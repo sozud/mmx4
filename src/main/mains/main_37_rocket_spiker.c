@@ -12,6 +12,10 @@
 #include "main/objects.h"
 #include "main/visuals/visual_03_small_effect.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 void rocket_spiker_main(struct MainObj*);
 void rocket_spiker_despawn(struct MainObj* arg0);
 
@@ -56,7 +60,107 @@ void rocket_spiker_update(struct MainObj* self)
 }
 
 // rocket_spiker_init
+#ifdef MMX4_PC
+void func_8005FE1C(struct MainObj* arg0);
+void func_800608CC(struct MainObj* arg0);
+#define MAIN_37_U8(object, offset) (((u8*)&(object)->ext.main_37)[(offset)-0x80])
+#define MAIN_37_S16(object, offset) (*(s16*)&MAIN_37_U8(object, offset))
+extern union AnimationStep* rocket_spiker_animations[28];
+extern struct Unk_unk68 D_800FE4D4;
+extern struct Unk_unk68 D_800FE4D8;
+extern struct Unk_unk68 D_800FE4DC;
+extern struct Unk_unk68 D_800FE4E0;
+extern struct Unk_unk68 D_800FE4E4;
+extern struct Unk_unk68 D_80107474[];
+void rocket_spiker_face_player(struct AnimatedObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_8005FE1C(struct MainObj* arg0)
+{
+    static const s16 lanes[3][3] = {
+        { 0x3F0, 0x480, 0x410 },
+        { 0x390, 0x40B, 0x3B0 },
+        { 0x330, 0x380, 0x350 },
+    };
+    u8 lane;
+
+    arg0->hp = 6;
+    arg0->contact_damage = 4;
+    arg0->invincibility_timer = 0;
+    arg0->unk62 = 2;
+    arg0->animation_table = (const u8* const*)rocket_spiker_animations;
+    arg0->terrain_box = &D_800FE4E4;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->air_state = 0;
+    arg0->unk16 = 6;
+    switch (arg0->unk2) {
+    case 0:
+        arg0->collision_data = (const u16*)D_80107474;
+        arg0->hurt_box = (const u8*)&D_800FE4D4;
+        arg0->attack_box = (const u8*)&D_800FE4D8;
+        rocket_spiker_face_player(ANIMATED_OBJECT(arg0));
+        arg0->x_speed = 0;
+        arg0->y_speed = -0x18000;
+        set_animation(arg0, 1);
+        arg0->unk5 = 2;
+        break;
+    case 1:
+    case 2:
+        arg0->collision_data = (const u16*)D_80107474;
+        arg0->hurt_box = (const u8*)&D_800FE4D4;
+        arg0->attack_box = (const u8*)&D_800FE4D8;
+        arg0->unk15 = arg0->unk2 == 2 ? 0x40 : 0;
+        arg0->x_speed = arg0->unk2 == 2 ? 0x18000 : -0x18000;
+        arg0->y_speed = 0;
+        set_animation(arg0, 0);
+        arg0->unk5 = 3;
+        break;
+    case 3:
+        arg0->collision_data = (const u16*)D_801060F0;
+        arg0->hurt_box = (const u8*)&D_800FE4DC;
+        arg0->attack_box = (const u8*)&D_800FE4E0;
+        arg0->y_speed = 0;
+        arg0->unk42 += 2;
+        if (arg0->x_pos.i.hi >= 0x1799) {
+            MAIN_37_S16(arg0, 0x84) = 0x17E0;
+            arg0->x_pos.val = 0x18180000;
+            arg0->x_speed = 0x10000;
+            arg0->unk15 = 0;
+            MAIN_37_U8(arg0, 0x81) = 0;
+        } else {
+            MAIN_37_S16(arg0, 0x84) = 0x1710;
+            arg0->x_pos.val = 0x17080000;
+            arg0->x_speed = -0x10000;
+            arg0->unk15 = 0x40;
+            MAIN_37_U8(arg0, 0x81) = 1;
+        }
+        if (arg0->y_pos.i.hi < 0x370)
+            MAIN_37_U8(arg0, 0x81) += 2;
+        if (arg0->y_pos.i.hi < 0x3D0)
+            MAIN_37_U8(arg0, 0x81) += 2;
+        lane = MAIN_37_U8(arg0, 0x81);
+        if (lane < 6) {
+            MAIN_37_S16(arg0, 0x86) = lanes[lane / 2][0];
+            MAIN_37_S16(arg0, 0x88) = lanes[lane / 2][1];
+            arg0->y_pos.val = lanes[lane / 2][2] << 16;
+        }
+        set_animation(arg0, 7);
+        arg0->unk5 = 4;
+        break;
+    }
+    MAIN_37_U8(arg0, 0x8C) = 0;
+    MAIN_37_U8(arg0, 0x8D) = 1;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->state = 1;
+    arg0->unk6 = 0;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_37_rocket_spiker", func_8005FE1C);
+#endif
 
 extern void (*rocket_spiker_step_funcs[])(struct MainObj*);
 
@@ -265,7 +369,33 @@ void rocket_spiker_boost_launch(struct MainObj* self)
 }
 
 // rocket_spiker_boost_fly
+#ifdef MMX4_PC
+void func_800608CC(struct MainObj* arg0)
+{
+    s32 velocity;
+
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->unk15 == 0) {
+        if (arg0->x_pos.i.hi >= 0x17A0)
+            return;
+        arg0->x_pos.i.hi = 0x17A0;
+        func_8001540C(2, 0x5A, arg0);
+        velocity = 0x58000;
+    } else {
+        if (arg0->x_pos.i.hi < 0x1781)
+            return;
+        velocity = -0x58000;
+        arg0->x_pos.i.hi = 0x1780;
+    }
+    arg0->unk7C = 0x28;
+    arg0->x_accel = 0x2000;
+    arg0->x_speed = velocity;
+    arg0->unk6 = 4;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_37_rocket_spiker", func_800608CC);
+#endif
 
 void rocket_spiker_boost_pause(struct MainObj* self)
 {

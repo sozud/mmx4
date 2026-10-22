@@ -8,6 +8,10 @@
 #include "main/objects.h"
 #include "main/player_common.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // web_shot_state_funcs
 extern void (*web_shot_state_funcs[])(struct ShotObj*);
 
@@ -27,7 +31,39 @@ void web_shot_update(struct ShotObj* self)
 }
 
 // web_shot_init
+#ifdef MMX4_PC
+void func_8009D788(struct ShotObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_8009D788(struct ShotObj* arg0)
+{
+    s32 direction;
+
+    arg0->unk54 = web_shot_hit_box;
+    arg0->unk50.data = web_shot_hit_box;
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk16 = 3;
+    arg0->unk68 = NULL;
+    arg0->unk58.data = (u8*)D_80106070;
+    direction = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+    arg0->unk84.value = direction;
+    set_velocity_from_angle(MOVING_OBJECT(arg0), direction);
+    arg0->timer = 0x14;
+    arg0->unk8A = 0;
+    arg0->unk5C = 1;
+    arg0->unk60 = 0;
+    arg0->unk8C.word = 1;
+    arg0->unk62 = 3;
+    arg0->unk90.val = 0;
+    arg0->x_vel.val *= 3;
+    arg0->y_vel.val *= 3;
+    set_animation(arg0, 0x16);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_22_web_shot", func_8009D788);
+#endif
 
 void web_shot_fly(struct ShotObj* self)
 {

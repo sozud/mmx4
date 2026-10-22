@@ -33,7 +33,66 @@ void latcher_update(struct MainObj* self)
 }
 
 // latcher_init
+#ifdef MMX4_PC
+void func_8005F558(struct MainObj* arg0);
+extern struct Unk_unk68 latcher_hurt_box;
+extern struct Unk_unk68 D_801073F4[];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_8005F558(struct MainObj* arg0)
+{
+    struct MainObj* current;
+    s32 resource;
+
+    resource = func_8002938C(0x24);
+    arg0->unk40 = D_801406A8[resource] >> 7;
+    arg0->unk42 = CLUT_FROM_ID(0x24);
+    resource = func_8002938C(0x24);
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->attack_box = &latcher_hurt_box;
+    arg0->hurt_box = &latcher_hurt_box;
+    arg0->animation_table = (const u8* const*)latcher_animations;
+    arg0->unk16 = 6;
+    arg0->unk62 = 3;
+    arg0->collision_data = D_801073F4;
+    arg0->hp = 0x10;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->unk15 = 0;
+    arg0->contact_damage = 0;
+    arg0->terrain_box = NULL;
+    arg0->invincibility_timer = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    switch (arg0->unk2) {
+    case 0:
+        set_animation(arg0, 0);
+        memset(SP_CUR_MAIN_OBJ->ext.main_36.unk80, 0, sizeof(SP_CUR_MAIN_OBJ->ext.main_36.unk80));
+        break;
+    case 1:
+        set_animation(arg0, 1);
+        arg0->x_speed = 0x18000;
+        break;
+    case 2:
+        set_animation(arg0, 1);
+        arg0->unk15 = 0x40;
+        arg0->x_speed = -0x18000;
+        break;
+    }
+    current = SP_CUR_MAIN_OBJ;
+    current->ext.main_36.unk8A = 0x80;
+    current->ext.main_36.unk8C = 0;
+    SP_CUR_MAIN_OBJ->ext.main_36.unk8D = 0;
+    arg0->state = 1;
+    arg0->unk5 = 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_36_latcher", func_8005F558);
+#endif
 
 extern void (*latcher_step_funcs[])(struct MainObj*);
 

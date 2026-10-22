@@ -3,6 +3,10 @@
 #include "common.h"
 #include "main/effects/effect_00_camera_trigger.h"
 
+#ifdef MMX4_PC
+#include "main/objects.h"
+#endif
+
 extern u16** camera_trigger_stage_scripts[26];
 
 // camera_trigger_state_funcs
@@ -28,7 +32,40 @@ void camera_trigger_init(struct EffectObj* self)
 }
 
 // camera_trigger_main
+#ifdef MMX4_PC
+void func_800B5798(struct EffectObj* arg0);
+extern struct Effect00BackgroundUpdate camera_trigger_bound_values[74];
+extern u16* camera_trigger_bound_fields[4];
+#endif
+
+#ifdef MMX4_PC
+void func_800B5798(struct EffectObj* arg0)
+{
+    const u16* trigger = arg0->ext.unk_effect.unk18;
+    u32 i;
+
+    if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
+        despawn_object(OBJECT_HEADER(arg0));
+        return;
+    }
+
+    if (trigger[0] < g_Player.x_pos.i.hi
+        || g_Player.x_pos.i.hi < trigger[1]
+        || trigger[2] < g_Player.y_pos.i.hi
+        || g_Player.y_pos.i.hi < trigger[3]) {
+        return;
+    }
+
+    background_objects[0].unk47 = 2;
+    for (i = 4; trigger[i] != 0; i++) {
+        const struct Effect00BackgroundUpdate* update
+            = &camera_trigger_bound_values[trigger[i] - 1];
+        *camera_trigger_bound_fields[update->object_index] = update->value;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_00_camera_trigger", func_800B5798);
+#endif
 
 void (*camera_trigger_state_funcs[])(struct EffectObj*) = {
     camera_trigger_init,

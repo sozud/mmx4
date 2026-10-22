@@ -12,6 +12,11 @@
 #include "main/CB184.h"
 #include "main/visuals/visual_03_small_effect.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#include "main/collision_bounds.h"
+#endif
+
 extern struct Unk_unk68 D_80105374;
 
 extern struct Unk_unk68 D_80105364;
@@ -279,7 +284,71 @@ void sigma_final_intro_load(struct MainObj* self)
 }
 
 // sigma_final_init
+#ifdef MMX4_PC
+void func_8008D5C8(struct MainObj* arg0);
+void func_8008F1A8(struct MainObj* self);
+void func_8008DAE8(struct MainObj* self);
+void func_8008EC48(struct MainObj* self);
+void func_8008E748(struct MainObj* self);
+void func_8008F3F4(struct MainObj* self);
+void func_8008F578(struct MainObj* self);
+extern struct Unk_unk68 D_801062F0[32];
+extern u8 D_8013B898[4];
+extern u8 D_8013B89C[4];
+extern u8 D_8013B8A4[4];
+extern void* D_8013B8B4;
+extern void (*sigma_final_step_funcs[14])();
+extern struct Unk_unk68 D_80108284[];
+extern struct Unk_unk68 D_80108304[];
+#endif
+
+#ifdef MMX4_PC
+void func_8008D5C8(struct MainObj* arg0)
+{
+    extern void* sigma_final_animations[39];
+    extern void* D_8013B8B4;
+    s32 i;
+
+    for (i = 0; i < 3; i++) {
+        struct ShotObj* shot = find_free_shot_obj();
+
+        if (shot == NULL)
+            continue;
+        shot->active = 0x41;
+        shot->id = 0x35;
+        shot->unk2 = i;
+        shot->x_pos = arg0->x_pos;
+        shot->y_pos = arg0->y_pos;
+        shot->unk7C = (struct WeaponObj*)arg0;
+        arg0->ext.main_74.children[i] = (struct MainObj*)shot;
+    }
+
+    arg0->unk15 = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->animation_table = (const u8* const*)sigma_final_animations;
+    arg0->unk16 = 6;
+    arg0->collision_data = D_801062F0;
+    arg0->contact_damage = 9;
+    arg0->invincibility_timer = 0;
+    arg0->unk62 = 0;
+    D_8013B8B0 = NULL;
+    D_8013B8B4 = NULL;
+    arg0->terrain_box = NULL;
+    arg0->hp = 0;
+    arg0->unk40 = (u16)((D_801406A8[0] >> 7) + 0xB0);
+    engine_obj.boss_ptr = arg0;
+    engine_obj.unk25 = 0;
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+    arg0->ext.main_74.target = 0;
+    arg0->ext.main_74.upper_health = 0;
+    arg0->ext.main_74.lower_health = 0x30;
+    arg0->state++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008D5C8);
+#endif
 
 extern void* D_8013B8B4;
 #define MAIN_74_COLLISION_BOUNDS D_8013B8B4
@@ -385,7 +454,66 @@ void sigma_final_appear(struct MainObj* self)
 }
 
 // sigma_final_pick_attack
+#ifdef MMX4_PC
+void func_8008DAE8(struct MainObj* self)
+{
+    struct Main74Ext* ext = &self->ext.main_74;
+
+    if (D_8013B8A0[0] != 0) {
+        D_8013B8A0[0]--;
+        if (ext->target != 0)
+            goto animate;
+    }
+    switch (ext->pattern_index) {
+    case 0:
+        self->unk5 = 5;
+        ext->pattern_index++;
+        break;
+    case 1:
+    case 5:
+        self->unk5 = 8;
+        ext->pattern_index++;
+        break;
+    case 2:
+        if (D_8013B8B8 == 2) {
+            ext->pattern_index = 6;
+            self->unk5 = 4;
+        } else {
+            self->unk5 = 6;
+        }
+        ext->pattern_index++;
+        break;
+    case 3:
+        self->unk5 = (get_random() & 1) ? 0xC : 0xD;
+        ext->pattern_index++;
+        break;
+    case 4:
+        self->unk5 = 7;
+        ext->pattern_index++;
+        break;
+    case 6:
+        if (D_8013B8B8 == 1) {
+            ext->pattern_index = 2;
+            self->unk5 = 6;
+        } else {
+            self->unk5 = 4;
+        }
+        ext->pattern_index++;
+        break;
+    case 7:
+        self->unk5 = (get_random() & 1) ? 9 : 0xA;
+        ext->pattern_index = 0;
+        break;
+    }
+    if (ext->target == 0)
+        return;
+animate:
+    animate_object(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008DAE8);
+#endif
 
 void sigma_final_laser_start(struct MainObj* self)
 {
@@ -708,7 +836,60 @@ void sigma_final_grab_start(struct MainObj* self)
 }
 
 // sigma_final_grab_hold
+#ifdef MMX4_PC
+// src/main/mains/main_74_sigma_final.c
+
+void func_8008E748(struct MainObj* self)
+{
+    struct ShotObj* shot;
+    s32 found;
+
+    if (g_Player.stun_timer != 0) {
+        self->unk7C = 0x1E;
+        g_Player.x_pos.u.hi = self->x_pos.u.hi + 0x10;
+        g_Player.y_pos.u.hi = self->y_pos.u.hi + 0x10;
+        set_animation(self, 5);
+        self->unk6++;
+        return;
+    }
+
+    if (g_Player.x_pos.i.hi > self->x_pos.i.hi + 0x10) {
+        g_Player.x_pos.u.hi -= 3;
+    } else {
+        g_Player.x_pos.u.hi += 3;
+    }
+
+    if (self->unk7C != 0) {
+        self->unk7C--;
+        if ((self->unk7C & 3) == 0) {
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x38;
+                shot->unk2 = 0;
+                shot->unk7C = WEAPON_OBJECT(self);
+            }
+        }
+    } else {
+        found = 0;
+        for (shot = shot_objects; shot < &shot_objects[0x20]; shot++) {
+            if (shot->id == 0x38 && (shot->active & 1)) {
+                found = 1;
+            }
+        }
+        if (!found) {
+            self->contact_damage = 9;
+            self->unk62 = 0;
+            self->unk5 = 0xB;
+            self->unk6 = 0;
+            stop_sound(2, 0xB);
+        }
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008E748);
+#endif
 
 void sigma_final_grab_release(struct MainObj* self)
 {
@@ -815,7 +996,32 @@ void sigma_final_spit(struct MainObj* self)
 }
 
 // sigma_final_wind_spikes
+#ifdef MMX4_PC
+void func_8008EC48(struct MainObj* self)
+{
+    struct ShotObj* shot;
+    s16 y = 0x228;
+    u32 i;
+
+    sigma_spawn_sequencer(self, 6);
+    set_animation(self, 2);
+    self->unk7C = 0x3C;
+    for (i = 0; i < 0xC; i++, y += 0x10) {
+        shot = find_free_shot_obj();
+        if (shot == NULL)
+            continue;
+        shot->active = 0x41;
+        shot->id = 0x36;
+        shot->unk2 = 7;
+        shot->x_pos.i.hi = 0x5A0;
+        shot->y_pos.i.hi = y;
+        shot->unk7C = (struct WeaponObj*)self;
+    }
+    self->unk6++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008EC48);
+#endif
 
 void sigma_final_wind_start(struct MainObj* self)
 {
@@ -931,10 +1137,91 @@ void sigma_final_summon(struct MainObj* self)
 }
 
 // sigma_final_fight
+#ifdef MMX4_PC
+void func_8008F1A8(struct MainObj* self)
+{
+    struct Main74Ext* ext = &self->ext.main_74;
+    s32 hit;
+    u8 flash;
+
+    sigma_final_step_funcs[self->unk5](self);
+    if (ext->target == 0)
+        goto done;
+    self->unk65 = D_8013B89C[0];
+    self->collision_data = D_801060F0;
+    self->hurt_box = D_8013B8B4;
+    func_8002DD04(self);
+    D_8013B89C[0] = self->unk65;
+    if (D_8013B8A4[0] == 0)
+        self->collision_data = ext->target == 1 ? D_80108284 : D_80108304;
+    self->unk65 = D_8013B898[0];
+    self->hurt_box = D_8013B8B0;
+    hit = func_8002DD04(self);
+    D_8013B898[0] = self->unk65;
+    if (hit < 0) {
+        stop_sound(2, 1);
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->unk62 = 0;
+        self->state++;
+        self->unk42 &= 0x7FFF;
+        if (D_8013B8B8 != 0) {
+            ext->death_kind = 2;
+            player_start_script_action(0x14, g_Player.unk15);
+            g_Player.spike_immune = 1;
+            engine_obj.gameplay_locked = 1;
+        } else {
+            ext->death_kind = 1;
+        }
+        return;
+    }
+    if (hit > 0 && hit != 0x7F) {
+        D_8013B8A4[0] = (u32)(hit - 0x19) < 2 ? 2 : 0x1E;
+        self->collision_data = D_801060F0;
+    }
+    flash = D_8013B8A4[0];
+    if (flash != 0) {
+        D_8013B8A4[0] = flash - 1;
+        if (flash & 2)
+            self->unk42 |= 0x8000;
+        else
+            self->unk42 &= 0x7FFF;
+        if (D_8013B8A4[0] == 0) {
+            self->unk42 &= 0x7FFF;
+            self->collision_data = ext->target == 1 ? D_80108284 : D_80108304;
+        }
+    }
+done:
+    func_8002D9BC(self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F1A8);
+#endif
 
 // sigma_final_death_start
+#ifdef MMX4_PC
+void func_8008F3F4(struct MainObj* self)
+{
+    if (self->ext.main_74.target == 2 || D_8013B8B8 == 0) {
+        set_animation(self, self->ext.main_74.target == 2 ? 1 : 0);
+        self->unk7C = 0x7F;
+        self->unk7E = 0x19;
+        self->invincibility_timer = 0x19;
+        self->unk5 = 1;
+    } else {
+        set_animation(self, 0x18);
+        func_8001540C(2, 9, self);
+        background_objects[0].unk26 = 0x450;
+        background_objects[0].unk24 = 0x450;
+        player_start_script_action(0x15, 0);
+        self->unk5 = 3;
+    }
+    self->ext.main_74.death_kind = 0;
+    update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F3F4);
+#endif
 
 void sigma_final_death_blink(struct MainObj* self)
 {
@@ -955,7 +1242,48 @@ void sigma_final_death_blink(struct MainObj* self)
 }
 
 // sigma_final_death_explode
+#ifdef MMX4_PC
+void func_8008F578(struct MainObj* self)
+{
+    self->unk7C = (u16)(self->unk7C - 1);
+    if (self->unk7C != 0) {
+        u16 old_blink_timer;
+        sigma_emit_explosions(self);
+        old_blink_timer = self->unk7E;
+        self->unk7E = old_blink_timer - 1;
+        if (old_blink_timer == 0) {
+            self->unk7E = 5;
+            self->unk42 ^= 0x8000;
+        }
+        if (self->unk7C == 0x1B) {
+            set_animation(self, self->ext.main_74.target == 2 ? 0x1B : 0x19);
+            func_8001540C(2, 9, self);
+        }
+        animate_object(ANIMATED_OBJECT(self));
+    } else if (D_8013B8B8 == 0) {
+        D_8013B8B8 = self->ext.main_74.target;
+        sigma_final_set_target(self, 0);
+        self->state = 1;
+        self->unk5 = 2;
+        D_8013B8A0[0] = 0x3C;
+        self->ext.main_74.pattern_index = 2;
+        self->invincibility_timer = 0;
+    } else {
+        set_animation(self, 0x18);
+        func_8001540C(2, 9, self);
+        sigma_final_set_target(self, 0);
+        self->x_pos.i.hi = 0x567;
+        self->y_pos.i.hi = 0x287;
+        self->unk5 = 3;
+        background_objects[0].unk26 = 0x450;
+        background_objects[0].unk24 = 0x450;
+        player_start_script_action(0x15, 0);
+    }
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F578);
+#endif
 
 void sigma_final_death_collapse(struct MainObj* self)
 {

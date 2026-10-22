@@ -8,6 +8,10 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/visuals/visual_03_small_effect.h"
+#endif
+
 // jet_stingray_flyby_enter_funcs
 extern void (*jet_stingray_flyby_enter_funcs[])(struct MainObj*);
 
@@ -21,7 +25,61 @@ extern void (*jet_stingray_flyby_charge_funcs[])(struct MainObj*);
 extern void (*jet_stingray_flyby_step_funcs[])(struct MainObj*);
 
 // jet_stingray_flyby_init
+#ifdef MMX4_PC
+void func_8006EB40(struct MainObj* self);
+void func_8006ED44(struct MainObj* self);
+void func_8006EF28(struct MainObj* self);
+void func_8006F0DC(struct MainObj* self);
+void func_8006F5F4(struct MainObj* self);
+void func_8006F86C(struct MainObj* self);
+extern struct AnimationTable12 jet_stingray_flyby_animations;
+extern struct Unk_unk68 jet_stingray_flyby_attack_box;
+extern struct Unk_unk68 jet_stingray_flyby_hurt_box;
+extern struct Unk_unk68 D_80107978[];
+extern s16 jet_stingray_flyby_explosion_offsets[16];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_8006EB40(struct MainObj* self)
+{
+    if (engine_obj.palette_flags & 0x10) {
+        self->state = 2;
+        return;
+    }
+    self->on_screen = 1;
+    self->state = 1;
+    self->unk5 = 2;
+    self->unk16 = 6;
+    self->contact_damage = 6;
+    self->unk15 = 0x40;
+    self->animation_table = (const u8* const*)&jet_stingray_flyby_animations;
+    self->hp = 0x20;
+    self->attack_box = &jet_stingray_flyby_attack_box;
+    self->hurt_box = &jet_stingray_flyby_hurt_box;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->terrain_box = NULL;
+    self->collision_data = D_80107978;
+    self->bg_offset = g_Player.bg_offset;
+    self->y_pos = g_Player.y_pos;
+    if (self->unk2 != 0) {
+        self->y_pos = g_Player.y_pos;
+        self->x_speed = 0x90000;
+        self->x_pos.val = background_objects[(u8)self->bg_offset].x_pos.val - 0x400000;
+    } else {
+        self->y_pos.val = background_objects[(u8)self->bg_offset].y_pos.val + 0x400000;
+        self->x_speed = 0x40000;
+        self->ext.main_55.unk84 = 0;
+        self->x_pos.val = background_objects[(u8)self->bg_offset].x_pos.val + 0x1B00000;
+    }
+    set_animation(self, 0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EB40);
+#endif
 
 void jet_stingray_flyby_wait_on_screen(struct MainObj* self)
 {
@@ -35,10 +93,105 @@ void jet_stingray_flyby_wait_on_screen(struct MainObj* self)
 }
 
 // jet_stingray_flyby_enter_straight
+#ifdef MMX4_PC
+// src/main/mains/main_55_jet_stingray_flyby.c
+
+void func_8006ED44(struct MainObj* self)
+{
+    struct Main55Ext* ext = &self->ext.main_55;
+    switch (ext->unk84) {
+    case 0:
+        ext->unk84 = 1;
+        ext->unk87 = 0;
+        self->unk5 = 5;
+        self->unk6 = 0;
+        self->unk7 = 0;
+        self->unk7C = 0;
+        break;
+    case 1:
+        if (ext->unk85 == 0)
+            ext->unk84 = 3;
+        if (self->unk7C == 0xF0 || ext->unk85 < 5) {
+            ext->unk87 = 1;
+            ext->unk84 = 2;
+            self->unk7C = 20;
+        } else {
+            self->unk7C = (s16)((u16)self->unk7C + 1);
+        }
+        break;
+    case 2:
+        if (self->unk7C != 0) {
+            self->unk7C = (s16)((u16)self->unk7C - 1);
+        } else {
+            if (ext->unk88 == 0)
+                ext->unk84 = 3;
+            for (unsigned bit = 0; bit < 8; bit++) {
+                if ((ext->unk88 >> bit) & 1) {
+                    ext->unk88 &= ~(1U << bit);
+                    self->unk7C = 30;
+                    break;
+                }
+            }
+        }
+        break;
+    case 3:
+        ext->unk84 = 0;
+        self->unk5 = 4;
+        self->unk6 = 0;
+        self->unk7 = 0;
+        break;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    self->y_speed = 0;
+    self->x_speed = (s32)background_objects[(s8)self->bg_offset].unk47 * FIXED(1);
+    move_object(MOVING_OBJECT(self));
+    if (self->x_pos.i.hi >= 0x1E16) {
+        self->unk5 = 6;
+        self->unk6 = 0;
+        self->x_speed = FIXED(8);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006ED44);
+#endif
 
 // jet_stingray_flyby_enter_aimed
+#ifdef MMX4_PC
+void func_8006EF28(struct MainObj* self)
+{
+    s16 dx;
+    s32 dy;
+
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->unk7C = 0x5A;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    set_velocity_from_angle(MOVING_OBJECT(self), (u8)angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)));
+    self->x_speed = (s32)background_objects[self->bg_offset].unk47 * FIXED(1);
+    move_object(MOVING_OBJECT(self));
+    dx = (u16)g_Player.x_pos.i.hi - (u16)self->x_pos.i.hi;
+    dy = (s16)((u16)g_Player.y_pos.i.hi - (u16)self->y_pos.i.hi);
+    if (dx < 0x50 && (dy < 0 ? -dy : dy) < 0x20 && (get_random() & 0xF) < 3) {
+        self->unk5 = 3;
+        self->unk6 = 0;
+    }
+    if (self->unk7C == 0) {
+        self->unk5 = 4;
+        self->unk6 = 0;
+        self->y_speed = FIXED(2);
+    } else {
+        self->unk7C = (u16)self->unk7C - 1;
+    }
+    if (self->x_pos.i.hi >= 0x390F) {
+        self->x_speed = FIXED(4);
+        self->unk5 = 6;
+        self->unk6 = 0;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EF28);
+#endif
 
 void jet_stingray_flyby_enter(struct MainObj* self)
 {
@@ -46,7 +199,44 @@ void jet_stingray_flyby_enter(struct MainObj* self)
 }
 
 // jet_stingray_flyby_cruise
+#ifdef MMX4_PC
+void func_8006F0DC(struct MainObj* self)
+{
+    switch (self->unk6) {
+    case 0:
+        self->unk6 = 1;
+        self->x_speed = FIXED(11);
+        self->y_speed = 0;
+        self->unk7C = 30;
+        set_animation(self, 1);
+
+    case 1:
+        if (self->unk7C != 0) {
+            move_object(MOVING_OBJECT(self));
+            self->unk7C = (u16)self->unk7C - 1;
+        } else {
+            u32 distance = (u32)self->x_pos.val - (u32)background_objects[self->bg_offset].x_pos.val;
+            self->x_speed = FIXED(4);
+            self->unk7C = 30;
+            self->unk6++;
+            memcpy(self->ext.main_55.pad80, &distance, sizeof(distance));
+            set_animation(self, 0);
+        }
+        break;
+    case 2:
+        if (self->x_pos.val < (s32)((u32)background_objects[self->bg_offset].x_pos.val + FIXED(48))) {
+            self->unk5 = 1;
+            self->unk6 = 0;
+        } else {
+            move_object(MOVING_OBJECT(self));
+        }
+        break;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006F0DC);
+#endif
 
 void jet_stingray_flyby_attack_rise(struct MainObj* self)
 {
@@ -153,7 +343,52 @@ void jet_stingray_flyby_charge_windup(struct MainObj* self)
 }
 
 // jet_stingray_flyby_charge_fire
+#ifdef MMX4_PC
+void func_8006F5F4(struct MainObj* self)
+{
+    if (self->unk7 == 0) {
+        if (self->unk7C != 0) {
+            self->unk7C = (u16)self->unk7C - 1;
+            return;
+        }
+        struct ShotObj* shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x22;
+            shot->unk40 = self->unk40;
+            s32 first = func_8002938C(0x37);
+            s32 second = func_8002938C(0x37);
+            s32 column = (s32)((u32)first * 4 + 0x19);
+            s32 row = (s32)((u32)second + 6) / 4 + 0x1E0;
+            shot->unk42 = ((u32)row << 6) | (u32)(column % 16);
+            shot->unk3C = ANIMATED_OBJECT(self)->unk3C;
+            shot->bg_offset = self->bg_offset;
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+            shot->animation_table = ANIMATED_OBJECT(self)->animation_table;
+            shot->unk7C = WEAPON_OBJECT(self);
+            shot->unk2 = 1;
+            shot->unk15 = self->unk15;
+            shot->unk8A = self->ext.main_55.unk86;
+            self->ext.main_55.unk85++;
+            self->ext.main_55.unk88 |= 1U << (self->ext.main_55.unk86 & 31);
+            self->ext.main_55.unk86++;
+        }
+        if (self->ext.main_55.unk86 == 8) {
+            self->unk7++;
+            set_animation(self, 5);
+        }
+        self->unk7C = 7;
+    } else if (self->animation_step.fields.relative_step == 0) {
+        self->unk5 = 1;
+        self->unk6 = 0;
+        self->unk7 = 0;
+        set_animation(self, 0);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006F5F4);
+#endif
 
 void jet_stingray_flyby_charge(struct MainObj* self)
 {
@@ -170,7 +405,38 @@ void jet_stingray_flyby_drift(struct MainObj* self)
 }
 
 // jet_stingray_flyby_destroyed
+#ifdef MMX4_PC
+void func_8006F86C(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->attack_box = NULL;
+        self->hurt_box = NULL;
+        self->ext.main_55.unk85 = 60;
+        set_animation(self, 0);
+    }
+    if (self->unk6 == 1) {
+        if (self->ext.main_55.unk85 == 0) {
+            self->unk6++;
+            self->x_speed = self->unk2 == 0 ? FIXED(8) : FIXED(4);
+        } else {
+            self->ext.main_55.unk85--;
+            self->x_speed = (s32)background_objects[self->bg_offset].unk47 * FIXED(1);
+        }
+    }
+    if ((get_random() & 0xFF) % 7 == 0) {
+        u8 kind = ((u8)main_bss_state.frame_counter ^ 1) & 1;
+        s16 x = (u16)self->x_pos.i.hi + (u16)jet_stingray_flyby_explosion_offsets[(get_random() & 7) * 2];
+        s16 y = (u16)self->y_pos.i.hi + (u16)jet_stingray_flyby_explosion_offsets[(get_random() & 7) * 2 + 1];
+        struct VisualObj* explosion = spawn_explosion_at(0, x, y, kind);
+        explosion->unk16 = 5;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006F86C);
+#endif
 
 void jet_stingray_flyby_main(struct MainObj* self)
 {

@@ -283,7 +283,36 @@ void ice_bird_face_player(struct AnimatedObj* self)
 }
 
 // ice_bird_check_player_ahead
+#ifdef MMX4_PC
+void func_8004D6FC(struct MainObj* self);
+#endif
+
+#ifdef MMX4_PC
+void func_8004D6FC(struct MainObj* self)
+{
+    struct Main14Ext* ext = &self->ext.main_14;
+
+    if (self->unk5 == 2 || self->unk5 == 5)
+        return;
+    if (--ext->unk84 != 0)
+        return;
+    if (ext->visual_variant >= 7)
+        return;
+    switch (++ext->visual_variant) {
+    case 4:
+        ext->unk84 = 0x1E;
+        break;
+    case 5:
+        ext->unk84 = 0x14;
+        break;
+    case 6:
+        ext->unk84 = 0x32;
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_14_ice_bird", func_8004D6FC);
+#endif
 
 void ice_bird_spawn_charge_ring(struct MainObj* self, s8 arg1)
 {

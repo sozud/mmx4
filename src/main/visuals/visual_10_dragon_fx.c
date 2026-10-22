@@ -32,7 +32,45 @@ void dragon_fx_flash_init(struct VisualObj* arg0)
 }
 
 // dragon_fx_flash
+#ifdef MMX4_PC
+void func_800B158C(struct VisualObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800B158C(struct VisualObj* arg0)
+{
+    struct PlayerObj* owner = arg0->unk50;
+
+    if (owner->active == 0 || owner->state == 2) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->unk2 == 0) {
+        arg0->x_pos.i.hi = (u16)owner->x_pos.i.hi + 0x58;
+    } else {
+        arg0->x_pos.i.hi = (u16)owner->x_pos.i.hi - 0x58;
+    }
+    arg0->y_pos.i.hi = (u16)owner->y_pos.i.hi - 0x38;
+
+    if (((u8*)&MAIN_OBJECT(owner)->ext)[0] != 0) {
+        arg0->unk42 = owner->unk42;
+        update_on_screen(BASE_OBJECT(arg0), 0xA0, 0xA0);
+        if (arg0->animation_step.fields.event != 0 && arg0->unk2 != 0) {
+            arg0->animation_step.fields.event = 0;
+            if (arg0->unk5 != 0) {
+                func_8001540C(2, 5, owner);
+            } else {
+                func_8001540C(2, 6, owner);
+            }
+            arg0->unk5 ^= 1;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/visuals/visual_10_dragon_fx", func_800B158C);
+#endif
 
 void dragon_fx_trail_init(struct VisualObj* arg0)
 {

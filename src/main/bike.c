@@ -51,7 +51,153 @@ void func_8003B458(void* arg0, s8 arg1)
     g_Player.unk6 = 0;
 }
 
+#ifdef MMX4_PC
+static u16 ride_chaser_clut(void);
+static void ride_chaser_spawn_body(struct RideArmorObj* arg0);
+void func_8003B470(struct RideArmorObj* arg0);
+void func_8003B7B4(struct RideArmorObj* arg0);
+void func_8003BB20(struct RideArmorObj* arg0);
+static void ride_chaser_land_animation(struct RideArmorObj* arg0);
+void func_8003BF1C(struct RideArmorObj* arg0);
+void func_8003C08C(struct RideArmorObj* arg0);
+void func_8003C6EC(struct RideArmorObj* arg0, u8 kind);
+void func_8003CA44(struct RideArmorObj* arg0);
+u8 func_8003CF24(struct RideArmorObj* arg0);
+void func_8003D01C(struct RideArmorObj* arg0);
+#define RIDE_U8(object, offset) (((u8*)&(object)->unk7C)[(offset)-0x7C])
+#define RIDE_S8(object, offset) (*(s8*)&RIDE_U8(object, offset))
+extern union AnimationStep* D_800F8FC4[38];
+extern u8 D_800F905C[12];
+extern u8 D_800F9068[4];
+extern u8 D_800F906C[4];
+extern u8 D_800F9100[4];
+extern u8 D_800F9104[4];
+extern u8 D_800F9108[4];
+extern u8 D_800F910C[4];
+extern u8 D_800F9110[4];
+extern u8 D_800F9114[4];
+extern void (*D_800F90E8[])(struct RideArmorObj*);
+void func_8003D164(struct VisualObj*, s32);
+void func_8003CF6C(struct RideArmorObj*);
+void func_8003CA44(struct RideArmorObj*);
+void func_8003D01C(struct RideArmorObj*);
+void func_8003D3B4(struct PlayerObj*);
+void func_8003B98C(struct PlayerObj*);
+void func_8003B694(struct RideArmorObj*);
+void func_8003C9A4(struct RideArmorObj*);
+extern ret_u8 func_8002938C(s32);
+static u16 ride_chaser_clut(void)
+{
+    u8 resource = func_8002938C(0x82);
+
+    return SOME_COORDINATE_CONVERSION(resource);
+}
+static void ride_chaser_spawn_body(struct RideArmorObj* arg0)
+{
+    struct WeaponObj* weapon = find_free_weapon_obj();
+    u8 unk16;
+
+    if (weapon == NULL)
+        return;
+    weapon->active = 0x41;
+    weapon->id = 0x39;
+    weapon->x_pos.i.hi = arg0->x_pos.i.hi;
+    weapon->y_pos.i.hi = arg0->y_pos.i.hi;
+    weapon->animation_table = (u32**)arg0->animation_table;
+    weapon->unk40 = arg0->unk40;
+    weapon->unk3C = arg0->unk3C;
+    weapon->unk42 = ride_chaser_clut();
+    weapon->owner = (struct PlayerObj*)arg0;
+    unk16 = arg0->unk16;
+    weapon->unk16 = unk16;
+    weapon->unk15 = arg0->unk15;
+}
+static void ride_chaser_land_animation(struct RideArmorObj* arg0)
+{
+    switch (arg0->unk80.bytes.unk82) {
+    case 0:
+        set_animation(arg0, 5);
+        func_8003B458(arg0, 0x46);
+        break;
+    case 1:
+        set_animation(arg0, 4);
+        func_8003B458(arg0, 0x44);
+        break;
+    case 2:
+        set_animation(arg0, 3);
+        func_8003B458(arg0, 0x42);
+        break;
+    }
+}
+#endif
+
+#ifdef MMX4_PC
+void func_8003B470(struct RideArmorObj* arg0)
+{
+    struct EffectObj* effect;
+    u8 resource;
+
+    arg0->state = 1;
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+    arg0->on_screen = 1;
+    arg0->active |= 0x40;
+    arg0->x_pos.val = g_Player.x_pos.val;
+    arg0->unk15 = 0x40;
+    arg0->animation_table = (u32**)D_800F8FC4;
+    arg0->y_pos.val = g_Player.y_pos.val;
+    resource = func_8002938C(0x82);
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->unk40 = D_801406A8[resource] >> 7;
+    arg0->unk42 = SOME_COORDINATE_CONVERSION(resource);
+    if (g_Player.unk2 != 0)
+        arg0->unk42 += 2;
+    arg0->unk16 = 4;
+    arg0->unk54 = D_800F906C;
+    arg0->unk60 = 0;
+    arg0->unk61 = 0;
+    arg0->unk67 = 0;
+    arg0->x_vel.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk50 = NULL;
+    arg0->unk68 = (struct Unk_unk68*)D_800F9068;
+    arg0->unk58 = NULL;
+    arg0->hp = g_Player.hp;
+    func_8002C808((struct PlayerObj*)arg0);
+    arg0->unk7D = 0;
+    arg0->unk7E = 0;
+    arg0->unk80.bytes.unk83 = 0;
+    arg0->unk80.bytes.unk82 = 0;
+    arg0->unk7C = 1;
+    arg0->unk7D = 0;
+    arg0->unk80.bytes.unk81 = 0;
+    arg0->unk80.bytes.unk80 = 0;
+    g_Player.ride_state = 1;
+    RIDE_U8(arg0, 0x9B) = 1;
+    arg0->unk8E.value = 0;
+    set_animation(arg0, 0);
+    func_8003B458(arg0, 0x41);
+    RIDE_U8(arg0, 0x89) = 0;
+    RIDE_U8(arg0, 0x98) = 0;
+    RIDE_U8(arg0, 0x9A) = 0;
+    arg0->saved_x_vel = 0;
+    background_objects[arg0->bg_offset].unk30 = 0x200;
+    func_8003D164((struct VisualObj*)arg0, 0);
+    effect = find_free_effect_obj();
+    if (effect != NULL) {
+        effect->active = 1;
+        effect->id = 0x1B;
+        arg0->unkA0.chaser_effect = effect;
+    }
+    background_objects[0].unk44 = 1;
+    background_objects[1].unk44 = 1;
+    background_objects[2].unk44 = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003B470);
+#endif
 
 void func_8003B694(struct RideArmorObj* self)
 {
@@ -80,7 +226,55 @@ void func_8003B694(struct RideArmorObj* self)
     }
 }
 
+#ifdef MMX4_PC
+void func_8003B7B4(struct RideArmorObj* arg0)
+{
+    s8 health = arg0->hp;
+
+    if (health == 0 || g_Player.hp == 0) {
+        g_Player.hp = -0x80;
+        arg0->hp = -0x80;
+        spawn_debris(0xB, D_800F905C, arg0);
+        arg0->state = 3;
+        return;
+    }
+    if (health < 0 && HP_VALUE(health) != 0) {
+        RIDE_U8(arg0, 0x9A) = 1;
+        arg0->unk61 = 0x79;
+        arg0->unk85 = 1;
+        g_Player.hp = HP_VALUE(arg0->hp);
+    }
+    if (background_objects[0].unk51 != 0) {
+        RIDE_U8(arg0, 0x9B) = 0;
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        is_on_screen(BASE_OBJECT(arg0));
+        return;
+    }
+    if (background_objects[0].unk4 == 1 && RIDE_S8(arg0, 0x9B) != 0) {
+        arg0->x_pos.i.hi += background_objects[0].x_pos.i.hi - background_objects[0].unk14.i.hi;
+        arg0->y_pos.i.hi += background_objects[0].y_pos.i.hi - background_objects[0].unk18.i.hi;
+    }
+    D_800F90E8[arg0->unk5](arg0);
+    CollisionRelated((struct PlayerObj*)arg0);
+    func_8003B694(arg0);
+    if (arg0->unk5 != 0) {
+        func_8003CF6C(arg0);
+        arg0->unk80.bytes.unk83 = arg0->unk80.bytes.unk82;
+        arg0->unk80.bytes.unk82 = func_8003CF24(arg0);
+        func_8003CA44(arg0);
+        if (RIDE_U8(arg0, 0x89) != 0)
+            RIDE_U8(arg0, 0x89) -= 1;
+        func_8003D01C(arg0);
+    }
+    func_8003D3B4((struct PlayerObj*)arg0);
+    func_8003B98C((struct PlayerObj*)arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003B7B4);
+#endif
 
 void func_8003B98C(struct PlayerObj* arg0)
 {
@@ -144,7 +338,72 @@ void func_8003BAE8(struct RideArmorObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
+#ifdef MMX4_PC
+void func_8003BB20(struct RideArmorObj* arg0)
+{
+    s16 dx = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
+    struct EffectObj* effect;
+    s32 speed;
+
+    switch (arg0->unk6) {
+    case 0:
+        arg0->unk6 = 1;
+        arg0->unk7C = 1;
+        arg0->x_vel.val = 0;
+        arg0->y_vel.val = 0;
+        arg0->unk28 = 0x8000;
+        arg0->unk2C = 0;
+        arg0->unk15 = 0x40;
+        func_8001540C(5, 0, NULL);
+        set_animation(arg0, 6);
+        func_8003B458(arg0, 0x47);
+        ride_chaser_spawn_body(arg0);
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        return;
+    case 1:
+        speed = arg0->x_vel.val;
+        if (speed < 0)
+            speed = -speed;
+        if (speed > 0x7FFFF) {
+            arg0->x_vel.val = 0x80000;
+            arg0->unk28 = 0;
+        }
+        if (dx >= 0xC0) {
+            arg0->unk6 = 2;
+            arg0->x_vel.val = 0x60000;
+            arg0->unk28 = -0x4000;
+        }
+        break;
+    case 2:
+        if (dx < 0x91) {
+            arg0->unk6 = 3;
+            arg0->x_vel.val = 0;
+            arg0->unk28 = 0;
+            set_animation(arg0, 7);
+            func_8003B458(arg0, 0x4B);
+        }
+        break;
+    case 3:
+        if (arg0->animation_step.fields.relative_step == 0)
+            arg0->unk6 = 4;
+        break;
+    case 4:
+        effect = arg0->unkA0.chaser_effect;
+        if (effect->active == 0 || effect->unk5 == 3) {
+            arg0->unk5 = 1;
+            arg0->unk6 = 0;
+        }
+        break;
+    default:
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        return;
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003BB20);
+#endif
 
 void func_8003BDA0(struct RideArmorObj* arg0)
 {
@@ -197,9 +456,150 @@ void func_8003BE28(struct RideArmorObj* self)
     func_8003CBCC(self);
 }
 
+#ifdef MMX4_PC
+void func_8003BF1C(struct RideArmorObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        arg0->unk6 = 1;
+        arg0->unk2C = 0x5000;
+    }
+    arg0->unk67 = 1;
+    func_8003C6EC(arg0, 4);
+    if (arg0->unk70 & 8) {
+        arg0->unk67 = 0;
+        arg0->unk2C = 0;
+        arg0->y_vel.val = 0;
+        if (arg0->unk7D != 0) {
+            arg0->unk5 = 5;
+            arg0->unk6 = 1;
+            RIDE_U8(arg0, 0x99) = 0;
+        } else {
+            arg0->unk5 = 1;
+            arg0->unk80.bytes.unk80 &= 0xFD;
+            ride_chaser_land_animation(arg0);
+        }
+    }
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    if (0x68000 - arg0->y_vel.val < 0)
+        arg0->y_vel.val = 0x68000;
+    func_8003CCBC(arg0);
+    if (arg0->unk7D != 0)
+        arg0->unk8E.value = 1;
+    func_8003CBCC(arg0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003BF1C);
+#endif
 
+#ifdef MMX4_PC
+void func_8003C08C(struct RideArmorObj* arg0)
+{
+    u8 value;
+
+    switch (arg0->unk6) {
+    case 0:
+        if (arg0->unk8E.value != 0) {
+            arg0->unk6 = 6;
+            arg0->y_vel.val = 0;
+            arg0->unk2C = 0;
+        } else {
+            arg0->unk6 = 1;
+        }
+        arg0->spawned_parts = 1;
+        arg0->x_vel.val = 0x40000;
+        arg0->unk28 = -0x1000;
+        arg0->unk90.value = 0x1000;
+        arg0->unk94.value = 0;
+        arg0->unk80.bytes.unk80 |= 1;
+        background_objects[arg0->bg_offset].unk47 = 8;
+        set_animation(arg0, D_800F9100[arg0->unk80.bytes.unk82]);
+        func_8003B458(arg0, D_800F910C[arg0->unk80.bytes.unk82]);
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        ride_chaser_spawn_body(arg0);
+        goto end;
+    case 1:
+        if (arg0->x_vel.val <= 0) {
+            arg0->unk6 = 4;
+            set_animation(arg0, D_800F9104[arg0->unk80.bytes.unk82]);
+            func_8003B458(arg0, D_800F9110[arg0->unk80.bytes.unk82]);
+            arg0->spawned_parts = 0;
+            func_8001540C(5, 0, NULL);
+        } else if (arg0->unk70 & 8) {
+            func_8003C9A4(arg0);
+            if (arg0->unk8C.value & 0x80) {
+                arg0->y_vel.val = 0x68000;
+                arg0->unk6 = 2;
+                arg0->unk2C = 0x5000;
+                arg0->unk28 = 0;
+                arg0->unk80.bytes.unk80 |= 2;
+            }
+        } else {
+            arg0->unk6 = 3;
+            arg0->unk2C = 0x5000;
+        }
+        break;
+    case 2:
+        func_8003C584(arg0);
+        goto end;
+    case 3:
+        if (arg0->unk70 & 8) {
+            arg0->unk6 = 4;
+            arg0->unk67 = 0;
+            arg0->unk28 = 0;
+            arg0->unk2C = 0;
+            arg0->y_vel.val = 0;
+            arg0->spawned_parts = 0;
+            ride_chaser_land_animation(arg0);
+        }
+        func_8003C624(arg0);
+        goto end;
+    case 4:
+        if (arg0->animation_step.fields.relative_step == 0)
+            arg0->unk6 = 5;
+        break;
+    case 5:
+        arg0->unk5 = 1;
+        arg0->spawned_parts = 0;
+        arg0->unk6 = 0;
+        arg0->unk7D = 0;
+        arg0->unk80.bytes.unk80 &= 0xFC;
+        background_objects[arg0->bg_offset].unk47 = 6;
+        set_animation(arg0, D_800F9108[arg0->unk80.bytes.unk82]);
+        func_8003B458(arg0, D_800F9114[arg0->unk80.bytes.unk82]);
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        goto end;
+    case 6:
+        if (arg0->unk70 & 8) {
+            RIDE_U8(arg0, 0x99) = 1;
+        } else {
+            value = arg0->unk80.bytes.unk81;
+            if (value >= 0x38 || (value < 0x20 && value != 0))
+                RIDE_U8(arg0, 0x99) = 1;
+        }
+        if (arg0->x_vel.val <= 0) {
+            arg0->unk6 = 3;
+            arg0->unk2C = 0x5000;
+            arg0->unk8E.value = 0;
+            RIDE_U8(arg0, 0x99) = 0;
+            func_8001540C(5, 0, NULL);
+        } else if (RIDE_U8(arg0, 0x99) == 0) {
+            if (arg0->unk8A & 4)
+                arg0->y_pos.val -= 0x8000;
+            else if (arg0->unk8A & 8)
+                arg0->y_pos.val += 0x8000;
+        }
+        break;
+    default:
+        goto end;
+    }
+    func_8003C624(arg0);
+    animate_object(ANIMATED_OBJECT(arg0));
+end:
+    func_8003C6EC(arg0, arg0->spawned_parts != 0 ? 3 : 2);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003C08C);
+#endif
 
 void func_8003C584(struct RideArmorObj* arg0)
 {
@@ -234,7 +634,51 @@ void func_8003C624(struct RideArmorObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
 }
 
+#ifdef MMX4_PC
+void func_8003C6EC(struct RideArmorObj* arg0, u8 kind)
+{
+    struct WeaponObj* weapon;
+    struct VisualObj* visual;
+
+    if (!(arg0->unk8C.value & 0x30) || RIDE_U8(arg0, 0x89) != 0 || RIDE_U8(arg0, 0x98) >= 3)
+        return;
+    weapon = find_free_weapon_obj();
+    if (weapon != NULL) {
+        weapon->active = 0x41;
+        weapon->id = 0x38;
+        weapon->unk2 = kind;
+        weapon->x_pos.i.hi = arg0->x_pos.i.hi;
+        weapon->y_pos.i.hi = arg0->y_pos.i.hi;
+        weapon->animation_table = (u32**)arg0->animation_table;
+        weapon->unk40 = arg0->unk40;
+        weapon->unk3C = arg0->unk3C;
+        weapon->unk42 = ride_chaser_clut();
+        weapon->owner = (struct PlayerObj*)arg0;
+        weapon->unk16 = arg0->unk16;
+        weapon->unk15 = arg0->unk15;
+    }
+    visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = 0x41;
+        visual->id = 0xC;
+        visual->unk2 = kind;
+        visual->x_pos.i.hi = arg0->x_pos.i.hi;
+        visual->y_pos.i.hi = arg0->y_pos.i.hi;
+        visual->animation_table = (u32**)arg0->animation_table;
+        visual->unk40 = arg0->unk40;
+        visual->unk3C = arg0->unk3C;
+        visual->unk42 = ride_chaser_clut();
+        visual->unk50 = (struct PlayerObj*)arg0;
+        visual->unk16 = arg0->unk16;
+        visual->unk15 = arg0->unk15;
+    }
+    RIDE_U8(arg0, 0x89) = 4;
+    RIDE_U8(arg0, 0x98) += 1;
+    func_8001540C(5, 2, arg0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003C6EC);
+#endif
 
 void func_8003C8F4(struct RideArmorObj* arg0)
 {
@@ -266,7 +710,29 @@ void func_8003C9A4(struct RideArmorObj* arg0)
     }
 }
 
+#ifdef MMX4_PC
+void func_8003CA44(struct RideArmorObj* arg0)
+{
+    if (arg0->unk80.bytes.unk82 == arg0->unk80.bytes.unk83 || (arg0->unk80.bytes.unk80 & 2))
+        return;
+    switch (arg0->unk80.bytes.unk82) {
+    case 0:
+        set_animation(arg0, 2);
+        func_8003B458(arg0, 0x45);
+        break;
+    case 1:
+        set_animation(arg0, 1);
+        func_8003B458(arg0, 0x43);
+        break;
+    case 2:
+        set_animation(arg0, 0);
+        func_8003B458(arg0, 0x41);
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003CA44);
+#endif
 
 void func_8003CB08(struct RideArmorObj* arg0)
 {
@@ -415,7 +881,20 @@ void func_8003CD38(struct RideArmorObj* arg0)
     }
 }
 
+#ifdef MMX4_PC
+u8 func_8003CF24(struct RideArmorObj* arg0)
+{
+    u8 tile = arg0->unk80.bytes.unk81;
+
+    if (tile != 0 && tile < 9)
+        return tile < 5 ? 0 : 1;
+    if (tile != 0x10)
+        return 2;
+    return arg0->unk80.bytes.unk83;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003CF24);
+#endif
 
 void func_8003CF6C(struct RideArmorObj* ride_armor)
 {
@@ -431,7 +910,31 @@ void func_8003CF6C(struct RideArmorObj* ride_armor)
         ride_armor->unk68->unk3 + (ride_armor->y_pos.i.hi + (s8)ride_armor->unk68->unk1) + 1);
 }
 
+#ifdef MMX4_PC
+void func_8003D01C(struct RideArmorObj* arg0)
+{
+    const struct Unk_unk68* bounds = arg0->unk68;
+    s32 offset = (u16)arg0->x_pos.i.hi - (u16)background_objects[arg0->bg_offset].x_pos.i.hi;
+    s16 edge;
+
+    if (arg0->unk15 != 0)
+        offset -= bounds->unk0;
+    else
+        offset += bounds->unk0;
+    edge = offset - bounds->unk2;
+    if (edge <= 0 && !(arg0->unk70 & 1)) {
+        arg0->x_pos.i.hi -= edge;
+    } else if (edge < -8) {
+        g_Player.hp = -0x80;
+        arg0->hp = -0x80;
+    }
+    edge = offset + bounds->unk2;
+    if (edge >= 0x100)
+        arg0->x_pos.i.hi -= (s16)(edge - 0x100);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003D01C);
+#endif
 
 void func_8003D164(struct VisualObj* arg0, s32 arg1)
 {

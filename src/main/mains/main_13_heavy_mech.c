@@ -140,7 +140,42 @@ void heavy_mech_idle_start(struct MainObj* self)
 }
 
 // heavy_mech_idle_wait
+#ifdef MMX4_PC
+void func_8004CA94(struct MainObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_8004CA94(struct MainObj* arg0)
+{
+    u8 roll;
+    s32 dx;
+    u32 animation;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C != 0)
+        return;
+    roll = get_random() & 0xF;
+    dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if (dx < 0)
+        dx = -dx;
+    if (roll < 2) {
+        arg0->unk7C = 0x3C;
+        return;
+    }
+    if (roll < 4) {
+        arg0->ext.main_13.unk80 = 0x8001;
+        return;
+    }
+    animation = roll < (dx < 0x81 ? 12 : 8) ? 2 : 1;
+    heavy_mech_face_player(ANIMATED_OBJECT(arg0));
+    set_animation(arg0, animation);
+    arg0->ext.main_13.unk88 = animation;
+    arg0->unk5 = 4;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_13_heavy_mech", func_8004CA94);
+#endif
 
 void heavy_mech_fall(struct MainObj* self)
 {

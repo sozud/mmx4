@@ -8,6 +8,12 @@
 #include "main/collision.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/stage_objects.h"
+#endif
+
 // sigma_bolt_funcs
 extern void (*sigma_bolt_funcs[])(struct ShotObj*);
 void sigma_bolt_gather(struct ShotObj*);
@@ -136,7 +142,133 @@ void (*sigma_shot_subtype_funcs[])(struct ShotObj*) = {
 };
 
 // sigma_shot_init
+#ifdef MMX4_PC
+void func_800A8628(struct ShotObj* self);
+void func_800A9544(struct ShotObj* self);
+void func_800A8E50(struct ShotObj* self);
+void func_80021DBC(s16* arg0, s16* arg1, s32 arg2);
+#endif
+
+#ifdef MMX4_PC
+void func_800A8628(struct ShotObj* self)
+{
+    struct WeaponObj* parent = self->unk7C;
+    s32 subtype = (s8)self->unk2;
+    s32 direction;
+
+    self->state = 1;
+    self->unk40 = parent->unk40;
+    self->animation_table = parent->animation_table;
+    self->unk3C = parent->unk3C;
+    self->unk42 = parent->unk42;
+    self->unk15 = parent->unk15;
+    self->bg_offset = parent->bg_offset;
+    self->x_pos = parent->x_pos;
+    self->y_pos = parent->y_pos;
+    self->unk16 = 5;
+    self->unk58.data = NULL;
+    self->unk50.data = NULL;
+    self->unk54 = NULL;
+    self->unk68 = NULL;
+
+    switch (subtype) {
+    case 0:
+        self->unk60 = 9;
+        set_animation(self, 5);
+        break;
+    case 1:
+    case 2:
+        self->unk58.collision_data = D_80106070;
+        self->unk68 = (struct Unk_unk68*)sigma_shot_boxes[0];
+        self->unk50.data = (u8*)sigma_shot_boxes[1];
+        self->unk60 = 6;
+        set_animation(self, 3);
+        break;
+    case 3:
+        direction = (u8)angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+        if ((u8)direction < 9)
+            direction = 0;
+        else if ((u8)(direction - 9) < 8)
+            direction = 0x10;
+        self->unk94 = direction;
+        self->unk60 = 9;
+        self->y_pos.u.hi -= 0x15;
+        self->x_pos.i.hi += self->unk15 ? 0x21 : -0x21;
+        self->unk68 = (struct Unk_unk68*)sigma_shot_boxes[6];
+        self->unk50.data = (u8*)sigma_shot_boxes[5];
+        set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->unk94);
+        set_animation(self, 0x1E);
+        func_8001540C(2, 5, self);
+        break;
+    case 4:
+        self->x_vel.val = 0;
+        self->y_vel.val = self->timer == 0 ? -0x80000 : 0x80000;
+        self->unk50.data = (u8*)sigma_shot_boxes[8];
+        self->unk60 = 6;
+        set_animation(self, 0x23);
+        func_8001540C(2, 7, self);
+        break;
+    case 5:
+        self->x_vel.val = self->timer == 0 ? -0x80000 : 0x80000;
+        self->y_vel.val = 0;
+        self->unk50.data = (u8*)sigma_shot_boxes[7];
+        self->unk60 = 6;
+        set_animation(self, 0x25);
+        func_8001540C(2, 7, self);
+        break;
+    case 6:
+        self->unk58.data = (const u8*)D_801060F0;
+        self->unk50.data = (u8*)sigma_shot_boxes[2];
+        self->unk54 = (u8*)sigma_shot_boxes[3];
+        self->unk95 = (u8)self->timer;
+        self->unk60 = 6;
+        self->unk90.i.lo = self->x_pos.i.hi + (self->unk15 ? -1 : 1) * (s8)sigma_shot_init_box[self->unk95];
+        self->unk90.i.hi = self->y_pos.i.hi - 0x40;
+        set_animation_frame(ANIMATED_OBJECT(self), 0x21, 2);
+        break;
+    case 7:
+        self->unk96 = 6;
+        self->unk60 = 9;
+        self->unk50.data = (u8*)sigma_shot_boxes[5];
+        self->unk94 = self->unk15 ? 5 : 7;
+        set_animation(self, 0x1E);
+        func_8001540C(2, 5, self);
+        break;
+    case 8: {
+        struct QuadObj* quad = (struct QuadObj*)self->unk7C;
+        struct MainObj* owner = (struct MainObj*)quad->unk5C;
+
+        self->unk16 = 5;
+        self->unk40 = owner->unk40;
+        self->animation_table = (u32**)owner->animation_table;
+        self->unk3C = (void*)owner->sprite_frames;
+        self->unk42 = owner->unk42;
+        self->unk15 = owner->unk15 ^ 0x40;
+        self->bg_offset = owner->bg_offset;
+        self->x_pos.i.hi = quad->x_pos.i.hi + quad->vertices[2].x.i.hi + 4;
+        self->unk50.data = (u8*)sigma_shot_boxes[9];
+        self->unk60 = 9;
+        self->y_pos.i.hi = quad->y_pos.i.hi + quad->vertices[2].y.i.hi - 8;
+        set_animation(self, 0x26);
+        func_8001540C(2, 0xC, self);
+        break;
+    }
+    case 9:
+        self->y_vel.val = 0x60000;
+        self->unk2C = 0x4200;
+        self->x_vel.val = 0;
+        self->unk28 = 0;
+        self->unk68 = (struct Unk_unk68*)sigma_shot_boxes[6];
+        set_animation(self, 0x1E);
+        break;
+    case 10:
+        set_animation(self, 0x2A);
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A8628);
+#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_shot_at_position);
@@ -264,7 +396,45 @@ void sigma_shot_bolt(struct ShotObj* self)
 }
 
 // sigma_planted_scythe_fly
+#ifdef MMX4_PC
+void func_800A8E50(struct ShotObj* self)
+{
+    s32 x_speed;
+    s32 y_speed;
+
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->unk94);
+    self->x_vel.val *= 6;
+    self->y_vel.val *= 6;
+    if (self->unk70 & 3) {
+        self->unk5++;
+        start_screen_shake_x(0x14, 4, 2);
+        set_animation(self, 0x1F);
+        self->timer = 0x18;
+        self->unk15 = ((self->unk70 & 2) == 0) << 6;
+        self->unk95 = 3;
+        x_speed = self->unk15 != 0 ? 0xFFED0000 : 0x130000;
+        y_speed = 0xFFEA0000;
+    } else if (self->unk70 & 8) {
+        self->unk5++;
+        self->unk15 ^= 0x40;
+        start_screen_shake_y(0x14, 4, 2);
+        set_animation(self, 0x20);
+        self->timer = 0x24;
+        self->unk95 = 4;
+        x_speed = self->unk15 != 0 ? 0xFFF10000 : 0xF0000;
+        y_speed = 0;
+    } else {
+        return;
+    }
+    spawn_debris_offset(6, sigma_shot_debris, MAIN_OBJECT(self), x_speed, y_speed);
+    stop_sound(2, 5);
+    func_8001540C(2, 6, self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A8E50);
+#endif
 
 void sigma_planted_scythe_stuck(struct ShotObj* self)
 {
@@ -415,7 +585,35 @@ void sigma_shot_dart(struct ShotObj* self)
 }
 
 // sigma_shot_spin_scythe
+#ifdef MMX4_PC
+void func_800A9544(struct ShotObj* self)
+{
+    struct WeaponObj* owner = self->unk7C;
+    u8* angle = (u8*)&self->unk94;
+    u8* delay = (u8*)&self->unk96;
+
+    if (--*delay == 0) {
+        if (self->unk15 != 0)
+            *angle = (*angle - 1) & 0xF;
+        else
+            *angle = (*angle + 1) & 0xF;
+        *delay = 6;
+    }
+    self->unk90.i.lo = 0x40;
+    self->unk90.i.hi = 0x40;
+    func_80021DBC(&self->unk90.i.lo, &self->unk90.i.hi, *angle);
+    self->x_pos.i.hi = owner->x_pos.i.hi + (self->unk15 != 0 ? self->unk90.i.lo + 0x30 : self->unk90.i.lo - 0x30);
+    self->y_pos.i.hi = owner->y_pos.i.hi + self->unk90.i.hi + 0x30;
+    animate_object(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
+    if (*angle == 6)
+        self->state = 2;
+    if (self->unk7C->state == 2)
+        self->state = 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A9544);
+#endif
 
 void sigma_shot_cloak_fire(struct ShotObj* self)
 {

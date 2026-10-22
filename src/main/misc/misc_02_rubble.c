@@ -57,7 +57,47 @@ void rubble_update(struct MiscObj* self)
 }
 
 // rubble_init
+#ifdef MMX4_PC
+void func_800C7F1C(struct MiscObj* arg0);
+void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation_table);
+extern s32 rubble_x_speeds[8];
+extern s32 rubble_y_speeds[8];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_800C7F1C(struct MiscObj* arg0)
+{
+    s32 index;
+
+    arg0->on_screen = 1;
+    arg0->animation_step.fields.frame_index = arg0->ext.unk.unk54;
+    if (engine_obj.stage == 3) {
+        index = func_8002938C(0x8A);
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
+        index = func_8002938C(0x8A);
+        arg0->unk40 = (u16)((u32)D_801406A8[index] >> 7);
+        arg0->unk42 = 0x7987;
+    } else {
+        index = func_8002938C(0x83);
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
+        index = func_8002938C(0x83);
+        arg0->unk40 = (u16)((u32)D_801406A8[index] >> 7);
+        if (arg0->unk2 == 0)
+            arg0->unk42 = 0x7983;
+        else
+            arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x83));
+    }
+    arg0->unk16 = 1;
+    arg0->unk2C = 0x5000;
+    arg0->x_vel.val += rubble_x_speeds[get_random() & 7];
+    arg0->y_vel.val = rubble_y_speeds[get_random() & 7];
+    arg0->state++;
+    is_on_screen(BASE_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", func_800C7F1C);
+#endif
 
 void rubble_fall(struct MiscObj* self)
 {
@@ -176,7 +216,44 @@ void spawn_debris_offset(u8 count, u8* variants, struct MainObj* owner, s32 x_of
 #endif
 
 // spawn_animated_debris
+#ifdef MMX4_PC
+// src/main/misc/misc_02_rubble.c
+
+void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation_table)
+{
+    struct MiscObj* obj;
+    s32 clut_x;
+    s32 clut_y;
+    s32 resource;
+
+    for (; count & 0xFF; count--) {
+        obj = find_free_misc_obj();
+        if (obj == NULL)
+            continue;
+        obj->active = 0x41;
+        obj->id = 3;
+        obj->unk2 = 1;
+        obj->unk15 = get_random() & 0x40;
+        obj->state = 0;
+        obj->unk5 = 0;
+        obj->unk6 = 0;
+        obj->x_pos.val = ((struct MainObj*)owner)->x_pos.val + ((get_random() & 3) << 16);
+        obj->y_pos.val = ((struct MainObj*)owner)->y_pos.val + ((get_random() & 3) << 16);
+        obj->ext.misc_2.owner = owner;
+        obj->animation_table = animation_table;
+        obj->ext.misc_2.unk58 = *variants++;
+        clut_x = func_8002938C(id);
+        clut_y = func_8002938C(id);
+        obj->unk42 = ((clut_x * 4 + 0x18) % 16) | (((clut_y + 6) / 4 + 0x1E0) << 6);
+        resource = func_8002938C(id);
+        obj->unk40 = D_801406A8[resource] >> 7;
+        resource = func_8002938C(id);
+        obj->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", func_800C842C);
+#endif
 
 s32 rubble_x_speeds[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
 s32 rubble_y_speeds[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };

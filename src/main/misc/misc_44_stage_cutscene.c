@@ -164,7 +164,41 @@ void func_800D0C68(struct MiscObj* self)
 }
 
 // stage_cutscene_spawn_part
+#ifdef MMX4_PC
+void func_800D0D68(struct MiscObj* self, u8 kind);
+struct Misc45PositionData {
+    s16 x;
+    s16 y;
+    s16 width;
+    s16 height;
+};
+extern struct Misc45PositionData scripted_slider_offsets[];
+#endif
+
+#ifdef MMX4_PC
+void func_800D0D68(struct MiscObj* self, u8 kind)
+{
+    struct MiscObj* child;
+
+    self->x_pos.i.hi = scripted_slider_offsets[self->unk2].x;
+    self->y_pos.i.hi = scripted_slider_offsets[self->unk2].y;
+    self->ext.misc_45.unk58 = scripted_slider_offsets[self->unk2].width;
+    self->ext.misc_45.target_x = scripted_slider_offsets[self->unk2].height;
+    self->x_vel.val = 0xFFF20000;
+    self->unk28 = 0;
+    child = find_free_misc_obj();
+    if (child != NULL) {
+        child->active = 0x41;
+        child->id = 0x2D;
+        child->unk2 = kind;
+        child->x_pos.val = self->x_pos.val;
+        child->ext.misc_45.owner = (struct MainObj*)self;
+        child->y_pos.val = self->y_pos.val;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0D68);
+#endif
 
 union AnimationStep stage_cutscene_anim_0[6] = {
     { 0x00010048 },

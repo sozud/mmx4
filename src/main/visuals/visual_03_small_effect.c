@@ -97,10 +97,73 @@ void spawn_explosion_variant(struct BaseObj* arg0, s8 arg1)
 }
 
 // spawn_random_explosion
+#ifdef MMX4_PC
+void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range, s32 divisor);
+void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3);
+extern u8 D_8013B8E0[];
+extern u8 D_8013B8E4[4];
+#endif
+
+#ifdef MMX4_PC
+void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+    s32 x = arg2 & get_random();
+    s16 y;
+    u8 toggle;
+
+    if (get_random() & 1) {
+        x = arg0->x_pos.u.hi + (x & 0xFF);
+    } else {
+        x = arg0->x_pos.u.hi - (x & 0xFF);
+    }
+
+    y = arg3 & get_random();
+    if (get_random() & 1) {
+        y = arg0->y_pos.u.hi + (y & 0xFF);
+    } else {
+        y = arg0->y_pos.u.hi - (y & 0xFF);
+    }
+
+    toggle = D_8013B8E0[0] + 1;
+    D_8013B8E0[0] = toggle;
+    spawn_explosion_at((s8)arg1, (s16)x, y, (toggle & 1) ^ 1);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/visuals/visual_03_small_effect", func_800AF878);
+#endif
 
 // spawn_explosion_in_box
+#ifdef MMX4_PC
+void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range, s32 divisor)
+{
+    s16 x;
+    s16 y;
+    s32 roll;
+    u8 variant;
+
+    x_range &= get_random();
+    if (get_random() & 1)
+        x = arg0->x_pos.u.hi + (x_range & 0xFF);
+    else
+        x = arg0->x_pos.u.hi - (x_range & 0xFF);
+    y_range &= get_random();
+    if (get_random() & 1)
+        y = arg0->y_pos.u.hi + (y_range & 0xFF);
+    else
+        y = arg0->y_pos.u.hi - (y_range & 0xFF);
+    roll = get_random_nonzero();
+    divisor &= 0xFF;
+    if (divisor == 0 || roll % divisor == 0) {
+        D_8013B8E4[0]++;
+        variant = (D_8013B8E4[0] & 1) ? 2 : 3;
+    } else {
+        variant = 0xFF;
+    }
+    spawn_explosion_at((s8)type, x, y, variant);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/visuals/visual_03_small_effect", func_800AF95C);
+#endif
 
 struct VisualObj* spawn_explosion_at(s8 arg0, s16 x, s16 y, u8 arg3)
 {

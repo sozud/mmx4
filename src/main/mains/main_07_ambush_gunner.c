@@ -9,6 +9,10 @@
 #include "main/misc/misc_02_rubble.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 extern u8 ambush_gunner_emerge_particles[8];
 
 extern u8 ambush_gunner_debris[];
@@ -38,7 +42,64 @@ void ambush_gunner_update(struct MainObj* self)
 }
 
 // ambush_gunner_init
+#ifdef MMX4_PC
+void func_80047404(struct MainObj* arg0);
+void func_80047818(struct MainObj* arg0);
+extern struct Unk_unk68 ambush_gunner_terrain_box;
+extern union AnimationStep* ambush_gunner_animations[];
+#endif
+
+#ifdef MMX4_PC
+void func_80047404(struct MainObj* arg0)
+{
+    u8 kind = (u8)arg0->unk2;
+
+    arg0->hp = 6;
+    arg0->contact_damage = 3;
+    arg0->invincibility_timer = 0;
+    arg0->collision_data = D_80106670;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk16 = 6;
+    arg0->animation_table = (const u8* const*)ambush_gunner_animations;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->terrain_box = NULL;
+    arg0->attack_box = &ambush_gunner_terrain_box;
+    arg0->hurt_box = &ambush_gunner_terrain_box;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+
+    if (kind == 1) {
+        set_animation(arg0, 1);
+        arg0->unk5 = 3;
+        arg0->unk15 = 0x40;
+        arg0->ext.main_7.unk90 = 1;
+    } else if (kind >= 2 && kind <= 7) {
+        set_animation(arg0, 0);
+        arg0->unk5 = 2;
+        arg0->unk7A = 1;
+        arg0->invincibility_timer = 1;
+        arg0->unk15 = (kind & 1) ? 0x40 : 0;
+        arg0->ext.main_7.unk80 = kind >= 6;
+        arg0->ext.main_7.unk84 = kind >= 6 ? 0x28
+            : kind >= 4                    ? 0x8C
+                                           : 0x64;
+        arg0->ext.main_7.unk90 = 0;
+    } else {
+        set_animation(arg0, 1);
+        arg0->unk5 = 3;
+        arg0->unk15 = 0;
+        arg0->ext.main_7.unk90 = 1;
+    }
+    arg0->state = 1;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_07_ambush_gunner", func_80047404);
+#endif
 
 void ambush_gunner_main(struct MainObj* self)
 {
@@ -96,7 +157,28 @@ void ambush_gunner_emerge(struct MainObj* self)
 }
 
 // ambush_gunner_emerge_wait
+#ifdef MMX4_PC
+void func_80047818(struct MainObj* arg0)
+{
+    s32 distance;
+
+    if (arg0->unk15 == 0) {
+        if (g_Player.x_pos.val >= arg0->x_pos.val)
+            return;
+    } else if (arg0->x_pos.val >= g_Player.x_pos.val) {
+        return;
+    }
+    distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
+    if (distance < 0)
+        distance = -distance;
+    if ((!arg0->ext.main_7.unk80 && distance < (s32)arg0->ext.main_7.unk84) || (arg0->ext.main_7.unk80 && distance > (s32)arg0->ext.main_7.unk84)) {
+        arg0->unk7A = 0;
+        arg0->unk6 = 1;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_07_ambush_gunner", func_80047818);
+#endif
 
 void ambush_gunner_emerge_burst(struct MainObj* self)
 {

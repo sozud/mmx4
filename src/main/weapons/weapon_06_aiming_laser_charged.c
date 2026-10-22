@@ -9,6 +9,11 @@
 #include "main/player_common.h"
 #include "main/sprite_animations.h"
 
+#ifdef MMX4_PC
+#include "main/player_check.h"
+#include "main/player_weapon.h"
+#endif
+
 void aiming_laser_marker_init(struct WeaponObj*);
 
 void aiming_laser_marker_fire(struct WeaponObj*);
@@ -21,7 +26,65 @@ void aiming_laser_charged_despawn(struct WeaponObj*);
 void aiming_laser_charged_despawn(struct WeaponObj*);
 
 // aiming_laser_update
+#ifdef MMX4_PC
+void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player);
+void func_800961B0(struct WeaponObj* arg0);
+void func_80096B54(struct WeaponObj* self);
+extern struct Unk_unk68 aiming_laser_reticle_box[];
+void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1);
+void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1);
+// src/main/weapons/weapon_06_aiming_laser_charged.c
+
+extern struct Unk_unk68 aiming_laser_charged_box[];
+#endif
+
+#ifdef MMX4_PC
+void func_800961B0(struct WeaponObj* arg0)
+{
+    struct PlayerObj* player = &g_Player;
+    struct MainObj* owner;
+    s32 reset;
+
+    if (arg0->unk2 == 3) {
+        reset = engine_obj.unkF != 0;
+        if (player->weapon != 6)
+            reset = 1;
+        if (player->hp == 0)
+            reset = 1;
+        if (reset)
+            ZeroObjectState(OBJECT_HEADER(arg0));
+        else if (arg0->state == 0)
+            aiming_laser_reticle_init(arg0, player);
+        else
+            func_800963E8(arg0, player);
+        return;
+    }
+    owner = (struct MainObj*)arg0->owner;
+    reset = player->input_locked != 0;
+    if (player->capsule_state != 0 || player->weapon != 6 || player->actions_reset != 0 || player->hp == 0 || owner->active == 0 || owner->hp == 0)
+        reset = 1;
+    if (reset)
+        arg0->state = 3;
+    arg0->x_pos.val = owner->x_pos.val;
+    arg0->y_pos.val = owner->y_pos.val;
+    switch (arg0->state) {
+    case 0:
+        aiming_laser_marker_init(arg0);
+        break;
+    case 1:
+        aiming_laser_marker_wait_fire(arg0, player, (struct PlayerObj*)owner);
+        break;
+    case 2:
+        aiming_laser_marker_fire(arg0);
+        break;
+    default:
+        aiming_laser_marker_despawn(arg0, player);
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800961B0);
+#endif
 
 void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
@@ -48,7 +111,41 @@ void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
 }
 
 // aiming_laser_reticle_main
+#ifdef MMX4_PC
+void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
+{
+    s32 hidden = player->weapon_energy[6] == 0;
+    u32 i;
+
+    if (!(player->armor_parts & 1) && player->weapon_energy[6] < player_weapon_energy.charge.initial_thresholds[0])
+        hidden = 1;
+    if (player->special_shot_count >= 3)
+        hidden = 1;
+    if (player->hurt_phase > 0)
+        hidden = 1;
+    if (player->attacking != 0 && (player->last_shot_type == 6 || player->last_shot_type == 0xF))
+        hidden = 1;
+    if (hidden) {
+        arg0->on_screen = 0;
+        return;
+    }
+    arg0->on_screen = 1;
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->ext.weapon_6.direction != 0 && (player->input.buttons.held & 4))
+        arg0->ext.weapon_6.direction--;
+    if (arg0->ext.weapon_6.direction != 0x10 && (player->input.buttons.held & 8))
+        arg0->ext.weapon_6.direction++;
+    aiming_laser_reticle_place(arg0, player);
+    arg0->unk50 = aiming_laser_reticle_box;
+    for (i = 0; i < COUNT(main_objects); i++) {
+        if (aiming_laser_try_lock_on(arg0, player, &main_objects[i]))
+            return;
+    }
+    arg0->unk50 = NULL;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800963E8);
+#endif
 
 void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
@@ -256,7 +353,46 @@ void aiming_laser_charged_init(struct WeaponObj* arg0)
 }
 
 // aiming_laser_charged_main
+#ifdef MMX4_PC
+void func_80096B54(struct WeaponObj* self)
+{
+    struct Weapon6Ext* ext = &self->ext.weapon_6;
+    if (ext->lifetime == 0) {
+        self->state = 3;
+        return;
+    }
+    ext->lifetime--;
+    switch (self->unk5) {
+    case 0:
+        if (ext->lifetime == 0xD2) {
+            self->unk50 = aiming_laser_charged_box;
+            self->unk64 = 1;
+            self->unk5++;
+        }
+        break;
+    case 1:
+        if (ext->lifetime == 0x1E) {
+            self->unk50 = NULL;
+            self->unk5++;
+            break;
+        }
+        if (ext->direction != 0 && (g_Player.input.buttons.held & PLAYER_INPUT_UP))
+            ext->direction--;
+        if (ext->direction != 0x10 && (g_Player.input.buttons.held & PLAYER_INPUT_DOWN))
+            ext->direction++;
+        if (ext->timer == 0) {
+            ext->timer = 6;
+            self->unk64++;
+        } else {
+            ext->timer--;
+        }
+        break;
+    }
+    aiming_laser_charged_aim(self, &g_Player);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_80096B54);
+#endif
 
 void aiming_laser_charged_aim(struct WeaponObj* self, struct PlayerObj* player)
 {

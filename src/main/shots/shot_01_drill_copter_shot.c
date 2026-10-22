@@ -7,6 +7,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // drill_copter_shot_state_funcs
 extern void (*drill_copter_shot_state_funcs[])(struct ShotObj*);
 
@@ -30,7 +34,33 @@ void drill_copter_shot_update(struct ShotObj* self)
 }
 
 // drill_copter_shot_init
+#ifdef MMX4_PC
+void func_80099B6C(struct ShotObj* self);
+#endif
+
+#ifdef MMX4_PC
+// src/main/shots/shot_01_drill_copter_shot.c
+
+void func_80099B6C(struct ShotObj* self)
+{
+    self->on_screen = 1;
+    self->x_vel.val = self->y_vel.val = self->unk28 = self->unk2C = 0;
+    self->animation_table = (u32**)&drill_copter_shot_animation;
+    self->unk15 = (self->unk2 == 0) << 6;
+    self->state++;
+    self->x_vel.val = self->unk15 != 0 ? FIXED(6) : FIXED(-6);
+    self->x_pos.i.hi = (u16)self->x_pos.i.hi + drill_copter_shot_spawn_offsets[(s8)self->unk2][0];
+    self->y_pos.i.hi = (u16)self->y_pos.i.hi + drill_copter_shot_spawn_offsets[(s8)self->unk2][1];
+    self->unk16 = 6;
+    self->unk58.collision_data = D_80106070;
+    self->unk54 = self->unk50.data = drill_copter_shot_hit_box;
+    self->unk60 = 2;
+    self->unk68 = NULL;
+    set_animation(ANIMATED_OBJECT(self), 0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_01_drill_copter_shot", func_80099B6C);
+#endif
 
 void drill_copter_shot_fly(struct ShotObj* self)
 {

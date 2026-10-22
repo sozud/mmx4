@@ -4,6 +4,10 @@
 #include "main/quads/quad_16_sigma_laser.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/visuals/visual_03_small_effect.h"
+#endif
+
 extern u8 sigma_laser_flash_colors[];
 
 extern s16 sigma_laser_end_offsets[8][2];
@@ -28,7 +32,52 @@ void sigma_laser_despawn(struct QuadObj*);
 void sigma_laser_cancel(struct QuadObj*);
 
 // sigma_laser_init
+#ifdef MMX4_PC
+void func_800D802C(struct QuadObj* self);
+void func_800D845C(struct QuadObj* self);
+// src/main/quads/quad_16_sigma_laser.c
+
+extern s16 sigma_laser_origin_offsets[2][2];
+extern s16 sigma_laser_start_offsets[8][2];
+#endif
+
+#ifdef MMX4_PC
+void func_800D802C(struct QuadObj* self)
+{
+    s32 i;
+    s16(*offsets)[2];
+
+    self->unk36 = self->bg_offset = 0;
+    self->x_pos.val = self->y_pos.val = 0;
+    self->active |= 0x92;
+    if ((self->unk2 & 0x10) == 0) {
+        self->ext.unk38 = 20;
+        self->state = 1;
+        self->unk34 = 0x12;
+
+        for (i = 0; i < 4; i++) {
+            s32 pair = self->unk2 * 4 + i;
+            offsets = pair < 2 ? &sigma_laser_origin_offsets[pair]
+                               : &sigma_laser_sweep_offsets[pair - 2];
+            self->vertices[i].x.val = (s32)(*offsets)[0] * 65536;
+            self->vertices[i].y.val = (s32)(*offsets)[1] * 65536;
+        }
+    } else {
+        self->unk2 &= 1;
+        self->ext.unk38 = 15;
+        self->state = 3;
+        self->unk34 = 0x13;
+        for (i = 0; i < 4; i++) {
+            offsets = &sigma_laser_start_offsets[self->unk2 * 4 + i];
+            self->vertices[i].x.val = (s32)(*offsets)[0] * 65536;
+            self->vertices[i].y.val = (s32)(*offsets)[1] * 65536;
+        }
+    }
+    quad_is_on_screen(self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/quads/quad_16_sigma_laser", func_800D802C);
+#endif
 
 void sigma_laser_wait(struct QuadObj* arg0)
 {
@@ -137,7 +186,33 @@ void sigma_laser_cancel_wait(struct QuadObj* arg0)
 }
 
 // sigma_laser_cancel_shrink
+#ifdef MMX4_PC
+void func_800D845C(struct QuadObj* self)
+{
+    struct MainObj* owner = MAIN_OBJECT(self->unk5C);
+    u32 elapsed;
+
+    self->ext.unk38 = (s32)((u32)self->ext.unk38 - 1);
+    if (self->ext.unk38 == 0) {
+        self->state = 2;
+        self->unk5++;
+        return;
+    }
+    elapsed = 16u - (u32)self->ext.unk38;
+    if (self->unk2 != 0) {
+        self->vertices[2].x.val = (s32)((u32)self->vertices[2].x.val + 0x380000u);
+        self->vertices[3].x.val = (s32)((u32)self->vertices[3].x.val + 0x380000u);
+        spawn_explosion_at(1, (s32)(0x400u + 30u * elapsed), 0x2E0, 1);
+    } else {
+        self->vertices[2].y.val = (s32)((u32)self->vertices[2].y.val - 0x140000u);
+        self->vertices[3].y.val = (s32)((u32)self->vertices[3].y.val - 0x140000u);
+        spawn_explosion_at(1, 0x430, (s32)(0x2F0u - 18u * elapsed), 0);
+    }
+    owner->ext.main_74.pad95 = (u32)(self->ext.unk38 - 5u) < 7;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/quads/quad_16_sigma_laser", func_800D845C);
+#endif
 
 void sigma_laser_cancel(struct QuadObj* arg0)
 {

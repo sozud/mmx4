@@ -12,7 +12,43 @@ extern void (*vent_state_funcs[])(struct MiscObj*);
 void vent_animate(struct MiscObj*);
 
 // vent_init
+#ifdef MMX4_PC
+void func_800CA86C(struct MiscObj* self);
+extern union AnimationStep* vent_animations[2];
+#endif
+
+#ifdef MMX4_PC
+void func_800CA86C(struct MiscObj* self)
+{
+    s32 animation;
+
+    self->unk42 = 0x7881;
+    self->unk40 = D_801406A8[4] >> 7;
+    self->animation_table = (u32**)vent_animations;
+    self->x_pos.val = 0x7C0000;
+    self->y_pos.val = 0x1880000;
+    self->bg_offset = 0;
+    self->unk15 = 0;
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
+    if (self->unk2 == 0) {
+        set_animation(self, 0);
+        self->unk16 = 2;
+    } else {
+        if (engine_obj.unk5F < 5)
+            animation = 0;
+        else if (engine_obj.unk5F < 7)
+            animation = 1;
+        else
+            animation = 2;
+        set_animation_frame(ANIMATED_OBJECT(self), 1, animation);
+        self->unk16 = 1;
+    }
+    self->state++;
+    is_on_screen(BASE_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_15_vent", func_800CA86C);
+#endif
 
 void vent_animate(struct MiscObj* self)
 {

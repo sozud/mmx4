@@ -34,7 +34,60 @@ void stage_block_update(struct ItemObj* arg0)
 }
 
 // stage_block_init
+struct Item01DebrisPosition {
+    s16 x;
+    s16 y;
+};
+
+#ifdef MMX4_PC
+void func_800BEBFC(struct ItemObj* arg0);
+void func_800BEFCC(struct ItemObj* arg0);
+void func_800BF1FC(struct ItemObj* arg0);
+void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
+extern u8 drop_item_table[24][6];
+extern struct Unk_unk68 D_80108504[];
+extern u8 stage_block_boxes[60];
+extern struct Item01DebrisPosition stage_block_spawn_positions[6];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_800BEBFC(struct ItemObj* arg0)
+{
+    u8 index = (u8)arg0->unk2;
+    const struct Item01StageEntry* entry = &stage_block_entries[index];
+
+    arg0->active = 1;
+    arg0->state++;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->x_pos.i.hi = entry->x;
+    arg0->y_pos.i.hi = entry->y;
+    arg0->animation_step.fields.frame_index = entry->flags_and_palette & 0x3F;
+    arg0->y_vel.val = index == 9 ? 0x40000 : 0;
+    arg0->unk2C = entry->velocity;
+    arg0->unk40 = 0x1500;
+    if (index == 8 || index == 9)
+        arg0->unk42 = 0x7941;
+    else if (index == 13)
+        arg0->unk42 = 0x79C4;
+    else
+        arg0->unk42 = 0x7983;
+    arg0->unk16 = 6;
+    arg0->unk68 = (struct Unk_unk68*)&stage_block_bounds[index];
+    arg0->unk5C = 0x10;
+    arg0->unk61 = 0;
+    arg0->unk75 = 1;
+    arg0->unk54 = &stage_block_boxes[index * 4];
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 8);
+    if (index == 1)
+        arg0->unk66 = 1;
+    arg0->unk58 = (const u8*)D_80108504;
+    arg0->tail_ext.unk1.unk84.previous_value = 0;
+    arg0->tail_ext.unk1.unk88 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BEBFC);
+#endif
 
 void stage_block_main(struct ItemObj* arg0)
 {
@@ -92,10 +145,114 @@ void stage_block_wait_trigger(struct ItemObj* self)
 }
 
 // stage_block_fall
+#ifdef MMX4_PC
+void func_800BEFCC(struct ItemObj* arg0)
+{
+    u8 kind = (u8)arg0->unk2;
+    const struct Item01StageEntry* entry = &stage_block_entries[kind];
+    u16 boundary;
+    int reached_boundary;
+
+    if (--arg0->ext.timer == 0) {
+        if (kind == 8) {
+            func_800B10E4(0x21, 0xA40, 0x1D0, 0xB80, 0x1F0, 1);
+            func_800B10E4(0x22, 0xA40, 0x1D0, 0xB80, 0x1F0, 1);
+        } else if (kind == 9) {
+            func_800B10E4(0x21, 0xB80, 0x1D0, 0xC40, 0x1F0, 1);
+            func_800B10E4(0x22, 0xB80, 0x1D0, 0xC40, 0x1F0, 1);
+        }
+        arg0->ext.timer = 4;
+    }
+
+    if ((kind == 5 || kind == 8) && arg0->tail_ext.unk1.unk84.previous_value == 0) {
+        if (kind == 5 && arg0->tail_ext.unk1.unk88 == 0 && arg0->y_pos.i.hi >= 0x1C0) {
+            func_8001540C(5, 0, NULL);
+            start_screen_shake_y(0x20, 4, 1);
+            arg0->tail_ext.unk1.unk88++;
+        }
+        if (arg0->y_pos.i.hi >= entry->trigger_x && !(entry->flags_and_palette & 0x40)) {
+            apply_tile_effect((u8)entry->sound_id, 0, 0);
+            arg0->tail_ext.unk1.unk84.previous_value++;
+        }
+    }
+
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    boundary = entry->right;
+    reached_boundary = kind == 9
+        ? arg0->y_pos.i.hi <= boundary
+        : arg0->y_pos.i.hi >= boundary;
+    if (reached_boundary) {
+        arg0->y_pos.i.hi = boundary;
+        arg0->ext.timer = 0;
+        arg0->unk5++;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BEFCC);
+#endif
 
 // stage_block_land
+#ifdef MMX4_PC
+void func_800BF1FC(struct ItemObj* arg0)
+{
+    u8 kind = (u8)arg0->unk2;
+    const struct Item01StageEntry* entry = &stage_block_entries[kind];
+    int first;
+    int last;
+    int index;
+
+    if (arg0->y_pos.i.hi == entry->trigger_x && !(entry->flags_and_palette & 0x40)) {
+        apply_tile_effect((u8)entry->sound_id, 0, 0);
+        if (kind != 3 && kind != 4)
+            arg0->state = 3;
+    }
+    if (kind != 13 && kind != 5 && kind != 1 && kind != 11) {
+        func_8001540C(5, 0, NULL);
+        start_screen_shake_y(0x20, 4, 1);
+    }
+    arg0->unk5++;
+
+    if ((kind >= 2 && kind <= 7) || kind == 11 || kind == 13) {
+        func_800B0CA0(0x21, 2, (struct MainObj*)arg0, 0x18, 6);
+        func_800B0CA0(0x22, 2, (struct MainObj*)arg0, 0x18, 6);
+    }
+
+    if (kind == 1) {
+        first = 0;
+        last = 1;
+    } else if (kind == 10) {
+        first = 1;
+        last = 4;
+    } else if (kind == 11) {
+        first = 4;
+        last = 6;
+    } else {
+        return;
+    }
+
+    for (index = first; index < last; index++) {
+        struct MainObj* obj = find_free_main_obj();
+        s32 resource;
+
+        if (obj == NULL)
+            continue;
+        obj->active = 0x41;
+        obj->id = 7;
+        obj->unk2 = index == 3 ? 3 : 2;
+        obj->x_pos.i.hi = stage_block_spawn_positions[index].x;
+        obj->y_pos.i.hi = stage_block_spawn_positions[index].y;
+        resource = func_8002938C(7);
+        obj->unk40 = (u16)((u32)D_801406A8[(u8)resource] >> 7);
+        resource = func_8002938C(7);
+        obj->unk42 = SOME_COORDINATE_CONVERSION((u8)resource);
+        resource = func_8002938C(7);
+        obj->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES,
+            (u8)resource);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BF1FC);
+#endif
 
 void stage_block_stop(struct ItemObj* self)
 {
@@ -132,7 +289,48 @@ void drop_item(struct BaseObj* arg0, s8 arg1)
 }
 
 // drop_item_at
+#ifdef MMX4_PC
+// src/main/items/item_01_stage_block.c
+
+void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3)
+{
+    const u8* weights = &drop_item_table[0][0];
+    s32 offset = (s8)arg1 * 6;
+    s32 roll = get_random() & 0xFF;
+    struct ItemObj* item;
+    s32 index;
+    s32 counter;
+
+    if (engine_obj.stage == 5) {
+        return;
+    }
+
+    counter = 0xFF;
+    do {
+        counter++;
+        index = counter & 0xFF;
+        roll = (roll & 0xFF) - weights[index + (offset & 0xFF)];
+    } while ((u32)(roll & 0xFFFF) < 0x100);
+
+    if (index == 0) {
+        return;
+    }
+    item = find_free_item_obj();
+    if (item == NULL) {
+        return;
+    }
+    item->active = 0x21;
+    item->id = 2;
+    item->unk2 = counter - 1;
+    item->x_pos.i.hi = arg2;
+    item->y_pos.i.hi = arg3;
+    item->backref = NULL;
+    item->unk7C.value = 0;
+    item->bg_offset = arg0->bg_offset;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BF638);
+#endif
 
 struct Item01StageEntry stage_block_entries[15] = {
     { 0x0240, 0x00E0, 0x0200, 0x0100, 0x0100, 0x0040, 0x0C00, 0x0000 },
@@ -250,11 +448,6 @@ u8 stage_block_debris[16] = {
     0x03,
     0x04,
     0x00,
-};
-
-struct Item01DebrisPosition {
-    s16 x;
-    s16 y;
 };
 
 struct Item01DebrisPosition stage_block_spawn_positions[6] = {

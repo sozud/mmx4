@@ -7,6 +7,11 @@
 #include "main/collision.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#endif
+
 // sigma_spit_step_funcs
 extern void (*sigma_spit_step_funcs[])(struct ShotObj*);
 
@@ -50,7 +55,70 @@ void (*sigma_spit_step_funcs[])(struct ShotObj*) = {
 };
 
 // sigma_spit_init
+#ifdef MMX4_PC
+void func_800ADF30(struct ShotObj* self);
+#endif
+
+#ifdef MMX4_PC
+// src/main/shots/shot_56_sigma_spit.c
+
+void func_800ADF30(struct ShotObj* self)
+{
+    struct WeaponObj* owner = self->unk7C;
+    u32 frame;
+
+    self->unk40 = owner->unk40;
+    self->animation_table = owner->animation_table;
+    self->unk3C = owner->unk3C;
+    self->unk68 = NULL;
+    self->unk42 = owner->unk42 & 0x7FFF;
+    frame = get_random() & 3;
+    set_animation_frame(ANIMATED_OBJECT(self), 0x15, frame);
+    self->unk58.animation_steps = D_80105FF0;
+    self->unk54 = (const u8*)sigma_spit_boxes[frame * 2];
+    self->unk50.data = (const u8*)sigma_spit_boxes[frame * 2 + 1];
+    self->unk16 = 0x20;
+    self->unk15 = 0;
+    self->bg_offset = owner->bg_offset;
+    if (self->unk2 == 0) {
+        self->unk5 = 2;
+        self->unk5C = 3;
+        self->unk60 = 6;
+        switch (get_random() & 3) {
+        case 0:
+            self->x_pos.u.hi = background_objects[0].x_pos.u.hi + (get_random() & 0xFF);
+            self->y_pos.u.hi = background_objects[0].y_pos.u.hi - 0x20;
+            break;
+        case 1:
+            self->x_pos.u.hi = background_objects[0].x_pos.u.hi + 0x160;
+            self->y_pos.u.hi = background_objects[0].y_pos.u.hi + (get_random() & 0xFF);
+            break;
+        case 2:
+            self->x_pos.u.hi = background_objects[0].x_pos.u.hi + (get_random() & 0xFF);
+            self->y_pos.u.hi = background_objects[0].y_pos.u.hi + 0x110;
+            break;
+        case 3:
+            self->x_pos.u.hi = background_objects[0].x_pos.u.hi - 0x20;
+            self->y_pos.u.hi = background_objects[0].y_pos.u.hi + (get_random() & 0xFF);
+            break;
+        }
+    } else {
+        self->unk5 = 3;
+        set_velocity_from_angle(MOVING_OBJECT(self), (get_random() & 0xFF) % 7 + 1);
+        self->unk2C = 0x4200;
+        self->timer = 0x1E;
+        self->unk60 = 6;
+        self->unk28 = 0;
+        self->unk5C = 3;
+        self->x_vel.val = (u32)self->x_vel.val * 8;
+        self->y_vel.val = (u32)self->y_vel.val * 10;
+    }
+    self->state++;
+    update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_56_sigma_spit", func_800ADF30);
+#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/shots/shot_56_sigma_spit", sigma_spit_return);

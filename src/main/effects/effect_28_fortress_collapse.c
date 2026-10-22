@@ -60,7 +60,34 @@ void fortress_collapse_shake(struct EffectObj* self)
 }
 
 // fortress_collapse_explode
+#ifdef MMX4_PC
+void func_800BBD88(struct EffectObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800BBD88(struct EffectObj* arg0)
+{
+    if (arg0->ext.effect_28.finished) {
+        fortress_collapse_flash_funcs[arg0->ext.effect_28.palette_index](arg0);
+    } else if (--arg0->ext.effect_28.timer == 0) {
+        arg0->ext.effect_28.finished = 1;
+    }
+
+    arg0->x_pos.i.hi = background_objects[0].x_pos.i.hi + 0xA0;
+    arg0->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x80;
+    if (--arg0->ext.effect_28.unk1A == 0) {
+        fortress_collapse_spawn_random_explosion(arg0);
+        arg0->ext.effect_28.unk1A = 3;
+    }
+    if (arg0->unk7 == 0) {
+        start_screen_shake_y(10, 4, 2);
+        arg0->unk7 = 10;
+    }
+    arg0->unk7--;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_28_fortress_collapse", func_800BBD88);
+#endif
 
 void fortress_collapse_despawn(struct EffectObj* self)
 {

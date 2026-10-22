@@ -8,6 +8,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // ice_core_shot_state_funcs
 extern void (*ice_core_shot_state_funcs[])(struct ShotObj*);
 
@@ -29,7 +33,44 @@ void ice_core_shot_update(struct ShotObj* self)
 }
 
 // ice_core_spray_init
+#ifdef MMX4_PC
+void func_8009B85C(struct ShotObj* arg0);
+void func_8009BA6C(struct ShotObj* arg0);
+extern u8 ice_core_spray_hit_box[4];
+extern u8 ice_core_shard_hit_box[4];
+extern u8 ice_core_shard_terrain_box[4];
+#endif
+
+#ifdef MMX4_PC
+void func_8009B85C(struct ShotObj* arg0)
+{
+    const u8* offsets = (const u8*)&ice_core_shard_data + 0x14 + arg0->unk2 * 2;
+
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk58.data = (const u8*)D_80105FF0;
+    arg0->unk42 &= 0x7FFF;
+    set_velocity_from_angle(MOVING_OBJECT(arg0), (arg0->unk2 * 4) & 0xFC);
+    arg0->y_vel.val *= 6;
+    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + (s8)offsets[1];
+    if (arg0->unk15 == 0) {
+        arg0->x_vel.val *= 6;
+        arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi + (s8)offsets[0];
+    } else {
+        arg0->x_vel.val = -(arg0->x_vel.val * 6);
+        arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi - (s8)offsets[0];
+    }
+    arg0->unk54 = ice_core_spray_hit_box;
+    arg0->unk50.data = ice_core_spray_hit_box;
+    arg0->unk5C = 6;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk60 = 3;
+    set_animation(arg0, arg0->unk2 + 0x11);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_12_ice_core_shot", func_8009B85C);
+#endif
 
 void ice_core_spray_fly(struct ShotObj* self)
 {
@@ -54,7 +95,26 @@ void ice_core_spray_despawn(struct ShotObj* self)
 }
 
 // ice_core_shard_init
+#ifdef MMX4_PC
+void func_8009BA6C(struct ShotObj* arg0)
+{
+    arg0->state = 4;
+    arg0->unk58.data = (const u8*)D_80105FF0;
+    arg0->unk68 = (struct Unk_unk68*)ice_core_shard_terrain_box;
+    arg0->on_screen = 1;
+    arg0->unk5C = 1;
+    arg0->unk54 = ice_core_shard_hit_box;
+    arg0->unk50.data = ice_core_shard_hit_box;
+    arg0->unk16 = 0;
+    arg0->x_vel.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk60 = 3;
+    arg0->unk42 &= 0x7FFF;
+    set_animation(arg0, 0x1D);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_12_ice_core_shot", func_8009BA6C);
+#endif
 
 void ice_core_shard_hold(struct ShotObj* self)
 {

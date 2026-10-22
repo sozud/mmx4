@@ -48,7 +48,40 @@ void sigma_sequencer_fx_wait_player(struct EffectObj* self)
 }
 
 // sigma_sequencer_fx_summon
+#ifdef MMX4_PC
+void func_800BE364(struct EffectObj* self);
+#endif
+
+#ifdef MMX4_PC
+void func_800BE364(struct EffectObj* self)
+{
+    struct Main73PartsExt* owner = &self->ext.effect_42.owner.main->ext.main_73_parts;
+    u32 ready = 0;
+    u32 matched = 0;
+    u32 i;
+
+    for (i = 0; i < 3; i++) {
+        if (owner->parts[i]->unk5 == 3)
+            ready++;
+    }
+    if (ready != 3)
+        return;
+    for (i = 0; i < 3; i++) {
+        if (owner->parts[i]->unk2 == owner->object_id)
+            matched = 1;
+    }
+    if (matched) {
+        owner->effect_state = 2;
+        self->unk5++;
+    } else {
+        owner->effect_state = 3;
+        self->ext.effect_42.timer = 0xC8;
+        self->unk5 += 2;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", func_800BE364);
+#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", sigma_sequencer_fx_wait_parts);

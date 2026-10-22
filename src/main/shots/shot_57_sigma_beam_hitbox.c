@@ -97,7 +97,30 @@ s16* sigma_beam_hitbox_boxes[30] = {
 };
 
 // sigma_beam_hitbox_init
+#ifdef MMX4_PC
+void func_800AE450(struct ShotObj* self);
+#endif
+
+#ifdef MMX4_PC
+// src/main/shots/shot_57_sigma_beam_hitbox.c
+
+void func_800AE450(struct ShotObj* self)
+{
+    self->unk15 = 0;
+    self->unk58.data = NULL;
+    self->unk54 = NULL;
+    self->unk8C.bytes[0] = sigma_beam_hitbox_ranges[self->unk2][0];
+    self->unk8C.bytes[1] = sigma_beam_hitbox_ranges[self->unk2][1];
+    self->bg_offset = self->unk7C->bg_offset;
+    self->x_pos.u.hi = sigma_beam_hitbox_offsets[self->unk2][0];
+    self->y_pos.u.hi = sigma_beam_hitbox_offsets[self->unk2][1];
+    self->unk5C = 1;
+    self->unk60 = 9;
+    self->state = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_57_sigma_beam_hitbox", func_800AE450);
+#endif
 
 void sigma_beam_hitbox_pulse(struct ShotObj* self)
 {

@@ -10,6 +10,11 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/stage_objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+#endif
+
 extern u8 D_800FDF40[12];
 
 void spike_sled_run(struct MainObj*);
@@ -142,7 +147,93 @@ void spike_sled_run(struct MainObj* self)
 }
 
 // spike_sled_death
+#ifdef MMX4_PC
+void func_8005D4E0(struct MainObj* arg0);
+void func_8005DC58(struct MainObj* arg0);
+void func_8005DED4(struct MainObj* arg0);
+void func_8005E108(struct MainObj* arg0);
+void func_8005E298(struct MainObj* arg0);
+extern u8 D_800FDD90[8];
+extern u8 D_800FDD98[8];
+extern u8 D_800FDF4C[8];
+#define MAIN_33_SLOT_X(index) ((s16)D_800FDDA0[(index)*2])
+#define MAIN_33_SLOT_Y(index) ((s16)D_800FDDA0[(index)*2 + 1])
+#endif
+
+#ifdef MMX4_PC
+void func_8005D4E0(struct MainObj* arg0)
+{
+    struct Main33Ext* ext = &arg0->ext.main_33;
+    s32 x;
+    s32 y;
+    s32 i;
+
+    switch (arg0->unk5) {
+    case 0:
+        if (--arg0->unk7C == 0) {
+            engine_obj.enable_boss = 0;
+            engine_obj.boss_ptr = NULL;
+            arg0->unk7C = 0x50;
+            arg0->unk7E = 1;
+            arg0->unk42 = 0x798F;
+            for (i = 0; i < 7; i++) {
+                if (!(D_800FDD90[i] & ext->unk80))
+                    continue;
+                arg0->x_pos.i.hi = MAIN_33_SLOT_X(i) + 0x20;
+                arg0->y_pos.i.hi = MAIN_33_SLOT_Y(i) + 0x20;
+                apply_tile_effect(0, MAIN_33_SLOT_X(i), MAIN_33_SLOT_Y(i));
+                spawn_debris(6, D_800FDF4C, arg0);
+            }
+            arg0->unk5 = 1;
+            return;
+        }
+        if (!(--arg0->unk7E & 1)) {
+            x = arg0->x_pos.val;
+            y = arg0->y_pos.val;
+            arg0->x_pos.i.hi = 0x12A0;
+            arg0->y_pos.i.hi = 0x300;
+            func_800AF95C(OBJECT_HEADER(arg0), 1, 0xA0, 0x18, 4);
+            arg0->x_pos.val = x;
+            arg0->y_pos.val = y;
+        }
+        if (arg0->unk7E == 0) {
+            arg0->unk7E = 6;
+            func_800AF95C(OBJECT_HEADER(arg0), 1, 0x20, 0x20, 4);
+        }
+        break;
+    case 1:
+        if (--arg0->unk7C == 0) {
+            arg0->unk7C = 0x80;
+            ext->unk88 = 0x1200;
+            arg0->unk5 = 2;
+            return;
+        }
+        if (--arg0->unk7E != 0)
+            return;
+        arg0->unk7E = 6;
+        for (i = 0; i < 7; i++) {
+            if (!(D_800FDD90[i] & ext->unk80))
+                continue;
+            arg0->x_pos.i.hi = MAIN_33_SLOT_X(i) + 0x20;
+            arg0->y_pos.i.hi = MAIN_33_SLOT_Y(i) + 0x20;
+            func_800AF95C(OBJECT_HEADER(arg0), 1, 0x28, 0x18, 4);
+        }
+        break;
+    case 2:
+        if (--arg0->unk7C == 0) {
+            arg0->state = 3;
+            return;
+        }
+        ext->unk88 -= 2;
+        if (ext->unk88 < 0x1100)
+            ext->unk88 = 0x1100;
+        background_objects[0].unk26 = ext->unk88;
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005D4E0);
+#endif
 
 void spike_sled_despawn(struct MainObj* self)
 {
@@ -286,10 +377,91 @@ void spike_sled_charge_start(struct MainObj* self)
 }
 
 // spike_sled_charge_dash
+#ifdef MMX4_PC
+void func_8005DC58(struct MainObj* arg0)
+{
+    struct Main33Ext* ext = &arg0->ext.main_33;
+    s16 target;
+    s32 delta;
+    u8 slot;
+    u8 first;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (ext->target_x != 0) {
+        arg0->unk6 = 3;
+        return;
+    }
+    move_object(MOVING_OBJECT(arg0));
+    target = g_Player.x_pos.i.hi;
+    if (--arg0->unk7C == 0) {
+        if (g_Player.x_pos.i.hi < 0x1220) {
+            ext->variant = 0;
+            if (!(D_800FDD98[0] & ext->unk80)) {
+                ext->variant = 1;
+                if (!(D_800FDD98[1] & ext->unk80))
+                    ext->variant = 0;
+            }
+        } else if (g_Player.x_pos.i.hi >= 0x1321) {
+            ext->variant = 4;
+            if (!(D_800FDD98[4] & ext->unk80)) {
+                ext->variant = 3;
+                if (!(D_800FDD98[3] & ext->unk80))
+                    ext->variant = 4;
+            }
+        } else {
+            delta = (u16)g_Player.x_pos.i.hi - 0x1220;
+            slot = (u8)((s16)delta >> 6);
+            ext->variant = (delta & 0x3F) < 0x21 ? slot : slot + 1;
+            first = ext->variant;
+            if (!(D_800FDD98[first] & ext->unk80)) {
+                ext->variant = (delta & 0x3F) < 0x21 ? first + 1 : first - 1;
+                if (!(D_800FDD98[ext->variant] & ext->unk80))
+                    ext->variant = first;
+            }
+        }
+        ext->target_x = ext->variant * 64 + 0x1220;
+        target = ext->target_x;
+    }
+    if (arg0->unk15 == 0) {
+        if (!(arg0->x_pos.i.hi < 0x1220 && ext->target_x == 0) && !(arg0->x_pos.i.hi < target))
+            return;
+    } else {
+        if (!(arg0->x_pos.i.hi >= 0x1321 && ext->target_x == 0) && !(target < arg0->x_pos.i.hi))
+            return;
+    }
+    set_animation(arg0, 4);
+    arg0->x_accel = -0x4000;
+    arg0->unk6 = 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005DC58);
+#endif
 
 // spike_sled_charge_target
+#ifdef MMX4_PC
+void func_8005DED4(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0)
+        arg0->unk7C = 1;
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    if (arg0->x_speed != 0)
+        return;
+    func_8001540C(2, 0x52, arg0);
+    if (arg0->unk15 == 0) {
+        arg0->unk15 = 0x40;
+        arg0->x_speed = 0x40000;
+    } else {
+        arg0->x_speed = -0x40000;
+        arg0->unk15 = 0;
+    }
+    set_animation(arg0, 3);
+    arg0->x_accel = 0;
+    arg0->unk6 = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005DED4);
+#endif
 
 void spike_sled_charge_approach(struct MainObj* self)
 {
@@ -340,7 +512,34 @@ void spike_sled_bomb(struct MainObj* self)
 }
 
 // spike_sled_bomb_jump
+#ifdef MMX4_PC
+void func_8005E108(struct MainObj* arg0)
+{
+    struct Main33Ext* ext = &arg0->ext.main_33;
+    u8 slot;
+    u8 mask;
+
+    move_object(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    slot = ext->variant;
+    mask = ext->unk80;
+    if (D_800FDD90[slot] & mask) {
+        arg0->unk7C = 0xC;
+    } else if (slot < 2 && (mask & 0x20)) {
+        ext->variant = 5;
+        arg0->unk7C = 0x22;
+    } else if (slot >= 2 && (u8)(slot - 3) < 2 && (mask & 0x40)) {
+        ext->variant = 6;
+        arg0->unk7C = 0x22;
+    } else {
+        ext->variant = 0xFF;
+        arg0->unk7C = 0x26;
+    }
+    arg0->unk6 = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E108);
+#endif
 
 void spike_sled_bomb_rise(struct MainObj* self)
 {
@@ -384,7 +583,40 @@ void spike_sled_bomb_rise(struct MainObj* self)
 }
 
 // spike_sled_bomb_drop
+#ifdef MMX4_PC
+void func_8005E298(struct MainObj* arg0)
+{
+    struct Main33Ext* ext = &arg0->ext.main_33;
+    u8 slot;
+    s32 x;
+    s32 y;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7E != 0)
+        return;
+    func_8001540C(2, 0x55, arg0);
+    start_screen_shake_y(0x10, 8, 2);
+    slot = ext->variant;
+    apply_tile_effect(0, MAIN_33_SLOT_X(slot), MAIN_33_SLOT_Y(slot));
+    x = arg0->x_pos.val;
+    y = arg0->y_pos.val;
+    arg0->x_pos.i.hi = MAIN_33_SLOT_X(slot) + 0x20;
+    arg0->unk42 = 0x798F;
+    arg0->y_pos.i.hi = MAIN_33_SLOT_Y(slot) + 0x20;
+    spawn_debris(6, D_800FDF4C, arg0);
+    arg0->x_pos.val = x;
+    arg0->y_pos.val = y;
+    arg0->unk42 = ext->unk8E;
+    ext->flash_timer = 0x20;
+    ext->unk91 = 6;
+    ext->variant = 0xFF;
+    ext->unk87 = slot;
+    arg0->unk6 = 1;
+    ext->unk80 ^= D_800FDD90[slot];
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E298);
+#endif
 
 void spike_sled_intro(struct MainObj* self)
 {

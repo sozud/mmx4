@@ -28,7 +28,38 @@ void regen_turret_update(struct MainObj* self)
 }
 
 // regen_turret_init
+#ifdef MMX4_PC
+void func_8005B438(struct MainObj* arg0);
+extern union AnimationStep* regen_turret_animations[];
+extern struct Unk_unk68 regen_turret_hurt_box[];
+extern struct Unk_unk68 regen_turret_terrain_box[];
+extern struct Unk_unk68 D_80107174[];
+#endif
+
+#ifdef MMX4_PC
+void func_8005B438(struct MainObj* arg0)
+{
+    arg0->unk5 = 2;
+    arg0->state++;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk15 = arg0->unk2 != 0 ? 0x40 : 0;
+    arg0->animation_table = (const u8* const*)regen_turret_animations;
+    arg0->collision_data = (const u16*)D_80107174;
+    arg0->hurt_box = (const u8*)regen_turret_terrain_box;
+    arg0->attack_box = (const u8*)regen_turret_hurt_box;
+    arg0->unk16 = 6;
+    arg0->terrain_box = NULL;
+    arg0->invincibility_timer = 0;
+    arg0->hp = 6;
+    arg0->contact_damage = 3;
+    arg0->air_state = 0;
+    arg0->unk7C = 0;
+    set_animation(arg0, 0);
+    update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_30_regen_turret", func_8005B438);
+#endif
 
 void regen_turret_start_idle(struct MainObj* self)
 {

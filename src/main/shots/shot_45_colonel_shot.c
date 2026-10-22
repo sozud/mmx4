@@ -7,6 +7,10 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // colonel_shot_state_funcs
 extern void (*colonel_shot_state_funcs[])(struct ShotObj*);
 void colonel_shot_init(struct ShotObj*);
@@ -134,7 +138,43 @@ void colonel_wave(struct ShotObj* self)
 }
 
 // colonel_wave_start
+#ifdef MMX4_PC
+void func_800A7CE8(struct ShotObj* arg0);
+void func_800A83C4(struct ShotObj* arg0);
+void func_800A858C(struct ShotObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800A7CE8(struct ShotObj* arg0)
+{
+    s32 speed;
+
+    set_animation(arg0, 0xE);
+    arg0->unk5C = 5;
+    if (engine_obj.stage == 0xA) {
+        arg0->unk60 = 7;
+        speed = arg0->unk15 != 0 ? 0x60000 : -0x60000;
+    } else {
+        arg0->unk60 = 6;
+        speed = arg0->unk15 != 0 ? 0x50000 : -0x50000;
+    }
+    arg0->x_vel.val = speed;
+    arg0->y_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    if (arg0->unk15 != 0)
+        arg0->x_pos.i.hi += colonel_wave_offsets[arg0->unk2][0];
+    else
+        arg0->x_pos.i.hi -= colonel_wave_offsets[arg0->unk2][0];
+    arg0->unk58.collision_bounds = D_801060F0;
+    arg0->unk54 = (const u8*)colonel_shot_boxes[1];
+    arg0->unk50.data = (const u8*)colonel_shot_boxes[0];
+    arg0->unk6++;
+    arg0->y_pos.i.hi += colonel_wave_offsets[arg0->unk2][1];
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A7CE8);
+#endif
 
 void colonel_wave_fly(struct ShotObj* self)
 {
@@ -323,7 +363,36 @@ void colonel_shockwave(struct ShotObj* self)
 }
 
 // colonel_shockwave_start
+#ifdef MMX4_PC
+void func_800A83C4(struct ShotObj* arg0)
+{
+    u8 kind;
+
+    arg0->unk60 = 9;
+    arg0->unk50.data = (const u8*)colonel_shot_boxes[0];
+    arg0->unk5C = 0;
+    arg0->unk58.data = NULL;
+    arg0->unk54 = NULL;
+    kind = arg0->unk2 & 0xF;
+    arg0->x_vel.val = arg0->unk15 != 0 ? 0x18000 : -0x18000;
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->x_pos.i.hi += arg0->unk15 != 0 ? 0x10 : -0x10;
+    if (kind < 5) {
+        set_animation(arg0, 0xB);
+    } else if (kind < 8) {
+        set_animation(arg0, 0xC);
+        arg0->x_pos.i.hi += arg0->unk15 != 0 ? 4 : -4;
+    } else {
+        set_animation(arg0, 0xD);
+        arg0->x_pos.i.hi += arg0->unk15 != 0 ? 8 : -8;
+    }
+    arg0->unk6++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A83C4);
+#endif
 
 void colonel_shockwave_spread(struct ShotObj* self)
 {
@@ -353,7 +422,20 @@ void colonel_shockwave_spread(struct ShotObj* self)
 }
 
 // colonel_shockwave_move
+#ifdef MMX4_PC
+void func_800A858C(struct ShotObj* arg0)
+{
+    static const u8 bounds[6] = { 2, 3, 4, 6, 7, 8 };
+    u32 index = arg0->animation_step.fields.frame_index - 0x37;
+
+    if (index < 6)
+        arg0->unk50.data = (const u8*)colonel_shot_boxes[bounds[index]];
+    else
+        arg0->unk50.data = NULL;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A858C);
+#endif
 
 void (*colonel_shot_state_funcs[])(struct ShotObj*) = {
     colonel_shot_init,

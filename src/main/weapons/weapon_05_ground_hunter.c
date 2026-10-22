@@ -9,6 +9,10 @@
 #include "main/sprite_animations.h"
 #include "main/weapons/weapon_22_nova_strike_hitbox.h"
 
+#ifdef MMX4_PC
+#include "main/player_common.h"
+#endif
+
 extern struct Unk_unk68 ground_hunter_crawl_box[];
 extern struct Unk_unk68 ground_hunter_rise_box[];
 
@@ -272,7 +276,49 @@ void ground_hunter_charged_update(struct WeaponObj* arg0)
 }
 
 // ground_hunter_charged_init
+#ifdef MMX4_PC
+void func_80095E3C(struct WeaponObj* self);
+void func_80096060(struct WeaponObj* self);
+extern u32* D_8011C0C8[];
+// src/main/weapons/weapon_05_ground_hunter.c
+
+extern struct Unk_unk68 ground_hunter_charged_hit_box[];
+extern struct Unk_unk68 ground_hunter_charged_shot_box[];
+#endif
+
+#ifdef MMX4_PC
+void func_80095E3C(struct WeaponObj* self)
+{
+    self->on_screen = 1;
+    self->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[6];
+    self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[14];
+    self->animation_table = D_8011C0C8;
+    self->unk40 = 0x520;
+    self->unk42 = 0x7801;
+    self->x_vel.val = self->unk28.val = self->y_vel.val = self->unk2C = 0;
+    self->unk15 = g_Player.unk15;
+    set_animation(self, self->unk2 + 3);
+    self->state++;
+    if (self->unk2 == 0) {
+        self->unk16 = 0;
+        self->unk50 = ground_hunter_charged_hit_box;
+        self->unk64 = 1;
+        buster_shot_place_at_muzzle((struct VisualObj*)self, &g_Player, self->id);
+        self->x_vel.val = self->unk15 ? FIXED(6) : FIXED(-6);
+        func_8001540C(1, 9, self);
+        self->unk5 = 0;
+    } else {
+        self->unk50 = ground_hunter_charged_shot_box;
+        self->unk16 = 1;
+        self->unk64 = 0;
+        self->y_vel.val = self->unk2 == 1 ? FIXED(8) : FIXED(-8);
+        self->unk5 = 2;
+    }
+    update_on_screen(BASE_OBJECT(self), 0x2C, 0x18);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", func_80095E3C);
+#endif
 
 void ground_hunter_charged_main(struct WeaponObj* arg0)
 {
@@ -298,7 +344,35 @@ void ground_hunter_charged_wait_fire(struct WeaponObj* arg0)
 }
 
 // ground_hunter_charged_fire
+#ifdef MMX4_PC
+void func_80096060(struct WeaponObj* self)
+{
+    struct Weapon14Ext* ext = &self->ext.weapon_14;
+    if (ext->unk8C == 0) {
+        struct WeaponObj* shot;
+        ext->unk8C = 4;
+        shot = player_spawn_weapon(1, 0xE, 1, NULL);
+        if (shot != NULL) {
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+        }
+        shot = player_spawn_weapon(1, 0xE, 2, NULL);
+        if (shot != NULL) {
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+        }
+        g_Player.shot_count += 2;
+        g_Player.special_shot_count += 2;
+        if (--ext->unk8D == 0)
+            ground_hunter_start_burst(self);
+    } else {
+        ext->unk8C--;
+    }
+    update_on_screen(BASE_OBJECT(self), 0x2C, 0x18);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", func_80096060);
+#endif
 
 void ground_hunter_charged_shot_fly(struct WeaponObj* arg0)
 {

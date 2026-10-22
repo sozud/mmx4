@@ -58,7 +58,42 @@ struct QuadMotionData boss_warning_quad_motions[22] = {
     { { 0xA4, 0x64, 0xA4, 0x68 }, { -9, 0, 9, 0 } },
 };
 
+#ifdef MMX4_PC
+void func_800D4C50(struct QuadObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+// src/main/quads/quad_03_boss_warning_quad.c
+
+void func_800D4C50(struct QuadObj* arg0)
+{
+    u8 index = (u8)arg0->unk2;
+    const u16* vertices = boss_warning_quad_motions[index].vertex;
+
+    arg0->bg_offset = -1;
+    arg0->unk34 = 4;
+    arg0->unk36 = 0x10;
+    arg0->on_screen = 1;
+    arg0->x_pos.val = 0;
+    arg0->y_pos.val = 0;
+    arg0->ext.quad_2.x_scale.bytes.fraction = 0;
+    arg0->state++;
+    arg0->vertices[0].x.val = (s32)vertices[0] << 16;
+    arg0->vertices[0].y.val = (s32)vertices[1] << 16;
+    arg0->vertices[1].x.val = (s32)vertices[2] << 16;
+    arg0->vertices[1].y.val = (s32)vertices[3] << 16;
+    arg0->vertices[2].x.val = (s32)vertices[2] << 16;
+    arg0->vertices[2].y.val = (s32)vertices[3] << 16;
+    arg0->vertices[3].x.val = (s32)vertices[0] << 16;
+    arg0->vertices[3].y.val = (s32)vertices[1] << 16;
+    arg0->ext.quad_2.x_scale.bytes.integer = index == 0x15 ? 0xF : 2;
+    arg0->ext.quad_2.y_scale.bytes.fraction = 0;
+    if (index == 0)
+        D_8013B960 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/quads/quad_03_boss_warning_quad", func_800D4C50);
+#endif
 void boss_warning_quad_open(struct QuadObj* arg0)
 {
     u8 integer = arg0->ext.quad_2.x_scale.bytes.integer;

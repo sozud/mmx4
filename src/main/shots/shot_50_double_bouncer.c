@@ -25,7 +25,30 @@ void (*double_bouncer_step_funcs[])(struct ShotObj*) = {
 };
 
 // double_bouncer_launch
+#ifdef MMX4_PC
+void func_800AA2FC(struct ShotObj* self);
+#endif
+
+#ifdef MMX4_PC
+// src/main/shots/shot_50_double_bouncer.c
+
+void func_800AA2FC(struct ShotObj* self)
+{
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk5++;
+        set_animation(self, 0x19);
+        func_8001540C(2, 0xF9, NULL);
+        self->x_vel.val = self->x_pos.i.hi < g_Player.x_pos.i.hi ? FIXED(-2) : FIXED(2);
+        self->y_vel.val = FIXED(-2);
+        self->unk28 = 0;
+        self->unk2C = 0;
+        move_with_gravity(ANIMATED_OBJECT(self));
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_50_double_bouncer", func_800AA2FC);
+#endif
 
 void double_bouncer_bounce(struct ShotObj* self)
 {

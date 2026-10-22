@@ -92,7 +92,35 @@ void gravity_switch_activate(struct ItemObj* arg0)
 }
 
 // gravity_switch_flip
+#ifdef MMX4_PC
+void func_800C4F40(struct ItemObj* self);
+void func_800C5210(struct ItemObj* self);
+void gravity_switch_flip_objects(void);
+void func_800C5210(struct ItemObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_800C4F40(struct ItemObj* self)
+{
+    for (u32 i = 0; i < 3; i++)
+        background_objects[i].unk4C = 1;
+
+    g_Player.y_pos.val = 0x8000000 - g_Player.y_pos.val;
+    g_Player.unk1C.val = 0x8000000 - g_Player.unk1C.val;
+    background_objects[0].y_pos.val = 0x7000000 - background_objects[0].y_pos.val;
+    background_objects[0].unk18.val = 0x7000000 - background_objects[0].unk18.val;
+    for (u32 i = 1; i < 3; i++) {
+        background_objects[i].y_pos.val = 0x9000000 - background_objects[i].y_pos.val;
+        background_objects[i].unk18.val = 0x9000000 - background_objects[i].unk18.val;
+    }
+    gravity_switch_flip_objects();
+    engine_obj.character_state.bytes[0] = 1 - (u8)engine_obj.character_state.bytes[0];
+    func_800C5210(self);
+    self->unk5 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_20_gravity_switch", func_800C4F40);
+#endif
 
 void gravity_switch_despawn(struct ItemObj* arg0)
 {
@@ -146,7 +174,22 @@ void gravity_switch_flip_objects(void)
 }
 
 // gravity_switch_flip_camera
+#ifdef MMX4_PC
+void func_800C5210(struct ItemObj* self)
+{
+    u32 index = (u8)self->unk2 >> 4;
+    s32 offset = engine_obj.character_state.bytes[0] ? 1 : -1;
+
+    background_objects[0].unk22 = ((u16*)gravity_switch_camera_bounds)[index * 2];
+    background_objects[0].unk2A = ((u16*)gravity_switch_camera_bounds)[index * 2];
+    background_objects[0].unk20 = ((u16*)gravity_switch_camera_bounds)[index * 2 + 1];
+    background_objects[0].unk28 = ((u16*)gravity_switch_camera_bounds)[index * 2 + 1];
+    background_objects[1].unk42 += 0x80 * offset;
+    background_objects[2].unk42 += 0xC0 * offset;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_20_gravity_switch", func_800C5210);
+#endif
 
 void (*gravity_switch_state_funcs[])(struct ItemObj*) = {
     func_800C4D20,

@@ -8,6 +8,11 @@
 #include "main/mains/main_26_ice_wall.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/1CF60.h"
+#include "main/misc/misc_02_rubble.h"
+#endif
+
 extern struct Unk_unk68 ice_block_crumble_attack_box;
 
 void ice_block_main(struct MainObj*);
@@ -47,7 +52,50 @@ void ice_block_update(struct MainObj* self)
 }
 
 // ice_block_init
+#ifdef MMX4_PC
+void func_800545EC(struct MainObj* arg0);
+void func_800548B8(struct MainObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+// src/main/mains/main_20_ice_block.c
+
+void func_800545EC(struct MainObj* arg0)
+{
+    arg0->unk5 = 2;
+    arg0->state++;
+    arg0->animation_table = (const u8* const*)ice_block_animations;
+    arg0->unk16 = 6;
+    arg0->collision_data = D_80106C74;
+    arg0->unk15 = 0;
+    arg0->terrain_box = NULL;
+    arg0->invincibility_timer = 0;
+    arg0->hp = 9;
+    arg0->contact_damage = 3;
+    arg0->ext.main_20.unk80 = 9;
+    arg0->ext.main_20.unk81 = 2;
+    arg0->bg_offset = g_Player.bg_offset;
+    if (arg0->unk2 != 0) {
+        arg0->attack_box = &D_800FC844;
+        arg0->hurt_box = &D_800FC848;
+    } else {
+        arg0->attack_box = NULL;
+        arg0->hurt_box = &D_800FC84C;
+    }
+    arg0->x_speed = 0;
+    arg0->x_accel = 0;
+    arg0->y_speed = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->unk7C = 0;
+    arg0->x_pos.i.hi = (arg0->x_pos.i.hi & ~0xF) + 8;
+    arg0->y_pos.i.hi = (arg0->y_pos.i.hi & ~0xF) + 0x14;
+    set_animation(arg0, 0);
+    update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800545EC);
+#endif
 
 void ice_block_start_idle(struct MainObj* self)
 {
@@ -93,7 +141,68 @@ void ice_block_main(struct MainObj* self)
 }
 
 // ice_block_break_start
+#ifdef MMX4_PC
+void func_800548B8(struct MainObj* arg0)
+{
+    struct WeaponObj* weapon;
+    u8 flags = 0;
+    u8 top;
+    u8 bottom;
+
+    if (arg0->unk2 == 0) {
+        func_800583B0(arg0, arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi - 0x10), 0xA);
+        top = func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi - 0x30));
+        bottom = func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi + 0x30));
+        if (top >= 0x30) {
+            if (top < 0x32 || top == 0x3C)
+                func_800583B0(arg0, arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi - 0x40), 0xA);
+            else if (top == 0x38)
+                flags = 1;
+        }
+        if (bottom >= 0x30) {
+            if (bottom < 0x32 || bottom == 0x3C)
+                func_800583B0(arg0, arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi + 0x20), 0xA);
+            else if (bottom == 0x38)
+                flags += 2;
+        }
+    }
+    switch (flags) {
+    case 1:
+        set_animation(arg0, 7);
+        arg0->attack_box = &D_800FC850;
+        break;
+    case 2:
+        set_animation(arg0, 6);
+        arg0->attack_box = &D_800FC854;
+        break;
+    case 3:
+        arg0->unk7C = 1;
+        arg0->attack_box = &D_800FC858;
+        break;
+    default:
+        set_animation(arg0, 8);
+        arg0->attack_box = &D_800FC85C;
+        break;
+    }
+    weapon = find_free_weapon_obj();
+    if (weapon != NULL) {
+        weapon->active = 1;
+        weapon->id = 0x3A;
+        weapon->owner = PLAYER_OBJECT(arg0);
+        weapon->state = 0;
+        weapon->unk5 = 0;
+        weapon->unk6 = 0;
+        weapon->unk2 = flags;
+    }
+    arg0->unk5++;
+    spawn_explosion(BASE_OBJECT(arg0));
+    spawn_debris(4, ice_block_debris, arg0);
+    if (arg0->unk2 == 0)
+        func_800C842C(0xC, ice_wall_debris, arg0, 0x1A, ice_wall_animations);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800548B8);
+#endif
 
 void ice_block_break_crumble(struct MainObj* self)
 {

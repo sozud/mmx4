@@ -8,6 +8,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 extern union AnimationStep* falling_icicle_animations[];
 extern struct Unk_unk68 falling_icicle_body_box;
 extern struct Unk_unk68 falling_icicle_terrain_box;
@@ -65,7 +69,39 @@ void falling_icicle_init(struct MainObj* arg0)
 #endif
 
 // falling_icicle_main
+#ifdef MMX4_PC
+void func_80054D8C(struct MainObj* arg0);
+extern void (*falling_icicle_step_funcs[])(struct MainObj*);
+extern u8 falling_icicle_debris[];
+#endif
+
+#ifdef MMX4_PC
+void func_80054D8C(struct MainObj* arg0)
+{
+    s32 collision;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    falling_icicle_step_funcs[arg0->unk5](arg0);
+    arg0->ext.main_21.saved_unk5 = arg0->unk5;
+    collision = func_8002DD04(arg0);
+    func_8002D9BC(arg0);
+    if (collision < 0 || func_8002BB80(arg0, MAIN_OBJECT(&g_Player)) != 0 || (arg0->collision_flags & 8)) {
+        set_animation(arg0, 4);
+        spawn_debris(3, falling_icicle_debris, arg0);
+        func_8001540C(5, 1, NULL);
+        arg0->state = 2;
+        return;
+    }
+    if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
+        arg0->state = 3;
+        return;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_21_falling_icicle", func_80054D8C);
+#endif
 
 void falling_icicle_shatter(struct MainObj* self)
 {

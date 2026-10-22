@@ -275,7 +275,84 @@ void boss_teleporter_update(struct ItemObj* arg0)
 }
 
 // boss_teleporter_init
+#ifdef MMX4_PC
+void func_800C71C0(struct ItemObj* arg0);
+extern u8 boss_teleporter_box[4];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_800C71C0(struct ItemObj* arg0)
+{
+    s32 resource;
+    s32 row;
+    struct MiscObj* misc;
+
+    arg0->active = 0x41;
+    arg0->unk16 = 6;
+    arg0->unk15 = 0;
+    arg0->unk40 = D_801406A8[func_8002938C(0x88)] >> 7;
+    resource = func_8002938C(0x88);
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->unk42 = CLUT_FROM_ID(0x88);
+    arg0->animation_table = (const u8* const*)boss_teleporter_animations;
+    arg0->unk67 = 0;
+    arg0->unk75 = 0;
+    arg0->unk68 = (struct Unk_unk68*)boss_teleporter_box;
+    if (arg0->unk2 & 0x10) {
+        resource = func_8002938C(0x88);
+        row = func_8002938C(0x88);
+        arg0->unk42 = ((resource * 4 + 0x1A) % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
+        set_animation(ANIMATED_OBJECT(arg0), 6);
+        arg0->state = 1;
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        arg0->unk2 &= 0xF;
+        return;
+    }
+    switch (engine_obj.character_state.bytes[6 + arg0->unk2]) {
+    case 0:
+        set_animation(ANIMATED_OBJECT(arg0), 1);
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 0x41;
+            misc->id = 0x33;
+            misc->unk2 = 0;
+            misc->x_pos.val = arg0->x_pos.val;
+            misc->y_pos.val = arg0->y_pos.val;
+            misc->ext.misc_51.source = MAIN_OBJECT(arg0);
+            arg0->unk7C.misc = misc;
+        }
+        arg0->state = 1;
+        break;
+    case 1:
+        set_animation(ANIMATED_OBJECT(arg0), 10);
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 0x41;
+            misc->id = 0x33;
+            misc->unk2 = 0x30;
+            misc->x_pos.val = arg0->x_pos.val;
+            misc->y_pos.val = arg0->y_pos.val;
+            misc->ext.misc_51.source = MAIN_OBJECT(arg0);
+            arg0->unk7C.misc = misc;
+        }
+        arg0->state = 2;
+        break;
+    case 2:
+        set_animation(ANIMATED_OBJECT(arg0), 6);
+        arg0->state = 3;
+        break;
+    default:
+        arg0->unk6 = 0;
+        return;
+    }
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_27_boss_teleporter", func_800C71C0);
+#endif
 
 void boss_teleporter_main(struct ItemObj* arg0)
 {

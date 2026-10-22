@@ -6,6 +6,10 @@
 #include "main/effects/edge_spawner_data.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/1CF60.h"
+#endif
+
 // edge_spawner_state_funcs
 extern void (*edge_spawner_state_funcs[])(struct EffectObj*);
 void edge_spawner_init(struct EffectObj*);
@@ -67,7 +71,41 @@ void func_800B8630(struct EffectObj* self)
 }
 
 // edge_spawner_try_spawn
+#ifdef MMX4_PC
+void func_800B875C(struct EffectObj* arg0, s16 unused);
+#endif
+
+#ifdef MMX4_PC
+void func_800B875C(struct EffectObj* arg0, s16 unused)
+{
+    s16 x;
+    s16 y;
+    u8 i;
+
+    x = arg0->x_pos.i.hi - 0x10;
+    arg0->x_pos.i.hi = x;
+    y = arg0->y_pos.i.hi - 0x10;
+    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) != 0) {
+        for (i = 1; i < 0x10; i++) {
+            if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, y + i * 16) == 0) {
+                arg0->y_pos.i.hi += i * 16;
+                func_800B8630(arg0);
+                return;
+            }
+        }
+        return;
+    }
+    for (i = 1; i < 0x10; i++) {
+        if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, y - i * 16) != 0) {
+            arg0->y_pos.i.hi -= (i - 1) * 16;
+            func_800B8630(arg0);
+            return;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_13_edge_spawner", func_800B875C);
+#endif
 
 // edge_spawner_spawn_items
 void func_800B887C(s16 x_min, s16 x_max, s16 y_min, s16 y_max)

@@ -11,6 +11,10 @@
 #include "main/collision_bounds.h"
 #include "main/stage_objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 extern u8 frost_walrus_script_recover_high[4];
 extern u8 frost_walrus_script_recover_low[4];
 
@@ -154,10 +158,109 @@ void frost_walrus_start_warning(struct MainObj* self)
 }
 
 // frost_walrus_start_init
+#ifdef MMX4_PC
+void func_800722A0(struct MainObj* arg0);
+void func_80072418(struct MainObj* arg0);
+void func_80073E80(struct MainObj* arg0);
+extern struct Unk_unk68 frost_walrus_terrain_box;
+extern void* frost_walrus_animations[39];
+extern void (*frost_walrus_step_funcs[12])();
+#endif
+
+#ifdef MMX4_PC
+void func_800722A0(struct MainObj* arg0)
+{
+    if (((struct BaseObj*)arg0->ext.main_57.effect)->active != 0)
+        return;
+    arg0->unk16 = 5;
+    arg0->contact_damage = 6;
+    arg0->terrain_box = &frost_walrus_terrain_box;
+    arg0->hurt_box = &frost_walrus_hurt_box;
+    arg0->attack_box = &frost_walrus_attack_box;
+    arg0->collision_data = D_80107A78;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->unk15 = 0;
+    arg0->hp = 0;
+    arg0->invincibility_timer = 0;
+    arg0->animation_table = (const u8* const*)frost_walrus_animations;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    if (engine_obj.stage != 0xC) {
+        arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+    } else {
+        arg0->unk40 = (D_801406A8[0] >> 7) + 0x160;
+        arg0->unk42 = 0x7888;
+        arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
+    }
+    engine_obj.unk25 = 1;
+    engine_obj.boss_ptr = arg0;
+    set_animation(arg0, 0x26);
+    arg0->ext.main_57.tusks_broken = 0;
+    arg0->ext.main_57.flash_timer = 0;
+    arg0->ext.main_57.flashing = 0;
+    arg0->ext.main_57.staggered = 0;
+    arg0->state = 1;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_800722A0);
+#endif
 
 // frost_walrus_main
+#ifdef MMX4_PC
+void func_80072418(struct MainObj* arg0)
+{
+    s32 hit;
+    s32 flash = 0;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    ((void (*)(struct MainObj*))frost_walrus_step_funcs[arg0->unk5])(arg0);
+    hit = func_8002DD04(arg0);
+    if (arg0->ext.main_57.flash_timer != 0) {
+        if (arg0->ext.main_57.flash_timer & 1)
+            arg0->unk42 &= 0x7FFF;
+        else
+            arg0->unk42 |= 0x8000;
+        if (--arg0->ext.main_57.flash_timer == 0) {
+            arg0->collision_data = D_80107A78;
+            arg0->ext.main_57.flashing = 0;
+        }
+    } else if (hit < 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        arg0->unk42 &= 0x7FFF;
+        g_Player.spike_immune = 1;
+        update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
+        return;
+    } else if (hit != 0) {
+        s32 weakness = engine_obj.cur_character == CHARACTER_X ? (hit == 5 || hit == 0xE) : hit == 0x24;
+
+        if (weakness && arg0->ext.main_57.staggered == 0) {
+            arg0->unk5 = 0xA;
+            arg0->unk6 = 0;
+            return;
+        }
+        flash = engine_obj.cur_character == CHARACTER_X || hit != 0x7F;
+    }
+    if (flash) {
+        arg0->collision_data = D_801060F0;
+        arg0->ext.main_57.flash_timer = 0x40;
+        arg0->ext.main_57.flashing = 1;
+    }
+    func_8002D9BC(arg0);
+    update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80072418);
+#endif
 
 void frost_walrus_reset(struct MainObj* self)
 {
@@ -884,7 +987,38 @@ void frost_walrus_stagger(struct MainObj* self)
 }
 
 // frost_walrus_stagger_start
+#ifdef MMX4_PC
+void func_80073E80(struct MainObj* arg0)
+{
+    struct VisualObj* visual;
+    u32 i;
+
+    arg0->ext.main_57.staggered = 1;
+    for (i = 0; i < 4; i++) {
+        visual = find_free_visual_obj();
+        if (visual == NULL)
+            continue;
+        visual->active = 0x41;
+        visual->id = 0x18;
+        visual->unk2 = i + 0x40;
+        visual->unk50 = (struct PlayerObj*)arg0;
+        visual->unk15 = arg0->unk15;
+    }
+    set_animation(arg0, 0x12);
+    func_8001540C(2, 0x99, arg0);
+    arg0->x_speed = arg0->x_pos.i.hi < g_Player.x_pos.i.hi ? -0x20000 : 0x20000;
+    arg0->y_speed = 0x38000;
+    arg0->gravity = 0x4200;
+    arg0->ext.main_57.flash_timer = 0xC8;
+    arg0->air_state = 1;
+    arg0->ext.main_57.flashing = 1;
+    arg0->x_accel = 0;
+    arg0->collision_data = D_801060F0;
+    arg0->unk6++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80073E80);
+#endif
 
 void frost_walrus_stagger_fall(struct MainObj* self)
 {

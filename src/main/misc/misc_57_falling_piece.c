@@ -8,6 +8,7 @@
 #include "main/objects.h"
 
 #ifdef MMX4_PC
+#include "main/2824.h"
 extern void menu_text_init_label(struct UnkObj* arg0);
 extern void menu_text_init_cursor(struct UnkObj* arg0);
 #endif
@@ -150,7 +151,38 @@ void menu_text_highlight(struct UnkObj* self)
 }
 
 // menu_text_blink
+#ifdef MMX4_PC
+void func_800D3798(struct UnkObj* self);
+// src/main/misc/misc_57_falling_piece.c
+
+extern u16 menu_button_bits_a[8];
+extern u16 menu_button_bits_b[8];
+#endif
+
+#ifdef MMX4_PC
+void func_800D3798(struct UnkObj* self)
+{
+    u8 bit, button;
+    u16 mask = menu_button_bits_a[self->unk2];
+
+    for (bit = 0; bit < 16; bit++) {
+        if (mask == (1U << bit))
+            break;
+    }
+    for (button = 0; button < 8; button++) {
+        if (D_800EE430[bit] == menu_button_bits_b[button]) {
+            self->animation_step.fields.frame_index = button + 0x68;
+            break;
+        }
+    }
+    self->unk42 = 0x7800;
+    if (main_bss_state.character_mode == 0 && engine_obj.cur_character != 0 && self->unk2 < 7 && self->unk2 >= 5)
+        self->unk42 = 0x7804;
+    is_on_screen(self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_57_falling_piece", func_800D3798);
+#endif
 
 void menu_text_cursor(struct UnkObj* self)
 {

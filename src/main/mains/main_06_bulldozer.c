@@ -8,6 +8,11 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#include "main/visuals/visual_03_small_effect.h"
+#endif
+
 // bulldozer_state_funcs
 extern void (*bulldozer_state_funcs[])(struct MainObj*);
 
@@ -36,10 +41,145 @@ void bulldozer_update(struct MainObj* self)
 }
 
 // bulldozer_init
+#ifdef MMX4_PC
+void func_80046B80(struct MainObj* arg0);
+void func_80046C8C(struct MainObj* arg0);
+extern struct Unk_unk68 D_801065F0[];
+extern struct Unk_unk68 bulldozer_terrain_box;
+extern struct Unk_unk68 bulldozer_hurt_boxes[2];
+extern struct Unk_unk68 D_800FA430;
+extern struct Unk_unk68 D_800FA434[2];
+extern union AnimationStep* D_800FA4E8[16];
+extern u8 bulldozer_debris[16];
+extern void (*bulldozer_step_funcs[])(struct MainObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_80046B80(struct MainObj* arg0)
+{
+    arg0->hp = 0x7F;
+    arg0->contact_damage = 4;
+    arg0->unk7C = 0;
+    arg0->invincibility_timer = 0;
+    arg0->collision_data = (const u16*)D_801065F0;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    arg0->animation_table = (const u8* const*)D_800FA4E8;
+    arg0->unk16 = 6;
+    arg0->terrain_box = &bulldozer_terrain_box;
+    arg0->hurt_box = (const u8*)bulldozer_hurt_boxes;
+    arg0->attack_box = (const u8*)bulldozer_hurt_boxes;
+    arg0->ext.main_6.armor_broken = 0;
+    arg0->ext.main_6.ground_probe_distance = 0;
+    arg0->ext.main_6.armor_health = 0x12;
+    arg0->ext.main_6.core_health = 9;
+    arg0->ext.main_6.hitbox_toggle = 0;
+    arg0->air_state = 0;
+    set_animation(arg0, 0);
+    arg0->state = 1;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_06_bulldozer", func_80046B80);
+#endif
 
 // bulldozer_main
+#ifdef MMX4_PC
+void func_80046C8C(struct MainObj* arg0)
+{
+    s32 facing_offset;
+
+    bulldozer_check_fall(arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    bulldozer_step_funcs[arg0->unk5](arg0);
+
+    arg0->hp = 0x7F;
+    arg0->ext.main_6.hitbox_toggle ^= 1;
+    if (arg0->ext.main_6.hitbox_toggle != 0) {
+        arg0->hurt_box += 4;
+        arg0->attack_box += 4;
+    } else {
+        arg0->hurt_box -= 4;
+        arg0->attack_box -= 4;
+    }
+    func_8002D9BC(arg0);
+    arg0->ext.main_6.saved_step = arg0->unk5;
+
+    if (func_8002DD04(arg0) != 0) {
+        if (arg0->ext.main_6.armor_broken == 0
+            && arg0->ext.main_6.hitbox_toggle == 0) {
+            arg0->ext.main_6.armor_health
+                += arg0->hp - 0x7F;
+        } else {
+            arg0->ext.main_6.core_health += arg0->hp - 0x7F;
+        }
+
+        if ((s32)arg0->ext.main_6.core_health < 0) {
+            if (arg0->ext.main_6.armor_broken == 0) {
+                facing_offset = arg0->unk15 != 0 ? -0x24 : 0x24;
+                spawn_explosion_at(0, arg0->x_pos.i.hi + facing_offset,
+                    arg0->y_pos.i.hi, 1);
+                spawn_explosion(BASE_OBJECT(arg0));
+                facing_offset = arg0->unk15 != 0 ? 0x20 : -0x20;
+                spawn_explosion_at(0, arg0->x_pos.i.hi + facing_offset,
+                    arg0->y_pos.i.hi, 1);
+                facing_offset = arg0->unk15 != 0 ? 0x18 : -0x18;
+                spawn_explosion_at(0, arg0->x_pos.i.hi + facing_offset,
+                    arg0->y_pos.i.hi - 0x1B, 1);
+                spawn_explosion_at(0, arg0->x_pos.i.hi + facing_offset,
+                    arg0->y_pos.i.hi - 0x37, 1);
+                spawn_debris(0xF, bulldozer_debris, arg0);
+            } else {
+                spawn_explosion(BASE_OBJECT(arg0));
+                facing_offset = arg0->unk15 != 0 ? -0x24 : 0x24;
+                spawn_explosion_at(0, arg0->x_pos.i.hi + facing_offset,
+                    arg0->y_pos.i.hi, 1);
+                spawn_debris(8, bulldozer_debris + 7, arg0);
+            }
+            drop_item(BASE_OBJECT(arg0), 0x13);
+            arg0->state = 2;
+            return;
+        }
+
+        if (arg0->ext.main_6.armor_broken == 0
+            && (s32)arg0->ext.main_6.armor_health < 0) {
+            facing_offset = arg0->unk15 != 0 ? 0x20 : -0x20;
+            spawn_explosion_at(0, arg0->x_pos.i.hi + facing_offset,
+                arg0->y_pos.i.hi, 1);
+            facing_offset = arg0->unk15 != 0 ? 0x18 : -0x18;
+            spawn_explosion_at(0, arg0->x_pos.i.hi + facing_offset,
+                arg0->y_pos.i.hi - 0x1B, 1);
+            spawn_explosion_at(0, arg0->x_pos.i.hi + facing_offset,
+                arg0->y_pos.i.hi - 0x37, 1);
+            spawn_debris(7, bulldozer_debris, arg0);
+            set_animation(arg0, 1);
+            arg0->contact_damage = 3;
+            arg0->terrain_box = &D_800FA430;
+            arg0->hurt_box = (const u8*)D_800FA434;
+            arg0->attack_box = (const u8*)D_800FA434;
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            arg0->ext.main_6.armor_broken = 1;
+        }
+    }
+
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x68, 0x68) != 0) {
+        arg0->state = 2;
+    } else {
+        update_on_screen(BASE_OBJECT(arg0), 0x48, 0x48);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_06_bulldozer", func_80046C8C);
+#endif
 
 void bulldozer_cleanup(struct MainObj* self)
 {

@@ -39,7 +39,54 @@ void highway_trooper_update(struct MainObj* self)
 }
 
 // highway_trooper_init
+#ifdef MMX4_PC
+void func_8005E5C0(struct MainObj* arg0);
+void func_8005EB40(struct MainObj* arg0);
+extern u16 D_800FE18C[8];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_8005E5C0(struct MainObj* arg0)
+{
+    s32 resource;
+    s32 clut_x;
+    s32 clut_y;
+
+    resource = func_8002938C(0x22);
+    arg0->unk40 = D_801406A8[resource] >> 7;
+    clut_x = func_8002938C(0x22);
+    clut_y = func_8002938C(0x22);
+    arg0->unk42 = ((clut_x * 4 + 0x1A) % 16) | (((clut_y + 6) / 4 + 0x1E0) << 6);
+    resource = func_8002938C(0x22);
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->x_pos.i.hi = ((s16(*)[2])D_800FE18C)[arg0->unk2][0];
+    arg0->y_pos.i.hi = ((s16(*)[2])D_800FE18C)[arg0->unk2][1];
+    arg0->animation_table = (const u8* const*)highway_trooper_animations;
+    arg0->unk16 = 6;
+    arg0->x_speed = -0x1C000;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->unk15 = 0;
+    arg0->attack_box = NULL;
+    arg0->hurt_box = NULL;
+    arg0->collision_data = NULL;
+    arg0->invincibility_timer = 0;
+    arg0->hp = 1;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    if (arg0->unk2 != 2)
+        arg0->terrain_box = &highway_trooper_terrain_box;
+    set_animation(arg0, 1);
+    arg0->state = 1;
+    arg0->unk5 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_34_highway_trooper", func_8005E5C0);
+#endif
 
 void highway_trooper_main(struct MainObj* self)
 {
@@ -151,7 +198,31 @@ void highway_trooper_attack_end(struct MainObj* self)
 }
 
 // highway_trooper_hit
+#ifdef MMX4_PC
+void func_8005EB40(struct MainObj* arg0)
+{
+    if (--SP_CUR_MAIN_OBJ->ext.main_34.unk80 > 0)
+        return;
+    if (arg0->unk2 == 0) {
+        arg0->x_speed = -0x1C000;
+        arg0->y_speed = 0xC000;
+        arg0->gravity = 0x2000;
+        arg0->terrain_box = NULL;
+        set_animation(arg0, 5);
+        arg0->unk5 = 4;
+    } else {
+        arg0->terrain_box = NULL;
+        arg0->unk15 = 0x40;
+        arg0->x_speed = 0x38000;
+        arg0->y_speed = 0;
+        arg0->gravity = 0;
+        set_animation(arg0, 1);
+        arg0->unk5 = 5;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_34_highway_trooper", func_8005EB40);
+#endif
 
 void highway_trooper_fall_away(struct MainObj* self)
 {

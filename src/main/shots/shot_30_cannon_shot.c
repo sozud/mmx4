@@ -4,6 +4,12 @@
 #include "main/objects.h"
 #include "main/shots/shot_30_cannon_shot.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#endif
+
 // cannon_shot_state_funcs
 extern void (*cannon_shot_state_funcs[])(struct ShotObj*);
 
@@ -16,10 +22,92 @@ void cannon_shot_update(struct ShotObj* self)
 }
 
 // cannon_shot_init
+#ifdef MMX4_PC
+void func_8009FB9C(struct ShotObj* arg0);
+void func_8009FD00(struct ShotObj* arg0);
+extern struct Unk_unk68 D_80106170[32];
+extern u8 cannon_shot_boxes[4][4];
+extern s32 cannon_shot_speeds[4];
+#endif
+
+#ifdef MMX4_PC
+void func_8009FB9C(struct ShotObj* arg0)
+{
+    struct MainObj* owner = (struct MainObj*)arg0->unk7C;
+    s32 dx;
+    s32 dy;
+
+    arg0->on_screen = 1;
+    arg0->unk5C = 1;
+    arg0->unk60 = 6;
+    arg0->unk58.collision_bounds = D_80106170;
+    arg0->unk50.data = (const u8*)cannon_shot_boxes;
+    arg0->unk54 = (const u8*)cannon_shot_boxes;
+    arg0->unk68 = NULL;
+    arg0->x_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->unk42 &= 0x7FFF;
+    arg0->state++;
+    if (arg0->unk2 == 0) {
+        dx = 0x20;
+        dy = -8;
+    } else if (arg0->unk2 == 1) {
+        dx = 0x1D;
+        dy = 0xE;
+    } else {
+        dx = 0xC;
+        dy = 0x12;
+    }
+    arg0->x_pos.i.hi = owner->x_pos.i.hi + (arg0->unk15 != 0 ? dx : -dx);
+    arg0->y_pos.i.hi = owner->y_pos.i.hi + dy;
+    set_animation(arg0, 3);
+    cannon_shot_spawn_flash(arg0);
+    arg0->unk84.value = 0x10;
+    arg0->unk8C.word = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FB9C);
+#endif
 
 // cannon_shot_fly
+#ifdef MMX4_PC
+void func_8009FD00(struct ShotObj* arg0)
+{
+    s32 speed;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    speed = arg0->x_vel.val;
+    if (speed < 0)
+        speed = -speed;
+    if (speed > 0x30000)
+        arg0->unk28 = 0;
+    if (func_8002DD04((struct MainObj*)arg0) < 0) {
+        spawn_explosion(BASE_OBJECT(arg0));
+    } else {
+        func_8002D9BC(arg0);
+        if (--arg0->unk84.value == 0 && arg0->unk17 != 4) {
+            arg0->unk28 = 0x600;
+            arg0->x_vel.val = cannon_shot_speeds[(arg0->unk15 & 0x40) ? 1 : 0];
+            if (arg0->unk15 & 0x40)
+                arg0->x_pos.i.hi += 0x10;
+            else
+                arg0->x_pos.i.hi -= 0x10;
+            set_animation(arg0, 4);
+        }
+        if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+            update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
+            return;
+        }
+    }
+    arg0->unk8C.word = 1;
+    arg0->state++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FD00);
+#endif
 
 void cannon_shot_despawn(struct ShotObj* self)
 {

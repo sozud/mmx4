@@ -7,6 +7,11 @@
 #include "main/player_common.h"
 #include "main/visuals/visual_03_small_effect.h"
 
+#ifdef MMX4_PC
+#include "main/1A5BC.h"
+#include "main/55C4.h"
+#endif
+
 // boss_death_fx_state_funcs
 extern void (*boss_death_fx_state_funcs[])(struct EffectObj*);
 
@@ -68,7 +73,57 @@ void boss_death_fx_spawn_explosions(struct EffectObj* self)
 }
 
 // boss_death_fx_start_flash
+#ifdef MMX4_PC
+static void effect_26_spawn_spark(struct EffectObj* arg0, u8 angle);
+void func_800BB364(struct EffectObj* arg0);
+void func_800BB750(struct EffectObj* arg0);
+void func_800BB888(struct EffectObj* arg0);
+void boss_death_fx_spawn_ray(struct EffectObj* arg0);
+void boss_death_fx_spawn_ring(struct EffectObj* arg0);
+static void effect_26_spawn_spark(struct EffectObj* arg0, u8 angle)
+{
+    struct QuadObj* quad = find_free_quad_obj();
+
+    if (quad == NULL)
+        return;
+    quad->active = 1;
+    quad->id = 4;
+    quad->unk2 = angle;
+    quad->x_pos.i.hi = arg0->x_pos.i.hi;
+    quad->y_pos.i.hi = arg0->y_pos.i.hi;
+}
+#endif
+
+#ifdef MMX4_PC
+void func_800BB364(struct EffectObj* arg0)
+{
+    effect_26_spawn_spark(arg0, arg0->unk2);
+    effect_26_spawn_spark(arg0, (arg0->unk2 + 0xA) & 0x1F);
+    effect_26_spawn_spark(arg0, (arg0->unk2 + 0x15) & 0x1F);
+    func_8002B560(0x82, 0);
+    if (arg0->ext.effect_26.timer != 0) {
+        arg0->ext.effect_26.timer--;
+        spawn_explosion(BASE_OBJECT(arg0));
+        return;
+    }
+    arg0->ext.effect_26.timer = 0x64;
+    arg0->state++;
+    g_FilterModeR = 0;
+    g_FilterModeG = 0;
+    g_FilterModeB = 0;
+    g_FilterAmountR = 0;
+    g_FilterAmountG = 0;
+    g_FilterAmountB = 0;
+    D_8013E188[0] = -1;
+    D_8013E188[1] = -1;
+    D_8013E188[2] = -1;
+    D_8013E188[3] = -1;
+    func_80016F0C();
+    engine_obj.unk42 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", func_800BB364);
+#endif
 
 void boss_death_fx_spawn_ray(struct EffectObj* self)
 {
@@ -154,7 +209,29 @@ void boss_death_fx_rays(struct EffectObj* self)
 }
 
 // boss_death_fx_whiteout
+#ifdef MMX4_PC
+void func_800BB750(struct EffectObj* arg0)
+{
+    arg0->ext.effect_26.timer++;
+    boss_death_fx_spawn_explosions(arg0);
+    boss_death_fx_spawn_ray(arg0);
+    boss_death_fx_spawn_ring(arg0);
+    if (arg0->ext.effect_26.timer % 5 != 0)
+        return;
+    g_FilterAmountR += 1;
+    g_FilterAmountG += 0x20;
+    g_FilterAmountB += 0x400;
+    if (g_FilterAmountR != 0x1F)
+        return;
+    arg0->state++;
+    arg0->ext.effect_26.timer = (arg0->active & 0x80) ? 0xC8 : 0x28;
+    arg0->unk7 = 1;
+    engine_obj.enable_boss = 0;
+    func_8001540C(0, 5, NULL);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", func_800BB750);
+#endif
 
 void boss_death_fx_wait(struct EffectObj* self)
 {
@@ -164,7 +241,20 @@ void boss_death_fx_wait(struct EffectObj* self)
 }
 
 // boss_death_fx_fade_in
+#ifdef MMX4_PC
+void func_800BB888(struct EffectObj* arg0)
+{
+    if (++arg0->ext.effect_26.timer % 5 != 0)
+        return;
+    g_FilterAmountR -= 1;
+    g_FilterAmountG -= 0x20;
+    g_FilterAmountB -= 0x400;
+    if (g_FilterAmountR == 0)
+        arg0->state++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", func_800BB888);
+#endif
 
 void boss_death_fx_finish(struct EffectObj* self)
 {

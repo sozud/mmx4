@@ -10,6 +10,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/visuals/visual_08_ice_shard.h"
+#endif
+
 extern struct Unk_unk68 wave_rider_body_hurt_box;
 extern struct Unk_unk68 wave_rider_rider_hurt_box[2];
 extern u8 wave_rider_debris[8];
@@ -33,7 +37,83 @@ void wave_rider_main(struct MainObj*);
 void wave_rider_despawn(struct MainObj* arg0);
 
 // wave_rider_init
+#ifdef MMX4_PC
+void func_8006AF70(struct MainObj* arg0);
+void func_8006B2A4(struct MainObj* arg0);
+void func_8006B398(struct MainObj* arg0);
+void func_8006B5F8(struct MainObj* arg0);
+void func_8006B6B0(struct MainObj* arg0);
+extern union AnimationStep* wave_rider_animations[27];
+extern struct Unk_unk68 wave_rider_terrain_box;
+extern struct Unk_unk68 wave_rider_attack_box;
+extern struct Unk_unk68 D_80107878[];
+void wave_rider_move(struct MainObj*);
+s32 wave_rider_check_camera(struct MainObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_8006AF70(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    struct VisualObj* visual;
+
+    arg0->ext.main_53.unk84 = 0;
+    switch (arg0->unk2) {
+    case 0:
+    case 1:
+    case 2:
+        arg0->x_speed = 0x80000;
+        arg0->unk5 = 1;
+        break;
+    case 3:
+        arg0->x_speed = 0x54000;
+        arg0->unk5 = 2;
+        arg0->state++;
+        break;
+    default:
+        arg0->x_speed = 0x54000;
+        arg0->unk5 = 5;
+        arg0->state++;
+        break;
+    }
+    arg0->unk15 = arg0->unk2 == 4 ? 0 : 0x40;
+    arg0->ext.main_53.unk80 = func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi,
+        (s16)(arg0->y_pos.i.hi + 0x20));
+    arg0->animation_table = (const u8* const*)wave_rider_animations;
+    arg0->terrain_box = &wave_rider_terrain_box;
+    arg0->attack_box = &wave_rider_attack_box;
+    arg0->unk7C = 0x3C;
+    arg0->collision_data = D_80107878;
+    arg0->unk16 = 5;
+    arg0->invincibility_timer = 0;
+    arg0->unk62 = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->hp = 6;
+    arg0->contact_damage = 5;
+    arg0->air_state = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    set_animation(arg0, 0);
+    if (arg0->unk2 == 0) {
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x1C;
+            shot->unk2 = 0;
+            shot->unk7C = WEAPON_OBJECT(arg0);
+        }
+    }
+    visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = 0x41;
+        visual->id = 0x15;
+        visual->unk50 = PLAYER_OBJECT(arg0);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006AF70);
+#endif
 
 void wave_rider_wait_offscreen(struct MainObj* self)
 {
@@ -83,10 +163,87 @@ scan:
 }
 
 // wave_rider_float
+#ifdef MMX4_PC
+void func_8006B2A4(struct MainObj* arg0)
+{
+    struct Main53Ext* ext = &arg0->ext.main_53;
+
+    ext->unk81 = func_8006B1C4(arg0, 0);
+    arg0->air_state = 0;
+    if (ext->unk81 == ext->unk80) {
+        animate_object(ANIMATED_OBJECT(arg0));
+        return;
+    }
+    switch (ext->unk81) {
+    case 0:
+        set_animation(arg0, 2);
+        arg0->y_speed = 0x68000;
+        arg0->gravity = 0x5000;
+        arg0->air_state = 1;
+        arg0->unk6++;
+        break;
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+        set_animation(arg0, 2);
+        break;
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+        set_animation(arg0, 1);
+        break;
+    case 0x38:
+        set_animation(arg0, 0);
+        break;
+    }
+    ext->unk80 = ext->unk81;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B2A4);
+#endif
 
 // wave_rider_bob
+#ifdef MMX4_PC
+void func_8006B398(struct MainObj* arg0)
+{
+    struct Main53Ext* ext = &arg0->ext.main_53;
+    u8 tile;
+    s16 x;
+    s16 y;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    tile = func_8006B1C4(arg0, 0);
+    ext->unk81 = tile;
+    if (arg0->unk7E != 0) {
+        arg0->unk7E--;
+        return;
+    }
+    if (tile == 0)
+        return;
+    if (ext->unk84 != 0)
+        arg0->x_speed = arg0->x_pos.val < background_objects[arg0->bg_offset].x_pos.val + 0x400000
+            ? 0x80000
+            : 0x50000;
+    else
+        arg0->x_speed = arg0->unk2 == 4 ? 0x10000 : 0x60000;
+    arg0->x_accel = 0;
+    arg0->air_state = 0;
+    arg0->unk6 = 0;
+    set_animation(arg0, 0);
+    if (ext->unk81 == 0x24)
+        return;
+    x = arg0->x_pos.i.hi;
+    y = arg0->y_pos.i.hi;
+    if (arg0->unk15 != 0)
+        func_800B10E4(2, (s16)(x - 0x18), (s16)(y + 9), (s16)(x + 0xA), (s16)(y + 0x19), 0x10);
+    else
+        func_800B10E4(2, (s16)(x + 0x18), (s16)(y + 9), (s16)(x - 0xA), (s16)(y + 0x19), 0x10);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B398);
+#endif
 
 void wave_rider_move(struct MainObj* self)
 {
@@ -119,10 +276,72 @@ s32 wave_rider_check_camera(struct MainObj* self)
 }
 
 // wave_rider_ride
+#ifdef MMX4_PC
+void func_8006B5F8(struct MainObj* arg0)
+{
+    if (wave_rider_check_camera(arg0) != 0) {
+        switch (arg0->unk2) {
+        case 0:
+            arg0->x_speed = 0x60000;
+            arg0->unk5 = 3;
+            arg0->unk7C = 0x28;
+            break;
+        case 1:
+            set_animation(arg0, 2);
+            arg0->x_speed = 0x90000;
+            arg0->y_speed = 0x80000;
+            arg0->gravity = 0x5000;
+            arg0->unk5 = 2;
+            arg0->air_state = 1;
+            arg0->unk6 = 1;
+            arg0->unk7E = 2;
+            break;
+        }
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x30, 0x20);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B5F8);
+#endif
 
 // wave_rider_ride_back
+#ifdef MMX4_PC
+void func_8006B6B0(struct MainObj* arg0)
+{
+    u8 tile;
+    s32 animation;
+
+    arg0->ext.main_53.unk84 = 0;
+    wave_rider_move(arg0);
+    if (arg0->unk7C != 0) {
+        arg0->unk7C--;
+        update_on_screen(BASE_OBJECT(arg0), 0x30, 0x20);
+        return;
+    }
+    if (arg0->air_state != 0) {
+        update_on_screen(BASE_OBJECT(arg0), 0x30, 0x20);
+        return;
+    }
+    tile = func_8006B1C4(arg0, 0);
+    arg0->ext.main_53.unk81 = tile;
+    if (tile == 0)
+        animation = 3;
+    else if (tile < 5)
+        animation = 5;
+    else if (tile < 9)
+        animation = 4;
+    else
+        animation = 3;
+    set_animation(arg0, animation);
+    arg0->unk5 = 4;
+    arg0->x_speed = 0x80000;
+    arg0->x_accel = 0;
+    arg0->air_state = 1;
+    update_on_screen(BASE_OBJECT(arg0), 0x30, 0x20);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B6B0);
+#endif
 
 void wave_rider_catch_up(struct MainObj* self)
 {

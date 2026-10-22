@@ -53,7 +53,38 @@ void bg_wind_main(struct EffectObj* self)
 }
 
 // bg_wind_calm
+#ifdef MMX4_PC
+void func_800B76A4(struct EffectObj* arg0);
+extern struct Effect09MovementStep bg_wind_steps_fast[3];
+#endif
+
+#ifdef MMX4_PC
+void func_800B76A4(struct EffectObj* arg0)
+{
+    struct Effect9Ext* ext = &arg0->ext.effect_9;
+
+    if (ext->direction != 0) {
+        background_objects[2].y_pos.val = 0;
+        ext->transition_timer = 1;
+        background_objects[2].unk4C = 1;
+        arg0->unk5 = 0;
+        arg0->state--;
+        return;
+    }
+    background_objects[2].y_pos.val = 0x1800000;
+    background_objects[2].unk4C = 1;
+    ext->movement_timer = 0x168;
+    ext->movement_table = (u8*)bg_wind_steps_fast;
+    ext->timer = ext->movement_table[0];
+    ext->frame = ext->movement_table[1];
+    ext->target_x = ext->movement_table[2];
+    background_objects[2].x_pos.i.hi = (ext->target_x << 9) + (u8)background_objects[2].x_pos.i.hi;
+    ext->velocity = 0x10000;
+    arg0->unk5++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B76A4);
+#endif
 
 extern struct Effect09MovementStep bg_wind_steps_fast[3];
 extern struct Effect09MovementStep bg_wind_steps_slow[3];

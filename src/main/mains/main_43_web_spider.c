@@ -164,7 +164,82 @@ void web_spider_intro_setup(struct MainObj* self)
 }
 
 // web_spider_intro_enter
+#ifdef MMX4_PC
+static u8 main43_column(s16 index);
+void func_8006346C(struct MainObj* arg0);
+void func_8006398C(struct MainObj* arg0);
+void func_80063B20(struct MainObj* arg0);
+void func_80065168(struct MainObj* arg0, s16 x, s16 y);
+void func_80064154(struct MainObj* arg0);
+void func_800646EC(struct MainObj* arg0);
+void func_80065574(struct MainObj* arg0);
+extern u8 D_800FF724[16];
+extern void (*web_spider_step_funcs[7])();
+void web_spider_check_big_web(struct MainObj* arg0);
+extern RECT* web_spider_swing_paths[6];
+extern u16 web_spider_arena_y;
+u8 angle_from_delta(s32 arg0, s32 arg1);
+extern struct FixedPointPosition spiderling_velocities[8];
+extern struct Unk_unk68 D_800FF5B4;
+extern struct Unk_unk68 D_800FF5B8;
+extern struct Unk_unk68 D_800FF5BC;
+static u8 main43_column(s16 index)
+{
+    static const u8 following_pointer_low_byte = 0x6C;
+
+    return index < 16 ? D_800FF724[index] : following_pointer_low_byte;
+}
+#endif
+
+#ifdef MMX4_PC
+void func_8006346C(struct MainObj* arg0)
+{
+    u8 column;
+
+    switch (arg0->unk6) {
+    case 0:
+        column = main43_column(arg0->unk7C);
+        arg0->unk7C++;
+        arg0->unk7E = 0x10;
+        arg0->unk6 = 1;
+        arg0->x_pos.i.hi = web_spider_arena_x + 0x30 + (column << 5);
+        vent_spawn_puffs((struct MiscObj*)arg0, 2);
+        break;
+    case 1:
+        if (--arg0->unk7E == 0) {
+            if (arg0->unk7C >= 0x11) {
+                arg0->unk5 = 3;
+                arg0->unk6 = 0;
+                arg0->unk7C = 0;
+                arg0->x_pos.i.hi = web_spider_arena_x + 0xF0;
+            } else {
+                arg0->unk6 = 0;
+            }
+        }
+        break;
+    case 2:
+        arg0->unk7E = 0x14;
+        arg0->unk6 = 3;
+        arg0->x_pos.i.hi = web_spider_arena_x + 0x30 + (arg0->unk7C << 5);
+        arg0->unk7C++;
+        vent_spawn_puffs((struct MiscObj*)arg0, 2);
+        break;
+    case 3:
+        if (--arg0->unk7E == 0) {
+            if (arg0->unk7C >= 7) {
+                arg0->unk5 = 3;
+                arg0->unk6 = 0;
+                arg0->unk7C = 0;
+            } else {
+                arg0->unk6 = 2;
+            }
+        }
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006346C);
+#endif
 
 void web_spider_intro_spawn_thread(struct MainObj* self)
 {
@@ -281,7 +356,45 @@ void web_spider_intro_climb(struct MainObj* self)
 }
 
 // web_spider_main
+#ifdef MMX4_PC
+void func_8006398C(struct MainObj* arg0)
+{
+    s32 result;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    web_spider_check_big_web(arg0);
+    ((void (*)(struct MainObj*))web_spider_step_funcs[arg0->unk5])(arg0);
+    result = -1;
+    if (arg0->hp > 0)
+        result = func_8002DD04(arg0);
+    if (arg0->ext.main_43.flash_timer != 0) {
+        if ((arg0->ext.main_43.flash_timer & 1) == 0)
+            arg0->unk42 |= 0x8000;
+        else
+            arg0->unk42 &= 0x7FFF;
+        if (--arg0->ext.main_43.flash_timer == 0) {
+            arg0->collision_data = D_801075F4;
+            arg0->ext.main_43.hurt_collision = 0;
+        }
+    } else if (result < 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        arg0->unk42 &= 0x7FFF;
+        g_Player.spike_immune = 1;
+    } else if (result != 0 && result != 0x7F) {
+        arg0->collision_data = D_801060F0;
+        arg0->ext.main_43.flash_timer = 0x40;
+        web_spider_spawn_web_piece((struct VisualObj*)arg0, 0);
+        arg0->ext.main_43.hurt_collision = 1;
+    }
+    func_8002D9BC(arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006398C);
+#endif
 
 void web_spider_drop(struct MainObj* self)
 {
@@ -289,7 +402,71 @@ void web_spider_drop(struct MainObj* self)
 }
 
 // web_spider_drop_start
+#ifdef MMX4_PC
+void func_80063B20(struct MainObj* arg0)
+{
+    s32 threshold;
+
+    switch (arg0->unk7) {
+    case 0:
+        arg0->unk7 = 1;
+        arg0->unk7C = g_Player.stun_timer != 0 ? 0x10 : 0x40;
+        if (g_Player.stun_timer == 0) {
+            if ((get_random() & 7) < 5)
+                arg0->ext.main_43.unk94 = ((g_Player.x_pos.i.hi - (s16)web_spider_arena_x) / 40 + 4) & 7;
+            else
+                arg0->ext.main_43.unk94 = get_random() & 7;
+        } else {
+            arg0->ext.main_43.unk94 = (g_Player.x_pos.i.hi - (s16)web_spider_arena_x) / 40;
+        }
+        arg0->gravity = 0x8000;
+        arg0->y_speed = 0;
+        arg0->x_pos.i.hi = web_spider_arena_x + 0x30 + (arg0->ext.main_43.unk94 << 5);
+        vent_spawn_mixed_puffs((struct MiscObj*)arg0, 8);
+        set_animation(arg0, 0);
+        break;
+    case 1:
+        if (arg0->unk7C != 0) {
+            arg0->unk7C--;
+            break;
+        }
+        if (arg0->y_speed <= -0x80000) {
+            arg0->y_speed = -0x80000;
+            arg0->gravity = 0;
+        }
+        threshold = 0x80;
+        if (g_Player.stun_timer == 0 && (get_random() & 3) == 0)
+            threshold = 0x50;
+        if (arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi >= threshold) {
+            arg0->unk7 = 2;
+            arg0->unk7C = 0xA;
+            arg0->y_speed = 0x10000;
+            arg0->gravity = 0;
+            set_animation(arg0, 0x20);
+        }
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        break;
+    case 2:
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        if (--arg0->unk7C == 0) {
+            arg0->y_speed = 0;
+            arg0->gravity = 0;
+        }
+        if (arg0->unk7C == 0xF)
+            arg0->y_speed = -0x10000;
+        if (arg0->animation_step.fields.relative_step == 0) {
+            arg0->unk6 = 1;
+            arg0->unk7 = 0;
+            arg0->unk7C = 0xA;
+            set_animation(arg0, 0x21);
+        }
+        animate_object(ANIMATED_OBJECT(arg0));
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80063B20);
+#endif
 
 void web_spider_drop_climb(struct MainObj* self)
 {
@@ -393,7 +570,56 @@ void web_spider_swing_start(struct MainObj* self)
 }
 
 // web_spider_swing_move
+#ifdef MMX4_PC
+void func_80064154(struct MainObj* arg0)
+{
+    const u16* point;
+    s16 dx;
+    s16 dy;
+
+    if (arg0->ext.main_43.attack_cooldown == 0) {
+        arg0->ext.main_43.unk94 = 0;
+        if (g_Player.stun_timer != 0) {
+            arg0->ext.main_43.unk94 = 1;
+            arg0->unk5 = 5;
+            arg0->unk6 = 0;
+            arg0->unk7 = 0;
+            return;
+        }
+        dx = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
+        dy = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
+        if ((dx < 0 ? -dx : dx) >= 0x40 && (dy < 0 ? -dy : dy) >= 0x50) {
+            arg0->unk5 = 5;
+            arg0->unk6 = 0;
+            arg0->unk7 = 0;
+            return;
+        }
+    } else {
+        arg0->ext.main_43.attack_cooldown--;
+    }
+    point = (const u16*)web_spider_swing_paths[arg0->ext.main_43.animation_set] + arg0->ext.main_43.animation_index * 2;
+    func_80065168(arg0, (s16)(point[0] + web_spider_arena_x + 0x10), (s16)(point[1] + web_spider_arena_y));
+    if (--arg0->unk7C == 0) {
+        arg0->ext.main_43.animation_index++;
+        if (arg0->ext.main_43.animation_length < arg0->ext.main_43.animation_index) {
+            arg0->unk6 = 2;
+            arg0->ext.main_43.animation_index = 0;
+            arg0->unk7C = 0x20;
+            web_spider_set_move_timer(arg0);
+        } else {
+            web_spider_set_move_timer(arg0);
+            web_spider_set_swing_animation(arg0);
+        }
+    }
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->animation_step.fields.event = 0;
+        func_8001540C(2, 0x70, arg0);
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80064154);
+#endif
 
 void web_spider_swing_wait(struct MainObj* self)
 {
@@ -412,7 +638,63 @@ void web_spider_attack(struct MainObj* self)
 }
 
 // web_spider_attack_spiderlings
+#ifdef MMX4_PC
+void func_800643B0(struct MainObj* arg0)
+{
+    struct MainObj* child;
+    u32 i;
+
+    switch (arg0->unk6) {
+    case 0:
+        arg0->unk6 = 1;
+        set_animation(arg0, 0xB);
+        break;
+    case 1:
+        if (arg0->animation_step.fields.relative_step == 0) {
+            arg0->unk6 = 2;
+            set_animation(arg0, 0xC);
+            break;
+        }
+        if (arg0->animation_step.fields.event == 0)
+            break;
+        for (i = 0; i < 4; i++) {
+            child = find_free_main_obj();
+            if (child == NULL)
+                continue;
+            child->active = 0x41;
+            child->id = 0x2B;
+            child->unk2 = i + 1;
+            child->x_pos.val = arg0->x_pos.val;
+            child->y_pos.val = arg0->y_pos.val;
+            child->y_pos.i.hi -= 0x18;
+            child->animation_table = arg0->animation_table;
+            child->unk40 = arg0->unk40;
+            child->sprite_frames = arg0->sprite_frames;
+            child->unk42 = arg0->unk42 & 0x7FFF;
+            child->unk16 = arg0->unk16;
+            child->ext.main_43.effect = (struct EffectObj*)arg0;
+            child->unk15 = arg0->unk15;
+        }
+        arg0->animation_step.fields.event = 0;
+        func_8001540C(2, 0x71, arg0);
+        break;
+    case 2:
+        if (arg0->animation_step.fields.relative_step != 0)
+            break;
+        arg0->unk5 = 4;
+        arg0->unk6 = 1;
+        arg0->unk7 = 0;
+        set_animation(arg0, arg0->ext.main_43.animation_id);
+        web_spider_set_attack_cooldown(arg0);
+        if (++arg0->ext.main_43.attack_count >= 3)
+            arg0->ext.main_43.attack_count = 0;
+        break;
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_800643B0);
+#endif
 
 void web_spider_attack_web(struct MainObj* self)
 {
@@ -456,7 +738,63 @@ void web_spider_big_web(struct MainObj* self)
 }
 
 // web_spider_big_web_start
+#ifdef MMX4_PC
+void func_800646EC(struct MainObj* arg0)
+{
+    switch (arg0->unk7) {
+    case 0:
+        arg0->unk7 = 1;
+        arg0->unk7C = 0xC0;
+        arg0->ext.main_43.attack_count = 0;
+        arg0->gravity = 0x8000;
+        arg0->ext.main_43.attack_cooldown = 0;
+        arg0->x_pos.i.lo = 0;
+        arg0->y_speed = 0;
+        arg0->ext.main_43.flash_timer = 0;
+        arg0->collision_data = D_801060F0;
+        arg0->x_pos.i.hi = web_spider_arena_x + 0xB0;
+        vent_spawn_mixed_puffs((struct MiscObj*)arg0, 8);
+        set_animation(arg0, 0);
+        break;
+    case 1:
+        if (arg0->unk7C != 0) {
+            arg0->unk7C--;
+            break;
+        }
+        if (arg0->y_speed <= -0x80000) {
+            arg0->y_speed = -0x80000;
+            arg0->gravity = 0;
+        }
+        if (arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi >= 0x58) {
+            arg0->unk7 = 2;
+            arg0->unk7C = 0x1E;
+            set_animation(arg0, 0x20);
+            arg0->y_speed = 0x10000;
+            arg0->gravity = 0;
+        }
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        break;
+    case 2:
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        if (--arg0->unk7C == 0) {
+            arg0->y_speed = 0;
+            arg0->gravity = 0;
+        }
+        if (arg0->unk7C == 0xF)
+            arg0->y_speed = -0x10000;
+        if (arg0->animation_step.fields.relative_step == 0) {
+            arg0->unk6 = 1;
+            arg0->unk7 = 0;
+            arg0->unk7C = 0x14;
+            set_animation(arg0, 0x21);
+        }
+        animate_object(ANIMATED_OBJECT(arg0));
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_800646EC);
+#endif
 
 void web_spider_big_web_spin(struct MainObj* arg0)
 {
@@ -726,7 +1064,25 @@ void web_spider_spawn_web_shot(struct AnimatedObj* self, u8 arg1)
 }
 
 // web_spider_aim_swing
+#ifdef MMX4_PC
+void func_80065168(struct MainObj* arg0, s16 x, s16 y)
+{
+    s32 dx = arg0->x_pos.val - (x << 16);
+    s32 dy = arg0->y_pos.val - (y << 16);
+    u8 direction = angle_from_delta(dx, dy);
+
+    if ((arg0->ext.main_43.move_direction ^ direction) & 0x10) {
+        arg0->x_pos.i.lo = 0;
+        arg0->y_pos.i.lo = 0;
+    } else {
+        arg0->x_pos.val -= dx / arg0->unk7C;
+        arg0->y_pos.val -= dy / arg0->unk7C;
+    }
+    arg0->ext.main_43.move_direction = direction;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80065168);
+#endif
 
 #ifdef MMX4_PC
 
@@ -841,7 +1197,39 @@ void web_spider_death(struct MainObj* self)
 }
 
 // spiderling_init
+#ifdef MMX4_PC
+void func_80065574(struct MainObj* arg0)
+{
+    const s32* velocity = (const s32*)&spiderling_velocities[((arg0->unk2 - 1) & 3) * 2];
+
+    arg0->unk5 = 2;
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk63 = 1;
+    arg0->contact_damage = 4;
+    arg0->unk6 = 0;
+    arg0->unk7C = 0;
+    arg0->hp = 3;
+    arg0->invincibility_timer = 0;
+    arg0->unk62 = 0;
+    arg0->air_state = 0;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->x_speed = velocity[0];
+    arg0->x_accel = velocity[1];
+    arg0->y_speed = velocity[2];
+    arg0->gravity = velocity[3];
+    arg0->hurt_box = &D_800FF5B8;
+    arg0->attack_box = &D_800FF5B4;
+    arg0->terrain_box = &D_800FF5BC;
+    arg0->unk16 = 3;
+    arg0->collision_flags = 0;
+    arg0->collision_data = D_801075F4;
+    set_animation(arg0, 0x1B);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80065574);
+#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", spiderling_run);

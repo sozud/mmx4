@@ -173,7 +173,37 @@ void boss_door_open(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerO
 }
 
 // boss_door_opening
+#ifdef MMX4_PC
+s8 func_800C1E7C(struct ItemObj* arg0);
+void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2);
+#endif
+
+#ifdef MMX4_PC
+void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
+    struct PlayerObj* arg2)
+{
+    static const s16 offsets[7] = { 0, 0x30, 0xA0, 0, 0x50, 0xB0, 0x5A0 };
+    (void)arg2;
+
+    if (arg0->animation_step.fields.event < 2) {
+        animate_object(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.event == 1) {
+            func_8001540C(0, 0x11, arg0);
+            arg0->animation_step.fields.event = 0;
+        }
+        return;
+    }
+
+    arg1->unk10 = 0;
+    arg1->unk12 = 0;
+    if ((u8)arg0->unk2 < COUNT(offsets))
+        background_objects[0].unk24 = arg0->x_pos.i.hi + offsets[(u8)arg0->unk2];
+    background_objects[0].unk26 = arg0->x_pos.i.hi;
+    arg0->unk5 = 3;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", func_800C1C88);
+#endif
 
 void boss_door_walk_through(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
@@ -204,7 +234,38 @@ void boss_door_close(struct ItemObj* arg0, struct EngineObj* arg1,
 }
 
 // boss_door_player_touching
+#ifdef MMX4_PC
+s8 func_800C1E7C(struct ItemObj* arg0)
+{
+    struct Unk_unk68* item_bounds;
+    struct Unk_unk68* player_bounds;
+    s16 item_x;
+    s16 player_x;
+    s16 dx;
+
+    if (g_Player.hurt_phase != 0 || g_Player.unk5 == 3 || g_Player.unk5 == 0xB)
+        return 0;
+    if (g_Player.unk2 != 0 && g_Player.attacking != 0)
+        return 0;
+    if (g_Player.spike_immune != 0 || arg0->x_pos.i.hi < g_Player.x_pos.i.hi)
+        return 0;
+
+    item_bounds = arg0->unk68;
+    player_bounds = g_Player.unk68;
+    if (item_bounds == NULL || player_bounds == NULL)
+        return 0;
+    item_x = arg0->x_pos.i.hi + item_bounds->unk0;
+    player_x = g_Player.x_pos.i.hi + player_bounds->unk0;
+    dx = item_x >= player_x ? item_x - player_x : player_x - item_x;
+    if (dx > item_bounds->unk2 + player_bounds->unk2)
+        return 0;
+    if (g_Player.y_pos.i.hi - player_bounds->unk3 < arg0->y_pos.i.hi - item_bounds->unk3)
+        return 0;
+    return arg0->y_pos.i.hi + item_bounds->unk3 >= g_Player.y_pos.i.hi + player_bounds->unk3;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", func_800C1E7C);
+#endif
 
 void boss_door_locked(struct ItemObj* arg0)
 {

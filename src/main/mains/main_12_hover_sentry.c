@@ -8,6 +8,11 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/1CF60.h"
+#include "main/misc/misc_00_static_sprite.h"
+#endif
+
 extern u8 hover_sentry_debris[];
 
 void hover_sentry_check_player_near(struct MainObj*);
@@ -35,7 +40,88 @@ void hover_sentry_update(struct MainObj* self)
 }
 
 // hover_sentry_init
+#ifdef MMX4_PC
+void func_8004B8FC(struct MainObj* arg0);
+void func_8004BCFC(struct MainObj* arg0);
+void func_8004BF5C(struct MainObj* arg0);
+void func_8004C210(struct MainObj* self);
+void func_8004C394(struct MainObj* self);
+void func_8004C56C(struct MainObj* self);
+extern union AnimationStep* hover_sentry_animations[];
+extern struct Unk_unk68 D_800FB690;
+extern struct Unk_unk68 D_800FB69C;
+extern struct Unk_unk68 D_800FB6A0;
+extern struct Unk_unk68 D_800FB6A4;
+extern struct Unk_unk68 D_80106870[];
+#endif
+
+#ifdef MMX4_PC
+void func_8004B8FC(struct MainObj* arg0)
+{
+    arg0->state = 1;
+    arg0->unk6 = 0;
+    arg0->unk7C = 0x90;
+    arg0->invincibility_timer = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->animation_table = (const u8* const*)hover_sentry_animations;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    arg0->ext.main_12.unk88 = 0;
+    arg0->air_state = 0;
+    arg0->ext.main_12.unk81 = 0;
+    arg0->collision_data = D_80106870;
+
+    switch (arg0->unk2) {
+    case 0:
+        arg0->hp = 3;
+        arg0->contact_damage = 3;
+        arg0->unk5 = 2;
+        arg0->y_speed = -0x8000;
+        arg0->gravity = -0x800;
+        arg0->unk16 = 6;
+        arg0->terrain_box = &D_800FB684;
+        arg0->hurt_box = &D_800FB68C;
+        arg0->attack_box = &D_800FB688;
+        arg0->x_speed = 0;
+        arg0->x_accel = 0;
+        set_animation(ANIMATED_OBJECT(arg0), 0);
+        break;
+    case 1:
+        arg0->hp = 3;
+        arg0->contact_damage = 3;
+        arg0->unk5 = 6;
+        arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        arg0->y_speed = 0x4000;
+        arg0->x_speed = 0;
+        arg0->x_accel = 0;
+        arg0->gravity = 0;
+        arg0->unk16 = 6;
+        arg0->terrain_box = &D_800FB690;
+        arg0->hurt_box = NULL;
+        arg0->attack_box = NULL;
+        arg0->ext.main_12.unk8A = 0;
+        set_animation(ANIMATED_OBJECT(arg0), 3);
+        break;
+    case 2:
+        arg0->hp = 3;
+        arg0->contact_damage = 3;
+        arg0->unk7E = 0;
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        arg0->unk16 = 6;
+        arg0->terrain_box = NULL;
+        arg0->hurt_box = NULL;
+        arg0->attack_box = NULL;
+        arg0->ext.main_12.unk8A = 0;
+        set_animation(ANIMATED_OBJECT(arg0), 2);
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004B8FC);
+#endif
 
 void hover_sentry_main(struct MainObj* self)
 {
@@ -99,19 +185,283 @@ void hover_sentry_alert(struct MainObj* self)
 }
 
 // hover_sentry_attack_0
+#ifdef MMX4_PC
+void func_8004BCFC(struct MainObj* arg0)
+{
+    s32 transition = 0;
+
+    switch (arg0->unk6) {
+    case 0:
+        if (arg0->unk7E-- != 0)
+            return;
+        arg0->unk6 = 1;
+        arg0->unk7 = 0;
+        arg0->air_state = 1;
+        arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        arg0->y_speed = 0x80000;
+        arg0->x_speed = 0;
+        arg0->x_accel = 0;
+        if (arg0->unk2 == 2) {
+            if ((get_random() & 3) == 0) {
+                arg0->ext.main_12.unk80 = 0x10;
+                arg0->ext.main_12.unk81 = 1;
+            } else {
+                arg0->ext.main_12.unk80 = 0xF;
+                arg0->ext.main_12.unk81 = 0;
+            }
+        } else {
+            arg0->ext.main_12.unk80 = get_random() & 0xF;
+        }
+        arg0->gravity = 0;
+        arg0->terrain_box = &D_800FB690;
+        arg0->hurt_box = &D_800FB698;
+        arg0->attack_box = &D_800FB694;
+        set_animation(ANIMATED_OBJECT(arg0), 2);
+        break;
+
+    case 1: {
+        struct Unk_unk68* bounds;
+        s16 x;
+        s16 y;
+
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        bounds = arg0->terrain_box;
+        x = arg0->x_pos.i.hi + bounds->unk0;
+        y = arg0->y_pos.i.hi + bounds->unk1 + bounds->unk3 + 4;
+        if (func_8002D724(PLAYER_OBJECT(arg0), x, y) != 0x24) {
+            arg0->unk6 = 2;
+            set_animation(ANIMATED_OBJECT(arg0), 9);
+        } else if (arg0->unk7 == 0) {
+            spawn_common_effect(arg0, 1);
+            arg0->unk7 = 1;
+            func_8001540C(2, 0x25, arg0);
+        }
+        transition = (u8)arg0->collision_flags & 4;
+        break;
+    }
+
+    case 2:
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        transition = arg0->y_pos.i.hi < g_Player.y_pos.i.hi;
+        break;
+    }
+
+    if (transition) {
+        hover_sentry_face_player(arg0);
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+        set_animation(ANIMATED_OBJECT(arg0), 0xA);
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BCFC);
+#endif
 
 // hover_sentry_attack_1
+#ifdef MMX4_PC
+void func_8004BF5C(struct MainObj* arg0)
+{
+    switch (arg0->unk6) {
+    case 0:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->unk6 = 1;
+            set_animation(ANIMATED_OBJECT(arg0), 6);
+        }
+        break;
+    case 1:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->unk6 = 2;
+            set_animation(ANIMATED_OBJECT(arg0), 7);
+            arg0->terrain_box = &D_800FB69C;
+            arg0->hurt_box = &D_800FB6A4;
+            arg0->attack_box = &D_800FB6A0;
+        }
+        break;
+    case 2:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->unk6 = 3;
+            arg0->unk7E = 10;
+        }
+        break;
+    case 3:
+        if (--arg0->unk7E == 0) {
+            u8 direction;
+
+            arg0->unk6 = 4;
+            arg0->ext.main_12.unk8C = 0;
+            direction = (u8)angle_to_object(
+                OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+            if ((u8)(direction - 8) < 0x10) {
+                arg0->unk15 = 0;
+                if (direction < 0xC)
+                    direction = 0xC;
+                if (direction >= 0x15)
+                    direction = 0x14;
+            } else {
+                arg0->unk15 = 0x40;
+                if ((u8)(direction - 0x18) < 4)
+                    direction = 0x1C;
+                else if ((u8)(direction - 5) < 3)
+                    direction = 4;
+            }
+            set_velocity_from_angle(MOVING_OBJECT(arg0), direction);
+            arg0->x_accel = 0;
+            arg0->gravity = 0;
+            arg0->x_speed *= 6;
+            arg0->y_speed *= 6;
+            set_animation(ANIMATED_OBJECT(arg0), 8);
+        }
+        break;
+    case 4: {
+        struct Unk_unk68* bounds;
+        s16 x;
+        s16 y;
+
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        bounds = arg0->terrain_box;
+        x = arg0->x_pos.i.hi + bounds->unk0 + bounds->unk2;
+        y = arg0->y_pos.i.hi + bounds->unk1 + bounds->unk3;
+        if (func_8002D724(PLAYER_OBJECT(arg0), x, y) == 0x24) {
+            s16 tile = x / 16;
+            if ((u16)tile != arg0->ext.main_12.unk8C) {
+                spawn_common_effect(arg0, 1);
+                func_8001540C(2, 0x25, arg0);
+                arg0->ext.main_12.unk8C = tile;
+            }
+        }
+        break;
+    }
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BF5C);
+#endif
 
 // hover_sentry_attack_2
+#ifdef MMX4_PC
+// src/main/mains/main_12_hover_sentry.c
+
+void func_8004C210(struct MainObj* self)
+{
+    switch (self->unk6) {
+    case 0:
+        move_with_gravity(ANIMATED_OBJECT(self));
+        if ((s16)SP_CUR_MAIN_OBJ->ext.main_12.unk86 - self->y_pos.i.hi >= 16) {
+            self->unk6 = 1;
+            self->y_speed = FIXED(4);
+
+            get_random();
+            SP_CUR_MAIN_OBJ->ext.main_12.unk8A = 1;
+            self->unk7C = 5;
+            self->hurt_box = &D_800FB698;
+            self->attack_box = &D_800FB694;
+            set_animation(self, 5);
+        }
+        animate_object(ANIMATED_OBJECT(self));
+        break;
+    case 1:
+        move_with_gravity(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.event < 0) {
+            hover_sentry_face_player(self);
+            self->unk6 = 2;
+            set_animation(self, 2);
+        }
+        break;
+    case 2:
+        move_with_gravity(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
+        self->unk7C = (u16)self->unk7C - 1;
+        if (self->unk7C == 0) {
+            hover_sentry_face_player(self);
+            self->unk5 = 5;
+            self->unk6 = 0;
+            self->unk7 = 0;
+            set_animation(self, 10);
+        }
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C210);
+#endif
 
 // hover_sentry_attack_3
+#ifdef MMX4_PC
+void func_8004C394(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->x_speed = (self->unk15 & 0x40) ? FIXED(4) : FIXED(-4);
+        self->x_accel = -0x2000;
+        self->unk7C = 0x90;
+        self->terrain_box = &D_800FB684;
+        self->hurt_box = &D_800FB68C;
+        self->attack_box = &D_800FB688;
+        self->y_speed = 0;
+        self->gravity = 0;
+        set_animation(self, 1);
+    } else {
+        if ((self->unk15 & 0x40) ? self->x_speed < 0 : self->x_speed >= 0) {
+            s32 distance = self->y_pos.i.hi - g_Player.y_pos.i.hi;
+            if (distance < 0) {
+                distance = -distance;
+            }
+            self->unk15 = (self->x_pos.val < g_Player.x_pos.val && (s16)distance < 32) ? 0x40 : 0;
+            self->unk6 = 0;
+            if ((get_random() & 3) == 0) {
+                self->unk5 = 4;
+                self->unk6 = 0;
+                self->unk7 = 0;
+                self->unk7E = 1;
+                if ((get_random() & 0x1F) == 0) {
+                    SP_CUR_MAIN_OBJ->ext.main_12.unk81 = 1;
+                }
+            }
+        }
+        if (self->collision_flags & ((self->unk15 & 0x40) ? 1 : 2)) {
+            self->unk15 ^= 0x40;
+        }
+    }
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C394);
+#endif
 
 // hover_sentry_attack_4
+#ifdef MMX4_PC
+void func_8004C56C(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        struct Unk_unk68* bounds;
+        s16 x, y;
+
+        move_with_gravity(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
+        bounds = self->terrain_box;
+        x = (u16)self->x_pos.u.hi + bounds->unk0;
+        y = (u16)self->y_pos.u.hi + bounds->unk1 + bounds->unk3;
+        if (self->unk7 == 0 && func_8002D724(PLAYER_OBJECT(self), x, y) == 0x24) {
+            spawn_common_effect(self, 1);
+            self->unk7 = 1;
+            func_8001540C(2, 0x25, self);
+        }
+        if (self->collision_flags != 0) {
+            self->unk5 = 7;
+            self->unk6 = 0;
+            self->unk7 = 0;
+            self->air_state = 0;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C56C);
+#endif
 
 void hover_sentry_despawn(struct MainObj* self)
 {

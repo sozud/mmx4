@@ -196,7 +196,26 @@ void frost_walrus_fx_sparkle_start(struct VisualObj* arg0)
 }
 
 // frost_walrus_fx_sparkle_move
+#ifdef MMX4_PC
+void func_800B3B94(struct VisualObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800B3B94(struct VisualObj* arg0)
+{
+    struct PlayerObj* source = arg0->unk50;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    arg0->x_pos.val = source->x_pos.val + (frost_walrus_fx_sparkle_offsets[(s8)arg0->unk2 * 2] << 16);
+    arg0->y_pos.val = source->y_pos.val + (frost_walrus_fx_sparkle_offsets[(s8)arg0->unk2 * 2 + 1] << 16);
+    is_on_screen(BASE_OBJECT(arg0));
+    if ((s8)source->unk6 == 2) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24_frost_walrus_fx", func_800B3B94);
+#endif
 
 void frost_walrus_fx_stagger(struct VisualObj* arg0)
 {

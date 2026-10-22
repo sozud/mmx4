@@ -38,7 +38,36 @@ void enemy_charge_glow_init(struct VisualObj* arg0)
 }
 
 // enemy_charge_glow_main
+#ifdef MMX4_PC
+void func_800B1F78(struct VisualObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800B1F78(struct VisualObj* arg0)
+{
+    struct MainObj* owner;
+    struct ShotObj* shot;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->unk2 == 0) {
+        owner = (struct MainObj*)arg0->unk50;
+        if (owner->ext.main_38.unk88 == 1 && owner->id == 0x26)
+            set_animation(arg0, 0x13);
+        if (owner->ext.main_38.unk88 == 2 || owner->unk5 != 3)
+            arg0->state = 2;
+        update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
+        return;
+    }
+    shot = (struct ShotObj*)arg0->unk50;
+    if (shot->active == 0 || shot->unk8C.word != 0)
+        arg0->state = 2;
+    arg0->x_pos.i.hi = shot->x_pos.i.hi;
+    arg0->y_pos.i.hi = shot->y_pos.i.hi;
+    update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/visuals/visual_16_enemy_charge_glow", func_800B1F78);
+#endif
 
 void enemy_charge_glow_despawn(struct VisualObj* arg0)
 {

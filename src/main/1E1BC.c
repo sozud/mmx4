@@ -5,6 +5,10 @@
 #include "main/collision.h"
 
 #ifdef MMX4_PC
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
 s32 func_8002DE30(struct MainObj*, struct WeaponObj*);
 void func_8002DF7C(struct WeaponObj*, s32);
 s32 func_8002BD58(struct MainObj*, struct MainObj*, s16*, s16*);
@@ -282,11 +286,155 @@ ret_u8 func_8002D9BC(void* object)
     return 1;
 }
 // check_weapon_hits
+#ifdef MMX4_PC
+void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1);
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#ifdef MMX4_PC
+// src/main/1E1BC.c
+
+ret_s8 func_8002DD04(struct MainObj* object)
+{
+    struct WeaponObj* weapon;
+
+    if (object->unk7A != 0) {
+        object->unk65 = 0;
+        return 0;
+    }
+    if (object->collision_data == D_80106070 && (g_Player.unk2 == 0 || !(g_Player.boss_flags & 0x40)))
+        return 0;
+    if (object->unk5 != 0)
+        object->unk42 &= 0x7FFF;
+    for (weapon = weapon_objects; weapon < weapon_objects + COUNT(weapon_objects); weapon++) {
+        s32 result;
+
+        if (!weapon->active)
+            continue;
+        if (!func_8002BD58((struct MainObj*)weapon, object,
+                &((s16*)&weapon->unk80)[0], &((s16*)&weapon->unk80)[1]))
+            continue;
+        result = (s8)func_8002DE30(object, weapon);
+        if (result == 0x7E)
+            return 0;
+        if (result != 0)
+            return result;
+    }
+    object->unk65 = 0;
+    return 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DD04);
+#endif
 
+#ifdef MMX4_PC
+s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
+{
+    const u8* table;
+    s8 hit;
+    u8 id;
+    u8 kind;
+
+    hit = arg1->unk64;
+    id = arg1->id;
+    if (hit != 0) {
+        if (hit == arg0->unk65) {
+            return 0x7E;
+        }
+        arg0->unk65 = hit;
+    } else {
+        arg0->unk65 = 0;
+    }
+
+    table = (const u8*)arg0->collision_data;
+    kind = table[(s8)id * 2];
+    arg0->unk63 = kind;
+    if ((s8)kind == 2) {
+        return 0;
+    }
+    if (((s8)id >= 0x1A && (s8)id < 0x24)
+        || ((s8)id >= 0x3D && (s8)id < 0x3F)) {
+        g_Player.update_delay_request = 1;
+    }
+    if (arg0->unk63 == -1) {
+        func_8002DF7C(arg1, -1);
+        return 0x7F;
+    }
+
+    arg0->hp = (u8)arg0->hp - table[((s8)id * 2) + 1];
+    arg0->unk42 |= 0x8000;
+    if (arg0->hp <= 0) {
+        arg0->hp = 0;
+        func_8002DF7C(arg1, 1);
+        return -1;
+    }
+    if (arg0->unk63 != 0) {
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+    func_8002DF7C(arg1, 0);
+    return (s8)(id + 1);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DE30);
+#endif
 
+#ifdef MMX4_PC
+void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
+{
+    const struct EffectSpawnData* entry = &D_800F460C[arg0->id];
+    struct VisualObj* visual;
+    s32 visual_id;
+
+    if (entry->effect_type == 4) {
+        return;
+    }
+
+    if (arg1 < 0) {
+        if (entry->set_facing != 0) {
+            arg0->unk98 = -1;
+        }
+        func_8001540C(0, 6, arg0);
+        visual_id = 0;
+    } else {
+        if (entry->set_facing != 0 && (arg1 == 0 || entry->keep_facing == 0)) {
+            arg0->unk98 = 1;
+        }
+        switch (entry->effect_type) {
+        case 0:
+            func_8001540C(1, entry->animation_id, arg0);
+            break;
+        case 1:
+            func_8001540C(1, arg1 != 0 ? 0xA : 9, arg0);
+            break;
+        case 2:
+        case 3:
+            func_8001540C(5, entry->animation_id, arg0);
+            break;
+        }
+        visual_id = entry->visual_id;
+    }
+
+    visual = find_free_visual_obj();
+    if (visual == NULL) {
+        return;
+    }
+    visual->active = 0x21;
+    visual->id = 3;
+    visual->unk2 = (s8)visual_id;
+    visual->bg_offset = arg0->bg_offset;
+    visual->animation_table = D_8011BF40;
+    visual->unk40 = 0;
+    visual->unk42 = 0x7802;
+    visual->unk16 = 0;
+    visual->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
+    visual->x_pos.i.hi = (s16)((u16*)&arg0->unk80)[0];
+    visual->y_pos.i.hi = (s16)((u16*)&arg0->unk80)[1];
+    visual->unk15 = arg0->unk15 ^ 0x40;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DF7C);
+#endif
 void collide_with_players(struct PlayerObj* arg0)
 {
     if (arg0->unk68 != NULL) {
@@ -312,7 +460,26 @@ void collide_with_players(struct PlayerObj* arg0)
     }
 }
 
+#ifdef MMX4_PC
+void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
+{
+    s16 x_overlap;
+    s16 y_overlap;
+
+    if (arg1->unk68 == NULL || !func_8002C160(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1)))
+        return;
+    func_8002C26C(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1));
+    func_8002C2EC(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1));
+    x_overlap = arg1->unk6C < 0 ? -arg1->unk6C : arg1->unk6C;
+    y_overlap = arg1->unk6E < 0 ? -arg1->unk6E : arg1->unk6E;
+    if ((arg0->unk66 == 0 && x_overlap < y_overlap) || arg0->unk66 > 0)
+        arg1->x_pos.i.hi += arg1->unk6C;
+    else
+        arg1->y_pos.i.hi += arg1->unk6E;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002E294);
+#endif
 void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
 {
     s32 delta;

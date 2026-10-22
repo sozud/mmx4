@@ -9,6 +9,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/visuals/visual_03_small_effect.h"
+#endif
+
 extern s8 train_boss_terrain_box[4];
 
 #ifdef MMX4_PC
@@ -137,16 +141,187 @@ void train_boss_defeated(struct MainObj* self)
 }
 
 // train_boss_leave
+#ifdef MMX4_PC
+static void train_boss_move_player_past_exit(struct MainObj* self);
+static void train_boss_exit_player_script(struct MainObj* self);
+void func_80065EA4(struct MainObj* self);
+void func_800661AC(struct MainObj* self);
+void func_8006630C(struct MainObj* self);
+void func_80066478(struct MainObj* self);
+void func_800665BC(struct MainObj* self);
+void func_80066970(struct MainObj* self);
+void collide_with_players(struct PlayerObj*);
+extern u8 D_800FF8B0[8];
+// src/main/mains/main_45_train_boss.c
+
+static void train_boss_move_player_past_exit(struct MainObj* self)
+{
+    if (self->x_pos.i.hi + 0x69 < g_Player.x_pos.i.hi && (u8)(get_layout_screen(1, 0xA0, 0x80) - 0x23) < 2) {
+        g_Player.x_pos.u.hi = background_objects[0].x_pos.u.hi + 0x12C;
+        g_Player.y_pos.u.hi = background_objects[0].y_pos.u.hi + 0x64;
+        g_Player.unk18 = g_Player.x_pos;
+        g_Player.unk1C = g_Player.y_pos;
+    }
+}
+static void train_boss_exit_player_script(struct MainObj* self)
+{
+    if (self->unk6 == 0 && (g_Player.x_pos.i.hi <= self->x_pos.i.hi + 0x69 || g_Player.x_pos.i.hi >= 0x1B36)) {
+        player_start_script_action(0x14, 0x40);
+        self->unk6 = 1;
+    }
+    collide_with_players(PLAYER_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
+}
+#endif
+
+#ifdef MMX4_PC
+void func_80065EA4(struct MainObj* self)
+{
+    train_boss_move_player_past_exit(self);
+    func_80066970(self);
+    switch ((s16)(get_layout_screen(1, -0x20, 0x80) - 0x20)) {
+    case 9:
+        if (self->unk5 == 0) {
+            SP_BG_TILEMAP[layout_size + 2] = 0x20;
+            self->unk5 = 1;
+        }
+        break;
+    case 10:
+        if (self->unk5 == 1) {
+            SP_BG_TILEMAP[layout_size + 3] = 0x21;
+            self->unk5 = 2;
+        }
+        break;
+    case 0:
+        if (self->unk5 == 2) {
+            SP_BG_TILEMAP[layout_size + 4] = 0x22;
+            self->unk5 = 3;
+        }
+        break;
+    case 1:
+        if (self->unk5 == 3) {
+            SP_BG_TILEMAP[layout_size + 5] = 0x23;
+            self->unk5 = 4;
+        }
+        break;
+    case 2:
+        if (self->unk5 == 4) {
+            SP_BG_TILEMAP[layout_size + 6] = 0x24;
+            self->unk5 = 5;
+        }
+        break;
+    case 3:
+        if (self->unk5 == 5) {
+            SP_BG_TILEMAP[layout_size + 2] = 0x1D;
+            SP_BG_TILEMAP[layout_size + 3] = 0x1D;
+            SP_BG_TILEMAP[layout_size + 4] = 0x1D;
+            SP_BG_TILEMAP[layout_size + 7] = 0x1D;
+            self->unk7C = 0xC;
+            self->state = 4;
+        }
+        break;
+    }
+    train_boss_exit_player_script(self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80065EA4);
+#endif
 
 // train_boss_despawn
+#ifdef MMX4_PC
+void func_800661AC(struct MainObj* self)
+{
+    if ((u8)g_Player.hp != 0x80)
+        train_boss_move_player_past_exit(self);
+    func_80066970(self);
+    self->unk7C = (u16)self->unk7C - 1;
+    if (self->unk7C == 0) {
+        if ((u8)g_Player.hp != 0x80)
+            engine_obj.unkF = 0x40;
+        ZeroObjectState(OBJECT_HEADER(self));
+    }
+
+    train_boss_exit_player_script(self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800661AC);
+#endif
 
 // train_boss_update_parts
+#ifdef MMX4_PC
+void func_8006630C(struct MainObj* self)
+{
+    struct Main45Ext* parts = &self->ext.main_45;
+    u8 flags = parts->attack_flags;
+    u8 command = parts->projectile_command;
+
+    if ((flags & 7) == 7 || command == 0x80)
+        return;
+    if (command == 0xFF) {
+        parts->projectile_command = parts->unk86;
+        do {
+            parts->unk89++;
+            if (train_boss_attack_timers[parts->unk89] == 0xFF)
+                parts->unk89 = 0;
+            parts->unk86 = train_boss_attack_timers[parts->unk89];
+        } while (D_800FF8B0[parts->unk86] & parts->attack_flags);
+        return;
+    }
+    if (command == 5) {
+        unsigned slot, finished = 0;
+        for (slot = 0; slot < 3; slot++) {
+            if ((s8)shot_objects[slot].state < 3 || shot_objects[slot].unk28 == 0)
+                finished++;
+        }
+        if (finished == 3)
+            parts->projectile_command = 0xFF;
+    } else if (command == 4) {
+        if ((flags & 0x70) == 0x70)
+            parts->projectile_command = 0xFF;
+    } else if (D_800FF8B0[command] & flags) {
+        parts->projectile_command = 0xFF;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_8006630C);
+#endif
 
 // train_boss_update_projectiles
+#ifdef MMX4_PC
+void func_80066478(struct MainObj* self)
+{
+    struct Main45Ext* parts = &self->ext.main_45;
+
+    parts->unk84 = (u16)parts->unk84 - 1;
+    if (parts->unk84 == 0) {
+        if (parts->unk82 == 0) {
+            parts->unk81 = 1;
+            parts->unk82 = 1;
+            parts->unk83 = 0x20;
+            parts->unk84 = 0xF0;
+        } else {
+            parts->unk81 = 0xFF;
+            parts->unk82 = 0;
+            parts->unk83 = 0x20;
+            parts->unk84 = 0x12C;
+        }
+    }
+    collide_with_players(PLAYER_OBJECT(self));
+    if (parts->unk83 != 0) {
+        parts->unk83--;
+        if (parts->unk83 == 0) {
+            parts->unk81 = 0;
+            *parts->layer_bg_offset = 0;
+        } else if ((parts->unk83 & 1) == 0) {
+            if (g_Player.wall_climbable != 0 || self->unk76 != 0)
+                *parts->layer_parameter = 1;
+            *parts->layer_bg_offset = parts->unk81;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80066478);
+#endif
 
 void train_boss_arrive(struct MainObj* self)
 {
@@ -154,7 +329,93 @@ void train_boss_arrive(struct MainObj* self)
 }
 
 // train_boss_arrive_start
+#ifdef MMX4_PC
+void func_800665BC(struct MainObj* self)
+{
+    struct LayerObj* layer = find_free_layer_obj();
+    struct ItemObj* floor;
+    struct MainObj* part;
+    unsigned index;
+
+    if (layer != NULL) {
+        struct Main45LayerSignals* signals = (struct Main45LayerSignals*)&layer->unk16;
+
+        layer->active = 1;
+        layer->id = 3;
+        layer->unk2 = 1;
+        layer->bg_offset = 0;
+        layer->unk16 = layer->unk17 = 0;
+        signals->projectile_state[0] = 0;
+        signals->projectile_state[1] = 0;
+        signals->projectile_state[2] = 0;
+        self->ext.main_45.layer_bg_offset = (u8*)&layer->bg_offset;
+        self->ext.main_45.layer_parameter = &layer->unk15;
+        self->ext.main_45.layer_signals = signals;
+        layer->state = 0;
+    }
+    floor = find_free_item_obj();
+    if (floor != NULL) {
+        floor->active = 0x41;
+        floor->id = 0x10;
+        floor->unk2 = 0;
+        floor->unk40 = self->unk40;
+        floor->unk42 = self->unk42;
+        floor->animation_table = self->animation_table;
+        floor->sprite_frames = self->sprite_frames;
+        floor->animation_step.fields.frame_index = 7;
+        floor->bg_offset = self->bg_offset;
+        floor->x_pos = self->x_pos;
+        floor->y_pos = self->y_pos;
+        floor->unk7C.train_boss = &self->ext.main_45;
+
+        assert(layer != NULL);
+        floor->ext.train_layer_parameter = &layer->unk15;
+        floor->unk15 = 0;
+        floor->state = 0;
+    }
+    part = find_free_main_obj();
+    if (part != NULL) {
+        part->active = 0x45;
+        part->id = 0x2E;
+        part->unk2 = 0;
+        part->unk40 = self->unk40;
+        part->unk42 = self->unk42;
+        part->animation_table = self->animation_table;
+        part->sprite_frames = self->sprite_frames;
+        part->animation_step.fields.frame_index = 0x11;
+        part->bg_offset = self->bg_offset;
+        part->x_pos = self->x_pos;
+        part->y_pos = self->y_pos;
+        part->ext.main_46.owner = &self->ext.main_45;
+        part->unk15 = 0;
+        part->state = 0;
+    }
+    for (index = 0; index < 3; index++) {
+        part = find_free_main_obj();
+        if (part == NULL)
+            continue;
+        part->active = 0x45;
+        part->id = 0x2F;
+        part->unk2 = index;
+        part->unk40 = self->unk40;
+        part->unk42 = self->unk42;
+        part->animation_table = self->animation_table;
+        part->sprite_frames = self->sprite_frames;
+        part->animation_step.fields.frame_index = index + 0x13;
+        part->bg_offset = self->bg_offset;
+        part->x_pos = self->x_pos;
+        part->y_pos = self->y_pos;
+        part->ext.main_47.train_boss = &self->ext.main_45;
+        part->ext.main_47.boss_hp = &self->hp;
+        part->unk15 = 0;
+        part->state = 0;
+    }
+    self->x_speed = 0x10000;
+    self->unk6 = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800665BC);
+#endif
 
 void train_boss_arrive_approach(struct MainObj* self)
 {
@@ -210,7 +471,32 @@ void train_boss_fight_idle(void)
 }
 
 // train_boss_spawn_smoke
+#ifdef MMX4_PC
+void func_80066970(struct MainObj* self)
+{
+    u16 x = self->x_pos.u.hi;
+    u16 y = self->y_pos.u.hi;
+
+    self->unk7E = (u16)self->unk7E - 1;
+    if (self->unk7E == 3) {
+        self->x_pos.u.hi = x - 0x37;
+        self->y_pos.u.hi = y + 0xB;
+        func_800AF95C(OBJECT_HEADER(self), 1, 0x29, 0x59, 4);
+        self->x_pos.u.hi = x;
+        self->y_pos.u.hi = y;
+    }
+    if (self->unk7E == 0) {
+        self->x_pos.u.hi = x + 0x27;
+        self->y_pos.u.hi = y + 0x34;
+        func_800AF95C(OBJECT_HEADER(self), 1, 0x37, 0x28, 2);
+        self->x_pos.u.hi = x;
+        self->y_pos.u.hi = y;
+        self->unk7E = 6;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80066970);
+#endif
 
 s8 train_boss_terrain_box[4] = { -56, 12, 39, 86 };
 

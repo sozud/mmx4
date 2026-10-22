@@ -74,7 +74,80 @@ void spike_marl_update(struct MainObj* self)
 }
 
 // spike_marl_init
+#ifdef MMX4_PC
+void func_80043390(struct MainObj* arg0);
+void func_80043C0C(struct MainObj* arg0);
+extern union AnimationStep* D_800F9E1C[];
+extern struct Unk_unk68 spike_marl_terrain_box;
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_80043390(struct MainObj* arg0)
+{
+    s32 index;
+    s32 column;
+    s32 row;
+
+    arg0->unk7C = 0;
+    arg0->hp = 6;
+    arg0->invincibility_timer = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    arg0->animation_table = (const u8* const*)D_800F9E1C;
+    arg0->terrain_box = &spike_marl_terrain_box;
+    arg0->hurt_box = (const u8*)&spike_marl_walk_hurt_box;
+    arg0->attack_box = (const u8*)&spike_marl_walk_attack_box;
+    arg0->unk16 = 4;
+    index = func_8002938C(3);
+    arg0->unk40 = (u16)((u32)D_801406A8[index] >> 7);
+    index = func_8002938C(3);
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
+    column = (func_8002938C(3) << 2) + 0x18;
+    row = func_8002938C(3);
+    arg0->unk42 = (u16)((column - ((column >> 4) << 4))
+        | ((((row + 6) >> 2) + 0x1E0) << 6));
+    arg0->air_state = 0;
+    switch (arg0->unk2) {
+    case 0:
+        arg0->collision_data = D_80106470;
+        set_animation(arg0, 1);
+        arg0->contact_damage = 3;
+        arg0->ext.main_3.turn_timer = 0x78;
+        arg0->ext.main_3.alerted = 0;
+        arg0->ext.main_3.player_ahead = 0;
+        arg0->unk5 = 2;
+        break;
+    case 1:
+        arg0->collision_data = (const u16*)D_801060F0;
+        arg0->ext.main_3.turn_timer = 0x78;
+        arg0->contact_damage = 4;
+        arg0->ext.main_3.alerted = 1;
+        arg0->ext.main_3.player_ahead = 0;
+        arg0->unk5 = 5;
+        break;
+    default:
+        arg0->collision_data = (const u16*)D_801060F0;
+        arg0->contact_damage = 4;
+        arg0->ext.main_3.alerted = 1;
+        arg0->ext.main_3.player_ahead = 0;
+        arg0->ext.main_3.turn_timer = 0x78;
+        set_animation(arg0, 5);
+        arg0->unk5 = 8;
+        break;
+    }
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->state = 1;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043390);
+#endif
 
 void spike_marl_run(struct MainObj* self)
 {
@@ -266,7 +339,29 @@ void spike_marl_roll_update(struct MainObj* self)
 }
 
 // spike_marl_roll_slow
+#ifdef MMX4_PC
+void func_80043C0C(struct MainObj* arg0)
+{
+    s32 magnitude = arg0->x_speed;
+
+    if (magnitude < 0) {
+        magnitude = -magnitude;
+    }
+    if (magnitude <= 0xFFFF
+        || ((arg0->collision_flags & 2) && arg0->unk15 == 0)
+        || ((arg0->collision_flags & 1) && arg0->unk15 != 0)) {
+        arg0->contact_damage = 3;
+        arg0->x_speed = 0;
+        arg0->x_accel = 0;
+        arg0->unk5 = 7;
+        arg0->unk6 = 0;
+    }
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043C0C);
+#endif
 
 void spike_marl_fall(struct MainObj* self)
 {

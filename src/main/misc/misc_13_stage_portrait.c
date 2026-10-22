@@ -12,7 +12,38 @@ void stage_portrait_select(struct MiscObj*);
 void stage_portrait_show(struct MiscObj*);
 
 // stage_portrait_init
+#ifdef MMX4_PC
+void func_800CA52C(struct MiscObj* self);
+extern union AnimationStep* stage_portrait_animations[1];
+#endif
+
+#ifdef MMX4_PC
+void func_800CA52C(struct MiscObj* self)
+{
+    self->unk42 = 0x780B;
+    self->unk40 = D_801406A8[1] >> 7;
+    self->animation_table = (u32**)stage_portrait_animations;
+    self->bg_offset = 0;
+    self->unk15 = 0;
+    self->unk16 = 1;
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[1];
+    if (self->unk2 == 0) {
+        self->x_pos.val = 0xE40000;
+        self->y_pos.val = 0x1880000;
+        set_animation_frame(ANIMATED_OBJECT(self), 0, 1);
+        self->unk7 = 1;
+        self->state++;
+    } else {
+        self->x_pos.i.hi = 0x60;
+        self->y_pos.i.hi = 0x180;
+        set_animation_frame(ANIMATED_OBJECT(self), 0, 10);
+        self->unk42 = 0x784F;
+        self->state = 2;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_13_stage_portrait", func_800CA52C);
+#endif
 
 void stage_portrait_select(struct MiscObj* self)
 {

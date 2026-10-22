@@ -13,6 +13,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // gunner_shot_state_funcs
 extern void (*gunner_shot_state_funcs[])(struct ShotObj*);
 
@@ -63,7 +67,39 @@ void gunner_shot_update(struct ShotObj* self)
 }
 
 // gunner_shot_init
+#ifdef MMX4_PC
+void func_8009A5F4(struct ShotObj* arg0);
+void func_80099F48(struct ShotObj* arg0);
+void func_8009A448(struct ShotObj* arg0);
+void func_80099D54(struct ShotObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_80099D54(struct ShotObj* arg0)
+{
+    u8 kind = (u8)arg0->unk2;
+
+    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk42 &= 0x7FFF;
+    arg0->x_pos.i.hi += gunner_shot_spawn_offsets[kind][0];
+    arg0->x_vel.val *= 3;
+    arg0->y_vel.val *= 3;
+    arg0->unk54 = gunner_shot_hit_box;
+    arg0->unk50.data = gunner_shot_hit_box;
+    arg0->unk60 = 2;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk5C = 1;
+    arg0->y_pos.i.hi += gunner_shot_spawn_offsets[kind][1];
+    set_animation(arg0, 8);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_80099D54);
+#endif
 
 void gunner_shot_fly(struct ShotObj* self)
 {
@@ -96,7 +132,53 @@ void gunner_shot_despawn(struct ShotObj* self)
 }
 
 // eregion_fireball_init
+#ifdef MMX4_PC
+void func_80099F48(struct ShotObj* arg0)
+{
+    struct WeaponObj* owner = arg0->unk7C;
+    s32 target;
+    s32 offset;
+    s32 subtype = arg0->unk2;
+    s32 angle;
+
+    arg0->unk40 = owner->unk40;
+    arg0->unk42 = owner->unk42 & 0x7FFF;
+    arg0->animation_table = owner->animation_table;
+    arg0->unk3C = owner->unk3C;
+    arg0->unk15 = owner->unk15;
+    arg0->bg_offset = owner->bg_offset;
+    arg0->x_pos.val = owner->x_pos.val
+        + (owner->unk15 != 0 ? 0x530000 : -0x530000);
+    arg0->y_pos.val = owner->y_pos.val;
+    arg0->state = 1;
+    arg0->on_screen = 1;
+
+    if (subtype == 0) {
+        angle = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+        set_velocity_from_angle(MOVING_OBJECT(arg0), angle & 0xFF);
+        arg0->x_vel.val *= 4;
+        arg0->y_vel.val *= 4;
+    } else {
+        offset = ((subtype - 1) * 11 << 17) - 0x200000;
+        target = arg0->x_pos.val
+            + (owner->unk15 != 0 ? offset : -offset);
+        angle = angle_to_point(OBJECT_HEADER(arg0), target, 0x1E00000);
+        set_velocity_from_angle(MOVING_OBJECT(arg0), angle & 0xFF);
+        arg0->x_vel.val *= 8;
+        arg0->y_vel.val *= 8;
+    }
+
+    arg0->unk68 = (struct Unk_unk68*)eregion_fireball_terrain_box;
+    arg0->unk50.data = eregion_fireball_hit_box;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
+    arg0->unk16 = 0;
+    arg0->unk54 = NULL;
+    set_animation(ANIMATED_OBJECT(arg0), 0x17);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_80099F48);
+#endif
 
 // eregion_fireball_fly
 void func_8009A10C(struct ShotObj* self)
@@ -186,7 +268,29 @@ void eregion_wing_slash_update(struct ShotObj* self)
 }
 
 // eregion_wing_slash_init
+#ifdef MMX4_PC
+void func_8009A448(struct ShotObj* arg0)
+{
+    struct WeaponObj* owner = arg0->unk7C;
+
+    arg0->unk40 = owner->unk40;
+    arg0->animation_table = owner->animation_table;
+    arg0->unk3C = owner->unk3C;
+    arg0->unk15 = owner->unk15;
+    arg0->unk16 = 5;
+    arg0->unk68 = NULL;
+    arg0->unk54 = NULL;
+    arg0->unk60 = 5;
+    arg0->state++;
+    arg0->unk50.data = eregion_wing_slash_hit_box;
+    arg0->unk5C = 0x7F;
+    arg0->bg_offset = owner->bg_offset;
+    set_animation(ANIMATED_OBJECT(arg0), 0x14);
+    update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_8009A448);
+#endif
 
 void eregion_wing_slash_active(struct ShotObj* self)
 {
@@ -219,7 +323,32 @@ void mech_boulder_update(struct ShotObj* self)
 }
 
 // mech_boulder_init
+#ifdef MMX4_PC
+void func_8009A5F4(struct ShotObj* arg0)
+{
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk58.data = (const u8*)D_80105FF0;
+    arg0->unk42 &= 0x7FFF;
+    if (arg0->unk15 != 0)
+        arg0->x_pos.i.hi += 0x20;
+    else
+        arg0->x_pos.i.hi -= 0x20;
+    arg0->y_vel.val = 0x70000;
+    arg0->unk2C = 0x4200;
+    arg0->unk16 = 0;
+    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x18;
+    arg0->x_vel.val = arg0->unk15 != 0 ? 0x2C000 : -0x2C000;
+    arg0->unk54 = mech_boulder_shockwave_boxes;
+    arg0->unk50.data = mech_boulder_shockwave_boxes;
+    arg0->unk5C = 6;
+    arg0->unk68 = NULL;
+    arg0->unk60 = 2;
+    set_animation(arg0, 5);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_8009A5F4);
+#endif
 
 void mech_boulder_fall(struct ShotObj* self)
 {

@@ -94,7 +94,50 @@ void destructible_core_update(struct ItemObj* arg0)
 }
 
 // destructible_core_init
+#ifdef MMX4_PC
+void func_800C0864(struct ItemObj* arg0);
+extern u32* dragon_rubble_animations[14];
+extern struct Unk_unk68 D_80108504[];
+#endif
+
+#ifdef MMX4_PC
+void func_800C0864(struct ItemObj* arg0)
+{
+    const u16* layout = (const u16*)&destructible_core_data;
+    s32 slot = arg0->unk2;
+
+    if (engine_obj.checkpoint >= 2 && slot == 0) {
+        apply_tile_effect(destructible_core_data.object_ids[slot * 0x10], 0, 0);
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+
+    arg0->state = 0;
+    arg0->unk5 = 1;
+    arg0->active = 1;
+    arg0->state = (u8)arg0->state + 1;
+    arg0->animation_table = (const u8* const*)dragon_rubble_animations;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk42 = 0x78C0;
+    arg0->unk40 = (u16)((u32)D_801406A8[6] >> 7);
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 6);
+    arg0->x_pos.i.hi = layout[slot * 8];
+    arg0->unk58 = (const u8*)D_80108504;
+    arg0->y_pos.i.hi = layout[slot * 8 + 1];
+    arg0->unk5C = slot != 0 ? 0x20 : 0x50;
+    arg0->unk75 = 1;
+    arg0->ext.packed = 5;
+    arg0->unk61 = 0;
+    arg0->unk68 = NULL;
+    arg0->on_screen = 0;
+    arg0->unk7C.timer = 0;
+    arg0->tail_ext.unk1.unk88 = 0;
+    arg0->unk54 = (const u8*)destructible_core_boxes[slot];
+    arg0->tail_ext.unk1.unk84.previous_value = arg0->unk5C;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_04_destructible_core", func_800C0864);
+#endif
 
 void destructible_core_main(struct ItemObj* arg0)
 {

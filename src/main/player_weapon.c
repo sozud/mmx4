@@ -449,7 +449,63 @@ void player_update_weapon(struct PlayerObj* self)
 }
 
 // player_select_weapon
+#ifdef MMX4_PC
+void func_80036F50(struct PlayerObj* player);
+void func_80037484(struct PlayerObj* arg0, s32 arg1);
+void func_80037C28(struct PlayerObj* arg0);
+void player_enter_frost_tower_pose(struct PlayerObj* arg0);
+void player_enter_soul_body(struct PlayerObj* arg0);
+void player_enter_rising_fire(struct PlayerObj* arg0, s32 arg1);
+void player_enter_rising_fire_charged(struct PlayerObj* arg0, s32 arg1);
+void player_enter_double_cyclone_pose(struct PlayerObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_80036F50(struct PlayerObj* player)
+{
+    static const u8 weapon_masks[] = { 0, 1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80 };
+    u16 input;
+    s8 weapon;
+
+    if (player->input_locked != 0 || player->is_clone != 0 || player->special_shot_count != 0 || player->ride_state != 0 || player->nova_strike_active != 0 || engine_obj.gameplay_locked != 0)
+        return;
+    input = player->pressed_input;
+    if (((player->input.buttons.held & 0x600) == 0x600) || ((input & 0x600) == 0x600)) {
+        if (player->weapon != 0) {
+            player->weapon = 0;
+            player_reset_charge(player);
+            func_8001540C(0, 0xC, 0);
+        }
+        return;
+    }
+    if (!(input & 0x600))
+        return;
+    weapon = player->weapon;
+    if (input & 0x200) {
+        do {
+            if (++weapon == 9) {
+                weapon = 0;
+                break;
+            }
+        } while (!(weapon_masks[(u8)weapon] & player->boss_flags));
+    } else {
+        do {
+            if (--weapon < 0)
+                weapon = 8;
+            if (weapon == 0)
+                break;
+        } while (!(weapon_masks[(u8)weapon] & player->boss_flags));
+    }
+    if (player->weapon != weapon) {
+        player->weapon = weapon;
+        player_reset_charge(player);
+        func_8001540C(0, 0xC, 0);
+        player->stock_charge = 0;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player_weapon", func_80036F50);
+#endif
 void player_update_shot_types(struct PlayerObj* self)
 {
     if (self->is_clone != 0) {
@@ -586,7 +642,32 @@ s32 player_check_shoot_ladder(struct PlayerObj* self)
 }
 
 // player_enter_weapon_pose
+#ifdef MMX4_PC
+void func_80037484(struct PlayerObj* arg0, s32 arg1)
+{
+    switch ((s8)(arg0->shot_type - 2)) {
+    case 0:
+    case 9:
+        player_enter_frost_tower_pose(arg0);
+        break;
+    case 10:
+        player_enter_soul_body(arg0);
+        break;
+    case 2:
+        player_enter_rising_fire(arg0, arg1);
+        break;
+    case 11:
+        player_enter_rising_fire_charged(arg0, arg1);
+        break;
+    case 5:
+    case 14:
+        player_enter_double_cyclone_pose(arg0);
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player_weapon", func_80037484);
+#endif
 s32 player_check_hover(struct PlayerObj* self)
 {
     if (!(self->armor_parts & 8)) {
@@ -799,7 +880,28 @@ void player_fire_charged_buster(struct PlayerObj* self)
 }
 
 // player_fire_twin_slasher
+#ifdef MMX4_PC
+void func_80037C28(struct PlayerObj* arg0)
+{
+    s32 count;
+    s8 i;
+
+    if (arg0->shot_type == 8) {
+        count = 2;
+        func_8001540C(1, 9, arg0);
+    } else {
+        count = 8;
+        func_8001540C(1, 0xA, arg0);
+        player_play_voice(arg0, 9);
+    }
+    for (i = 0; i < count; i++)
+        player_spawn_weapon(1, arg0->shot_type, i, NULL);
+    arg0->shot_count += count;
+    arg0->special_shot_count += count;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player_weapon", func_80037C28);
+#endif
 void player_fire_lightning_web_charged(struct PlayerObj* self)
 {
     s8 i;

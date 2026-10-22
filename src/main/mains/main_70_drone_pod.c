@@ -11,6 +11,10 @@
 #include "main/objects.h"
 #include "main/visuals/visual_03_small_effect.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 extern u8 D_80104A3C[];
 
 extern struct Unk_unk68 D_801049B0[2];
@@ -163,7 +167,39 @@ void drone_pod_intro_fill_health(struct MainObj* self)
 }
 
 // drone_pod_run
+#ifdef MMX4_PC
+void func_80088EA4(struct MainObj* self);
+void func_80089588(struct MainObj* self);
+extern void (*drone_pod_step_funcs[4])(struct MainObj*);
+extern u8 D_801049B8[20];
+extern s16 D_801049CC[12];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_80088EA4(struct MainObj* self)
+{
+    s8 old_unk5C = self->hp;
+    s32 collision;
+
+    drone_pod_step_funcs[self->unk5](self);
+    collision = func_8002DD04(self);
+    if ((s32)old_unk5C - self->hp >= 4)
+        spawn_debris(4, &D_801049AC, self);
+    if (self->unk5 != 0)
+        self->ext.main_70.saved_unk5 = self->unk5;
+    if (collision < 0) {
+        set_animation(self, 3);
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->state++;
+    } else {
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", func_80088EA4);
+#endif
 
 void drone_pod_death(struct MainObj* self)
 {
@@ -337,7 +373,49 @@ void drone_pod_launch_close(struct MainObj* self)
 }
 
 // drone_pod_spawn_drones
+#ifdef MMX4_PC
+void func_80089588(struct MainObj* self)
+{
+    u8 start = self->ext.main_70.unk84;
+
+    for (u8 i = 0; i < 2; i++) {
+        struct MainObj* child = find_free_main_obj();
+        u8 part = D_801049B8[(u8)(start + i)];
+        s32 index;
+        s32 column;
+        s32 row;
+
+        if (child == NULL)
+            continue;
+        child->active = 0x41;
+        child->id = 0x3A;
+        if (part == 1 || part == 4)
+            child->unk2 = 2;
+        else if (part < 6)
+            child->unk2 = 1;
+        child->unk42 = self->unk42;
+        index = func_8002938C(0x3A);
+        child->unk40 = D_801406A8[index] >> 7;
+        index = func_8002938C(0x3A);
+        column = index * 4 + 0x18;
+        index = func_8002938C(0x3A);
+        row = index + 6;
+        child->unk42 = (column - (column / 16) * 16) | (((row / 4 + 0x1E0) << 6) & 0xFFFF);
+        index = func_8002938C(0x3A);
+        child->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
+        child->unk15 = part < 3 ? 0x40 : 0;
+        child->unk16 = 5;
+        child->bg_offset = self->bg_offset;
+        child->x_pos.u.hi = (u16)D_801049CC[part * 2];
+        child->y_pos.u.hi = (u16)D_801049CC[part * 2 + 1];
+    }
+    self->ext.main_70.unk84 = start + 2;
+    if (D_801049B8[self->ext.main_70.unk84] == 0xFF)
+        self->ext.main_70.unk84 = start - 0xE;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", func_80089588);
+#endif
 
 void drone_pod_random_explosion(struct MainObj* self)
 {

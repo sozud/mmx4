@@ -7,6 +7,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 extern u8 iris_laser_box[4];
 extern u8 iris_pillar_box[4];
 
@@ -47,7 +51,42 @@ void iris_shot_update(struct ShotObj* self)
 }
 
 // iris_drone_init
+#ifdef MMX4_PC
+void func_800A7008(struct ShotObj* self);
+void func_800A766C(struct ShotObj* self);
+void func_800A73C4(struct ShotObj* self);
+extern u8 iris_drone_attack_box[4];
+extern u8 iris_drone_hurt_box[4];
+#endif
+
+#ifdef MMX4_PC
+void func_800A7008(struct ShotObj* self)
+{
+    self->on_screen = 1;
+    self->unk58.data = (u8*)D_80105FF0;
+    self->unk61 = 1;
+    self->unk42 &= 0x7FFF;
+    set_velocity_from_angle(MOVING_OBJECT(self), self->unk84.bytes[0]);
+    self->unk16 = 2;
+    self->unk54 = iris_drone_hurt_box;
+    self->unk50.data = iris_drone_attack_box;
+    self->timer = 0x10;
+    self->unk60 = 4;
+    self->x_vel.val *= 5;
+    self->y_vel.val *= 5;
+    self->unk2C = 0;
+    self->unk28 = 0;
+    self->unk68 = NULL;
+    self->unk5C = 1;
+    self->x_pos.val += self->x_vel.val * 5;
+    self->y_pos.val -= self->y_vel.val * 5;
+    set_animation(self, 0xD);
+    self->state = 1;
+    self->unk5 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A7008);
+#endif
 
 void iris_drone_run(struct ShotObj* self)
 {
@@ -137,7 +176,32 @@ void iris_laser_despawn(struct ShotObj* self)
 }
 
 // iris_pillar_init
+#ifdef MMX4_PC
+void func_800A73C4(struct ShotObj* self)
+{
+    self->timer = 0x78;
+    self->unk60 = 8;
+    self->on_screen = 1;
+    self->unk61 = 1;
+    self->unk5C = 1;
+    self->unk58.data = NULL;
+    self->x_vel.val = 0;
+    self->y_vel.val = 0;
+    self->unk2C = 0;
+    self->unk28 = 0;
+    self->unk16 = 0;
+    self->unk68 = NULL;
+    self->unk54 = NULL;
+    self->unk50.data = NULL;
+    self->unk42 &= 0x7FFF;
+    self->y_pos.i.hi -= 0x86;
+    set_animation(self, 0x1B);
+    self->state = 7;
+    self->unk5 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A73C4);
+#endif
 
 void iris_pillar_run(struct ShotObj* self)
 {
@@ -202,7 +266,44 @@ void iris_drone_hover(struct ShotObj* self)
 }
 
 // iris_drone_chase
+#ifdef MMX4_PC
+void func_800A766C(struct ShotObj* self)
+{
+    s32 dx;
+    s32 dy;
+
+    if (--self->unk8A == 0) {
+        set_animation(self, 0xE);
+        self->unk5 = 4;
+        return;
+    }
+    if (--self->timer == 0) {
+        if (self->unk2 == 0) {
+            self->unk2 = 1;
+            self->timer = 0xB4;
+        } else {
+            self->timer = 0x78;
+            self->unk2 = 0;
+        }
+    }
+    if (!(main_bss_state.frame_counter & 3)) {
+        set_velocity_from_angle(MOVING_OBJECT(self),
+            angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
+        if (self->unk2 == 0) {
+            self->x_vel.val *= 2;
+            self->y_vel.val *= 2;
+        }
+    }
+    dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
+    dy = self->y_pos.i.hi - g_Player.y_pos.i.hi;
+    if ((dx >= 0 ? dx : -dx) >= 3 || (dy >= 0 ? dy : -dy) >= 3) {
+        move_object(MOVING_OBJECT(self));
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A766C);
+#endif
 
 void iris_drone_burst(struct ShotObj* self)
 {

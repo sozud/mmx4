@@ -33,10 +33,55 @@ void (*double_mine_step_funcs[])(struct ShotObj*) = {
 };
 
 // double_mine_wait
+#ifdef MMX4_PC
+void func_800AA5E0(struct ShotObj* self);
+void func_800AA68C(struct ShotObj* self);
+#endif
+
+#ifdef MMX4_PC
+// src/main/shots/shot_51_double_mine.c
+
+void func_800AA5E0(struct ShotObj* self)
+{
+    if (self->animation_step.fields.relative_step == 0) {
+        s32 height;
+        s16 target;
+        s32 distance;
+
+        self->unk5++;
+        height = (get_random() & 1) ? 0x40 : 0x70;
+        target = (u16)background_objects[0].y_pos.u.hi - (height - 0xC0);
+        distance = target - self->y_pos.i.hi;
+        self->unk8C.halves[1] = target;
+        if (distance < 0)
+            distance = -distance;
+        self->timer = distance / 4 + 1;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA5E0);
+#endif
 
 // double_mine_arm
+#ifdef MMX4_PC
+void func_800AA68C(struct ShotObj* self)
+{
+    s32 target = self->unk8C.halves[1] * 0x10000;
+
+    if (self->timer == 0) {
+        self->unk5++;
+        self->y_pos.val = target;
+    } else {
+        s32 distance = (s32)((u32)self->y_pos.val - (u32)target);
+        self->y_pos.val = (s32)((u32)self->y_pos.val - (u32)(distance / self->timer));
+        self->timer--;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA68C);
+#endif
 
 void double_mine_dash_start(struct ShotObj* self)
 {

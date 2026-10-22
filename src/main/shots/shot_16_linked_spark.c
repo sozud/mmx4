@@ -5,6 +5,10 @@
 #include "main/55C4.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 // linked_spark_state_funcs
 extern void (*linked_spark_state_funcs[])(struct ShotObj*);
 
@@ -50,7 +54,44 @@ void linked_spark_init(struct ShotObj* rawArg0)
 }
 
 // linked_spark_main
+#ifdef MMX4_PC
+void func_8009C45C(struct ShotObj* self);
+extern u8 turret_laser_full_beam_box[4];
+extern u8* turret_laser_beam_boxes[12];
+#endif
+
+#ifdef MMX4_PC
+// src/main/shots/shot_16_linked_spark.c
+
+void func_8009C45C(struct ShotObj* self)
+{
+    struct WeaponObj* owner = self->unk7C;
+
+    if (self->unk5 == 0) {
+        if (self->animation_step.fields.relative_step == 0) {
+            set_animation(self, self->unk84.value + 1);
+            self->unk5 = 1;
+            if (owner->active != 0 && owner->id == 0x1D && owner->state == 1 && owner->unk2 >= 0)
+                owner->unk5 = 4;
+        } else {
+            s8 index = self->animation_step.fields.event;
+            self->unk50.data = index > 0 && index <= 12 ? turret_laser_beam_boxes[index - 1]
+                                                        : turret_laser_full_beam_box;
+        }
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    self->x_pos = owner->x_pos;
+    self->y_pos = owner->y_pos;
+    func_8002D9BC(self);
+    func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player));
+    if (self->unk2 < 2)
+        update_on_screen(BASE_OBJECT(self), 0x68, 0x10);
+    else
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x68);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_16_linked_spark", func_8009C45C);
+#endif
 
 void linked_spark_despawn(struct ShotObj* self)
 {

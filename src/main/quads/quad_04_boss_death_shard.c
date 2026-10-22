@@ -26,7 +26,32 @@ void boss_death_shard_init(struct QuadObj* arg0)
 }
 
 // boss_death_shard_launch
+#ifdef MMX4_PC
+void func_800D52F4(struct QuadObj* arg0);
+extern s16 boss_death_shard_shapes[64][2];
+#endif
+
+#ifdef MMX4_PC
+void func_800D52F4(struct QuadObj* arg0)
+{
+    u8 angle = arg0->ext.quad_4.unk38;
+    const s16* outer = boss_death_shard_shapes[(arg0->ext.quad_4.unk39 + 1) * 16 + (angle & 0xF)];
+    const s16* inner = boss_death_shard_shapes[arg0->ext.quad_4.unk39 * 16 + (angle & 0xF)];
+    s32 sign = (angle & 0x1F) >= 0x10 ? -1 : 1;
+
+    arg0->vertices[1].x.val = sign * (outer[0] << 16);
+    arg0->vertices[1].y.val = sign * (outer[1] << 16);
+    arg0->vertices[2].x.val = sign * (inner[0] << 16);
+    arg0->vertices[2].y.val = sign * (inner[1] << 16);
+    arg0->vertices[3].x.val = 0;
+    arg0->vertices[3].y.val = 0;
+    arg0->state++;
+    arg0->ext.quad_4.timer = get_random_nonzero() % 7;
+    quad_is_on_screen(arg0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/quads/quad_04_boss_death_shard", func_800D52F4);
+#endif
 
 void boss_death_shard_fly(struct QuadObj* arg0)
 {

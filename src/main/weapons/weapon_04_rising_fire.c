@@ -48,7 +48,52 @@ void rising_fire_update(struct WeaponObj* arg0)
 }
 
 // rising_fire_init
+#ifdef MMX4_PC
+void func_80095254(struct WeaponObj* arg0);
+void func_80095538(struct WeaponObj* arg0);
+extern struct Unk_unk68 rising_fire_hit_box[];
+extern u32* D_8011C0B0[];
+extern u8 rising_fire_charged_offsets[4];
+#endif
+
+#ifdef MMX4_PC
+void func_80095254(struct WeaponObj* arg0)
+{
+    s32* player_gfx = SP_PLAYER_GFX;
+    s32* sprite_frames = SP_SPRITE_FRAMES;
+    s8 dx = ((s8*)rising_fire_charged_offsets)[arg0->unk2 * 2];
+    s8 dy = ((s8*)rising_fire_charged_offsets)[arg0->unk2 * 2 + 1];
+
+    arg0->on_screen = 1;
+    arg0->unk64 = 1;
+    arg0->unk50 = rising_fire_hit_box;
+    arg0->unk38 = (u8*)player_gfx + player_gfx[5];
+    arg0->animation_table = D_8011C0B0;
+    arg0->unk40 = 0x520;
+    arg0->unk42 = 0x7801;
+    arg0->unk16 = 1;
+    arg0->unk15 = 0;
+    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xD];
+    if (g_Player.unk15 == 0)
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + dx;
+    else
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - dx;
+    arg0->y_vel.val = 0x70000;
+    arg0->x_vel.val = 0;
+    arg0->unk28.val = 0;
+    arg0->unk2C = 0;
+    arg0->unk67 = 1;
+    arg0->unk49 = 0;
+    arg0->y_pos.i.hi = g_Player.y_pos.i.hi + dy;
+    set_animation(arg0, 1);
+    func_8001540C(0, 0x1B, arg0);
+    arg0->unk5 = 0;
+    arg0->state++;
+    rising_fire_draw(arg0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095254);
+#endif
 
 void rising_fire_main(struct WeaponObj* arg0)
 {
@@ -99,7 +144,39 @@ void rising_fire_charged_update(struct WeaponObj* arg0)
 }
 
 // rising_fire_charged_init
+#ifdef MMX4_PC
+void func_80095538(struct WeaponObj* arg0)
+{
+    s32* player_gfx = SP_PLAYER_GFX;
+    s32* sprite_frames = SP_SPRITE_FRAMES;
+
+    arg0->on_screen = 1;
+    arg0->unk64 = 1;
+    arg0->unk38 = (u8*)player_gfx + player_gfx[5];
+    arg0->animation_table = D_8011C0B0;
+    arg0->unk40 = 0x520;
+    arg0->unk42 = 0x7801;
+    arg0->unk16 = 1;
+    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xD];
+    arg0->unk15 = g_Player.unk15;
+    arg0->x_pos.val = g_Player.x_pos.val;
+    arg0->y_vel.val = 0x70000;
+    arg0->x_vel.val = 0;
+    arg0->unk28.val = 0;
+    arg0->unk2C = 0;
+    arg0->unk67 = 1;
+    arg0->unk49 = 0;
+    arg0->ext.weapon_13.timer = 4;
+    arg0->y_pos.val = g_Player.y_pos.val;
+    set_animation(arg0, arg0->unk2 == 0 ? 3 : 5);
+    func_8001540C(0, 0x1B, arg0);
+    arg0->unk5 = 0;
+    arg0->state++;
+    rising_fire_charged_draw(arg0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095538);
+#endif
 
 void rising_fire_charged_main(struct WeaponObj* self)
 {

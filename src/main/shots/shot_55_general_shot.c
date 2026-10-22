@@ -10,6 +10,10 @@
 #include "main/object_motion.h"
 #include "main/shots/general_shot_debris_data.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // general_fist_leader_funcs
 extern void (*general_fist_leader_funcs[])(struct ShotObj*);
 void general_fist_wait_launch(struct ShotObj*);
@@ -166,7 +170,128 @@ void (*general_shot_subtype_funcs[])(struct ShotObj*) = {
 };
 
 // general_shot_init
+#ifdef MMX4_PC
+void func_800AC8C4(struct ShotObj* self);
+void func_800ACDE4(struct ShotObj* self);
+void func_800AD338(struct ShotObj* self);
+void func_800AD6DC(struct ShotObj* self);
+extern u8 D_8013B8DC[4];
+#endif
+
+#ifdef MMX4_PC
+void func_800AC8C4(struct ShotObj* self)
+{
+    struct MainObj* parent = (struct MainObj*)self->unk7C;
+    s32 animation;
+
+    self->state++;
+    self->unk40 = parent->unk40;
+    self->animation_table = (u32**)parent->animation_table;
+    self->unk3C = (void*)parent->sprite_frames;
+    self->unk42 = parent->unk42;
+    self->unk15 = parent->unk15;
+    self->bg_offset = parent->bg_offset;
+    self->unk16 = parent->unk16;
+    self->x_pos.val = parent->x_pos.val;
+    self->unk58.data = NULL;
+    self->unk50.data = NULL;
+    self->unk54 = NULL;
+    self->unk68 = NULL;
+    self->unk75 = 0;
+    self->y_pos.val = parent->y_pos.val;
+    self->unk60 = 3;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    switch ((u8)self->unk2) {
+    case 0:
+        self->unk16 = 7;
+        self->unk84.value = 0;
+        self->timer = 0;
+        animation = 2;
+        break;
+    case 1:
+        self->unk16 = 7;
+        animation = 0x27;
+        break;
+    case 2:
+        self->unk16 = 5;
+        self->timer = 0;
+        self->unk8A = 0;
+        if (self->unk15 != 0)
+            self->x_pos.i.hi += 0x50;
+        else
+            self->x_pos.i.hi -= 0x50;
+        self->unk75 = 1;
+        self->unk50.data = (u8*)general_shot_boxes[1];
+        self->unk54 = (u8*)general_shot_boxes[2];
+        self->y_pos.i.hi -= 0x28;
+        self->unk58.collision_bounds = D_801060F0;
+        self->unk84.shot_55.x = self->x_pos.i.hi;
+        self->unk84.shot_55.y = self->y_pos.i.hi;
+        set_animation(self, 0xD);
+        self->unk60 = 6;
+        return;
+    case 3:
+        self->unk16 = 5;
+        self->y_pos.i.hi -= 0x28;
+        self->timer = 0;
+        self->unk8A = 0;
+        self->unk75 = 1;
+        self->unk84.shot_55.x = self->x_pos.i.hi;
+        self->unk84.shot_55.y = self->y_pos.i.hi;
+        set_animation(self, 0x12);
+        self->unk50.data = (u8*)general_shot_boxes[1];
+        self->unk54 = (u8*)general_shot_boxes[2];
+        self->unk58.collision_bounds = D_801060F0;
+        self->unk60 = 6;
+        return;
+    case 4:
+    case 5:
+        self->unk50.data = (u8*)general_shot_attack_boxes[1];
+        self->timer = 0x20;
+        self->unk8A = 0;
+        self->unk60 = 6;
+        animation = self->unk2 == 4 ? 0x21 : 0x22;
+        break;
+    case 6:
+        self->unk16 = 5;
+        self->unk60 = 9;
+        animation = 0x18;
+        break;
+    case 7:
+        self->unk16 = 7;
+        animation = 0x1B;
+        break;
+    case 8:
+        self->unk42 &= 0x7FFF;
+        animation = 0x26;
+        break;
+    case 9:
+        D_8013B8DC[0] = 0;
+        if (self->unk15 != 0)
+            self->x_pos.i.hi += 0x1B;
+        else
+            self->x_pos.i.hi -= 0x1B;
+        self->y_pos.i.hi -= 0x1A;
+        animation = 0x1E;
+        break;
+    case 10:
+    case 11:
+        self->unk8A = self->timer != 0 ? 0xF : 0x1E;
+        self->x_pos.i.hi += self->unk84.shot_55.x;
+        self->y_pos.i.hi += self->unk84.shot_55.y;
+        self->x_vel.val = self->unk15 != 0 ? 0x10000 : 0xFFFF0000;
+        self->y_vel.val = self->unk2 == 10 ? 0x18000 : 0xFFFE8000;
+        animation = 0x1F;
+        break;
+    default:
+        return;
+    }
+    set_animation(self, animation);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AC8C4);
+#endif
 
 void general_shot_intro_prop(struct ShotObj* self)
 {
@@ -203,7 +328,31 @@ void general_fist_wait_launch(struct ShotObj* self)
 }
 
 // general_fist_launch
+#ifdef MMX4_PC
+void func_800ACDE4(struct ShotObj* self)
+{
+    s16 player_y;
+
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step != 0)
+        return;
+    self->unk5++;
+    self->x_vel.val = self->unk15 != 0 ? 0x40000 : 0xFFFC0000;
+    set_animation(self, 0x14);
+    func_8001540C(2, 5, self);
+    player_y = g_Player.y_pos.i.hi;
+    if (player_y < 0x210)
+        self->timer = 0;
+    else if (player_y < 0x240)
+        self->timer = 1;
+    else if (player_y < 0x270)
+        self->timer = 2;
+    else
+        self->timer = 3;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800ACDE4);
+#endif
 
 void general_fist_fly_to_row(struct ShotObj* self)
 {
@@ -371,7 +520,26 @@ void general_fist_sweep_turn(struct ShotObj* self)
 }
 
 // general_fist_return
+#ifdef MMX4_PC
+void func_800AD338(struct ShotObj* self)
+{
+    self->unk68 = NULL;
+    set_velocity_from_angle(MOVING_OBJECT(self),
+        (u8)angle_to_point(OBJECT_HEADER(self), self->unk84.shot_55.x << 16,
+            self->unk84.shot_55.y << 16));
+    self->x_vel.val *= 4;
+    self->y_vel.val *= 4;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    if (sigma_final_shot_at_position(self, self->unk84.shot_55.x, self->unk84.shot_55.y) & 0xFF) {
+        self->unk5++;
+        set_animation(self, self->unk2 == 3 ? 0x13 : 0xE);
+        func_8001540C(2, 6, self);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AD338);
+#endif
 
 void general_fist_docked(struct ShotObj* self)
 {
@@ -445,7 +613,30 @@ void general_shot_fist(struct ShotObj* self)
 }
 
 // general_ring_init
+#ifdef MMX4_PC
+void func_800AD6DC(struct ShotObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    self->unk42 = self->unk7C->unk42;
+    if (--self->timer != 0)
+        return;
+    self->unk5++;
+    if (self->unk15 != 0)
+        self->x_pos.i.hi -= general_ring_offsets[(self->unk2 - 4) * 2];
+    else
+        self->x_pos.i.hi += general_ring_offsets[(self->unk2 - 4) * 2];
+    self->y_pos.i.hi += general_ring_offsets[(self->unk2 - 4) * 2 + 1];
+    set_animation(self, 0x23);
+    set_velocity_from_angle(MOVING_OBJECT(self),
+        (u8)angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)));
+    self->x_vel.val *= 3;
+    self->y_vel.val *= 3;
+    self->unk42 &= 0x7FFF;
+    func_8001540C(2, 7, self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AD6DC);
+#endif
 
 void general_ring_fly(struct ShotObj* self)
 {

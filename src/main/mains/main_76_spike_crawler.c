@@ -10,6 +10,10 @@
 #include "main/enemy_reaction_data.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/1CF60.h"
+#endif
+
 extern s8 spike_crawler_attack_box[4];
 extern s8 spike_crawler_hurt_box[4];
 
@@ -77,7 +81,51 @@ void spike_crawler_fall(struct MainObj* self)
 }
 
 // spike_crawler_crawl
+#ifdef MMX4_PC
+void func_80091B1C(struct MainObj* arg0);
+void func_80091EC4(struct MainObj* self);
+#endif
+
+#ifdef MMX4_PC
+void func_80091B1C(struct MainObj* arg0)
+{
+    struct Unk_unk68* bounds;
+    s32 velocity = arg0->x_speed;
+    s16 x;
+    s16 y;
+    s32 reverse = 0;
+
+    if (!(arg0->collision_flags & 8)) {
+        arg0->unk5 = 1;
+        arg0->unk6 = 0;
+        arg0->unk7C = 0;
+        arg0->x_speed = 0;
+        arg0->y_speed = 0;
+        arg0->x_accel = 0;
+        arg0->gravity = 0x4200;
+        arg0->ext.main_76.saved_x_velocity = velocity;
+        return;
+    }
+
+    bounds = arg0->terrain_box;
+    y = arg0->y_pos.i.hi + bounds->unk1 + (u8)bounds->unk3 + 4;
+    if (arg0->x_speed < 0) {
+        reverse = (arg0->collision_flags & 2) != 0;
+        x = arg0->x_pos.i.hi + bounds->unk0 - (u8)bounds->unk2;
+    } else {
+        reverse = (arg0->collision_flags & 1) != 0;
+        x = arg0->x_pos.i.hi + bounds->unk0 + (u8)bounds->unk2;
+    }
+    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) < 0x38)
+        reverse = 1;
+    if (reverse)
+        arg0->x_speed = -arg0->x_speed;
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", func_80091B1C);
+#endif
 
 void spike_crawler_update_speed(struct MainObj* self)
 {
@@ -171,7 +219,37 @@ void spike_crawler_hit_flash(struct MainObj* self)
 }
 
 // spike_crawler_hit_bounce
+#ifdef MMX4_PC
+// src/main/mains/main_76_spike_crawler.c
+
+void func_80091EC4(struct MainObj* self)
+{
+    s8 step;
+
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->invincibility_timer = self->unk63 == 3 ? 0x12 : 3;
+        self->ext.main_76.bounce_step = 2;
+    }
+    step = self->ext.main_76.bounce_step;
+    self->ext.main_76.bounce_step = -step;
+    self->x_pos.u.hi = (u16)(self->x_pos.u.hi + step);
+    if ((s8)self->invincibility_timer % 9 != 0)
+        self->unk42 &= 0x7FFF;
+    else
+        self->unk42 |= 0x8000;
+    self->invincibility_timer = (u8)(self->invincibility_timer - 1);
+    if (self->invincibility_timer == 0) {
+        self->unk5 = 1;
+        self->unk6 = 0;
+        self->unk42 &= 0x7FFF;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", func_80091EC4);
+#endif
 
 extern s32 spike_crawler_knockback_speeds[2];
 

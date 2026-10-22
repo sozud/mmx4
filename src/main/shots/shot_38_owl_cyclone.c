@@ -7,6 +7,10 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // owl_cyclone_state_funcs
 extern void (*owl_cyclone_state_funcs[])(struct ShotObj*);
 
@@ -24,7 +28,96 @@ void owl_cyclone_update(struct ShotObj* self)
 }
 
 // owl_cyclone_init
+#ifdef MMX4_PC
+void func_800A42C8(struct ShotObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800A42C8(struct ShotObj* arg0)
+{
+    struct MainObj* owner = (struct MainObj*)arg0->unk7C;
+    s16 dx = 0;
+    s16 dy = 0;
+
+    arg0->unk58.data = (u8*)D_80105FF0;
+    arg0->unk60 = 6;
+    arg0->unk54 = owl_cyclone_hit_box;
+    arg0->unk50.data = owl_cyclone_hit_box;
+    arg0->unk84.value = 4;
+    arg0->state++;
+    arg0->on_screen = 1;
+    arg0->unk68 = NULL;
+    arg0->unk5C = 1;
+    arg0->unk42 &= 0x7FFF;
+    switch ((u8)arg0->unk2) {
+    case 0:
+        set_animation(arg0, 0xF);
+        arg0->x_vel.val = 0x45000;
+        arg0->y_vel.val = 0x45000;
+        dx = 0xB;
+        dy = -0x15;
+        break;
+    case 1:
+        set_animation(arg0, 0x10);
+        arg0->x_vel.val = 0x52800;
+        arg0->y_vel.val = 0x2A000;
+        dx = 0x10;
+        dy = -0x13;
+        break;
+    case 2:
+        set_animation(arg0, 0x11);
+        arg0->x_vel.val = 0x60000;
+        arg0->y_vel.val = 0;
+        if (owner->unk17 == 4) {
+            dx = 0x19;
+            dy = -6;
+        } else {
+            dx = 0x13;
+            dy = -0xD;
+        }
+        break;
+    case 3:
+        set_animation(arg0, 0x12);
+        arg0->x_vel.val = 0x52800;
+        arg0->y_vel.val = -0x2A000;
+        dx = 0x19;
+        dy = 0;
+        break;
+    case 4:
+        set_animation(arg0, 0x13);
+        arg0->x_vel.val = 0x45000;
+        arg0->y_vel.val = -0x45000;
+        dx = 0x14;
+        dy = 5;
+        break;
+    case 5:
+        arg0->unk58.data = (u8*)D_80105FF0;
+        arg0->unk50.data = owl_cyclone_column_box;
+        arg0->unk54 = NULL;
+        set_animation(arg0, 0x1D);
+        arg0->unk60 = 9;
+        arg0->on_screen = 0;
+        arg0->x_vel.val = 0;
+        arg0->y_vel.val = 0;
+        arg0->unk28 = 0;
+        arg0->unk2C = 0;
+        arg0->unk84.value = 0;
+        arg0->timer = 1;
+        break;
+    }
+    if (arg0->unk2 >= 5)
+        return;
+    if (owner->unk15 == 0) {
+        arg0->x_pos.i.hi = owner->x_pos.i.hi - dx;
+        arg0->x_vel.val = -arg0->x_vel.val;
+    } else {
+        arg0->x_pos.i.hi = owner->x_pos.i.hi + dx;
+    }
+    arg0->y_pos.i.hi = owner->y_pos.i.hi + dy;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_38_owl_cyclone", func_800A42C8);
+#endif
 
 void owl_cyclone_fly(struct ShotObj* self)
 {

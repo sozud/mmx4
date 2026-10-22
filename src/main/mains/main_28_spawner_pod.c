@@ -7,6 +7,10 @@
 #include "main/collision_bounds.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/object_motion.h"
+#endif
+
 struct Main28InitData {
     u8 unk84;
     u8 unk15;
@@ -106,10 +110,155 @@ void spawner_pod_idle(struct MainObj* self)
 }
 
 // spawner_pod_step_2
+#ifdef MMX4_PC
+void func_80059E40(struct MainObj* self);
+void func_80059F60(struct MainObj* self);
+extern u8 D_800FD5C8[32];
+extern struct FixedPointPosition D_800FD618[4];
+extern struct FixedPointPosition D_800FD638[4];
+extern u8 D_800FD5C8[32];
+extern struct Unk_unk68* D_800FD5B0[2];
+extern struct Unk_unk68* D_800FD5B8[2];
+extern struct Unk_unk68* D_800FD5C0[2];
+#endif
+
+#ifdef MMX4_PC
+void func_80059E40(struct MainObj* self)
+{
+    struct Main28Ext* ext = &self->ext.main_28;
+    if (self->animation_step.fields.relative_step == 0) {
+        u8 index = (u8)self->unk2 * 2;
+        self->unk5 = 3;
+        ext->context->unk7C = 0;
+        set_animation(self, ext->unk84 + 1);
+        self->x_speed = 0;
+        self->y_speed = 0;
+        if (get_random() & 7) {
+            self->x_accel = D_800FD618[index / 2].x;
+            self->gravity = D_800FD618[index / 2].y;
+        } else {
+            self->x_accel = D_800FD638[index / 2].x;
+            self->gravity = D_800FD638[index / 2].y;
+        }
+        self->unk7C = 0;
+        self->unk7E = D_800FD5C8[get_random() & 0x1F];
+        self->hurt_box = D_800FD5B8[0];
+        self->attack_box = D_800FD5C0[0];
+        self->terrain_box = D_800FD5B0[0];
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", func_80059E40);
+#endif
 
 // spawner_pod_step_3
+#ifdef MMX4_PC
+void func_80059F60(struct MainObj* self)
+{
+    struct Main28Ext* ext = &self->ext.main_28;
+    struct ShotObj* shot;
+    s32 turn = 0;
+
+    switch (self->unk2) {
+    case 0:
+        turn = (self->x_speed <= -0x500000 && self->unk15 == 0) || (self->x_speed >= -0x10000 && self->unk15 != 0);
+        break;
+    case 1:
+        turn = (self->x_speed > 0x4FFFFF && self->unk15 != 0) || (self->x_speed <= 0x10000 && self->unk15 == 0);
+        break;
+    case 2:
+        turn = (self->y_speed <= -0x500000 && self->unk15 == 0) || (self->y_speed >= -0x10000 && self->unk15 != 0);
+        break;
+    case 3:
+        turn = (self->y_speed > 0x4FFFFF && self->unk15 != 0) || (self->y_speed <= 0x10000 && self->unk15 == 0);
+        break;
+    }
+    if (self->unk7E != 0)
+        self->unk7E--;
+
+    switch ((u8)self->unk6) {
+    case 0:
+        if (self->unk7E == 0 || turn) {
+            ext->unk85++;
+            self->unk6 = 1;
+            self->unk7C = 0x3C;
+        } else {
+            self->x_speed += self->x_accel;
+            self->y_speed += self->gravity;
+            animate_object(ANIMATED_OBJECT(self));
+        }
+        break;
+    case 1:
+        if (ext->unk85 >= 4) {
+            ext->unk85 = 0;
+            set_animation(self, ext->unk84 + 2);
+            self->unk6 = 2;
+            break;
+        }
+        self->unk15 ^= 0x40;
+        if (self->unk2 >= 2) {
+            ext->unk84 ^= 8;
+            set_animation(self, ext->unk84 + 1);
+        }
+        self->unk7C = 0x20;
+        self->unk6 = 4;
+        self->x_accel = -self->x_accel;
+        self->gravity = -self->gravity;
+        self->unk7E = 0;
+        break;
+    case 2:
+        if (self->animation_step.fields.relative_step == 0) {
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x12;
+                shot->x_pos.val = self->x_pos.val + self->x_speed;
+                shot->y_pos.val = self->y_pos.val + self->y_speed;
+                shot->animation_table = (u32**)self->animation_table;
+                shot->unk40 = self->unk40;
+                shot->unk3C = (void*)self->sprite_frames;
+                shot->unk42 = self->unk42 & 0x7FFF;
+                shot->unk7C = (struct WeaponObj*)self;
+                shot->unk16 = self->unk16;
+                shot->unk15 = self->unk15;
+            }
+            self->unk7C = 0x10;
+            self->unk6 = 3;
+        }
+        animate_object(ANIMATED_OBJECT(self));
+        break;
+    case 3:
+        if (self->unk7C != 0) {
+            self->unk7C--;
+            break;
+        }
+        self->unk15 ^= 0x40;
+        if (self->unk2 >= 2)
+            ext->unk84 ^= 8;
+        self->x_accel = -self->x_accel;
+        self->gravity = -self->gravity;
+        self->unk6 = 0;
+        self->unk7C = 0;
+        self->unk7E = D_800FD5C8[get_random() & 0x1F];
+        set_animation(self, ext->unk84 + 1);
+        break;
+    case 4:
+        if (self->unk7C != 0) {
+            self->unk7C--;
+            break;
+        }
+        self->unk7C = 0;
+        self->unk7E = D_800FD5C8[get_random() & 0x1F];
+        self->unk6 = 0;
+        break;
+    }
+    self->x_pos.val += self->x_speed;
+    self->y_pos.val += self->y_speed;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", func_80059F60);
+#endif
 
 void spawner_pod_step_4(struct MainObj* self)
 {

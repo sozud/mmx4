@@ -8,6 +8,10 @@
 #include "main/collision.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/1CF60.h"
+#endif
+
 extern struct Unk_unk68 trident_mech_charge_attack_box;
 
 void trident_mech_check_fall(struct MainObj*);
@@ -64,7 +68,85 @@ void trident_mech_update(struct MainObj* self)
 }
 
 // trident_mech_init
+#ifdef MMX4_PC
+void func_8004E8E0(struct MainObj* arg0);
+void func_8004FD38(struct MainObj* arg0, s32 animation);
+void func_8004ED60(struct MainObj* arg0);
+void func_8004FAE4(struct MainObj* self);
+extern void* common_effect_animations[];
+extern union AnimationStep* trident_mech_animations[];
+extern struct Unk_unk68 D_800FBBC8;
+extern struct Unk_unk68 D_80106A74[];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_8004E8E0(struct MainObj* arg0)
+{
+    arg0->hp = 0x10;
+    arg0->contact_damage = 3;
+    arg0->invincibility_timer = 0;
+    arg0->collision_data = D_80106A74;
+    arg0->animation_table = (const u8* const*)trident_mech_animations;
+    arg0->unk16 = 6;
+    arg0->terrain_box = &D_800FBBC8;
+    arg0->hurt_box = &trident_mech_stunned_hurt_box;
+    arg0->attack_box = &trident_mech_attack_box;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    trident_mech_face_player(ANIMATED_OBJECT(arg0));
+
+    arg0->ext.main_16.unk80 = 0;
+    arg0->ext.main_16.unk84 = 0;
+    arg0->ext.main_16.unk8C = 0;
+    arg0->ext.main_16.unk90 = 0;
+    arg0->ext.main_16.shot_09_active = 1;
+
+    switch (arg0->unk2) {
+    case 0:
+        set_animation(ANIMATED_OBJECT(arg0), 0);
+        arg0->unk5 = 2;
+        break;
+    case 1:
+        set_animation(ANIMATED_OBJECT(arg0), 2);
+        arg0->unk5 = 2;
+        break;
+    case 2:
+        set_animation(ANIMATED_OBJECT(arg0), 1);
+        arg0->unk7C = 0x14;
+        arg0->unk5 = 9;
+        break;
+    case 3:
+        set_animation(ANIMATED_OBJECT(arg0), 2);
+        arg0->unk5 = 0xA;
+        break;
+    case 4:
+        set_animation(ANIMATED_OBJECT(arg0), 0x11);
+        arg0->unk7E = 3;
+        arg0->unk5 = 8;
+        arg0->unk42 += 2;
+        break;
+    case 5:
+        set_animation(ANIMATED_OBJECT(arg0), 2);
+        arg0->unk7E = 3;
+        arg0->unk5 = 2;
+        arg0->unk42 += 2;
+        break;
+    }
+
+    arg0->state = 1;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004E8E0);
+#endif
 
 void trident_mech_main(struct MainObj* self)
 {
@@ -162,7 +244,80 @@ void trident_mech_idle_start(struct MainObj* self)
 }
 
 // trident_mech_idle_think
+#ifdef MMX4_PC
+void func_8004ED60(struct MainObj* arg0)
+{
+    s32 random;
+    s32 distance;
+
+    trident_mech_face_player(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C != 0)
+        return;
+
+    arg0->ext.main_16.unk8C = 0;
+    distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if (distance < 0)
+        distance = -distance;
+
+    if (distance < 0x61) {
+        if (weapon_objects[0].active != 0)
+            goto choose_state_6;
+        if ((get_random() & 7) < 5)
+            goto choose_state_6;
+        set_animation(ANIMATED_OBJECT(arg0), 0x10);
+        arg0->ext.main_16.unk80 = 1;
+        arg0->ext.main_16.unk90 = 1;
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        return;
+    }
+
+    random = get_random() & 0xF;
+    if (weapon_objects[0].active != 0) {
+        if (random < 0xC) {
+            set_animation(ANIMATED_OBJECT(arg0), 0x10);
+            arg0->ext.main_16.unk90 = 1;
+            arg0->ext.main_16.unk80 = 0;
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            return;
+        }
+        if (random < 0xE) {
+            set_animation(ANIMATED_OBJECT(arg0), 0x10);
+            arg0->ext.main_16.unk80 = 1;
+            arg0->ext.main_16.unk90 = 1;
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            return;
+        }
+    } else {
+        if (random < 0xC) {
+            set_animation(ANIMATED_OBJECT(arg0), 0x11);
+            arg0->unk5 = 8;
+            arg0->unk6 = 0;
+            return;
+        }
+        if (random < 0xE) {
+            set_animation(ANIMATED_OBJECT(arg0), 0x10);
+            arg0->ext.main_16.unk80 = 1;
+            arg0->ext.main_16.unk90 = 1;
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            return;
+        }
+    }
+
+choose_state_6:
+    arg0->ext.main_16.unk8C = 1;
+    arg0->invincibility_timer = (u8)engine_obj.cur_character;
+    trident_mech_fire_tracked_shot(arg0);
+    arg0->unk5 = 6;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004ED60);
+#endif
 
 void trident_mech_fall(struct MainObj* self)
 {
@@ -538,7 +693,49 @@ void trident_mech_wait_behind(struct MainObj* self)
 }
 
 // trident_mech_stunned
+#ifdef MMX4_PC
+// src/main/mains/main_16_trident_mech.c
+
+void func_8004FAE4(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    self->contact_damage = 3;
+    if (self->animation_step.fields.event == 0)
+        return;
+
+    self->hurt_box = &trident_mech_stunned_hurt_box;
+    if (self->unk2 >= 4) {
+        if (self->collision_flags & 8) {
+            set_animation(ANIMATED_OBJECT(self), 0x11);
+            self->unk5 = 8;
+        } else {
+            self->air_state = 0;
+            self->y_speed = 0;
+            self->gravity = 0;
+            self->unk5 = 2;
+        }
+    } else if (!(self->collision_flags & 8)) {
+        self->air_state = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
+        self->unk5 = 2;
+    } else {
+        func_8004FD38(self, 2);
+        if (self->ext.main_16.unk8C != 0 && (get_random() & 4)) {
+            self->invincibility_timer = (u8)engine_obj.cur_character;
+            trident_mech_fire_tracked_shot(self);
+            self->ext.main_16.unk8C = 1;
+            self->unk5 = 6;
+        } else {
+            set_animation(ANIMATED_OBJECT(self), 0);
+            self->unk5 = 2;
+        }
+    }
+    self->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FAE4);
+#endif
 
 void trident_mech_check_fall(struct MainObj* self)
 {
@@ -587,7 +784,73 @@ void trident_mech_fire_tracked_shot(struct MainObj* obj)
 }
 
 // trident_mech_set_part
+#ifdef MMX4_PC
+void func_8004FD38(struct MainObj* arg0, s32 animation)
+{
+    struct MiscObj* misc;
+    struct Unk_unk68* bounds;
+    s16 x;
+    s16 y;
+    s32 resource;
+
+    if (arg0->air_state != 0)
+        return;
+
+    bounds = arg0->terrain_box;
+    x = arg0->x_pos.i.hi + bounds->unk0;
+    y = arg0->y_pos.i.hi + bounds->unk1 + bounds->unk3 - 4;
+    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) != 0x24)
+        return;
+
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 5;
+        misc->animation_table = (u32**)common_effect_animations;
+        misc->unk42 = 0x7888;
+        misc->unk40 = (u16)((u32)D_801406A8[4] >> 7);
+        misc->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 4);
+        misc->bg_offset = arg0->bg_offset;
+        misc->y_pos.val = arg0->y_pos.val + FIXED(6);
+        misc->unk15 = arg0->unk15;
+        if ((s8)animation == 2) {
+            misc->unk2 = 1;
+            misc->ext.misc_5.owner = arg0;
+            misc->x_pos.val = arg0->x_pos.val - FIXED(13);
+        } else {
+            misc->unk2 = 0;
+            misc->x_pos.val = arg0->x_pos.val;
+        }
+        misc->ext.misc_5.animation = (s8)animation;
+        misc->state = 3;
+    }
+
+    if ((s8)animation != 2)
+        return;
+
+    misc = find_free_misc_obj();
+    if (misc == NULL)
+        return;
+    misc->active = 0x41;
+    misc->id = 5;
+    misc->unk2 = 1;
+    misc->animation_table = (u32**)common_effect_animations;
+    resource = func_8002938C(0x84);
+    misc->unk40 = (u16)((u32)D_801406A8[resource] >> 7);
+    resource = func_8002938C(0x84);
+    misc->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
+    misc->unk42 = 0x7888;
+    misc->bg_offset = arg0->bg_offset;
+    misc->y_pos.val = arg0->y_pos.val + FIXED(6);
+    misc->unk15 = arg0->unk15;
+    misc->state = 3;
+    misc->ext.misc_5.animation = (s8)animation;
+    misc->ext.misc_5.owner = arg0;
+    misc->x_pos.val = arg0->x_pos.val + FIXED(13);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FD38);
+#endif
 
 struct Unk_unk68 trident_mech_stunned_hurt_box = { -14, -28, 30, 59 };
 

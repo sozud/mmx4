@@ -8,6 +8,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // dropped_bomb_state_funcs
 extern void (*dropped_bomb_state_funcs[])(struct ShotObj*);
 
@@ -24,7 +28,31 @@ void dropped_bomb_update(struct ShotObj* self)
 }
 
 // dropped_bomb_init
+#ifdef MMX4_PC
+void func_8009AD6C(struct ShotObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_8009AD6C(struct ShotObj* arg0)
+{
+    arg0->y_vel.val = -0x10000;
+    arg0->unk2C = 0x3000;
+    arg0->unk68 = (struct Unk_unk68*)dropped_bomb_hit_box;
+    arg0->unk54 = dropped_bomb_terrain_box;
+    arg0->unk50.data = dropped_bomb_terrain_box;
+    arg0->unk58.data = (const u8*)D_80105FF0;
+    arg0->unk60 = 5;
+    arg0->on_screen = 1;
+    arg0->unk5C = 1;
+    arg0->x_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->state++;
+    arg0->unk42 &= 0x7FFF;
+    set_animation(arg0, 2);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_07_dropped_bomb", func_8009AD6C);
+#endif
 
 void dropped_bomb_fall(struct ShotObj* arg0)
 {

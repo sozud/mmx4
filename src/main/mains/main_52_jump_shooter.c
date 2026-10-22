@@ -9,6 +9,10 @@
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/1CF60.h"
+#endif
+
 // jump_shooter_state_funcs
 extern void (*jump_shooter_state_funcs[])(struct MainObj*);
 void func_8006A55C(struct MainObj*);
@@ -218,7 +222,74 @@ void jump_shooter_walk_start(struct MainObj* self)
 }
 
 // jump_shooter_walk_move
+#ifdef MMX4_PC
+void func_8006AAB4(struct MainObj* arg0);
+void func_8006AE80(struct MainObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_8006AAB4(struct MainObj* arg0)
+{
+    struct Unk_unk68* bounds;
+    s16 x;
+    s16 y;
+    s32 dy;
+
+    move_object(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    bounds = arg0->terrain_box;
+    y = arg0->y_pos.i.hi + bounds->unk1 + (u8)bounds->unk3 + 0x10;
+    x = arg0->x_pos.i.hi + bounds->unk0;
+    x = arg0->unk15 == 0 ? x - 0x10 : x + 0x10;
+    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) == 0) {
+        set_animation(arg0, 1);
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        return;
+    }
+    if (arg0->unk15 == 0) {
+        if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi > 0x40) {
+            arg0->unk15 = 0x40;
+            arg0->x_speed = 0x1CCCC;
+            goto countdown;
+        }
+        if (!(arg0->collision_flags & 2)) {
+            goto countdown;
+        }
+    } else {
+        if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi > 0x40) {
+            arg0->unk15 = 0;
+            arg0->x_speed = -0x1CCCC;
+            goto countdown;
+        }
+        if (!(arg0->collision_flags & 1)) {
+            goto countdown;
+        }
+    }
+    set_animation(arg0, 1);
+    arg0->unk5 = 4;
+    arg0->unk6 = 0;
+countdown:
+    if (--arg0->unk7C != 0) {
+        return;
+    }
+    arg0->ext.main_52.unk8C = 1;
+    dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+    if (dy < 0) {
+        dy = -dy;
+    }
+    if (dy > 0x20 || (get_random() & 0xF) < 3) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        return;
+    }
+    set_animation(arg0, 1);
+    arg0->unk5 = 4;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", func_8006AAB4);
+#endif
 
 void jump_shooter_jump(struct MainObj* self)
 {
@@ -295,7 +366,56 @@ void jump_shooter_face_player(struct AnimatedObj* self)
 }
 
 // jump_shooter_aim_at_player
+#ifdef MMX4_PC
+void func_8006AE80(struct MainObj* arg0)
+{
+    u8 angle;
+    u8 value;
+
+    arg0->y_pos.i.hi -= 0x10;
+    arg0->ext.main_52.unk84 = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+    arg0->y_pos.i.hi += 0x10;
+    angle = arg0->ext.main_52.unk84;
+    if (arg0->unk15 == 0) {
+        if ((u8)(angle - 8) > 0x10) {
+            return;
+        }
+        if (angle < 10) {
+            value = 0;
+        } else if (angle < 14) {
+            value = 1;
+        } else if (angle < 19) {
+            value = 2;
+        } else if (angle < 23) {
+            value = 3;
+        } else {
+            value = 4;
+        }
+    } else {
+        if (angle >= 0x20) {
+            return;
+        }
+        if (angle < 3) {
+            value = 2;
+        } else if (angle < 7) {
+            value = 1;
+        } else if (angle < 9) {
+            value = 0;
+        } else if (angle < 24) {
+            return;
+        } else if (angle < 26) {
+            value = 4;
+        } else if (angle < 30) {
+            value = 3;
+        } else {
+            value = 2;
+        }
+    }
+    arg0->ext.main_52.unk88 = value;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", func_8006AE80);
+#endif
 
 struct Unk_unk68 jump_shooter_hurt_box = { -14, -19, 25, 33 };
 

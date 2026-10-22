@@ -5,6 +5,12 @@
 #include "main/shots/shot_29_cannon_missile.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#endif
+
 // cannon_missile_state_funcs
 extern void (*cannon_missile_state_funcs[])(struct ShotObj*);
 
@@ -21,13 +27,107 @@ void cannon_missile_update(struct ShotObj* self)
 }
 
 // cannon_missile_init
+#ifdef MMX4_PC
+void func_8009F674(struct ShotObj* arg0);
+void func_8009F7C0(struct ShotObj* arg0);
+void func_8009F89C(struct ShotObj* arg0);
+extern void (*cannon_missile_step_funcs[])(struct ShotObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_8009F674(struct ShotObj* arg0)
+{
+    struct MainObj* owner;
+    s32 dx;
+
+    arg0->on_screen = 1;
+    arg0->unk5C = 1;
+    arg0->unk60 = 5;
+    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->unk50.data = cannon_missile_boxes;
+    arg0->unk54 = cannon_missile_boxes;
+    arg0->x_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->unk68 = NULL;
+    arg0->state++;
+    arg0->unk42 &= 0x7FFF;
+    owner = (struct MainObj*)arg0->unk7C;
+    dx = arg0->unk15 != 0 ? -0x1A : 0x1A;
+    arg0->x_pos.i.hi = owner->x_pos.i.hi + dx;
+    arg0->y_pos.i.hi = owner->y_pos.i.hi + (arg0->unk2 == 0 ? -0x23 : -0x10);
+    set_animation(arg0, 7);
+    arg0->unk8C.bytes[3] = 0x20;
+    arg0->unk5 = 0;
+    arg0->unk8C.bytes[1] = 0;
+    arg0->unk8C.bytes[2] = 0;
+    arg0->unk90.bytes[2] = 0;
+    arg0->unk90.bytes[0] = 2;
+    arg0->unk90.bytes[1] = 0;
+    arg0->unk8C.bytes[0] = arg0->unk2 * 20 + 0x1E;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F674);
+#endif
 
 // cannon_missile_main
+#ifdef MMX4_PC
+void func_8009F7C0(struct ShotObj* arg0)
+{
+    s32 speed;
+
+    cannon_missile_step_funcs[arg0->unk5](arg0);
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    func_8002D9BC(arg0);
+    if (func_8002DD04((struct MainObj*)arg0) < 0) {
+        spawn_explosion(BASE_OBJECT(arg0));
+        arg0->state++;
+        return;
+    }
+    speed = arg0->x_vel.val;
+    if (speed < 0)
+        speed = -speed;
+    if (speed > 0x40000)
+        arg0->unk28 = 0;
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x20) != 0) {
+        arg0->state++;
+        return;
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F7C0);
+#endif
 
 // cannon_missile_launch
+#ifdef MMX4_PC
+void func_8009F89C(struct ShotObj* arg0)
+{
+    u8 timer = arg0->unk8C.bytes[3];
+    u8 blink;
+
+    if (timer == 0) {
+        arg0->x_vel.val = cannon_missile_speeds[(arg0->unk15 & 0x40) ? 1 : 0];
+        arg0->y_vel.val = cannon_missile_accels[arg0->unk2 != 0 ? 1 : 0];
+        arg0->unk42 &= 0x7FFF;
+        arg0->unk5++;
+        return;
+    }
+    arg0->unk8C.bytes[3] = timer - 1;
+    blink = arg0->unk90.bytes[0];
+    arg0->unk90.bytes[0] = blink - 1;
+    if (blink == 0) {
+        arg0->unk90.bytes[0] = 2;
+        arg0->unk42 &= 0x7FFF;
+    } else {
+        arg0->unk42 |= 0x8000;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F89C);
+#endif
 
 void cannon_missile_slow(struct ShotObj* self)
 {

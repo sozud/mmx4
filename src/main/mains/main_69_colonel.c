@@ -12,6 +12,10 @@
 #include "main/object_motion.h"
 #include "main/stage_objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 extern struct Unk_unk68 D_8010450C;
 extern struct Unk_unk68 D_80104510;
 
@@ -163,10 +167,103 @@ void colonel_spawn_warning(struct MainObj* self)
 }
 
 // colonel_init
+#ifdef MMX4_PC
+void func_80086008(struct MainObj* arg0);
+void func_80086124(struct MainObj* arg0);
+void func_800877A4(struct MainObj* arg0);
+void func_80087A00(struct MainObj* arg0);
+void func_800889DC(struct MainObj* arg0);
+extern struct Unk_unk68 D_801044F8;
+extern void* D_80104770[25];
+extern void (*colonel_step_funcs[9])();
+extern u8 D_801044A0[8];
+extern u8 D_801044A8[8];
+extern void* D_801044EC[2];
+extern u8 D_801044F4[4];
+void colonel_spawn_afterimages(struct MainObj*);
+void colonel_face_player(struct MainObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_80086008(struct MainObj* arg0)
+{
+    struct Main69Ext* ext = &arg0->ext.main_69;
+
+    if (ext->state.bytes.variant == 0) {
+        if (ext->effect->active != 0)
+            return;
+        arg0->unk6 = 0;
+    } else {
+        arg0->unk6 = 1;
+    }
+    arg0->unk16 = 5;
+    arg0->contact_damage = 6;
+    arg0->air_state = 0;
+    arg0->unk15 = 0;
+    arg0->hp = 0;
+    arg0->invincibility_timer = 0;
+    arg0->terrain_box = &D_801044F8;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->hurt_box = NULL;
+    arg0->attack_box = NULL;
+    arg0->collision_data = NULL;
+    arg0->animation_table = (const u8* const*)D_80104770;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+    set_animation(arg0, 0);
+    colonel_spawn_afterimages(arg0);
+    engine_obj.unk25 = 1;
+    engine_obj.boss_ptr = arg0;
+    arg0->state = 1;
+    ext->state.bytes.unk8D = 0;
+    ext->state.bytes.unk8E = 0;
+    arg0->unk5 = 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086008);
+#endif
 
 // colonel_run
+#ifdef MMX4_PC
+void func_80086124(struct MainObj* arg0)
+{
+    struct Main69Ext* ext = &arg0->ext.main_69;
+    s32 collision;
+
+    colonel_step_funcs[arg0->unk5](arg0);
+    collision = func_8002DD04(arg0);
+    if (ext->state.bytes.unk8D != 0) {
+        if (ext->state.bytes.unk8D & 1)
+            arg0->unk42 &= 0x7FFF;
+        else
+            arg0->unk42 |= 0x8000;
+        if (--ext->state.bytes.unk8D == 0) {
+            arg0->collision_data = D_80108084;
+            ext->state.bytes.unk8E = 0;
+        }
+    } else if (collision < 0) {
+        arg0->state = 2;
+        arg0->unk5 = ext->state.bytes.variant != 0 ? 1 : 0;
+        arg0->unk6 = 0;
+        arg0->unk42 &= 0x7FFF;
+        g_Player.spike_immune = 1;
+        is_on_screen(BASE_OBJECT(arg0));
+        return;
+    } else if (collision != 0 && collision != 0x7F) {
+        arg0->collision_data = D_801060F0;
+        ext->state.bytes.unk8D = 0x40;
+        ext->state.bytes.unk8E = 1;
+    }
+    func_8002D9BC(arg0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086124);
+#endif
 
 void colonel_death(struct MainObj* self)
 {
@@ -814,7 +911,29 @@ void colonel_teleport_slash_shake(struct MainObj* self)
 }
 
 // colonel_teleport_slash_reappear
+#ifdef MMX4_PC
+void func_800877A4(struct MainObj* arg0)
+{
+    s16 player_x;
+
+    if (--arg0->unk7C != 0)
+        return;
+    player_x = g_Player.x_pos.i.hi;
+    if (player_x < background_objects[0].x_pos.i.hi + 0xB0)
+        arg0->x_pos.i.hi = player_x + 0x30;
+    else
+        arg0->x_pos.i.hi = player_x - 0x30;
+    colonel_face_player(arg0);
+    set_animation(arg0, 5);
+    func_8001540C(2, 0xD4, arg0);
+    arg0->hurt_box = &D_80104508;
+    arg0->attack_box = &D_80104504;
+    arg0->unk7C = 0x1E;
+    arg0->unk6++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_800877A4);
+#endif
 
 void colonel_teleport_slash_swing(struct MainObj* self)
 {
@@ -867,7 +986,36 @@ void colonel_dash_start(struct MainObj* self)
 }
 
 // colonel_dash_run
+#ifdef MMX4_PC
+void func_80087A00(struct MainObj* arg0)
+{
+    s32 speed;
+
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    if (arg0->unk15 != 0) {
+        if (arg0->x_speed <= 0x41FFF)
+            arg0->x_speed = 0x42000;
+    } else if (arg0->x_speed > -0x42000) {
+        arg0->x_speed = -0x42000;
+    }
+    if (arg0->unk15 != 0) {
+        if (arg0->x_pos.i.hi < (s16)background_objects[0].unk1E + 0x110)
+            return;
+        speed = 0x42000;
+    } else {
+        if ((s16)background_objects[0].unk1E + 0x50 < arg0->x_pos.i.hi)
+            return;
+        speed = -0x42000;
+    }
+    arg0->x_speed = speed;
+    arg0->x_accel = -0x3000;
+    arg0->unk4B = -1;
+    set_animation(arg0, 2);
+    arg0->unk6++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80087A00);
+#endif
 
 void colonel_dash_brake(struct MainObj* self)
 {
@@ -1350,7 +1498,31 @@ void colonel_face_center(struct BaseObj* self)
 }
 
 // colonel_pick_script
+#ifdef MMX4_PC
+void func_800889DC(struct MainObj* arg0)
+{
+    struct Main69Ext* ext = &arg0->ext.main_69;
+    u8 roll = get_random() & 0xF;
+    u8 level;
+    u8** scripts;
+    u8 i;
+
+    if (ext->state.bytes.variant == 1) {
+        ext->script = roll < 10 ? D_801044A0 : D_801044A8;
+        return;
+    }
+    level = (arg0->hp - 1) / 24;
+    scripts = D_801044EC[level];
+    for (i = 0; i < 2; i++) {
+        if (roll < D_801044F4[level * 2 + i]) {
+            ext->script = scripts[i];
+            return;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_800889DC);
+#endif
 
 void colonel_spawn_afterimages(struct MainObj* self)
 {

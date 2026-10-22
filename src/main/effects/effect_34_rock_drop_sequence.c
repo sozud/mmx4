@@ -6,6 +6,10 @@
 #include "main/effects/effect_35_palette_pulse.h"
 #include "main/stage_objects.h"
 
+#ifdef MMX4_PC
+#include "main/object_motion.h"
+#endif
+
 // rock_drop_sequence_state_funcs
 extern void (*rock_drop_sequence_state_funcs[])(struct EffectObj*);
 void rock_drop_sequence_wait_player(struct EffectObj*);
@@ -85,7 +89,42 @@ void palette_pulse_init(struct EffectObj* self)
 }
 
 // palette_pulse_step
+#ifdef MMX4_PC
+void func_800BD080(struct EffectObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800BD080(struct EffectObj* arg0)
+{
+    struct MainObj* main;
+    s32 x;
+    s32 y;
+    u32 i;
+
+    if (--arg0->ext.unk_effect.unk14 != 0)
+        return;
+    x = background_objects[0].x_pos.u.hi + (u16)arg0->ext.effect_4.unk16;
+    y = background_objects[0].y_pos.i.hi + (arg0->ext.unk_effect.unk15 != 0 ? 0x20 : 0x10);
+    for (i = 0; i < 5; i++) {
+        main = find_free_main_obj();
+        if (main == NULL)
+            continue;
+        main->active = 0x21;
+        main->id = 0x3B;
+        main->unk2 = 0;
+        main->x_pos.i.hi = x + (get_random() & 0xF);
+        main->y_pos.i.hi = y + (get_random() & 0x1F);
+        y += 0x20;
+        main->unk7C = get_random() & 0xF;
+    }
+    arg0->ext.unk_effect.unk14 = 7;
+    arg0->ext.unk_effect.unk15 ^= 1;
+    if ((s16)arg0->ext.effect_4.unk16 < 0x70)
+        arg0->ext.effect_4.unk16 += 3;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_34_rock_drop_sequence", func_800BD080);
+#endif
 
 s16 rock_drop_sequence_delays[10] = { 2, 2, 2, 0x46, 0x64, 0x46, 0x46, 0x46, 0x46, 0 };
 
