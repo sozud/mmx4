@@ -73,11 +73,12 @@ void func_8009C638(struct ShotObj* self)
 }
 
 // depth_charge_launch
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009C784(struct ShotObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009C784(struct ShotObj* self)
 {
     move_object(MOVING_OBJECT(self));

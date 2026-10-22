@@ -29,6 +29,7 @@ extern void (*boss_teleporter_warp_funcs[])(struct ItemObj*);
 void boss_teleporter_warp_charge(struct ItemObj*);
 void boss_teleporter_warp_leave(struct ItemObj*);
 void boss_teleporter_warp_finish(struct ItemObj*);
+#include "weapon_resources.h"
 
 struct Item26AnimationStep {
     u8 duration;
@@ -275,13 +276,14 @@ void boss_teleporter_update(struct ItemObj* arg0)
 }
 
 // boss_teleporter_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C71C0(struct ItemObj* arg0);
 extern u8 boss_teleporter_box[4];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C71C0(struct ItemObj* arg0)
 {
     s32 resource;
@@ -289,12 +291,12 @@ void func_800C71C0(struct ItemObj* arg0)
     struct MiscObj* misc;
 
     arg0->active = 0x41;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk15 = 0;
-    arg0->unk40 = D_801406A8[func_8002938C(0x88)] >> 7;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x88));
     resource = func_8002938C(0x88);
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    arg0->unk42 = CLUT_FROM_ID(0x88);
+    arg0->unk42 = OBJECT_STAGE_CLUT(0x88);
     arg0->animation_table = (const u8* const*)boss_teleporter_animations;
     arg0->unk67 = 0;
     arg0->unk75 = 0;
@@ -302,7 +304,7 @@ void func_800C71C0(struct ItemObj* arg0)
     if (arg0->unk2 & 0x10) {
         resource = func_8002938C(0x88);
         row = func_8002938C(0x88);
-        arg0->unk42 = ((resource * 4 + 0x1A) % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
+        arg0->unk42 = OBJECT_CLUT(((resource * 4 + 0x1A) % 16) | ((((row + 6) / 4) + 0x1E0) << 6));
         set_animation(ANIMATED_OBJECT(arg0), 6);
         arg0->state = 1;
         arg0->unk5 = 4;
@@ -418,7 +420,7 @@ void boss_teleporter_wait_enter(struct ItemObj* arg0)
         background_objects[0].unk24 = background_objects[0].x_pos.i.hi;
         arg0->unk5 = 2;
         arg0->unk6 = 0;
-        func_8001540C(5, 0, NULL);
+        func_8001540C(5, SATURN_SOUND(0, 0x29), NULL);
     }
 }
 
@@ -458,7 +460,7 @@ void boss_teleporter_warp_leave(struct ItemObj* arg0)
 {
     if (--arg0->tail_ext.unk1.unk84.timer == 0) {
         player_start_script_action(0x16, g_Player.unk15);
-        func_8001540C(5, 1, NULL);
+        func_8001540C(5, SATURN_SOUND(1, 0x2A), NULL);
         arg0->tail_ext.unk1.unk84.timer = 0x28;
         arg0->unk6 = (u8)arg0->unk6 + 1;
     }

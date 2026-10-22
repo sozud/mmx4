@@ -175,7 +175,7 @@ static void check(void)
 
 static void expect_animation(u32 animation, u32 word)
 {
-    assert(D_80119DF0[animation][0] == word);
+    assert(D_80119DF0[animation][0].packed == word);
     expected.unk17 = animation;
     expected.previous_animation_index = 0xFF;
     expected.animation_cursor = (u32*)D_80119DF0[animation];
@@ -257,7 +257,7 @@ static u32 test_nova_handoff(u32 row)
     palette_dirty |= 1;
     handoff->run(&g_Player);
     check();
-    assert(D_80119DF0[0x6A][0] == 0xD5010003 && D_80119DF0[0x63][0] == 0xE7010002);
+    assert(D_80119DF0[0x6A][0].packed == 0xD5010003 && D_80119DF0[0x63][0].packed == 0xE7010002);
     return 1;
 }
 

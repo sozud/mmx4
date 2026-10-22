@@ -1,3 +1,6 @@
+#ifndef MMX4_COMMON_H
+#define MMX4_COMMON_H
+
 #ifdef VERSION_JP
 #define ASM_ROOT "asm/jp/"
 #elif defined(VERSION_EU)
@@ -6,7 +9,10 @@
 #define ASM_ROOT "asm/us/"
 #endif
 
-#if defined(MMX4_PC) || defined(SKIP_ASM) || defined(PERMUTER)
+#if defined(MMX4_SHC)
+#define INCLUDE_ASM(FOLDER, NAME) extern int shc_unported_asm_##NAME
+#define INCLUDE_RODATA(FOLDER, NAME) extern int shc_unported_rodata_##NAME
+#elif defined(MMX4_PC) || defined(SKIP_ASM) || defined(PERMUTER)
 #define INCLUDE_ASM(FOLDER, NAME)
 #define INCLUDE_RODATA(FOLDER, NAME)
 #else
@@ -61,10 +67,17 @@ __asm__(".include \"macro.inc\"\n");
 #define ON_SCREEN_X(X, W) ((u16)((X) + (W)) < (u16)((W) + ((W) + SCREEN_WIDTH)))
 #define ON_SCREEN_Y(Y, H) ((u16)((Y) + (H)) < (u16)((H) + ((H) + SCREEN_HEIGHT)))
 
-#ifdef MMX4_WIN32
+#if defined(MMX4_SHC_LAYOUT_CHECKS)
+#define MMX4_STATIC_ASSERT(name, condition) int shc_layout_check_##name(void) { return (condition); } extern int shc_layout_decl_##name
+#elif defined(MMX4_SHC)
+#define MMX4_STATIC_ASSERT(name, condition) extern int shc_layout_check_##name(void)
+#elif defined(MMX4_WIN32)
 #define MMX4_STATIC_ASSERT(name, condition)
 #else
 #define MMX4_STATIC_ASSERT(name, condition) typedef char static_assert_##name[(condition) ? 1 : -1]
+#endif
+#if defined(MMX4_SATURN) && !defined(assert)
+#define assert(condition) ((void)0)
 #endif
 #ifdef MMX4_PC
 #define MMX4_OFFSET_OF(type, member) __builtin_offsetof(type, member)
@@ -75,7 +88,9 @@ __asm__(".include \"macro.inc\"\n");
 typedef signed char s8;
 typedef signed short s16;
 typedef signed int s32;
-#ifdef MMX4_WIN32
+#ifdef MMX4_SHC
+typedef struct ShcUnsupportedSigned64 s64;
+#elif defined(MMX4_WIN32)
 typedef signed __int64 s64;
 #else
 typedef signed long long s64;
@@ -83,10 +98,34 @@ typedef signed long long s64;
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-#ifdef MMX4_WIN32
+#ifdef MMX4_SHC
+typedef struct ShcUnsupportedUnsigned64 u64;
+#elif defined(MMX4_WIN32)
 typedef unsigned __int64 u64;
 #else
 typedef unsigned long long u64;
+#endif
+
+struct PlayerHurtVelocity {
+    s32 x_vel;
+    s32 x_accel;
+    s32 y_vel;
+    s32 gravity;
+};
+
+#ifdef MMX4_SATURN
+#define PLAYER_FACING_RIGHT 0x10
+#define PLAYER_FACING_SHIFT 4
+#else
+#define PLAYER_FACING_RIGHT 0x40
+#define PLAYER_FACING_SHIFT 6
+#endif
+
+#ifdef MMX4_SHC
+void* memcpy(void*, const void*, unsigned int);
+void* memset(void*, int, unsigned int);
+#define __builtin_memcpy memcpy
+#define __builtin_memset memset
 #endif
 
 typedef u16 Palette[16];
@@ -173,7 +212,9 @@ struct SoundArchive {
     u32 vab_offset : 24;
     u32 vab_id : 8;
     u32 unk4;
+#ifndef MMX4_SHC
     u8 sound_entries[0];
+#endif
 };
 struct SoundTransfer {
     s32 remaining;
@@ -243,6 +284,30 @@ typedef char CdCompletionSlot_must_be_12_bytes[sizeof(struct CdCompletionSlot) =
 typedef union {
     s32 val;
     struct {
+#ifdef MMX4_SATURN
+        s16 hi;
+        s16 lo;
+#else
+        s16 lo;
+        s16 hi;
+#endif
+    } i;
+    struct {
+#ifdef MMX4_SATURN
+        u16 hi;
+        u16 lo;
+#else
+        u16 lo;
+        u16 hi;
+#endif
+    } u;
+    u8 bytes[4];
+} f32;
+
+#ifdef MMX4_SATURN
+typedef union {
+    s32 val;
+    struct {
         s16 lo;
         s16 hi;
     } i;
@@ -251,7 +316,10 @@ typedef union {
         u16 hi;
     } u;
     u8 bytes[4];
-} f32;
+} f32_halves;
+#else
+typedef f32 f32_halves;
+#endif
 struct TitlePointState {
     f32 coordinates[36];
     u8 unk90[18]; /* 0x90 */
@@ -280,13 +348,13 @@ extern u8 mission_stage_order[12];
 #endif
 
 union AnimationStep {
-    u32 packed;
     struct {
         s8 duration;
         s8 event;
         s8 relative_step;
         u8 frame_index;
     } fields;
+    u32 packed;
 };
 
 union PlayerUnk8A {
@@ -454,7 +522,11 @@ extern s32 D_80139514;
 extern u8 D_80139554[];
 extern s8 D_80139568;
 extern s16 D_8013955C;
+#ifdef MMX4_SATURN
+extern u16 D_80173C84;
+#else
 extern u8 D_80173C84;
+#endif
 extern s32 D_80175EE8[];
 #ifdef MMX4_PC
 #define D_8016DEA2 (D_8016DEA0.unk2)
@@ -529,7 +601,7 @@ extern s8 D_80137CE4;
 extern u8 D_80137CF0;
 extern u8 D_80137CF4;
 extern u8 D_8013BD40;
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern struct BootTransitionDataRegion g_BootTransitionDataRegion;
 #define D_800F1C0F (g_BootTransitionDataRegion.stage_map)
 #else
@@ -578,7 +650,6 @@ extern s32 D_80139680;
 extern s32 D_80139684;
 extern s32 D_80139688;
 extern u8* D_80173C80;
-extern u8 D_80173C84;
 extern u8 need_palette_load;
 extern s8 D_801721F7;
 extern s32 D_8013E188[4];
@@ -750,6 +821,10 @@ void post_boss_cutscene_spawn_afterimages(struct UnkObj*);
 
 #endif
 
+#ifdef MMX4_SATURN
+#include "saturn/game_prototypes.h"
+#endif
+
 #ifdef MMX4_PC
 #include "pc_build.h"
 #endif
@@ -757,6 +832,9 @@ void post_boss_cutscene_spawn_afterimages(struct UnkObj*);
 #ifdef MMX4_WIN32
 extern u32 D_800F44C4;
 extern u32 D_800F44D8;
+#elif defined(MMX4_SATURN)
+extern u16 D_800F44C4[9];
+extern u16 D_800F44D8[7];
 #else
 extern u16 D_800F44C4[9]; // secret code sequence
 extern u16 D_800F44D8[8]; // secret code sequence
@@ -771,3 +849,5 @@ u8 get_random();
 void player_start_script_action(s8 action, s8 facing);
 #endif
 void spawn_explosion(struct BaseObj* arg0);
+
+#endif

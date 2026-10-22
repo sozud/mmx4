@@ -63,6 +63,28 @@ void player_zero_ryuenjin_rise(struct PlayerObj*);
 void player_zero_ryuenjin_peak(struct PlayerObj*);
 void player_zero_ryuenjin_fall(struct PlayerObj*);
 
+#ifdef MMX4_SATURN
+#include "saturn/player_resources.h"
+extern u32 saturn_frame_counter;
+#define PLAYER_FRAME_COUNTER saturn_frame_counter
+#define PLAYER_ZERO_SOUND_7 0x27
+#define PLAYER_ZERO_SOUND_8 0x28
+#define PLAYER_NOVA_SOUND 0x26
+#define PLAYER_RYUENJIN_SOUND 0x24
+#define PLAYER_HYOURETSUZAN_SOUND 0x23
+#else
+#define PLAYER_FRAME_COUNTER main_bss_state.frame_counter
+#define PLAYER_ZERO_SOUND_7 7
+#define PLAYER_ZERO_SOUND_8 8
+#define PLAYER_NOVA_SOUND 0x20
+#define PLAYER_RYUENJIN_SOUND 0x1B
+#define PLAYER_HYOURETSUZAN_SOUND 0x1A
+#define PLAYER_EFFECT_TEXTURE_BASE 0
+#define PLAYER_PALETTE_BASE 0x7800
+#endif
+
+s32 func_8003A1DC(struct PlayerObj* self);
+
 s32 player_nova_strike_hit_wall(struct PlayerObj* self);
 void player_set_ladder_shoot_animation(struct PlayerObj* self);
 void player_zero_attack_finish(struct PlayerObj* self);
@@ -73,13 +95,6 @@ s32 player_zero_check_slash_input(struct PlayerObj* self);
 void player_zero_ryuenjin_spawn_flame(struct PlayerObj* self);
 void player_zero_saber_on_event(struct PlayerObj* self, s8 saber_id);
 void player_zero_spawn_saber(struct PlayerObj* self, s8 saber_id);
-
-struct PlayerHurtVelocity {
-    s32 x_vel;
-    s32 x_accel;
-    s32 y_vel;
-    s32 gravity;
-};
 
 void player_update(void);
 
@@ -558,9 +573,9 @@ void (*player_rising_fire_charged_funcs[])(struct PlayerObj*) = {
 };
 
 u8 player_zero_combo_sounds[4][2] = {
-    { 7, 3 },
-    { 8, 4 },
-    { 7, 5 },
+    { PLAYER_ZERO_SOUND_7, 3 },
+    { PLAYER_ZERO_SOUND_8, 4 },
+    { PLAYER_ZERO_SOUND_7, 5 },
     { 0, 0 },
 };
 
@@ -640,7 +655,7 @@ void player_ladder_shoot(struct PlayerObj* self)
             self->unk15 = 0;
         }
         if (self->pressed_input & PLAYER_INPUT_RIGHT) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
         if (self->attack_ended != 0) {
             player_set_animation_frame(self, 0x20, 3);
@@ -897,7 +912,7 @@ void player_nova_strike_dash(struct PlayerObj* self)
         player_spawn_weapon(1, 0x16, 0, NULL);
         player_set_palette(self, 0x49);
         func_8001540C(1, 5, self);
-        func_8001540C(0, 0x20, self);
+        func_8001540C(0, PLAYER_NOVA_SOUND, self);
         if (self->unk15 != 0) {
             self->x_vel.val = FIXED(8);
         } else {
@@ -1220,7 +1235,7 @@ s32 player_zero_check_saber(struct PlayerObj* self)
         return 0;
     }
     player_set_animation(self, 0x58);
-    func_8001540C(1, 7, self);
+    func_8001540C(1, PLAYER_ZERO_SOUND_7, self);
     player_play_voice(self, 3);
     self->dash_momentum = 0;
     self->air_action = 0;
@@ -1235,11 +1250,11 @@ s32 player_zero_check_jump_slash(struct PlayerObj* self)
     if (player_zero_check_slash_input(self) != 0) {
         if (self->boss_flags & 4) {
             player_set_animation(self, 0x64);
-            func_8001540C(1, 7, self);
+            func_8001540C(1, PLAYER_ZERO_SOUND_7, self);
             self->unk5 = PLAYER_ZERO_SPIN_JUMP_SLASH;
         } else {
             player_set_animation(self, 0x5B);
-            func_8001540C(1, 8, self);
+            func_8001540C(1, PLAYER_ZERO_SOUND_8, self);
             self->unk5 = PLAYER_ZERO_JUMP_SLASH;
         }
         self->unk6 = 0;
@@ -1266,11 +1281,11 @@ s32 player_zero_check_fall_slash(struct PlayerObj* self)
 
     if (self->boss_flags & 4) {
         player_set_animation(self, 0x64);
-        func_8001540C(1, 7, self);
+        func_8001540C(1, PLAYER_ZERO_SOUND_7, self);
         self->unk5 = PLAYER_ZERO_SPIN_FALL_SLASH;
     } else {
         player_set_animation(self, 0x5B);
-        func_8001540C(1, 8, self);
+        func_8001540C(1, PLAYER_ZERO_SOUND_8, self);
         self->unk5 = PLAYER_ZERO_FALL_SLASH;
     }
 
@@ -1285,7 +1300,7 @@ s32 player_zero_check_ladder_slash(struct PlayerObj* self)
         return 0;
     }
     player_set_animation(self, 0x5D);
-    func_8001540C(1, 7, self);
+    func_8001540C(1, PLAYER_ZERO_SOUND_7, self);
     player_play_voice(self, 8);
     self->dash_momentum = 0;
     self->air_action = 0;
@@ -1302,7 +1317,7 @@ s32 player_zero_check_wall_slash(struct PlayerObj* self)
     }
 
     player_set_animation(self, 0x5E);
-    func_8001540C(1, 7, self);
+    func_8001540C(1, PLAYER_ZERO_SOUND_7, self);
     player_play_voice(self, 8);
     self->unk5 = PLAYER_ZERO_WALL_SLASH;
     self->unk6 = 0;
@@ -1374,7 +1389,7 @@ s32 player_zero_check_hyouretsuzan(struct PlayerObj* self)
         self->unk15 = 0;
     }
     if (self->input.buttons.held & PLAYER_INPUT_RIGHT) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
     self->unk5 = PLAYER_ZERO_HYOURETSUZAN;
     self->unk6 = 0;
@@ -1423,7 +1438,7 @@ s32 player_zero_check_ryuenjin(struct PlayerObj* self)
 
     player_zero_begin_attack(self);
     player_set_animation(self, 0x65);
-    func_8001540C(0, 0x1B, self);
+    func_8001540C(0, PLAYER_RYUENJIN_SOUND, self);
     player_play_voice(self, 9);
     self->air_state = 1;
     self->spike_immune = 1;
@@ -1479,7 +1494,7 @@ s32 player_zero_check_shippuuga(struct PlayerObj* self)
     self->combo = 0;
     player_clear_dash(self);
     player_set_animation(self, 0x68);
-    func_8001540C(1, 8, self);
+    func_8001540C(1, PLAYER_ZERO_SOUND_8, self);
     player_play_voice(self, 9);
     if (self->unk15 != 0) {
         self->x_vel.val = FIXED(4.125);
@@ -1523,12 +1538,13 @@ void player_zero_saber(struct PlayerObj* self)
 }
 
 // player_zero_check_combo
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_8003A1DC(struct PlayerObj* arg0);
 void player_zero_raijingeki(struct PlayerObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_8003A1DC(struct PlayerObj* arg0)
 {
     s8 combo;
@@ -1587,7 +1603,11 @@ void player_zero_attack_finish(struct PlayerObj* self)
             return;
         }
         if (self->script_state != 0) {
+#ifdef MMX4_SATURN
+            func_80034E2C(self);
+#else
             func_80034E2C();
+#endif
             return;
         }
         player_enter_idle(self);
@@ -1756,7 +1776,7 @@ void player_zero_ladder_slash(struct PlayerObj* self)
         self->unk15 = 0;
     }
     if (self->pressed_input & PLAYER_INPUT_RIGHT) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
     if (self->animation_step.fields.relative_step == 0) {
         self->attacking = 0;
@@ -1832,7 +1852,7 @@ void player_zero_raijingeki(struct PlayerObj* self)
     player_zero_saber_on_event(self, 0x20);
     if (self->animation_step.fields.event & 0x10) {
         self->animation_step.fields.event = 0;
-        func_8001540C(1, 8, self);
+        func_8001540C(1, PLAYER_ZERO_SOUND_8, self);
         player_play_voice(self, 6);
     }
     if (self->input_locked == 0) {
@@ -1871,7 +1891,7 @@ void player_zero_hyouretsuzan_start(struct PlayerObj* self)
             self->unk15 = 0;
         }
         if (self->input.buttons.held & PLAYER_INPUT_RIGHT) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
     }
 
@@ -1914,7 +1934,7 @@ void player_zero_hyouretsuzan_drop(struct PlayerObj* self)
             }
             i++;
         } while (i < 8);
-        func_8001540C(0, 0x1A, self);
+        func_8001540C(0, PLAYER_HYOURETSUZAN_SOUND, self);
         self->unk6++;
         return;
     }
@@ -2016,7 +2036,7 @@ void player_zero_ryuenjin_spawn_flame(struct PlayerObj* self)
 {
     struct MiscObj* obj;
 
-    if (!(main_bss_state.frame_counter & 1)) {
+    if (!(PLAYER_FRAME_COUNTER & 1)) {
         self->animation_step.fields.event &= 0xFE;
         obj = find_free_misc_obj();
         if (obj != NULL) {
@@ -2047,8 +2067,8 @@ void player_zero_rakuhouha(struct PlayerObj* self)
             sprite_frames = SP_SPRITE_FRAMES;
             visual_obj->unk3C = (u8*)sprite_frames + sprite_frames[6];
             visual_obj->animation_table = D_8011C018;
-            visual_obj->unk40 = 0;
-            visual_obj->unk42 = 0x7803;
+            visual_obj->unk40 = PLAYER_EFFECT_TEXTURE_BASE;
+            visual_obj->unk42 = PLAYER_PALETTE_BASE + 3;
             visual_obj->unk16 = 0;
             visual_obj->x_pos.val = self->x_pos.val;
             visual_obj->y_pos.val = self->y_pos.val;

@@ -18,6 +18,9 @@
 #include "main/object_update.h"
 #include "main/stage_objects.h"
 #include "main/xa_sequence_data.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#endif
 
 extern s16 D_800F21DC[];
 extern u8 D_800F21F8[];
@@ -155,6 +158,115 @@ void (*D_800F2294[15])(struct GameInfo*) = {
 };
 
 #else
+#ifdef MMX4_SATURN
+s16 D_800F21DC[14] = {
+    0x8442,
+    0x8C84,
+    0x94C6,
+    0x9908,
+    0xA16B,
+    0xA9AD,
+    0xADEF,
+    0xB631,
+    0xBE73,
+    0xC6D6,
+    0xCB18,
+    0xD35A,
+    0xDB9C,
+    0xE3FF,
+};
+
+u8 D_800F21F8[10] = {
+    0x12,
+    0x13,
+    0x00,
+    0x0B,
+    0x0C,
+    0x04,
+    0x07,
+    0x09,
+    0x11,
+    0xFF,
+};
+
+s16 D_800F2204[36] = {
+    -154,
+    -297,
+    319,
+    -297,
+    429,
+    -297,
+    869,
+    -297,
+    -77,
+    -187,
+    176,
+    -220,
+    473,
+    -242,
+    -605,
+    649,
+    -220,
+    605,
+    -154,
+    649,
+    132,
+    572,
+    396,
+    572,
+    -11,
+    649,
+    473,
+    649,
+    11,
+    154,
+    231,
+    -33,
+    275,
+    154,
+    77,
+    308,
+};
+
+s16 D_800F224C[36] = {
+    169,
+    26,
+    212,
+    26,
+    222,
+    26,
+    262,
+    26,
+    176,
+    36,
+    199,
+    33,
+    229,
+    31,
+    128,
+    112,
+    163,
+    108,
+    169,
+    112,
+    195,
+    105,
+    219,
+    105,
+    182,
+    112,
+    226,
+    112,
+    184,
+    67,
+    204,
+    50,
+    208,
+    67,
+    190,
+    81,
+};
+#else
 s16 D_800F21DC[14] = {
     0x8442,
     0x8C84,
@@ -257,6 +369,7 @@ s16 D_800F224C[36] = {
     190,
     81,
 };
+#endif
 
 void (*D_800F2294[15])(struct GameInfo*) = {
     func_8001DCCC,
@@ -278,14 +391,13 @@ void (*D_800F2294[15])(struct GameInfo*) = {
 
 #endif
 
-extern u8 D_800F22D0[16];
-extern u8 D_800F22E0[16];
-extern u8 D_800F22F0[16];
-extern u8 D_800F2300[16];
-extern u8 D_800F2310[12];
-extern u8 D_800F231C[12];
-extern u8 D_800F2328[16];
-extern struct GameInfoAuxData D_800F2338;
+extern u8 D_800F22D0[];
+extern u8 D_800F22E0[];
+extern u8 D_800F22F0[];
+extern u8 D_800F2300[];
+extern u8 D_800F2310[];
+extern u8 D_800F231C[];
+extern u8 D_800F2328[];
 extern RECT D_800F2388;
 extern void (*D_800F2390[3])(struct GameInfo*);
 extern void (*D_800F239C[5])(struct GameInfo*);
@@ -404,9 +516,13 @@ void func_8001DCCC(struct GameInfo* arg0)
     func_8002771C();
     func_80023CE0();
     need_palette_load |= 1;
+#ifdef MMX4_SATURN
+    saturn_display_mode = 2;
+#else
     background_objects[0].unk3 = 0;
     background_objects[1].unk3 = 1;
     background_objects[2].unk3 = 0;
+#endif
 #ifdef VERSION_JP
     func_8001DC7C(0xB, 0);
     func_8001DC7C(0xB, 1);
@@ -422,6 +538,16 @@ void func_8001DCCC(struct GameInfo* arg0)
 
 void func_8001DDB0(struct GameInfo* arg0)
 {
+#ifdef MMX4_SATURN
+    if (arg0->unk4 == 0 && saturn_title_skip == 0) {
+        func_8001663C(0x50, 0);
+    }
+    if (++arg0->unk4 >= 28) {
+        arg0->unkD = 1;
+        arg0->mode++;
+        arg0->unk4 = 0xA;
+    }
+#else
     if (arg0->unk4 == 0) {
         func_8001663C(MUSIC_TITLE, 0x7F);
         arg0->unk4 = 1;
@@ -438,6 +564,7 @@ void func_8001DDB0(struct GameInfo* arg0)
 #endif
         arg0->mode++;
     }
+#endif
 }
 
 void func_8001DE20(struct GameInfo* arg0)
@@ -514,7 +641,11 @@ void func_8001DE54(struct GameInfo* arg0)
             var_a2 += 1;
         } while (var_a2 < 0x24);
         D_80169498.title.settled = 1;
+#ifdef MMX4_SATURN
+        saturn_display_mode = 3;
+#else
         background_objects[0].unk3 = 1;
+#endif
         arg0->mode++;
     }
 }
@@ -575,6 +706,18 @@ void func_8001E000(struct GameInfo* arg0)
 #endif
     if (D_80139690->active == 0) {
         g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
+#ifdef MMX4_SATURN
+        D_8013E188[0] = 0;
+        func_8001DC7C(0xC, 0);
+        func_8001DC7C(0xC, 1);
+        func_8001DC7C(0xC, 2);
+        func_8001DC7C(0xC, 3);
+        func_8001DC7C(0xC, 4);
+        func_8001DC7C(0xC, 5);
+        func_8001DC7C(0xC, 6);
+        arg0->unk6 = 0x3C;
+        saturn_display_mode = 2;
+#else
         D_8013E188[0] = 0;
         D_8013E188[1] = 0;
         D_8013E188[2] = 0;
@@ -591,6 +734,7 @@ void func_8001E000(struct GameInfo* arg0)
         func_8001DC7C(0xC, 8);
         arg0->unk6 = 0x3C;
         background_objects[0].unk3 = 0;
+#endif
         arg0->unkA = 0;
         arg0->mode++;
     }
@@ -763,7 +907,11 @@ void func_8001E54C(struct GameInfo* /* D_80173C70 */ arg0)
         arg0->unk4 = 0x258;
 #endif
         arg0->mode++;
+#ifdef MMX4_SATURN
+        saturn_display_mode = 6;
+#else
         background_objects[2].unk3 = 1;
+#endif
         arg0->unkD = 0;
     }
 }
@@ -789,11 +937,42 @@ void func_8001E6BC(struct GameInfo* arg0)
     if (main_bss_state.transition.active == 0) {
         arg0->unkD = 1;
         func_8001D134();
+#ifdef MMX4_SATURN
+        saturn_stage_commit_video();
+#endif
         arg0->mode = 0;
         arg0->unk0++;
     }
 }
 
+#ifdef MMX4_SATURN
+void func_8001E708(struct GameInfo* arg0)
+{
+    D_800F2294[arg0->mode](arg0);
+    if (((saturn_pad_pressed & SATURN_PAD_START) && arg0->unkD == 1) || (saturn_title_skip != 0 && arg0->unkD == 1)) {
+        if (saturn_title_skip != 0) {
+            saturn_title_skip = 0;
+        } else {
+            func_8001540C(0, SATURN_SE_CONFIRM, 0);
+            saturn_music_stop();
+        }
+        arg0->mode = 0xC;
+        g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
+        D_8013E188[0] = 0;
+        saturn_display_mode = 0;
+        reset_objects();
+        background_objects[1].x_pos.i.hi = 0x400;
+        background_objects[1].unk4C = 1;
+        arg0->unk4 = 1;
+    }
+    saturn_sprite_reset_queues();
+    update_effect_objects();
+    update_misc_objects();
+    update_quad_objects();
+    func_8002A484();
+    func_80023D68();
+}
+#else
 void func_8001E708(struct GameInfo* arg0)
 {
     D_800F2294[arg0->mode](arg0);
@@ -821,6 +1000,7 @@ void func_8001E708(struct GameInfo* arg0)
     func_8002A484();
     func_80023D68();
 }
+#endif
 
 u8 func_8001E850(u8* arg0, u8 arg1)
 {
@@ -868,6 +1048,237 @@ void func_8001E954(struct GameInfo* arg0)
     }
 }
 
+#ifdef MMX4_SATURN
+void func_8001E980(u8 arg0)
+{
+    s32 i;
+
+    if (arg0 == 0) {
+        for (i = 0; i < 0x1F0; i++) {
+            saturn_title_palette_backup[i] = saturn_color_ram[i];
+            saturn_color_ram[i] = saturn_title_palette[i];
+        }
+        for (i = 0; i < 16; i++) {
+            saturn_title_window_backup[i] = saturn_color_ram[0x400 + i];
+            saturn_color_ram[0x400 + i] = menu_window_palette[i];
+        }
+    } else {
+        for (i = 0; i < 0x1F0; i++) {
+            saturn_color_ram[i] = saturn_title_palette_backup[i];
+        }
+        for (i = 0; i < 16; i++) {
+            saturn_color_ram[0x400 + i] = saturn_title_window_backup[i];
+        }
+    }
+    need_palette_load |= 1;
+}
+
+static void saturn_menu_restore_backgrounds(struct GameInfo* arg0)
+{
+    background_objects[2].x_pos.i.hi = 0;
+    background_objects[0].unk0 = 1;
+    background_objects[1].unk0 = 1;
+    background_objects[2].unk0 = 1;
+    saturn_background_refresh();
+    saturn_display_mode = 6;
+    arg0->unk0 = 6;
+    arg0->mode = 0;
+    arg0->unk2 = 0;
+    arg0->unk3 = 0;
+}
+
+void func_8001E9E0(struct GameInfo* arg0)
+{
+    struct MiscObj* obj;
+
+    reset_objects();
+    obj = find_free_misc_obj();
+    if (obj != 0) {
+        obj->active = 1;
+        obj->id = 0x1F;
+        obj->unk2 = 0x56;
+        obj->y_pos.i.hi = 0x80;
+    }
+    main_bss_state.transition.selection = 0;
+    arg0->unk8 = func_8001E850(D_800F22F0, 0) & 0xFF;
+    saturn_stage_commit_video();
+    saturn_display_mode = 0;
+    func_8001E980(0);
+    saturn_title_upload_window();
+    func_800129A4(8);
+    arg0->mode++;
+}
+
+void func_8001EA90(struct GameInfo* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        if (saturn_pad_pressed & SATURN_PAD_BACK) {
+            func_800129F0(8);
+            main_bss_state.transition.selection = 2;
+            arg0->mode++;
+            return;
+        }
+        if ((saturn_pad_pressed & SATURN_PAD_CONFIRM) && main_bss_state.transition.selection != 1) {
+            func_8001540C(0, SATURN_SE_CONFIRM, 0);
+            func_800129F0(8);
+            arg0->mode++;
+            return;
+        }
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if ((saturn_pad_pressed & SATURN_PAD_TOGGLE) && main_bss_state.transition.selection == 1) {
+            func_8001540C(0, SATURN_SE_TOGGLE, 0);
+            saturn_sound_output ^= 0x80;
+            saturn_sound_set_output(saturn_sound_output);
+        }
+    }
+}
+
+void func_8001EBA0(struct GameInfo* info)
+{
+    if (main_bss_state.transition.active != 0) {
+        return;
+    }
+    if (main_bss_state.transition.selection == 0) {
+        info->unk0 = 0xA;
+        info->mode = 0;
+        info->unk2 = 0;
+        info->unk3 = 0;
+        return;
+    }
+    func_8001E980(1);
+    saturn_menu_restore_backgrounds(info);
+}
+
+void func_8001EC34(struct GameInfo* arg0)
+{
+    D_800F2390[arg0->mode](arg0);
+    saturn_sprite_reset_queues();
+    update_misc_objects();
+    func_8002A484();
+    func_80023D68();
+}
+
+void func_8001EC90(struct GameInfo* arg0)
+{
+    reset_objects();
+    main_bss_state.transition.selection = 0;
+    if (D_800F1D90.save.character != 0xFF) {
+        arg0->unk8 = func_8001E850(D_800F22D0, 0) & 0xFF;
+        arg0->mode = arg0->mode + 1;
+    } else {
+        arg0->unk8 = func_8001E850(D_800F22E0, 0) & 0xFF;
+        arg0->mode = arg0->mode + 3;
+    }
+    saturn_stage_commit_video();
+    func_8001E980(0);
+    saturn_title_upload_window();
+    func_800129A4(8);
+}
+
+void func_8001ED44(struct GameInfo* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        if (saturn_pad_pressed & SATURN_PAD_CONFIRM) {
+            func_8001540C(0, SATURN_SE_CONFIRM, 0);
+            if (main_bss_state.transition.selection != 1) {
+                func_800129F0(8);
+            }
+            arg0->mode = (u8)arg0->mode + 1;
+        } else if (saturn_pad_pressed & SATURN_PAD_CANCEL) {
+            func_800129F0(8);
+            main_bss_state.transition.selection = 2;
+            arg0->mode = (u8)arg0->mode + 1;
+        } else {
+            func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        }
+    }
+}
+
+void func_8001EE08(struct GameInfo* arg0)
+{
+    s32 state;
+
+    if (main_bss_state.transition.active != 0) {
+        return;
+    }
+    if (main_bss_state.transition.selection != 1) {
+        func_8001E980(1);
+    }
+    state = main_bss_state.transition.selection;
+    if (state == 0) {
+        saturn_save_load(&D_800F1D90.save, 0);
+        if (engine_obj.cur_character != 0) {
+            saturn_archive_load_blocking("PL01.ARC");
+        } else if (engine_obj.unk37 != 0) {
+            saturn_archive_load_blocking("PL02.ARC");
+        } else {
+            saturn_archive_load_blocking("PL00.ARC");
+        }
+        engine_obj.state = 1;
+        engine_obj.unk1 = 6;
+        engine_obj.unk2 = 0;
+        engine_obj.unk3 = 0;
+        func_80012740(1, &func_8001FB50);
+        func_800127FC();
+        return;
+    }
+    if (state == 1) {
+        arg0->unk0 = 9;
+        engine_obj.unk1 = 0;
+        engine_obj.unk2 = 0;
+        engine_obj.unk3 = 0;
+        return;
+    }
+    saturn_menu_restore_backgrounds(arg0);
+}
+
+void func_8001EF48(struct GameInfo* arg0)
+{
+    if (main_bss_state.transition.active != 0) {
+        return;
+    }
+
+    if (saturn_pad_pressed & SATURN_PAD_CONFIRM) {
+        func_8001540C(0, SATURN_SE_CONFIRM, 0);
+        if (main_bss_state.transition.selection != 0) {
+            func_800129F0(8);
+        }
+    } else if (saturn_pad_pressed & SATURN_PAD_CANCEL) {
+        func_800129F0(8);
+        main_bss_state.transition.selection = 2;
+    } else {
+        return;
+    }
+
+    arg0->mode++;
+}
+
+void func_8001EFF0(struct GameInfo* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        if (main_bss_state.transition.selection != 0) {
+            func_8001E980(1);
+        }
+        if (main_bss_state.transition.selection == 0) {
+            arg0->unk0 = 9;
+            engine_obj.unk1 = 0;
+            engine_obj.unk2 = 0;
+            engine_obj.unk3 = 0;
+        } else {
+            saturn_menu_restore_backgrounds(arg0);
+        }
+    }
+}
+
+void func_8001F0BC(struct GameInfo* arg0)
+{
+    D_800F239C[arg0->mode](arg0);
+    saturn_sprite_reset_queues();
+    update_misc_objects();
+    func_8002A484();
+    func_80023D68();
+}
+#else
 void func_8001E980(u8 arg0)
 {
     if (arg0 == 0) {
@@ -1097,3 +1508,4 @@ void func_8001F0BC(struct GameInfo* arg0)
     func_80016124();
     func_80023D68();
 }
+#endif

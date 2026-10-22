@@ -1,21 +1,23 @@
 // LayerObj, layer_object_update_funcs[3]
 // 800D9C84..800DA05C
 #include "common.h"
+#include "weapon_resources.h"
+#include "main/objects.h"
+#include "main/player_common.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/objects.h"
 #include "main/player_common.h"
 #endif
 
 // train_boss_trigger_update
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D9C84(struct LayerObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
-// src/main/layers/layer_03.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D9C84(struct LayerObj* self)
 {
     struct Main45LayerSignals* signals = (struct Main45LayerSignals*)&self->unk16;
@@ -37,7 +39,7 @@ void func_800D9C84(struct LayerObj* self)
             boss->active = 0x41;
             boss->id = 0x2D;
             boss->unk2 = 0;
-            boss->unk40 = D_801406A8[(u8)func_8002938C(0x2D)] >> 7;
+            boss->unk40 = OBJECT_STAGE_TEXTURE((u8)func_8002938C(0x2D));
             resource = (u8)func_8002938C(0x2D);
             column = resource * 4 + 0x18;
             row = (u8)func_8002938C(0x2D);

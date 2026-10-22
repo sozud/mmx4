@@ -663,7 +663,7 @@ struct Main71Ext {
 struct Main72Ext {
     u8 pad80[4];
     s16 unk84;
-    u8 pad86;
+    u8 unk86;
     u8 lifetime;
     u8 spawn_timer;
 };
@@ -1164,7 +1164,7 @@ struct PlayerObj {
     s8 wall_climbable;
     s8 pad4B[0x50 - 0x4B];
     void* unk50;
-    const u32* unk54;
+    struct Unk_unk68* unk54;
     void* unk58;
     s8 hp;
     s8 hud_hp;
@@ -1414,7 +1414,7 @@ struct ShotObj {
     s16 timer;
     s16 unk8A;
     union ShotUnk8C unk8C;
-    f32 unk90;
+    f32_halves unk90;
     s8 unk94;
     u8 unk95;
     s8 unk96;
@@ -2710,10 +2710,14 @@ union EngineCharacterState {
         s8 previous_character;
         s8 secret_code_phase;
         s8 secret_code_index;
+#ifdef MMX4_SHC
+        u8 menu_state_bytes[4];
+#else
         s32 menu_state;
+#endif
         u8 reserved[6];
     }
-#ifndef MMX4_WIN32
+#if !defined(MMX4_WIN32) && !defined(MMX4_SHC)
     __attribute((packed))
 #endif
     fields;

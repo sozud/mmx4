@@ -4,8 +4,10 @@
 #include "main/mains/main_47_train_boss_armor.h"
 #include "main/visuals/visual_08_ice_shard.h"
 #include "main/object_motion.h"
+#include "main/collision_bounds.h"
+#include "main/objects.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/collision_bounds.h"
 #include "main/objects.h"
@@ -19,7 +21,7 @@ extern void (*train_boss_armor_state_funcs[])(struct MainObj*);
 
 extern u16 train_boss_armor_smoke_offsets[3][2];
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern s8 train_boss_armor_hurt_boxes[3][16];
 extern u8 D_800FF9FC[4], D_800FFA00[4], D_800FFA04[8];
 extern void (*train_boss_armor_step_funcs[3])(struct MainObj*);
@@ -31,14 +33,16 @@ void train_boss_armor_update(struct MainObj* self)
 }
 
 // train_boss_armor_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80066DE8(struct MainObj* self);
 void func_80066F1C(struct MainObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/mains/main_47_train_boss_armor.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80066DE8(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -80,7 +84,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066DE8);
 #endif
 
 // train_boss_armor_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80066F1C(struct MainObj* self)
 {
     struct Main45Ext* owner = self->ext.main_47.train_boss;

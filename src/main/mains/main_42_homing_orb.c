@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[42]
 // 80062D60..800631C8
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_42_homing_orb.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
@@ -24,7 +25,8 @@ void homing_orb_update(struct MainObj* self)
 }
 
 // homing_orb_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80062D9C(struct MainObj* arg0);
 extern struct Unk_unk68 D_80107574[];
 extern s8 homing_orb_hurt_box[4];
@@ -32,12 +34,12 @@ extern s8 homing_orb_attack_box[4];
 extern union AnimationStep* homing_orb_animations[7];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80062D9C(struct MainObj* arg0)
 {
     arg0->unk5 = 2;
     arg0->state++;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->hp = 3;
     arg0->contact_damage = 3;
     arg0->collision_data = D_80107574;
@@ -180,76 +182,76 @@ s8 homing_orb_hurt_box[4] = { -6, -6, 11, 11 };
 s8 homing_orb_attack_box[4] = { -10, -9, 17, 17 };
 
 union AnimationStep homing_orb_anim_0[] = {
-    { 0x00010003 },
-    { 0x01010003 },
-    { 0x02010003 },
-    { 0x03010003 },
-    { 0x04010002 },
-    { 0x04FB0001 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 1, 0, -5, 0x04 },
 };
 
 union AnimationStep homing_orb_anim_1[] = {
-    { 0x00010003 },
-    { 0x14010102 },
-    { 0x15010202 },
-    { 0x16010302 },
-    { 0x17010402 },
-    { 0x18010502 },
-    { 0x19010602 },
-    { 0x1A010702 },
-    { 0x1B010802 },
-    { 0x1C010902 },
-    { 0x1D010A02 },
-    { 0x1E010B02 },
-    { 0x1F010C02 },
-    { 0x20010D02 },
-    { 0x04010E01 },
-    { 0x04F10E01 },
+    { 3, 0, 1, 0x00 },
+    { 2, 1, 1, 0x14 },
+    { 2, 2, 1, 0x15 },
+    { 2, 3, 1, 0x16 },
+    { 2, 4, 1, 0x17 },
+    { 2, 5, 1, 0x18 },
+    { 2, 6, 1, 0x19 },
+    { 2, 7, 1, 0x1A },
+    { 2, 8, 1, 0x1B },
+    { 2, 9, 1, 0x1C },
+    { 2, 10, 1, 0x1D },
+    { 2, 11, 1, 0x1E },
+    { 2, 12, 1, 0x1F },
+    { 2, 13, 1, 0x20 },
+    { 1, 14, 1, 0x04 },
+    { 1, 14, -15, 0x04 },
 };
 
 union AnimationStep homing_orb_anim_2[] = {
-    { 0x05010002 },
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x08010002 },
-    { 0x09010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0C010102 },
-    { 0x0D010002 },
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010001 },
-    { 0x13F10001 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 1, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 1, 0, 1, 0x13 },
+    { 1, 0, -15, 0x13 },
 };
 
 union AnimationStep homing_orb_anim_3[] = {
-    { 0x00010002 },
-    { 0x01010102 },
-    { 0x02010202 },
-    { 0x03010302 },
-    { 0x04010402 },
-    { 0x00010502 },
-    { 0x01010602 },
-    { 0x02010702 },
-    { 0x03010802 },
-    { 0x04010902 },
-    { 0x00010A02 },
-    { 0x01010B02 },
-    { 0x02010C02 },
-    { 0x03010D02 },
-    { 0x04010E01 },
-    { 0x04F10E01 },
+    { 2, 0, 1, 0x00 },
+    { 2, 1, 1, 0x01 },
+    { 2, 2, 1, 0x02 },
+    { 2, 3, 1, 0x03 },
+    { 2, 4, 1, 0x04 },
+    { 2, 5, 1, 0x00 },
+    { 2, 6, 1, 0x01 },
+    { 2, 7, 1, 0x02 },
+    { 2, 8, 1, 0x03 },
+    { 2, 9, 1, 0x04 },
+    { 2, 10, 1, 0x00 },
+    { 2, 11, 1, 0x01 },
+    { 2, 12, 1, 0x02 },
+    { 2, 13, 1, 0x03 },
+    { 1, 14, 1, 0x04 },
+    { 1, 14, -15, 0x04 },
 };
 
-union AnimationStep homing_orb_anim_4[] = { { 0x21000001 } };
+union AnimationStep homing_orb_anim_4[] = { { 1, 0, 0, 0x21 } };
 
-union AnimationStep homing_orb_anim_5[] = { { 0x22000001 } };
+union AnimationStep homing_orb_anim_5[] = { { 1, 0, 0, 0x22 } };
 
-union AnimationStep homing_orb_anim_6[] = { { 0x23000001 } };
+union AnimationStep homing_orb_anim_6[] = { { 1, 0, 0, 0x23 } };
 
 union AnimationStep* homing_orb_animations[7] = {
     homing_orb_anim_0,

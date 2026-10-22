@@ -3,8 +3,9 @@
 #include "common.h"
 #include "main/effects/effect_21_crumble_sequencer.h"
 #include "main/objects.h"
+#include "main/effects/effect_20_bg_zone_controller_d.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/effects/effect_20_bg_zone_controller_d.h"
 #endif
 
@@ -40,13 +41,14 @@ void func_800B9EC0(struct EffectObj* self)
 }
 
 // crumble_sequencer_timed
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B9F38(struct EffectObj* arg0);
 void func_800BA178(struct EffectObj* arg0);
 extern u8* crumble_sequencer_groups[8];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B9F38(struct EffectObj* arg0)
 {
     struct Effect21Ext* ext = &arg0->ext.effect_21;
@@ -109,7 +111,7 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800B9F
 #endif
 
 // crumble_sequencer_triggered
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BA178(struct EffectObj* arg0)
 {
     struct Effect21Ext* ext = &arg0->ext.effect_21;

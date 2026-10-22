@@ -14,6 +14,7 @@ void trap_floor_main(struct ItemObj*);
 void trap_floor_wait_stand(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
 void trap_floor_open(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
 void trap_floor_opened(struct ItemObj*);
+#include "weapon_resources.h"
 
 struct Item13AnimationStep {
     u8 duration;
@@ -53,10 +54,10 @@ void trap_floor_update(struct ItemObj* arg0)
 void func_800C3578(struct ItemObj* arg0)
 {
     arg0->active = 0x49;
-    arg0->unk16 = 7;
-    arg0->unk40 = D_801406A8[func_8002938C(0x81)] >> 7;
+    arg0->unk16 = VISUAL_SATURN_LAYER(7);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x81));
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x81)];
-    arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x81));
+    arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x81));
     arg0->animation_table = (const u8* const*)trap_floor_animations;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk67 = arg0->unk15 = 0;
@@ -106,7 +107,7 @@ void trap_floor_wait_stand(struct ItemObj* self, struct EngineObj* engine,
                 engine->unk14 = 1;
             }
             set_animation(self, 1);
-            func_8001540C(5, 2, self);
+            func_8001540C(5, SATURN_SOUND(2, 0x2B), self);
             if (self->unk2 != 0) {
                 background_objects[0].unk28 = 0x100;
             }

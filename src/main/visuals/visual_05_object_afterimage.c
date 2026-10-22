@@ -15,6 +15,10 @@ extern void (*object_afterimage_step_funcs[])(struct VisualObj*);
 void object_afterimage_trail(struct VisualObj*);
 void object_afterimage_linger(struct VisualObj*);
 void object_afterimage_catch_up(struct VisualObj*);
+#include "weapon_resources.h"
+#ifdef MMX4_SATURN
+extern void saturn_queue_object(void*);
+#endif
 
 void (*object_afterimage_state_funcs[])(struct VisualObj*) = {
     object_afterimage_wait,
@@ -66,6 +70,10 @@ void object_afterimage_wait(struct VisualObj* arg0)
 void object_afterimage_main(struct VisualObj* arg0)
 {
     object_afterimage_step_funcs[arg0->unk5](arg0);
+#ifdef MMX4_SATURN
+    if (arg0->on_screen)
+        saturn_queue_object(arg0);
+#endif
 }
 
 void object_afterimage_trail(struct VisualObj* arg0)

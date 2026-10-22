@@ -5,11 +5,8 @@
 #include "main/55C4.h"
 #include "main/objects.h"
 #include "main/weapons/weapon_22_nova_strike_hitbox.h"
-
-#ifdef MMX4_PC
-#include "main/object_motion.h"
 #include "main/sprite_animations.h"
-#endif
+#include "main/object_motion.h"
 
 // plasma_shot_state_funcs
 extern void (*plasma_shot_state_funcs[])(struct WeaponObj*);
@@ -18,27 +15,38 @@ void plasma_shot_main(struct WeaponObj*);
 
 void plasma_orb_linger(struct WeaponObj*);
 
+extern struct Unk_unk68 D_8010871C[];
+extern struct Unk_unk68 D_80108720[];
+
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/object_motion.h"
+#include "main/sprite_animations.h"
+#endif
+
 void plasma_shot_update(struct WeaponObj* arg0)
 {
     plasma_shot_state_funcs[arg0->state](arg0);
 }
 
 // plasma_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800929DC(struct WeaponObj* self);
 void func_80092B5C(struct WeaponObj* self);
 extern struct Unk_unk68 D_8010871C[];
 extern struct Unk_unk68 D_80108720[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800929DC(struct WeaponObj* self)
 {
     self->on_screen = 1;
     self->animation_table = D_8011BF40;
-    self->unk42 = 0x7802;
+    self->unk42 = WEAPON_PALETTE_2;
     self->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 12);
-    self->unk40 = 0;
+    self->unk40 = WEAPON_TEXTURE_BASE;
     if (self->id == 0x14) {
         self->unk16 = 0;
         self->unk50 = D_8010871C;
@@ -80,7 +88,7 @@ void plasma_shot_main(struct WeaponObj* arg0)
 }
 
 // plasma_shot_move
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80092B5C(struct WeaponObj* self)
 {
     struct WeaponObj* child;

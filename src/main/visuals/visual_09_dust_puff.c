@@ -9,6 +9,7 @@
 
 void dust_puff_init(struct VisualObj*);
 void dust_puff_main(struct VisualObj*);
+#include "weapon_resources.h"
 
 void dust_puff_update(struct VisualObj* arg0)
 {
@@ -31,14 +32,14 @@ void dust_puff_init(struct VisualObj* self)
     self->unk3C = (u8*)sprite_frames + offset;
     self->animation_table = explosion_animations;
     self->bg_offset = g_Player.bg_offset;
-    self->unk40 = 0;
+    self->unk40 = WEAPON_TEXTURE_BASE;
     if (self->unk5C.value != 2) {
-        self->unk42 = 0x7805;
+        self->unk42 = WEAPON_PALETTE_5;
     } else {
-        self->unk42 = 0x7806;
+        self->unk42 = WEAPON_PALETTE_6;
     }
     if (self->unk7 == 0) {
-        self->unk16 = 1;
+        self->unk16 = VISUAL_SATURN_LAYER(1);
     }
     set_animation(self, self->unk5C.value);
     self->state++;
@@ -61,7 +62,7 @@ void dust_puff_main(struct VisualObj* arg0)
     }
     arg0->on_screen = 0;
     temp_v1 = (u8)arg0->unk5C.value;
-    if (((temp_v1 & 3) && !(temp_v1 & 1)) || ((BLINK_CLOCK(main_bss_state.frame_counter) & 1) == arg0->unk7)) {
+    if (((temp_v1 & 3) && !(temp_v1 & 1)) || ((BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 1) == arg0->unk7)) {
         is_on_screen((struct BaseObj*)arg0);
     }
 }

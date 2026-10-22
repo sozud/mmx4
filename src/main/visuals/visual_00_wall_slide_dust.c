@@ -13,6 +13,7 @@ extern void (*wall_slide_dust_state_funcs[])(struct VisualObj*, struct PlayerObj
 void wall_slide_dust_init(struct VisualObj*, struct PlayerObj*);
 void wall_slide_dust_main(struct VisualObj*, struct PlayerObj*);
 void wall_slide_dust_fade(struct VisualObj*, struct PlayerObj*);
+#include "weapon_resources.h"
 
 void wall_slide_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1);
 
@@ -33,9 +34,9 @@ void wall_slide_dust_init(struct VisualObj* arg0, struct PlayerObj* arg1)
     arg0->unk38 = 0;
     arg0->unk3C = (void*)((s8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[1]);
     arg0->animation_table = &D_8011BF40;
-    arg0->unk40 = 0;
-    arg0->unk42 = 0x7804;
-    arg0->unk16 = 1;
+    arg0->unk40 = WEAPON_TEXTURE_BASE;
+    arg0->unk42 = WEAPON_PALETTE_4;
+    arg0->unk16 = VISUAL_SATURN_LAYER(1);
     wall_slide_dust_attach(arg0, arg1);
     set_animation(arg0, 3);
     arg0->state++;

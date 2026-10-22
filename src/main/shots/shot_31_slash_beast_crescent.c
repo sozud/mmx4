@@ -6,8 +6,9 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/collision_bounds.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
 #endif
 
@@ -29,11 +30,12 @@ void slash_beast_crescent_update(struct ShotObj* self)
 }
 
 // slash_beast_crescent_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009FF4C(struct ShotObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009FF4C(struct ShotObj* self)
 {
     self->state = 1;

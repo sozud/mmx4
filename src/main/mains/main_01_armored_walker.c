@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[1]
 // 80042120..80042914
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_01_armored_walker.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
@@ -67,9 +68,9 @@ void armored_walker_init(struct MainObj* self)
     self->bg_offset = (s8)((u8)g_Player.bg_offset);
     self->unk1C.val = y_pos;
     self->unk18.val = x_pos;
-    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
+    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     self->animation_table = (u32**)armored_walker_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->terrain_box = &armored_walker_terrain_box;
     self->hurt_box = &armored_walker_hit_box;
     self->attack_box = &armored_walker_hit_box;
@@ -116,7 +117,11 @@ void armored_walker_main(struct MainObj* obj)
 
 void armored_walker_despawn(struct MainObj* self)
 {
+#ifdef MMX4_SATURN
+    func_8001540C(2, 0, self);
+#else
     stop_sound(2, 0xF);
+#endif
     despawn_object(self);
 }
 
@@ -142,7 +147,7 @@ void func_800423A0(struct MainObj* self)
             speed = FIXED(3);
         }
         self->x_speed = speed;
-        func_8001540C(2, 0xF, self);
+        func_8001540C(2, SATURN_SOUND(0xF, 0x75), self);
     }
 
     move_object(MOVING_OBJECT(self));
@@ -154,7 +159,7 @@ void armored_walker_hop(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk6 == 0) {
         if (self->animation_step.fields.event != 0) {
-            func_8001540C(2, 0x11, self);
+            func_8001540C(2, SATURN_SOUND(0x11, 0x77), self);
             self->unk6++;
             self->x_speed = self->unk15 != 0 ? FIXED(-2) : FIXED(2);
             self->x_accel = 0;
@@ -177,7 +182,7 @@ void armored_walker_land(struct MainObj* self)
     u8 turn;
 
     if (self->animation_step.fields.event != 0) {
-        func_8001540C(2, 0x12, self);
+        func_8001540C(2, SATURN_SOUND(0x12, 0x78), self);
         self->animation_step.fields.event = 0;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -210,7 +215,7 @@ void armored_walker_turn_brake(struct MainObj* self)
 {
     if (self->unk7C == 0) {
         self->unk6++;
-        func_8001540C(2, 0x10, self);
+        func_8001540C(2, SATURN_SOUND(0x10, 0x76), self);
         set_animation(self, 2);
         self->x_accel = FIXED(-0.08984375);
     } else {
@@ -224,7 +229,7 @@ void armored_walker_turn_flip(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        self->unk15 ^= 0x40;
+        self->unk15 ^= PLAYER_FACING_RIGHT;
         set_animation(self, 1);
         self->unk6++;
         if (self->air_state == 0) {
@@ -239,7 +244,7 @@ void armored_walker_turn_pause(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk7C == 0x1E) {
-        func_8001540C(2, 0xF, self);
+        func_8001540C(2, SATURN_SOUND(0xF, 0x75), self);
     }
     if (self->unk7C == 0) {
         self->x_accel = 0;
@@ -326,69 +331,69 @@ struct Unk_unk68 armored_walker_terrain_box = { 0, 2, 18, 20 };
 
 struct Unk_unk68 armored_walker_hit_box = { -19, -16, 46, 38 };
 
-union AnimationStep armored_walker_anim_0[] = { { 0x00000001 } };
+union AnimationStep armored_walker_anim_0[] = { { 1, 0, 0, 0x00 } };
 
 union AnimationStep armored_walker_anim_1[] = {
-    { 0x00010001 },
-    { 0x01010001 },
-    { 0x02FE0001 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, -2, 0x02 },
 };
 
 union AnimationStep armored_walker_anim_2[] = {
-    { 0x03010002 },
-    { 0x04010002 },
-    { 0x05010002 },
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x08010002 },
-    { 0x09010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0C010002 },
-    { 0x0D010002 },
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x11010001 },
-    { 0x11000101 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 1, 0, 1, 0x11 },
+    { 1, 1, 0, 0x11 },
 };
 
 union AnimationStep armored_walker_anim_3[] = {
-    { 0x12010001 },
-    { 0x13010101 },
-    { 0x14010001 },
-    { 0x15FE0001 },
+    { 1, 0, 1, 0x12 },
+    { 1, 1, 1, 0x13 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, -2, 0x15 },
 };
 
 union AnimationStep armored_walker_anim_4[] = {
-    { 0x16010001 },
-    { 0x17010001 },
-    { 0x18FE0001 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, -2, 0x18 },
 };
 
 union AnimationStep armored_walker_anim_5[] = {
-    { 0x19010104 },
-    { 0x1B010001 },
-    { 0x18010001 },
-    { 0x13010006 },
-    { 0x17010001 },
-    { 0x1C010001 },
-    { 0x19010003 },
-    { 0x1B010001 },
-    { 0x18010004 },
-    { 0x1D010001 },
-    { 0x1A000002 },
+    { 4, 1, 1, 0x19 },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, 1, 0x18 },
+    { 6, 0, 1, 0x13 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x1C },
+    { 3, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1B },
+    { 4, 0, 1, 0x18 },
+    { 1, 0, 1, 0x1D },
+    { 2, 0, 0, 0x1A },
 };
 
-union AnimationStep armored_walker_anim_6[] = { { 0x1E000002 } };
+union AnimationStep armored_walker_anim_6[] = { { 2, 0, 0, 0x1E } };
 
-union AnimationStep armored_walker_anim_7[] = { { 0x1F000001 } };
+union AnimationStep armored_walker_anim_7[] = { { 1, 0, 0, 0x1F } };
 
-union AnimationStep armored_walker_anim_8[] = { { 0x20000001 } };
+union AnimationStep armored_walker_anim_8[] = { { 1, 0, 0, 0x20 } };
 
-union AnimationStep armored_walker_anim_9[] = { { 0x21000001 } };
+union AnimationStep armored_walker_anim_9[] = { { 1, 0, 0, 0x21 } };
 
-union AnimationStep armored_walker_anim_10[] = { { 0x22000001 } };
+union AnimationStep armored_walker_anim_10[] = { { 1, 0, 0, 0x22 } };
 
 union AnimationStep* armored_walker_animations[11] = {
     armored_walker_anim_0,

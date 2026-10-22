@@ -263,7 +263,9 @@ void func_800148EC();
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#ifndef MMX4_SATURN
 s16 SsVabTransCompleted();
+#endif
 
 extern u8 D_801374B4;
 
@@ -840,10 +842,38 @@ extern union MainPaletteData D_800F1660;
 
 extern RECT D_800F1860;
 
+#ifdef MMX4_SATURN
+#define SCREEN_RESET_BANKS 3
+
+void saturn_vram_clear_banks(u32 banks);
+void saturn_thread_sleep(u32 frames);
+void saturn_debug_text_setup(s16 wide, s16 bitmap);
+extern u8 saturn_text_dirty_a;
+extern u16 saturn_vdp2_shadow[];
+
+void func_800160F4(void)
+{
+    u8* shadow = (u8*)saturn_vdp2_shadow;
+
+    saturn_vram_clear_banks(SCREEN_RESET_BANKS);
+    saturn_thread_sleep(1);
+    saturn_debug_text_setup(0, 1);
+    saturn_text_dirty_a = 1;
+    need_palette_load |= 1;
+    saturn_thread_sleep(1);
+    *(u32*)(shadow + 0x70) = 0;
+    *(u32*)(shadow + 0x80) = 0;
+    *(u16*)(shadow + 0x90) = 0;
+    *(u32*)(shadow + 0x74) = 0;
+    *(u32*)(shadow + 0x84) = 0;
+    *(u16*)(shadow + 0x92) = 0;
+}
+#else
 void func_800160F4(void)
 {
     LoadImage(&D_800F1860, &D_800F1660);
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80016124);
 
@@ -1110,7 +1140,7 @@ extern s16 D_8013955C;
 
 extern s32 D_80141BD4;
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern u32 mmx4_pc_xa_stops;
 extern u32 mmx4_pc_xa_stop_sample;
 extern u32 mmx4_pc_xa_starts;

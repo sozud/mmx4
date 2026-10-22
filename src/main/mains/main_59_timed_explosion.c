@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[59]
 // 80074E84..8007501C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_59_timed_explosion.h"
 #include "main/object_motion.h"
 #include "main/1E1BC.h"
@@ -27,13 +28,13 @@ void timed_explosion_wait(struct MainObj* self)
         self->sprite_frames = (u8*)sprite_archive + sprite_archive[2];
         self->animation_table = (const u8* const*)explosion_animations;
         self->unk40 = 0;
-        self->unk42 = 0x788F;
+        self->unk42 = OBJECT_CLUT(0x788F);
         self->hurt_box = 0;
         self->attack_box = &timed_explosion_attack_box;
         set_animation(self, 2);
 
         if (get_random() & 1) {
-            func_8001540C(0, 0, self);
+            func_8001540C(0, SATURN_SOUND(0, 0x01), self);
         } else {
             func_8001540C(0, 1, self);
         }

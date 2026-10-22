@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[72]
 // 8008ADFC..8008BA38
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_72_unused_ride_armor.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -62,13 +63,13 @@ void unused_ride_armor_init(struct MainObj* self)
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
 }
 
 void unused_ride_armor_face_player(struct MainObj* self)
 {
     if ((self->x_pos.val - g_Player.x_pos.val) < 0) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         return;
     }
 
@@ -120,7 +121,7 @@ void unused_ride_armor_spawn_shot(struct MainObj* self, s32 arg1)
         obj->unk40 = self->unk40;
         obj->unk3C = self->sprite_frames;
         v = (u8)func_8002938C(0x48);
-        obj->unk42 = SOME_COORDINATE_CONVERSION(v);
+        obj->unk42 = VISUAL_STAGE_PALETTE(v);
         obj->unk16 = self->unk16;
         obj->unk7C = self;
         obj->unk15 = self->unk15;
@@ -128,10 +129,70 @@ void unused_ride_armor_spawn_shot(struct MainObj* self, s32 arg1)
 }
 
 // unused_ride_armor_idle
+#ifdef MMX4_SATURN
+#define RIDE_ARMOR_FAR_X 96
+#define RIDE_ARMOR_HIGH_Y (-48)
+
+void func_8008B020(struct MainObj* self)
+{
+    s32 dx;
+    s8 step;
+
+    if (self->unk6 == 0) {
+        self->unk6++;
+        self->air_state = 1;
+        set_animation(self, 8);
+        self->ext.main_72.lifetime = get_random() & 63;
+        unused_ride_armor_face_player(self);
+    }
+    if (self->ext.main_72.lifetime != 0) {
+        self->ext.main_72.lifetime--;
+        animate_object(self);
+        return;
+    }
+    dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
+    if (dx < 0)
+        dx = -dx;
+    if (dx > RIDE_ARMOR_FAR_X) {
+        step = (get_random() & 1) ? 8 : 3;
+    } else if (self->y_pos.i.hi - g_Player.y_pos.i.hi > RIDE_ARMOR_HIGH_Y) {
+        step = (get_random() & 1) ? 8 : 6;
+    } else {
+        step = (get_random() & 1) ? 9 : 10;
+    }
+    unused_ride_armor_set_step(BASE_OBJECT(self), step);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B020);
+#endif
 
 // unused_ride_armor_walk
+#ifdef MMX4_SATURN
+#define RIDE_ARMOR_WALK_ATTACK 0x160
+#define RIDE_ARMOR_WALK_FRAMES 64
+
+void func_8008B188(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6++;
+        set_animation(self, 8);
+        self->ext.main_72.unk84 = RIDE_ARMOR_WALK_ATTACK;
+        unused_ride_armor_face_player(self);
+        self->ext.main_72.lifetime = (get_random() & 31) + RIDE_ARMOR_WALK_FRAMES;
+    }
+    if (--self->ext.main_72.lifetime == 0) {
+        unused_ride_armor_set_step(BASE_OBJECT(self), (self->collision_flags & 8) ? 5 : 2);
+        return;
+    }
+    unused_ride_armor_set_walk_speed(self);
+    unused_ride_armor_apply_x_speed(self);
+    animate_object(self);
+    if (self->animation_step.fields.event != 0)
+        func_8001540C(2, SATURN_SOUND(0x45, 0x149), self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B188);
+#endif
 
 void unused_ride_armor_shoot(struct MainObj* self)
 {
@@ -147,7 +208,7 @@ void unused_ride_armor_shoot(struct MainObj* self)
         self->ext.main_72.lifetime = 0x40;
         self->ext.main_72.spawn_timer = 0x10;
         unused_ride_armor_face_player(self);
-        func_8001540C(2, 0x4C, self);
+        func_8001540C(2, SATURN_SOUND(0x4C, 0x14F), self);
     }
 
     timer1 = self->ext.main_72.lifetime - 1;
@@ -181,7 +242,7 @@ void unused_ride_armor_jump(struct MainObj* self)
         self->air_state = 1;
         set_animation(self, 2);
         self->collision_flags &= 0xF7;
-        func_8001540C(2, 0x48, self);
+        func_8001540C(2, SATURN_SOUND(0x48, 0x14C), self);
     }
     self->x_speed = 0;
     unused_ride_armor_set_jump_speed(self);
@@ -199,7 +260,7 @@ void unused_ride_armor_land(struct MainObj* self)
         self->air_state = 0;
         set_animation(self, 4);
         self->collision_flags |= 8;
-        func_8001540C(2, 0x45, self);
+        func_8001540C(2, SATURN_SOUND(0x45, 0x149), self);
     }
     if (self->animation_step.fields.relative_step == 0) {
         unused_ride_armor_set_step(BASE_OBJECT(self), 7);
@@ -209,7 +270,40 @@ void unused_ride_armor_land(struct MainObj* self)
 }
 
 // unused_ride_armor_dash
+#ifdef MMX4_SATURN
+#define RIDE_ARMOR_DASH_ATTACK 0x420
+#define RIDE_ARMOR_DASH_SPEED FIXED(4.125)
+#define RIDE_ARMOR_DASH_FLASH 30
+
+void func_8008B4B8(struct MainObj* self)
+{
+    s32 dx;
+
+    if (self->unk6 == 0) {
+        unused_ride_armor_face_player(self);
+        self->unk6 = 1;
+        self->ext.main_72.unk84 = RIDE_ARMOR_DASH_ATTACK;
+        self->x_speed = self->unk15 != 0 ? RIDE_ARMOR_DASH_SPEED : -RIDE_ARMOR_DASH_SPEED;
+        self->gravity = 0;
+        self->y_speed = 0;
+        self->ext.main_72.unk86 = RIDE_ARMOR_DASH_FLASH;
+        set_animation(self, 7);
+        func_8001540C(2, SATURN_SOUND(0x47, 0x14B), self);
+        dx = g_Player.x_pos.i.hi - self->x_pos.i.hi;
+        if (dx < 0)
+            dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
+        self->ext.main_72.lifetime = dx / 4;
+    }
+    if (--self->ext.main_72.lifetime == 0) {
+        unused_ride_armor_set_step(BASE_OBJECT(self), 2);
+        return;
+    }
+    unused_ride_armor_apply_x_speed(self);
+    animate_object(self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B4B8);
+#endif
 
 void unused_ride_armor_fall(struct MainObj* self)
 {
@@ -239,7 +333,46 @@ void unused_ride_armor_fall(struct MainObj* self)
 }
 
 // unused_ride_armor_jump_shoot
+#ifdef MMX4_SATURN
+#define RIDE_ARMOR_FALL_LIMIT FIXED(-5.875)
+
+void func_8008B69C(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
+        self->air_state = 1;
+        set_animation(self, 3);
+        unused_ride_armor_face_player(self);
+        func_8001540C(2, SATURN_SOUND(0x4C, 0x14F), self);
+    }
+    if (self->collision_flags & 8) {
+        unused_ride_armor_set_step(BASE_OBJECT(self), 5);
+        return;
+    }
+    if (self->y_pos.i.hi - g_Player.y_pos.i.hi >= 0) {
+        unused_ride_armor_set_step(BASE_OBJECT(self), 2);
+        return;
+    }
+    self->x_speed = 0;
+    unused_ride_armor_set_jump_speed(self);
+    if (self->y_speed < RIDE_ARMOR_FALL_LIMIT)
+        self->y_speed = RIDE_ARMOR_FALL_LIMIT;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (--self->ext.main_72.lifetime == 0) {
+        unused_ride_armor_set_step(BASE_OBJECT(self), 2);
+        return;
+    }
+    if (--self->ext.main_72.spawn_timer & 15)
+        unused_ride_armor_spawn_shot(self, 0);
+    animate_object(self);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B69C);
+#endif
 
 void unused_ride_armor_rapid_fire(struct MainObj* self)
 {
@@ -249,7 +382,7 @@ void unused_ride_armor_rapid_fire(struct MainObj* self)
         self->ext.main_72.lifetime = 0x80;
         self->ext.main_72.spawn_timer = 0x30;
         unused_ride_armor_face_player(self);
-        func_8001540C(2, 0x4C, self);
+        func_8001540C(2, SATURN_SOUND(0x4C, 0x14F), self);
     }
 
     if (--(&self->ext.main_72)->lifetime != 0) {
@@ -337,38 +470,38 @@ struct Unk_unk68 unused_ride_armor_anim_1[9] = {
 };
 
 union AnimationStep unused_ride_armor_anim_2[] = {
-    { 0x09000006 },
+    { 6, 0, 0, 0x09 },
 };
 
 union AnimationStep unused_ride_armor_anim_3[] = {
-    { 0x0A000006 },
+    { 6, 0, 0, 0x0A },
 };
 
 union AnimationStep unused_ride_armor_anim_4[] = {
-    { 0x0B010002 },
-    { 0x0C010008 },
-    { 0x0B010007 },
-    { 0x00000008 },
+    { 2, 0, 1, 0x0B },
+    { 8, 0, 1, 0x0C },
+    { 7, 0, 1, 0x0B },
+    { 8, 0, 0, 0x00 },
 };
 
 union AnimationStep unused_ride_armor_anim_5[] = {
-    { 0x0D010004 },
-    { 0x0E000008 },
+    { 4, 0, 1, 0x0D },
+    { 8, 0, 0, 0x0E },
 };
 
 union AnimationStep unused_ride_armor_anim_6[] = {
-    { 0x0D000004 },
+    { 4, 0, 0, 0x0D },
 };
 
 union AnimationStep unused_ride_armor_anim_7[] = {
-    { 0x10010002 },
-    { 0x20010003 },
-    { 0x11010001 },
-    { 0x1D010001 },
-    { 0x12010001 },
-    { 0x1E010001 },
-    { 0x1F010001 },
-    { 0x20000013 },
+    { 2, 0, 1, 0x10 },
+    { 3, 0, 1, 0x20 },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x1F },
+    { 19, 0, 0, 0x20 },
 };
 
 struct Unk_unk68 unused_ride_armor_anim_8[4] = {
@@ -386,25 +519,25 @@ struct Unk_unk68 unused_ride_armor_anim_9[4] = {
 };
 
 union AnimationStep unused_ride_armor_anim_10[] = {
-    { 0x0F000001 },
+    { 1, 0, 0, 0x0F },
 };
 
 union AnimationStep unused_ride_armor_anim_11[] = {
-    { 0x25010005 },
-    { 0x26010008 },
-    { 0x25000006 },
+    { 5, 0, 1, 0x25 },
+    { 8, 0, 1, 0x26 },
+    { 6, 0, 0, 0x25 },
 };
 
 union AnimationStep unused_ride_armor_anim_15[] = {
-    { 0x27010005 },
-    { 0x28010005 },
-    { 0x29010005 },
-    { 0x2A010005 },
-    { 0x2B010005 },
-    { 0x2C010005 },
-    { 0x2D010005 },
-    { 0x2E010005 },
-    { 0x2F000005 },
+    { 5, 0, 1, 0x27 },
+    { 5, 0, 1, 0x28 },
+    { 5, 0, 1, 0x29 },
+    { 5, 0, 1, 0x2A },
+    { 5, 0, 1, 0x2B },
+    { 5, 0, 1, 0x2C },
+    { 5, 0, 1, 0x2D },
+    { 5, 0, 1, 0x2E },
+    { 5, 0, 0, 0x2F },
 };
 
 struct Unk_unk68 unused_ride_armor_anim_14[12] = {
@@ -423,31 +556,31 @@ struct Unk_unk68 unused_ride_armor_anim_14[12] = {
 };
 
 union AnimationStep unused_ride_armor_anim_24[] = {
-    { 0x36000002 },
+    { 2, 0, 0, 0x36 },
 };
 
 union AnimationStep unused_ride_armor_anim_25[] = {
-    { 0x37000002 },
+    { 2, 0, 0, 0x37 },
 };
 
 union AnimationStep unused_ride_armor_anim_26[] = {
-    { 0x38000002 },
+    { 2, 0, 0, 0x38 },
 };
 
 union AnimationStep unused_ride_armor_anim_27[] = {
-    { 0x39000002 },
+    { 2, 0, 0, 0x39 },
 };
 
 union AnimationStep unused_ride_armor_anim_28[] = {
-    { 0x3A000002 },
+    { 2, 0, 0, 0x3A },
 };
 
 union AnimationStep unused_ride_armor_anim_29[] = {
-    { 0x3B000002 },
+    { 2, 0, 0, 0x3B },
 };
 
 union AnimationStep unused_ride_armor_anim_30[] = {
-    { 0x3C000002 },
+    { 2, 0, 0, 0x3C },
 };
 
 struct Unk_unk68 unused_ride_armor_anim_12[4] = {

@@ -167,7 +167,11 @@ void bg_zone_controller_b_zone_5(struct EffectObj* self)
 
 void bg_zone_controller_b_zone_5_enter(struct EffectObj* self)
 {
+#ifdef MMX4_SATURN
+    background_objects[2].unk4A = 4;
+#else
     background_objects[2].unk4A = 9;
+#endif
     self->unk6++;
 }
 
@@ -182,12 +186,13 @@ void bg_zone_controller_b_idle(struct EffectObj* self)
 }
 
 // bg_zone_controller_b_update_zone
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B8E74(struct EffectObj* arg0);
 extern u16 bg_zone_controller_b_zone_bounds[6];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B8E74(struct EffectObj* arg0)
 {
     s8 index;

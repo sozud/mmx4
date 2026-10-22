@@ -3,10 +3,7 @@
 #include "common.h"
 #include "main/misc/misc_12_stage_icon.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/55C4.h"
-#endif
 
 // stage_icon_state_funcs
 extern void (*stage_icon_state_funcs[])(struct MiscObj*);
@@ -15,6 +12,11 @@ void stage_icon_highlight(struct MiscObj*);
 
 void stage_icon_follow(struct MiscObj*);
 void stage_icon_show_selected(struct MiscObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/55C4.h"
+#endif
 
 // stage_icon_init
 struct Misc12Position {
@@ -22,19 +24,19 @@ struct Misc12Position {
     s16 y;
 };
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA228(struct MiscObj* self);
 void func_800CA40C(struct MiscObj* self);
 extern union AnimationStep* stage_icon_animations[2];
 extern struct Misc12Position stage_icon_positions[8];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA228(struct MiscObj* self)
 {
     s32 index;
 
-    self->unk40 = D_801406A8[0] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(0);
     self->animation_table = (u32**)stage_icon_animations;
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0];
     index = self->unk2 & 0x7F;
@@ -44,12 +46,12 @@ void func_800CA228(struct MiscObj* self)
     self->unk15 = 0;
     if (self->unk2 < 0) {
         index = self->unk2 & 0x7F;
-        self->unk42 = (index & 0xF) | (((index >> 4) | 0x1E0) << 6);
+        self->unk42 = OBJECT_CLUT((index & 0xF) | (((index >> 4) | 0x1E0) << 6));
         self->unk16 = 0x12;
         set_animation_frame(ANIMATED_OBJECT(self), 1, index);
         self->state = 2;
     } else {
-        self->unk42 = 0x780A;
+        self->unk42 = OBJECT_CLUT(0x780A);
         self->unk16 = 0x10;
         if ((u8)(self->unk2 - 8) < 2) {
             if (self->unk2 == 8) {
@@ -77,20 +79,20 @@ void stage_icon_highlight(struct MiscObj* self)
 {
     self->on_screen = 0;
     if (engine_obj.unk3 == self->unk2) {
-        self->unk42 = 0x780A;
+        self->unk42 = OBJECT_CLUT(0x780A);
         is_on_screen(BASE_OBJECT(self));
     } else {
-        self->unk42 = 0x7809;
+        self->unk42 = OBJECT_CLUT(0x7809);
     }
 }
 
 // stage_icon_follow_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA40C(struct MiscObj* self)
 {
     s32 index = self->unk2 & 0x7F;
 
-    self->unk42 = (index & 0xF) | (((index >> 4) | 0x1E0) << 6);
+    self->unk42 = OBJECT_CLUT((index & 0xF) | (((index >> 4) | 0x1E0) << 6));
     is_on_screen(BASE_OBJECT(self));
 }
 #else
@@ -120,26 +122,26 @@ void stage_icon_update(struct MiscObj* self)
 }
 
 union AnimationStep stage_icon_anim_0[9] = {
-    { 0x0001001E },
-    { 0x0101001E },
-    { 0x0201001E },
-    { 0x0301001E },
-    { 0x0401001E },
-    { 0x0501001E },
-    { 0x0601001E },
-    { 0x0701001E },
-    { 0x1000001E },
+    { 30, 0, 1, 0x00 },
+    { 30, 0, 1, 0x01 },
+    { 30, 0, 1, 0x02 },
+    { 30, 0, 1, 0x03 },
+    { 30, 0, 1, 0x04 },
+    { 30, 0, 1, 0x05 },
+    { 30, 0, 1, 0x06 },
+    { 30, 0, 1, 0x07 },
+    { 30, 0, 0, 0x10 },
 };
 
 union AnimationStep stage_icon_anim_1[8] = {
-    { 0x0801001E },
-    { 0x0901001E },
-    { 0x0A01001E },
-    { 0x0B01001E },
-    { 0x0C01001E },
-    { 0x0D01001E },
-    { 0x0E01001E },
-    { 0x0FF9001E },
+    { 30, 0, 1, 0x08 },
+    { 30, 0, 1, 0x09 },
+    { 30, 0, 1, 0x0A },
+    { 30, 0, 1, 0x0B },
+    { 30, 0, 1, 0x0C },
+    { 30, 0, 1, 0x0D },
+    { 30, 0, 1, 0x0E },
+    { 30, 0, -7, 0x0F },
 };
 
 union AnimationStep* stage_icon_animations[2] = { stage_icon_anim_0, stage_icon_anim_1 };

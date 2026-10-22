@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[5]
 // 80044F4C..80046B30
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_05_robot_bee.h"
 #include "main/object_motion.h"
 #include "main/1E1BC.h"
@@ -86,7 +87,8 @@ void robot_bee_update(struct MainObj* self)
 }
 
 // robot_bee_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80044F88(struct MainObj* arg0);
 void func_80046220(struct MainObj* self);
 void func_80046400(struct MainObj* self);
@@ -125,7 +127,7 @@ static void robot_bee_arc_position(struct MainObj* self, int index,
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80044F88(struct MainObj* arg0)
 {
     arg0->state = 1;
@@ -139,8 +141,8 @@ void func_80044F88(struct MainObj* arg0)
     arg0->attack_box = (const u8*)&D_800FA104;
     arg0->collision_data = D_80106570;
     arg0->contact_damage = 3;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
-    arg0->unk16 = 5;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->terrain_box = NULL;
     arg0->hp = 2;
     arg0->invincibility_timer = 0;
@@ -195,8 +197,12 @@ void robot_bee_despawn(struct MainObj* self)
 {
     struct MainObj* target;
     u8 subtype;
+#ifdef MMX4_SATURN
+    func_8001540C(6, 5, NULL);
+#else
     stop_sound(2, 0x13);
     stop_sound(2, 0x14);
+#endif
     self->on_screen = 0;
     subtype = self->unk2;
     if ((subtype == 3) || (subtype == 4)) {
@@ -217,16 +223,20 @@ void robot_bee_resume_step(struct MainObj* self)
 
 void robot_bee_wait(struct MainObj* self)
 {
+#ifndef MMX4_SATURN
+#ifndef MMX4_SATURN
     if (is_sound_finished(0x13, self) != 0) {
         func_8001540C(2, 0x13, self);
     }
+#endif
+#endif
     robot_bee_wait_funcs[self->unk6](self);
 }
 
 void robot_bee_wait_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    func_8001540C(2, 0x13, self);
+    func_8001540C(2, SATURN_SOUND(0x13, 0x12), self);
     self->unk6++;
 }
 
@@ -240,7 +250,7 @@ void robot_bee_wait_for_player(struct MainObj* self)
     object_x = self->x_pos.val;
     player_x = g_Player.x_pos.val;
     if (ABS(object_x, player_x) <= FIXED(144)) {
-        x_vel = robot_bee_approach_speeds[!(self->unk15 & 0x40)];
+        x_vel = robot_bee_approach_speeds[!(self->unk15 & PLAYER_FACING_RIGHT)];
         self->y_speed = 0;
         self->unk5 = 3;
         self->x_speed = x_vel;
@@ -249,9 +259,11 @@ void robot_bee_wait_for_player(struct MainObj* self)
 
 void robot_bee_glide(struct MainObj* self)
 {
+#ifndef MMX4_SATURN
     if (is_sound_finished(0x13, self) != 0) {
         func_8001540C(2, 0x13, self);
     }
+#endif
     robot_bee_glide_funcs[self->unk6](self);
 }
 
@@ -260,7 +272,7 @@ void robot_bee_glide_start(struct MainObj* self)
     s32 x_vel;
 
     animate_object(ANIMATED_OBJECT(self));
-    x_vel = robot_bee_approach_speeds[!(self->unk15 & 0x40)];
+    x_vel = robot_bee_approach_speeds[!(self->unk15 & PLAYER_FACING_RIGHT)];
     self->y_speed = FIXED(1);
     self->x_speed = x_vel;
     self->unk6++;
@@ -276,17 +288,19 @@ void robot_bee_glide_move(struct MainObj* self)
 
 void robot_bee_dash(struct MainObj* self)
 {
+#ifndef MMX4_SATURN
     if (is_sound_finished(0x14, self) != 0) {
         func_8001540C(2, 0x14, self);
     }
+#endif
     robot_bee_dash_funcs[self->unk6](self);
 }
 
 void robot_bee_dash_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    stop_sound(2, 0x13);
-    func_8001540C(2, 0x14, self);
+    STOP_SOUND(2, 0x13, 0x5);
+    func_8001540C(2, SATURN_SOUND(0x14, 0x13), self);
     self->unk6++;
 }
 
@@ -302,7 +316,7 @@ void robot_bee_dash_charge(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    self->x_speed = robot_bee_charge_speeds[(self->unk15 & 0x40) ? 1 : 0];
+    self->x_speed = robot_bee_charge_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
     if (self->unk7C-- == 0) {
         self->unk6++;
         set_animation(self, 9);
@@ -322,7 +336,8 @@ void robot_bee_dash_accelerate(struct MainObj* self)
 
 void robot_bee_sting(struct MainObj* self)
 {
-#ifdef VERSION_EU
+#if defined(MMX4_SATURN)
+#elif defined(VERSION_EU)
     if (self->unk6 > 3) {
         if (is_sound_finished(0x14, self) != 0) {
             func_8001540C(2, 0x14, self);
@@ -351,10 +366,10 @@ void robot_bee_sting_start(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 1);
-    stop_sound(2, 0x13);
-    func_8001540C(2, 0x13, self);
+    STOP_SOUND(2, 0x13, 0x5);
+    func_8001540C(2, SATURN_SOUND(0x13, 0x12), self);
     velocity = robot_bee_sting_speeds;
-    if (self->unk15 & 0x40) {
+    if (self->unk15 & PLAYER_FACING_RIGHT) {
         velocity++;
     }
     self->x_speed = *velocity;
@@ -392,7 +407,7 @@ void robot_bee_sting_brake(struct MainObj* self)
 
     if (self->unk7C-- <= 4) {
         velocity = robot_bee_lunge_speeds;
-        if (self->unk15 & 0x40) {
+        if (self->unk15 & PLAYER_FACING_RIGHT) {
             velocity++;
         }
         self->x_speed = *velocity;
@@ -409,22 +424,20 @@ void robot_bee_sting_lunge(struct MainObj* self)
     if (self->unk7C-- <= 0) {
         self->unk7C = 8;
         self->ext.main_5.unk80 = 0;
-        stop_sound(2, 0x13);
-        func_8001540C(2, 0x14, self);
+        STOP_SOUND(2, 0x13, 0x5);
+        func_8001540C(2, SATURN_SOUND(0x14, 0x13), self);
         set_animation(self, 0xB);
         self->unk6++;
     }
 }
 
 // robot_bee_sting_strike
-#ifdef MMX4_PC
-// src/main/mains/main_05_robot_bee.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80045940(struct MainObj* self)
 {
     u8 phase = self->ext.main_5.unk80;
     int timer = self->unk7C;
-    int right = self->unk15 == 0x40;
+    int right = self->unk15 == PLAYER_FACING_RIGHT;
 
     switch (phase) {
     case 0:
@@ -454,7 +467,7 @@ void func_80045940(struct MainObj* self)
             self->ext.main_5.unk80++;
         } else {
             self->unk7C = 0x17;
-            self->x_speed = D_800FA128[(self->unk15 & 0x40) != 0];
+            self->x_speed = D_800FA128[(self->unk15 & PLAYER_FACING_RIGHT) != 0];
             self->y_speed = FIXED(4);
             self->ext.main_5.unk80 = 0;
             self->unk6++;
@@ -477,12 +490,12 @@ void robot_bee_sting_recoil(struct MainObj* self)
 }
 
 // robot_bee_sting_return
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80045DD8(struct MainObj* self)
 {
     u8 phase = self->ext.main_5.unk80;
     int timer = self->unk7C;
-    int right = self->unk15 == 0x40;
+    int right = self->unk15 == PLAYER_FACING_RIGHT;
 
     switch (phase) {
     case 0:
@@ -526,9 +539,11 @@ void robot_bee_sting_fly_off(struct MainObj* self)
 
 void robot_bee_circle(struct MainObj* self)
 {
+#ifndef MMX4_SATURN
     if (is_sound_finished(0x13, self) != 0) {
         func_8001540C(2, 0x13, self);
     }
+#endif
     robot_bee_circle_funcs[self->unk6](self);
 }
 
@@ -537,7 +552,7 @@ void func_8004619C(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 1);
-    func_8001540C(2, 0x13, self);
+    func_8001540C(2, SATURN_SOUND(0x13, 0x12), self);
     self->x_accel = 0x400;
     self->ext.main_5.unk80 = self->unk15;
     self->x_speed = 0;
@@ -549,7 +564,7 @@ void func_8004619C(struct MainObj* self)
 }
 
 // robot_bee_circle_orbit
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80046220(struct MainObj* self)
 {
     struct Main5Ext* ext = &self->ext.main_5;
@@ -585,7 +600,8 @@ INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046220);
 
 void robot_bee_drop(struct MainObj* self)
 {
-#ifdef VERSION_EU
+#if defined(MMX4_SATURN)
+#elif defined(VERSION_EU)
     if (self->unk6 > 1) {
         if (is_sound_finished(0x14, self) != 0) {
             func_8001540C(2, 0x14, self);
@@ -606,7 +622,7 @@ void robot_bee_drop(struct MainObj* self)
 }
 
 // robot_bee_drop_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80046400(struct MainObj* self)
 {
     s16 timer = self->unk7C;
@@ -618,12 +634,12 @@ void func_80046400(struct MainObj* self)
     if (timer >= 5)
         return;
 
-    func_8001540C(2, 0x14, self);
+    func_8001540C(2, SATURN_SOUND(0x14, 0x13), self);
     direction = (u8)angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
     set_velocity_from_angle(MOVING_OBJECT(self), direction);
     if (self->unk15 == 0 && self->x_speed > 0)
-        self->unk15 = 0x40;
-    if (self->unk15 == 0x40 && self->x_speed < 0)
+        self->unk15 = PLAYER_FACING_RIGHT;
+    if (self->unk15 == PLAYER_FACING_RIGHT && self->x_speed < 0)
         self->unk15 = 0;
     if (self->y_speed > 0)
         self->y_speed = 0;
@@ -665,9 +681,11 @@ void robot_bee_drop_fall(struct MainObj* self)
 
 void robot_bee_swarm(struct MainObj* self)
 {
+#ifndef MMX4_SATURN
     if (is_sound_finished(0x13, self) != 0) {
         func_8001540C(2, 0x13, self);
     }
+#endif
     robot_bee_swarm_funcs[self->unk6](self);
 }
 
@@ -677,7 +695,7 @@ void robot_bee_swarm_start(struct MainObj* arg0)
     u8 angle;
 
     set_animation(self, 1);
-    func_8001540C(2, 0x13, self);
+    func_8001540C(2, SATURN_SOUND(0x13, 0x12), self);
     animate_object(ANIMATED_OBJECT(self));
     angle = angle_to_point(
         OBJECT_HEADER(self),
@@ -736,9 +754,11 @@ void robot_bee_swarm_hover(struct MainObj* self)
 
 void robot_bee_swarm_return(struct MainObj* self)
 {
+#ifndef MMX4_SATURN
     if (is_sound_finished(0x13, self) != 0) {
         func_8001540C(2, 0x13, self);
     }
+#endif
     robot_bee_swarm_return_funcs[self->unk6](self);
 }
 
@@ -747,7 +767,7 @@ void robot_bee_swarm_return_start(struct MainObj* self)
     u8 angle;
 
     set_animation(self, 1);
-    func_8001540C(2, 0x13, self);
+    func_8001540C(2, SATURN_SOUND(0x13, 0x12), self);
     animate_object(ANIMATED_OBJECT(self));
     angle = angle_to_point(OBJECT_HEADER(self),
         self->ext.main_5.target_y << 0x10,
@@ -810,7 +830,7 @@ void robot_bee_swarm_return_hover(struct MainObj* self)
 void robot_bee_check_dive(struct MainObj* self)
 {
     if ((self->unk5 == 3) && (self->y_pos.val + FIXED(16) >= g_Player.y_pos.val)) {
-        self->unk15 = g_Player.x_pos.val > self->x_pos.val ? 0x40 : 0;
+        self->unk15 = g_Player.x_pos.val > self->x_pos.val ? PLAYER_FACING_RIGHT : 0;
         self->unk5 = 4;
         self->unk6 = 0;
         self->x_speed = 0;
@@ -857,165 +877,165 @@ s32 D_800FA130[] = {
 };
 
 union AnimationStep robot_bee_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep robot_bee_anim_1[] = {
-    { 0x00010001 },
-    { 0x01010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x06010001 },
-    { 0x07010001 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0E010001 },
-    { 0x0FF10001 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, -15, 0x0F },
 };
 
 union AnimationStep robot_bee_anim_2[] = {
-    { 0x10010002 },
-    { 0x11010009 },
-    { 0x12010001 },
-    { 0x13010001 },
-    { 0x14010001 },
-    { 0x15000001 },
+    { 2, 0, 1, 0x10 },
+    { 9, 0, 1, 0x11 },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 1, 0x13 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 0, 0x15 },
 };
 
 union AnimationStep robot_bee_anim_3[] = {
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x19010002 },
-    { 0x1A010002 },
-    { 0x1B010002 },
-    { 0x1C010002 },
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1F010002 },
-    { 0x20010002 },
-    { 0x21010002 },
-    { 0x22010002 },
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25F10002 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x1A },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, -15, 0x25 },
 };
 
 union AnimationStep robot_bee_anim_4[] = {
-    { 0x26010003 },
-    { 0x27010003 },
-    { 0x28010003 },
-    { 0x29FD0003 },
+    { 3, 0, 1, 0x26 },
+    { 3, 0, 1, 0x27 },
+    { 3, 0, 1, 0x28 },
+    { 3, 0, -3, 0x29 },
 };
 
 union AnimationStep robot_bee_anim_5[] = {
-    { 0x2A000001 },
+    { 1, 0, 0, 0x2A },
 };
 
 union AnimationStep robot_bee_anim_6[] = {
-    { 0x2B000001 },
+    { 1, 0, 0, 0x2B },
 };
 
 union AnimationStep robot_bee_anim_7[] = {
-    { 0x2C000001 },
+    { 1, 0, 0, 0x2C },
 };
 
 union AnimationStep robot_bee_anim_8[] = {
-    { 0x2D000001 },
+    { 1, 0, 0, 0x2D },
 };
 
 union AnimationStep robot_bee_anim_9[] = {
-    { 0x2E010001 },
-    { 0x2F010001 },
-    { 0x30010001 },
-    { 0x31FD0001 },
+    { 1, 0, 1, 0x2E },
+    { 1, 0, 1, 0x2F },
+    { 1, 0, 1, 0x30 },
+    { 1, 0, -3, 0x31 },
 };
 
 union AnimationStep robot_bee_anim_10[] = {
-    { 0x32010002 },
-    { 0x33010002 },
-    { 0x34010002 },
-    { 0x35010002 },
-    { 0x36010002 },
-    { 0x37010002 },
-    { 0x38010002 },
-    { 0x39010002 },
-    { 0x3A010002 },
-    { 0x3B010002 },
-    { 0x3C010002 },
-    { 0x3D010002 },
-    { 0x3E010002 },
-    { 0x3F010002 },
-    { 0x40010002 },
-    { 0x41F10002 },
+    { 2, 0, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 2, 0, 1, 0x34 },
+    { 2, 0, 1, 0x35 },
+    { 2, 0, 1, 0x36 },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x3B },
+    { 2, 0, 1, 0x3C },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x3E },
+    { 2, 0, 1, 0x3F },
+    { 2, 0, 1, 0x40 },
+    { 2, 0, -15, 0x41 },
 };
 
 union AnimationStep robot_bee_anim_11[] = {
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x19010002 },
-    { 0x1A010002 },
-    { 0x1B010002 },
-    { 0x1C010002 },
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1F010002 },
-    { 0x20010002 },
-    { 0x21010002 },
-    { 0x22010002 },
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010017 },
-    { 0x39010001 },
-    { 0x3A010002 },
-    { 0x3B010002 },
-    { 0x3C010002 },
-    { 0x3D010002 },
-    { 0x3E010002 },
-    { 0x3F010002 },
-    { 0x40010002 },
-    { 0x41010002 },
-    { 0x32010002 },
-    { 0x33010002 },
-    { 0x34010002 },
-    { 0x35010002 },
-    { 0x36000002 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x1A },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 23, 0, 1, 0x18 },
+    { 1, 0, 1, 0x39 },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x3B },
+    { 2, 0, 1, 0x3C },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x3E },
+    { 2, 0, 1, 0x3F },
+    { 2, 0, 1, 0x40 },
+    { 2, 0, 1, 0x41 },
+    { 2, 0, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 2, 0, 1, 0x34 },
+    { 2, 0, 1, 0x35 },
+    { 2, 0, 0, 0x36 },
 };
 
 union AnimationStep robot_bee_anim_12[] = {
-    { 0x16010002 },
-    { 0x25010002 },
-    { 0x24010002 },
-    { 0x23010002 },
-    { 0x22000002 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 0, 0x22 },
 };
 
 union AnimationStep robot_bee_anim_13[] = {
-    { 0x16010002 },
-    { 0x25010002 },
-    { 0x24010002 },
-    { 0x23000002 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 0, 0x23 },
 };
 
 union AnimationStep robot_bee_anim_14[] = {
-    { 0x16010002 },
-    { 0x25010002 },
-    { 0x24000002 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 0, 0x24 },
 };
 
 union AnimationStep robot_bee_anim_15[] = {
-    { 0x16010002 },
-    { 0x25000002 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 0, 0x25 },
 };
 
 union AnimationStep* robot_bee_animations[] = {

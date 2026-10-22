@@ -17,6 +17,7 @@ extern void (*rising_slab_state_funcs[])(struct ItemObj*);
 void rising_slab_init(struct ItemObj*);
 void rising_slab_rise(struct ItemObj*);
 void rising_slab_finish(struct ItemObj*);
+#include "weapon_resources.h"
 
 void rising_slab_update(struct ItemObj* arg0)
 {
@@ -27,12 +28,12 @@ void rising_slab_update(struct ItemObj* arg0)
 
 void rising_slab_init(struct ItemObj* arg0)
 {
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->animation_table = NULL;
     arg0->animation_step.fields.frame_index = (u8)arg0->unk2;
-    arg0->unk40 = D_801406A8[func_8002938C(0x89)] >> 7;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x89));
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x89)];
-    arg0->unk42 = 0x7943;
+    arg0->unk42 = OBJECT_CLUT(0x7943);
     arg0->unk5C = 0;
     arg0->unk61 = 0;
     arg0->unk68 = (struct Unk_unk68*)rising_slab_terrain_boxes[arg0->unk2];
@@ -49,7 +50,7 @@ void rising_slab_init(struct ItemObj* arg0)
     arg0->unk7C.timer = 0;
     arg0->ext.packed = 0;
     update_on_screen(BASE_OBJECT(arg0), 0x40, 0x60);
-    func_8001540C(5, 3, NULL);
+    func_8001540C(5, SATURN_SOUND(3, 0x2C), NULL);
     arg0->state = 1;
 }
 
@@ -84,8 +85,12 @@ void rising_slab_rise(struct ItemObj* arg0)
 
 void rising_slab_finish(struct ItemObj* arg0)
 {
+#ifdef MMX4_SATURN
+    func_8001540C(6, 5, NULL);
+#else
     stop_sound(5U, 3U);
-    func_8001540C(5, 4, NULL);
+#endif
+    func_8001540C(5, SATURN_SOUND(4, 0x2D), NULL);
     arg0->unk7C.timer = 0;
     arg0->ext.timer = 0;
     arg0->on_screen = 0;

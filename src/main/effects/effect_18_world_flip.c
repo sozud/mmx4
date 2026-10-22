@@ -23,13 +23,12 @@ void world_flip_init(struct EffectObj* self)
 }
 
 // world_flip_trigger
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B96E0(struct EffectObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/effects/effect_18_world_flip.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B96E0(struct EffectObj* self)
 {
     (void)self;

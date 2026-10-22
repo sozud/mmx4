@@ -12,6 +12,7 @@ extern void (*breakable_panel_state_funcs[])(struct ItemObj*);
 
 void breakable_panel_main(struct ItemObj*);
 void breakable_panel_destroyed(struct ItemObj*);
+#include "weapon_resources.h"
 
 struct Item24AnimationStep {
     u8 duration;
@@ -42,7 +43,7 @@ struct Item24AnimationStep* breakable_panel_animations[7] = {
 
 u8 breakable_panel_debris[12] = { 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 0, 0 };
 u8 breakable_panel_terrain_box[4] = { 0, 0, 0x17, 0x26 };
-u32 breakable_panel_hit_box = 0x4927DBEC;
+u8 breakable_panel_hit_box[4] = { 0xEC, 0xDB, 0x27, 0x49 };
 
 void breakable_panel_update(struct ItemObj* arg0)
 {
@@ -52,13 +53,14 @@ void breakable_panel_update(struct ItemObj* arg0)
 }
 
 // breakable_panel_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C609C(struct ItemObj* self);
 extern struct Unk_unk68 D_80108504[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C609C(struct ItemObj* self)
 {
     s32 index;
@@ -66,8 +68,8 @@ void func_800C609C(struct ItemObj* self)
     self->unk5 = 0;
     self->on_screen = 1;
     index = func_8002938C(0x9E);
-    self->unk40 = D_801406A8[index] >> 7;
-    self->unk42 = ((((index * 4 + 0x18) & 0xF)) | ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF));
+    self->unk40 = OBJECT_STAGE_TEXTURE(index);
+    self->unk42 = OBJECT_CLUT(((((index * 4 + 0x18) & 0xF)) | ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF)));
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
     self->animation_table = (const u8* const*)breakable_panel_animations;
     self->unk5C = 0x20;
@@ -75,8 +77,8 @@ void func_800C609C(struct ItemObj* self)
     self->unk15 = 0;
     self->unk61 = 0;
     self->unk75 = 1;
-    self->unk16 = 5;
-    self->unk54 = (const u8*)&breakable_panel_hit_box;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
+    self->unk54 = (const u8*)breakable_panel_hit_box;
     self->unk68 = (struct Unk_unk68*)breakable_panel_terrain_box;
     self->bg_offset = g_Player.bg_offset;
     set_animation(self, 0);
@@ -111,10 +113,10 @@ extern u32 breakable_panel_explosion_types[];
 void breakable_panel_destroyed(struct ItemObj* arg0)
 {
     if (--arg0->unk7C.timer != 0) {
-        if ((main_bss_state.frame_counter & 7) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 7) == 0) {
             func_800AF878(BASE_OBJECT(arg0), 1, 0xF, 0x3F);
         }
-        if ((main_bss_state.frame_counter & 0xF) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 0xF) == 0) {
             ((s32(*)(s32, s32, void*))func_8001540C)(0, breakable_panel_explosion_types[get_random() & 3], arg0);
         }
     } else {

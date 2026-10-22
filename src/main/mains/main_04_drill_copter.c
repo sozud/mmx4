@@ -1,12 +1,15 @@
 // MainObj, main_object_update_funcs[4]
 // 8004441C..80044F4C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_04_drill_copter.h"
 #include "main/objects.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/collision.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/collision.h"
 #endif
@@ -70,14 +73,16 @@ void drill_copter_update(struct MainObj* self)
 }
 
 // drill_copter_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80044458(struct MainObj* self);
 void func_80044508(struct MainObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/mains/main_04_drill_copter.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80044458(struct MainObj* self)
 {
     self->unk5 = 1;
@@ -91,18 +96,23 @@ void func_80044458(struct MainObj* self)
     self->animation_table = (const u8* const*)drill_copter_animations;
     self->collision_data = (const u16*)D_801064F0;
     self->hurt_box = self->attack_box = &D_800F9EC0;
+#ifdef MMX4_SATURN
+    self->hp = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+#else
     self->unk16 = self->hp = 6;
+#endif
     self->terrain_box = NULL;
     self->air_state = 0;
     self->contact_damage = 2;
-    self->unk15 = ((s32)((u32)self->x_pos.val - (u32)g_Player.x_pos.val) < 1) << 6;
+    self->unk15 = ((s32)((u32)self->x_pos.val - (u32)g_Player.x_pos.val) < 1) << PLAYER_FACING_SHIFT;
 }
 #else
 INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", func_80044458);
 #endif
 
 // drill_copter_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80044508(struct MainObj* self)
 {
     self->unk18.val = self->x_pos.val;
@@ -137,9 +147,13 @@ void drill_copter_despawn(struct MainObj* self)
     } else {
         despawn_object(OBJECT_HEADER(self));
     }
+#ifdef MMX4_SATURN
+    func_8001540C(2, 3, self);
+#else
     stop_sound(2, 7);
     stop_sound(2, 8);
     stop_sound(2, 9);
+#endif
 }
 
 void drill_copter_noop(struct MainObj* self)
@@ -159,7 +173,7 @@ void drill_copter_approach_start(struct MainObj* self)
     x_vel = 0 != self->unk15 ? FIXED(2) : FIXED(-2);
     self->x_speed = x_vel;
     set_animation(self, 2);
-    func_8001540C(2, 7, self);
+    func_8001540C(2, SATURN_SOUND(7, 0x0C), self);
 }
 
 void drill_copter_approach_fly(struct MainObj* self)
@@ -209,7 +223,7 @@ void drill_copter_sway_move(struct MainObj* self)
         distance = g_Player.x_pos.val - object_x;
     }
     if (distance > FIXED(64)) {
-        self->unk15 = ((self->unk15 & 0x40) == 0) << 6;
+        self->unk15 = ((self->unk15 & PLAYER_FACING_RIGHT) == 0) << PLAYER_FACING_SHIFT;
         self->x_speed = -self->x_speed;
         object_x_2 = self->x_pos.val;
         distance_2 = object_x_2 - g_Player.x_pos.val;
@@ -240,7 +254,7 @@ void drill_copter_drop_start(struct MainObj* self)
     self->unk7C = 0x1E;
     self->air_state = -1;
     set_animation(self, 4);
-    func_8001540C(2, 8, self);
+    func_8001540C(2, SATURN_SOUND(8, 0x0D), self);
 }
 
 void drill_copter_drop_wait(struct MainObj* self)
@@ -265,7 +279,7 @@ void drill_copter_drop_fall(struct MainObj* self)
         self->gravity = 0;
         self->air_state = 0;
         set_animation(self, 5);
-        func_8001540C(2, 9, self);
+        func_8001540C(2, SATURN_SOUND(9, 0x0E), self);
     }
 }
 
@@ -273,7 +287,11 @@ void drill_copter_drop_land(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
+#ifdef MMX4_SATURN
+        func_8001540C(2, 3, self);
+#else
         stop_sound(2, 9);
+#endif
         self->unk5 = 5;
         self->unk6 = 0;
         self->contact_damage = 2;
@@ -342,7 +360,7 @@ void drill_copter_fire_shots(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        func_8001540C(2, 0xA, self);
+        func_8001540C(2, SATURN_SOUND(0xA, 0x0F), self);
         self->animation_step.fields.event = 0;
         i = 0;
         do {
@@ -382,7 +400,7 @@ void drill_copter_fire_reload(struct MainObj* self)
 }
 
 // drill_copter_spawn_clone
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80044DE4(struct MainObj* self)
 {
     struct MainObj* child;
@@ -436,138 +454,138 @@ struct Unk_unk68 D_800F9EC4[2] = {
 };
 
 union AnimationStep drill_copter_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep drill_copter_anim_1[] = {
-    { 0x49000001 },
+    { 1, 0, 0, 0x49 },
 };
 
 union AnimationStep drill_copter_anim_2[] = {
-    { 0x00010001 },
-    { 0x01010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05FB0001 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, -5, 0x05 },
 };
 
 union AnimationStep drill_copter_anim_3[] = {
-    { 0x00010001 },
-    { 0x01010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x06010001 },
-    { 0x07010001 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x10010001 },
-    { 0x11010001 },
-    { 0x12010001 },
-    { 0x13010001 },
-    { 0x14010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x17E90001 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 1, 0x13 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, -23, 0x17 },
 };
 
 union AnimationStep drill_copter_anim_4[] = {
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x1AFE0001 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, -2, 0x1A },
 };
 
 union AnimationStep drill_copter_anim_5[] = {
-    { 0x1B010001 },
-    { 0x1C010001 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1F010001 },
-    { 0x20010001 },
-    { 0x21010002 },
-    { 0x22010002 },
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25010003 },
-    { 0x26010005 },
-    { 0x27010003 },
-    { 0x28010005 },
-    { 0x29010003 },
-    { 0x2A010007 },
-    { 0x2B010007 },
-    { 0x2C01000A },
-    { 0x2D01010A },
-    { 0x2E01000B },
-    { 0x2F00000B },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x1F },
+    { 1, 0, 1, 0x20 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 3, 0, 1, 0x25 },
+    { 5, 0, 1, 0x26 },
+    { 3, 0, 1, 0x27 },
+    { 5, 0, 1, 0x28 },
+    { 3, 0, 1, 0x29 },
+    { 7, 0, 1, 0x2A },
+    { 7, 0, 1, 0x2B },
+    { 10, 0, 1, 0x2C },
+    { 10, 1, 1, 0x2D },
+    { 11, 0, 1, 0x2E },
+    { 11, 0, 0, 0x2F },
 };
 
 union AnimationStep drill_copter_anim_6[] = {
-    { 0x2F010002 },
-    { 0x30010002 },
-    { 0x31010002 },
-    { 0x32010002 },
-    { 0x33000002 },
+    { 2, 0, 1, 0x2F },
+    { 2, 0, 1, 0x30 },
+    { 2, 0, 1, 0x31 },
+    { 2, 0, 1, 0x32 },
+    { 2, 0, 0, 0x33 },
 };
 
 union AnimationStep drill_copter_anim_7[] = {
-    { 0x34010004 },
-    { 0x35010006 },
-    { 0x36010009 },
-    { 0x35010006 },
-    { 0x37010004 },
-    { 0x38010102 },
-    { 0x39010002 },
-    { 0x3A010002 },
-    { 0x32010002 },
-    { 0x33000002 },
+    { 4, 0, 1, 0x34 },
+    { 6, 0, 1, 0x35 },
+    { 9, 0, 1, 0x36 },
+    { 6, 0, 1, 0x35 },
+    { 4, 0, 1, 0x37 },
+    { 2, 1, 1, 0x38 },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x32 },
+    { 2, 0, 0, 0x33 },
 };
 
 union AnimationStep drill_copter_anim_8[] = {
-    { 0x48010001 },
-    { 0x49010001 },
-    { 0x4A010001 },
-    { 0x4B010001 },
-    { 0x4C010001 },
-    { 0x4DFB0001 },
+    { 1, 0, 1, 0x48 },
+    { 1, 0, 1, 0x49 },
+    { 1, 0, 1, 0x4A },
+    { 1, 0, 1, 0x4B },
+    { 1, 0, 1, 0x4C },
+    { 1, 0, -5, 0x4D },
 };
 
 union AnimationStep drill_copter_anim_14[] = {
-    { 0x3B010003 },
-    { 0x3C010003 },
-    { 0x3D010003 },
-    { 0x3E010003 },
-    { 0x3FFC0003 },
+    { 3, 0, 1, 0x3B },
+    { 3, 0, 1, 0x3C },
+    { 3, 0, 1, 0x3D },
+    { 3, 0, 1, 0x3E },
+    { 3, 0, -4, 0x3F },
 };
 
 union AnimationStep drill_copter_anim_9[] = {
-    { 0x40010002 },
-    { 0x41010002 },
-    { 0x42010002 },
-    { 0x43FD0002 },
+    { 2, 0, 1, 0x40 },
+    { 2, 0, 1, 0x41 },
+    { 2, 0, 1, 0x42 },
+    { 2, 0, -3, 0x43 },
 };
 
 union AnimationStep drill_copter_anim_10[] = {
-    { 0x44000001 },
+    { 1, 0, 0, 0x44 },
 };
 
 union AnimationStep drill_copter_anim_11[] = {
-    { 0x45000001 },
+    { 1, 0, 0, 0x45 },
 };
 
 union AnimationStep drill_copter_anim_12[] = {
-    { 0x46000001 },
+    { 1, 0, 0, 0x46 },
 };
 
 union AnimationStep drill_copter_anim_13[] = {
-    { 0x47000001 },
+    { 1, 0, 0, 0x47 },
 };
 
 union AnimationStep* drill_copter_animations[] = {

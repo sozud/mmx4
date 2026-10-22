@@ -20,6 +20,7 @@ void double_aerial_fly_alt(struct ShotObj*);
 extern void (*double_aerial_state_funcs[])(struct ShotObj*);
 
 void double_aerial_run(struct ShotObj*);
+#include "weapon_resources.h"
 
 extern u8 double_ball_box_1[2][4];
 
@@ -31,13 +32,12 @@ void (*double_aerial_funcs[])(struct ShotObj*) = {
 };
 
 // double_aerial_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A9DF4(struct ShotObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/shots/shot_49_double_aerial.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A9DF4(struct ShotObj* self)
 {
     self->unk16 = 3;
@@ -62,7 +62,7 @@ void func_800A9DF4(struct ShotObj* self)
     self->y_vel.val = 0;
     self->unk28 = 0;
     self->unk2C = 0;
-    func_8001540C(2, 0xF2, NULL);
+    func_8001540C(2, SATURN_SOUND(0xF2, 0xCF), NULL);
 }
 #else
 INCLUDE_ASM("main/nonmatchings/shots/shot_49_double_aerial", func_800A9DF4);
@@ -93,7 +93,7 @@ void func_800A9F30(struct ShotObj* self)
         self->unk54 = (const u8*)double_ball_box_1;
         self->unk50.data = (const u8*)double_ball_box_1;
         self->unk5++;
-        func_8001540C(2, 0xF3, NULL);
+        func_8001540C(2, SATURN_SOUND(0xF3, 0xD0), NULL);
     } else {
         animate_object(ANIMATED_OBJECT(self));
     }

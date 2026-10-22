@@ -38,9 +38,15 @@ void final_weapon_bg_cycle_main(struct LayerObj* arg0)
         if (arg0->unk15 == 4) {
             arg0->unk15 = 0;
         }
+#ifdef MMX4_SATURN
+        background = &background_objects[1];
+        background->x_pos.i.hi = (arg0->unk15 & 1) << 9;
+        background->y_pos.i.hi = (arg0->unk15 & 2) << 7;
+#else
         temp_v0_3 = arg0->unk15;
         background = &background_objects[1];
         background->x_pos.i.hi = temp_v0_3 << 9;
+#endif
         background->unk4C = 1;
     }
 }

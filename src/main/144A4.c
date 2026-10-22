@@ -31,7 +31,7 @@ extern u8 D_800F2C58[];
 extern u8 D_800F2D18[];
 extern u32 D_800F2F08[12];
 extern u32 D_800F2F38[2];
-extern u32 D_800F2F60[];
+extern union AnimationStep D_800F2F60[];
 extern union AnimationStep D_800F3000[10];
 extern union AnimationStep D_800F3028[11];
 extern union AnimationStep D_800F3054[10];
@@ -169,6 +169,7 @@ void func_80023CA4(struct MiscObj* arg0)
 {
     D_800F30C8[arg0->state](arg0);
 }
+#ifndef MMX4_SATURN
 void func_80023CE0()
 {
     func_80025DA0(0, D_800F30D4[engine_obj.stage][engine_obj.substage]);
@@ -331,3 +332,4 @@ void func_800241E8(void)
         }
     }
 }
+#endif

@@ -1,13 +1,16 @@
 // MainObj, main_object_update_funcs[27]
 // 800586F0..80059C48
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_27_dash_gunner.h"
 #include "main/objects.h"
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/object_motion.h"
+#include "main/collision_bounds.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/collision_bounds.h"
 #endif
@@ -47,7 +50,7 @@ extern void (*dash_gunner_turn_funcs[])(struct MainObj*);
 extern void (*dash_gunner_shoot_funcs[])(struct MainObj*);
 extern void (*dash_gunner_dash_funcs[])(struct MainObj*);
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern union AnimationStep* dash_gunner_animations[12];
 extern struct Unk_unk68 dash_gunner_boxes[10];
 extern struct Unk_unk68* D_8013B828;
@@ -66,15 +69,17 @@ void dash_gunner_update(struct MainObj* self)
 }
 
 // dash_gunner_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80058740(struct MainObj* arg0);
 void func_80058AC8(struct MainObj* arg0);
 void func_80059640(struct MainObj* arg0);
 #endif
 
-#ifdef MMX4_PC
-// src/main/mains/main_27_dash_gunner.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80058740(struct MainObj* arg0)
 {
     struct Main27Ext* ext = &arg0->ext.main_27;
@@ -85,7 +90,7 @@ void func_80058740(struct MainObj* arg0)
     arg0->bg_offset = g_Player.bg_offset;
     arg0->air_state = 0;
     arg0->animation_table = (const u8* const*)dash_gunner_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->hurt_box = NULL;
     arg0->attack_box = NULL;
     arg0->collision_flags = 0;
@@ -105,12 +110,12 @@ void func_80058740(struct MainObj* arg0)
         arg0->unk15 = 0;
         ext->unk80 = 0;
         ext->unk8C = 0x1E;
-        func_8001540C(2, 0x51, arg0);
+        func_8001540C(2, SATURN_SOUND(0x51, 0x42), arg0);
         arg0->unk5 = 2;
         break;
     case 1:
     case 5:
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         ext->unk8C = 0x1E;
         arg0->unk5 = 3;
         ext->unk90 = 0;
@@ -128,12 +133,12 @@ void func_80058740(struct MainObj* arg0)
         ext->unk88 = 0;
         ext->unk89 = 0x14;
         ext->unk8A = 0;
-        func_8001540C(2, 0x51, arg0);
+        func_8001540C(2, SATURN_SOUND(0x51, 0x42), arg0);
         arg0->unk5 = 6;
         break;
     case 3:
     case 7:
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         ext->unk82 = 0x1E;
         ext->unk8C = 0x12C;
         ext->unk89 = 0x14;
@@ -153,10 +158,10 @@ void func_80058740(struct MainObj* arg0)
         ext->unk91 = 0x30;
         if (subtype >= 10)
             ext->unk92 = 2;
-        arg0->unk15 = (subtype & 1) ? 0x40 : 0;
+        arg0->unk15 = (subtype & 1) ? PLAYER_FACING_RIGHT : 0;
         ext->unk80 = 0;
         ext->unk8A = 0;
-        func_8001540C(2, 0x51, arg0);
+        func_8001540C(2, SATURN_SOUND(0x51, 0x42), arg0);
         arg0->x_speed = (subtype & 1) ? 0x18000 : -0x18000;
         arg0->unk5 = 2;
         break;
@@ -187,7 +192,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80058740);
 #endif
 
 // dash_gunner_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80058AC8(struct MainObj* arg0)
 {
     struct Main27Ext* ext = &arg0->ext.main_27;
@@ -230,7 +235,7 @@ void func_80058AC8(struct MainObj* arg0)
             arg0->unk7C = 0x20;
             arg0->unk7E = 6;
             arg0->on_screen = 0;
-            stop_sound(2, 0x51);
+            STOP_SOUND(2, 0x51, 0x5);
             arg0->state = 2;
             return;
         }
@@ -238,7 +243,7 @@ void func_80058AC8(struct MainObj* arg0)
     if (arg0->state == 2)
         return;
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x60, 0x60) != 0) {
-        stop_sound(2, 0x51);
+        STOP_SOUND(2, 0x51, 0x5);
         arg0->state = 3;
         return;
     }
@@ -286,7 +291,7 @@ void dash_gunner_run_move(struct MainObj* self)
     if (--self->ext.main_27.unk8C == 0) {
         set_animation(self, 3);
         self->x_speed = 0;
-        stop_sound(2, 0x51);
+        STOP_SOUND(2, 0x51, 0x5);
         self->unk5 = 5;
         self->unk6 = 0;
         return;
@@ -298,7 +303,7 @@ void dash_gunner_run_move(struct MainObj* self)
                 self->ext.main_27.unk92 = 2;
                 set_animation(self, 3);
                 self->x_speed = 0;
-                stop_sound(2, 0x51);
+                STOP_SOUND(2, 0x51, 0x5);
                 self->unk5 = 5;
                 self->unk6 = 0;
                 return;
@@ -322,7 +327,7 @@ void dash_gunner_run_move(struct MainObj* self)
 void dash_gunner_wait_for_player(struct MainObj* self)
 {
     if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) > 0xBC) {
-        func_8001540C(2, 0x51, self);
+        func_8001540C(2, SATURN_SOUND(0x51, 0x42), self);
         self->unk7A = 0;
         if (self->ext.main_27.unk80 == 0) {
             self->unk5 = 2;
@@ -356,7 +361,7 @@ void dash_gunner_turn_flip(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        self->unk15 ^= 0x40;
+        self->unk15 ^= PLAYER_FACING_RIGHT;
         set_animation(self, 1);
         self->unk7C = 0x14;
         if (self->ext.main_27.unk8A == 0) {
@@ -508,7 +513,7 @@ void func_80059590(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         set_animation(self, 1);
-        func_8001540C(2, 0x51, self);
+        func_8001540C(2, SATURN_SOUND(0x51, 0x42), self);
         if (self->ext.main_27.unk80 == 0) {
             self->ext.main_27.unk8C = 0xB4;
             if (self->unk15 == 0) {
@@ -528,7 +533,7 @@ void func_80059590(struct MainObj* self)
 }
 
 // dash_gunner_hop
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80059640(struct MainObj* arg0)
 {
     struct Main27Ext* ext = &arg0->ext.main_27;
@@ -538,7 +543,7 @@ void func_80059640(struct MainObj* arg0)
     if (--ext->unk8C == 0 && (arg0->unk15 == 0 ? g_Player.x_pos.i.hi < arg0->x_pos.i.hi : arg0->x_pos.i.hi < g_Player.x_pos.i.hi)) {
         set_animation(arg0, 3);
         arg0->x_speed = 0;
-        stop_sound(2, 0x51);
+        STOP_SOUND(2, 0x51, 0x5);
         arg0->unk5 = 5;
         arg0->unk6 = 0;
         return;
@@ -704,115 +709,115 @@ struct Unk_unk68 dash_gunner_boxes[10] = {
 };
 
 union AnimationStep dash_gunner_anim_0[] = {
-    { 0x00010003 },
-    { 0x01010003 },
-    { 0x02010003 },
-    { 0x03FD0003 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, -3, 0x03 },
 };
 
 union AnimationStep dash_gunner_anim_1[] = {
-    { 0x04010003 },
-    { 0x05010003 },
-    { 0x06010003 },
-    { 0x07010003 },
-    { 0x08010003 },
-    { 0x09010003 },
-    { 0x0A010003 },
-    { 0x0BF90103 },
+    { 3, 0, 1, 0x04 },
+    { 3, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x0A },
+    { 3, 1, -7, 0x0B },
 };
 
 union AnimationStep dash_gunner_anim_2[] = {
-    { 0x0C010002 },
-    { 0x0D010002 },
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x11010001 },
-    { 0x11000101 },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 1, 0, 1, 0x11 },
+    { 1, 1, 0, 0x11 },
 };
 
 union AnimationStep dash_gunner_anim_3[] = {
-    { 0x12010002 },
-    { 0x13010006 },
-    { 0x14010003 },
-    { 0x15010003 },
-    { 0x16010004 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x19010202 },
-    { 0x1A010002 },
-    { 0x19010002 },
-    { 0x1A010009 },
-    { 0x1A000101 },
+    { 2, 0, 1, 0x12 },
+    { 6, 0, 1, 0x13 },
+    { 3, 0, 1, 0x14 },
+    { 3, 0, 1, 0x15 },
+    { 4, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 2, 1, 0x19 },
+    { 2, 0, 1, 0x1A },
+    { 2, 0, 1, 0x19 },
+    { 9, 0, 1, 0x1A },
+    { 1, 1, 0, 0x1A },
 };
 
 union AnimationStep dash_gunner_anim_4[] = {
-    { 0x1B010002 },
-    { 0x1C010002 },
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1A000101 },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 1, 1, 0, 0x1A },
 };
 
 union AnimationStep dash_gunner_anim_5[] = {
-    { 0x1F010003 },
-    { 0x20010003 },
-    { 0x21010003 },
-    { 0x22010003 },
-    { 0x23010003 },
-    { 0x24FB0003 },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, 1, 0x21 },
+    { 3, 0, 1, 0x22 },
+    { 3, 0, 1, 0x23 },
+    { 3, 0, -5, 0x24 },
 };
 
 union AnimationStep dash_gunner_anim_6[] = {
-    { 0x1A010006 },
-    { 0x17010002 },
-    { 0x16010202 },
-    { 0x25010002 },
-    { 0x16010004 },
-    { 0x15010003 },
-    { 0x14010003 },
-    { 0x13010006 },
-    { 0x12010002 },
-    { 0x26010002 },
-    { 0x27010001 },
-    { 0x27000101 },
+    { 6, 0, 1, 0x1A },
+    { 2, 0, 1, 0x17 },
+    { 2, 2, 1, 0x16 },
+    { 2, 0, 1, 0x25 },
+    { 4, 0, 1, 0x16 },
+    { 3, 0, 1, 0x15 },
+    { 3, 0, 1, 0x14 },
+    { 6, 0, 1, 0x13 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x26 },
+    { 1, 0, 1, 0x27 },
+    { 1, 1, 0, 0x27 },
 };
 
 union AnimationStep dash_gunner_anim_7[] = {
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x28010002 },
-    { 0x29010001 },
-    { 0x2A010001 },
-    { 0x2B010002 },
-    { 0x2C010002 },
-    { 0x2D010001 },
-    { 0x2E010001 },
-    { 0x2F010002 },
-    { 0x30010002 },
-    { 0x31010001 },
-    { 0x32010001 },
-    { 0x33010002 },
-    { 0x34010002 },
-    { 0x35010001 },
-    { 0x36010002 },
-    { 0x37F10002 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x28 },
+    { 1, 0, 1, 0x29 },
+    { 1, 0, 1, 0x2A },
+    { 2, 0, 1, 0x2B },
+    { 2, 0, 1, 0x2C },
+    { 1, 0, 1, 0x2D },
+    { 1, 0, 1, 0x2E },
+    { 2, 0, 1, 0x2F },
+    { 2, 0, 1, 0x30 },
+    { 1, 0, 1, 0x31 },
+    { 1, 0, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 2, 0, 1, 0x34 },
+    { 1, 0, 1, 0x35 },
+    { 2, 0, 1, 0x36 },
+    { 2, 0, -15, 0x37 },
 };
 
 union AnimationStep dash_gunner_anim_8[] = {
-    { 0x38000101 },
+    { 1, 1, 0, 0x38 },
 };
 
 union AnimationStep dash_gunner_anim_9[] = {
-    { 0x39000101 },
+    { 1, 1, 0, 0x39 },
 };
 
 union AnimationStep dash_gunner_anim_10[] = {
-    { 0x3A000101 },
+    { 1, 1, 0, 0x3A },
 };
 
 union AnimationStep dash_gunner_anim_11[] = {
-    { 0x3B000101 },
+    { 1, 1, 0, 0x3B },
 };
 
 union AnimationStep* dash_gunner_animations[] = {

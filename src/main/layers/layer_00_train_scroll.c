@@ -9,6 +9,7 @@
 #include "main/stage_objects.h"
 
 extern s16 train_scroll_lock_positions[4];
+#include "weapon_resources.h"
 
 void train_scroll_section_0_skip(struct LayerObj* arg0);
 void train_scroll_section_0_wait(struct LayerObj* arg0);
@@ -42,7 +43,7 @@ void train_scroll_init(struct LayerObj* arg0)
     background_objects[2].unk4E = 5;
     background_objects[0].unk2E = 0xA0;
     background_objects[0].unk2C = 0x30;
-    func_8001540C(5, 9, NULL);
+    func_8001540C(5, SATURN_SOUND(9, 0x42), NULL);
     train_scroll_main(arg0);
 }
 
@@ -95,7 +96,7 @@ void train_scroll_section_1_lock(struct LayerObj* arg0)
     if (train_scroll_player_at_lock(arg0)) {
         background_objects[0].unk24 = 0x8D0;
         background_objects[0].unk26 = 0x8D0;
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         arg0->unk7 = 0;
         arg0->unk6++;
     }
@@ -122,7 +123,7 @@ void train_scroll_section_2_lock(struct LayerObj* arg0)
     if (train_scroll_player_at_lock(arg0)) {
         background_objects[0].unk24 = 0xD30;
         background_objects[0].unk26 = 0xD30;
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         arg0->unk7 = 0;
         arg0->unk6++;
     }
@@ -169,7 +170,7 @@ void train_scroll_section_4_lock(struct LayerObj* arg0)
     if (train_scroll_player_at_lock(arg0)) {
         background_objects[0].unk24 = 0x1A50;
         background_objects[0].unk26 = 0x1A50;
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         arg0->unk7 = 0;
         arg0->unk6++;
     }

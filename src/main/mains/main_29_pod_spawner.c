@@ -1,13 +1,15 @@
 // MainObj, main_object_update_funcs[29]
 // 8005A4CC..8005B3FC
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_29_pod_spawner.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
+#include "main/collision_bounds.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
 #endif
 
@@ -26,7 +28,7 @@ void pod_spawner_wait(struct MainObj* arg0);
 extern void (*pod_spawner_state_funcs[])(struct MainObj*);
 extern void (*pod_spawner_copy_state_funcs[])(struct MainObj*);
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern union AnimationStep* pod_spawner_animations[16];
 extern struct Unk_unk68 D_800FD830[1];
 extern struct Unk_unk68 D_800FD834[1];
@@ -47,7 +49,8 @@ void pod_spawner_update(struct MainObj* self)
 }
 
 // pod_spawner_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005A538(struct MainObj* self);
 void func_8005A758(struct MainObj* self);
 void func_8005AA14(struct MainObj* self);
@@ -58,9 +61,7 @@ void func_8005B2C8(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
-// src/main/mains/main_29_pod_spawner.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005A538(struct MainObj* self)
 {
     struct MainObj* controller = SP_CUR_MAIN_OBJ;
@@ -89,7 +90,7 @@ void func_8005A538(struct MainObj* self)
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->unk16 = 7;
+    self->unk16 = VISUAL_SATURN_LAYER(7);
     context[0] = 0;
     context[1] = self->unk2 == 3;
     controller->ext.main_29.slots.controller.target = NULL;
@@ -128,7 +129,7 @@ void pod_spawner_idle(struct MainObj* self)
 }
 
 // pod_spawner_spawn
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005A758(struct MainObj* self)
 {
     u8* context = (u8*)&SP_CUR_MAIN_OBJ->ext;
@@ -137,7 +138,7 @@ void func_8005A758(struct MainObj* self)
     s32 dx;
     s32 dy;
 
-    if ((main_bss_state.frame_counter & 3) == 0) {
+    if ((WEAPON_FRAME_COUNTER & 3) == 0) {
         context[0]++;
         if (context[0] >= 12)
             context[0] = 0;
@@ -186,7 +187,7 @@ void pod_spawner_wait(struct MainObj* self)
 }
 
 // pod_spawner_step_4
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005AA14(struct MainObj* self)
 {
     switch (self->unk6) {
@@ -270,7 +271,7 @@ void func_8005ABC0(struct WeaponObj* self, s8 direction)
         shot->unk3C = self->unk3C;
         shot->unk40 = self->unk40;
         shot->unk42 = self->unk42;
-        shot->unk16 = 7;
+        shot->unk16 = VISUAL_SATURN_LAYER(7);
         shot->unk42 = self->unk42 & 0x7FFF;
         shot->unk16 = self->unk16;
         shot->unk7C = self;
@@ -299,7 +300,7 @@ void pod_spawner_despawn(struct MainObj* self)
 }
 
 // pod_spawner_state_3
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005AD00(struct MainObj* self)
 {
     struct Main29Record* record;
@@ -336,10 +337,10 @@ void func_8005AD00(struct MainObj* self)
             move_with_gravity(ANIMATED_OBJECT(self));
         }
         self->on_screen = 0;
-        if (main_bss_state.frame_counter & 3) {
+        if (WEAPON_FRAME_COUNTER & 3) {
             update_on_screen(BASE_OBJECT(self), 0x68, 0x68);
         }
-        if (!(main_bss_state.frame_counter & 0xF)) {
+        if (!(WEAPON_FRAME_COUNTER & 0xF)) {
             func_800AF878(BASE_OBJECT(self), 0, 8, 4);
         }
         break;
@@ -370,14 +371,14 @@ void pod_spawner_copy_init(struct MainObj* self)
     self->sprite_frames = source->sprite_frames;
     self->unk40 = source->unk40;
     self->unk42 = source->unk42;
-    self->unk16 = 7;
+    self->unk16 = VISUAL_SATURN_LAYER(7);
     self->unk7C = 0;
     self->ext.main_29.unk94 = 0;
     set_animation(self, 5);
 }
 
 // pod_spawner_copy_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005AF5C(struct MainObj* self)
 {
     struct MainObj* source = self->ext.main_29.source;
@@ -397,7 +398,8 @@ void func_8005AF5C(struct MainObj* self)
         u16 count = self->ext.main_29.unk96;
         u16* spawned = &self->ext.main_29.unk94;
         if (count != 0) {
-            for (u32 i = 0; i < count; i++) {
+            u32 i;
+            for (i = 0; i < count; i++) {
                 struct MainObj* slot = self->ext.main_29.slots.children[i];
                 if (slot == NULL && self->unk7C == 0) {
                     struct MainObj* child = find_free_main_obj();
@@ -415,11 +417,15 @@ void func_8005AF5C(struct MainObj* self)
                         child->x_pos = self->x_pos;
                         child->y_pos = self->y_pos;
                         index = func_8002938C(child->id);
-                        child->unk40 = D_801406A8[index] >> 7;
+                        child->unk40 = OBJECT_STAGE_TEXTURE(index);
                         index = func_8002938C(child->id);
                         column = index * 4 + 0x18;
                         row = index + 6;
+#ifdef MMX4_SATURN
+                        child->unk42 = column;
+#else
                         child->unk42 = (column - (column / 16) * 16) | (((row / 4 + 0x1E0) << 6) & 0xFFFF);
+#endif
                         index = func_8002938C(child->id);
                         child->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
                         self->unk7C = 1;
@@ -467,13 +473,14 @@ INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005AF5C);
 #endif
 
 // pod_spawner_copy_state_2
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005B24C(struct MainObj* self)
 {
     struct Main29Ext* ext = &self->ext.main_29;
+    u32 i;
 
     ext->unk94 = 0;
-    for (u32 i = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
         struct MainObj* child = ext->slots.children[i];
         if (child != NULL && child->active != 0 && child->id == 0x1C)
             child->state = 3;
@@ -486,7 +493,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B24C);
 #endif
 
 // pod_spawner_copy_state_3
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005B2C8(struct MainObj* self)
 {
     struct MainObj* source = self->ext.main_29.source;
@@ -515,7 +522,7 @@ void func_8005B2C8(struct MainObj* self)
     case 1:
         animate_object(ANIMATED_OBJECT(self));
         self->on_screen = 0;
-        if (main_bss_state.frame_counter & 3) {
+        if (WEAPON_FRAME_COUNTER & 3) {
             update_on_screen(BASE_OBJECT(self), 0x68, 0x68);
         }
         break;
@@ -529,152 +536,152 @@ INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B2C8);
 #endif
 
 union AnimationStep pod_spawner_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep pod_spawner_anim_1[] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x02010002 },
-    { 0x03010002 },
-    { 0x04010002 },
-    { 0x05010002 },
-    { 0x04010002 },
-    { 0x03010002 },
-    { 0x02010002 },
-    { 0x01010002 },
-    { 0x00000002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 0, 0x00 },
 };
 
 union AnimationStep pod_spawner_anim_2[] = {
-    { 0x00010003 },
-    { 0x06010003 },
-    { 0x07010003 },
-    { 0x08010003 },
-    { 0x09000003 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 0, 0x09 },
 };
 
 union AnimationStep pod_spawner_anim_4[] = {
-    { 0x08010003 },
-    { 0x07010003 },
-    { 0x06010003 },
-    { 0x00000003 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 0, 0x00 },
 };
 
 union AnimationStep pod_spawner_anim_3[] = {
-    { 0x0A010001 },
-    { 0x14010001 },
-    { 0x0B010001 },
-    { 0x14010001 },
-    { 0x0C010001 },
-    { 0x14010001 },
-    { 0x0D010001 },
-    { 0x0E000001 },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 0, 0x0E },
 };
 
 union AnimationStep pod_spawner_anim_5[] = {
-    { 0x0F010001 },
-    { 0x0E010001 },
-    { 0x10010001 },
-    { 0x0E010001 },
-    { 0x13010001 },
-    { 0x0E010001 },
-    { 0x10010001 },
-    { 0x0E010001 },
-    { 0x11010001 },
-    { 0x0E010001 },
-    { 0x10010001 },
-    { 0x0E010001 },
-    { 0x12010001 },
-    { 0x0E010001 },
-    { 0x10010001 },
-    { 0x0EF10001 },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x13 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, -15, 0x0E },
 };
 
 union AnimationStep pod_spawner_anim_6[] = {
-    { 0x20010102 },
-    { 0x1F010202 },
-    { 0x1E010302 },
-    { 0x1D010402 },
-    { 0x1C010402 },
-    { 0x1B000402 },
+    { 2, 1, 1, 0x20 },
+    { 2, 2, 1, 0x1F },
+    { 2, 3, 1, 0x1E },
+    { 2, 4, 1, 0x1D },
+    { 2, 4, 1, 0x1C },
+    { 2, 4, 0, 0x1B },
 };
 
 union AnimationStep pod_spawner_anim_7[] = {
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x19010002 },
-    { 0x16010002 },
-    { 0x1A010002 },
-    { 0x18F90002 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x1A },
+    { 2, 0, -7, 0x18 },
 };
 
 union AnimationStep pod_spawner_anim_8[] = {
-    { 0x1B010002 },
-    { 0x1C010002 },
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1F010002 },
-    { 0x20000002 },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 0, 0x20 },
 };
 
 union AnimationStep pod_spawner_anim_9[] = {
-    { 0x2C010502 },
-    { 0x2B010602 },
-    { 0x2A010702 },
-    { 0x29010802 },
-    { 0x28010802 },
-    { 0x27000802 },
+    { 2, 5, 1, 0x2C },
+    { 2, 6, 1, 0x2B },
+    { 2, 7, 1, 0x2A },
+    { 2, 8, 1, 0x29 },
+    { 2, 8, 1, 0x28 },
+    { 2, 8, 0, 0x27 },
 };
 
 union AnimationStep pod_spawner_anim_10[] = {
-    { 0x21010002 },
-    { 0x22010002 },
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25010002 },
-    { 0x22010002 },
-    { 0x26010002 },
-    { 0x24F90002 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, -7, 0x24 },
 };
 
 union AnimationStep pod_spawner_anim_11[] = {
-    { 0x27010002 },
-    { 0x28010002 },
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x2B010002 },
-    { 0x2C000002 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, 1, 0x2B },
+    { 2, 0, 0, 0x2C },
 };
 
 union AnimationStep pod_spawner_anim_12[] = {
-    { 0x3A010902 },
-    { 0x39010A02 },
-    { 0x38010B02 },
-    { 0x37010C02 },
-    { 0x36010C02 },
-    { 0x35000C02 },
+    { 2, 9, 1, 0x3A },
+    { 2, 10, 1, 0x39 },
+    { 2, 11, 1, 0x38 },
+    { 2, 12, 1, 0x37 },
+    { 2, 12, 1, 0x36 },
+    { 2, 12, 0, 0x35 },
 };
 
 union AnimationStep pod_spawner_anim_13[] = {
-    { 0x2F010002 },
-    { 0x30010002 },
-    { 0x31010002 },
-    { 0x32010002 },
-    { 0x33010002 },
-    { 0x30010002 },
-    { 0x34010002 },
-    { 0x31F90002 },
+    { 2, 0, 1, 0x2F },
+    { 2, 0, 1, 0x30 },
+    { 2, 0, 1, 0x31 },
+    { 2, 0, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 2, 0, 1, 0x30 },
+    { 2, 0, 1, 0x34 },
+    { 2, 0, -7, 0x31 },
 };
 
 union AnimationStep pod_spawner_anim_14[] = {
-    { 0x2D000001 },
+    { 1, 0, 0, 0x2D },
 };
 
 union AnimationStep pod_spawner_anim_15[] = {
-    { 0x2E000001 },
+    { 1, 0, 0, 0x2E },
 };
 
 union AnimationStep* pod_spawner_animations[] = {

@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[63]
 // 8007BFF4..8007C30C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_63_hatch_turret.h"
 #include "main/objects.h"
 #include "main/55C4.h"
@@ -38,7 +39,7 @@ void func_8007BFF4(struct MainObj* self)
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     set_animation(self, 0);
@@ -68,11 +69,15 @@ void func_8007C090(struct WeaponObj* weapon)
 }
 
 // hatch_turret_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007C144(struct MainObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007C144(struct MainObj* arg0)
 {
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) != 0) {
@@ -94,7 +99,7 @@ void func_8007C144(struct MainObj* arg0)
             break;
         }
         arg0->unk5 = 2;
-        func_8001540C(2, 0x78, arg0);
+        func_8001540C(2, SATURN_SOUND(0x78, 0x30), arg0);
         set_animation(arg0, 1);
         break;
     case 2:
@@ -103,7 +108,7 @@ void func_8007C144(struct MainObj* arg0)
             break;
         }
         arg0->unk5 = 3;
-        func_8001540C(2, 0x79, arg0);
+        func_8001540C(2, SATURN_SOUND(0x79, 0x31), arg0);
         func_8007C090(WEAPON_OBJECT(arg0));
         break;
     case 3:
@@ -137,124 +142,124 @@ void hatch_turret_update(struct MainObj* self)
 }
 
 union AnimationStep hatch_turret_anim_0[] = {
-    { 0x00010007 },
-    { 0x01010007 },
-    { 0x02010007 },
-    { 0x03010007 },
-    { 0x03000001 },
+    { 7, 0, 1, 0x00 },
+    { 7, 0, 1, 0x01 },
+    { 7, 0, 1, 0x02 },
+    { 7, 0, 1, 0x03 },
+    { 1, 0, 0, 0x03 },
 };
 
 union AnimationStep hatch_turret_anim_5[] = {
-    { 0x03010007 },
-    { 0x02010007 },
-    { 0x01010007 },
-    { 0x00010007 },
-    { 0x00000001 },
+    { 7, 0, 1, 0x03 },
+    { 7, 0, 1, 0x02 },
+    { 7, 0, 1, 0x01 },
+    { 7, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep hatch_turret_anim_1[] = {
-    { 0x04010001 },
-    { 0x03010001 },
-    { 0x05010001 },
-    { 0x03010001 },
-    { 0x06010001 },
-    { 0x03010001 },
-    { 0x07010001 },
-    { 0x03010001 },
-    { 0x08010001 },
-    { 0x03010001 },
-    { 0x09010001 },
-    { 0x03010001 },
-    { 0x0A010001 },
-    { 0x03010001 },
-    { 0x0B010001 },
-    { 0x03010001 },
-    { 0x0C010001 },
-    { 0x03010001 },
-    { 0x0D010001 },
-    { 0x03010001 },
-    { 0x0E010001 },
-    { 0x03010001 },
-    { 0x0F010001 },
-    { 0x03010001 },
-    { 0x10010001 },
-    { 0x03010001 },
-    { 0x11010001 },
-    { 0x03010001 },
-    { 0x12010001 },
-    { 0x03010001 },
-    { 0x13010001 },
-    { 0x03010001 },
-    { 0x14010001 },
-    { 0x03010001 },
-    { 0x15010001 },
-    { 0x03010001 },
-    { 0x16010001 },
-    { 0x03010001 },
-    { 0x17010001 },
-    { 0x03010001 },
-    { 0x18010001 },
-    { 0x03010001 },
-    { 0x19010001 },
-    { 0x03010001 },
-    { 0x1A010001 },
-    { 0x03010001 },
-    { 0x1B010001 },
-    { 0x03000001 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x13 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x1A },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, 0, 0x03 },
 };
 
 union AnimationStep hatch_turret_anim_2[] = {
-    { 0x1C010001 },
-    { 0x24010001 },
-    { 0x1C010001 },
-    { 0x24010001 },
-    { 0x1D010001 },
-    { 0x24010001 },
-    { 0x1D010001 },
-    { 0x24010001 },
-    { 0x1D010001 },
-    { 0x24010001 },
-    { 0x1E010001 },
-    { 0x24010001 },
-    { 0x1E010001 },
-    { 0x24010001 },
-    { 0x1E010001 },
-    { 0x24010001 },
-    { 0x1E010001 },
-    { 0x24010001 },
-    { 0x1F010001 },
-    { 0x24010001 },
-    { 0x1F010001 },
-    { 0x24010001 },
-    { 0x1F010001 },
-    { 0x24000001 },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1F },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1F },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1F },
+    { 1, 0, 0, 0x24 },
 };
 
 union AnimationStep hatch_turret_anim_3[] = {
-    { 0x1F010001 },
-    { 0x24010001 },
-    { 0x1F010001 },
-    { 0x24010001 },
-    { 0x1F010001 },
-    { 0x24010001 },
-    { 0x1E010001 },
-    { 0x24010001 },
-    { 0x1E010001 },
-    { 0x24010001 },
-    { 0x1E010001 },
-    { 0x24010001 },
-    { 0x1E010001 },
-    { 0x24010001 },
-    { 0x1D010001 },
-    { 0x24010001 },
-    { 0x1D010001 },
-    { 0x24010001 },
-    { 0x1D010001 },
-    { 0x24010001 },
-    { 0x1C010001 },
-    { 0x24010001 },
-    { 0x1C010001 },
-    { 0x24000001 },
+    { 1, 0, 1, 0x1F },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1F },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1F },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 0, 0x24 },
 };
 
 struct Unk_unk68 hatch_turret_anim_4[8] = {
@@ -269,31 +274,31 @@ struct Unk_unk68 hatch_turret_anim_4[8] = {
 };
 
 union AnimationStep hatch_turret_anim_6[] = {
-    { 0x25000001 },
+    { 1, 0, 0, 0x25 },
 };
 
 union AnimationStep hatch_turret_anim_7[] = {
-    { 0x26000001 },
+    { 1, 0, 0, 0x26 },
 };
 
 union AnimationStep hatch_turret_anim_8[] = {
-    { 0x27000001 },
+    { 1, 0, 0, 0x27 },
 };
 
 union AnimationStep hatch_turret_anim_9[] = {
-    { 0x28000001 },
+    { 1, 0, 0, 0x28 },
 };
 
 union AnimationStep hatch_turret_anim_10[] = {
-    { 0x29000001 },
+    { 1, 0, 0, 0x29 },
 };
 
 union AnimationStep hatch_turret_anim_11[] = {
-    { 0x2A000001 },
+    { 1, 0, 0, 0x2A },
 };
 
 union AnimationStep hatch_turret_anim_12[] = {
-    { 0x2B000001 },
+    { 1, 0, 0, 0x2B },
 };
 
 void* hatch_turret_animations[13] = {

@@ -1977,7 +1977,7 @@ static u32 menu_rebuild(u32 row)
     scripts[0] = D_800F22F0;
     scripts[1] = D_800F22D0;
     scripts[2] = D_800F22E0;
-    scripts[3] = D_800F2338.scripts[0];
+    scripts[3] = D_800F2338;
     scripts[4] = D_800F2310;
     setup();
     memset(&info, 0x25, sizeof(info));

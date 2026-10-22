@@ -37,6 +37,7 @@ extern void (*crumbling_tile_state_funcs[])(struct MiscObj*);
 void func_800C9510(struct MiscObj*);
 void crumbling_tile_main(struct MiscObj* arg0);
 void crumbling_tile_despawn(struct MiscObj*);
+#include "weapon_resources.h"
 
 extern u8 crumbling_tile_debris_0[];
 extern u8 crumbling_tile_debris_1[];
@@ -54,12 +55,12 @@ void func_800C9510(struct MiscObj* self)
     self->state++;
     self->bg_offset = g_Player.bg_offset;
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x99)];
-    self->unk40 = D_801406A8[func_8002938C(0x99)] >> 7;
-    self->unk42 = CLUT_FROM_ID(0x99);
-    self->unk16 = 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x99));
+    self->unk42 = OBJECT_STAGE_CLUT(0x99);
+    self->unk16 = VISUAL_SATURN_LAYER(7);
     self->unk15 = 0;
     if ((u8)(self->unk2 - 0xD) < 6) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->x_pos.u.hi += 0x10;
     }
     self->ext.misc_8.timer = 0;
@@ -247,124 +248,119 @@ void crumbling_tile_update(struct MiscObj* self)
     crumbling_tile_state_funcs[self->state](self);
 }
 
-#define ANIM_STEP(value) \
-    {                    \
-        (value)          \
-    }
+union AnimationStep D_8010DC7C[] = { { 3, 0, 1, 0x00 }, { 3, 0, 1, 0x01 }, { 3, 0, 1, 0x02 }, { 3, 0, 1, 0x03 }, { 2, 0, 1, 0x04 }, { 1, 0, 0, 0x04 } };
 
-union AnimationStep D_8010DC7C[] = { ANIM_STEP(0x00010003), ANIM_STEP(0x01010003), ANIM_STEP(0x02010003), ANIM_STEP(0x03010003), ANIM_STEP(0x04010002), ANIM_STEP(0x04000001) };
+union AnimationStep D_8010DC94[] = { { 1, 0, 0, 0x05 } };
 
-union AnimationStep D_8010DC94[] = { ANIM_STEP(0x05000001) };
+union AnimationStep D_8010DC98[] = { { 1, 0, 0, 0x06 } };
 
-union AnimationStep D_8010DC98[] = { ANIM_STEP(0x06000001) };
+union AnimationStep D_8010DC9C[] = { { 1, 0, 0, 0x07 } };
 
-union AnimationStep D_8010DC9C[] = { ANIM_STEP(0x07000001) };
+union AnimationStep D_8010DCA0[] = { { 1, 0, 0, 0x08 } };
 
-union AnimationStep D_8010DCA0[] = { ANIM_STEP(0x08000001) };
+union AnimationStep D_8010DCA4[] = { { 1, 0, 0, 0x09 } };
 
-union AnimationStep D_8010DCA4[] = { ANIM_STEP(0x09000001) };
+union AnimationStep D_8010DCA8[] = { { 1, 0, 0, 0x0A } };
 
-union AnimationStep D_8010DCA8[] = { ANIM_STEP(0x0A000001) };
+union AnimationStep D_8010DCAC[] = { { 1, 0, 0, 0x0B } };
 
-union AnimationStep D_8010DCAC[] = { ANIM_STEP(0x0B000001) };
+union AnimationStep D_8010DCB0[] = { { 3, 0, 1, 0x0D }, { 3, 0, 1, 0x0E }, { 3, 0, 0, 0x0F } };
 
-union AnimationStep D_8010DCB0[] = { ANIM_STEP(0x0D010003), ANIM_STEP(0x0E010003), ANIM_STEP(0x0F000003) };
+union AnimationStep D_8010DCBC[] = { { 1, 0, 0, 0x11 } };
 
-union AnimationStep D_8010DCBC[] = { ANIM_STEP(0x11000001) };
+union AnimationStep D_8010DCC0[] = { { 1, 0, 0, 0x12 } };
 
-union AnimationStep D_8010DCC0[] = { ANIM_STEP(0x12000001) };
+union AnimationStep D_8010DCC4[] = { { 1, 0, 0, 0x13 } };
 
-union AnimationStep D_8010DCC4[] = { ANIM_STEP(0x13000001) };
+union AnimationStep D_8010DCC8[] = { { 1, 0, 0, 0x14 } };
 
-union AnimationStep D_8010DCC8[] = { ANIM_STEP(0x14000001) };
+union AnimationStep D_8010DCCC[] = { { 1, 0, 0, 0x15 } };
 
-union AnimationStep D_8010DCCC[] = { ANIM_STEP(0x15000001) };
+union AnimationStep D_8010DCD0[] = { { 1, 0, 0, 0x16 } };
 
-union AnimationStep D_8010DCD0[] = { ANIM_STEP(0x16000001) };
+union AnimationStep D_8010DCD4[] = { { 1, 0, 0, 0x17 } };
 
-union AnimationStep D_8010DCD4[] = { ANIM_STEP(0x17000001) };
+union AnimationStep D_8010DCD8[] = { { 1, 0, 0, 0x18 } };
 
-union AnimationStep D_8010DCD8[] = { ANIM_STEP(0x18000001) };
+union AnimationStep D_8010DCDC[] = { { 1, 0, 0, 0x19 } };
 
-union AnimationStep D_8010DCDC[] = { ANIM_STEP(0x19000001) };
+union AnimationStep D_8010DCE0[] = { { 1, 0, 0, 0x1A } };
 
-union AnimationStep D_8010DCE0[] = { ANIM_STEP(0x1A000001) };
+union AnimationStep D_8010DCE4[] = { { 1, 0, 0, 0x1B } };
 
-union AnimationStep D_8010DCE4[] = { ANIM_STEP(0x1B000001) };
+union AnimationStep D_8010DCE8[] = { { 3, 0, 1, 0x4E }, { 3, 0, 1, 0x4F }, { 3, 0, 1, 0x50 }, { 3, 0, 1, 0x51 }, { 3, 0, 1, 0x52 }, { 3, 0, 1, 0x53 }, { 3, 0, 1, 0x54 }, { 3, 0, 1, 0x55 }, { 2, 0, 1, 0x56 }, { 1, 0, 0, 0x56 } };
 
-union AnimationStep D_8010DCE8[] = { ANIM_STEP(0x4E010003), ANIM_STEP(0x4F010003), ANIM_STEP(0x50010003), ANIM_STEP(0x51010003), ANIM_STEP(0x52010003), ANIM_STEP(0x53010003), ANIM_STEP(0x54010003), ANIM_STEP(0x55010003), ANIM_STEP(0x56010002), ANIM_STEP(0x56000001) };
+union AnimationStep D_8010DD10[] = { { 3, 0, 1, 0x5E }, { 3, 0, 1, 0x5F }, { 3, 0, 1, 0x60 }, { 3, 0, 1, 0x62 }, { 3, 0, 1, 0x64 }, { 3, 0, 1, 0x65 }, { 2, 0, 1, 0x66 }, { 1, 0, 0, 0x66 } };
 
-union AnimationStep D_8010DD10[] = { ANIM_STEP(0x5E010003), ANIM_STEP(0x5F010003), ANIM_STEP(0x60010003), ANIM_STEP(0x62010003), ANIM_STEP(0x64010003), ANIM_STEP(0x65010003), ANIM_STEP(0x66010002), ANIM_STEP(0x66000001) };
+union AnimationStep D_8010DD30[] = { { 3, 0, 1, 0x3F }, { 3, 0, 1, 0x40 }, { 3, 0, 1, 0x41 }, { 3, 0, 1, 0x42 }, { 3, 0, 1, 0x43 }, { 2, 0, 1, 0x44 }, { 1, 0, 0, 0x44 } };
 
-union AnimationStep D_8010DD30[] = { ANIM_STEP(0x3F010003), ANIM_STEP(0x40010003), ANIM_STEP(0x41010003), ANIM_STEP(0x42010003), ANIM_STEP(0x43010003), ANIM_STEP(0x44010002), ANIM_STEP(0x44000001) };
+union AnimationStep D_8010DD4C[] = { { 3, 0, 1, 0x3F }, { 3, 0, 1, 0x40 }, { 3, 0, 1, 0x41 }, { 3, 0, 1, 0x42 }, { 3, 0, 1, 0x45 }, { 2, 0, 1, 0x46 }, { 1, 0, 0, 0x46 } };
 
-union AnimationStep D_8010DD4C[] = { ANIM_STEP(0x3F010003), ANIM_STEP(0x40010003), ANIM_STEP(0x41010003), ANIM_STEP(0x42010003), ANIM_STEP(0x45010003), ANIM_STEP(0x46010002), ANIM_STEP(0x46000001) };
+union AnimationStep D_8010DD68[] = { { 3, 0, 1, 0x99 }, { 3, 0, 1, 0x9A }, { 3, 0, 1, 0x9B }, { 3, 0, 1, 0x9C }, { 3, 0, 1, 0x9D }, { 2, 0, 1, 0x9E }, { 1, 0, 0, 0x9E } };
 
-union AnimationStep D_8010DD68[] = { ANIM_STEP(0x99010003), ANIM_STEP(0x9A010003), ANIM_STEP(0x9B010003), ANIM_STEP(0x9C010003), ANIM_STEP(0x9D010003), ANIM_STEP(0x9E010002), ANIM_STEP(0x9E000001) };
+union AnimationStep D_8010DD84[] = { { 3, 0, 1, 0x9F }, { 3, 0, 1, 0xA0 }, { 3, 0, 1, 0xA1 }, { 3, 0, 1, 0xA2 }, { 3, 0, 1, 0xA3 }, { 2, 0, 1, 0xA4 }, { 1, 0, 0, 0xA4 } };
 
-union AnimationStep D_8010DD84[] = { ANIM_STEP(0x9F010003), ANIM_STEP(0xA0010003), ANIM_STEP(0xA1010003), ANIM_STEP(0xA2010003), ANIM_STEP(0xA3010003), ANIM_STEP(0xA4010002), ANIM_STEP(0xA4000001) };
+union AnimationStep D_8010DDA0[] = { { 3, 0, 1, 0xA5 }, { 3, 0, 1, 0xA6 }, { 3, 0, 1, 0xA7 }, { 3, 0, 1, 0xA8 }, { 3, 0, 1, 0xA9 }, { 2, 0, 1, 0xAA }, { 1, 0, 0, 0xAA } };
 
-union AnimationStep D_8010DDA0[] = { ANIM_STEP(0xA5010003), ANIM_STEP(0xA6010003), ANIM_STEP(0xA7010003), ANIM_STEP(0xA8010003), ANIM_STEP(0xA9010003), ANIM_STEP(0xAA010002), ANIM_STEP(0xAA000001) };
+union AnimationStep D_8010DDBC[] = { { 3, 0, 1, 0x3F }, { 3, 0, 1, 0x40 }, { 3, 0, 1, 0x41 }, { 3, 0, 1, 0x42 }, { 3, 0, 1, 0x47 }, { 2, 0, 1, 0x48 }, { 1, 0, 0, 0x48 } };
 
-union AnimationStep D_8010DDBC[] = { ANIM_STEP(0x3F010003), ANIM_STEP(0x40010003), ANIM_STEP(0x41010003), ANIM_STEP(0x42010003), ANIM_STEP(0x47010003), ANIM_STEP(0x48010002), ANIM_STEP(0x48000001) };
+union AnimationStep D_8010DDD8[] = { { 3, 0, 1, 0x9F }, { 3, 0, 1, 0xA0 }, { 3, 0, 1, 0xA1 }, { 3, 0, 1, 0xA2 }, { 3, 0, 1, 0xAB }, { 2, 0, 1, 0xAC }, { 1, 0, 0, 0xAC } };
 
-union AnimationStep D_8010DDD8[] = { ANIM_STEP(0x9F010003), ANIM_STEP(0xA0010003), ANIM_STEP(0xA1010003), ANIM_STEP(0xA2010003), ANIM_STEP(0xAB010003), ANIM_STEP(0xAC010002), ANIM_STEP(0xAC000001) };
+union AnimationStep D_8010DDF4[] = { { 1, 0, 0, 0x49 } };
 
-union AnimationStep D_8010DDF4[] = { ANIM_STEP(0x49000001) };
+union AnimationStep D_8010DDF8[] = { { 1, 0, 0, 0x4A } };
 
-union AnimationStep D_8010DDF8[] = { ANIM_STEP(0x4A000001) };
+union AnimationStep D_8010DDFC[] = { { 1, 0, 0, 0x4B } };
 
-union AnimationStep D_8010DDFC[] = { ANIM_STEP(0x4B000001) };
+union AnimationStep D_8010DE00[] = { { 1, 0, 0, 0x4C } };
 
-union AnimationStep D_8010DE00[] = { ANIM_STEP(0x4C000001) };
+union AnimationStep D_8010DE04[] = { { 1, 0, 0, 0x4D } };
 
-union AnimationStep D_8010DE04[] = { ANIM_STEP(0x4D000001) };
+union AnimationStep D_8010DE08[] = { { 3, 0, 1, 0x21 }, { 3, 0, 1, 0x22 }, { 3, 0, 1, 0x23 }, { 3, 0, 1, 0x25 }, { 3, 0, 1, 0x27 }, { 3, 0, 1, 0x28 }, { 2, 0, 1, 0x29 }, { 1, 0, 0, 0x29 } };
 
-union AnimationStep D_8010DE08[] = { ANIM_STEP(0x21010003), ANIM_STEP(0x22010003), ANIM_STEP(0x23010003), ANIM_STEP(0x25010003), ANIM_STEP(0x27010003), ANIM_STEP(0x28010003), ANIM_STEP(0x29010002), ANIM_STEP(0x29000001) };
+union AnimationStep D_8010DE28[] = { { 3, 0, 1, 0x2A }, { 3, 0, 1, 0x2B }, { 3, 0, 1, 0x2C }, { 3, 0, 1, 0x2E }, { 3, 0, 1, 0x30 }, { 3, 0, 1, 0x31 }, { 2, 0, 1, 0x32 }, { 1, 0, 0, 0x32 } };
 
-union AnimationStep D_8010DE28[] = { ANIM_STEP(0x2A010003), ANIM_STEP(0x2B010003), ANIM_STEP(0x2C010003), ANIM_STEP(0x2E010003), ANIM_STEP(0x30010003), ANIM_STEP(0x31010003), ANIM_STEP(0x32010002), ANIM_STEP(0x32000001) };
+union AnimationStep D_8010DE48[] = { { 3, 0, 1, 0x6C }, { 3, 0, 1, 0x6D }, { 3, 0, 1, 0x6E }, { 3, 0, 1, 0x70 }, { 3, 0, 1, 0x72 }, { 3, 0, 1, 0x73 }, { 2, 0, 1, 0x74 }, { 1, 0, 0, 0x74 } };
 
-union AnimationStep D_8010DE48[] = { ANIM_STEP(0x6C010003), ANIM_STEP(0x6D010003), ANIM_STEP(0x6E010003), ANIM_STEP(0x70010003), ANIM_STEP(0x72010003), ANIM_STEP(0x73010003), ANIM_STEP(0x74010002), ANIM_STEP(0x74000001) };
+union AnimationStep D_8010DE68[] = { { 3, 0, 1, 0x75 }, { 3, 0, 1, 0x76 }, { 3, 0, 1, 0x77 }, { 3, 0, 1, 0x79 }, { 3, 0, 1, 0x7B }, { 3, 0, 1, 0x7C }, { 2, 0, 1, 0x7D }, { 1, 0, 0, 0x7D } };
 
-union AnimationStep D_8010DE68[] = { ANIM_STEP(0x75010003), ANIM_STEP(0x76010003), ANIM_STEP(0x77010003), ANIM_STEP(0x79010003), ANIM_STEP(0x7B010003), ANIM_STEP(0x7C010003), ANIM_STEP(0x7D010002), ANIM_STEP(0x7D000001) };
+union AnimationStep D_8010DE88[] = { { 3, 0, 1, 0x7E }, { 3, 0, 1, 0x7F }, { 3, 0, 1, 0x80 }, { 3, 0, 1, 0x82 }, { 3, 0, 1, 0x84 }, { 3, 0, 1, 0x85 }, { 2, 0, 1, 0x86 }, { 1, 0, 0, 0x86 } };
 
-union AnimationStep D_8010DE88[] = { ANIM_STEP(0x7E010003), ANIM_STEP(0x7F010003), ANIM_STEP(0x80010003), ANIM_STEP(0x82010003), ANIM_STEP(0x84010003), ANIM_STEP(0x85010003), ANIM_STEP(0x86010002), ANIM_STEP(0x86000001) };
+union AnimationStep D_8010DEA8[] = { { 3, 0, 1, 0x33 }, { 3, 0, 1, 0x34 }, { 3, 0, 1, 0x36 }, { 3, 0, 1, 0x38 }, { 3, 0, 1, 0x39 }, { 3, 0, 1, 0x3A }, { 2, 0, 1, 0x3B }, { 1, 0, 0, 0x3B } };
 
-union AnimationStep D_8010DEA8[] = { ANIM_STEP(0x33010003), ANIM_STEP(0x34010003), ANIM_STEP(0x36010003), ANIM_STEP(0x38010003), ANIM_STEP(0x39010003), ANIM_STEP(0x3A010003), ANIM_STEP(0x3B010002), ANIM_STEP(0x3B000001) };
+union AnimationStep D_8010DEC8[] = { { 3, 0, 1, 0x87 }, { 3, 0, 1, 0x88 }, { 3, 0, 1, 0x8A }, { 3, 0, 1, 0x8C }, { 3, 0, 1, 0x8D }, { 3, 0, 1, 0x8E }, { 2, 0, 1, 0x8F }, { 1, 0, 0, 0x8F } };
 
-union AnimationStep D_8010DEC8[] = { ANIM_STEP(0x87010003), ANIM_STEP(0x88010003), ANIM_STEP(0x8A010003), ANIM_STEP(0x8C010003), ANIM_STEP(0x8D010003), ANIM_STEP(0x8E010003), ANIM_STEP(0x8F010002), ANIM_STEP(0x8F000001) };
+union AnimationStep D_8010DEE8[] = { { 1, 0, 0, 0x57 } };
 
-union AnimationStep D_8010DEE8[] = { ANIM_STEP(0x57000001) };
+union AnimationStep D_8010DEEC[] = { { 1, 0, 0, 0x58 } };
 
-union AnimationStep D_8010DEEC[] = { ANIM_STEP(0x58000001) };
+union AnimationStep D_8010DEF0[] = { { 1, 0, 0, 0x59 } };
 
-union AnimationStep D_8010DEF0[] = { ANIM_STEP(0x59000001) };
+union AnimationStep D_8010DEF4[] = { { 1, 0, 0, 0x5A } };
 
-union AnimationStep D_8010DEF4[] = { ANIM_STEP(0x5A000001) };
+union AnimationStep D_8010DEF8[] = { { 1, 0, 0, 0x5B } };
 
-union AnimationStep D_8010DEF8[] = { ANIM_STEP(0x5B000001) };
+union AnimationStep D_8010DEFC[] = { { 1, 0, 0, 0x5C } };
 
-union AnimationStep D_8010DEFC[] = { ANIM_STEP(0x5C000001) };
+union AnimationStep D_8010DF00[] = { { 1, 0, 0, 0x5D } };
 
-union AnimationStep D_8010DF00[] = { ANIM_STEP(0x5D000001) };
+union AnimationStep D_8010DF04[] = { { 3, 0, 1, 0x3C }, { 3, 0, 1, 0x3D }, { 3, 0, 0, 0x3E } };
 
-union AnimationStep D_8010DF04[] = { ANIM_STEP(0x3C010003), ANIM_STEP(0x3D010003), ANIM_STEP(0x3E000003) };
+union AnimationStep D_8010DF10[] = { { 3, 0, 0, 0x67 } };
 
-union AnimationStep D_8010DF10[] = { ANIM_STEP(0x67000003) };
+union AnimationStep D_8010DF14[] = { { 3, 0, 0, 0x68 } };
 
-union AnimationStep D_8010DF14[] = { ANIM_STEP(0x68000003) };
+union AnimationStep D_8010DF18[] = { { 3, 0, 0, 0x69 } };
 
-union AnimationStep D_8010DF18[] = { ANIM_STEP(0x69000003) };
+union AnimationStep D_8010DF1C[] = { { 3, 0, 0, 0x6A } };
 
-union AnimationStep D_8010DF1C[] = { ANIM_STEP(0x6A000003) };
+union AnimationStep D_8010DF20[] = { { 3, 0, 0, 0x6B } };
 
-union AnimationStep D_8010DF20[] = { ANIM_STEP(0x6B000003) };
+union AnimationStep D_8010DF24[] = { { 3, 0, 1, 0x90 }, { 3, 0, 1, 0x91 }, { 3, 0, 0, 0x92 } };
 
-union AnimationStep D_8010DF24[] = { ANIM_STEP(0x90010003), ANIM_STEP(0x91010003), ANIM_STEP(0x92000003) };
+union AnimationStep D_8010DF30[] = { { 3, 0, 1, 0x93 }, { 3, 0, 1, 0x94 }, { 3, 0, 0, 0x95 } };
 
-union AnimationStep D_8010DF30[] = { ANIM_STEP(0x93010003), ANIM_STEP(0x94010003), ANIM_STEP(0x95000003) };
-
-union AnimationStep D_8010DF3C[] = { ANIM_STEP(0x96010003), ANIM_STEP(0x97010003), ANIM_STEP(0x98000003) };
+union AnimationStep D_8010DF3C[] = { { 3, 0, 1, 0x96 }, { 3, 0, 1, 0x97 }, { 3, 0, 0, 0x98 } };
 
 #undef ANIM_STEP
 

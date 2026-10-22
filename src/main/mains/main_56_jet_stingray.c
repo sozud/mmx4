@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[56]
 // 8006FABC..80072194
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_55_jet_stingray_flyby.h"
 #include "main/mains/main_56_jet_stingray.h"
 #include "main/objects.h"
@@ -192,7 +193,7 @@ struct VisualObj* jet_stingray_spawn_splash(struct MainObj* self)
         visual->unk15 = self->unk15;
         visual->bg_offset = self->bg_offset;
         visual->unk50 = PLAYER_OBJECT(self);
-        func_8001540C(2, 0xAE, self);
+        func_8001540C(2, SATURN_SOUND(0xAE, 0x19), self);
         return visual;
     }
     return 0;
@@ -237,7 +238,7 @@ extern u8 jet_stingray_pattern_weights[];
 void jet_stingray_intro_setup(struct MainObj* self)
 {
     if (g_Player.capsule_state == 0) {
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         self->unk5++;
         self->on_screen = 0;
         self->hurt_box = NULL;
@@ -246,14 +247,14 @@ void jet_stingray_intro_setup(struct MainObj* self)
         self->collision_data = D_801079F8;
         self->bg_offset = g_Player.bg_offset;
         if (engine_obj.stage != 0xC) {
-            self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+            self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
         } else {
-            self->unk40 = (D_801406A8[0] >> 7) + 0x160;
+            self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0x160);
             self->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
-            self->unk42 = 0x7888;
+            self->unk42 = OBJECT_CLUT(0x7888);
         }
         self->animation_table = (const u8* const*)jet_stingray_animations;
-        self->unk16 = 6;
+        self->unk16 = VISUAL_SATURN_LAYER(6);
         self->hp = 0;
         self->contact_damage = 4;
         self->x_pos.val = (background_objects[self->bg_offset].unk1E + 0x10B) << 16;
@@ -320,7 +321,7 @@ void jet_stingray_intro_emerge(struct MainObj* self)
             counter = jet_stingray_bubble_index + 1;
             jet_stingray_bubble_index = counter;
         } while ((u32)(counter & 0xFF) < 3U);
-        func_8001540C(2, 0xAD, self);
+        func_8001540C(2, SATURN_SOUND(0xAD, 0x18), self);
     }
 }
 
@@ -364,7 +365,7 @@ void jet_stingray_intro_fill_health(struct MainObj* self)
     if ((update_boss_music_delay() == 0) && (self->animation_step.fields.relative_step == 0)) {
         if (self->hp < 0x30) {
             if (--self->unk7C == 0) {
-                func_8001540C(0, 0xE, 0);
+                func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
                 self->unk7C = 2;
             }
             self->hp++;
@@ -457,7 +458,8 @@ void jet_stingray_swim_start(struct MainObj* self)
 }
 
 // jet_stingray_swim_move
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80070514(struct MainObj* arg0);
 void func_80070A38(struct MainObj* arg0);
 void func_800710D4(struct MainObj* arg0);
@@ -468,7 +470,7 @@ extern u8 jet_stingray_splash_y_offsets[4];
 extern void (*jet_stingray_ambush_funcs[])(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80070514(struct MainObj* arg0)
 {
     struct BackgroundObj* background = &background_objects[arg0->bg_offset];
@@ -476,7 +478,7 @@ void func_80070514(struct MainObj* arg0)
     s16 target_y;
 
     if (arg0->x_pos.val < background->x_pos.val + 0xA00000) {
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         target_x = background->unk1E + 0x40;
     } else {
         arg0->unk15 = 0;
@@ -603,12 +605,12 @@ void jet_stingray_vortex_spawn(struct MainObj* self)
             visual_obj->unk2 = 0;
             self->ext.main_56.object.visual = visual_obj;
         }
-        func_8001540C(2, 0xB0, self);
+        func_8001540C(2, SATURN_SOUND(0xB0, 0x1B), self);
     }
 }
 
 // jet_stingray_vortex_spin
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80070A38(struct MainObj* arg0)
 {
     struct MainObj* debris;
@@ -636,7 +638,7 @@ void func_80070A38(struct MainObj* arg0)
         arg0->ext.main_56.vortex_result = 1;
         arg0->unk6++;
     }
-    if (main_bss_state.frame_counter % 5 != 0)
+    if (WEAPON_FRAME_COUNTER % 5 != 0)
         return;
     debris = func_8006FB20(arg0, 0, 0);
     roll = get_random();
@@ -686,7 +688,7 @@ void jet_stingray_ambush_exit(struct MainObj* self)
         self->y_speed = FIXED(9);
         self->x_speed = 0;
         set_animation(self, 7);
-        func_8001540C(2, 0xAF, self);
+        func_8001540C(2, SATURN_SOUND(0xAF, 0x1A), self);
     }
 
     if (self->on_screen == 0) {
@@ -713,7 +715,7 @@ void jet_stingray_ambush_drop(struct MainObj* self)
         if (self->on_screen == 0)
             break;
         self->unk7++;
-        func_8001540C(2, 0xAF, self);
+        func_8001540C(2, SATURN_SOUND(0xAF, 0x1A), self);
         break;
     case 2:
         if (self->on_screen != 0)
@@ -742,7 +744,7 @@ void jet_stingray_ambush_rise(struct MainObj* self)
     case 1:
         if (self->on_screen != 0) {
             self->unk7++;
-            func_8001540C(2, 0xAF, self);
+            func_8001540C(2, SATURN_SOUND(0xAF, 0x1A), self);
         }
         break;
     case 2:
@@ -773,7 +775,7 @@ void jet_stingray_ambush_return(struct MainObj* self)
 }
 
 // jet_stingray_ambush
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800710D4(struct MainObj* arg0)
 {
     struct MainObj* debris;
@@ -842,7 +844,7 @@ void jet_stingray_dash_charge(struct MainObj* self)
             self->x_speed = x_velocity;
             self->hurt_box = &jet_stingray_dash_hurt_box;
             set_animation(self, 6);
-            func_8001540C(2, 0xAF, self);
+            func_8001540C(2, SATURN_SOUND(0xAF, 0x1A), self);
         }
     } else if (self->on_screen == 0) {
         self->unk7 = 0;
@@ -905,7 +907,7 @@ void jet_stingray_leap_start(struct MainObj* self)
     self->ext.main_56.flags &= 0xFD;
 
     set_animation(self, 4);
-    func_8001540C(2, 0xAF, self);
+    func_8001540C(2, SATURN_SOUND(0xAF, 0x1A), self);
 }
 
 void jet_stingray_leap_fall(struct MainObj* self)
@@ -949,7 +951,7 @@ void jet_stingray_leap(struct MainObj* self)
 }
 
 // jet_stingray_missiles_fire
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80071740(struct MainObj* arg0)
 {
     struct ShotObj* shot;
@@ -957,7 +959,7 @@ void func_80071740(struct MainObj* arg0)
     switch (arg0->unk7) {
     case 0:
         arg0->unk7 = 1;
-        func_8001540C(2, 0xB2, arg0);
+        func_8001540C(2, SATURN_SOUND(0xB2, 0x1D), arg0);
         arg0->unk7C = 0x32;
     case 1:
         if (--arg0->unk7C == 0) {
@@ -968,7 +970,7 @@ void func_80071740(struct MainObj* arg0)
         break;
     case 2:
         if (arg0->animation_step.fields.event == 1) {
-            func_8001540C(2, 0xB1, arg0);
+            func_8001540C(2, SATURN_SOUND(0xB1, 0x1C), arg0);
             arg0->animation_step.fields.event = 0;
             shot = find_free_shot_obj();
             if (shot != NULL) {
@@ -1045,7 +1047,7 @@ void jet_stingray_stagger_start(struct MainObj* self)
     self->collision_data = (const u16*)D_801060F0;
     self->unk42 &= 0x7FFF;
     self->unk6++;
-    func_8001540C(2, 0xB3, self);
+    func_8001540C(2, SATURN_SOUND(0xB3, 0x1E), self);
     set_animation(self, 0x16);
 }
 
@@ -1080,7 +1082,7 @@ void jet_stingray_stagger_shake(struct MainObj* self)
 
     self->unk6++;
     set_animation(self, 0x17);
-    func_8001540C(2, 0xCA, self);
+    func_8001540C(2, SATURN_SOUND(0xCA, 0x17), self);
     spawn_debris(6, jet_stingray_debris, self);
 }
 
@@ -1091,7 +1093,7 @@ void jet_stingray_stagger_flee(struct MainObj* self)
         self->y_speed = FIXED(8);
         self->x_speed = 0;
         set_animation(self, 7);
-        func_8001540C(2, 0xAF, self);
+        func_8001540C(2, SATURN_SOUND(0xAF, 0x1A), self);
     }
 }
 
@@ -1297,13 +1299,13 @@ struct Unk_unk68 jet_stingray_leap_hurt_boxes[6] = {
 struct Unk_unk68 jet_stingray_terrain_box = { 0, 28, 27, 3 };
 
 union AnimationStep jet_stingray_pattern_2_0[] = {
-    { 0x0000FF07 },
+    { 7, -1, 0, 0x00 },
 };
 
 u8 jet_stingray_pattern_2_1[4] = { 8, 7, 255, 0 };
 
 union AnimationStep jet_stingray_pattern_1_0[] = {
-    { 0x0000FF07 },
+    { 7, -1, 0, 0x00 },
 };
 
 u8 jet_stingray_pattern_1_1[4] = { 8, 7, 255, 0 };
@@ -1356,13 +1358,13 @@ struct Unk_unk68 jet_stingray_anim_1[4] = {
 };
 
 union AnimationStep jet_stingray_anim_2[] = {
-    { 0x08010008 },
-    { 0x09010003 },
-    { 0x0A010002 },
-    { 0x0B01000A },
-    { 0x0C010002 },
-    { 0x0D010005 },
-    { 0x0E000007 },
+    { 8, 0, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 10, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 5, 0, 1, 0x0D },
+    { 7, 0, 0, 0x0E },
 };
 
 struct Unk_unk68 jet_stingray_anim_3[3] = {
@@ -1391,10 +1393,10 @@ struct Unk_unk68 jet_stingray_anim_4[16] = {
 };
 
 union AnimationStep jet_stingray_anim_5[] = {
-    { 0x02010006 },
-    { 0x1B01000A },
-    { 0x1C010003 },
-    { 0x1D000005 },
+    { 6, 0, 1, 0x02 },
+    { 10, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1C },
+    { 5, 0, 0, 0x1D },
 };
 
 struct Unk_unk68 jet_stingray_anim_6[4] = {
@@ -1431,9 +1433,9 @@ struct Unk_unk68 jet_stingray_anim_9[9] = {
 };
 
 union AnimationStep jet_stingray_anim_10[] = {
-    { 0x2D010002 },
-    { 0x2C010002 },
-    { 0x2B000207 },
+    { 2, 0, 1, 0x2D },
+    { 2, 0, 1, 0x2C },
+    { 7, 2, 0, 0x2B },
 };
 
 struct Unk_unk68 jet_stingray_anim_11[4] = {
@@ -1451,13 +1453,13 @@ struct Unk_unk68 jet_stingray_anim_12[4] = {
 };
 
 union AnimationStep jet_stingray_anim_13[] = {
-    { 0x39010002 },
-    { 0x3A000002 },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 0, 0x3A },
 };
 
 union AnimationStep jet_stingray_anim_14[] = {
-    { 0x3B010002 },
-    { 0x3C000002 },
+    { 2, 0, 1, 0x3B },
+    { 2, 0, 0, 0x3C },
 };
 
 struct Unk_unk68 jet_stingray_anim_15[4] = {
@@ -1475,24 +1477,24 @@ struct Unk_unk68 jet_stingray_anim_16[4] = {
 };
 
 union AnimationStep jet_stingray_anim_17[] = {
-    { 0x45010002 },
-    { 0x46000002 },
+    { 2, 0, 1, 0x45 },
+    { 2, 0, 0, 0x46 },
 };
 
 union AnimationStep jet_stingray_anim_18[] = {
-    { 0x47010002 },
-    { 0x48000002 },
+    { 2, 0, 1, 0x47 },
+    { 2, 0, 0, 0x48 },
 };
 
 union AnimationStep jet_stingray_anim_19[] = {
-    { 0x49010004 },
-    { 0x4A010004 },
-    { 0x4B010004 },
-    { 0x4C010004 },
-    { 0x4D010003 },
-    { 0x4E010003 },
-    { 0x4F010004 },
-    { 0x50000003 },
+    { 4, 0, 1, 0x49 },
+    { 4, 0, 1, 0x4A },
+    { 4, 0, 1, 0x4B },
+    { 4, 0, 1, 0x4C },
+    { 3, 0, 1, 0x4D },
+    { 3, 0, 1, 0x4E },
+    { 4, 0, 1, 0x4F },
+    { 3, 0, 0, 0x50 },
 };
 
 struct Unk_unk68 jet_stingray_anim_20[4] = {
@@ -1503,111 +1505,111 @@ struct Unk_unk68 jet_stingray_anim_20[4] = {
 };
 
 union AnimationStep jet_stingray_anim_21[] = {
-    { 0x4D010003 },
-    { 0x4E010003 },
-    { 0x4F010003 },
-    { 0x50010003 },
-    { 0x4B010003 },
-    { 0x4A010003 },
-    { 0x49000003 },
+    { 3, 0, 1, 0x4D },
+    { 3, 0, 1, 0x4E },
+    { 3, 0, 1, 0x4F },
+    { 3, 0, 1, 0x50 },
+    { 3, 0, 1, 0x4B },
+    { 3, 0, 1, 0x4A },
+    { 3, 0, 0, 0x49 },
 };
 
 union AnimationStep jet_stingray_anim_22[] = {
-    { 0x51010003 },
-    { 0x52010003 },
-    { 0x51010003 },
-    { 0x52010003 },
-    { 0x53010003 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x54000002 },
+    { 3, 0, 1, 0x51 },
+    { 3, 0, 1, 0x52 },
+    { 3, 0, 1, 0x51 },
+    { 3, 0, 1, 0x52 },
+    { 3, 0, 1, 0x53 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 0, 0x54 },
 };
 
 union AnimationStep jet_stingray_anim_23[] = {
-    { 0x55010002 },
-    { 0x56010002 },
-    { 0x57010002 },
-    { 0x56010002 },
-    { 0x5700000F },
+    { 2, 0, 1, 0x55 },
+    { 2, 0, 1, 0x56 },
+    { 2, 0, 1, 0x57 },
+    { 2, 0, 1, 0x56 },
+    { 15, 0, 0, 0x57 },
 };
 
 union AnimationStep jet_stingray_anim_24[] = {
-    { 0x58000001 },
+    { 1, 0, 0, 0x58 },
 };
 
 union AnimationStep jet_stingray_anim_25[] = {
-    { 0x59000001 },
+    { 1, 0, 0, 0x59 },
 };
 
 union AnimationStep jet_stingray_anim_26[] = {
-    { 0x5A000001 },
+    { 1, 0, 0, 0x5A },
 };
 
 union AnimationStep jet_stingray_anim_27[] = {
-    { 0x5B010002 },
-    { 0x5C010002 },
-    { 0x5D010004 },
-    { 0x5C010003 },
-    { 0x5B000003 },
-    { 0x5E000005 },
-    { 0x5F010003 },
-    { 0x60010003 },
-    { 0x61010003 },
-    { 0x62010003 },
-    { 0x6301000A },
-    { 0x15010005 },
-    { 0x16010005 },
-    { 0x13010005 },
-    { 0x14010005 },
-    { 0x5E010005 },
-    { 0x64010106 },
-    { 0x65010007 },
-    { 0x5B010002 },
-    { 0x5C010002 },
-    { 0x5D010004 },
-    { 0x5C010003 },
-    { 0x5B010003 },
-    { 0x6601000A },
-    { 0x55010002 },
-    { 0x56010002 },
-    { 0x5700000F },
+    { 2, 0, 1, 0x5B },
+    { 2, 0, 1, 0x5C },
+    { 4, 0, 1, 0x5D },
+    { 3, 0, 1, 0x5C },
+    { 3, 0, 0, 0x5B },
+    { 5, 0, 0, 0x5E },
+    { 3, 0, 1, 0x5F },
+    { 3, 0, 1, 0x60 },
+    { 3, 0, 1, 0x61 },
+    { 3, 0, 1, 0x62 },
+    { 10, 0, 1, 0x63 },
+    { 5, 0, 1, 0x15 },
+    { 5, 0, 1, 0x16 },
+    { 5, 0, 1, 0x13 },
+    { 5, 0, 1, 0x14 },
+    { 5, 0, 1, 0x5E },
+    { 6, 1, 1, 0x64 },
+    { 7, 0, 1, 0x65 },
+    { 2, 0, 1, 0x5B },
+    { 2, 0, 1, 0x5C },
+    { 4, 0, 1, 0x5D },
+    { 3, 0, 1, 0x5C },
+    { 3, 0, 1, 0x5B },
+    { 10, 0, 1, 0x66 },
+    { 2, 0, 1, 0x55 },
+    { 2, 0, 1, 0x56 },
+    { 15, 0, 0, 0x57 },
 };
 
 union AnimationStep jet_stingray_anim_29[] = {
-    { 0x5F010003 },
-    { 0x60010003 },
-    { 0x61010003 },
-    { 0x62010003 },
-    { 0x63010009 },
-    { 0x63000001 },
+    { 3, 0, 1, 0x5F },
+    { 3, 0, 1, 0x60 },
+    { 3, 0, 1, 0x61 },
+    { 3, 0, 1, 0x62 },
+    { 9, 0, 1, 0x63 },
+    { 1, 0, 0, 0x63 },
 };
 
 u8 jet_stingray_anim_38[8] = { 5, 0, 1, 21, 5, 0, 255, 22 };
 
 union AnimationStep jet_stingray_anim_39[] = {
-    { 0x13010005 },
-    { 0x14010005 },
-    { 0x5E010005 },
-    { 0x64010106 },
-    { 0x65010007 },
-    { 0x5B010002 },
-    { 0x5C010002 },
-    { 0x5D010004 },
-    { 0x5C010003 },
-    { 0x5B010003 },
-    { 0x6601000A },
-    { 0x55010002 },
-    { 0x56010002 },
-    { 0x5700000F },
+    { 5, 0, 1, 0x13 },
+    { 5, 0, 1, 0x14 },
+    { 5, 0, 1, 0x5E },
+    { 6, 1, 1, 0x64 },
+    { 7, 0, 1, 0x65 },
+    { 2, 0, 1, 0x5B },
+    { 2, 0, 1, 0x5C },
+    { 4, 0, 1, 0x5D },
+    { 3, 0, 1, 0x5C },
+    { 3, 0, 1, 0x5B },
+    { 10, 0, 1, 0x66 },
+    { 2, 0, 1, 0x55 },
+    { 2, 0, 1, 0x56 },
+    { 15, 0, 0, 0x57 },
 };
 
 union AnimationStep jet_stingray_anim_30[] = {
-    { 0x67010003 },
-    { 0x68010003 },
-    { 0x69010003 },
-    { 0x6A000003 },
+    { 3, 0, 1, 0x67 },
+    { 3, 0, 1, 0x68 },
+    { 3, 0, 1, 0x69 },
+    { 3, 0, 0, 0x6A },
 };
 
 struct Unk_unk68 jet_stingray_anim_31[4] = {
@@ -1618,18 +1620,18 @@ struct Unk_unk68 jet_stingray_anim_31[4] = {
 };
 
 union AnimationStep jet_stingray_anim_32[] = {
-    { 0x6E010008 },
-    { 0x6F010008 },
-    { 0x70010008 },
-    { 0x71010008 },
-    { 0x72000008 },
+    { 8, 0, 1, 0x6E },
+    { 8, 0, 1, 0x6F },
+    { 8, 0, 1, 0x70 },
+    { 8, 0, 1, 0x71 },
+    { 8, 0, 0, 0x72 },
 };
 
 union AnimationStep jet_stingray_anim_33[] = {
-    { 0x73010002 },
-    { 0x74010002 },
-    { 0x75010002 },
-    { 0x76000002 },
+    { 2, 0, 1, 0x73 },
+    { 2, 0, 1, 0x74 },
+    { 2, 0, 1, 0x75 },
+    { 2, 0, 0, 0x76 },
 };
 
 struct Unk_unk68 jet_stingray_anim_34[4] = {
@@ -1640,19 +1642,19 @@ struct Unk_unk68 jet_stingray_anim_34[4] = {
 };
 
 union AnimationStep jet_stingray_anim_35[] = {
-    { 0x5F010003 },
-    { 0x60010003 },
-    { 0x61010003 },
-    { 0x62010003 },
-    { 0x63010003 },
-    { 0x15010005 },
-    { 0x16010005 },
-    { 0x13010005 },
-    { 0x14010005 },
-    { 0x11010005 },
-    { 0x12010005 },
-    { 0x19010005 },
-    { 0x1A000005 },
+    { 3, 0, 1, 0x5F },
+    { 3, 0, 1, 0x60 },
+    { 3, 0, 1, 0x61 },
+    { 3, 0, 1, 0x62 },
+    { 3, 0, 1, 0x63 },
+    { 5, 0, 1, 0x15 },
+    { 5, 0, 1, 0x16 },
+    { 5, 0, 1, 0x13 },
+    { 5, 0, 1, 0x14 },
+    { 5, 0, 1, 0x11 },
+    { 5, 0, 1, 0x12 },
+    { 5, 0, 1, 0x19 },
+    { 5, 0, 0, 0x1A },
 };
 
 struct Unk_unk68 jet_stingray_anim_36[6] = {
@@ -1665,36 +1667,36 @@ struct Unk_unk68 jet_stingray_anim_36[6] = {
 };
 
 union AnimationStep jet_stingray_anim_37[] = {
-    { 0x7F010002 },
-    { 0x80010002 },
-    { 0x81010002 },
-    { 0x82010002 },
-    { 0x81010002 },
-    { 0x80FB0002 },
+    { 2, 0, 1, 0x7F },
+    { 2, 0, 1, 0x80 },
+    { 2, 0, 1, 0x81 },
+    { 2, 0, 1, 0x82 },
+    { 2, 0, 1, 0x81 },
+    { 2, 0, -5, 0x80 },
 };
 
 union AnimationStep jet_stingray_anim_40[] = {
-    { 0x83000001 },
+    { 1, 0, 0, 0x83 },
 };
 
 union AnimationStep jet_stingray_anim_41[] = {
-    { 0x85000001 },
+    { 1, 0, 0, 0x85 },
 };
 
 union AnimationStep jet_stingray_anim_42[] = {
-    { 0x84000001 },
+    { 1, 0, 0, 0x84 },
 };
 
 union AnimationStep jet_stingray_anim_43[] = {
-    { 0x86010003 },
-    { 0x87010003 },
-    { 0x88010004 },
-    { 0x89010004 },
-    { 0x8A010004 },
-    { 0x8B010003 },
-    { 0x8C010003 },
-    { 0x8D010003 },
-    { 0x8E000003 },
+    { 3, 0, 1, 0x86 },
+    { 3, 0, 1, 0x87 },
+    { 4, 0, 1, 0x88 },
+    { 4, 0, 1, 0x89 },
+    { 4, 0, 1, 0x8A },
+    { 3, 0, 1, 0x8B },
+    { 3, 0, 1, 0x8C },
+    { 3, 0, 1, 0x8D },
+    { 3, 0, 0, 0x8E },
 };
 
 struct Unk_unk68 jet_stingray_anim_44[3] = {

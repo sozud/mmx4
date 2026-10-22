@@ -15,6 +15,7 @@ extern u8 weapon_overlay_layers[4];
 extern u8 weapon_overlay_animations[4];
 extern s16 weapon_overlay_gfx_rows[4];
 extern struct VisualBounds weapon_overlay_bounds[4];
+#include "weapon_resources.h"
 
 void weapon_overlay_update(struct VisualObj* arg0)
 {
@@ -58,7 +59,7 @@ struct VisualSpawnOffset double_cyclone_charged_fan_offsets[2] = {
     { 0x1F, -0x07 },
 };
 
-u16 weapon_overlay_palettes[4] = { 0x0530, 0x0520, 0x0530, 0x0530 };
+u16 weapon_overlay_palettes[4] = { WEAPON_TEXTURE_SPECIAL_1, WEAPON_TEXTURE_SPECIAL_0, WEAPON_TEXTURE_SPECIAL_1, WEAPON_TEXTURE_SPECIAL_1 };
 u8 weapon_overlay_layers[4] = { 3, 2, 3, 3 };
 u8 weapon_overlay_animations[4] = { 0, 1, 2, 4 };
 s16 weapon_overlay_gfx_rows[4] = { 0x30, 0, 0x30, 0x30 };

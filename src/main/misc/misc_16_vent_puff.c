@@ -4,8 +4,9 @@
 #include "main/misc/misc_16_vent_puff.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#include "main/object_motion.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/object_motion.h"
 #endif
 
@@ -49,11 +50,12 @@ void vent_puff_init(struct MiscObj* self)
 }
 
 // vent_puff_rise
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CACF0(struct MiscObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CACF0(struct MiscObj* arg0)
 {
     if (arg0->unk5 == 0) {

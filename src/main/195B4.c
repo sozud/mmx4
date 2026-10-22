@@ -4,31 +4,34 @@
 #include "main/195B4.h"
 #include "main/stage_object_record_tables.h"
 #include "main/stage_objects.h"
+#ifdef MMX4_SATURN
+#include "weapon_resources.h"
+#endif
 
-extern u8 D_800F4A50[16];
-extern u8 D_800F4A60[16];
-extern u8 D_800F5008[12];
-extern u8 D_800F5014[12];
-extern u8 D_800F55E0[12];
-extern u8 D_800F55EC[12];
-extern u8 D_800F611C[12];
-extern u8 D_800F6128[16];
-extern u8 D_800F669C[12];
-extern u8 D_800F66A8[12];
-extern u8 D_800F6AC4[8];
-extern u8 D_800F6ACC[12];
-extern u8 D_800F7204[8];
-extern u8 D_800F720C[12];
-extern u8 D_800F76A0[12];
-extern u8 D_800F76AC[12];
-extern u8 D_800F7AAC[12];
-extern u8 D_800F7AB8[12];
-extern u8 D_800F817C[8];
-extern u8 D_800F81E0[12];
-extern u8 D_800F8470[12];
-extern u8 D_800F847C[16];
-extern u8 D_800F87C8[8];
-extern u8 D_800F87D0[16];
+extern u8 D_800F4A50[];
+extern u8 D_800F4A60[];
+extern u8 D_800F5008[];
+extern u8 D_800F5014[];
+extern u8 D_800F55E0[];
+extern u8 D_800F55EC[];
+extern u8 D_800F611C[];
+extern u8 D_800F6128[];
+extern u8 D_800F669C[];
+extern u8 D_800F66A8[];
+extern u8 D_800F6AC4[];
+extern u8 D_800F6ACC[];
+extern u8 D_800F7204[];
+extern u8 D_800F720C[];
+extern u8 D_800F76A0[];
+extern u8 D_800F76AC[];
+extern u8 D_800F7AAC[];
+extern u8 D_800F7AB8[];
+extern u8 D_800F817C[];
+extern u8 D_800F81E0[];
+extern u8 D_800F8470[];
+extern u8 D_800F847C[];
+extern u8 D_800F87C8[];
+extern u8 D_800F87D0[];
 extern struct StageObjectRecord stage_object_records_0_0[];
 extern struct StageObjectRecord stage_object_records_0_1[];
 extern struct StageObjectRecord stage_object_records_1_0[];
@@ -137,7 +140,33 @@ void func_80028DB4(void)
     }
 }
 
+#ifdef MMX4_SATURN
+void func_80028E24(void)
+{
+    struct BackgroundObj* bg = &background_objects[0];
+    s16 old_x = bg->unk14.i.hi;
+    s16 x = bg->x_pos.i.hi;
+    s16 old_y = bg->unk18.i.hi;
+    s16 y = bg->y_pos.i.hi;
+
+    if (old_x != x) {
+        if (old_x < x) {
+            func_80028FEC(x + 0x150, x + 0x170, y - 0x30, y + 0x120, 1);
+        } else {
+            func_80028FEC(x - 0x30, x - 0x10, y - 0x30, y + 0x120, 2);
+        }
+    }
+    if (old_y != y) {
+        if (old_y < y) {
+            func_80028FEC(x - 0x30, x + 0x170, y + 0x100, y + 0x120, 3);
+        } else {
+            func_80028FEC(x - 0x30, x + 0x170, y - 0x30, y - 0x10, 4);
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/195B4", func_80028E24);
+#endif
 void func_80028F58(void)
 {
     func_80028FEC(background_objects[0].x_pos.i.hi - 0x30,
@@ -148,7 +177,68 @@ void func_80028F58(void)
     func_800292D0(D_800F4430[engine_obj.stage][engine_obj.substage]);
 }
 
+#ifdef MMX4_SATURN
+void func_80028FEC(s16 left, s16 right, s16 top, s16 bottom, u8 direction)
+{
+    struct StageObjectRecord* record = D_800F43C8[engine_obj.stage][engine_obj.substage];
+
+    while (record->object_type != 0xFF) {
+        u8 flags = record->flags;
+        s16 scan_left = left;
+        s16 scan_right = right;
+        s16 scan_top = top;
+        s16 scan_bottom = bottom;
+
+        if (!(flags & 0x81)) {
+            if (flags & 0x70) {
+                u16 margin = D_800F4334.margins[(flags >> 4) - 1];
+
+                switch (direction) {
+                case 1:
+                    scan_left += margin;
+                    scan_right += margin;
+                    break;
+                case 2:
+                    scan_left -= margin;
+                    scan_right -= margin;
+                    break;
+                case 3:
+                    scan_top += margin;
+                    scan_bottom += margin;
+                    break;
+                case 4:
+                    scan_top -= margin;
+                    scan_bottom -= margin;
+                    break;
+                }
+            }
+            if (scan_left < record->x && record->x < scan_right && scan_top < record->y && record->y < scan_bottom) {
+                struct ObjectHeader* object = MakeObject(record->object_type);
+
+                if (object != NULL) {
+                    object->active = 0x41;
+                    object->id = record->id;
+                    object->unk2 = record->subtype;
+                    object->x_pos.i.hi = record->x;
+                    object->y_pos.i.hi = record->y;
+                    object->backref = record;
+                    if (record->object_type == 0) {
+                        struct MainObj* main = (struct MainObj*)object;
+
+                        main->unk40 = OBJECT_STAGE_TEXTURE((u8)func_8002938C(record->id));
+                        main->unk42 = VISUAL_STAGE_PALETTE((u8)func_8002938C(record->id));
+                        main->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, (u8)func_8002938C(record->id));
+                    }
+                    record->flags |= 1;
+                }
+            }
+        }
+        record++;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/195B4", func_80028FEC);
+#endif
 void func_800292D0(struct StageObjectRecord* arg0)
 {
     struct StageObjectRecord* var_s1 = arg0;

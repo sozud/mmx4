@@ -12,21 +12,28 @@ extern void (*ride_chaser_shot_state_funcs[])(struct WeaponObj*);
 void ride_chaser_shot_main(struct WeaponObj*);
 void ride_chaser_shot_despawn(struct WeaponObj*);
 
+extern struct Unk_unk68 ride_chaser_shot_hit_box[];
+extern u16 ride_chaser_shot_offsets[5][2];
+extern u8 ride_chaser_shot_angles[];
+extern u8 ride_chaser_shot_animations[];
+
+#include "weapon_resources.h"
+
 void ride_chaser_shot_update(struct WeaponObj* arg0)
 {
     ride_chaser_shot_state_funcs[arg0->state](arg0);
 }
 
 // ride_chaser_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80098630(struct WeaponObj* arg0);
 extern struct Unk_unk68 ride_chaser_shot_hit_box[];
-extern u16 ride_chaser_shot_offsets[];
 extern u8 ride_chaser_shot_angles[];
 extern u8 ride_chaser_shot_animations[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80098630(struct WeaponObj* arg0)
 {
     s32 dx;
@@ -37,11 +44,11 @@ void func_80098630(struct WeaponObj* arg0)
     arg0->unk68 = NULL;
     arg0->unk54 = NULL;
     arg0->unk50 = (u8*)ride_chaser_shot_hit_box;
-    dx = ((u16(*)[2])ride_chaser_shot_offsets)[arg0->unk2][0];
+    dx = ride_chaser_shot_offsets[arg0->unk2][0];
     if (arg0->unk15 != 0)
         dx = -dx;
     arg0->x_pos.i.hi += dx;
-    arg0->y_pos.i.hi += ((u16(*)[2])ride_chaser_shot_offsets)[arg0->unk2][1];
+    arg0->y_pos.i.hi += ride_chaser_shot_offsets[arg0->unk2][1];
     set_velocity_from_angle(MOVING_OBJECT(arg0), ride_chaser_shot_angles[arg0->unk2]);
     arg0->unk60 = 3;
     arg0->x_vel.val *= 8;
@@ -87,17 +94,12 @@ struct Unk_unk68 ride_chaser_shot_hit_box[] = {
     { -9, -11, 0x1A, 0x14 },
 };
 
-u16 ride_chaser_shot_offsets[] = {
-    0xFFCC,
-    0x0001,
-    0xFFD1,
-    0x0017,
-    0xFFD0,
-    0x000F,
-    0xFFD6,
-    0xFFEA,
-    0xFFCC,
-    0x0001,
+u16 ride_chaser_shot_offsets[5][2] = {
+    { 0xFFCC, 0x0001 },
+    { 0xFFD1, 0x0017 },
+    { 0xFFD0, 0x000F },
+    { 0xFFD6, 0xFFEA },
+    { 0xFFCC, 0x0001 },
 };
 
 void (*ride_chaser_shot_state_funcs[])(struct WeaponObj*) = {

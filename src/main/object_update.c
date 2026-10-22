@@ -384,6 +384,12 @@ extern void (*layer_object_update_funcs[])(struct LayerObj*);
 
 // D_800F2AD4
 extern void (*D_800F2AD4[])(struct RideArmorObj*);
+#ifdef MMX4_SATURN
+#include "../saturn/object_state.h"
+#define OBJECT_BANK_READY 1
+#else
+#define OBJECT_BANK_READY (!g_Player.update_delay)
+#endif
 
 void func_80021C14(void);
 void func_80021CC8(void);
@@ -407,6 +413,9 @@ void TitleUpdate2(struct QuadObj*);
 
 void func_80021158(void)
 {
+#ifdef MMX4_SATURN
+    saturn_gameplay_prepare();
+#endif
     player_read_input();
     func_80021C14();
     player_update();
@@ -428,13 +437,17 @@ void func_80021158(void)
     func_8002A484();
     func_80021D84();
     func_80021CC8();
+#ifdef MMX4_SATURN
+    saturn_update_object_texture(GRAPHICS_OBJECT(&g_Player));
+#else
     decompress_player_gfx(GRAPHICS_OBJECT(&g_Player), 0x140, 0);
+#endif
 }
 
 void update_main_objects(void)
 {
 #define current SP_CUR_MAIN_OBJ
-    if (!g_Player.update_delay) {
+    if (OBJECT_BANK_READY) {
         for (current = main_objects; current < &main_objects[COUNT(main_objects)]; current++) {
             if (current->active) {
                 if (g_Player.update_delay != 0 || (engine_obj.unk12 != 0 && !(current->active & 0x8))) {
@@ -453,7 +466,7 @@ void update_main_objects(void)
 void update_weapon_objects(void)
 {
 #define current SP_CUR_WEAPON_OBJ
-    if (!g_Player.update_delay) {
+    if (OBJECT_BANK_READY) {
         for (current = weapon_objects; current < &weapon_objects[COUNT(weapon_objects)]; current++) {
             if (current->active) {
                 if (g_Player.update_delay != 0 || (engine_obj.unk11 != 0 && !(current->active & 0x8))) {
@@ -472,7 +485,7 @@ void update_weapon_objects(void)
 void update_shot_objects(void)
 {
 #define current SP_CUR_SHOT_OBJ
-    if (!g_Player.update_delay) {
+    if (OBJECT_BANK_READY) {
         for (current = shot_objects; current < &shot_objects[COUNT(shot_objects)]; current++) {
             if (current->active) {
                 if (g_Player.update_delay != 0 || (engine_obj.unk13 != 0 && !(current->active & 0x8))) {
@@ -521,7 +534,7 @@ void update_effect_objects(void)
 void update_item_objects(void)
 {
 #define current SP_CUR_ITEM_OBJ
-    if (!g_Player.update_delay) {
+    if (OBJECT_BANK_READY) {
         for (current = item_objects; current < &item_objects[COUNT(item_objects)]; current++) {
             if (current->active) {
                 if (g_Player.update_delay != 0 || (engine_obj.unk16 != 0 && !(current->active & 0x8))) {
@@ -575,7 +588,11 @@ void update_quad_objects(void)
             if (current->active & 8) {
                 quad_object_update_funcs[current->id](current);
             } else if (current->on_screen != 0) {
+#ifdef MMX4_SATURN
+                saturn_queue_frozen_quad(current);
+#else
                 func_8002B458(current); // no-op
+#endif
             }
         }
     }
@@ -595,6 +612,7 @@ void update_layer_objects(void)
 #undef current
 }
 
+#ifndef MMX4_SATURN_NATIVE_OBJECT_HELPERS
 void func_80021C14(void)
 {
     if (engine_obj.unk10 == 0) {
@@ -636,7 +654,9 @@ void func_80021D84(void)
     func_800AE6B4(&baz_objects[0]);
     func_800AE6B4(&baz_objects[1]);
 }
+#endif
 
+#ifndef MMX4_SATURN_NATIVE_OBJECT_TABLES
 void (*main_object_update_funcs[])(struct MainObj*) = {
     background_dragon_update,
     armored_walker_update,
@@ -717,6 +737,9 @@ void (*main_object_update_funcs[])(struct MainObj*) = {
     spike_crawler_update,
 };
 
+#endif
+
+#if !defined(MMX4_SATURN_NATIVE_OBJECT_TABLES) || defined(MMX4_SATURN_OWN_WEAPON_TABLE)
 void (*weapon_object_update_funcs[])(struct WeaponObj*) = {
     lemon_update,
     lightning_web_update,
@@ -783,6 +806,9 @@ void (*weapon_object_update_funcs[])(struct WeaponObj*) = {
     ride_armor_punch_update,
 };
 
+#endif
+
+#if !defined(MMX4_SATURN_NATIVE_OBJECT_TABLES) || defined(MMX4_SATURN_OWN_SHOT_TABLE)
 void (*shot_object_update_funcs[])(struct ShotObj*) = {
     dragon_shot_update,
     drill_copter_shot_update,
@@ -844,6 +870,9 @@ void (*shot_object_update_funcs[])(struct ShotObj*) = {
     sigma_beam_hitbox_update,
 };
 
+#endif
+
+#if !defined(MMX4_SATURN_NATIVE_OBJECT_TABLES) || defined(MMX4_SATURN_OWN_VISUAL_TABLE)
 void (*visual_object_update_funcs[])(struct VisualObj*) = {
     wall_slide_dust_update,
     dash_dust_update,
@@ -887,6 +916,9 @@ void (*visual_object_update_funcs[])(struct VisualObj*) = {
     func_80098338,
 };
 
+#endif
+
+#if !defined(MMX4_SATURN_NATIVE_OBJECT_TABLES) || defined(MMX4_SATURN_OWN_EFFECT_TABLE)
 void (*effect_object_update_funcs[])(struct EffectObj*) = {
     camera_trigger_update,
     tile_animator_update,
@@ -1067,3 +1099,4 @@ void (*D_800F2AD4[])(struct RideArmorObj*) = {
     func_8003B3DC,
     func_8003D3F8,
 };
+#endif

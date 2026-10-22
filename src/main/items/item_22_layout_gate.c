@@ -8,10 +8,7 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
-
-#ifdef MMX4_PC
 #include "main/visuals/visual_03_small_effect.h"
-#endif
 
 // layout_gate_state_funcs
 extern void (*layout_gate_state_funcs[])(struct ItemObj*);
@@ -24,6 +21,11 @@ void layout_gate_finish(struct ItemObj*);
 extern void (*layout_gate_step_funcs[])(struct ItemObj*);
 void layout_gate_wait_hit(struct ItemObj*);
 void func_800C580C(struct ItemObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/visuals/visual_03_small_effect.h"
+#endif
 
 struct Item22LayoutDescriptor {
     u8 start;
@@ -106,8 +108,8 @@ void layout_gate_init(struct ItemObj* self)
     self->unk58 = (u8*)D_80108584;
     self->bg_offset = g_Player.bg_offset;
     self->unk5C = 3;
-    self->unk40 = D_801406A8[func_8002938C(0x28)] >> 7;
-    self->unk42 = CLUT_FROM_ID(0x28);
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x28));
+    self->unk42 = OBJECT_STAGE_CLUT(0x28);
     self->sprite_frames = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x28));
     state = self->state + 1;
 
@@ -164,13 +166,13 @@ void layout_gate_wait_hit(struct ItemObj* arg0)
 void func_800C580C(struct ItemObj* self)
 {
     if (--self->unk7C.timer != 0) {
-        if ((main_bss_state.frame_counter & 3) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 3) == 0) {
             func_800C5994(self, 0);
         }
-        if ((main_bss_state.frame_counter & 7) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 7) == 0) {
             func_800C5994(self, 1);
         }
-        if ((main_bss_state.frame_counter & 0xF) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 0xF) == 0) {
             func_8001540C(0, layout_gate_unused[get_random() & 3], self);
         }
         if (self->unk7C.timer == 0x1E) {
@@ -201,11 +203,12 @@ void layout_gate_apply_layout(struct ItemObj* arg0)
 }
 
 // layout_gate_restore_layout
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C5994(struct ItemObj* self, u8 collision);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C5994(struct ItemObj* self, u8 collision)
 {
     s16 original_x = self->x_pos.i.hi;

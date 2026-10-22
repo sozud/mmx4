@@ -10,6 +10,7 @@ extern void (*common_effect_state_funcs[])(struct MiscObj*);
 void common_effect_init(struct MiscObj*);
 void common_effect_animate(struct MiscObj*);
 void common_effect_despawn(struct MiscObj*);
+#include "weapon_resources.h"
 
 struct Misc01AnimationStep {
     u8 duration;
@@ -102,11 +103,11 @@ void common_effect_init(struct MiscObj* self)
     self->unk6 = 0;
     self->bg_offset = 0;
     self->animation_table = (u32**)common_effect_animations;
-    self->unk40 = D_801406A8[func_8002938C(0x84)] >> 7;
-    self->unk42 = CLUT_FROM_ID(0x84);
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x84));
+    self->unk42 = OBJECT_STAGE_CLUT(0x84);
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x84)];
     if (self->unk2 == 5) {
-        self->unk16 = 5;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
     } else {
         self->unk16 = 0x11;
     }

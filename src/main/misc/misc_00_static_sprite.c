@@ -8,6 +8,7 @@
 void static_sprite_init(struct MiscObj* arg0);
 void static_sprite_main(struct MiscObj* arg0);
 void static_sprite_despawn(struct MiscObj* arg0);
+#include "weapon_resources.h"
 
 extern void (*static_sprite_state_funcs[])(struct MiscObj*);
 
@@ -20,8 +21,8 @@ void static_sprite_update(struct MiscObj* self)
 void static_sprite_init(struct MiscObj* self)
 {
     self->active = 1;
-    self->unk16 = 0x11;
-    self->unk40 = 0x1511;
+    self->unk16 = SATURN_ALT(0x11, 0);
+    self->unk40 = SATURN_ALT(0x1511, OBJECT_STAGE_TEXTURE(9));
     self->animation_step.fields.frame_index = (u8)self->unk2;
 
     self->bg_offset = (u8)g_Player.bg_offset;
@@ -29,7 +30,7 @@ void static_sprite_init(struct MiscObj* self)
 
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0x24 / 4];
 
-    self->unk42 = 0x7904;
+    self->unk42 = OBJECT_CLUT(0x7904);
     self->state++;
 }
 void static_sprite_main(struct MiscObj* self)

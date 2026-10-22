@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[33]
 // 8005D1F4..8005E570
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_33_spike_sled.h"
 #include "main/player_common.h"
 #include "main/1E1BC.h"
@@ -9,8 +10,10 @@
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+#include "main/stage_objects.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/stage_objects.h"
 #include "main/visuals/visual_03_small_effect.h"
 #endif
@@ -67,7 +70,7 @@ void spike_sled_init(struct MainObj* self)
     self->invincibility_timer = 0;
     self->collision_data = D_801072F4;
     bg_offset = (u8)g_Player.bg_offset;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     x_pos = self->x_pos.val;
     self->y_pos.i.hi = 0x2E8;
     y_pos = self->y_pos.val;
@@ -80,7 +83,7 @@ void spike_sled_init(struct MainObj* self)
     self->gravity = 0;
     self->air_state = 0;
     self->terrain_box = NULL;
-    self->unk15 = 0x40;
+    self->unk15 = PLAYER_FACING_RIGHT;
     self->bg_offset = bg_offset;
     self->unk18.val = x_pos;
     self->unk1C.val = y_pos;
@@ -147,7 +150,8 @@ void spike_sled_run(struct MainObj* self)
 }
 
 // spike_sled_death
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005D4E0(struct MainObj* arg0);
 void func_8005DC58(struct MainObj* arg0);
 void func_8005DED4(struct MainObj* arg0);
@@ -160,7 +164,7 @@ extern u8 D_800FDF4C[8];
 #define MAIN_33_SLOT_Y(index) ((s16)D_800FDDA0[(index)*2 + 1])
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005D4E0(struct MainObj* arg0)
 {
     struct Main33Ext* ext = &arg0->ext.main_33;
@@ -175,7 +179,7 @@ void func_8005D4E0(struct MainObj* arg0)
             engine_obj.boss_ptr = NULL;
             arg0->unk7C = 0x50;
             arg0->unk7E = 1;
-            arg0->unk42 = 0x798F;
+            arg0->unk42 = OBJECT_CLUT(0x798F);
             for (i = 0; i < 7; i++) {
                 if (!(D_800FDD90[i] & ext->unk80))
                     continue;
@@ -303,7 +307,7 @@ void spike_sled_patrol_turn(struct MainObj* self)
         return;
     }
     if (self->unk15 == 0) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->x_speed = FIXED(2.5);
     } else {
         self->unk15 = 0;
@@ -362,7 +366,7 @@ void spike_sled_charge_start(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
-        func_8001540C(2, 0x52, self);
+        func_8001540C(2, SATURN_SOUND(0x52, 0x43), self);
     }
     if (self->animation_step.fields.event == 1) {
         if (self->unk15 == 0) {
@@ -377,7 +381,7 @@ void spike_sled_charge_start(struct MainObj* self)
 }
 
 // spike_sled_charge_dash
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005DC58(struct MainObj* arg0)
 {
     struct Main33Ext* ext = &arg0->ext.main_33;
@@ -438,7 +442,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005DC58);
 #endif
 
 // spike_sled_charge_target
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005DED4(struct MainObj* arg0)
 {
     if (--arg0->unk7C == 0)
@@ -447,9 +451,9 @@ void func_8005DED4(struct MainObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
     if (arg0->x_speed != 0)
         return;
-    func_8001540C(2, 0x52, arg0);
+    func_8001540C(2, SATURN_SOUND(0x52, 0x43), arg0);
     if (arg0->unk15 == 0) {
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = 0x40000;
     } else {
         arg0->x_speed = -0x40000;
@@ -494,12 +498,12 @@ void spike_sled_charge_leap(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
-        func_8001540C(2, 0x53, self);
+        func_8001540C(2, SATURN_SOUND(0x53, 0x44), self);
     }
     if (self->animation_step.fields.event == 1) {
         self->y_speed = FIXED(4);
         self->x_speed = 0;
-        func_8001540C(2, 0x54, self);
+        func_8001540C(2, SATURN_SOUND(0x54, 0x45), self);
         set_animation(self, 6);
         self->unk5 = 5;
         self->unk6 = 0;
@@ -512,7 +516,7 @@ void spike_sled_bomb(struct MainObj* self)
 }
 
 // spike_sled_bomb_jump
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005E108(struct MainObj* arg0)
 {
     struct Main33Ext* ext = &arg0->ext.main_33;
@@ -583,7 +587,7 @@ void spike_sled_bomb_rise(struct MainObj* self)
 }
 
 // spike_sled_bomb_drop
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005E298(struct MainObj* arg0)
 {
     struct Main33Ext* ext = &arg0->ext.main_33;
@@ -594,14 +598,14 @@ void func_8005E298(struct MainObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     if (--arg0->unk7E != 0)
         return;
-    func_8001540C(2, 0x55, arg0);
+    func_8001540C(2, SATURN_SOUND(0x55, 0x46), arg0);
     start_screen_shake_y(0x10, 8, 2);
     slot = ext->variant;
     apply_tile_effect(0, MAIN_33_SLOT_X(slot), MAIN_33_SLOT_Y(slot));
     x = arg0->x_pos.val;
     y = arg0->y_pos.val;
     arg0->x_pos.i.hi = MAIN_33_SLOT_X(slot) + 0x20;
-    arg0->unk42 = 0x798F;
+    arg0->unk42 = OBJECT_CLUT(0x798F);
     arg0->y_pos.i.hi = MAIN_33_SLOT_Y(slot) + 0x20;
     spawn_debris(6, D_800FDF4C, arg0);
     arg0->x_pos.val = x;
@@ -637,7 +641,7 @@ void spike_sled_intro_fill_health(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7E == 0) {
-        func_8001540C(0, 0xE, NULL);
+        func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
         self->unk7E = 3;
     }
     if (++self->hp == 0x30) {
@@ -694,146 +698,146 @@ u16 D_800FDDA0[14] = {
 };
 
 union AnimationStep D_800FDDBC[] = {
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x19FE0001 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, -2, 0x19 },
 };
 
 union AnimationStep D_800FDDC8[] = {
-    { 0x1A010005 },
-    { 0x1B010004 },
-    { 0x1B000101 },
+    { 5, 0, 1, 0x1A },
+    { 4, 0, 1, 0x1B },
+    { 1, 1, 0, 0x1B },
 };
 
 union AnimationStep D_800FDDD4[] = {
-    { 0x0D010006 },
-    { 0x0E010201 },
-    { 0x0E010003 },
-    { 0x0E000101 },
+    { 6, 0, 1, 0x0D },
+    { 1, 2, 1, 0x0E },
+    { 3, 0, 1, 0x0E },
+    { 1, 1, 0, 0x0E },
 };
 
 union AnimationStep D_800FDDE4[] = {
-    { 0x0F010002 },
-    { 0x10FF0002 },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, -1, 0x10 },
 };
 
 union AnimationStep D_800FDDEC[] = {
-    { 0x15010002 },
-    { 0x16010001 },
-    { 0x16000101 },
+    { 2, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 1, 0, 0x16 },
 };
 
 union AnimationStep D_800FDDF8[] = {
-    { 0x0E010006 },
-    { 0x0D010002 },
-    { 0x0C010002 },
-    { 0x0B010201 },
-    { 0x0B010001 },
-    { 0x0A010002 },
-    { 0x09010002 },
-    { 0x08010002 },
-    { 0x11010004 },
-    { 0x14010002 },
-    { 0x13010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x07010004 },
-    { 0x07000101 },
+    { 6, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0C },
+    { 1, 2, 1, 0x0B },
+    { 1, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x08 },
+    { 4, 0, 1, 0x11 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 4, 0, 1, 0x07 },
+    { 1, 1, 0, 0x07 },
 };
 
 union AnimationStep D_800FDE5C[] = {
-    { 0x00010005 },
-    { 0x01010004 },
-    { 0x02010004 },
-    { 0x03010003 },
-    { 0x04010003 },
-    { 0x05010003 },
-    { 0x06010003 },
-    { 0x07010003 },
-    { 0x00010003 },
-    { 0x01010003 },
-    { 0x02F90003 },
+    { 5, 0, 1, 0x00 },
+    { 4, 0, 1, 0x01 },
+    { 4, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 3, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, -7, 0x02 },
 };
 
 union AnimationStep D_800FDE88[] = {
-    { 0x00010005 },
-    { 0x01010005 },
-    { 0x02010005 },
-    { 0x03010005 },
-    { 0x04010005 },
-    { 0x05010005 },
-    { 0x06010005 },
-    { 0x07F90005 },
+    { 5, 0, 1, 0x00 },
+    { 5, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 5, 0, 1, 0x03 },
+    { 5, 0, 1, 0x04 },
+    { 5, 0, 1, 0x05 },
+    { 5, 0, 1, 0x06 },
+    { 5, 0, -7, 0x07 },
 };
 
 union AnimationStep D_800FDEA8[] = {
-    { 0x1C000001 },
+    { 1, 0, 0, 0x1C },
 };
 
 union AnimationStep D_800FDEAC[] = {
-    { 0x1D000001 },
+    { 1, 0, 0, 0x1D },
 };
 
 union AnimationStep D_800FDEB0[] = {
-    { 0x1E000001 },
+    { 1, 0, 0, 0x1E },
 };
 
 union AnimationStep D_800FDEB4[] = {
-    { 0x1F000001 },
+    { 1, 0, 0, 0x1F },
 };
 
 union AnimationStep D_800FDEB8[] = {
-    { 0x20000001 },
+    { 1, 0, 0, 0x20 },
 };
 
 union AnimationStep D_800FDEBC[] = {
-    { 0x21000001 },
+    { 1, 0, 0, 0x21 },
 };
 
 union AnimationStep D_800FDEC0[] = {
-    { 0x22000001 },
+    { 1, 0, 0, 0x22 },
 };
 
 union AnimationStep D_800FDEC4[] = {
-    { 0x23000001 },
+    { 1, 0, 0, 0x23 },
 };
 
 union AnimationStep D_800FDEC8[] = {
-    { 0x24000001 },
+    { 1, 0, 0, 0x24 },
 };
 
 union AnimationStep D_800FDECC[] = {
-    { 0x25000001 },
+    { 1, 0, 0, 0x25 },
 };
 
 union AnimationStep D_800FDED0[] = {
-    { 0x26000001 },
+    { 1, 0, 0, 0x26 },
 };
 
 union AnimationStep D_800FDED4[] = {
-    { 0x27000001 },
+    { 1, 0, 0, 0x27 },
 };
 
 union AnimationStep D_800FDED8[] = {
-    { 0x28000001 },
+    { 1, 0, 0, 0x28 },
 };
 
 union AnimationStep D_800FDEDC[] = {
-    { 0x29000001 },
+    { 1, 0, 0, 0x29 },
 };
 
 union AnimationStep D_800FDEE0[] = {
-    { 0x2A000001 },
+    { 1, 0, 0, 0x2A },
 };
 
 union AnimationStep* spike_sled_animations[23] = {

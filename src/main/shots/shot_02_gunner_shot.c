@@ -12,13 +12,15 @@
 #include "main/misc/misc_02_rubble.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // gunner_shot_state_funcs
 extern void (*gunner_shot_state_funcs[])(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
 
 struct Shot2Hitbox {
     s8 x;
@@ -67,14 +69,15 @@ void gunner_shot_update(struct ShotObj* self)
 }
 
 // gunner_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009A5F4(struct ShotObj* arg0);
 void func_80099F48(struct ShotObj* arg0);
 void func_8009A448(struct ShotObj* arg0);
 void func_80099D54(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80099D54(struct ShotObj* arg0)
 {
     u8 kind = (u8)arg0->unk2;
@@ -132,7 +135,7 @@ void gunner_shot_despawn(struct ShotObj* self)
 }
 
 // eregion_fireball_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80099F48(struct ShotObj* arg0)
 {
     struct WeaponObj* owner = arg0->unk7C;
@@ -268,7 +271,7 @@ void eregion_wing_slash_update(struct ShotObj* self)
 }
 
 // eregion_wing_slash_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009A448(struct ShotObj* arg0)
 {
     struct WeaponObj* owner = arg0->unk7C;
@@ -277,7 +280,7 @@ void func_8009A448(struct ShotObj* arg0)
     arg0->animation_table = owner->animation_table;
     arg0->unk3C = owner->unk3C;
     arg0->unk15 = owner->unk15;
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->unk68 = NULL;
     arg0->unk54 = NULL;
     arg0->unk60 = 5;
@@ -323,7 +326,7 @@ void mech_boulder_update(struct ShotObj* self)
 }
 
 // mech_boulder_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009A5F4(struct ShotObj* arg0)
 {
     arg0->state = 1;

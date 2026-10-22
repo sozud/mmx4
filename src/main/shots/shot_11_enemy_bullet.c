@@ -6,8 +6,9 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/collision_bounds.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
 #endif
 
@@ -25,11 +26,12 @@ void enemy_bullet_update(struct ShotObj* self)
 }
 
 // enemy_bullet_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009B6B8(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009B6B8(struct ShotObj* arg0)
 {
     arg0->state = 1;

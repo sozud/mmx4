@@ -12,6 +12,10 @@
 #include "main/55C4.h"
 #include "main/objects.h"
 #include "main/sprite_animations.h"
+#include "weapon_resources.h"
+#ifdef MMX4_SATURN
+extern void saturn_queue_object(void*);
+#endif
 
 void hover_jet_update(struct VisualObj* arg0)
 {
@@ -23,9 +27,9 @@ void hover_jet_update(struct VisualObj* arg0)
         arg0->unk2 = -1;
         arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x30 / 4];
         arg0->animation_table = &D_8011BF40;
-        arg0->unk40 = 0;
-        arg0->unk42 = 0x7802;
-        arg0->unk16 = 3;
+        arg0->unk40 = WEAPON_TEXTURE_BASE;
+        arg0->unk42 = WEAPON_PALETTE_2;
+        arg0->unk16 = VISUAL_SATURN_LAYER(3);
         arg0->unk5C.value = 0;
         arg0->state++;
     }
@@ -63,7 +67,7 @@ void hover_jet_update(struct VisualObj* arg0)
     arg0->y_pos.val = player->y_pos.val;
     if (arg0->unk5C.value == 0) {
         arg0->unk5C.value = 8;
-        func_8001540C(0, 0x1F, arg0);
+        func_8001540C(0, VISUAL_SOUND_HOVER, arg0);
     } else {
         arg0->unk5C.value--;
     }
@@ -78,9 +82,9 @@ void stock_charge_meter_update(struct MiscObj* arg0)
     if (arg0->state == 0) {
         arg0->bg_offset = -1;
         arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x30 / 4];
-        arg0->unk40 = 0;
-        arg0->unk42 = 0x780A;
-        arg0->unk16 = 0x10;
+        arg0->unk40 = WEAPON_TEXTURE_BASE;
+        arg0->unk42 = WEAPON_PALETTE_10;
+        arg0->unk16 = VISUAL_SATURN_LAYER(0x10);
         arg0->x_pos.i.hi = 0x20;
         arg0->y_pos.i.hi = 0x34;
         arg0->state++;
@@ -93,5 +97,9 @@ void stock_charge_meter_update(struct MiscObj* arg0)
             arg0->y_pos.i.hi = 0x34;
             arg0->animation_step.fields.frame_index = 0x1F - playerUnkA6;
         }
+#ifdef MMX4_SATURN
+        if (arg0->on_screen)
+            saturn_queue_object(arg0);
+#endif
     }
 }

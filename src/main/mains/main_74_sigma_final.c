@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[74]
 // 8008D3B8..8008FA0C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/55C4.h"
 #include "main/mains/main_73_double.h"
 #include "main/mains/main_74_sigma_final.h"
@@ -11,8 +12,10 @@
 #include "main/3D88.h"
 #include "main/CB184.h"
 #include "main/visuals/visual_03_small_effect.h"
+#include "main/collision_bounds.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/collision_bounds.h"
 #endif
@@ -247,12 +250,37 @@ void sigma_final_intro_lock_camera(struct MainObj* self)
     background_objects[0].unk24 = 0x480;
     background_objects[0].unk2A = 0x200;
     background_objects[0].unk28 = 0x200;
-    player_start_script_action(0x14, 0x40);
+    player_start_script_action(0x14, PLAYER_FACING_RIGHT);
+#ifdef MMX4_SATURN
+    self->unk5++;
+    D_80141BD0 = 1;
+#else
     self->ext.main_74.timer = 0x64;
     self->unk5++;
     func_80016FB4(3);
+#endif
 }
 
+#ifdef MMX4_SATURN
+void sigma_final_intro_start_music(struct MainObj* self)
+{
+    if (saturn_music_fading == 0) {
+        saturn_music_stop();
+        D_80141BD0 = 1;
+        saturn_archive_queue_push("STC_1_1.ARC", 1);
+        self->unk5++;
+    }
+}
+
+void sigma_final_intro_wait_load(struct MainObj* self)
+{
+    if (saturn_archive_queue_busy == 0) {
+        D_80171EA8 = 1;
+        D_80141BD0 = 0;
+        self->unk5++;
+    }
+}
+#else
 void sigma_final_intro_start_music(struct MainObj* self)
 {
     if (--self->ext.main_74.timer == 0) {
@@ -276,15 +304,25 @@ void sigma_final_intro_wait_load(struct MainObj* self)
         self->unk5++;
     }
 }
+#endif
 
 void sigma_final_intro_load(struct MainObj* self)
 {
+#ifdef MMX4_SATURN
+    saturn_music_request(14, 0, 0, 0);
+#else
     func_8001653C();
+#endif
     self->unk5++;
 }
 
 // sigma_final_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void sigma_emit_explosions(struct MainObj*);
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008D5C8(struct MainObj* arg0);
 void func_8008F1A8(struct MainObj* self);
 void func_8008DAE8(struct MainObj* self);
@@ -302,12 +340,12 @@ extern struct Unk_unk68 D_80108284[];
 extern struct Unk_unk68 D_80108304[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008D5C8(struct MainObj* arg0)
 {
+    s32 i;
     extern void* sigma_final_animations[39];
     extern void* D_8013B8B4;
-    s32 i;
 
     for (i = 0; i < 3; i++) {
         struct ShotObj* shot = find_free_shot_obj();
@@ -326,7 +364,7 @@ void func_8008D5C8(struct MainObj* arg0)
     arg0->unk15 = 0;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)sigma_final_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->collision_data = D_801062F0;
     arg0->contact_damage = 9;
     arg0->invincibility_timer = 0;
@@ -335,7 +373,7 @@ void func_8008D5C8(struct MainObj* arg0)
     D_8013B8B4 = NULL;
     arg0->terrain_box = NULL;
     arg0->hp = 0;
-    arg0->unk40 = (u16)((D_801406A8[0] >> 7) + 0xB0);
+    arg0->unk40 = (u16)((OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0));
     engine_obj.boss_ptr = arg0;
     engine_obj.unk25 = 0;
     arg0->unk5 = 3;
@@ -395,7 +433,7 @@ void sigma_final_appear_start(struct MainObj* self)
     self->y_pos.i.hi = 0x287;
     self->unk6++;
     set_animation(self, 0x18);
-    func_8001540C(2, 9, self);
+    func_8001540C(2, SATURN_SOUND(9, 0xED), self);
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
@@ -431,7 +469,7 @@ void sigma_final_appear_fill_health(struct MainObj* self)
     if (self->hp < 0x30) {
         if (update_boss_music_delay() == 0) {
             if (--self->unk7E == 0) {
-                func_8001540C(0, 0xE, 0);
+                func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
                 self->unk7E = 3;
             }
             self->hp++;
@@ -454,7 +492,7 @@ void sigma_final_appear(struct MainObj* self)
 }
 
 // sigma_final_pick_attack
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008DAE8(struct MainObj* self)
 {
     struct Main74Ext* ext = &self->ext.main_74;
@@ -546,7 +584,7 @@ void sigma_final_laser_fire(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step < 0) {
         self->unk6 += 1;
-        func_8001540C(2, 5, self);
+        func_8001540C(2, SATURN_SOUND(5, 0xE9), self);
 
         quad = find_free_quad_obj();
         if (quad != 0) {
@@ -571,7 +609,7 @@ void sigma_final_laser_wait(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (D_8013B8A8->active == 0) {
-        stop_sound(2, 5);
+        STOP_SOUND(2, 5, 0x5);
         self->unk6++;
         set_animation(self,
             sigma_final_laser_animations[self->ext.main_74.animation_index * 2 + 1]);
@@ -602,8 +640,8 @@ void sigma_final_big_beam_start(struct MainObj* self)
     self->ext.main_74.animation_index = 1;
     set_animation(self, 0x1D);
     sigma_spawn_sequencer(self, 3);
-    func_8001540C(2, 6, self);
-    func_8001540C(2, 1, self);
+    func_8001540C(2, SATURN_SOUND(6, 0xEA), self);
+    func_8001540C(2, SATURN_SOUND(1, 0xE5), self);
     self->unk6++;
 }
 
@@ -655,7 +693,7 @@ void sigma_final_big_beam_wait(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (D_8013B8A8->active == 0) {
-        stop_sound(2, 1);
+        STOP_SOUND(2, 1, 0x5);
         if (self->ext.main_74.animation_index != 0) {
             set_animation(self, 0x22);
         } else {
@@ -685,7 +723,7 @@ void sigma_final_hide_upper_start(struct MainObj* self)
     self->ext.main_74.unk8C = 3;
     self->unk6++;
     set_animation(self, 0x19);
-    func_8001540C(2, 9, self);
+    func_8001540C(2, SATURN_SOUND(9, 0xED), self);
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
@@ -733,7 +771,7 @@ void sigma_final_show_upper_start(struct MainObj* self)
     sigma_final_set_target(self, 1);
     self->unk6++;
     set_animation(self, 0x18);
-    func_8001540C(2, 9, self);
+    func_8001540C(2, SATURN_SOUND(9, 0xED), self);
 }
 
 void sigma_final_show_upper_wait(struct MainObj* self)
@@ -758,7 +796,7 @@ void sigma_final_hide_lower_start(struct MainObj* self)
     self->ext.main_74.unk8C = 3;
     self->unk6++;
     set_animation(self, 0x1B);
-    func_8001540C(2, 9, self);
+    func_8001540C(2, SATURN_SOUND(9, 0xED), self);
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
@@ -804,7 +842,7 @@ void sigma_final_show_lower_start(struct MainObj* self)
     sigma_final_set_target(self, 2);
     self->unk6++;
     set_animation(self, 0x1A);
-    func_8001540C(2, 9, self);
+    func_8001540C(2, SATURN_SOUND(9, 0xED), self);
 }
 
 void sigma_final_show_lower_wait(struct MainObj* self)
@@ -832,13 +870,11 @@ void sigma_final_grab_start(struct MainObj* self)
     self->attack_box = (const u8*)&D_80105364;
     self->contact_damage = 0;
     self->unk6++;
-    func_8001540C(2, 0xB, self);
+    func_8001540C(2, SATURN_SOUND(0xB, 0xEF), self);
 }
 
 // sigma_final_grab_hold
-#ifdef MMX4_PC
-// src/main/mains/main_74_sigma_final.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008E748(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -882,7 +918,7 @@ void func_8008E748(struct MainObj* self)
             self->unk62 = 0;
             self->unk5 = 0xB;
             self->unk6 = 0;
-            stop_sound(2, 0xB);
+            STOP_SOUND(2, 0xB, 0x5);
         }
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -914,7 +950,7 @@ void sigma_final_grab_release(struct MainObj* self)
     }
 
     if (!found) {
-        stop_sound(2, 0xB);
+        STOP_SOUND(2, 0xB, 0x5);
         g_Player.stun_timer = 0;
         self->unk62 = 2;
         self->contact_damage = 9;
@@ -971,7 +1007,7 @@ void sigma_final_spit_fire(struct MainObj* self)
         return;
     }
     if ((timer % 10) == 0) {
-        func_8001540C(2, 0, self);
+        func_8001540C(2, SATURN_SOUND(0, 0xE4), self);
         shot = find_free_shot_obj();
         if (shot != 0) {
             shot->active = 0x41;
@@ -996,7 +1032,7 @@ void sigma_final_spit(struct MainObj* self)
 }
 
 // sigma_final_wind_spikes
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008EC48(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -1033,7 +1069,7 @@ void sigma_final_wind_start(struct MainObj* self)
         self->unk6++;
     }
     if ((self->unk7C % 10) == 0) {
-        func_8001540C(2, 0xA, self);
+        func_8001540C(2, SATURN_SOUND(0xA, 0xEE), self);
         miscObj = find_free_misc_obj();
         if (miscObj != 0) {
             miscObj->active = 0x41;
@@ -1056,7 +1092,7 @@ void sigma_final_wind_push(struct MainObj* self)
         self->unk6++;
     }
     if (self->unk7C % 10 == 0) {
-        func_8001540C(2, 10, self);
+        func_8001540C(2, SATURN_SOUND(10, 0xEE), self);
         misc = find_free_misc_obj();
         if (misc != 0) {
             misc->active = 0x41;
@@ -1078,7 +1114,7 @@ void sigma_final_wind_push_hard(struct MainObj* self)
     }
 
     if (self->unk7C % 10 == 0) {
-        func_8001540C(2, 0xA, self);
+        func_8001540C(2, SATURN_SOUND(0xA, 0xEE), self);
     }
 }
 
@@ -1090,7 +1126,7 @@ void sigma_final_wind_finish(struct MainObj* self)
         return;
     }
     if ((self->unk7C % 10) == 0) {
-        func_8001540C(2, 10, self);
+        func_8001540C(2, SATURN_SOUND(10, 0xEE), self);
     }
 }
 
@@ -1137,7 +1173,7 @@ void sigma_final_summon(struct MainObj* self)
 }
 
 // sigma_final_fight
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008F1A8(struct MainObj* self)
 {
     struct Main74Ext* ext = &self->ext.main_74;
@@ -1159,7 +1195,7 @@ void func_8008F1A8(struct MainObj* self)
     hit = func_8002DD04(self);
     D_8013B898[0] = self->unk65;
     if (hit < 0) {
-        stop_sound(2, 1);
+        STOP_SOUND(2, 1, 0x5);
         self->unk5 = 0;
         self->unk6 = 0;
         self->unk62 = 0;
@@ -1199,7 +1235,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F1A8);
 #endif
 
 // sigma_final_death_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008F3F4(struct MainObj* self)
 {
     if (self->ext.main_74.target == 2 || D_8013B8B8 == 0) {
@@ -1210,7 +1246,7 @@ void func_8008F3F4(struct MainObj* self)
         self->unk5 = 1;
     } else {
         set_animation(self, 0x18);
-        func_8001540C(2, 9, self);
+        func_8001540C(2, SATURN_SOUND(9, 0xED), self);
         background_objects[0].unk26 = 0x450;
         background_objects[0].unk24 = 0x450;
         player_start_script_action(0x15, 0);
@@ -1242,7 +1278,7 @@ void sigma_final_death_blink(struct MainObj* self)
 }
 
 // sigma_final_death_explode
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008F578(struct MainObj* self)
 {
     self->unk7C = (u16)(self->unk7C - 1);
@@ -1257,7 +1293,7 @@ void func_8008F578(struct MainObj* self)
         }
         if (self->unk7C == 0x1B) {
             set_animation(self, self->ext.main_74.target == 2 ? 0x1B : 0x19);
-            func_8001540C(2, 9, self);
+            func_8001540C(2, SATURN_SOUND(9, 0xED), self);
         }
         animate_object(ANIMATED_OBJECT(self));
     } else if (D_8013B8B8 == 0) {
@@ -1270,7 +1306,7 @@ void func_8008F578(struct MainObj* self)
         self->invincibility_timer = 0;
     } else {
         set_animation(self, 0x18);
-        func_8001540C(2, 9, self);
+        func_8001540C(2, SATURN_SOUND(9, 0xED), self);
         sigma_final_set_target(self, 0);
         self->x_pos.i.hi = 0x567;
         self->y_pos.i.hi = 0x287;
@@ -1439,43 +1475,43 @@ struct Unk_unk68 D_801053D0[6] = {
 };
 
 union AnimationStep D_801053E8[] = {
-    { 0x0D000008 },
+    { 8, 0, 0, 0x0D },
 };
 
 union AnimationStep D_801053EC[] = {
-    { 0x0E010008 },
-    { 0x0F010008 },
-    { 0x10010007 },
-    { 0x10000001 },
+    { 8, 0, 1, 0x0E },
+    { 8, 0, 1, 0x0F },
+    { 7, 0, 1, 0x10 },
+    { 1, 0, 0, 0x10 },
 };
 
 union AnimationStep D_801053FC[] = {
-    { 0x0C010008 },
-    { 0x0B010008 },
-    { 0x0A010007 },
-    { 0x0A000001 },
+    { 8, 0, 1, 0x0C },
+    { 8, 0, 1, 0x0B },
+    { 7, 0, 1, 0x0A },
+    { 1, 0, 0, 0x0A },
 };
 
 union AnimationStep D_8010540C[] = {
-    { 0x0D01001E },
-    { 0x11010001 },
-    { 0x12010001 },
-    { 0x13010006 },
-    { 0x1401001D },
-    { 0x14000001 },
+    { 30, 0, 1, 0x0D },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, 1, 0x12 },
+    { 6, 0, 1, 0x13 },
+    { 29, 0, 1, 0x14 },
+    { 1, 0, 0, 0x14 },
 };
 
 union AnimationStep D_80105424[] = {
-    { 0x0D01001E },
-    { 0x42010001 },
-    { 0x43010001 },
-    { 0x44010106 },
-    { 0x4501001D },
-    { 0x45000001 },
+    { 30, 0, 1, 0x0D },
+    { 1, 0, 1, 0x42 },
+    { 1, 0, 1, 0x43 },
+    { 6, 1, 1, 0x44 },
+    { 29, 0, 1, 0x45 },
+    { 1, 0, 0, 0x45 },
 };
 
 union AnimationStep D_8010543C[] = {
-    { 0x0A000001 },
+    { 1, 0, 0, 0x0A },
 };
 
 struct Unk_unk68 D_80105440[6] = {
@@ -1515,10 +1551,10 @@ struct Unk_unk68 D_80105484[7] = {
 };
 
 union AnimationStep D_801054A0[] = {
-    { 0x32010007 },
-    { 0x33010008 },
-    { 0x34010008 },
-    { 0x34000001 },
+    { 7, 0, 1, 0x32 },
+    { 8, 0, 1, 0x33 },
+    { 8, 0, 1, 0x34 },
+    { 1, 0, 0, 0x34 },
 };
 
 struct Unk_unk68 D_801054B0[5] = {
@@ -1538,14 +1574,14 @@ struct Unk_unk68 D_801054C4[5] = {
 };
 
 union AnimationStep D_801054D8[] = {
-    { 0x35000001 },
+    { 1, 0, 0, 0x35 },
 };
 
 union AnimationStep D_801054DC[] = {
-    { 0x3A000001 },
-    { 0x63000001 },
-    { 0x64000001 },
-    { 0x65000001 },
+    { 1, 0, 0, 0x3A },
+    { 1, 0, 0, 0x63 },
+    { 1, 0, 0, 0x64 },
+    { 1, 0, 0, 0x65 },
 };
 
 struct Unk_unk68 D_801054EC[5] = {
@@ -1595,30 +1631,30 @@ struct Unk_unk68 D_80105514[27] = {
 };
 
 union AnimationStep D_80105580[] = {
-    { 0x4F010002 },
-    { 0x4D010002 },
-    { 0x4E010002 },
-    { 0x4F010001 },
-    { 0x4D010001 },
-    { 0x4E010001 },
-    { 0x4F010001 },
-    { 0x4D010001 },
-    { 0x4E010001 },
-    { 0x4F010001 },
-    { 0x4D010001 },
-    { 0x4E010001 },
-    { 0x4F010001 },
-    { 0x4D010001 },
-    { 0x4E010001 },
-    { 0x4F010001 },
-    { 0x4D010001 },
-    { 0x4F000001 },
-    { 0x4F010001 },
-    { 0x4D010001 },
-    { 0x4F010001 },
-    { 0x4D010001 },
-    { 0x4F010001 },
-    { 0x4D000001 },
+    { 2, 0, 1, 0x4F },
+    { 2, 0, 1, 0x4D },
+    { 2, 0, 1, 0x4E },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 1, 0x4D },
+    { 1, 0, 1, 0x4E },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 1, 0x4D },
+    { 1, 0, 1, 0x4E },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 1, 0x4D },
+    { 1, 0, 1, 0x4E },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 1, 0x4D },
+    { 1, 0, 1, 0x4E },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 1, 0x4D },
+    { 1, 0, 0, 0x4F },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 1, 0x4D },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 1, 0x4D },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 0, 0x4D },
 };
 
 struct Unk_unk68 D_801055E0[27] = {
@@ -1652,30 +1688,30 @@ struct Unk_unk68 D_801055E0[27] = {
 };
 
 union AnimationStep D_8010564C[] = {
-    { 0x05010002 },
-    { 0x46010002 },
-    { 0x47010002 },
-    { 0x05010001 },
-    { 0x46010001 },
-    { 0x47010001 },
-    { 0x05010001 },
-    { 0x46010001 },
-    { 0x47010001 },
-    { 0x05010001 },
-    { 0x46010001 },
-    { 0x47010001 },
-    { 0x05010001 },
-    { 0x46010001 },
-    { 0x47010001 },
-    { 0x05010001 },
-    { 0x46010001 },
-    { 0x05000001 },
-    { 0x05010001 },
-    { 0x46010001 },
-    { 0x05010001 },
-    { 0x46010001 },
-    { 0x05010001 },
-    { 0x46000001 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x46 },
+    { 2, 0, 1, 0x47 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 1, 0x47 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 1, 0x47 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 1, 0x47 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 1, 0x47 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 0, 0x05 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 0, 0x46 },
 };
 
 u8 D_801056AC[24] = { 30, 0, 1, 79, 6, 0, 1, 82, 1, 0, 1, 88, 20, 0, 1, 84, 1, 0, 1, 85, 1, 0, 255, 94 };
@@ -1689,76 +1725,76 @@ u8 D_801056F8[28] = { 30, 0, 1, 79, 4, 0, 1, 82, 4, 0, 1, 88, 2, 0, 1, 84, 20, 0
 u8 D_80105714[36] = { 30, 0, 1, 79, 3, 0, 1, 82, 2, 0, 1, 88, 3, 0, 1, 84, 3, 0, 1, 90, 3, 0, 1, 86, 20, 0, 1, 92, 1, 0, 1, 93, 1, 0, 255, 98 };
 
 union AnimationStep D_80105738[] = {
-    { 0x5E010002 },
-    { 0x55010002 },
-    { 0x54010002 },
-    { 0x52010002 },
-    { 0x4F010001 },
-    { 0x4F000001 },
+    { 2, 0, 1, 0x5E },
+    { 2, 0, 1, 0x55 },
+    { 2, 0, 1, 0x54 },
+    { 2, 0, 1, 0x52 },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 0, 0x4F },
 };
 
 union AnimationStep D_80105750[] = {
-    { 0x5F010002 },
-    { 0x57010002 },
-    { 0x56010002 },
-    { 0x5A010002 },
-    { 0x54010002 },
-    { 0x58010002 },
-    { 0x52010002 },
-    { 0x4F010001 },
-    { 0x4F000001 },
+    { 2, 0, 1, 0x5F },
+    { 2, 0, 1, 0x57 },
+    { 2, 0, 1, 0x56 },
+    { 2, 0, 1, 0x5A },
+    { 2, 0, 1, 0x54 },
+    { 2, 0, 1, 0x58 },
+    { 2, 0, 1, 0x52 },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 0, 0x4F },
 };
 
 union AnimationStep D_80105774[] = {
-    { 0x60010002 },
-    { 0x59010002 },
-    { 0x58010002 },
-    { 0x52010002 },
-    { 0x4F010001 },
-    { 0x4F000001 },
+    { 2, 0, 1, 0x60 },
+    { 2, 0, 1, 0x59 },
+    { 2, 0, 1, 0x58 },
+    { 2, 0, 1, 0x52 },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 0, 0x4F },
 };
 
 union AnimationStep D_8010578C[] = {
-    { 0x61010002 },
-    { 0x5B010002 },
-    { 0x5A010002 },
-    { 0x54010002 },
-    { 0x58010002 },
-    { 0x52010002 },
-    { 0x4F010001 },
-    { 0x4F000001 },
+    { 2, 0, 1, 0x61 },
+    { 2, 0, 1, 0x5B },
+    { 2, 0, 1, 0x5A },
+    { 2, 0, 1, 0x54 },
+    { 2, 0, 1, 0x58 },
+    { 2, 0, 1, 0x52 },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 0, 0x4F },
 };
 
 union AnimationStep D_801057AC[] = {
-    { 0x62010002 },
-    { 0x5D010002 },
-    { 0x5C010002 },
-    { 0x56010002 },
-    { 0x5A010002 },
-    { 0x54010002 },
-    { 0x58010002 },
-    { 0x52010002 },
-    { 0x4F010001 },
-    { 0x4F000001 },
+    { 2, 0, 1, 0x62 },
+    { 2, 0, 1, 0x5D },
+    { 2, 0, 1, 0x5C },
+    { 2, 0, 1, 0x56 },
+    { 2, 0, 1, 0x5A },
+    { 2, 0, 1, 0x54 },
+    { 2, 0, 1, 0x58 },
+    { 2, 0, 1, 0x52 },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 0, 0x4F },
 };
 
 union AnimationStep D_801057D4[] = {
-    { 0x00010003 },
-    { 0x01010003 },
-    { 0x02010003 },
-    { 0x03010003 },
-    { 0x04010003 },
-    { 0x00010003 },
-    { 0x01010003 },
-    { 0x02010003 },
-    { 0x03010003 },
-    { 0x04010003 },
-    { 0x00010003 },
-    { 0x01010003 },
-    { 0x02010003 },
-    { 0x03010003 },
-    { 0x04010002 },
-    { 0x04000001 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 1, 0, 0, 0x04 },
 };
 
 void* sigma_final_animations[39] = {

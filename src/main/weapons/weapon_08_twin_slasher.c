@@ -5,6 +5,7 @@
 #include "main/weapons/weapon_08_twin_slasher.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
+#include "main/weapons/weapon_22_nova_strike_hitbox.h"
 
 void twin_slasher_hide(struct WeaponObj*);
 
@@ -22,7 +23,12 @@ void twin_slasher_charged_main(struct WeaponObj*);
 void twin_slasher_despawn(struct WeaponObj*);
 void twin_slasher_despawn(struct WeaponObj*);
 
-extern u32* D_8011C104[10];
+extern struct Unk_unk68 twin_slasher_charged_hit_boxes[];
+extern u8 twin_slasher_charged_angles[];
+
+#include "weapon_resources.h"
+
+extern union AnimationStep* D_8011C104[10];
 
 void twin_slasher_update(struct WeaponObj* arg0)
 {
@@ -44,14 +50,15 @@ void twin_slasher_update(struct WeaponObj* arg0)
 }
 
 // twin_slasher_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800978DC(struct WeaponObj* arg0);
 void func_80097BA4(struct WeaponObj* arg0);
 extern struct Unk_unk68 twin_slasher_charged_hit_boxes[];
 extern u8 twin_slasher_charged_angles[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800978DC(struct WeaponObj* arg0)
 {
     s32* player_gfx = SP_PLAYER_GFX;
@@ -61,8 +68,8 @@ void func_800978DC(struct WeaponObj* arg0)
     arg0->unk50 = twin_slasher_hit_boxes;
     arg0->unk38 = (u8*)player_gfx + player_gfx[9];
     arg0->animation_table = D_8011C104;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0;
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x11];
     arg0->unk15 = g_Player.unk15;
@@ -138,7 +145,7 @@ void twin_slasher_charged_update(struct WeaponObj* arg0)
 }
 
 // twin_slasher_charged_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80097BA4(struct WeaponObj* arg0)
 {
     s32* player_gfx = SP_PLAYER_GFX;
@@ -150,8 +157,8 @@ void func_80097BA4(struct WeaponObj* arg0)
     arg0->unk50 = &twin_slasher_charged_hit_boxes[level];
     arg0->unk38 = (u8*)player_gfx + player_gfx[9];
     arg0->animation_table = D_8011C104;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0;
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x11];
     arg0->unk15 = g_Player.unk15;
@@ -235,8 +242,8 @@ void func_80097DD8(struct MiscObj* self)
         self->unk38 = (u8*)player_gfx + player_gfx[9];
         self->unk3C = (u8*)sprite_frames + sprite_frames[0x11];
         self->animation_table = D_8011C104;
-        self->unk40 = 0x520;
-        self->unk42 = 0x7801;
+        self->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+        self->unk42 = WEAPON_PALETTE_1;
         self->unk16 = 1;
         set_animation(self, self->unk2 + 6);
         self->state++;

@@ -12,18 +12,23 @@ extern void (*charge_shot_state_funcs[])(struct WeaponObj*);
 
 void charge_shot_main(struct WeaponObj*);
 
+extern struct Unk_unk68 D_80108708[];
+
+#include "weapon_resources.h"
+
 void charge_shot_update(struct WeaponObj* arg0)
 {
     charge_shot_state_funcs[arg0->state](arg0);
 }
 
 // charge_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80092684(struct WeaponObj* arg0);
 extern struct Unk_unk68 D_80108708[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80092684(struct WeaponObj* arg0)
 {
     s32 velocity;

@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[51]
 // 80069A94..8006A50C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_51_fortress_cannon.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -71,11 +72,11 @@ void func_80069AD0(struct MainObj* obj)
     obj->gravity = 0;
     obj->air_state = 0;
     obj->animation_table = (const u8* const*)fortress_cannon_animations;
-    obj->unk16 = 5;
+    obj->unk16 = VISUAL_SATURN_LAYER(5);
     obj->terrain_box = &D_800FFC5C;
     obj->hurt_box = &D_800FFC54;
     obj->attack_box = &D_800FFC58;
-    obj->unk15 = obj->x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
+    obj->unk15 = obj->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     set_animation(obj, 0);
     obj->ext.raw[0] = 0;
     obj->ext.raw[1] = 0;
@@ -171,7 +172,7 @@ void fortress_cannon_fire_start(struct MainObj* self)
     } else {
         set_animation(self, 1);
     }
-    func_8001540C(2, 0xA1, self);
+    func_8001540C(2, SATURN_SOUND(0xA1, 0x71), self);
     if (self->unk2 == 0 && self->ext.main_51.unk84 == 2 && engine_obj.cur_character == 0) {
         fortress_cannon_fire_double_shot(self);
     } else {
@@ -220,7 +221,7 @@ void fortress_cannon_volley_fire(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_8001540C(2, 0xA2, self);
+        func_8001540C(2, SATURN_SOUND(0xA2, 0x72), self);
         fortress_cannon_fire_volley(self);
         self->unk7C = 0x3C;
         self->unk6++;
@@ -311,7 +312,7 @@ void fortress_cannon_fire_shot(struct MainObj* self)
         shot->unk40 = source->unk40;
         shot->unk15 = source->unk15;
         shot->bg_offset = (s8)(u8)source->bg_offset;
-        shot->unk16 = 4;
+        shot->unk16 = VISUAL_SATURN_LAYER(4);
     }
 }
 
@@ -338,7 +339,7 @@ void fortress_cannon_fire_double_shot(struct MainObj* self)
             shot->unk40 = self->unk40;
             shot->unk15 = self->unk15;
             shot->bg_offset = (s8)(u8)self->bg_offset;
-            shot->unk16 = 4;
+            shot->unk16 = VISUAL_SATURN_LAYER(4);
         }
         i++;
     } while (i < 2);
@@ -363,7 +364,7 @@ void fortress_cannon_fire_volley(struct MainObj* self)
             shot->unk40 = self->unk40;
             shot->unk15 = self->unk15;
             shot->bg_offset = self->bg_offset;
-            shot->unk16 = 4;
+            shot->unk16 = VISUAL_SATURN_LAYER(4);
         }
         i++;
     } while (i < 2);
@@ -376,102 +377,102 @@ struct Unk_unk68 D_800FFC58 = { -27, -32, 58, 66 };
 struct Unk_unk68 D_800FFC5C = { 3, 0, 27, 32 };
 
 union AnimationStep fortress_cannon_anim_0[] = {
-    { 0x00010015 },
-    { 0x01010016 },
-    { 0x00010015 },
-    { 0x02FD0014 },
+    { 21, 0, 1, 0x00 },
+    { 22, 0, 1, 0x01 },
+    { 21, 0, 1, 0x00 },
+    { 20, 0, -3, 0x02 },
 };
 
 union AnimationStep fortress_cannon_anim_1[] = {
-    { 0x00010001 },
-    { 0x03010002 },
-    { 0x04010004 },
-    { 0x05000007 },
+    { 1, 0, 1, 0x00 },
+    { 2, 0, 1, 0x03 },
+    { 4, 0, 1, 0x04 },
+    { 7, 0, 0, 0x05 },
 };
 
 union AnimationStep fortress_cannon_anim_2[] = {
-    { 0x00010001 },
-    { 0x06010002 },
-    { 0x07010004 },
-    { 0x05000007 },
+    { 1, 0, 1, 0x00 },
+    { 2, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 7, 0, 0, 0x05 },
 };
 
 union AnimationStep fortress_cannon_anim_3[] = {
-    { 0x08010004 },
-    { 0x09010004 },
-    { 0x0A010004 },
-    { 0x0B010004 },
-    { 0x0C010006 },
-    { 0x0D000008 },
+    { 4, 0, 1, 0x08 },
+    { 4, 0, 1, 0x09 },
+    { 4, 0, 1, 0x0A },
+    { 4, 0, 1, 0x0B },
+    { 6, 0, 1, 0x0C },
+    { 8, 0, 0, 0x0D },
 };
 
 union AnimationStep fortress_cannon_anim_4[] = {
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x11FD0002 },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, -3, 0x11 },
 };
 
 union AnimationStep fortress_cannon_anim_5[] = {
-    { 0x00010005 },
-    { 0x12010006 },
-    { 0x13010007 },
-    { 0x12010006 },
-    { 0x00010007 },
-    { 0x14010002 },
-    { 0x15010002 },
-    { 0x14010001 },
-    { 0x15010001 },
-    { 0x14010001 },
-    { 0x15010001 },
-    { 0x14010001 },
-    { 0x15010001 },
-    { 0x1600000A },
+    { 5, 0, 1, 0x00 },
+    { 6, 0, 1, 0x12 },
+    { 7, 0, 1, 0x13 },
+    { 6, 0, 1, 0x12 },
+    { 7, 0, 1, 0x00 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x15 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 10, 0, 0, 0x16 },
 };
 
 union AnimationStep fortress_cannon_anim_6[] = {
-    { 0x16010004 },
-    { 0x17010004 },
-    { 0x18010004 },
-    { 0x19010005 },
-    { 0x1A010003 },
-    { 0x1B010003 },
-    { 0x00000003 },
+    { 4, 0, 1, 0x16 },
+    { 4, 0, 1, 0x17 },
+    { 4, 0, 1, 0x18 },
+    { 5, 0, 1, 0x19 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, 0, 0x00 },
 };
 
 union AnimationStep fortress_cannon_anim_7[] = {
-    { 0x1C010001 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1FFD0001 },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, -3, 0x1F },
 };
 
 union AnimationStep fortress_cannon_anim_8[] = {
-    { 0x20000001 },
+    { 1, 0, 0, 0x20 },
 };
 
 union AnimationStep fortress_cannon_anim_9[] = {
-    { 0x21000001 },
+    { 1, 0, 0, 0x21 },
 };
 
 union AnimationStep fortress_cannon_anim_10[] = {
-    { 0x22000001 },
+    { 1, 0, 0, 0x22 },
 };
 
 union AnimationStep fortress_cannon_anim_11[] = {
-    { 0x23000001 },
+    { 1, 0, 0, 0x23 },
 };
 
 union AnimationStep fortress_cannon_anim_12[] = {
-    { 0x24000001 },
+    { 1, 0, 0, 0x24 },
 };
 
 union AnimationStep fortress_cannon_anim_13[] = {
-    { 0x25010003 },
-    { 0x26010003 },
-    { 0x27010003 },
-    { 0x28010003 },
-    { 0x29FC0003 },
+    { 3, 0, 1, 0x25 },
+    { 3, 0, 1, 0x26 },
+    { 3, 0, 1, 0x27 },
+    { 3, 0, 1, 0x28 },
+    { 3, 0, -4, 0x29 },
 };
 
 union AnimationStep* fortress_cannon_animations[14] = {

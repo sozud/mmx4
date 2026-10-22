@@ -10,13 +10,26 @@
 #include "main/2824.h"
 #include "main/game_info.h"
 #include "main/object_update.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#define MENU_PAD_PRESSED saturn_pad_pressed
+#define MENU_PAD_ANY SATURN_PAD_ANY
+#else
+#define MENU_PAD_PRESSED controller_input.pressed
+#define MENU_PAD_ANY 0x8FF
+#endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/323C.h"
 #include "main/background.h"
 #include "main/stage_objects.h"
 #include "main/xa_sequence_data.h"
 #endif
+
+extern s32 D_801396B8;
+extern s32 D_801396BC;
+extern struct MiscObj* D_801396C0;
+extern struct MiscObj* D_801396C4;
 
 // D_800F23B0
 extern void (*D_800F23B0[])(struct EngineObj*);
@@ -49,7 +62,7 @@ struct MiscObj* func_8001F150(struct EngineObj* arg0, u8 arg1)
     return obj;
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8001F198(struct EngineObj* arg0);
 void func_8001F2BC(struct EngineObj* arg0);
 void func_8001F488(struct EngineObj* arg0);
@@ -64,7 +77,7 @@ void func_8001F3D4(struct MainObj*);
 void func_8001F5D8(struct EngineObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8001F198(struct EngineObj* arg0)
 {
     s32* dst;
@@ -88,7 +101,9 @@ void func_8001F198(struct EngineObj* arg0)
     func_8002AB20();
     func_80028BF0();
     func_8002771C();
+#ifndef MMX4_SATURN
     func_80023CE0();
+#endif
     arg0->unkE = 0;
     arg0->unk2 = 1;
     arg0->unk3 = 0;
@@ -96,8 +111,13 @@ void func_8001F198(struct EngineObj* arg0)
     D_801396BC = 0;
     if (arg0->cur_character != 0)
         return;
+#ifdef MMX4_SATURN
+    src = saturn_weapon_get_palettes + (arg0->character_state.bytes[0] - 1) * 0x30;
+    dst = (s32*)((u8*)SP_PALETTE + 0xAE0);
+#else
     src = SP_ARC_30 + (arg0->character_state.bytes[0] - 1) * 0x30;
     dst = SP_PALETTE_WORDS + 0xAE0 / 4;
+#endif
     for (i = 0; i < 0x30; i++)
         *dst++ = *src++;
     need_palette_load |= 1;
@@ -106,13 +126,20 @@ void func_8001F198(struct EngineObj* arg0)
 INCLUDE_ASM("main/nonmatchings/engine", func_8001F198);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8001F2BC(struct EngineObj* arg0)
 {
     u8 index;
 
+#ifdef MMX4_SATURN
+    saturn_music_start(27, 0);
+    func_800129A4(8);
+    func_800160AC();
+    func_80023CE0();
+#else
     func_800129A4(8);
     func_8001663C(MUSIC_WEAPON_GET, 0x70);
+#endif
     arg0->unk2 = 0;
     arg0->unk1++;
     if (arg0->cur_character == 0) {
@@ -152,9 +179,13 @@ void func_8001F3D4(struct MainObj* obj)
         background_objects[background_index].x_pos.val = FIXED(256);
     }
 
+#ifdef MMX4_SATURN
+    D_8013E188[0] = 0x7F;
+#else
     for (i = 0; i < 4; i++) {
         D_8013E188[i] = -1;
     }
+#endif
     g_FilterModeR = 0;
     g_FilterModeG = 0;
     g_FilterModeB = 0;
@@ -163,12 +194,12 @@ void func_8001F3D4(struct MainObj* obj)
     g_FilterAmountB = 0;
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8001F488(struct EngineObj* arg0)
 {
     struct BackgroundObj* background;
 
-    if (controller_input.pressed & 0x8FF) {
+    if (MENU_PAD_PRESSED & MENU_PAD_ANY) {
         func_8001F3D4((struct MainObj*)arg0);
         background_objects[arg0->cur_character].unk4C = 1;
         arg0->character_state.bytes[2] = 1;
@@ -206,7 +237,7 @@ void func_8001F5D8(struct EngineObj* arg0)
     }
 }
 
-#ifdef MMX4_WIN32
+#if defined(MMX4_WIN32) || defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8001F634(struct EngineObj* arg0)
 {
     if (--arg0->unk4 == 0) {
@@ -218,29 +249,6 @@ void func_8001F634(struct EngineObj* arg0)
             arg0->unk4 = 0x1E;
             arg0->unk2++;
             arg0->character_state.bytes[1] = 1;
-        } else {
-            arg0->unk2 = 4;
-            arg0->unk3 = 0;
-            arg0->unk4 = 0x78;
-        }
-    } else {
-        func_8001F5D8(arg0);
-    }
-    need_palette_load |= 1;
-}
-#else
-#ifdef MMX4_PC
-void func_8001F634(struct EngineObj* arg0)
-{
-    if (--arg0->unk4 == 0) {
-        g_FilterAmountR = 0;
-        g_FilterAmountG = 0;
-        g_FilterAmountB = 0;
-        if (arg0->character_state.bytes[2] == 0) {
-            arg0->unk4 = 0x1E;
-            arg0->unk3 = 0;
-            arg0->character_state.bytes[1] = 1;
-            arg0->unk2++;
         } else {
             arg0->unk2 = 4;
             arg0->unk3 = 0;
@@ -254,13 +262,12 @@ void func_8001F634(struct EngineObj* arg0)
 #else
 INCLUDE_ASM("main/nonmatchings/engine", func_8001F634);
 #endif
-#endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8001F6E8(struct EngineObj* arg0)
 {
     if (D_801396C0->unk5 != 2 || D_801396C4->unk5 != 2) {
-        if (!(controller_input.pressed & 0x8FF))
+        if (!(MENU_PAD_PRESSED & MENU_PAD_ANY))
             return;
         D_801396C0->state = 1;
         D_801396C4->state = 1;
@@ -289,6 +296,18 @@ void func_8001F798(struct EngineObj* arg0)
         arg0->unk3 = 0;
         arg0->unk2++;
 
+#ifdef MMX4_SATURN
+        if (arg0->cur_character != 0) {
+            *(s16*)&arg0->unk6 = 0x46;
+            a1 = 0x37;
+        } else {
+            *(s16*)&arg0->unk6 = 0x3C;
+            a1 = 0x2E;
+        }
+
+        arg0->unk4 = 0xF0;
+        func_8001540C(3, a1, 0);
+#else
         if (arg0->cur_character != 0) {
             *(s16*)&arg0->unk6 = 0x46;
             a1 = 0;
@@ -299,6 +318,7 @@ void func_8001F798(struct EngineObj* arg0)
 
         arg0->unk4 = 0xF0;
         func_8001540C(5, a1, 0);
+#endif
     } else {
         func_8001F5D8(arg0);
     }
@@ -312,22 +332,38 @@ void func_8001F850(struct EngineObj* arg0)
         func_8002217C(arg0->character_state.bytes[0] + 0x10, 0x80, 0);
         arg0->unk2++;
     } else if (arg0->unk4 == 0xF0 - *(s16*)&arg0->unk6) {
+#ifdef MMX4_SATURN
+        func_8001540C(3, (u8)(arg0->character_state.bytes[0] + 0x2E), 0);
+#else
         func_8001540C(5, (u8)arg0->character_state.bytes[0], 0);
+#endif
     }
 }
 
 void func_8001F8DC(void)
 {
+#ifdef MMX4_SATURN
+    saturn_music_request(16, 0, 2, 0);
+#else
     func_80016FB4(3);
+#endif
 }
 
 s32 func_8001F8FC(struct GameInfo* arg0)
 {
+#ifdef MMX4_SATURN
+    if (saturn_music_fading == 0) {
+        saturn_music_stop();
+        return 0;
+    }
+    return 1;
+#else
     if (--arg0->unk6 == 0) {
         func_80016F0C();
         return 0;
     }
     return 1;
+#endif
 }
 
 void func_8001F93C(struct EngineObj* arg0)
@@ -354,11 +390,14 @@ void func_8001F9DC(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
         func_8001D134();
+#ifdef MMX4_SATURN
+        saturn_archive_load_blocking(engine_obj.cur_character != 0 ? "SEPL01.ARC" : "SEPL00.ARC");
+#endif
         arg0->unk2++;
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8001FA24(struct EngineObj* arg0)
 {
     u8 flags;

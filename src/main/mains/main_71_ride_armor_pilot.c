@@ -1,13 +1,17 @@
 // MainObj, main_object_update_funcs[71]
 // 80089AA4..8008ADFC
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_71_ride_armor_pilot.h"
 #include "main/objects.h"
 #include "main/object_motion.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/collision.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1CF60.h"
 #include "main/1E1BC.h"
 #include "main/collision.h"
@@ -62,7 +66,7 @@ void func_80089AA4(struct MainObj* self)
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->ext.main_71.unk8A = 0;
     self->ext.main_71.unk89 = 0;
     self->ext.main_71.unk88 = 0;
@@ -104,7 +108,7 @@ u8 ride_armor_pilot_update_facing(struct MainObj* self)
         flags = self->ext.main_71.unk8A;
         if (flags != 0) {
             if (flags & 1) {
-                self->unk15 = 0x40;
+                self->unk15 = PLAYER_FACING_RIGHT;
             } else {
                 self->unk15 = 0;
             }
@@ -112,7 +116,7 @@ u8 ride_armor_pilot_update_facing(struct MainObj* self)
         }
     } else {
         if ((self->x_pos.i.hi - g_Player.x_pos.i.hi) < 0) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         } else {
             self->unk15 = 0;
         }
@@ -122,7 +126,11 @@ u8 ride_armor_pilot_update_facing(struct MainObj* self)
 }
 
 // ride_armor_pilot_check_walls
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008AAF4(struct MainObj* self);
 void func_80089C7C(struct MainObj* self);
 void func_8008AC40(struct MainObj* self);
@@ -142,7 +150,7 @@ extern struct Unk_unk68 ride_armor_pilot_debris[2];
 extern void (*ride_armor_pilot_step_funcs[12])(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80089C7C(struct MainObj* self)
 {
     struct Main71Ext* ext = &self->ext.main_71;
@@ -166,10 +174,11 @@ void func_80089C7C(struct MainObj* self)
         return;
     y = self->y_pos.u.hi + self->terrain_box->unk3;
     if (ext->unk8A & self->collision_flags) {
+        u32 i;
         x = self->unk15 == 0 ? self->x_pos.u.hi - self->terrain_box->unk2
                              : self->x_pos.u.hi + self->terrain_box->unk2 + 1;
         y--;
-        for (u32 i = 0; i < 5; i++, y -= 0x10) {
+        for (i = 0; i < 5; i++, y -= 0x10) {
             if ((u8)func_8002D724(PLAYER_OBJECT(self), x, y) == 0) {
                 ext->unk86 = 1;
                 break;
@@ -349,7 +358,7 @@ void func_8008A180(struct MainObj* self)
         ride_armor_pilot_apply_x_speed(self);
         animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.event != 0) {
-            func_8001540C(2, 0x3D, self);
+            func_8001540C(2, SATURN_SOUND(0x3D, 0x140), self);
         }
     } else {
         animate_object(ANIMATED_OBJECT(self));
@@ -364,7 +373,7 @@ void ride_armor_pilot_punch(struct MainObj* self)
         self->unk6++;
         set_animation(self, 9);
         ride_armor_pilot_stub(self, 2, 0);
-        func_8001540C(2, 0x41, self);
+        func_8001540C(2, SATURN_SOUND(0x41, 0x144), self);
     }
 
     if (self->animation_step.fields.relative_step == 0) {
@@ -386,7 +395,7 @@ void ride_armor_pilot_punch(struct MainObj* self)
 }
 
 // ride_armor_pilot_jump
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008A3B0(struct MainObj* self)
 {
     struct Main71Ext* ext = &self->ext.main_71;
@@ -404,7 +413,7 @@ void func_8008A3B0(struct MainObj* self)
         ride_armor_pilot_spawn_dust((struct VisualObj*)self, 6);
         self->attack_box = &ride_armor_pilot_punch_box;
         self->contact_damage = 6;
-        func_8001540C(2, 0x40, self);
+        func_8001540C(2, SATURN_SOUND(0x40, 0x143), self);
     }
     if (ext->unk87) {
         ride_armor_pilot_set_step(BASE_OBJECT(self), 0xA);
@@ -427,7 +436,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A3B0);
 #endif
 
 // ride_armor_pilot_land
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008A4D8(struct MainObj* self)
 {
     struct Main71Ext* ext = &self->ext.main_71;
@@ -442,7 +451,7 @@ void func_8008A4D8(struct MainObj* self)
         ext->unk86 = 0;
         self->contact_damage = 5;
         self->collision_flags |= 8;
-        func_8001540C(2, 0x3D, self);
+        func_8001540C(2, SATURN_SOUND(0x3D, 0x140), self);
     }
     if (self->animation_step.fields.relative_step == 0) {
         ride_armor_pilot_return_to_idle(self);
@@ -471,7 +480,7 @@ void func_8008A60C(struct MainObj* self)
         self->unk6++;
         ride_armor_pilot_stub(self, 0, 1);
         set_animation(self, 0xA);
-        func_8001540C(2, 0x41, self);
+        func_8001540C(2, SATURN_SOUND(0x41, 0x144), self);
     }
 
     if (self->collision_flags & 8) {
@@ -531,7 +540,7 @@ void func_8008A778(struct MainObj* self)
         self->ext.main_71.unk8E = 0x1E;
         ride_armor_pilot_spawn_dust(VISUAL_OBJECT(self), 5);
         set_animation(self, 5);
-        func_8001540C(2, 0x3F, self);
+        func_8001540C(2, SATURN_SOUND(0x3F, 0x142), self);
         self->ext.main_71.unk8D |= 4;
     }
 
@@ -593,7 +602,7 @@ void func_8008A8E4(struct MainObj* self)
 }
 
 // ride_armor_pilot_guard
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008A9F4(struct MainObj* self)
 {
     struct Main71Ext* ext = &self->ext.main_71;
@@ -604,7 +613,7 @@ void func_8008A9F4(struct MainObj* self)
         self->attack_box = &ride_armor_pilot_guard_box;
         self->contact_damage = 6;
         ext->unk8D |= 8;
-        func_8001540C(2, 0x3C, self);
+        func_8001540C(2, SATURN_SOUND(0x3C, 0x13F), self);
     }
 
     ext->unk8E--;
@@ -629,7 +638,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A9F4);
 #endif
 
 // ride_armor_pilot_fall
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008AAF4(struct MainObj* self)
 {
     struct Main71Ext* ext = &self->ext.main_71;
@@ -675,9 +684,10 @@ void ride_armor_pilot_reset(struct MainObj* self)
 }
 
 // ride_armor_pilot_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008AC40(struct MainObj* self)
 {
+    s32 status;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     if (self->ext.main_71.unk8B != 0)
@@ -687,7 +697,7 @@ void func_8008AC40(struct MainObj* self)
     ride_armor_pilot_step_funcs[self->unk5](self);
     CollisionRelated(PLAYER_OBJECT(self));
     func_8002D9BC(self);
-    s32 status = func_8002DD04(self);
+    status = func_8002DD04(self);
     if (status < 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(7, ride_armor_pilot_debris, self);
@@ -758,130 +768,130 @@ struct Unk_unk68 ride_armor_pilot_anim_1[8] = {
 };
 
 union AnimationStep ride_armor_pilot_anim_2[] = {
-    { 0x09000006 },
+    { 6, 0, 0, 0x09 },
 };
 
 union AnimationStep ride_armor_pilot_anim_3[] = {
-    { 0x0A000006 },
+    { 6, 0, 0, 0x0A },
 };
 
 union AnimationStep ride_armor_pilot_anim_4[] = {
-    { 0x0B010002 },
-    { 0x0C010008 },
-    { 0x0B010007 },
-    { 0x00000008 },
+    { 2, 0, 1, 0x0B },
+    { 8, 0, 1, 0x0C },
+    { 7, 0, 1, 0x0B },
+    { 8, 0, 0, 0x00 },
 };
 
 union AnimationStep ride_armor_pilot_anim_5[] = {
-    { 0x0D010004 },
-    { 0x0E000008 },
+    { 4, 0, 1, 0x0D },
+    { 8, 0, 0, 0x0E },
 };
 
 union AnimationStep ride_armor_pilot_anim_6[] = {
-    { 0x0D000004 },
+    { 4, 0, 0, 0x0D },
 };
 
 union AnimationStep ride_armor_pilot_anim_7[] = {
-    { 0x0F010001 },
-    { 0x10010001 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x10010003 },
-    { 0x0F000006 },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 3, 0, 1, 0x10 },
+    { 6, 0, 0, 0x0F },
 };
 
 u8 ride_armor_pilot_anim_8[16] = { 2, 0, 1, 17, 2, 0, 1, 18, 2, 17, 1, 17, 2, 17, 255, 18 };
 
 union AnimationStep ride_armor_pilot_anim_9[] = {
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x1A010001 },
-    { 0x1B010001 },
-    { 0x1C010001 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1F010001 },
-    { 0x20010101 },
-    { 0x21010001 },
-    { 0x20010001 },
-    { 0x21010001 },
-    { 0x20010001 },
-    { 0x21000010 },
-    { 0x12000205 },
-    { 0x0F000005 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1A },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x1F },
+    { 1, 1, 1, 0x20 },
+    { 1, 0, 1, 0x21 },
+    { 1, 0, 1, 0x20 },
+    { 1, 0, 1, 0x21 },
+    { 1, 0, 1, 0x20 },
+    { 16, 0, 0, 0x21 },
+    { 5, 2, 0, 0x12 },
+    { 5, 0, 0, 0x0F },
 };
 
 union AnimationStep ride_armor_pilot_anim_10[] = {
-    { 0x09010001 },
-    { 0x22010001 },
-    { 0x23010001 },
-    { 0x24010001 },
-    { 0x25010001 },
-    { 0x26010001 },
-    { 0x27010001 },
-    { 0x28010001 },
-    { 0x29010001 },
-    { 0x28010001 },
-    { 0x29010001 },
-    { 0x28010001 },
-    { 0x29010006 },
-    { 0x2A000006 },
-    { 0x2B000006 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x22 },
+    { 1, 0, 1, 0x23 },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x28 },
+    { 1, 0, 1, 0x29 },
+    { 1, 0, 1, 0x28 },
+    { 1, 0, 1, 0x29 },
+    { 1, 0, 1, 0x28 },
+    { 6, 0, 1, 0x29 },
+    { 6, 0, 0, 0x2A },
+    { 6, 0, 0, 0x2B },
 };
 
 union AnimationStep ride_armor_pilot_anim_11[] = {
-    { 0x16010005 },
-    { 0x17000004 },
+    { 5, 0, 1, 0x16 },
+    { 4, 0, 0, 0x17 },
 };
 
 union AnimationStep ride_armor_pilot_anim_12[] = {
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x1A000001 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 0, 0x1A },
 };
 
 union AnimationStep ride_armor_pilot_anim_13[] = {
-    { 0x10010001 },
-    { 0x12010001 },
-    { 0x11000001 },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 0, 0x11 },
 };
 
 u8 ride_armor_pilot_anim_14[12] = { 1, 0, 1, 17, 1, 0, 1, 20, 1, 0, 255, 21 };
 
 union AnimationStep ride_armor_pilot_anim_15[] = {
-    { 0x11010005 },
-    { 0x12010002 },
-    { 0x0F000002 },
+    { 5, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 0, 0x0F },
 };
 
 union AnimationStep ride_armor_pilot_anim_16[] = {
-    { 0x2C010005 },
-    { 0x2D010005 },
-    { 0x2E010005 },
-    { 0x2F010005 },
-    { 0x30010005 },
-    { 0x31010005 },
-    { 0x32010005 },
-    { 0x33010005 },
-    { 0x34000005 },
+    { 5, 0, 1, 0x2C },
+    { 5, 0, 1, 0x2D },
+    { 5, 0, 1, 0x2E },
+    { 5, 0, 1, 0x2F },
+    { 5, 0, 1, 0x30 },
+    { 5, 0, 1, 0x31 },
+    { 5, 0, 1, 0x32 },
+    { 5, 0, 1, 0x33 },
+    { 5, 0, 0, 0x34 },
 };
 
 struct Unk_unk68 ride_armor_pilot_anim_17[12] = {
@@ -900,31 +910,31 @@ struct Unk_unk68 ride_armor_pilot_anim_17[12] = {
 };
 
 union AnimationStep ride_armor_pilot_anim_24[] = {
-    { 0x3B000002 },
+    { 2, 0, 0, 0x3B },
 };
 
 union AnimationStep ride_armor_pilot_anim_25[] = {
-    { 0x3C000002 },
+    { 2, 0, 0, 0x3C },
 };
 
 union AnimationStep ride_armor_pilot_anim_26[] = {
-    { 0x3D000002 },
+    { 2, 0, 0, 0x3D },
 };
 
 union AnimationStep ride_armor_pilot_anim_27[] = {
-    { 0x3E000002 },
+    { 2, 0, 0, 0x3E },
 };
 
 union AnimationStep ride_armor_pilot_anim_28[] = {
-    { 0x3F000002 },
+    { 2, 0, 0, 0x3F },
 };
 
 union AnimationStep ride_armor_pilot_anim_29[] = {
-    { 0x40000002 },
+    { 2, 0, 0, 0x40 },
 };
 
 union AnimationStep ride_armor_pilot_anim_30[] = {
-    { 0x41000002 },
+    { 2, 0, 0, 0x41 },
 };
 
 struct Unk_unk68 ride_armor_pilot_anim_22[4] = {

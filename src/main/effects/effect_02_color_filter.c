@@ -5,11 +5,33 @@
 #include "main/1A5BC.h"
 #include "main/objects.h"
 
-extern void (*g_TitleScalingXUpdateFuncs[])();
+extern void (*g_TitleScalingXUpdateFuncs[])(struct EffectObj*);
 
 extern s32 color_filter_masks[][4];
 
 void color_filter_step(struct EffectObj*);
+
+#ifdef MMX4_SATURN
+static const u8 color_filter_saturn_masks[17] = {
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x67,
+    0x67,
+    0x06,
+    0x06,
+    0x04,
+};
+#endif
 
 // scaling X animation in logo graphics
 void TitleScalingXUpdate(struct EffectObj* self)
@@ -29,9 +51,13 @@ void color_filter_init(struct EffectObj* self)
         temp_v0 = color_filter_scripts[self->unk2];
         self->ext.scaling_x.unk14 = temp_v0;
         self->ext.scaling_x.unk18 = temp_v0->unk2;
+#ifdef MMX4_SATURN
+        D_8013E188[0] = color_filter_saturn_masks[self->unk2];
+#else
         for (i = 0; i < 4; i++) {
             D_8013E188[i] = color_filter_masks[self->unk2][i];
         }
+#endif
         g_FilterModeR = self->ext.scaling_x.unk14->unk3 & 1;
         g_FilterModeG = self->ext.scaling_x.unk14->unk3 & 2;
         g_FilterModeB = self->ext.scaling_x.unk14->unk3 & 4;

@@ -9,10 +9,7 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/shots/general_shot_debris_data.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // general_fist_leader_funcs
 extern void (*general_fist_leader_funcs[])(struct ShotObj*);
@@ -77,6 +74,13 @@ extern void (*general_shot_state_funcs[])(struct ShotObj*);
 
 void general_shot_run(struct ShotObj*);
 void general_shot_despawn(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
+
+extern u8 D_8013B8DC[4];
 
 extern s8 general_shot_boxes[3][4];
 
@@ -170,7 +174,8 @@ void (*general_shot_subtype_funcs[])(struct ShotObj*) = {
 };
 
 // general_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AC8C4(struct ShotObj* self);
 void func_800ACDE4(struct ShotObj* self);
 void func_800AD338(struct ShotObj* self);
@@ -178,7 +183,7 @@ void func_800AD6DC(struct ShotObj* self);
 extern u8 D_8013B8DC[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AC8C4(struct ShotObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk7C;
@@ -204,17 +209,17 @@ void func_800AC8C4(struct ShotObj* self)
     self->unk1C.val = self->y_pos.val;
     switch ((u8)self->unk2) {
     case 0:
-        self->unk16 = 7;
+        self->unk16 = VISUAL_SATURN_LAYER(7);
         self->unk84.value = 0;
         self->timer = 0;
         animation = 2;
         break;
     case 1:
-        self->unk16 = 7;
+        self->unk16 = VISUAL_SATURN_LAYER(7);
         animation = 0x27;
         break;
     case 2:
-        self->unk16 = 5;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
         self->timer = 0;
         self->unk8A = 0;
         if (self->unk15 != 0)
@@ -232,7 +237,7 @@ void func_800AC8C4(struct ShotObj* self)
         self->unk60 = 6;
         return;
     case 3:
-        self->unk16 = 5;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
         self->y_pos.i.hi -= 0x28;
         self->timer = 0;
         self->unk8A = 0;
@@ -254,12 +259,12 @@ void func_800AC8C4(struct ShotObj* self)
         animation = self->unk2 == 4 ? 0x21 : 0x22;
         break;
     case 6:
-        self->unk16 = 5;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
         self->unk60 = 9;
         animation = 0x18;
         break;
     case 7:
-        self->unk16 = 7;
+        self->unk16 = VISUAL_SATURN_LAYER(7);
         animation = 0x1B;
         break;
     case 8:
@@ -323,12 +328,12 @@ void general_fist_wait_launch(struct ShotObj* self)
     if (self->unk7C->unk6 == 3) {
         self->unk5++;
         set_animation(self, 0x13);
-        func_8001540C(2, 6, self);
+        func_8001540C(2, SATURN_SOUND(6, 0xE0), self);
     }
 }
 
 // general_fist_launch
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800ACDE4(struct ShotObj* self)
 {
     s16 player_y;
@@ -339,7 +344,7 @@ void func_800ACDE4(struct ShotObj* self)
     self->unk5++;
     self->x_vel.val = self->unk15 != 0 ? 0x40000 : 0xFFFC0000;
     set_animation(self, 0x14);
-    func_8001540C(2, 5, self);
+    func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
     player_y = g_Player.y_pos.i.hi;
     if (player_y < 0x210)
         self->timer = 0;
@@ -446,17 +451,17 @@ void general_fist_turn(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
-        self->unk15 ^= 0x40;
+        self->unk15 ^= PLAYER_FACING_RIGHT;
         self->x_vel.val = self->unk15 != 0 ? FIXED(1.5) : FIXED(-1.5);
     }
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5++;
         if (self->unk2 == 3) {
             set_animation(self, 0xF);
-            func_8001540C(2, 5, self);
+            func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
         } else {
             set_animation(self, 0x14);
-            func_8001540C(2, 5, self);
+            func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
         }
     }
 }
@@ -494,7 +499,7 @@ void general_fist_sweep_turn(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
-        self->unk15 ^= 0x40;
+        self->unk15 ^= PLAYER_FACING_RIGHT;
         self->x_vel.val = self->unk15 != 0 ? FIXED(1.5) : FIXED(-1.5);
     }
     if (self->animation_step.fields.relative_step == 0) {
@@ -511,16 +516,16 @@ void general_fist_sweep_turn(struct ShotObj* self)
         self->unk5 = 3;
         if (self->unk2 == 3) {
             set_animation(self, 0x14);
-            func_8001540C(2, 5, self);
+            func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
         } else {
             set_animation(self, 0xF);
-            func_8001540C(2, 5, self);
+            func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
         }
     }
 }
 
 // general_fist_return
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AD338(struct ShotObj* self)
 {
     self->unk68 = NULL;
@@ -534,7 +539,7 @@ void func_800AD338(struct ShotObj* self)
     if (sigma_final_shot_at_position(self, self->unk84.shot_55.x, self->unk84.shot_55.y) & 0xFF) {
         self->unk5++;
         set_animation(self, self->unk2 == 3 ? 0x13 : 0xE);
-        func_8001540C(2, 6, self);
+        func_8001540C(2, SATURN_SOUND(6, 0xE0), self);
     }
 }
 #else
@@ -559,7 +564,7 @@ void general_fist_follower_wait_launch(struct ShotObj* self)
     if (self->unk8C.object->unk5 == 3) {
         self->unk5++;
         set_animation(self, 0xE);
-        func_8001540C(2, 6, self);
+        func_8001540C(2, SATURN_SOUND(6, 0xE0), self);
     }
 }
 
@@ -569,7 +574,7 @@ void general_fist_follower_launch(struct ShotObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5++;
         set_animation(self, 0xF);
-        func_8001540C(2, 5, self);
+        func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
     }
 }
 
@@ -613,7 +618,7 @@ void general_shot_fist(struct ShotObj* self)
 }
 
 // general_ring_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AD6DC(struct ShotObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -632,7 +637,7 @@ void func_800AD6DC(struct ShotObj* self)
     self->x_vel.val *= 3;
     self->y_vel.val *= 3;
     self->unk42 &= 0x7FFF;
-    func_8001540C(2, 7, self);
+    func_8001540C(2, SATURN_SOUND(7, 0xE1), self);
 }
 #else
 INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AD6DC);
@@ -740,7 +745,7 @@ void general_shot_orb_launcher(struct ShotObj* self)
                     shot->unk7C = owner;
                     shot->unk84.halves[0] = self->x_pos.u.hi - owner->x_pos.u.hi;
                     shot->unk84.halves[1] = self->y_pos.u.hi - owner->y_pos.u.hi;
-                    func_8001540C(2, 4, self);
+                    func_8001540C(2, SATURN_SOUND(4, 0xDE), self);
                 }
                 i++;
             } while (i < 2);
@@ -801,7 +806,7 @@ void general_orb_aim(struct ShotObj* self)
         self->unk5 = (u8)self->unk5 + 1;
         self->x_vel.val = self->unk15 ? FIXED(5) : FIXED(-5);
         self->y_vel.val = 0;
-        func_8001540C(2, 4, self);
+        func_8001540C(2, SATURN_SOUND(4, 0xDE), self);
     }
 }
 

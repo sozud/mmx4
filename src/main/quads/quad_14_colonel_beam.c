@@ -15,6 +15,7 @@ extern void (*colonel_beam_step_funcs[])(struct QuadObj*);
 void colonel_beam_drop(struct QuadObj*);
 
 void colonel_beam_wait(struct QuadObj*);
+#include "weapon_resources.h"
 
 void colonel_beam_place(struct QuadObj* arg0, u8 arg1);
 

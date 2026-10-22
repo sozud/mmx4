@@ -6,8 +6,9 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#include "main/collision_bounds.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
 #endif
 
@@ -22,13 +23,16 @@ extern void (*double_ball_state_funcs[])(struct ShotObj*);
 
 void double_ball_run(struct ShotObj*);
 
+extern u8 double_ball_boxes[2][4];
+
 // double_ball_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A9964(struct ShotObj* self);
 extern u8 double_ball_boxes[2][4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A9964(struct ShotObj* self)
 {
     s32 direction;

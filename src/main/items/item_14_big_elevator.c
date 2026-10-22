@@ -27,6 +27,7 @@ extern void (*big_elevator_ride_funcs[])(struct ItemObj*);
 void big_elevator_wait_player(struct ItemObj*);
 void big_elevator_rise(struct ItemObj*);
 void big_elevator_arrive(struct ItemObj*);
+#include "weapon_resources.h"
 
 void big_elevator_update(struct ItemObj* arg0)
 {
@@ -42,10 +43,10 @@ void big_elevator_init(struct ItemObj* self)
     self->active = 0x41;
     self->unk16 = 0x22;
     self->unk15 = 0;
-    self->unk40 = D_801406A8[func_8002938C(0x8B) & 0xFF] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x8B) & 0xFF);
     self->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[(func_8002938C(0x8B) & 0xFF)];
     self->animation_step.fields.frame_index = 0;
-    self->unk42 = 0x7947;
+    self->unk42 = OBJECT_CLUT(0x7947);
     self->unk68 = &big_elevator_terrain_box;
     self->unk54 = NULL;
     self->unk58 = NULL;
@@ -114,17 +115,18 @@ void big_elevator_arrive(struct ItemObj* arg0)
     background_objects[0].unk28 = 0x2D0;
     background_objects[0].unk2A = 0x2D0;
     background_objects[0].unk47 = 1;
-    func_8001540C(5, 5, NULL);
+    func_8001540C(5, SATURN_SOUND(5, 0x2E), NULL);
     arg0->unk6 = 0;
     arg0->unk5++;
 }
 
 // big_elevator_transition
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C3BA4(struct ItemObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C3BA4(struct ItemObj* self)
 {
     u8* phase = (u8*)&self->ext;
@@ -134,7 +136,11 @@ void func_800C3BA4(struct ItemObj* self)
         bg->unk20 = 0x2D0;
         bg->unk22 = 0x2D0;
         start_screen_shake_y(0x1E, 2, 1);
+#ifdef MMX4_SATURN
+        func_8001540C(6, 6, NULL);
+#else
         stop_sound(5, 5);
+#endif
         self->unk5++;
         return;
     }

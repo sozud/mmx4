@@ -9,6 +9,7 @@ extern s32 rubble_x_offsets[8];
 extern s32 rubble_y_offsets[8];
 
 void rubble_fall(struct MiscObj*);
+#include "weapon_resources.h"
 
 void spawn_rubble(arg_u8 count, u8* variants, void* source, s32 x_velocity)
 {
@@ -27,7 +28,7 @@ void spawn_rubble(arg_u8 count, u8* variants, void* source, s32 x_velocity)
             if (obj != NULL) {
                 obj->active = 0x41;
                 obj->id = 2;
-                obj->unk15 = get_random() & 0x40;
+                obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
                 obj->state = 0;
                 obj->unk5 = 0;
                 obj->unk6 = 0;
@@ -57,7 +58,8 @@ void rubble_update(struct MiscObj* self)
 }
 
 // rubble_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C7F1C(struct MiscObj* arg0);
 void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation_table);
 extern s32 rubble_x_speeds[8];
@@ -65,7 +67,7 @@ extern s32 rubble_y_speeds[8];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C7F1C(struct MiscObj* arg0)
 {
     s32 index;
@@ -76,17 +78,17 @@ void func_800C7F1C(struct MiscObj* arg0)
         index = func_8002938C(0x8A);
         arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
         index = func_8002938C(0x8A);
-        arg0->unk40 = (u16)((u32)D_801406A8[index] >> 7);
-        arg0->unk42 = 0x7987;
+        arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(index));
+        arg0->unk42 = OBJECT_CLUT(0x7987);
     } else {
         index = func_8002938C(0x83);
         arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
         index = func_8002938C(0x83);
-        arg0->unk40 = (u16)((u32)D_801406A8[index] >> 7);
+        arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(index));
         if (arg0->unk2 == 0)
-            arg0->unk42 = 0x7983;
+            arg0->unk42 = OBJECT_CLUT(0x7983);
         else
-            arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x83));
+            arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x83));
     }
     arg0->unk16 = 1;
     arg0->unk2C = 0x5000;
@@ -131,7 +133,7 @@ void spawn_debris(arg_u8 arg0, void* arg1, void* arg2)
                 temp_v0->active = 0x41;
                 temp_v0->id = 3;
                 temp_v0->unk2 = 0;
-                temp_v0->unk15 = get_random() & 0x40;
+                temp_v0->unk15 = get_random() & PLAYER_FACING_RIGHT;
                 temp_v0->state = 0;
                 temp_v0->unk5 = 0;
                 temp_v0->unk6 = 0;
@@ -167,7 +169,7 @@ void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
                 obj->active = 0x41;
                 obj->id = 3;
                 obj->unk2 = 1;
-                obj->unk15 = get_random() & 0x40;
+                obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
                 obj->state = 0;
                 obj->unk5 = 0;
                 obj->unk6 = 0;
@@ -202,7 +204,7 @@ void spawn_debris_offset(u8 count, u8* variants, struct MainObj* owner, s32 x_of
             misc->active = 0x41;
             misc->id = 3;
             misc->unk2 = 0;
-            misc->unk15 = get_random() & 0x40;
+            misc->unk15 = get_random() & PLAYER_FACING_RIGHT;
             misc->state = 0;
             misc->unk5 = 0;
             misc->unk6 = 0;
@@ -216,9 +218,7 @@ void spawn_debris_offset(u8 count, u8* variants, struct MainObj* owner, s32 x_of
 #endif
 
 // spawn_animated_debris
-#ifdef MMX4_PC
-// src/main/misc/misc_02_rubble.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation_table)
 {
     struct MiscObj* obj;
@@ -233,7 +233,7 @@ void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation
         obj->active = 0x41;
         obj->id = 3;
         obj->unk2 = 1;
-        obj->unk15 = get_random() & 0x40;
+        obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
         obj->state = 0;
         obj->unk5 = 0;
         obj->unk6 = 0;
@@ -244,9 +244,9 @@ void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation
         obj->ext.misc_2.unk58 = *variants++;
         clut_x = func_8002938C(id);
         clut_y = func_8002938C(id);
-        obj->unk42 = ((clut_x * 4 + 0x18) % 16) | (((clut_y + 6) / 4 + 0x1E0) << 6);
+        obj->unk42 = OBJECT_CLUT(((clut_x * 4 + 0x18) % 16) | (((clut_y + 6) / 4 + 0x1E0) << 6));
         resource = func_8002938C(id);
-        obj->unk40 = D_801406A8[resource] >> 7;
+        obj->unk40 = OBJECT_STAGE_TEXTURE(resource);
         resource = func_8002938C(id);
         obj->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
     }

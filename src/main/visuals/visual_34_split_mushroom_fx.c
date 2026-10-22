@@ -9,6 +9,7 @@
 extern void (*split_mushroom_fx_state_funcs[])(struct VisualObj*);
 void split_mushroom_fx_main(struct VisualObj*);
 void split_mushroom_fx_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void split_mushroom_fx_update(struct VisualObj* arg0)
 {

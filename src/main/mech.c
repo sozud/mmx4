@@ -8,6 +8,7 @@
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/player_common.h"
+#include "weapon_resources.h"
 
 s32 func_8003D7E4(struct RideArmorObj*, u8, s32);
 
@@ -34,7 +35,20 @@ void func_8003D3F8(struct RideArmorObj* arg0)
     arg0->hp &= ~0x80;
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#define RIDE_S8(object, offset) (*(s8*)&RIDE_U8(object, offset))
+s32 func_8003DE08(struct MainObj*);
+s32 func_8003DC8C(struct RideArmorObj*);
+s32 func_8003DC50(struct RideArmorObj*);
+void func_8003DD14(struct MainObj*);
+void func_8003DD2C(struct MainObj*);
+void func_8003DD54(struct RideArmorObj*);
+void func_8003DDA0(struct RideArmorObj*);
+void func_8003D7A0(void);
+s32 func_8003E048(struct PlayerObj*);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003D4C8(struct RideArmorObj* arg0);
 void func_8003D9E0(struct RideArmorObj* arg0);
 s32 func_8003DCD8(struct RideArmorObj* arg0);
@@ -66,7 +80,7 @@ void func_80040248(struct RideArmorObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003D4C8(struct RideArmorObj* arg0)
 {
     u8 resource;
@@ -81,8 +95,8 @@ void func_8003D4C8(struct RideArmorObj* arg0)
     arg0->animation_table = (u32**)(arg0->unk2 != 0 ? D_800F965C : D_800F9428);
     resource = func_8002938C(0x86);
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    arg0->unk40 = D_801406A8[resource] >> 7;
-    arg0->unk42 = SOME_COORDINATE_CONVERSION(resource);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
+    arg0->unk42 = VISUAL_STAGE_PALETTE(resource);
     arg0->hp = 0x20;
     arg0->unk16 = 3;
     arg0->unk68 = &D_800F9124;
@@ -217,7 +231,7 @@ s32 func_8003D8A8(struct RideArmorObj* owner, s32 shot_kind, s32 shot_variant)
             weapon->unk40 = ride_armor->unk40;
             weapon->unk3C = ride_armor->unk3C;
             resource = func_8002938C(0x86);
-            weapon->unk42 = SOME_COORDINATE_CONVERSION(resource);
+            weapon->unk42 = VISUAL_STAGE_PALETTE(resource);
             weapon->unk16 = ride_armor->unk16;
             weapon->owner = PLAYER_OBJECT(ride_armor);
             weapon->unk15 = ride_armor->unk15;
@@ -228,7 +242,7 @@ s32 func_8003D8A8(struct RideArmorObj* owner, s32 shot_kind, s32 shot_variant)
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003D9E0(struct RideArmorObj* arg0)
 {
     u16 mode;
@@ -260,7 +274,7 @@ void func_8003D9E0(struct RideArmorObj* arg0)
         if (arg0->unk2 == 0 || mode != 0x4000)
             return;
         func_8003D6EC(ANIMATED_OBJECT(arg0), 0x10);
-        func_8001540C(5, 8, NULL);
+        func_8001540C(5, SATURN_SOUND(8, 78), NULL);
         return;
     case 2:
         if (arg0->collision_flags & arg0->unkA6)
@@ -268,7 +282,7 @@ void func_8003D9E0(struct RideArmorObj* arg0)
         if (arg0->unk2 == 0 || mode != 0x4000) {
             RIDE_U8(arg0, 0x94) = 0;
             arg0->unkA6 = 0;
-            stop_sound(5, 8);
+            STOP_SOUND(5, 8, 1);
             return;
         }
         switch ((u8)arg0->unk5) {
@@ -282,7 +296,7 @@ void func_8003D9E0(struct RideArmorObj* arg0)
         case 0x11:
             RIDE_U8(arg0, 0x94) = 0;
             arg0->unkA6 = 0;
-            stop_sound(5, 8);
+            STOP_SOUND(5, 8, 1);
             return;
         }
         parts = arg0->spawned_parts;
@@ -294,7 +308,7 @@ void func_8003D9E0(struct RideArmorObj* arg0)
             parts >>= 1;
         }
         arg0->unk7E = 0x10;
-        func_8001540C(5, 6, NULL);
+        func_8001540C(5, SATURN_SOUND(6, 76), NULL);
         RIDE_U8(arg0, 0x94) = 0;
         arg0->unkA6 = 0;
         return;
@@ -327,7 +341,7 @@ s32 func_8003DC50(struct RideArmorObj* arg0)
         return 1;
     }
     if (collision_flags & 1) {
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         return 1;
     }
     return 0;
@@ -345,7 +359,7 @@ s32 func_8003DC8C(struct RideArmorObj* arg0)
     return 0;
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_8003DCD8(struct RideArmorObj* arg0)
 {
     if (!(arg0->unk8A & 0x30))
@@ -550,7 +564,7 @@ void func_8003E0D0(struct RideArmorObj* self)
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003E274(struct RideArmorObj* arg0)
 {
     if (arg0->unk6 == 0) {
@@ -560,7 +574,7 @@ void func_8003E274(struct RideArmorObj* arg0)
         arg0->unk68 = &D_800F9120;
         set_animation(arg0, 0x12);
         func_8003DC1C((struct PlayerObj*)arg0, 0x39);
-        func_8001540C(5, arg0->id != 0 ? 4 : 6, NULL);
+        func_8001540C(5, SATURN_SOUND(arg0->id != 0 ? 4 : 6, arg0->id != 0 ? 74 : 62), NULL);
     }
     if (arg0->animation_step.fields.relative_step == 0) {
         if (RIDE_U8(arg0, 0x8C) == 0)
@@ -654,7 +668,7 @@ void func_8003E488(struct RideArmorObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        func_8001540C(5, (u8)self->animation_step.fields.event, NULL);
+        func_8001540C(5, SATURN_SOUND((u8)self->animation_step.fields.event, self->unk2 != 0 ? 69 : 57), NULL);
         self->animation_step.fields.event = 0;
     }
 }
@@ -667,12 +681,12 @@ void func_8003E5F8(struct RideArmorObj* self)
             func_8003D7E4(self, 2, 1);
             set_animation(self, 0xA);
             func_8003DC1C(PLAYER_OBJECT(self), 0x32);
-            func_8001540C(5, 5, NULL);
+            func_8001540C(5, SATURN_SOUND(5, 61), NULL);
         } else {
             func_8003D7E4(self, 0, 0);
             set_animation(self, 8);
             func_8003DC1C(PLAYER_OBJECT(self), 0x31);
-            func_8001540C(5, 0, NULL);
+            func_8001540C(5, SATURN_SOUND(0, 56), NULL);
         }
         self->unk80.bytes.unk81 = 0;
     }
@@ -710,9 +724,9 @@ void func_8003E750(struct RideArmorObj* self)
         func_8003DC1C(PLAYER_OBJECT(self), 0x2B);
         self->unk87 = 0;
         if (self->unk2 == 0) {
-            func_8001540C(5, 4, NULL);
+            func_8001540C(5, SATURN_SOUND(4, 60), NULL);
         } else {
-            func_8001540C(5, 3, NULL);
+            func_8001540C(5, SATURN_SOUND(3, 72), NULL);
         }
     }
     if (func_8003DCD8(self)) {
@@ -746,11 +760,15 @@ void func_8003E8A0(struct RideArmorObj* self)
         func_8003DC1C(PLAYER_OBJECT(self), 0x2D);
         self->input_flags |= 8;
         if (self->unk2 == 0) {
-            func_8001540C(5, 1, NULL);
+            func_8001540C(5, SATURN_SOUND(1, 57), NULL);
         } else {
+#ifdef MMX4_SATURN
+            func_8001540C(5, 69, NULL);
+#else
             func_8001540C(5, 0, NULL);
             stop_sound(5, 5);
             func_8001540C(5, 0, NULL);
+#endif
         }
     }
     if (func_8003DC8C(self)) {
@@ -781,7 +799,7 @@ void func_8003EA08(struct RideArmorObj* self)
         func_8003D7E4(self, 3, 1);
         set_animation(self, 0xB);
         func_8003DC1C(PLAYER_OBJECT(self), 0x33);
-        func_8001540C(5, 5, NULL);
+        func_8001540C(5, SATURN_SOUND(5, 61), NULL);
     }
     if (self->input_flags & 8) {
         func_8003DC44(BASE_OBJECT(self), 5);
@@ -823,10 +841,10 @@ void func_8003EB4C(struct RideArmorObj* self)
         set_animation(self, 5);
         func_8003DC1C(PLAYER_OBJECT(self), 0x2F);
         if (self->unk2 == 0) {
-            func_8001540C(5, 3, NULL);
+            func_8001540C(5, SATURN_SOUND(3, 59), NULL);
             func_8003D638(VISUAL_OBJECT(self), 5);
         } else {
-            func_8001540C(5, 2, NULL);
+            func_8001540C(5, SATURN_SOUND(2, 71), NULL);
         }
     }
     if (func_8003DC8C(self)) {
@@ -890,7 +908,7 @@ void func_8003EDF0(struct RideArmorObj* self)
         func_8003D7E4(self, 1, 1);
         set_animation(self, 9);
         func_8003DC1C(PLAYER_OBJECT(self), 0x37);
-        func_8001540C(5, 0, 0);
+        func_8001540C(5, SATURN_SOUND(0, 56), 0);
     }
 
     timer = --self->unk90.byte;
@@ -924,7 +942,7 @@ void func_8003EEF8(struct RideArmorObj* self)
         *(u8*)&self->unk8C = 0;
         self->unk94.bytes.pad94[0] = 0;
         self->unkA6 = 0;
-        stop_sound(5, 8);
+        STOP_SOUND(5, 8, 1);
         if (!(self->unk94.bytes.unk97 & 2)) {
             self->x_vel.val = 0;
             self->unk28 = 0;
@@ -953,7 +971,7 @@ void func_8003EEF8(struct RideArmorObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6 = 0;
         self->unk5 = 0;
-        stop_sound(5, 8);
+        STOP_SOUND(5, 8, 1);
         *(u8*)&self->unk8C = 0;
         self->unk94.bytes.pad94[0] = 0;
         self->unkA6 = 0;
@@ -1072,9 +1090,9 @@ void func_8003F31C(struct RideArmorObj* self)
                     set_animation(self, 0xF);
                     func_8003DC1C(PLAYER_OBJECT(self), 0x36);
                     if (self->unk2 == 0) {
-                        func_8001540C(5, 5, 0);
+                        func_8001540C(5, SATURN_SOUND(5, 61), 0);
                     } else {
-                        func_8001540C(5, 6, 0);
+                        func_8001540C(5, SATURN_SOUND(6, 76), 0);
                     }
                 }
             }
@@ -1111,7 +1129,7 @@ void func_8003F44C(struct RideArmorObj* self)
                         }
                     }
                     self->unk7E = 0x10;
-                    func_8001540C(5, 6, 0);
+                    func_8001540C(5, SATURN_SOUND(6, 76), 0);
                 }
             }
         }
@@ -1127,7 +1145,7 @@ void func_8003F570(struct RideArmorObj* arg0)
         set_animation(arg0, 0xC);
         func_8003DC1C(PLAYER_OBJECT(arg0), 0x34);
         func_8003F31C(arg0);
-        func_8001540C(5, 7, NULL);
+        func_8001540C(5, SATURN_SOUND(7, 63), NULL);
         return;
     }
 
@@ -1160,7 +1178,7 @@ void func_8003F698(struct RideArmorObj* arg0)
         func_8003D8A8(arg0, 0, 0);
         set_animation(arg0, 8);
         func_8003DC1C(PLAYER_OBJECT(arg0), 0x3F);
-        func_8001540C(5, 7, 0);
+        func_8001540C(5, SATURN_SOUND(7, 77), 0);
     }
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->unk87 = 0;
@@ -1184,7 +1202,7 @@ void func_8003F76C(struct RideArmorObj* self)
         } else {
             func_8003D8A8(self, 0, 0);
         }
-        func_8001540C(5, 7, NULL);
+        func_8001540C(5, SATURN_SOUND(7, 77), NULL);
     }
     if (self->input_flags & 8) {
         func_8003DC44(BASE_OBJECT(self), 5);
@@ -1230,7 +1248,7 @@ void func_8003F908(struct RideArmorObj* self)
         self->y_vel.val = 0;
         set_animation(self, 0xC);
         func_8003DC1C(PLAYER_OBJECT(self), 0x2F);
-        func_8001540C(5, 2, NULL);
+        func_8001540C(5, SATURN_SOUND(2, 71), NULL);
     }
     if (func_8003DC8C(self)) {
         func_8003DC44(BASE_OBJECT(self), 0xB);
@@ -1267,7 +1285,7 @@ void func_8003FA58(struct RideArmorObj* self)
         } else {
             func_8003D8A8(self, 0, 0);
         }
-        func_8001540C(5, 7, NULL);
+        func_8001540C(5, SATURN_SOUND(7, 77), NULL);
     }
     timer = --self->unk90.byte;
     if (!(self->unk94.bytes.unk97 & 2)) {
@@ -1305,7 +1323,7 @@ void func_8003FBD8(struct RideArmorObj* self)
         set_animation(self, 0xD);
         func_8003DC1C(PLAYER_OBJECT(self), 0x3C);
         self->unk87 = 0;
-        func_8001540C(5, 5, 0);
+        func_8001540C(5, SATURN_SOUND(5, 75), 0);
     }
     if (func_8003DC8C(self)) {
         func_8003DC44(BASE_OBJECT(self), 0xB);
@@ -1346,7 +1364,7 @@ void func_8003FD08(struct RideArmorObj* self)
             func_8003D8A8(self, 0, 0);
         }
         self->unk87 = 0;
-        func_8001540C(5, 7, NULL);
+        func_8001540C(5, SATURN_SOUND(7, 77), NULL);
     }
     if (func_8003DC8C(self)) {
         func_8003DC44(BASE_OBJECT(self), 0xB);
@@ -1466,7 +1484,7 @@ void func_800400C8(struct PlayerObj* self)
             self->state = 2;
             self->on_screen = 0;
             spawn_explosion(BASE_OBJECT(self));
-            stop_sound(5, 8);
+            STOP_SOUND(5, 8, 1);
             return;
         }
         func_800AF878(BASE_OBJECT(self), 0, 0x1F, 0x1F);
@@ -1496,7 +1514,7 @@ void func_800401F8(struct PlayerObj* arg0)
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80040248(struct RideArmorObj* arg0)
 {
     u8 count;
@@ -1541,7 +1559,7 @@ void func_800402C4(struct PlayerObj* self)
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800403DC(struct RideArmorObj* arg0)
 {
     u8 flags;
@@ -1616,124 +1634,124 @@ void func_800405D4(struct RideArmorObj* arg0)
 }
 
 union AnimationStep D_800F91D0[] = {
-    { 0x00010064 },
-    { 0x0B010007 },
-    { 0x0C010132 },
-    { 0x0BFD0008 },
+    { 100, 0, 1, 0x00 },
+    { 7, 0, 1, 0x0B },
+    { 50, 1, 1, 0x0C },
+    { 8, 0, -3, 0x0B },
 };
 
 union AnimationStep D_800F91E0[] = {
-    { 0x01010006 },
-    { 0x02010006 },
-    { 0x03010006 },
-    { 0x0401010A },
-    { 0x05010006 },
-    { 0x06010006 },
-    { 0x07010006 },
-    { 0x08F9010A },
+    { 6, 0, 1, 0x01 },
+    { 6, 0, 1, 0x02 },
+    { 6, 0, 1, 0x03 },
+    { 10, 1, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 6, 0, 1, 0x06 },
+    { 6, 0, 1, 0x07 },
+    { 10, 1, -7, 0x08 },
 };
 
 union AnimationStep D_800F9200[] = {
-    { 0x09000008 },
+    { 8, 0, 0, 0x09 },
 };
 
 union AnimationStep D_800F9204[] = {
-    { 0x0A000008 },
+    { 8, 0, 0, 0x0A },
 };
 
 union AnimationStep D_800F9208[] = {
-    { 0x0B010002 },
-    { 0x0C010008 },
-    { 0x0B010007 },
-    { 0x00000008 },
+    { 2, 0, 1, 0x0B },
+    { 8, 0, 1, 0x0C },
+    { 7, 0, 1, 0x0B },
+    { 8, 0, 0, 0x00 },
 };
 
 union AnimationStep D_800F9218[] = {
-    { 0x0D010004 },
-    { 0x0E010008 },
-    { 0x0D000008 },
+    { 4, 0, 1, 0x0D },
+    { 8, 0, 1, 0x0E },
+    { 8, 0, 0, 0x0D },
 };
 
 union AnimationStep D_800F9224[] = {
-    { 0x0D000008 },
+    { 8, 0, 0, 0x0D },
 };
 
 union AnimationStep D_800F9228[] = {
-    { 0x0F010001 },
-    { 0x10010001 },
-    { 0x11011002 },
-    { 0x12011002 },
-    { 0x11011102 },
-    { 0x12011102 },
-    { 0x11011102 },
-    { 0x12011102 },
-    { 0x10010103 },
-    { 0x0F010105 },
-    { 0x0F000001 },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 2, 16, 1, 0x11 },
+    { 2, 16, 1, 0x12 },
+    { 2, 17, 1, 0x11 },
+    { 2, 17, 1, 0x12 },
+    { 2, 17, 1, 0x11 },
+    { 2, 17, 1, 0x12 },
+    { 3, 1, 1, 0x10 },
+    { 5, 1, 1, 0x0F },
+    { 1, 0, 0, 0x0F },
 };
 
 union AnimationStep D_800F9254[] = {
-    { 0x0F010001 },
-    { 0x10010001 },
-    { 0x11011102 },
-    { 0x12FF1102 },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 2, 17, 1, 0x11 },
+    { 2, 17, -1, 0x12 },
 };
 
 union AnimationStep D_800F9264[] = {
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x1A010001 },
-    { 0x1B010001 },
-    { 0x1C010001 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1F012001 },
-    { 0x20013001 },
-    { 0x21013001 },
-    { 0x20013001 },
-    { 0x21013001 },
-    { 0x20013001 },
-    { 0x21013001 },
-    { 0x20013001 },
-    { 0x21013001 },
-    { 0x20013001 },
-    { 0x2101300A },
-    { 0x12010005 },
-    { 0x0F000005 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1A },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 32, 1, 0x1F },
+    { 1, 48, 1, 0x20 },
+    { 1, 48, 1, 0x21 },
+    { 1, 48, 1, 0x20 },
+    { 1, 48, 1, 0x21 },
+    { 1, 48, 1, 0x20 },
+    { 1, 48, 1, 0x21 },
+    { 1, 48, 1, 0x20 },
+    { 1, 48, 1, 0x21 },
+    { 1, 48, 1, 0x20 },
+    { 10, 48, 1, 0x21 },
+    { 5, 0, 1, 0x12 },
+    { 5, 0, 0, 0x0F },
 };
 
 union AnimationStep D_800F92B4[] = {
-    { 0x09010001 },
-    { 0x22010001 },
-    { 0x23010001 },
-    { 0x24010001 },
-    { 0x25010001 },
-    { 0x26010001 },
-    { 0x27014001 },
-    { 0x28015001 },
-    { 0x29015001 },
-    { 0x28015001 },
-    { 0x29015001 },
-    { 0x28015001 },
-    { 0x29015001 },
-    { 0x28015001 },
-    { 0x29015001 },
-    { 0x28015001 },
-    { 0x29015006 },
-    { 0x2A010006 },
-    { 0x2B010006 },
-    { 0x2B000001 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x22 },
+    { 1, 0, 1, 0x23 },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 1, 0, 1, 0x26 },
+    { 1, 64, 1, 0x27 },
+    { 1, 80, 1, 0x28 },
+    { 1, 80, 1, 0x29 },
+    { 1, 80, 1, 0x28 },
+    { 1, 80, 1, 0x29 },
+    { 1, 80, 1, 0x28 },
+    { 1, 80, 1, 0x29 },
+    { 1, 80, 1, 0x28 },
+    { 1, 80, 1, 0x29 },
+    { 1, 80, 1, 0x28 },
+    { 6, 80, 1, 0x29 },
+    { 6, 0, 1, 0x2A },
+    { 6, 0, 1, 0x2B },
+    { 1, 0, 0, 0x2B },
 };
 
 union AnimationStep D_800F9304[] = {
-    { 0x16010005 },
-    { 0x17010004 },
+    { 5, 0, 1, 0x16 },
+    { 4, 0, 1, 0x17 },
 };
 
 union AnimationStep D_800F930C[] = {
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x1AFE0001 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, -2, 0x1A },
 };
 
 #if defined(MMX4_PC) && !defined(MMX4_WIN32)
@@ -1742,13 +1760,13 @@ static struct {
     union AnimationStep D_800F930C[3];
 } ride_armor_land_run = {
     {
-        { 0x16010005 },
-        { 0x17010004 },
+        { 5, 0, 1, 0x16 },
+        { 4, 0, 1, 0x17 },
     },
     {
-        { 0x18010001 },
-        { 0x19010001 },
-        { 0x1AFE0001 },
+        { 1, 0, 1, 0x18 },
+        { 1, 0, 1, 0x19 },
+        { 1, 0, -2, 0x1A },
     },
 };
 #define D_800F9304 ride_armor_land_run.D_800F9304
@@ -1756,122 +1774,122 @@ static struct {
 #endif
 
 union AnimationStep D_800F9318[] = {
-    { 0x10010001 },
-    { 0x12010001 },
-    { 0x11000001 },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 0, 0x11 },
 };
 
 union AnimationStep D_800F9324[] = {
-    { 0x13016001 },
-    { 0x14016001 },
-    { 0x15FE6001 },
+    { 1, 96, 1, 0x13 },
+    { 1, 96, 1, 0x14 },
+    { 1, 96, -2, 0x15 },
 };
 
 union AnimationStep D_800F9330[] = {
-    { 0x11010005 },
-    { 0x12010002 },
-    { 0x0F000002 },
+    { 5, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 0, 0x0F },
 };
 
 union AnimationStep D_800F933C[] = {
-    { 0x31000002 },
+    { 2, 0, 0, 0x31 },
 };
 
 union AnimationStep D_800F9340[] = {
-    { 0x2F01000A },
-    { 0x3001000A },
-    { 0x2E01000A },
-    { 0x2D01000A },
-    { 0x00010005 },
-    { 0x2C010106 },
-    { 0x00000008 },
+    { 10, 0, 1, 0x2F },
+    { 10, 0, 1, 0x30 },
+    { 10, 0, 1, 0x2E },
+    { 10, 0, 1, 0x2D },
+    { 5, 0, 1, 0x00 },
+    { 6, 1, 1, 0x2C },
+    { 8, 0, 0, 0x00 },
 };
 
 union AnimationStep D_800F935C[] = {
-    { 0x2C010005 },
-    { 0x2D010005 },
-    { 0x2E010005 },
-    { 0x30010005 },
-    { 0x31010003 },
-    { 0x32010003 },
-    { 0x31000008 },
+    { 5, 0, 1, 0x2C },
+    { 5, 0, 1, 0x2D },
+    { 5, 0, 1, 0x2E },
+    { 5, 0, 1, 0x30 },
+    { 3, 0, 1, 0x31 },
+    { 3, 0, 1, 0x32 },
+    { 8, 0, 0, 0x31 },
 };
 
 union AnimationStep D_800F9378[] = {
-    { 0x33010005 },
-    { 0x34010005 },
-    { 0x35010005 },
-    { 0x36010005 },
-    { 0x37010005 },
-    { 0x38010005 },
-    { 0x39010005 },
-    { 0x3A010005 },
-    { 0x3B010005 },
-    { 0x3BF70001 },
+    { 5, 0, 1, 0x33 },
+    { 5, 0, 1, 0x34 },
+    { 5, 0, 1, 0x35 },
+    { 5, 0, 1, 0x36 },
+    { 5, 0, 1, 0x37 },
+    { 5, 0, 1, 0x38 },
+    { 5, 0, 1, 0x39 },
+    { 5, 0, 1, 0x3A },
+    { 5, 0, 1, 0x3B },
+    { 1, 0, -9, 0x3B },
 };
 
 union AnimationStep D_800F93A0[] = {
-    { 0x3C010002 },
-    { 0x3D010002 },
-    { 0x3E010002 },
-    { 0x3F010002 },
-    { 0x40010002 },
-    { 0x41010002 },
-    { 0x3C010001 },
-    { 0x3D010001 },
-    { 0x3E010001 },
-    { 0x3F010001 },
-    { 0x40010001 },
-    { 0x41010001 },
-    { 0x41F40001 },
+    { 2, 0, 1, 0x3C },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x3E },
+    { 2, 0, 1, 0x3F },
+    { 2, 0, 1, 0x40 },
+    { 2, 0, 1, 0x41 },
+    { 1, 0, 1, 0x3C },
+    { 1, 0, 1, 0x3D },
+    { 1, 0, 1, 0x3E },
+    { 1, 0, 1, 0x3F },
+    { 1, 0, 1, 0x40 },
+    { 1, 0, 1, 0x41 },
+    { 1, 0, -12, 0x41 },
 };
 
 union AnimationStep D_800F93D4[] = {
-    { 0x49010001 },
-    { 0x4A010002 },
-    { 0x49010001 },
-    { 0x4A010002 },
-    { 0x49010001 },
-    { 0x4A010002 },
-    { 0x49010001 },
-    { 0x4A010001 },
-    { 0x4AF80001 },
+    { 1, 0, 1, 0x49 },
+    { 2, 0, 1, 0x4A },
+    { 1, 0, 1, 0x49 },
+    { 2, 0, 1, 0x4A },
+    { 1, 0, 1, 0x49 },
+    { 2, 0, 1, 0x4A },
+    { 1, 0, 1, 0x49 },
+    { 1, 0, 1, 0x4A },
+    { 1, 0, -8, 0x4A },
 };
 
 union AnimationStep D_800F93F8[] = {
-    { 0x4B010001 },
-    { 0x4C010002 },
-    { 0x4B010001 },
-    { 0x4C010001 },
-    { 0x4CFC0001 },
+    { 1, 0, 1, 0x4B },
+    { 2, 0, 1, 0x4C },
+    { 1, 0, 1, 0x4B },
+    { 1, 0, 1, 0x4C },
+    { 1, 0, -4, 0x4C },
 };
 
 union AnimationStep D_800F940C[] = {
-    { 0x42000002 },
+    { 2, 0, 0, 0x42 },
 };
 
 union AnimationStep D_800F9410[] = {
-    { 0x43000002 },
+    { 2, 0, 0, 0x43 },
 };
 
 union AnimationStep D_800F9414[] = {
-    { 0x44000002 },
+    { 2, 0, 0, 0x44 },
 };
 
 union AnimationStep D_800F9418[] = {
-    { 0x45000002 },
+    { 2, 0, 0, 0x45 },
 };
 
 union AnimationStep D_800F941C[] = {
-    { 0x46000002 },
+    { 2, 0, 0, 0x46 },
 };
 
 union AnimationStep D_800F9420[] = {
-    { 0x47000002 },
+    { 2, 0, 0, 0x47 },
 };
 
 union AnimationStep D_800F9424[] = {
-    { 0x48000002 },
+    { 2, 0, 0, 0x48 },
 };
 
 union AnimationStep* D_800F9428[31] = {
@@ -1909,191 +1927,191 @@ union AnimationStep* D_800F9428[31] = {
 };
 
 union AnimationStep D_800F94A4[] = {
-    { 0x25010005 },
-    { 0x26010108 },
-    { 0x25010106 },
-    { 0x25000101 },
-    { 0x00000001 },
+    { 5, 0, 1, 0x25 },
+    { 8, 1, 1, 0x26 },
+    { 6, 1, 1, 0x25 },
+    { 1, 1, 0, 0x25 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep D_800F94B8[] = {
-    { 0x0F010008 },
-    { 0x0F01010C },
-    { 0x0F000101 },
+    { 8, 0, 1, 0x0F },
+    { 12, 1, 1, 0x0F },
+    { 1, 1, 0, 0x0F },
 };
 
 union AnimationStep D_800F94C4[] = {
-    { 0x0F010002 },
-    { 0x24010003 },
-    { 0x13010001 },
-    { 0x21010001 },
-    { 0x14010001 },
-    { 0x22010001 },
-    { 0x23010001 },
-    { 0x24010013 },
-    { 0x24000001 },
+    { 2, 0, 1, 0x0F },
+    { 3, 0, 1, 0x24 },
+    { 1, 0, 1, 0x13 },
+    { 1, 0, 1, 0x21 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x22 },
+    { 1, 0, 1, 0x23 },
+    { 19, 0, 1, 0x24 },
+    { 1, 0, 0, 0x24 },
 };
 
 union AnimationStep D_800F94E8[] = {
-    { 0x19010001 },
-    { 0x1A010001 },
-    { 0x1B010001 },
-    { 0x1C010001 },
-    { 0x19010001 },
-    { 0x1A010001 },
-    { 0x1B010001 },
-    { 0x1C010001 },
-    { 0x19010101 },
-    { 0x1A010101 },
-    { 0x1B010101 },
-    { 0x1C010101 },
-    { 0x19010101 },
-    { 0x1A010101 },
-    { 0x1B010101 },
-    { 0x1C010101 },
-    { 0x1CFC0101 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1A },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1A },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, 1, 0x1C },
+    { 1, 1, 1, 0x19 },
+    { 1, 1, 1, 0x1A },
+    { 1, 1, 1, 0x1B },
+    { 1, 1, 1, 0x1C },
+    { 1, 1, 1, 0x19 },
+    { 1, 1, 1, 0x1A },
+    { 1, 1, 1, 0x1B },
+    { 1, 1, 1, 0x1C },
+    { 1, 1, -4, 0x1C },
 };
 
 union AnimationStep D_800F952C[] = {
-    { 0x10010002 },
-    { 0x20010003 },
-    { 0x11010001 },
-    { 0x1D010001 },
-    { 0x12010001 },
-    { 0x1E010001 },
-    { 0x1F010001 },
-    { 0x20010013 },
-    { 0x20000001 },
+    { 2, 0, 1, 0x10 },
+    { 3, 0, 1, 0x20 },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x1F },
+    { 19, 0, 1, 0x20 },
+    { 1, 0, 0, 0x20 },
 };
 
 union AnimationStep D_800F9550[] = {
-    { 0x15010101 },
-    { 0x16010101 },
-    { 0x17010101 },
-    { 0x18FD0101 },
+    { 1, 1, 1, 0x15 },
+    { 1, 1, 1, 0x16 },
+    { 1, 1, 1, 0x17 },
+    { 1, 1, -3, 0x18 },
 };
 
 union AnimationStep D_800F9560[] = {
-    { 0x2C000001 },
+    { 1, 0, 0, 0x2C },
 };
 
 union AnimationStep D_800F9564[] = {
-    { 0x2A01000A },
-    { 0x2B01000A },
-    { 0x2901000A },
-    { 0x2801000A },
-    { 0x00010005 },
-    { 0x27010106 },
-    { 0x00010005 },
-    { 0x00000001 },
+    { 10, 0, 1, 0x2A },
+    { 10, 0, 1, 0x2B },
+    { 10, 0, 1, 0x29 },
+    { 10, 0, 1, 0x28 },
+    { 5, 0, 1, 0x00 },
+    { 6, 1, 1, 0x27 },
+    { 5, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep D_800F9584[] = {
-    { 0x27010005 },
-    { 0x28010005 },
-    { 0x29010005 },
-    { 0x2B010005 },
-    { 0x2C010003 },
-    { 0x2D010003 },
-    { 0x2C000008 },
+    { 5, 0, 1, 0x27 },
+    { 5, 0, 1, 0x28 },
+    { 5, 0, 1, 0x29 },
+    { 5, 0, 1, 0x2B },
+    { 3, 0, 1, 0x2C },
+    { 3, 0, 1, 0x2D },
+    { 8, 0, 0, 0x2C },
 };
 
 union AnimationStep D_800F95A0[] = {
-    { 0x2E010005 },
-    { 0x2F010005 },
-    { 0x30010005 },
-    { 0x31010005 },
-    { 0x32010005 },
-    { 0x33010005 },
-    { 0x34010005 },
-    { 0x35010005 },
-    { 0x36010005 },
-    { 0x36F70001 },
+    { 5, 0, 1, 0x2E },
+    { 5, 0, 1, 0x2F },
+    { 5, 0, 1, 0x30 },
+    { 5, 0, 1, 0x31 },
+    { 5, 0, 1, 0x32 },
+    { 5, 0, 1, 0x33 },
+    { 5, 0, 1, 0x34 },
+    { 5, 0, 1, 0x35 },
+    { 5, 0, 1, 0x36 },
+    { 1, 0, -9, 0x36 },
 };
 
 union AnimationStep D_800F95C8[] = {
-    { 0x37010002 },
-    { 0x38010002 },
-    { 0x39010002 },
-    { 0x3A010002 },
-    { 0x3B010002 },
-    { 0x3C010002 },
-    { 0x37010001 },
-    { 0x38010001 },
-    { 0x39010001 },
-    { 0x3A010001 },
-    { 0x3B010001 },
-    { 0x3C010001 },
-    { 0x3CF40001 },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x3B },
+    { 2, 0, 1, 0x3C },
+    { 1, 0, 1, 0x37 },
+    { 1, 0, 1, 0x38 },
+    { 1, 0, 1, 0x39 },
+    { 1, 0, 1, 0x3A },
+    { 1, 0, 1, 0x3B },
+    { 1, 0, 1, 0x3C },
+    { 1, 0, -12, 0x3C },
 };
 
 union AnimationStep D_800F95FC[] = {
-    { 0x44010002 },
-    { 0x46010002 },
-    { 0x45010002 },
-    { 0x47FD0002 },
+    { 2, 0, 1, 0x44 },
+    { 2, 0, 1, 0x46 },
+    { 2, 0, 1, 0x45 },
+    { 2, 0, -3, 0x47 },
 };
 
 union AnimationStep D_800F960C[] = {
-    { 0x48010002 },
-    { 0x49010002 },
-    { 0x4A010002 },
-    { 0x4BFD0002 },
+    { 2, 0, 1, 0x48 },
+    { 2, 0, 1, 0x49 },
+    { 2, 0, 1, 0x4A },
+    { 2, 0, -3, 0x4B },
 };
 
 union AnimationStep D_800F961C[] = {
-    { 0x4C000002 },
+    { 2, 0, 0, 0x4C },
 };
 
 union AnimationStep D_800F9620[] = {
-    { 0x4D000002 },
+    { 2, 0, 0, 0x4D },
 };
 
 union AnimationStep D_800F9624[] = {
-    { 0x4E000002 },
+    { 2, 0, 0, 0x4E },
 };
 
 union AnimationStep D_800F9628[] = {
-    { 0x4F000002 },
+    { 2, 0, 0, 0x4F },
 };
 
 union AnimationStep D_800F962C[] = {
-    { 0x50010002 },
-    { 0x51010002 },
-    { 0x52010002 },
-    { 0x53FD0002 },
+    { 2, 0, 1, 0x50 },
+    { 2, 0, 1, 0x51 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, -3, 0x53 },
 };
 
 union AnimationStep D_800F963C[] = {
-    { 0x25000005 },
+    { 5, 0, 0, 0x25 },
 };
 
 union AnimationStep D_800F9640[] = {
-    { 0x3D000002 },
+    { 2, 0, 0, 0x3D },
 };
 
 union AnimationStep D_800F9644[] = {
-    { 0x3E000002 },
+    { 2, 0, 0, 0x3E },
 };
 
 union AnimationStep D_800F9648[] = {
-    { 0x3F000002 },
+    { 2, 0, 0, 0x3F },
 };
 
 union AnimationStep D_800F964C[] = {
-    { 0x40000002 },
+    { 2, 0, 0, 0x40 },
 };
 
 union AnimationStep D_800F9650[] = {
-    { 0x41000002 },
+    { 2, 0, 0, 0x41 },
 };
 
 union AnimationStep D_800F9654[] = {
-    { 0x42000002 },
+    { 2, 0, 0, 0x42 },
 };
 
 union AnimationStep D_800F9658[] = {
-    { 0x43000002 },
+    { 2, 0, 0, 0x43 },
 };
 
 union AnimationStep* D_800F965C[38] = {

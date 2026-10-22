@@ -20,6 +20,7 @@ void cyberspace_warp_wait(struct MiscObj*);
 extern void (*cyberspace_warp_wait_funcs[])(struct MiscObj*);
 void cyberspace_warp_wait_start(struct MiscObj*);
 void cyberspace_warp_wait_blink(struct MiscObj*);
+#include "weapon_resources.h"
 
 void cyberspace_warp_update(struct MiscObj* self)
 {
@@ -34,7 +35,7 @@ struct Misc33Position {
     s16 y;
 };
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CE388(struct MiscObj* arg0);
 extern union AnimationStep* cyberspace_warp_animations[5];
 extern struct Misc33Position cyberspace_warp_positions[6];
@@ -42,7 +43,7 @@ extern struct Misc33Position cyberspace_warp_exit_position;
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CE388(struct MiscObj* arg0)
 {
     s32 resource;
@@ -52,10 +53,10 @@ void func_800CE388(struct MiscObj* arg0)
     arg0->animation_table = (u32**)cyberspace_warp_animations;
     arg0->bg_offset = g_Player.bg_offset;
     resource = func_8002938C(0x9B);
-    arg0->unk40 = D_801406A8[resource] >> 7;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
     resource = func_8002938C(0x9B);
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    arg0->unk42 = CLUT_FROM_ID(0x9B);
+    arg0->unk42 = OBJECT_STAGE_CLUT(0x9B);
     arg0->x_pos.i.hi = g_Player.x_pos.i.hi;
     arg0->y_pos.i.hi = g_Player.y_pos.i.hi;
     switch ((u32)arg0->unk2) {
@@ -63,7 +64,7 @@ void func_800CE388(struct MiscObj* arg0)
         set_animation(arg0, 0);
         arg0->ext.misc_33.timer = 0x48;
         arg0->unk5 = 0;
-        arg0->unk16 = 6;
+        arg0->unk16 = VISUAL_SATURN_LAYER(6);
         break;
     case 1:
         set_animation(arg0, 1);
@@ -136,7 +137,7 @@ void cyberspace_warp_wait_start(struct MiscObj* self)
     animate_object(ANIMATED_OBJECT(self));
     self->ext.misc_33.timer = 0x14;
     self->unk6 += 1;
-    func_8001540C(2, 0xE8, self);
+    func_8001540C(2, SATURN_SOUND(0xE8, 0xA9), self);
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -156,68 +157,63 @@ void cyberspace_warp_wait_blink(struct MiscObj* self)
     }
 }
 
-#define STEP(value) \
-    {               \
-        (value)     \
-    }
-
 union AnimationStep cyberspace_warp_anim_0[24] = {
-    STEP(0x00010003),
-    STEP(0x01010003),
-    STEP(0x03010003),
-    STEP(0x05010003),
-    STEP(0x07010003),
-    STEP(0x09010003),
-    STEP(0x0B010003),
-    STEP(0x0D010003),
-    STEP(0x0F010003),
-    STEP(0x11010003),
-    STEP(0x13010003),
-    STEP(0x15010003),
-    STEP(0x17010003),
-    STEP(0x19010003),
-    STEP(0x1B010003),
-    STEP(0x1D010003),
-    STEP(0x1F010003),
-    STEP(0x21010003),
-    STEP(0x23010003),
-    STEP(0x25010003),
-    STEP(0x27010003),
-    STEP(0x29010003),
-    STEP(0x2B010003),
-    STEP(0x2D000003),
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 1, 0x05 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x0B },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0F },
+    { 3, 0, 1, 0x11 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, 1, 0x15 },
+    { 3, 0, 1, 0x17 },
+    { 3, 0, 1, 0x19 },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1D },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x21 },
+    { 3, 0, 1, 0x23 },
+    { 3, 0, 1, 0x25 },
+    { 3, 0, 1, 0x27 },
+    { 3, 0, 1, 0x29 },
+    { 3, 0, 1, 0x2B },
+    { 3, 0, 0, 0x2D },
 };
 
 union AnimationStep cyberspace_warp_anim_1[24] = {
-    STEP(0x00010003),
-    STEP(0x02010003),
-    STEP(0x04010003),
-    STEP(0x06010003),
-    STEP(0x08010003),
-    STEP(0x0A010003),
-    STEP(0x0C010003),
-    STEP(0x0E010003),
-    STEP(0x10010003),
-    STEP(0x12010003),
-    STEP(0x14010003),
-    STEP(0x16010003),
-    STEP(0x18010003),
-    STEP(0x1A010003),
-    STEP(0x1C010003),
-    STEP(0x1E010003),
-    STEP(0x20010003),
-    STEP(0x22010003),
-    STEP(0x24010003),
-    STEP(0x26010003),
-    STEP(0x28010003),
-    STEP(0x2A010003),
-    STEP(0x2C010003),
-    STEP(0x2E000003),
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x04 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x0A },
+    { 3, 0, 1, 0x0C },
+    { 3, 0, 1, 0x0E },
+    { 3, 0, 1, 0x10 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x14 },
+    { 3, 0, 1, 0x16 },
+    { 3, 0, 1, 0x18 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1C },
+    { 3, 0, 1, 0x1E },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, 1, 0x22 },
+    { 3, 0, 1, 0x24 },
+    { 3, 0, 1, 0x26 },
+    { 3, 0, 1, 0x28 },
+    { 3, 0, 1, 0x2A },
+    { 3, 0, 1, 0x2C },
+    { 3, 0, 0, 0x2E },
 };
 
-union AnimationStep cyberspace_warp_anim_2[1] = { STEP(0x2F000008) };
-union AnimationStep cyberspace_warp_anim_3[1] = { STEP(0x30000008) };
-union AnimationStep cyberspace_warp_anim_4[1] = { STEP(0x31000008) };
+union AnimationStep cyberspace_warp_anim_2[1] = { { 8, 0, 0, 0x2F } };
+union AnimationStep cyberspace_warp_anim_3[1] = { { 8, 0, 0, 0x30 } };
+union AnimationStep cyberspace_warp_anim_4[1] = { { 8, 0, 0, 0x31 } };
 
 union AnimationStep* cyberspace_warp_animations[5] = {
     cyberspace_warp_anim_0,

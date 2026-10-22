@@ -10,20 +10,22 @@
 extern void (*vent_state_funcs[])(struct MiscObj*);
 
 void vent_animate(struct MiscObj*);
+#include "weapon_resources.h"
 
 // vent_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA86C(struct MiscObj* self);
 extern union AnimationStep* vent_animations[2];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA86C(struct MiscObj* self)
 {
     s32 animation;
 
-    self->unk42 = 0x7881;
-    self->unk40 = D_801406A8[4] >> 7;
+    self->unk42 = OBJECT_CLUT(0x7881);
+    self->unk40 = OBJECT_STAGE_TEXTURE(4);
     self->animation_table = (u32**)vent_animations;
     self->x_pos.val = 0x7C0000;
     self->y_pos.val = 0x1880000;
@@ -137,16 +139,16 @@ void vent_spawn_puffs(struct MiscObj* self, u8 count)
 }
 
 union AnimationStep vent_anim_0[4] = {
-    { 0x00010006 },
-    { 0x01010006 },
-    { 0x02010005 },
-    { 0x02FD0001 },
+    { 6, 0, 1, 0x00 },
+    { 6, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 1, 0, -3, 0x02 },
 };
 
 union AnimationStep vent_anim_1[3] = {
-    { 0x03000001 },
-    { 0x05000001 },
-    { 0x04000001 },
+    { 1, 0, 0, 0x03 },
+    { 1, 0, 0, 0x05 },
+    { 1, 0, 0, 0x04 },
 };
 
 union AnimationStep* vent_animations[2] = { vent_anim_0, vent_anim_1 };

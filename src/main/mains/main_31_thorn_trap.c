@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[31]
 // 8005B894..8005C824
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_31_thorn_trap.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
@@ -8,8 +9,9 @@
 #include "main/misc/misc_02_rubble.h"
 #include "main/objects.h"
 #include "main/visuals/visual_03_small_effect.h"
+#include "main/object_motion.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/object_motion.h"
 #endif
 
@@ -35,7 +37,7 @@ void thorn_trap_extend_high(struct MainObj* arg0);
 
 extern void (*thorn_trap_state_funcs[])(struct MainObj*);
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern union AnimationStep* thorn_trap_animations[21];
 extern s8 D_800FDC40[8];
 #endif
@@ -46,16 +48,15 @@ void thorn_trap_update(struct MainObj* self)
 }
 
 // thorn_trap_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005B8D0(struct MainObj* self);
 void func_8005BA2C(struct MainObj* self);
 void func_8005BDE4(struct MainObj* self);
 void func_8005BFC0(struct MainObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/mains/main_31_thorn_trap.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005B8D0(struct MainObj* self)
 {
     s32 variant = ((s8)self->unk2 >> 1) % 3;
@@ -69,7 +70,7 @@ void func_8005B8D0(struct MainObj* self)
         self->unk15 = 0;
     } else {
         self->x_pos.val = background_objects[0].x_pos.val + 0x1AC0000;
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
     self->animation_table = (const u8* const*)thorn_trap_animations;
     self->unk16 = 0x21;
@@ -97,7 +98,7 @@ void thorn_trap_idle(struct MainObj* self)
 }
 
 // thorn_trap_wait
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005BA2C(struct MainObj* self)
 {
     u8* ext = (u8*)&self->ext;
@@ -220,7 +221,7 @@ void thorn_trap_extend(struct MainObj* self)
 }
 
 // thorn_trap_extended
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005BDE4(struct MainObj* self)
 {
     if (self->animation_step.fields.event != 0) {
@@ -273,7 +274,7 @@ void thorn_trap_extend_high(struct MainObj* self)
 }
 
 // thorn_trap_extended_high
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005BFC0(struct MainObj* self)
 {
     if (self->animation_step.fields.event != 0) {
@@ -504,179 +505,179 @@ struct Unk_unk68 D_800FDA0C[] = {
 };
 
 union AnimationStep thorn_trap_anim_0[] = {
-    { 0x0D010001 },
-    { 0x0DFF0001 },
-    { 0x0101000D },
-    { 0x0201000D },
-    { 0x03010010 },
-    { 0x04010010 },
-    { 0x05010010 },
-    { 0x06010010 },
-    { 0x0701000F },
-    { 0x07F90001 },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, -1, 0x0D },
+    { 13, 0, 1, 0x01 },
+    { 13, 0, 1, 0x02 },
+    { 16, 0, 1, 0x03 },
+    { 16, 0, 1, 0x04 },
+    { 16, 0, 1, 0x05 },
+    { 16, 0, 1, 0x06 },
+    { 15, 0, 1, 0x07 },
+    { 1, 0, -7, 0x07 },
 };
 
 union AnimationStep thorn_trap_anim_1[] = {
-    { 0x02010004 },
-    { 0x03010004 },
-    { 0x04010004 },
-    { 0x05010004 },
-    { 0x06010004 },
-    { 0x07010003 },
-    { 0x07FA0001 },
+    { 4, 0, 1, 0x02 },
+    { 4, 0, 1, 0x03 },
+    { 4, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 4, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 1, 0, -6, 0x07 },
 };
 
 union AnimationStep thorn_trap_anim_2[] = {
-    { 0x02010004 },
-    { 0x03010004 },
-    { 0x04010004 },
-    { 0x05010004 },
-    { 0x06010004 },
-    { 0x07010004 },
-    { 0x02010004 },
-    { 0x00010003 },
-    { 0x00F80001 },
+    { 4, 0, 1, 0x02 },
+    { 4, 0, 1, 0x03 },
+    { 4, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 4, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 4, 0, 1, 0x02 },
+    { 3, 0, 1, 0x00 },
+    { 1, 0, -8, 0x00 },
 };
 
 union AnimationStep thorn_trap_anim_3[] = {
-    { 0x08010008 },
-    { 0x09010008 },
-    { 0x0A010108 },
-    { 0x0B010008 },
-    { 0x0C010008 },
-    { 0x0D01000F },
-    { 0x0E010006 },
-    { 0x0F010007 },
-    { 0x0E010006 },
-    { 0x0D010004 },
-    { 0x0DFF0001 },
+    { 8, 0, 1, 0x08 },
+    { 8, 0, 1, 0x09 },
+    { 8, 1, 1, 0x0A },
+    { 8, 0, 1, 0x0B },
+    { 8, 0, 1, 0x0C },
+    { 15, 0, 1, 0x0D },
+    { 6, 0, 1, 0x0E },
+    { 7, 0, 1, 0x0F },
+    { 6, 0, 1, 0x0E },
+    { 4, 0, 1, 0x0D },
+    { 1, 0, -1, 0x0D },
 };
 
 union AnimationStep thorn_trap_anim_4[] = {
-    { 0x0D010005 },
-    { 0x10010005 },
-    { 0x11010005 },
-    { 0x12010009 },
-    { 0x2C010005 },
-    { 0x2D01010A },
-    { 0x2D01030A },
-    { 0x2D010506 },
-    { 0x2C010005 },
-    { 0x12010009 },
-    { 0x11010005 },
-    { 0x10010005 },
-    { 0x0D010004 },
-    { 0x0DF50001 },
+    { 5, 0, 1, 0x0D },
+    { 5, 0, 1, 0x10 },
+    { 5, 0, 1, 0x11 },
+    { 9, 0, 1, 0x12 },
+    { 5, 0, 1, 0x2C },
+    { 10, 1, 1, 0x2D },
+    { 10, 3, 1, 0x2D },
+    { 6, 5, 1, 0x2D },
+    { 5, 0, 1, 0x2C },
+    { 9, 0, 1, 0x12 },
+    { 5, 0, 1, 0x11 },
+    { 5, 0, 1, 0x10 },
+    { 4, 0, 1, 0x0D },
+    { 1, 0, -11, 0x0D },
 };
 
 union AnimationStep thorn_trap_anim_5[] = {
-    { 0x14010004 },
-    { 0x15010004 },
-    { 0x16010004 },
-    { 0x17010004 },
-    { 0x18010004 },
-    { 0x19010104 },
-    { 0x1A010004 },
-    { 0x1B010003 },
-    { 0x1BF80001 },
+    { 4, 0, 1, 0x14 },
+    { 4, 0, 1, 0x15 },
+    { 4, 0, 1, 0x16 },
+    { 4, 0, 1, 0x17 },
+    { 4, 0, 1, 0x18 },
+    { 4, 1, 1, 0x19 },
+    { 4, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1B },
+    { 1, 0, -8, 0x1B },
 };
 
 union AnimationStep thorn_trap_anim_6[] = {
-    { 0x1C010003 },
-    { 0x1D010001 },
-    { 0x1E010002 },
-    { 0x1F010003 },
-    { 0x20010004 },
-    { 0x1F010003 },
-    { 0x1E010065 },
-    { 0x1F010003 },
-    { 0x20010003 },
-    { 0x1F010003 },
-    { 0x20010003 },
-    { 0x1F010003 },
-    { 0x20010003 },
-    { 0x20000001 },
+    { 3, 0, 1, 0x1C },
+    { 1, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 3, 0, 1, 0x1F },
+    { 4, 0, 1, 0x20 },
+    { 3, 0, 1, 0x1F },
+    { 101, 0, 1, 0x1E },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x20 },
+    { 1, 0, 0, 0x20 },
 };
 
 union AnimationStep thorn_trap_anim_7[] = {
-    { 0x0D010005 },
-    { 0x2E010006 },
-    { 0x2F010007 },
-    { 0x2E010106 },
-    { 0x2F010007 },
-    { 0x2E010106 },
-    { 0x2F010007 },
-    { 0x2E010106 },
-    { 0x2F010007 },
-    { 0x2E010106 },
-    { 0x0D010004 },
-    { 0x0DF50001 },
+    { 5, 0, 1, 0x0D },
+    { 6, 0, 1, 0x2E },
+    { 7, 0, 1, 0x2F },
+    { 6, 1, 1, 0x2E },
+    { 7, 0, 1, 0x2F },
+    { 6, 1, 1, 0x2E },
+    { 7, 0, 1, 0x2F },
+    { 6, 1, 1, 0x2E },
+    { 7, 0, 1, 0x2F },
+    { 6, 1, 1, 0x2E },
+    { 4, 0, 1, 0x0D },
+    { 1, 0, -11, 0x0D },
 };
 
 union AnimationStep thorn_trap_anim_8[] = {
-    { 0x21010002 },
-    { 0x22010002 },
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25010002 },
-    { 0x26010001 },
-    { 0x26FA0001 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, -6, 0x26 },
 };
 
 union AnimationStep thorn_trap_anim_9[] = {
-    { 0x00010001 },
-    { 0x30010005 },
-    { 0x31010004 },
-    { 0x32010002 },
-    { 0x32000101 },
+    { 1, 0, 1, 0x00 },
+    { 5, 0, 1, 0x30 },
+    { 4, 0, 1, 0x31 },
+    { 2, 0, 1, 0x32 },
+    { 1, 1, 0, 0x32 },
 };
 
 union AnimationStep thorn_trap_anim_10[] = {
-    { 0x32010001 },
-    { 0x31010004 },
-    { 0x30010005 },
-    { 0x31010003 },
-    { 0x31000001 },
+    { 1, 0, 1, 0x32 },
+    { 4, 0, 1, 0x31 },
+    { 5, 0, 1, 0x30 },
+    { 3, 0, 1, 0x31 },
+    { 1, 0, 0, 0x31 },
 };
 
 union AnimationStep thorn_trap_anim_11[] = {
-    { 0x13000001 },
+    { 1, 0, 0, 0x13 },
 };
 
 union AnimationStep thorn_trap_anim_12[] = {
-    { 0x27000001 },
+    { 1, 0, 0, 0x27 },
 };
 
 union AnimationStep thorn_trap_anim_13[] = {
-    { 0x28000001 },
+    { 1, 0, 0, 0x28 },
 };
 
 union AnimationStep thorn_trap_anim_14[] = {
-    { 0x29000001 },
+    { 1, 0, 0, 0x29 },
 };
 
 union AnimationStep thorn_trap_anim_15[] = {
-    { 0x2A000001 },
+    { 1, 0, 0, 0x2A },
 };
 
 union AnimationStep thorn_trap_anim_16[] = {
-    { 0x2B000001 },
+    { 1, 0, 0, 0x2B },
 };
 
 union AnimationStep thorn_trap_anim_17[] = {
-    { 0x33000001 },
+    { 1, 0, 0, 0x33 },
 };
 
 union AnimationStep thorn_trap_anim_18[] = {
-    { 0x34000001 },
+    { 1, 0, 0, 0x34 },
 };
 
 union AnimationStep thorn_trap_anim_19[] = {
-    { 0x35000001 },
+    { 1, 0, 0, 0x35 },
 };
 
 union AnimationStep thorn_trap_anim_20[] = {
-    { 0x36000001 },
+    { 1, 0, 0, 0x36 },
 };
 
 union AnimationStep* thorn_trap_animations[] = {

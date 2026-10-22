@@ -6,6 +6,7 @@
 #include "main/objects.h"
 
 void cyclone_trail_animate(struct MiscObj*);
+#include "weapon_resources.h"
 
 void cyclone_trail_update(struct MiscObj* self)
 {
@@ -17,17 +18,18 @@ void cyclone_trail_update(struct MiscObj* self)
 }
 
 // cyclone_trail_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CF184(struct MiscObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CF184(struct MiscObj* arg0)
 {
     struct BaseObj* source = arg0->ext.pointer.unk50;
 
     arg0->on_screen = 1;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->state++;
     if ((u8)arg0->unk2 < 5)
         set_animation(arg0, 0x14 + arg0->unk2);

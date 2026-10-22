@@ -1,12 +1,14 @@
 // MainObj, main_object_update_funcs[58]
 // 800743FC..80074E84
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_58_beam_drone.h"
 #include "main/objects.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -50,7 +52,11 @@ void beam_drone_update(struct MainObj* self)
 }
 
 // beam_drone_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800745E8(struct MainObj* self);
 void func_80074438(struct MainObj* self);
 extern struct Unk_unk68 D_80107AF8[];
@@ -59,7 +65,7 @@ extern struct Unk_unk68 beam_drone_debris;
 extern void (*beam_drone_step_funcs[6])(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80074438(struct MainObj* self)
 {
     self->active = 0x41;
@@ -71,7 +77,7 @@ void func_80074438(struct MainObj* self)
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     if (self->unk2 == 0)
-        self->unk15 = g_Player.x_pos.val < self->x_pos.val ? 0 : 0x40;
+        self->unk15 = g_Player.x_pos.val < self->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     switch (self->unk2) {
     case 0:
         self->x_speed = 0;
@@ -90,7 +96,7 @@ void func_80074438(struct MainObj* self)
         break;
     }
     self->animation_table = (const u8* const*)beam_drone_animations;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
@@ -109,7 +115,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_58_beam_drone", func_80074438);
 #endif
 
 // beam_drone_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800745E8(struct MainObj* self)
 {
     s32 status;
@@ -217,7 +223,7 @@ void beam_drone_charge_start(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 7);
     beam_drone_spawn_charge(ANIMATED_OBJECT(self));
-    func_8001540C(2, 0x2D, self);
+    func_8001540C(2, SATURN_SOUND(0x2D, 0x7A), self);
     self->unk7C = 0x50;
     self->unk6++;
 }
@@ -242,7 +248,7 @@ void beam_drone_fire_start(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 1);
     beam_drone_spawn_beam(self);
-    func_8001540C(2, 0x2C, self);
+    func_8001540C(2, SATURN_SOUND(0x2C, 0x79), self);
     self->unk7C = 0x12;
     self->unk6++;
 }
@@ -354,7 +360,7 @@ void beam_drone_spawn_charge(struct AnimatedObj* self)
         obj->unk3C = self->unk3C;
         obj->unk40 = self->unk40;
         obj->bg_offset = self->bg_offset;
-        obj->unk16 = 4;
+        obj->unk16 = VISUAL_SATURN_LAYER(4);
         obj->unk15 = self->unk15;
         obj->x_pos.val = self->x_pos.val;
         obj->y_pos.val = self->y_pos.val;
@@ -371,13 +377,13 @@ struct Unk_unk68 beam_drone_anim_0[4] = {
 };
 
 union AnimationStep beam_drone_anim_1[] = {
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0A010004 },
-    { 0x0C010004 },
-    { 0x0D010002 },
-    { 0x0E010002 },
-    { 0x0F000002 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 4, 0, 1, 0x0A },
+    { 4, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 0, 0x0F },
 };
 
 struct Unk_unk68 beam_drone_anim_2[4] = {
@@ -408,23 +414,23 @@ struct Unk_unk68 beam_drone_anim_4[7] = {
 };
 
 union AnimationStep beam_drone_anim_5[] = {
-    { 0x22010001 },
-    { 0x21010001 },
-    { 0x20010001 },
-    { 0x1F010001 },
-    { 0x1E010002 },
-    { 0x1D010002 },
-    { 0x1C000002 },
+    { 1, 0, 1, 0x22 },
+    { 1, 0, 1, 0x21 },
+    { 1, 0, 1, 0x20 },
+    { 1, 0, 1, 0x1F },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 0, 0x1C },
 };
 
 union AnimationStep beam_drone_anim_6[] = {
-    { 0x29010001 },
-    { 0x28010001 },
-    { 0x27010001 },
-    { 0x26010001 },
-    { 0x25010002 },
-    { 0x24010002 },
-    { 0x23000002 },
+    { 1, 0, 1, 0x29 },
+    { 1, 0, 1, 0x28 },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x26 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 0, 0x23 },
 };
 
 struct Unk_unk68 beam_drone_anim_7[8] = {
@@ -455,15 +461,15 @@ struct Unk_unk68 beam_drone_anim_8[13] = {
 };
 
 union AnimationStep beam_drone_anim_9[] = {
-    { 0x2A000001 },
+    { 1, 0, 0, 0x2A },
 };
 
 union AnimationStep beam_drone_anim_10[] = {
-    { 0x2B000001 },
+    { 1, 0, 0, 0x2B },
 };
 
 union AnimationStep beam_drone_anim_11[] = {
-    { 0x2C000001 },
+    { 1, 0, 0, 0x2C },
 };
 
 void* beam_drone_animations[12] = {

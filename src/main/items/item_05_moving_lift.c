@@ -3,16 +3,19 @@
 #include "common.h"
 #include "main/items/item_05_moving_lift.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/55C4.h"
 #include "main/object_motion.h"
-#endif
 
 // moving_lift_state_funcs
 extern void (*moving_lift_state_funcs[])(struct ItemObj*);
 
 void moving_lift_despawn(struct ItemObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#endif
 
 struct Item05AnimationStep {
     u8 duration;
@@ -133,7 +136,8 @@ void moving_lift_update(struct ItemObj* arg0)
 }
 
 // moving_lift_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C0EBC(struct ItemObj* arg0);
 void func_800C1050(struct ItemObj* arg0);
 void moving_lift_spawn_effect(struct ItemObj*);
@@ -141,7 +145,7 @@ void moving_lift_spawn_all(void);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C0EBC(struct ItemObj* arg0)
 {
     s8 index;
@@ -150,9 +154,9 @@ void func_800C0EBC(struct ItemObj* arg0)
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)moving_lift_animations;
-    arg0->unk42 = 0x788C;
-    arg0->unk40 = D_801406A8[5] >> 7;
-    arg0->unk16 = 6;
+    arg0->unk42 = OBJECT_CLUT(0x788C);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(5);
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk5C = 0xF;
     arg0->unk61 = 0;
     arg0->unk54 = NULL;
@@ -175,7 +179,7 @@ INCLUDE_ASM("main/nonmatchings/items/item_05_moving_lift", func_800C0EBC);
 #endif
 
 // moving_lift_move
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C1050(struct ItemObj* arg0)
 {
     const struct Item05MotionConfig* config;
@@ -247,7 +251,7 @@ void moving_lift_spawn_effect(struct ItemObj* arg0)
         visualObj->animation_table = (u32**)arg0->animation_table;
         visualObj->unk40 = arg0->unk40;
         visualObj->unk42 = arg0->unk42;
-        visualObj->unk16 = 5;
+        visualObj->unk16 = VISUAL_SATURN_LAYER(5);
         visualObj->x_pos.val = arg0->x_pos.val;
         visualObj->y_pos.val = arg0->y_pos.val;
     }

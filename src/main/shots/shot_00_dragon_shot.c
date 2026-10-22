@@ -21,6 +21,7 @@ void dragon_shot_pulse(struct ShotObj*);
 void dragon_shot_bomb(struct ShotObj*);
 void dragon_shot_despawn(struct ShotObj*);
 void dragon_shot_follow_owner(struct ShotObj*);
+#include "weapon_resources.h"
 
 u8 dragon_shot_flame_box[4] = { 0xB4, 0x1B, 0x52, 0x31 };
 u8 dragon_shot_flame_hit_box[4] = { 0x9E, 0xAE, 0x2C, 0x72 };
@@ -41,11 +42,12 @@ void dragon_shot_update(struct ShotObj* self)
 }
 
 // dragon_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800994DC(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800994DC(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
@@ -110,7 +112,7 @@ void func_800994DC(struct ShotObj* arg0)
         arg0->unk60 = 5;
         arg0->x_pos.val = owner->x_pos.val;
         arg0->bg_offset = 0;
-        arg0->unk16 = 6;
+        arg0->unk16 = VISUAL_SATURN_LAYER(6);
         arg0->state = 5;
         arg0->y_pos.val = owner->y_pos.val;
         if (owner->unk7E != 0) {

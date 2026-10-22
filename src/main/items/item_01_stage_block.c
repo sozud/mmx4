@@ -25,6 +25,7 @@ extern void (*stage_block_step_funcs[])(struct ItemObj*);
 void stage_block_wait_trigger(struct ItemObj*);
 
 void stage_block_stop(struct ItemObj*);
+#include "weapon_resources.h"
 
 void stage_block_update(struct ItemObj* arg0)
 {
@@ -39,7 +40,7 @@ struct Item01DebrisPosition {
     s16 y;
 };
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BEBFC(struct ItemObj* arg0);
 void func_800BEFCC(struct ItemObj* arg0);
 void func_800BF1FC(struct ItemObj* arg0);
@@ -51,7 +52,7 @@ extern struct Item01DebrisPosition stage_block_spawn_positions[6];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BEBFC(struct ItemObj* arg0)
 {
     u8 index = (u8)arg0->unk2;
@@ -65,14 +66,14 @@ void func_800BEBFC(struct ItemObj* arg0)
     arg0->animation_step.fields.frame_index = entry->flags_and_palette & 0x3F;
     arg0->y_vel.val = index == 9 ? 0x40000 : 0;
     arg0->unk2C = entry->velocity;
-    arg0->unk40 = 0x1500;
+    arg0->unk40 = SATURN_ALT(0x1500, OBJECT_STAGE_TEXTURE(8));
     if (index == 8 || index == 9)
-        arg0->unk42 = 0x7941;
+        arg0->unk42 = OBJECT_CLUT(0x7941);
     else if (index == 13)
-        arg0->unk42 = 0x79C4;
+        arg0->unk42 = OBJECT_CLUT(0x79C4);
     else
-        arg0->unk42 = 0x7983;
-    arg0->unk16 = 6;
+        arg0->unk42 = OBJECT_CLUT(0x7983);
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk68 = (struct Unk_unk68*)&stage_block_bounds[index];
     arg0->unk5C = 0x10;
     arg0->unk61 = 0;
@@ -145,7 +146,7 @@ void stage_block_wait_trigger(struct ItemObj* self)
 }
 
 // stage_block_fall
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BEFCC(struct ItemObj* arg0)
 {
     u8 kind = (u8)arg0->unk2;
@@ -192,7 +193,7 @@ INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BEFCC);
 #endif
 
 // stage_block_land
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BF1FC(struct ItemObj* arg0)
 {
     u8 kind = (u8)arg0->unk2;
@@ -242,9 +243,9 @@ void func_800BF1FC(struct ItemObj* arg0)
         obj->x_pos.i.hi = stage_block_spawn_positions[index].x;
         obj->y_pos.i.hi = stage_block_spawn_positions[index].y;
         resource = func_8002938C(7);
-        obj->unk40 = (u16)((u32)D_801406A8[(u8)resource] >> 7);
+        obj->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE((u8)resource));
         resource = func_8002938C(7);
-        obj->unk42 = SOME_COORDINATE_CONVERSION((u8)resource);
+        obj->unk42 = VISUAL_STAGE_PALETTE((u8)resource);
         resource = func_8002938C(7);
         obj->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES,
             (u8)resource);
@@ -266,10 +267,10 @@ extern u32 stage_block_explosion_sounds[4];
 void stage_block_destroyed(struct ItemObj* arg0)
 {
     if (--arg0->unk7C.timer != 0) {
-        if ((main_bss_state.frame_counter & 7) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 7) == 0) {
             func_800AF878(BASE_OBJECT(arg0), 1, 0x1F, 0x1F);
         }
-        if ((main_bss_state.frame_counter & 0xF) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 0xF) == 0) {
             func_8001540C(0, stage_block_explosion_sounds[get_random() & 3], arg0);
         }
     } else {
@@ -289,14 +290,16 @@ void drop_item(struct BaseObj* arg0, s8 arg1)
 }
 
 // drop_item_at
-#ifdef MMX4_PC
-// src/main/items/item_01_stage_block.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3)
 {
     const u8* weights = &drop_item_table[0][0];
     s32 offset = (s8)arg1 * 6;
+#ifdef MMX4_SATURN
+    s32 roll;
+#else
     s32 roll = get_random() & 0xFF;
+#endif
     struct ItemObj* item;
     s32 index;
     s32 counter;
@@ -304,6 +307,9 @@ void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3)
     if (engine_obj.stage == 5) {
         return;
     }
+#ifdef MMX4_SATURN
+    roll = get_random() & 0xFF;
+#endif
 
     counter = 0xFF;
     do {

@@ -13,6 +13,7 @@ extern void (*ride_armor_punch_state_funcs[])(struct WeaponObj*);
 void ride_armor_punch_init(struct WeaponObj*);
 void ride_armor_punch_main(struct WeaponObj*);
 void ride_armor_punch_despawn(struct WeaponObj*);
+#include "weapon_resources.h"
 
 void ride_armor_punch_update(struct WeaponObj* arg0)
 {

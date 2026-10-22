@@ -7,28 +7,28 @@ extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
 extern u32 D_800F45E4[10];
 
-void reset_game_engine();
+void reset_game_engine(void);
 
 void reset_entity(struct PlayerObj* arg0);
 
-void reset_main_and_shots();
+void reset_main_and_shots(void);
 
 // some kind of reset?
 void reset_objects(void);
 
-void func_8002AB20();
+void func_8002AB20(void);
 
 struct MainObj* find_free_main_obj(void);
 
-struct WeaponObj* find_free_weapon_obj();
+struct WeaponObj* find_free_weapon_obj(void);
 
 struct ShotObj* find_free_shot_obj(void);
 
-struct VisualObj* find_free_visual_obj();
+struct VisualObj* find_free_visual_obj(void);
 
 struct EffectObj* find_free_effect_obj(void);
 
-struct ItemObj* find_free_item_obj();
+struct ItemObj* find_free_item_obj(void);
 
 struct MiscObj* find_free_misc_obj(void);
 
@@ -36,11 +36,11 @@ struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1);
 
 struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1);
 
-struct QuadObj* find_free_quad_obj();
+struct QuadObj* find_free_quad_obj(void);
 
-struct LayerObj* find_free_layer_obj();
+struct LayerObj* find_free_layer_obj(void);
 
-struct UnkObj* find_free_unk_obj();
+struct UnkObj* find_free_unk_obj(void);
 
 void despawn_object(struct ObjectHeader* arg0);
 
@@ -143,6 +143,13 @@ u8 get_random()
     cur_random |= temp_v1 << 8;
 
     return cur_random;
+}
+#endif
+
+#ifdef MMX4_SATURN
+s32 saturn_get_random_signed(void)
+{
+    return (s8)get_random();
 }
 #endif
 
@@ -316,6 +323,30 @@ s16 func_8002BAA4(void)
     return count;
 }
 
+#ifdef MMX4_SATURN
+s16 get_layout_screen(s16 arg0, s16 arg1, s16 arg2)
+{
+    struct BackgroundObj* layer = &background_objects[arg0];
+    s16 x = (layer->x_pos.i.hi + arg1) / 16;
+    s16 y = (layer->y_pos.i.hi + arg2) / 16;
+    s16 width = layer->unk4E - layer->unk4D + 1;
+    s16 height = (u8)layer->max_y - (u8)layer->min_y + 1;
+    s16 column;
+    s16 row;
+
+    x -= layer->unk4D * 16;
+    y -= (u8)layer->min_y * 16;
+    while (x < 0) {
+        x += width * 16;
+    }
+    while (y < 0) {
+        y += height * 16;
+    }
+    column = (x >> 4) % width + layer->unk4D;
+    row = (y >> 4) % height + (u8)layer->min_y;
+    return SP_BG_TILEMAP[(s16)(layout_width * row + arg0 * layout_size + column)];
+}
+#else
 s16 get_layout_screen(s16 arg0, s16 arg1, s16 arg2)
 {
     struct BackgroundObj* temp_v1 = &background_objects[arg0];
@@ -328,3 +359,4 @@ s16 get_layout_screen(s16 arg0, s16 arg1, s16 arg2)
 
     return SP_BG_TILEMAP[temp];
 }
+#endif

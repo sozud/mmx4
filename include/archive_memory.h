@@ -13,6 +13,9 @@ extern u8* win32_main_ram;
 #define MAIN_ARCHIVE_ARENA (win32_main_ram + 0x178000)
 #define REPLAY_DATA (win32_main_ram + 0x1F6000)
 #define WINDOW_ARCHIVE_DATA (win32_main_ram + 0x1F3000)
+#elif defined(MMX4_SATURN)
+extern u8 saturn_demo_data[];
+#define REPLAY_DATA saturn_demo_data
 #else
 #define MAIN_ARCHIVE_ARENA ((u8*)0x80178000)
 #define REPLAY_DATA ((u8*)0x801F6000)

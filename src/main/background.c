@@ -2,6 +2,15 @@
 // 8002771C..80028B68
 #include "common.h"
 #include "main/background.h"
+#ifdef MMX4_SATURN
+#include "saturn/platform.h"
+#include "saturn/game_low.h"
+#define BG_Y_HIGH_OFFSET 0xC
+#define BG_PREVIOUS_Y_HIGH_OFFSET 0x18
+#else
+#define BG_Y_HIGH_OFFSET 0xE
+#define BG_PREVIOUS_Y_HIGH_OFFSET 0x1A
+#endif
 
 struct BackgroundCameraModePair {
     u8 primary, secondary;
@@ -100,6 +109,7 @@ void func_80027EE8(struct BackgroundObj* arg0);
 void func_800282D0(struct BackgroundObj* arg0);
 void func_80028450(struct BackgroundObj* arg0);
 void update_screen_shake_y(struct BackgroundObj* arg0);
+void func_80028690(struct BackgroundObj* bg);
 
 void func_8002771C(void)
 {
@@ -123,12 +133,31 @@ void func_8002771C(void)
     D_80173C6C[1] = *ptr++;
     D_80173C6C[2] = *ptr++;
     D_80173C6C[3] = *ptr++;
+#ifdef MMX4_SATURN
+    background_objects[0].unk4B = *ptr++;
+    background_objects[background_objects[0].unk4B].unk4A = *ptr++;
+    background_objects[1].unk4B = *ptr++;
+    background_objects[background_objects[1].unk4B].unk4A = *ptr++;
+    background_objects[2].unk4B = *ptr++;
+    background_objects[background_objects[2].unk4B].unk4A = *ptr;
+#else
     background_objects[0].unk4B = *ptr++;
     background_objects[0].unk4A = *ptr++;
     background_objects[1].unk4B = *ptr++;
     background_objects[1].unk4A = *ptr++;
     background_objects[2].unk4B = *ptr++;
     background_objects[2].unk4A = *ptr++;
+#endif
+#ifdef MMX4_SATURN
+    SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_PRINA) = (SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_PRINA) & 0xFF00) | (background_objects[0].unk4A & 7);
+    SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_PRINA) = (SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_PRINA) & 0x00FF) | ((background_objects[1].unk4A & 7) << 8);
+    SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_PRINB) = (SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_PRINB) & 0xFF00) | (background_objects[2].unk4A & 7);
+    if (engine_obj.stage == 0 && engine_obj.substage == 0) {
+        *SATURN_BACK_COLOR = SATURN_INTRO_BACK_COLOR;
+    } else {
+        *SATURN_BACK_COLOR = 0;
+    }
+#endif
 }
 
 void func_80027850(void)
@@ -252,8 +281,8 @@ void func_80027B70(struct Unk9* arg0)
     s8 temp;
     u16 temp2;
 
-    temp2 = *(u16*)((u8*)arg0 + 0xE);
-    base = *(u16*)((u8*)arg0 + 0x1A);
+    temp2 = *(u16*)((u8*)arg0 + BG_Y_HIGH_OFFSET);
+    base = *(u16*)((u8*)arg0 + BG_PREVIOUS_Y_HIGH_OFFSET);
     delta = temp2 - base;
 
     if (delta >= 0) {
@@ -268,7 +297,7 @@ void func_80027B70(struct Unk9* arg0)
         }
     }
 
-    *(u16*)((u8*)arg0 + 0xE) = delta + base;
+    *(u16*)((u8*)arg0 + BG_Y_HIGH_OFFSET) = delta + base;
 }
 
 void func_80027BE4(struct BackgroundObj* arg0)
@@ -697,11 +726,11 @@ void func_80028658(struct BackgroundObj* arg0)
     func_80028450(arg0);
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80028690(struct BackgroundObj* bg);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80028690(struct BackgroundObj* bg)
 {
     s16 target;
@@ -869,6 +898,44 @@ void (*D_800F3164[])(struct BackgroundObj*) = {
         }                                               \
     }
 
+#ifdef MMX4_SATURN
+struct BackgroundLayoutConfigData D_800F3188 = {
+    {
+        BACKGROUND_CONFIG(4, 6, 3, 1, 2, 4, 0, 4, 1, 3),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 2, 4, 1, 2),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 2, 4, 0, 4, 1, 3),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 3, 1, 0, 4, 1, 3, 2, 6),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 2, 4, 1, 3),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 1, 2, 2, 2),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 2, 4, 0, 2, 1, 2),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 2, 4, 1, 2),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 2, 4, 0, 6, 1, 3),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 2, 4, 0, 4, 1, 3),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 2, 4, 1, 2),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 2, 4, 1, 2),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 1, 2, 2, 2),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 1, 2, 2, 2),
+        BACKGROUND_CONFIG(4, 6, 2, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 4, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 4, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        BACKGROUND_CONFIG(4, 6, 4, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        BACKGROUND_CONFIG(4, 6, 4, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 4, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 4, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 5, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 3, 1, 2, 4, 0, 4, 1, 3),
+        BACKGROUND_CONFIG(5, 6, 3, 1, 0, 2, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 4, 4, 0, 6, 1, 2, 2, 4),
+        BACKGROUND_CONFIG(4, 6, 3, 1, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 4, 4, 4, 0, 4, 1, 4, 2, 4),
+        BACKGROUND_CONFIG(4, 4, 4, 4, 0, 6, 1, 6, 2, 4),
+    },
+};
+#else
 struct BackgroundLayoutConfigData D_800F3188 = {
     {
         BACKGROUND_CONFIG(6, 3, 9, 10, 5, 8, 4, 7, 9, 10),
@@ -907,6 +974,7 @@ struct BackgroundLayoutConfigData D_800F3188 = {
     },
     { 0, 0 },
 };
+#endif
 
 #undef BACKGROUND_CONFIG
 

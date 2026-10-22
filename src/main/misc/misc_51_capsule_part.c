@@ -22,6 +22,7 @@ extern void (*capsule_part_base_funcs[])(struct MiscObj*);
 void capsule_part_base_open(struct MiscObj*);
 void capsule_part_base_opening(struct MiscObj*);
 void capsule_part_base_animate(struct MiscObj*);
+#include "weapon_resources.h"
 
 void capsule_part_update(struct MiscObj* self)
 {
@@ -96,7 +97,7 @@ void capsule_part_base_animate(struct MiscObj* self)
 void capsule_part_glass(struct MiscObj* self)
 {
     if (self->unk6 == 0) {
-        self->unk16 = 6;
+        self->unk16 = VISUAL_SATURN_LAYER(6);
         set_animation(self, 3);
         self->unk6++;
     } else {

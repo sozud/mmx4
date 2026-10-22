@@ -2,8 +2,9 @@
 // 800B56F4..800B58A0
 #include "common.h"
 #include "main/effects/effect_00_camera_trigger.h"
+#include "main/objects.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/objects.h"
 #endif
 
@@ -32,13 +33,14 @@ void camera_trigger_init(struct EffectObj* self)
 }
 
 // camera_trigger_main
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B5798(struct EffectObj* arg0);
 extern struct Effect00BackgroundUpdate camera_trigger_bound_values[74];
 extern u16* camera_trigger_bound_fields[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B5798(struct EffectObj* arg0)
 {
     const u16* trigger = arg0->ext.unk_effect.unk18;

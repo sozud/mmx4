@@ -216,7 +216,7 @@ static void expect_frost_tick(void)
         return;
     }
     if (--expected.animation_step.fields.duration == 0) {
-        frame = expected.animation_cursor - D_8011C094[6];
+        frame = expected.animation_cursor - (u32*)D_8011C094[6];
         if (frame != 18)
             frame++;
         expected.animation_cursor = D_8011C094[6] + frame;
@@ -258,7 +258,7 @@ static u32 test_frost_lifecycle(u32 row)
     }
     check(&obj);
     for (tick = 0; tick < COUNT(frost_animation); tick++)
-        assert(D_8011C094[6][tick] == frost_animation[tick]);
+        assert(D_8011C094[6][tick].packed == frost_animation[tick]);
     return 1;
 }
 

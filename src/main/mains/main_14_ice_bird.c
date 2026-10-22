@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[14]
 // 8004CF24..8004D930
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_14_ice_bird.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -69,7 +70,7 @@ void ice_bird_init(struct MainObj* self)
     self->gravity = 0;
     self->air_state = 0;
     self->animation_table = (const u8* const*)ice_bird_animations;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->terrain_box = 0;
     self->hurt_box = &ice_bird_body_box;
     self->attack_box = &ice_bird_body_box;
@@ -120,7 +121,7 @@ void ice_bird_despawn(struct MainObj* self)
     self->ext.main_14.unk80 = 0;
     self->ext.main_14.unk84 = 0;
     engine_obj.character_state.bytes[0] = 0;
-    stop_sound(2, 0x40);
+    STOP_SOUND(2, 0x40, 0x6);
     if (self->ext.main_14.unk94 != 0) {
         despawn_object(OBJECT_HEADER(self));
         return;
@@ -142,11 +143,11 @@ void ice_bird_fly_in_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     ice_bird_spawn_charge_ring(self, 3);
-    func_8001540C(2, 0x40, self);
+    func_8001540C(2, SATURN_SOUND(0x40, 0x3E), self);
 
     self->ext.main_14.unk80 = 0x20;
     self->ext.main_14.unk84 = 1;
-    self->x_speed = ice_bird_fly_speeds[(self->unk15 & 0x40) ? 1 : 0];
+    self->x_speed = ice_bird_fly_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
     self->unk6++;
 }
 
@@ -234,8 +235,8 @@ void ice_bird_blast_release(struct MainObj* self)
     }
 
     animate_object(ANIMATED_OBJECT(self));
-    stop_sound(2, 0x40);
-    func_8001540C(2, 0x41, self);
+    STOP_SOUND(2, 0x40, 0x6);
+    func_8001540C(2, SATURN_SOUND(0x41, 0x3F), self);
     ice_bird_spawn_ice_shards(ANIMATED_OBJECT(self));
     self->unk6++;
 }
@@ -243,7 +244,7 @@ void ice_bird_blast_release(struct MainObj* self)
 void ice_bird_blast_finish(struct MainObj* self)
 {
     self->ext.main_14.unk8C = 1;
-    func_8001540C(5, 4, self);
+    func_8001540C(5, SATURN_SOUND(4, 0x25), self);
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 0);
     self->unk6 = 0;
@@ -260,7 +261,7 @@ void ice_bird_leave_start(struct MainObj* self)
     set_animation(self, 0);
     animate_object(ANIMATED_OBJECT(self));
 
-    self->x_speed = ice_bird_fly_speeds[(self->unk15 & 0x40) != 0];
+    self->x_speed = ice_bird_fly_speeds[(self->unk15 & PLAYER_FACING_RIGHT) != 0];
     self->hurt_box = (const u8*)&ice_bird_body_box;
     self->attack_box = (const u8*)&ice_bird_body_box;
     engine_obj.character_state.bytes[0] = 0;
@@ -278,16 +279,17 @@ void ice_bird_face_player(struct AnimatedObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
 // ice_bird_check_player_ahead
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004D6FC(struct MainObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004D6FC(struct MainObj* self)
 {
     struct Main14Ext* ext = &self->ext.main_14;
@@ -333,7 +335,7 @@ void ice_bird_spawn_charge_ring(struct MainObj* self, s8 arg1)
         temp_v0->animation_table = ANIMATED_OBJECT(self)->animation_table;
         temp_v0->unk40 = self->unk40;
         temp_v0->unk42 = self->unk42;
-        temp_v0->unk16 = 4;
+        temp_v0->unk16 = VISUAL_SATURN_LAYER(4);
         temp_v0->x_pos.val = self->x_pos.val;
         temp_v0->y_pos.val = self->y_pos.val;
     }
@@ -365,7 +367,7 @@ void ice_bird_spawn_ice_shards(struct AnimatedObj* self)
             visual_obj->animation_table = self->animation_table;
             visual_obj->unk40 = self->unk40;
             visual_obj->unk42 = self->unk42;
-            visual_obj->unk16 = 6;
+            visual_obj->unk16 = VISUAL_SATURN_LAYER(6);
             visual_obj->x_pos.val = self->x_pos.val;
             visual_obj->y_pos.val = self->y_pos.val;
         }
@@ -386,123 +388,123 @@ s32 ice_bird_fly_speeds[] = {
 };
 
 union AnimationStep ice_bird_anim_0[] = {
-    { 0x00010005 },
-    { 0x01010004 },
-    { 0x02010003 },
-    { 0x03010004 },
-    { 0x04010005 },
-    { 0x03010004 },
-    { 0x05010003 },
-    { 0x01F90004 },
+    { 5, 0, 1, 0x00 },
+    { 4, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 4, 0, 1, 0x03 },
+    { 5, 0, 1, 0x04 },
+    { 4, 0, 1, 0x03 },
+    { 3, 0, 1, 0x05 },
+    { 4, 0, -7, 0x01 },
 };
 
 union AnimationStep ice_bird_anim_1[] = {
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x08010002 },
-    { 0x09010006 },
-    { 0x0A010008 },
-    { 0x0B010003 },
-    { 0x0C010003 },
-    { 0x0D010003 },
-    { 0x0E010003 },
-    { 0x0F010003 },
-    { 0x10010005 },
-    { 0x0F010003 },
-    { 0x0E000003 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x08 },
+    { 6, 0, 1, 0x09 },
+    { 8, 0, 1, 0x0A },
+    { 3, 0, 1, 0x0B },
+    { 3, 0, 1, 0x0C },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 3, 0, 1, 0x0F },
+    { 5, 0, 1, 0x10 },
+    { 3, 0, 1, 0x0F },
+    { 3, 0, 0, 0x0E },
 };
 
 union AnimationStep ice_bird_anim_2[] = {
-    { 0x0F010001 },
-    { 0x0E010001 },
-    { 0x11010001 },
-    { 0x12FD0001 },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, -3, 0x12 },
 };
 
 union AnimationStep ice_bird_anim_3[] = {
-    { 0x13010006 },
-    { 0x14010006 },
-    { 0x15010006 },
-    { 0x16FD0006 },
+    { 6, 0, 1, 0x13 },
+    { 6, 0, 1, 0x14 },
+    { 6, 0, 1, 0x15 },
+    { 6, 0, -3, 0x16 },
 };
 
 union AnimationStep ice_bird_anim_4[] = {
-    { 0x17010004 },
-    { 0x18010004 },
-    { 0x19010004 },
-    { 0x1AFD0004 },
+    { 4, 0, 1, 0x17 },
+    { 4, 0, 1, 0x18 },
+    { 4, 0, 1, 0x19 },
+    { 4, 0, -3, 0x1A },
 };
 
 union AnimationStep ice_bird_anim_5[] = {
-    { 0x1B010002 },
-    { 0x1C010002 },
-    { 0x1D010002 },
-    { 0x1EFD0002 },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, -3, 0x1E },
 };
 
 union AnimationStep ice_bird_anim_6[] = {
-    { 0x1F010001 },
-    { 0x20010001 },
-    { 0x21010001 },
-    { 0x22FD0001 },
+    { 1, 0, 1, 0x1F },
+    { 1, 0, 1, 0x20 },
+    { 1, 0, 1, 0x21 },
+    { 1, 0, -3, 0x22 },
 };
 
 union AnimationStep ice_bird_anim_7[] = {
-    { 0x28010003 },
-    { 0x23010003 },
-    { 0x24010002 },
-    { 0x25010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x3A010002 },
-    { 0x39010002 },
-    { 0x3B000002 },
+    { 3, 0, 1, 0x28 },
+    { 3, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 0, 0x3B },
 };
 
 union AnimationStep ice_bird_anim_8[] = {
-    { 0x29000001 },
+    { 1, 0, 0, 0x29 },
 };
 
 union AnimationStep ice_bird_anim_9[] = {
-    { 0x2A000001 },
+    { 1, 0, 0, 0x2A },
 };
 
 union AnimationStep ice_bird_anim_10[] = {
-    { 0x2B000001 },
+    { 1, 0, 0, 0x2B },
 };
 
 union AnimationStep ice_bird_anim_11[] = {
-    { 0x2C000001 },
+    { 1, 0, 0, 0x2C },
 };
 
 union AnimationStep ice_bird_anim_12[] = {
-    { 0x2D000001 },
+    { 1, 0, 0, 0x2D },
 };
 
 union AnimationStep ice_bird_anim_13[] = {
-    { 0x2E000001 },
+    { 1, 0, 0, 0x2E },
 };
 
 union AnimationStep ice_bird_anim_14[] = {
-    { 0x2F010005 },
-    { 0x30010004 },
-    { 0x31010003 },
-    { 0x32FD0004 },
+    { 5, 0, 1, 0x2F },
+    { 4, 0, 1, 0x30 },
+    { 3, 0, 1, 0x31 },
+    { 4, 0, -3, 0x32 },
 };
 
 union AnimationStep ice_bird_anim_15[] = {
-    { 0x33000001 },
+    { 1, 0, 0, 0x33 },
 };
 
 union AnimationStep ice_bird_anim_16[] = {
-    { 0x34000001 },
+    { 1, 0, 0, 0x34 },
 };
 
 union AnimationStep ice_bird_anim_17[] = {
-    { 0x35010005 },
-    { 0x36010005 },
-    { 0x37010005 },
-    { 0x38FD0005 },
+    { 5, 0, 1, 0x35 },
+    { 5, 0, 1, 0x36 },
+    { 5, 0, 1, 0x37 },
+    { 5, 0, -3, 0x38 },
 };
 
 union AnimationStep* ice_bird_animations[] = {

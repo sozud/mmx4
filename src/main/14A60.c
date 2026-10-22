@@ -27,7 +27,7 @@ extern u8 D_800F2C58[];
 extern u8 D_800F2D18[];
 extern u32 D_800F2F08[12];
 extern u32 D_800F2F38[2];
-extern u32 D_800F2F60[];
+extern union AnimationStep D_800F2F60[];
 extern union AnimationStep D_800F3000[10];
 extern union AnimationStep D_800F3028[11];
 extern union AnimationStep D_800F3054[10];
@@ -163,7 +163,7 @@ void func_80023C0C(struct MiscObj* arg0);
 
 void func_80023CA4(struct MiscObj* arg0);
 
-void func_80023CE0();
+void func_80023CE0(void);
 
 void func_80023D30(void);
 
@@ -357,6 +357,31 @@ static u8* x_ready_text[] = {
     x_ready_text_flags_88,
 };
 #else
+#ifdef MMX4_SATURN
+u8 x_ready_text_flags[] = { 0, 0, 0, 0 };
+u8 x_ready_text_flags_4[] = { 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0 };
+u8 x_ready_text_flags_28[] = { 0, 0, 0, 0 };
+u8 x_ready_text_flags_32[] = { 1, 1, 0 };
+u8 x_ready_text_flags_36[] = { 1, 0, 1, 1, 1, 1, 1, 1, 0 };
+u8 x_ready_text_flags_48[] = { 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0 };
+u8 x_ready_text_flags_64[] = { 0, 1, 1, 0, 1, 1, 1, 0 };
+u8 x_ready_text_flags_72[] = { 1, 0, 1, 1, 1, 0, 1 };
+u8 x_ready_text_flags_80[] = { 0, 1, 1, 0, 1, 1, 1, 0 };
+u8 x_ready_text_flags_88[] = { 0, 0, 0, 0 };
+
+static u8* x_ready_text[] = {
+    x_ready_text_flags,
+    x_ready_text_flags_4,
+    x_ready_text_flags_28,
+    x_ready_text_flags_32,
+    x_ready_text_flags_36,
+    x_ready_text_flags_48,
+    x_ready_text_flags_64,
+    x_ready_text_flags_72,
+    x_ready_text_flags_80,
+    x_ready_text_flags_88,
+};
+#else
 u8 x_ready_text_flags[] = {
     0,
     0,
@@ -466,6 +491,7 @@ static u8* x_ready_text[] = {
 };
 #endif
 #endif
+#endif
 
 u8 D_800F2D18[] = {
     0x0A,
@@ -530,6 +556,74 @@ u8 D_800F2D18[] = {
     0x01,
 };
 
+#ifdef MMX4_SATURN
+static u8 zero_ready_text_flags[] = { 0, 0, 0 };
+
+static u8 zero_ready_text_flags_1[] = { 0, 0, 1, 0, 1, 0 };
+
+static u8 zero_ready_text_flags_2[] = { 0, 0, 0 };
+
+static u8 zero_ready_text_flags_3[] = {
+    1,
+    0,
+    1,
+    1,
+    0,
+    1,
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    0,
+    1,
+    1,
+#ifdef VERSION_JP
+    0,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+#else
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+#endif
+};
+
+static u8 zero_ready_text_flags_4[] = { 0, 0, 0 };
+
+static u8 zero_ready_text_flags_5[] = { 1, 0, 1, 1, 0, 1, 1, 1, 0 };
+
+static u8 zero_ready_text_flags_6[] = { 0, 1, 0, 1, 0, 0 };
+
+static u8 zero_ready_text_flags_7[] = { 1, 0, 1, 1, 0, 1 };
+
+static u8 zero_ready_text_flags_8[] = { 0, 1, 1, 0, 1, 0, 1, 0 };
+
+static u8 zero_ready_text_flags_9[] = { 0, 0 };
+
+static u8* zero_ready_text[] = {
+    &zero_ready_text_flags[0],
+    &zero_ready_text_flags_1[0],
+    &zero_ready_text_flags_2[0],
+    &zero_ready_text_flags_3[0],
+    &zero_ready_text_flags_4[0],
+    &zero_ready_text_flags_5[0],
+    &zero_ready_text_flags_6[0],
+    &zero_ready_text_flags_7[0],
+    &zero_ready_text_flags_8[0],
+    &zero_ready_text_flags_9[0],
+};
+#else
 static u8 zero_ready_text_flags[] = {
     0,
     0,
@@ -616,6 +710,7 @@ static u8* zero_ready_text[] = {
     &zero_ready_text_flags_8[0],
     &zero_ready_text_flags_9[0],
 };
+#endif
 
 const u8* D_800F2DD0[] = { D_800F2C58, D_800F2D18 };
 
@@ -624,23 +719,23 @@ u8* const* D_800F2DD8[] = {
     zero_ready_text,
 };
 
-static u32 anim_91_0[] = { 0x00000101 };
+static union AnimationStep anim_91_0[] = { { 1, 1, 0, 0x00 } };
 
-static u32 anim_91_1[] = { 0x00010007, 0x04010006, 0x04000101 };
+static union AnimationStep anim_91_1[] = { { 7, 0, 1, 0x00 }, { 6, 0, 1, 0x04 }, { 1, 1, 0, 0x04 } };
 
-static u32 anim_91_2[] = { 0x01000101 };
+static union AnimationStep anim_91_2[] = { { 1, 1, 0, 0x01 } };
 
-static u32 anim_91_3[] = { 0x01010007, 0x05010006, 0x05000101 };
+static union AnimationStep anim_91_3[] = { { 7, 0, 1, 0x01 }, { 6, 0, 1, 0x05 }, { 1, 1, 0, 0x05 } };
 
-static u32 anim_91_4[] = { 0x02000101 };
+static union AnimationStep anim_91_4[] = { { 1, 1, 0, 0x02 } };
 
-static u32 anim_91_5[] = { 0x02010007, 0x06010006, 0x06000101 };
+static union AnimationStep anim_91_5[] = { { 7, 0, 1, 0x02 }, { 6, 0, 1, 0x06 }, { 1, 1, 0, 0x06 } };
 
-static u32 anim_91_6[] = { 0x03000101 };
+static union AnimationStep anim_91_6[] = { { 1, 1, 0, 0x03 } };
 
-static u32 anim_91_7[] = { 0x03010007, 0x07010006, 0x07000101 };
+static union AnimationStep anim_91_7[] = { { 7, 0, 1, 0x03 }, { 6, 0, 1, 0x07 }, { 1, 1, 0, 0x07 } };
 
-static const u32* animation_91[] = {
+static const union AnimationStep* animation_91[] = {
     anim_91_0,
     anim_91_1,
     anim_91_2,
@@ -651,53 +746,53 @@ static const u32* animation_91[] = {
     anim_91_7,
 };
 
-static u32 anim_92_0[] = { 0x00000101 };
+static union AnimationStep anim_92_0[] = { { 1, 1, 0, 0x00 } };
 
-static u32 anim_92_1[] = { 0x01010007, 0x02010006, 0x02000101 };
+static union AnimationStep anim_92_1[] = { { 7, 0, 1, 0x01 }, { 6, 0, 1, 0x02 }, { 1, 1, 0, 0x02 } };
 
-static const u32* animation_92[] = { anim_92_0, anim_92_1 };
+static const union AnimationStep* animation_92[] = { anim_92_0, anim_92_1 };
 
-static u32 anim_93_0[] = { 0x00000101 };
+static union AnimationStep anim_93_0[] = { { 1, 1, 0, 0x00 } };
 
-static u32 anim_93_1[] = { 0x01010007, 0x02010006, 0x02000101 };
+static union AnimationStep anim_93_1[] = { { 7, 0, 1, 0x01 }, { 6, 0, 1, 0x02 }, { 1, 1, 0, 0x02 } };
 
-static const u32* animation_93[] = { anim_93_0, anim_93_1 };
+static const union AnimationStep* animation_93[] = { anim_93_0, anim_93_1 };
 
-static u32 anim_94_0[] = { 0x00000101 };
+static union AnimationStep anim_94_0[] = { { 1, 1, 0, 0x00 } };
 
-static u32 anim_94_1[] = { 0x00010007, 0x01010006, 0x01000101 };
+static union AnimationStep anim_94_1[] = { { 7, 0, 1, 0x00 }, { 6, 0, 1, 0x01 }, { 1, 1, 0, 0x01 } };
 
-static const u32* animation_94[] = { anim_94_0, anim_94_1 };
+static const union AnimationStep* animation_94[] = { anim_94_0, anim_94_1 };
 
-static u32 anim_95_0[] = { 0x00000101 };
+static union AnimationStep anim_95_0[] = { { 1, 1, 0, 0x00 } };
 
-static u32 anim_95_1[] = { 0x00010007, 0x01010006, 0x01000101 };
+static union AnimationStep anim_95_1[] = { { 7, 0, 1, 0x00 }, { 6, 0, 1, 0x01 }, { 1, 1, 0, 0x01 } };
 
-static const u32* animation_95[] = { anim_95_0, anim_95_1 };
+static const union AnimationStep* animation_95[] = { anim_95_0, anim_95_1 };
 
-static u32 anim_96_0[] = { 0x00000101 };
+static union AnimationStep anim_96_0[] = { { 1, 1, 0, 0x00 } };
 
-static u32 anim_96_1[] = { 0x00010007, 0x01010006, 0x01000101 };
+static union AnimationStep anim_96_1[] = { { 7, 0, 1, 0x00 }, { 6, 0, 1, 0x01 }, { 1, 1, 0, 0x01 } };
 
-static const u32* animation_96[] = { anim_96_0, anim_96_1 };
+static const union AnimationStep* animation_96[] = { anim_96_0, anim_96_1 };
 
-static u32 anim_97_0[] = {
-    0x00010003,
-    0x01010003,
-    0x02010003,
-    0x03010003,
-    0x04FC0003,
+static union AnimationStep anim_97_0[] = {
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, -4, 0x04 },
 };
 
-static const u32* animation_97[] = { anim_97_0 };
+static const union AnimationStep* animation_97[] = { anim_97_0 };
 
-static u32 anim_98_0[] = { 0x00000101 };
+static union AnimationStep anim_98_0[] = { { 1, 1, 0, 0x00 } };
 
-static u32 anim_98_1[] = { 0x00010007, 0x01010006, 0x01000101 };
+static union AnimationStep anim_98_1[] = { { 7, 0, 1, 0x00 }, { 6, 0, 1, 0x01 }, { 1, 1, 0, 0x01 } };
 
-static const u32* animation_98[] = { anim_98_0, anim_98_1 };
+static const union AnimationStep* animation_98[] = { anim_98_0, anim_98_1 };
 
-const u32* const* D_800F2EE8[] = {
+const union AnimationStep* const* D_800F2EE8[] = {
     animation_91,
     animation_92,
     animation_93,
@@ -744,36 +839,36 @@ u16 D_800F2F40[16] = {
     0x8E40,
 };
 
-u32 D_800F2F60[] = {
-    0x28010004,
-    0x27010003,
-    0x26010002,
-    0x25010002,
-    0x24010002,
-    0x23010002,
-    0x22010002,
-    0x21010002,
-    0x20010002,
-    0x1F010002,
-    0x1E010002,
-    0x1D010002,
-    0x1C010002,
-    0x1B010002,
-    0x1A010010,
-    0x1B010002,
-    0x1C010002,
-    0x1D010002,
-    0x1E010002,
-    0x1F010002,
-    0x20010002,
-    0x21010002,
-    0x22010002,
-    0x23010002,
-    0x24010002,
-    0x25010002,
-    0x26010002,
-    0x27010003,
-    0x28000104,
+union AnimationStep D_800F2F60[] = {
+    { 4, 0, 1, 0x28 },
+    { 3, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1B },
+    { 16, 0, 1, 0x1A },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x26 },
+    { 3, 0, 1, 0x27 },
+    { 4, 1, 0, 0x28 },
 };
 
 #if defined(VERSION_JP) || defined(MMX4_WIN32)
@@ -782,6 +877,7 @@ const u32* D_800F2FD4[1] = { D_800F2F60 };
 const u32* D_800F2FD4[2] = { D_800F2F60, NULL };
 #endif
 
+#ifndef MMX4_SATURN
 void func_80024260(void)
 {
     u32 buffer;
@@ -806,9 +902,13 @@ void func_80024260(void)
     mmx4_pc_render_log_dump();
 #endif
 }
+#endif
 
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/14A60", func_80024334);
+#endif
 
+#ifndef MMX4_SATURN
 void func_80024920(struct QuadObj* quad)
 {
     POLY_F4* primitive;
@@ -868,7 +968,9 @@ void func_80024920(struct QuadObj* quad)
     SP_PRIM_CURSOR = (u8*)SP_PRIM_CURSOR + sizeof(POLY_FT4);
     SP_DRAW_MODE_CURSOR = (u8*)SP_DRAW_MODE_CURSOR + sizeof(DR_TPAGE);
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_80024B9C(struct QuadObj* quad)
 {
     POLY_G4* primitive;
@@ -933,7 +1035,9 @@ void func_80024B9C(struct QuadObj* quad)
     SP_PRIM_CURSOR = (u8*)SP_PRIM_CURSOR + sizeof(POLY_FT4);
     SP_DRAW_MODE_CURSOR = (u8*)SP_DRAW_MODE_CURSOR + sizeof(DR_TPAGE);
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_80024E70(void)
 {
     struct PlayerObj* player = &g_Player;
@@ -954,6 +1058,8 @@ void func_80024E70(void)
         }
     }
 }
+#endif
+#ifndef MMX4_SATURN
 void func_80024F5C(struct PlayerObj* arg0)
 {
     s8 temp_v0_2;
@@ -977,6 +1083,8 @@ void func_80024F5C(struct PlayerObj* arg0)
         func_80025188(2, 0x4E);
     }
 }
+#endif
+#ifndef MMX4_SATURN
 void func_8002509C(struct PlayerObj* arg0)
 {
     s8 temp_s0;
@@ -991,13 +1099,21 @@ void func_8002509C(struct PlayerObj* arg0)
         func_80025188(2, 0x4E);
     }
 }
+#endif
 
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/14A60", func_80025188);
+#endif
 
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/14A60", func_800253F0);
+#endif
 #ifdef VERSION_EU
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/14A60", func_80025588);
+#endif
 #else
+#ifndef MMX4_SATURN
 void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 {
     u32 color;
@@ -1072,6 +1188,8 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
     SP_AUX_CURSOR = SP_AUX_POLY_F4_CURSOR + 1;
 }
 #endif
+#endif
+#ifndef MMX4_SATURN
 void func_800257BC(struct PlayerObj* arg0)
 {
     struct PlayerObj* target = arg0;
@@ -1090,8 +1208,12 @@ void func_800257BC(struct PlayerObj* arg0)
         func_8002588C(target, 1, 0x7843);
     }
 }
+#endif
 
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/14A60", func_8002588C);
+#endif
+#ifndef MMX4_SATURN
 void func_80025CDC(void)
 {
     struct UnkObj* var_s0;
@@ -1107,3 +1229,4 @@ void func_80025CDC(void)
     }
     func_80024260();
 }
+#endif

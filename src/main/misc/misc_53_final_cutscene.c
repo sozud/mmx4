@@ -18,6 +18,7 @@ extern void (*final_cutscene_state_funcs[])(struct MiscObj*);
 void func_800D2A74(struct MiscObj*);
 void final_cutscene_main(struct MiscObj* arg0);
 void final_cutscene_despawn(struct MiscObj*);
+#include "weapon_resources.h"
 
 extern union AnimationStep* final_cutscene_animations[1];
 
@@ -27,11 +28,11 @@ void func_800D2A74(struct MiscObj* self)
 
     self->state++;
     self->bg_offset = g_Player.bg_offset;
-    self->unk40 = (D_801406A8[1] >> 7) + 0xB0;
-    self->unk42 = CLUT_FROM_ID(0xA3);
+    self->unk40 = (OBJECT_STAGE_TEXTURE(1)) + OBJECT_TEXTURE_OFFSET(0xB0);
+    self->unk42 = OBJECT_STAGE_CLUT(0xA3);
     self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0xA3));
     self->animation_table = (u32**)final_cutscene_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->x_pos.u.hi = 0x860;
     self->unk15 = 0;
     self->y_pos.u.hi = 0x268;
@@ -44,7 +45,7 @@ void final_cutscene_wait_player(struct MiscObj* self)
 {
     if (g_Player.x_pos.i.hi > 0x6E0) {
         self->unk5++;
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         background_objects[0].unk24 = 0x6B0;
         background_objects[0].unk26 = 0x6B0;
         self->ext.misc_53.timer = 0x50;
@@ -85,7 +86,7 @@ void func_800D2CA4(struct MiscObj* self)
         self->unk2C = 0x4200;
         self->unk5++;
     }
-    if (main_bss_state.frame_counter % 10 == 0) {
+    if (WEAPON_FRAME_COUNTER % 10 == 0) {
         self->y_pos.i.hi += self->ext.misc_53.x_step;
         if (--self->ext.misc_53.movement_timer == 0) {
             self->ext.misc_53.movement_timer = 0xA;
@@ -190,9 +191,9 @@ void final_cutscene_update(struct MiscObj* self)
 }
 
 union AnimationStep final_cutscene_anim_0[3] = {
-    { 0x00010001 },
-    { 0x01010001 },
-    { 0x02FE0001 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, -2, 0x02 },
 };
 union AnimationStep* final_cutscene_animations[1] = { final_cutscene_anim_0 };
 

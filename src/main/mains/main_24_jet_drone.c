@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[24]
 // 80056788..80057100
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_24_jet_drone.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -31,7 +32,8 @@ void jet_drone_update(struct MainObj* self)
 }
 
 // jet_drone_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800567C4(struct MainObj* arg0);
 extern struct Unk_unk68 D_80106E74[];
 extern union AnimationStep* jet_drone_animations[];
@@ -39,23 +41,24 @@ extern struct Unk_unk68 jet_drone_hurt_box[];
 extern struct Unk_unk68 jet_drone_terrain_box[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800567C4(struct MainObj* arg0)
 {
+    u8 subtype;
     static const s32 motion[4][3] = {
         { -0x4000, -0x1C000, 0x14 },
         { -0x2000, -0xC000, 0x24 },
         { 0x4000, 0x1C000, 0x14 },
         { 0x2000, 0xC000, 0x24 },
     };
-    u8 subtype = arg0->unk2;
+    subtype = arg0->unk2;
 
     arg0->hp = 2;
     arg0->contact_damage = 3;
     arg0->invincibility_timer = 0;
     arg0->collision_data = (const u16*)D_80106E74;
     arg0->animation_table = (const u8* const*)jet_drone_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->hurt_box = (const u8*)jet_drone_hurt_box;
     arg0->air_state = 0;
     arg0->terrain_box = NULL;
@@ -71,11 +74,11 @@ void func_800567C4(struct MainObj* arg0)
         if (subtype < 4) {
             arg0->x_speed = -0x50000;
             arg0->unk15 = 0;
-            func_8001540C(2, 0x50, arg0);
+            func_8001540C(2, SATURN_SOUND(0x50, 0x41), arg0);
             arg0->unk5 = 2;
         } else {
             arg0->unk7A = 1;
-            arg0->unk15 = 0x40;
+            arg0->unk15 = PLAYER_FACING_RIGHT;
             arg0->x_speed = 0x50000;
             arg0->unk5 = 3;
         }
@@ -202,7 +205,7 @@ void jet_drone_fly_turn(struct MainObj* self)
             trail->bg_offset = self->bg_offset;
             trail->x_pos.val = self->x_pos.val;
             trail->y_pos.val = self->y_pos.val;
-            trail->unk15 = self->unk15 ^ 0x40;
+            trail->unk15 = self->unk15 ^ PLAYER_FACING_RIGHT;
             trail->ext.misc_7.position = &self->x_pos;
             trail->state = 0;
         }
@@ -240,7 +243,7 @@ void jet_drone_fly_bomb(struct MainObj* self)
             trail->bg_offset = self->bg_offset;
             trail->x_pos.val = self->x_pos.val;
             trail->y_pos.val = self->y_pos.val;
-            trail->unk15 = self->unk15 ^ 0x40;
+            trail->unk15 = self->unk15 ^ PLAYER_FACING_RIGHT;
             trail->ext.misc_7.position = &self->x_pos;
             trail->state = 0;
         }
@@ -273,7 +276,7 @@ void jet_drone_fly_bomb(struct MainObj* self)
 void jet_drone_wait_for_player(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0xA0) {
-        func_8001540C(2, 0x50, self);
+        func_8001540C(2, SATURN_SOUND(0x50, 0x41), self);
         self->unk7A = 0;
         self->unk5 = 2;
     }
@@ -288,74 +291,74 @@ struct Unk_unk68 jet_drone_terrain_box[] = {
 };
 
 union AnimationStep jet_drone_anim_0[] = {
-    { 0x00010006 },
-    { 0x07010005 },
-    { 0x06010004 },
-    { 0x05010005 },
-    { 0x04010006 },
-    { 0x03010005 },
-    { 0x02010004 },
-    { 0x01010005 },
-    { 0x00F90106 },
+    { 6, 0, 1, 0x00 },
+    { 5, 0, 1, 0x07 },
+    { 4, 0, 1, 0x06 },
+    { 5, 0, 1, 0x05 },
+    { 6, 0, 1, 0x04 },
+    { 5, 0, 1, 0x03 },
+    { 4, 0, 1, 0x02 },
+    { 5, 0, 1, 0x01 },
+    { 6, 1, -7, 0x00 },
 };
 
 union AnimationStep jet_drone_anim_1[] = {
-    { 0x0C010003 },
-    { 0x0D010005 },
-    { 0x08010003 },
-    { 0x09010004 },
-    { 0x0A010005 },
-    { 0x0B000101 },
+    { 3, 0, 1, 0x0C },
+    { 5, 0, 1, 0x0D },
+    { 3, 0, 1, 0x08 },
+    { 4, 0, 1, 0x09 },
+    { 5, 0, 1, 0x0A },
+    { 1, 1, 0, 0x0B },
 };
 
 union AnimationStep jet_drone_anim_2[] = {
-    { 0x0B000101 },
+    { 1, 1, 0, 0x0B },
 };
 
 union AnimationStep jet_drone_anim_3[] = {
-    { 0x11010002 },
-    { 0x15010002 },
-    { 0x13010002 },
-    { 0x15010002 },
-    { 0x14010002 },
-    { 0x12010002 },
-    { 0x16010002 },
-    { 0x15F90002 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, -7, 0x15 },
 };
 
 union AnimationStep jet_drone_anim_4[] = {
-    { 0x17000101 },
+    { 1, 1, 0, 0x17 },
 };
 
 union AnimationStep jet_drone_anim_5[] = {
-    { 0x18000101 },
+    { 1, 1, 0, 0x18 },
 };
 
 union AnimationStep jet_drone_anim_6[] = {
-    { 0x19000101 },
+    { 1, 1, 0, 0x19 },
 };
 
 union AnimationStep jet_drone_anim_7[] = {
-    { 0x1A000101 },
+    { 1, 1, 0, 0x1A },
 };
 
 union AnimationStep jet_drone_anim_8[] = {
-    { 0x1B000101 },
+    { 1, 1, 0, 0x1B },
 };
 
 union AnimationStep jet_drone_anim_9[] = {
-    { 0x0E010004 },
-    { 0x0F010005 },
-    { 0x0E010004 },
-    { 0x0B000101 },
+    { 4, 0, 1, 0x0E },
+    { 5, 0, 1, 0x0F },
+    { 4, 0, 1, 0x0E },
+    { 1, 1, 0, 0x0B },
 };
 
 union AnimationStep jet_drone_anim_10[] = {
-    { 0x10010001 },
-    { 0x1C010001 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1E000101 },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 1, 0, 0x1E },
 };
 
 union AnimationStep* jet_drone_animations[] = {

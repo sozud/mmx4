@@ -10,6 +10,25 @@
 #include "main/collision.h"
 #include "main/object_motion.h"
 #include "main/player_weapon.h"
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#define RIDE_U16(object, offset) (*(u16*)&RIDE_U8(object, offset))
+
+MMX4_STATIC_ASSERT(ride_armor_tail_layout,
+    MMX4_OFFSET_OF(struct RideArmorObj, saved_y_vel) - MMX4_OFFSET_OF(struct RideArmorObj, unk7C) == 0x9E - 0x7C);
+MMX4_STATIC_ASSERT(ride_armor_player_unk9A,
+    MMX4_OFFSET_OF(struct RideArmorObj, pad9A) == MMX4_OFFSET_OF(struct PlayerObj, shot_cycle));
+extern s32 D_800F9090[2];
+extern s32 D_800F9098[2];
+void func_8003B458(void*, s8);
+void func_8003CCBC(struct RideArmorObj*);
+
+extern u8 ride_chaser_shot_hit_box[4];
+extern u16 ride_chaser_shot_offsets[][2];
+extern u8 ride_chaser_shot_angles[];
+extern u8 ride_chaser_shot_animations[];
+#endif
 
 extern s32 D_800F9070[2];
 extern s32 D_800F9078[2];
@@ -51,7 +70,7 @@ void func_8003B458(void* arg0, s8 arg1)
     g_Player.unk6 = 0;
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static u16 ride_chaser_clut(void);
 static void ride_chaser_spawn_body(struct RideArmorObj* arg0);
 void func_8003B470(struct RideArmorObj* arg0);
@@ -90,7 +109,7 @@ static u16 ride_chaser_clut(void)
 {
     u8 resource = func_8002938C(0x82);
 
-    return SOME_COORDINATE_CONVERSION(resource);
+    return VISUAL_STAGE_PALETTE(resource);
 }
 static void ride_chaser_spawn_body(struct RideArmorObj* arg0)
 {
@@ -131,7 +150,7 @@ static void ride_chaser_land_animation(struct RideArmorObj* arg0)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003B470(struct RideArmorObj* arg0)
 {
     struct EffectObj* effect;
@@ -143,16 +162,16 @@ void func_8003B470(struct RideArmorObj* arg0)
     arg0->on_screen = 1;
     arg0->active |= 0x40;
     arg0->x_pos.val = g_Player.x_pos.val;
-    arg0->unk15 = 0x40;
+    arg0->unk15 = PLAYER_FACING_RIGHT;
     arg0->animation_table = (u32**)D_800F8FC4;
     arg0->y_pos.val = g_Player.y_pos.val;
     resource = func_8002938C(0x82);
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    arg0->unk40 = D_801406A8[resource] >> 7;
-    arg0->unk42 = SOME_COORDINATE_CONVERSION(resource);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
+    arg0->unk42 = VISUAL_STAGE_PALETTE(resource);
     if (g_Player.unk2 != 0)
         arg0->unk42 += 2;
-    arg0->unk16 = 4;
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
     arg0->unk54 = D_800F906C;
     arg0->unk60 = 0;
     arg0->unk61 = 0;
@@ -226,7 +245,7 @@ void func_8003B694(struct RideArmorObj* self)
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003B7B4(struct RideArmorObj* arg0)
 {
     s8 health = arg0->hp;
@@ -315,7 +334,7 @@ void func_8003BA24(struct RideArmorObj* arg0)
             arg0->y_vel.val = 0;
             arg0->unk2C = FIXED(0.265625);
             g_Player.ride_state = 0;
-            player_start_script_action(0x17, 0x40);
+            player_start_script_action(0x17, PLAYER_FACING_RIGHT);
         } else {
             if (arg0->unk70 & 8) {
                 arg0->y_vel.val = 0;
@@ -334,11 +353,11 @@ void func_8003BA24(struct RideArmorObj* arg0)
 
 void func_8003BAE8(struct RideArmorObj* arg0)
 {
-    stop_sound(5, 0);
+    STOP_SOUND(5, 0, 2);
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003BB20(struct RideArmorObj* arg0)
 {
     s16 dx = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
@@ -353,8 +372,8 @@ void func_8003BB20(struct RideArmorObj* arg0)
         arg0->y_vel.val = 0;
         arg0->unk28 = 0x8000;
         arg0->unk2C = 0;
-        arg0->unk15 = 0x40;
-        func_8001540C(5, 0, NULL);
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        func_8001540C(5, SATURN_SOUND(0, 50), NULL);
         set_animation(arg0, 6);
         func_8003B458(arg0, 0x47);
         ride_chaser_spawn_body(arg0);
@@ -430,7 +449,11 @@ void func_8003BE28(struct RideArmorObj* self)
     }
     self->unk67 = 1;
     func_8003C6EC(self, 4);
+#ifdef MMX4_SATURN
+    if ((self->unk70 & 5) != 5) {
+#else
     if ((*(u32*)&self->unk70 & 5) != 5) {
+#endif
         move_with_gravity(ANIMATED_OBJECT(self));
         if (self->y_vel.val < 0) {
             self->unk5 = 4;
@@ -456,7 +479,7 @@ void func_8003BE28(struct RideArmorObj* self)
     func_8003CBCC(self);
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003BF1C(struct RideArmorObj* arg0)
 {
     if (arg0->unk6 == 0) {
@@ -491,7 +514,7 @@ void func_8003BF1C(struct RideArmorObj* arg0)
 INCLUDE_ASM("main/nonmatchings/bike", func_8003BF1C);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003C08C(struct RideArmorObj* arg0)
 {
     u8 value;
@@ -523,7 +546,7 @@ void func_8003C08C(struct RideArmorObj* arg0)
             set_animation(arg0, D_800F9104[arg0->unk80.bytes.unk82]);
             func_8003B458(arg0, D_800F9110[arg0->unk80.bytes.unk82]);
             arg0->spawned_parts = 0;
-            func_8001540C(5, 0, NULL);
+            func_8001540C(5, SATURN_SOUND(0, 50), NULL);
         } else if (arg0->unk70 & 8) {
             func_8003C9A4(arg0);
             if (arg0->unk8C.value & 0x80) {
@@ -581,7 +604,7 @@ void func_8003C08C(struct RideArmorObj* arg0)
             arg0->unk2C = 0x5000;
             arg0->unk8E.value = 0;
             RIDE_U8(arg0, 0x99) = 0;
-            func_8001540C(5, 0, NULL);
+            func_8001540C(5, SATURN_SOUND(0, 50), NULL);
         } else if (RIDE_U8(arg0, 0x99) == 0) {
             if (arg0->unk8A & 4)
                 arg0->y_pos.val -= 0x8000;
@@ -609,7 +632,7 @@ void func_8003C584(struct RideArmorObj* arg0)
         func_8003C624(arg0);
         if (arg0->y_vel.val < 0) {
             arg0->unk6 = 3;
-            func_8001540C(5, 0, NULL);
+            func_8001540C(5, SATURN_SOUND(0, 50), NULL);
         }
     } else {
         arg0->unk6 = 3;
@@ -634,7 +657,7 @@ void func_8003C624(struct RideArmorObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003C6EC(struct RideArmorObj* arg0, u8 kind)
 {
     struct WeaponObj* weapon;
@@ -674,7 +697,7 @@ void func_8003C6EC(struct RideArmorObj* arg0, u8 kind)
     }
     RIDE_U8(arg0, 0x89) = 4;
     RIDE_U8(arg0, 0x98) += 1;
-    func_8001540C(5, 2, arg0);
+    func_8001540C(5, SATURN_SOUND(2, 52), arg0);
 }
 #else
 INCLUDE_ASM("main/nonmatchings/bike", func_8003C6EC);
@@ -710,7 +733,7 @@ void func_8003C9A4(struct RideArmorObj* arg0)
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003CA44(struct RideArmorObj* arg0)
 {
     if (arg0->unk80.bytes.unk82 == arg0->unk80.bytes.unk83 || (arg0->unk80.bytes.unk80 & 2))
@@ -812,7 +835,7 @@ void func_8003CCBC(struct RideArmorObj* arg0)
         arg0->unk6 = 0;
         arg0->unk80.bytes.unk80 |= 3;
         arg0->unk98.bytes.high = 0;
-        func_8001540C(5, 1, NULL);
+        func_8001540C(5, SATURN_SOUND(1, 51), NULL);
     }
 }
 
@@ -881,7 +904,7 @@ void func_8003CD38(struct RideArmorObj* arg0)
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_8003CF24(struct RideArmorObj* arg0)
 {
     u8 tile = arg0->unk80.bytes.unk81;
@@ -910,7 +933,7 @@ void func_8003CF6C(struct RideArmorObj* ride_armor)
         ride_armor->unk68->unk3 + (ride_armor->y_pos.i.hi + (s8)ride_armor->unk68->unk1) + 1);
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003D01C(struct RideArmorObj* arg0)
 {
     const struct Unk_unk68* bounds = arg0->unk68;
@@ -950,7 +973,7 @@ void func_8003D164(struct VisualObj* arg0, s32 arg1)
         obj->unk40 = arg0->unk40;
         obj->unk3C = arg0->unk3C;
         v = (u8)func_8002938C(0x82);
-        obj->unk42 = SOME_COORDINATE_CONVERSION(v);
+        obj->unk42 = VISUAL_STAGE_PALETTE(v);
         obj->unk16 = arg0->unk16;
         obj->unk50 = arg0;
         obj->unk15 = arg0->unk15;
@@ -971,7 +994,7 @@ void func_8003D254(struct VisualObj* arg0)
         obj->unk40 = arg0->unk40;
         obj->unk3C = arg0->unk3C;
         v = (u8)func_8002938C(0x82);
-        obj->unk42 = SOME_COORDINATE_CONVERSION(v);
+        obj->unk42 = VISUAL_STAGE_PALETTE(v);
         obj->unk16 = arg0->unk16;
         obj->unk50 = arg0;
         obj->unk15 = arg0->unk15;
@@ -1006,146 +1029,146 @@ void func_8003D3B4(struct PlayerObj* arg0)
     }
 }
 
-union AnimationStep D_800F8DC8[] = { { 0x00000001 } };
+union AnimationStep D_800F8DC8[] = { { 1, 0, 0, 0x00 } };
 
-union AnimationStep D_800F8DCC[] = { { 0x01000001 } };
+union AnimationStep D_800F8DCC[] = { { 1, 0, 0, 0x01 } };
 
-union AnimationStep D_800F8DD0[] = { { 0x02000001 } };
+union AnimationStep D_800F8DD0[] = { { 1, 0, 0, 0x02 } };
 
 union AnimationStep D_800F8DD4[] = {
-    { 0x00010002 },
-    { 0x04010002 },
-    { 0x05010006 },
-    { 0x04010001 },
-    { 0x00010001 },
-    { 0x06010003 },
-    { 0x00000001 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x00 },
+    { 3, 0, 1, 0x06 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep D_800F8DF0[] = {
-    { 0x01010002 },
-    { 0x07010002 },
-    { 0x08010006 },
-    { 0x07010001 },
-    { 0x01010001 },
-    { 0x09010003 },
-    { 0x01000001 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x07 },
+    { 6, 0, 1, 0x08 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x01 },
+    { 3, 0, 1, 0x09 },
+    { 1, 0, 0, 0x01 },
 };
 
 union AnimationStep D_800F8E0C[] = {
-    { 0x02010002 },
-    { 0x0A010002 },
-    { 0x0B010006 },
-    { 0x0A010001 },
-    { 0x02010001 },
-    { 0x0C010003 },
-    { 0x02000001 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x0A },
+    { 6, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x02 },
+    { 3, 0, 1, 0x0C },
+    { 1, 0, 0, 0x02 },
 };
 
-union AnimationStep D_800F8E28[] = { { 0x00010002 }, { 0x02010002 }, { 0x03010008 }, { 0x03000001 } };
+union AnimationStep D_800F8E28[] = { { 2, 0, 1, 0x00 }, { 2, 0, 1, 0x02 }, { 8, 0, 1, 0x03 }, { 1, 0, 0, 0x03 } };
 
-union AnimationStep D_800F8E38[] = { { 0x03010008 }, { 0x02010002 }, { 0x00010002 }, { 0x00000001 } };
+union AnimationStep D_800F8E38[] = { { 8, 0, 1, 0x03 }, { 2, 0, 1, 0x02 }, { 2, 0, 1, 0x00 }, { 1, 0, 0, 0x00 } };
 
-union AnimationStep D_800F8E48[] = { { 0x01010002 }, { 0x00010002 }, { 0x02010002 }, { 0x03010008 }, { 0x03000001 } };
+union AnimationStep D_800F8E48[] = { { 2, 0, 1, 0x01 }, { 2, 0, 1, 0x00 }, { 2, 0, 1, 0x02 }, { 8, 0, 1, 0x03 }, { 1, 0, 0, 0x03 } };
 
-union AnimationStep D_800F8E5C[] = { { 0x03010008 }, { 0x02010002 }, { 0x00010002 }, { 0x01010002 }, { 0x01000001 } };
+union AnimationStep D_800F8E5C[] = { { 8, 0, 1, 0x03 }, { 2, 0, 1, 0x02 }, { 2, 0, 1, 0x00 }, { 2, 0, 1, 0x01 }, { 1, 0, 0, 0x01 } };
 
-union AnimationStep D_800F8E70[] = { { 0x02010002 }, { 0x03010008 }, { 0x03000001 } };
+union AnimationStep D_800F8E70[] = { { 2, 0, 1, 0x02 }, { 8, 0, 1, 0x03 }, { 1, 0, 0, 0x03 } };
 
-union AnimationStep D_800F8E7C[] = { { 0x03010002 }, { 0x02010008 }, { 0x02000001 } };
+union AnimationStep D_800F8E7C[] = { { 2, 0, 1, 0x03 }, { 8, 0, 1, 0x02 }, { 1, 0, 0, 0x02 } };
 
-union AnimationStep D_800F8E88[] = { { 0x0D010001 }, { 0x0E010001 }, { 0x0FFE0001 } };
+union AnimationStep D_800F8E88[] = { { 1, 0, 1, 0x0D }, { 1, 0, 1, 0x0E }, { 1, 0, -2, 0x0F } };
 
-union AnimationStep D_800F8E94[] = { { 0x10010002 }, { 0x11010002 }, { 0x12FE0003 } };
+union AnimationStep D_800F8E94[] = { { 2, 0, 1, 0x10 }, { 2, 0, 1, 0x11 }, { 3, 0, -2, 0x12 } };
 
-union AnimationStep D_800F8EA0[] = { { 0x13010002 }, { 0x14010002 }, { 0x15FE0003 } };
+union AnimationStep D_800F8EA0[] = { { 2, 0, 1, 0x13 }, { 2, 0, 1, 0x14 }, { 3, 0, -2, 0x15 } };
 
-union AnimationStep D_800F8EAC[] = { { 0x16010002 }, { 0x17010002 }, { 0x18FE0003 } };
+union AnimationStep D_800F8EAC[] = { { 2, 0, 1, 0x16 }, { 2, 0, 1, 0x17 }, { 3, 0, -2, 0x18 } };
 
-union AnimationStep D_800F8EB8[] = { { 0x19010002 }, { 0x1A010002 }, { 0x1BFE0003 } };
+union AnimationStep D_800F8EB8[] = { { 2, 0, 1, 0x19 }, { 2, 0, 1, 0x1A }, { 3, 0, -2, 0x1B } };
 
-union AnimationStep D_800F8EC4[] = { { 0x1C010002 }, { 0x1D010001 }, { 0x1E010002 }, { 0x1FFD0001 } };
+union AnimationStep D_800F8EC4[] = { { 2, 0, 1, 0x1C }, { 1, 0, 1, 0x1D }, { 2, 0, 1, 0x1E }, { 1, 0, -3, 0x1F } };
 
-union AnimationStep D_800F8ED4[] = { { 0x20010002 }, { 0x21010001 }, { 0x22010002 }, { 0x23FD0001 } };
+union AnimationStep D_800F8ED4[] = { { 2, 0, 1, 0x20 }, { 1, 0, 1, 0x21 }, { 2, 0, 1, 0x22 }, { 1, 0, -3, 0x23 } };
 
-union AnimationStep D_800F8EE4[] = { { 0x24010002 }, { 0x25010001 }, { 0x26010002 }, { 0x27FD0001 } };
+union AnimationStep D_800F8EE4[] = { { 2, 0, 1, 0x24 }, { 1, 0, 1, 0x25 }, { 2, 0, 1, 0x26 }, { 1, 0, -3, 0x27 } };
 
-union AnimationStep D_800F8EF4[] = { { 0x28010002 }, { 0x29010001 }, { 0x2A010002 }, { 0x2BFD0001 } };
+union AnimationStep D_800F8EF4[] = { { 2, 0, 1, 0x28 }, { 1, 0, 1, 0x29 }, { 2, 0, 1, 0x2A }, { 1, 0, -3, 0x2B } };
 
 union AnimationStep D_800F8F04[] = {
-    { 0x2C010002 },
-    { 0x2D010101 },
-    { 0x2E010201 },
-    { 0x2F010301 },
-    { 0x30010402 },
-    { 0x31010501 },
-    { 0x31FA0501 },
+    { 2, 0, 1, 0x2C },
+    { 1, 1, 1, 0x2D },
+    { 1, 2, 1, 0x2E },
+    { 1, 3, 1, 0x2F },
+    { 2, 4, 1, 0x30 },
+    { 1, 5, 1, 0x31 },
+    { 1, 5, -6, 0x31 },
 };
 
 union AnimationStep D_800F8F20[] = {
-    { 0x32010002 },
-    { 0x33010101 },
-    { 0x34010201 },
-    { 0x35010301 },
-    { 0x36010402 },
-    { 0x37010501 },
-    { 0x37FA0501 },
+    { 2, 0, 1, 0x32 },
+    { 1, 1, 1, 0x33 },
+    { 1, 2, 1, 0x34 },
+    { 1, 3, 1, 0x35 },
+    { 2, 4, 1, 0x36 },
+    { 1, 5, 1, 0x37 },
+    { 1, 5, -6, 0x37 },
 };
 
 union AnimationStep D_800F8F3C[] = {
-    { 0x38010002 },
-    { 0x39010101 },
-    { 0x3A010201 },
-    { 0x3B010001 },
-    { 0x3C010402 },
-    { 0x3D010501 },
-    { 0x3DFA0001 },
+    { 2, 0, 1, 0x38 },
+    { 1, 1, 1, 0x39 },
+    { 1, 2, 1, 0x3A },
+    { 1, 0, 1, 0x3B },
+    { 2, 4, 1, 0x3C },
+    { 1, 5, 1, 0x3D },
+    { 1, 0, -6, 0x3D },
 };
 
 union AnimationStep D_800F8F58[] = {
-    { 0x3E010002 },
-    { 0x3F010101 },
-    { 0x40010201 },
-    { 0x41010301 },
-    { 0x42010402 },
-    { 0x43010501 },
-    { 0x43FA0501 },
+    { 2, 0, 1, 0x3E },
+    { 1, 1, 1, 0x3F },
+    { 1, 2, 1, 0x40 },
+    { 1, 3, 1, 0x41 },
+    { 2, 4, 1, 0x42 },
+    { 1, 5, 1, 0x43 },
+    { 1, 5, -6, 0x43 },
 };
 
 union AnimationStep D_800F8F74[] = {
-    { 0x44010003 },
-    { 0x45010002 },
-    { 0x46010002 },
-    { 0x47010003 },
-    { 0x48010003 },
-    { 0x49010002 },
-    { 0x4A010002 },
-    { 0x4BFA0003 },
+    { 3, 0, 1, 0x44 },
+    { 2, 0, 1, 0x45 },
+    { 2, 0, 1, 0x46 },
+    { 3, 0, 1, 0x47 },
+    { 3, 0, 1, 0x48 },
+    { 2, 0, 1, 0x49 },
+    { 2, 0, 1, 0x4A },
+    { 3, 0, -6, 0x4B },
 };
 
-union AnimationStep D_800F8F94[] = { { 0x4C000001 } };
+union AnimationStep D_800F8F94[] = { { 1, 0, 0, 0x4C } };
 
-union AnimationStep D_800F8F98[] = { { 0x4D000001 } };
+union AnimationStep D_800F8F98[] = { { 1, 0, 0, 0x4D } };
 
-union AnimationStep D_800F8F9C[] = { { 0x4E000001 } };
+union AnimationStep D_800F8F9C[] = { { 1, 0, 0, 0x4E } };
 
-union AnimationStep D_800F8FA0[] = { { 0x4F000001 } };
+union AnimationStep D_800F8FA0[] = { { 1, 0, 0, 0x4F } };
 
-union AnimationStep D_800F8FA4[] = { { 0x50000001 } };
+union AnimationStep D_800F8FA4[] = { { 1, 0, 0, 0x50 } };
 
-union AnimationStep D_800F8FA8[] = { { 0x51000001 } };
+union AnimationStep D_800F8FA8[] = { { 1, 0, 0, 0x51 } };
 
-union AnimationStep D_800F8FAC[] = { { 0x52000001 } };
+union AnimationStep D_800F8FAC[] = { { 1, 0, 0, 0x52 } };
 
-union AnimationStep D_800F8FB0[] = { { 0x53000001 } };
+union AnimationStep D_800F8FB0[] = { { 1, 0, 0, 0x53 } };
 
-union AnimationStep D_800F8FB4[] = { { 0x54000001 } };
+union AnimationStep D_800F8FB4[] = { { 1, 0, 0, 0x54 } };
 
-union AnimationStep D_800F8FB8[] = { { 0x55000001 } };
+union AnimationStep D_800F8FB8[] = { { 1, 0, 0, 0x55 } };
 
-union AnimationStep D_800F8FBC[] = { { 0x56000001 } };
+union AnimationStep D_800F8FBC[] = { { 1, 0, 0, 0x56 } };
 
-union AnimationStep D_800F8FC0[] = { { 0x57000001 } };
+union AnimationStep D_800F8FC0[] = { { 1, 0, 0, 0x57 } };
 
 union AnimationStep* D_800F8FC4[38] = {
     D_800F8DC8,

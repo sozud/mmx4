@@ -26,6 +26,12 @@ extern void (*sigma_fx_state_funcs[])(struct VisualObj*);
 
 void sigma_fx_run(struct VisualObj*);
 void sigma_fx_despawn(struct VisualObj*);
+#include "weapon_resources.h"
+extern u8 sigma_fx_x_offsets[4];
+extern u8 sigma_fx_y_offsets[4];
+extern u8 sigma_fx_cloak_piece_animations[4];
+extern s32 sigma_fx_cloak_piece_x_vels[8];
+extern s32 sigma_fx_cloak_piece_y_vels[8];
 
 u8 sigma_fx_x_offsets[4] = { 0xF, 6, 0x16, 0xF0 };
 u8 sigma_fx_y_offsets[4] = { 0xF8, 0x16, 2, 0xFF };
@@ -52,11 +58,12 @@ s32 sigma_fx_cloak_piece_y_vels[8] = {
 };
 
 // sigma_fx_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B4E34(struct VisualObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B4E34(struct VisualObj* self)
 {
     struct PlayerObj* parent = self->unk50;
@@ -74,7 +81,7 @@ void func_800B4E34(struct VisualObj* self)
 
     switch (self->unk2) {
     case 0:
-        self->unk16 = 5;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
         set_animation(self, 2);
         break;
     case 1:
@@ -87,7 +94,7 @@ void func_800B4E34(struct VisualObj* self)
         break;
     case 2:
     case 5:
-        self->unk16 = 5;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
         self->x_pos.i.hi += (parent->unk15 ? -1 : 1) * (s8)sigma_fx_x_offsets[get_random() & 3];
         self->y_pos.i.hi += (s8)sigma_fx_y_offsets[get_random() & 3];
         set_animation(self, 0xA);
@@ -103,7 +110,7 @@ void func_800B4E34(struct VisualObj* self)
         set_animation(self, 0x24);
         break;
     case 6:
-        self->unk16 = 5;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
         set_animation(self, 0x2A);
         self->unk42 &= 0x7FFF;
         break;

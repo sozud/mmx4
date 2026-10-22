@@ -10,18 +10,20 @@ extern void (*stage_portrait_state_funcs[])(struct MiscObj*);
 
 void stage_portrait_select(struct MiscObj*);
 void stage_portrait_show(struct MiscObj*);
+#include "weapon_resources.h"
 
 // stage_portrait_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA52C(struct MiscObj* self);
 extern union AnimationStep* stage_portrait_animations[1];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA52C(struct MiscObj* self)
 {
-    self->unk42 = 0x780B;
-    self->unk40 = D_801406A8[1] >> 7;
+    self->unk42 = OBJECT_PALETTE_FROM_COLOR(0x0B);
+    self->unk40 = OBJECT_STAGE_TEXTURE(1);
     self->animation_table = (u32**)stage_portrait_animations;
     self->bg_offset = 0;
     self->unk15 = 0;
@@ -37,7 +39,7 @@ void func_800CA52C(struct MiscObj* self)
         self->x_pos.i.hi = 0x60;
         self->y_pos.i.hi = 0x180;
         set_animation_frame(ANIMATED_OBJECT(self), 0, 10);
-        self->unk42 = 0x784F;
+        self->unk42 = OBJECT_PALETTE_FROM_COLOR(0x1F);
         self->state = 2;
     }
 }
@@ -76,7 +78,11 @@ void stage_portrait_select(struct MiscObj* self)
         if (var_v1 < 0) {
             var_v1 = stage + 0xB;
         }
+#ifdef MMX4_SATURN
+        self->unk42 = OBJECT_PALETTE_FROM_COLOR((stage - 1) * 2 + 0xB);
+#else
         self->unk42 = temp_a0 | (((var_v1 >> 3) + 0x1E0) << 6);
+#endif
     }
     is_on_screen(BASE_OBJECT(self));
 }
@@ -93,18 +99,18 @@ void stage_portrait_update(struct MiscObj* self)
 }
 
 union AnimationStep stage_portrait_anim_0[12] = {
-    { 0x0001001E },
-    { 0x0101001E },
-    { 0x0201001E },
-    { 0x0301001E },
-    { 0x0401001E },
-    { 0x0501001E },
-    { 0x0601001E },
-    { 0x0701001E },
-    { 0x0801001E },
-    { 0x0901001E },
-    { 0x0A01001E },
-    { 0x1001001E },
+    { 30, 0, 1, 0x00 },
+    { 30, 0, 1, 0x01 },
+    { 30, 0, 1, 0x02 },
+    { 30, 0, 1, 0x03 },
+    { 30, 0, 1, 0x04 },
+    { 30, 0, 1, 0x05 },
+    { 30, 0, 1, 0x06 },
+    { 30, 0, 1, 0x07 },
+    { 30, 0, 1, 0x08 },
+    { 30, 0, 1, 0x09 },
+    { 30, 0, 1, 0x0A },
+    { 30, 0, 1, 0x10 },
 };
 
 union AnimationStep* stage_portrait_animations[1] = { stage_portrait_anim_0 };

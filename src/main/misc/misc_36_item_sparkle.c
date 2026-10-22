@@ -11,6 +11,7 @@ extern void (*item_sparkle_state_funcs[])(struct MiscObj*);
 
 void item_sparkle_move(struct MiscObj*);
 void item_sparkle_despawn(struct MiscObj*);
+#include "weapon_resources.h"
 
 void item_sparkle_update(struct MiscObj* self)
 {
@@ -20,18 +21,17 @@ void item_sparkle_update(struct MiscObj* self)
 }
 
 // item_sparkle_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CF300(struct MiscObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/misc/misc_36_item_sparkle.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CF300(struct MiscObj* self)
 {
     struct AnimatedObj* owner = ANIMATED_OBJECT(self->ext.pointer.unk50);
 
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->unk40 = owner->unk40;
     owner->unk42 &= 0x7FFF;
     self->unk42 = owner->unk42;

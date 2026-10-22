@@ -9,6 +9,7 @@ extern void (*enemy_spawner_state_funcs[])(struct EffectObj*);
 void enemy_spawner_init(struct EffectObj*);
 
 void enemy_spawner_despawn(struct EffectObj*);
+#include "weapon_resources.h"
 
 u8 enemy_spawner_child_ids[8] = { 12, 25, 12, 12, 12, 12, 12, 12 };
 u8 enemy_spawner_child_subtypes[8] = { 2, 1, 2, 2, 2, 2, 2, 2 };
@@ -95,8 +96,8 @@ void func_800B8114(struct EffectObj* self)
                             child->x_pos.val = self->x_pos.val;
                             child->y_pos.val = self->y_pos.val;
                             self->ext.effect_12.cooldown = 0x20;
-                            child->unk40 = (u16)(D_801406A8[func_8002938C((u8)child->id) & 0xFF] >> 7);
-                            clut = SOME_COORDINATE_CONVERSION(func_8002938C((u8)child->id) & 0xFF);
+                            child->unk40 = (u16)(OBJECT_STAGE_TEXTURE(func_8002938C((u8)child->id) & 0xFF));
+                            clut = VISUAL_STAGE_PALETTE(func_8002938C((u8)child->id) & 0xFF);
                             child->unk42 = clut;
                             child->sprite_frames = (const u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C((u8)child->id) & 0xFF];
                             self->ext.effect_12.spawned++;
@@ -151,7 +152,7 @@ void enemy_spawner_despawn(struct EffectObj* self)
 }
 
 // enemy_spawner_count_children
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_800B8490(struct EffectObj* arg0)
 {
     if ((u16)(arg0->x_pos.i.hi - background_objects[0].x_pos.i.hi + 0x40) >= 0x1C0)

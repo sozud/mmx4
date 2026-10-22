@@ -5,6 +5,7 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "weapon_resources.h"
 
 // D_8010EC10 - g_TitleLogoUpdateFuncs
 extern void (*g_TitleLogoUpdateFuncs[])(struct MiscObj* arg0);
@@ -23,20 +24,34 @@ void title_logo_sparkle(struct MiscObj* arg0);
 #define TITLE_PALETTE_WORDS 16
 #endif
 
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#define TITLE_LOGO_STAR_PALETTE 0x04
+#define TITLE_LOGO_PALETTE 0x10
+#else
+#define TITLE_LOGO_STAR_PALETTE 0x7804
+#define TITLE_LOGO_PALETTE 0x7840
+#endif
+
 extern s32 title_logo_star_delays[];
 extern u32* title_animations[];
 
 // TitleLogoUpdate state 0
 void title_logo_init(struct MiscObj* self)
 {
+#ifdef MMX4_SATURN
+    self->unk40 = SATURN_TITLE_TEXTURE;
+    self->unk3C = SATURN_TITLE_FRAMES;
+#else
     self->unk40 = 0x600;
     self->unk3C = SP_TITLE_FRAMES;
+#endif
     self->animation_table = title_animations;
     self->bg_offset = -1;
     self->unk15 = 0;
 
     if (self->unk2 < 0x20) {
-        self->unk42 = 0x7804;
+        self->unk42 = TITLE_LOGO_STAR_PALETTE;
         self->animation_step.fields.frame_index = 0x1C;
         if (!(self->unk2 & 0x10)) {
             self->x_pos.val = 0;
@@ -53,7 +68,7 @@ void title_logo_init(struct MiscObj* self)
         }
         return;
     }
-    self->unk42 = 0x7840;
+    self->unk42 = TITLE_LOGO_PALETTE;
     if (self->unk2 == 0x20) {
         set_animation(self, 0);
         self->x_pos.i.hi = TITLE_FADE_X; // set x pos of "MEGAMAN" while it's fading from white
@@ -65,7 +80,7 @@ void title_logo_init(struct MiscObj* self)
         self->y_pos.i.hi = 72;
         self->state = 7;
     } else {
-        self->unk42 = 0x7804;
+        self->unk42 = TITLE_LOGO_STAR_PALETTE;
         self->unk16 = 0;
         self->x_pos.i.hi = 216;
         self->y_pos.i.hi = 72;
@@ -151,7 +166,11 @@ void title_logo_fade_start(struct MiscObj* self)
     // transition "MEGAMAN" to white before full logo appears
     if (self->animation_step.fields.relative_step == 0) {
         self->ext.title_logo.palette2 = (s32*)(SP_PALETTE + 0x100);
+#ifdef MMX4_SATURN
+        self->ext.title_logo.palette1 = SATURN_TITLE_PALETTE;
+#else
         self->ext.title_logo.palette1 = SP_ARC_30;
+#endif
         // interval to shift on
         self->ext.title_logo.palette_shift_speed = 2;
         // how much to shift each step

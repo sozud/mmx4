@@ -3,6 +3,23 @@
 #include "common.h"
 #include "main/objects.h"
 #include "main/1A5BC.h"
+#ifdef MMX4_SATURN
+#define VISIBILITY_BACKGROUND(obj) (*(struct BackgroundObj*)((u8*)background_objects + (u8)(84 * (u8)(obj)->bg_offset)))
+void saturn_queue_object(void*);
+void saturn_queue_frozen_quad(struct QuadObj*);
+#define VISIBLE_OBJECT(obj) saturn_queue_object(obj)
+#define VISIBLE_OR_FROZEN_OBJECT(obj)                         \
+    do {                                                      \
+        if ((s8)(obj)->active < 0)                            \
+            saturn_queue_frozen_quad((struct QuadObj*)(obj)); \
+        else                                                  \
+            saturn_queue_object(obj);                         \
+    } while (0)
+#else
+#define VISIBILITY_BACKGROUND(obj) background_objects[(obj)->bg_offset]
+#define VISIBLE_OBJECT(obj) ((obj)->on_screen = 1)
+#define VISIBLE_OR_FROZEN_OBJECT(obj) ((obj)->on_screen = 1)
+#endif
 
 void reset_game_engine()
 {
@@ -481,8 +498,8 @@ s32 func_8002B160(struct BaseObj* arg0)
         x = self->x_pos.u.hi;
         y = self->y_pos.u.hi;
     } else {
-        x = self->x_pos.u.hi - background_objects[self->bg_offset].x_pos.u.hi;
-        y = self->y_pos.u.hi - background_objects[self->bg_offset].y_pos.u.hi;
+        x = self->x_pos.u.hi - VISIBILITY_BACKGROUND(self).x_pos.u.hi;
+        y = self->y_pos.u.hi - VISIBILITY_BACKGROUND(self).y_pos.u.hi;
     }
     if ((u16)(x + 0x40) < 0x1C0 && (u16)(y + 0x40) < 0x170) {
         return 0;
@@ -500,8 +517,8 @@ s32 func_8002B1E8(struct BaseObj* self, s32 x_offset, s32 y_offset)
         x_pos = self->x_pos.u.hi;
         y_pos = self->y_pos.u.hi;
     } else {
-        x_pos = self->x_pos.u.hi - background_objects[self->bg_offset].x_pos.u.hi;
-        y_pos = self->y_pos.u.hi - background_objects[self->bg_offset].y_pos.u.hi;
+        x_pos = self->x_pos.u.hi - VISIBILITY_BACKGROUND(self).x_pos.u.hi;
+        y_pos = self->y_pos.u.hi - VISIBILITY_BACKGROUND(self).y_pos.u.hi;
     }
     if ((u16)(x_pos + x_offset) < (u16)((x_offset << 1) + 0x140) && (u16)(y_pos + y_offset) < (u16)((y_offset << 1) + 0xF0)) {
         return 0;
@@ -520,14 +537,14 @@ void is_on_screen(struct BaseObj* arg0)
         x_pos = arg0->x_pos.i.hi;
         y_pos = arg0->y_pos.i.hi;
     } else {
-        x_pos = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
-        y_pos = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
+        x_pos = arg0->x_pos.i.hi - VISIBILITY_BACKGROUND(arg0).x_pos.i.hi;
+        y_pos = arg0->y_pos.i.hi - VISIBILITY_BACKGROUND(arg0).y_pos.i.hi;
     }
     // check if the object is within 320x240 viewport += 32
     if (x_pos >= -32 && x_pos < 352) {
         y_range = y_pos + 32;
         if ((u32)y_range < 0x130U) {
-            arg0->on_screen = 1;
+            VISIBLE_OBJECT(arg0);
         }
     }
 }
@@ -542,8 +559,8 @@ void update_on_screen(struct BaseObj* arg0, s32 arg1, s32 arg2)
         x_pos = arg0->x_pos.i.hi;
         y_pos = arg0->y_pos.i.hi;
     } else {
-        x_pos = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
-        y_pos = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
+        x_pos = arg0->x_pos.i.hi - VISIBILITY_BACKGROUND(arg0).x_pos.i.hi;
+        y_pos = arg0->y_pos.i.hi - VISIBILITY_BACKGROUND(arg0).y_pos.i.hi;
     }
     x_pos += arg1;
     x_diff = 0x140 + arg1 + arg1;
@@ -551,7 +568,7 @@ void update_on_screen(struct BaseObj* arg0, s32 arg1, s32 arg2)
         y_pos_2 = y_pos + arg2;
         y_diff = 0xF0 + arg2 + arg2;
         if (y_pos_2 < y_diff) {
-            arg0->on_screen = 1;
+            VISIBLE_OBJECT(arg0);
         }
     }
 }
@@ -566,11 +583,11 @@ void func_8002B3C0(struct BaseObj* arg0)
         x_pos = arg0->x_pos.i.hi;
         y_pos = arg0->y_pos.i.hi;
     } else {
-        x_pos = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
-        y_pos = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
+        x_pos = arg0->x_pos.i.hi - VISIBILITY_BACKGROUND(arg0).x_pos.i.hi;
+        y_pos = arg0->y_pos.i.hi - VISIBILITY_BACKGROUND(arg0).y_pos.i.hi;
     }
     if ((u16)(x_pos + 0x60) < 0x200 && (u16)(y_pos + 0x50) < 0x190) {
-        arg0->on_screen = 1;
+        VISIBLE_OR_FROZEN_OBJECT(arg0);
     }
 }
 
@@ -613,11 +630,12 @@ struct EffectObj* func_8002B468(s8 id, s8 arg1)
 }
 
 // delete_effects
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8002B560(s8 id, s8 subtype);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8002B560(s8 id, s8 subtype)
 {
     s32 i;

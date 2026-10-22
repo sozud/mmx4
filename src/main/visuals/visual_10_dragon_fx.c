@@ -13,6 +13,7 @@ void dragon_fx_flash_init(struct VisualObj*);
 void dragon_fx_trail_init(struct VisualObj*);
 void dragon_fx_animate(struct VisualObj*);
 void dragon_fx_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void dragon_fx_update(struct VisualObj* arg0)
 {
@@ -24,7 +25,7 @@ void dragon_fx_flash_init(struct VisualObj* arg0)
     if (arg0->unk2 == 0) {
         arg0->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
     }
     set_animation(arg0, 5);
     arg0->state++;
@@ -32,11 +33,12 @@ void dragon_fx_flash_init(struct VisualObj* arg0)
 }
 
 // dragon_fx_flash
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B158C(struct VisualObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B158C(struct VisualObj* arg0)
 {
     struct PlayerObj* owner = arg0->unk50;
@@ -83,7 +85,7 @@ void dragon_fx_trail_init(struct VisualObj* arg0)
     arg0->animation_table = temp_v1->animation_table;
     arg0->unk40 = temp_v1->unk40;
     arg0->unk42 = temp_v1->unk42;
-    arg0->unk16 = 0x10;
+    arg0->unk16 = VISUAL_SATURN_LAYER(0x10);
     arg0->x_pos.val = temp_v1->x_pos.val;
     arg0->y_pos.val = temp_v1->y_pos.val;
     arg0->bg_offset = -1;

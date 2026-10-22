@@ -10,6 +10,10 @@
 #include "main/E47C.h"
 #include "main/E47C_menu_data.h"
 #include "main/game_info.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#include "saturn/player_resources.h"
+#endif
 
 void func_800193D8(struct EngineObj* arg0);
 
@@ -85,11 +89,41 @@ void func_800204A4(void)
 {
 }
 
+#ifndef MMX4_SATURN
 void func_800204AC(struct EngineObj* arg0)
 {
     func_800193D8(arg0);
 }
+#else
+void func_8001A9EC(struct EngineObj* arg0);
 
+void func_800204AC(struct EngineObj* arg0)
+{
+    func_8001A9EC(arg0);
+}
+#endif
+
+#ifdef MMX4_SATURN
+void func_800204CC(s8* arg0, s32 arg1)
+{
+    if (saturn_pad_pressed & SATURN_PAD_UP) {
+        func_8001540C(0, SATURN_SE_CURSOR, 0);
+        if (*arg0 == 0) {
+            *arg0 = arg1;
+        } else {
+            *arg0 = *arg0 - 1;
+        }
+    }
+    if (saturn_pad_pressed & SATURN_PAD_DOWN) {
+        func_8001540C(0, SATURN_SE_CURSOR, 0);
+        if (*arg0 == arg1) {
+            *arg0 = 0;
+            return;
+        }
+        *arg0 = *arg0 + 1;
+    }
+}
+#else
 void func_800204CC(s8* arg0, s32 arg1)
 {
     if (controller_input.pressed & 0x1000) {
@@ -109,7 +143,34 @@ void func_800204CC(s8* arg0, s32 arg1)
         *arg0 = *arg0 + 1;
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020580(struct EngineObj* arg0)
+{
+    func_8001D134();
+    main_bss_state.transition.selection = 0;
+    arg0->unk1F = 0;
+    arg0->enable_boss = 0;
+    func_8001E980(0);
+    if (arg0->stage != 0) {
+        func_8001C3E8();
+    }
+    saturn_title_upload_window();
+    arg0->unk4 = 0x78;
+    func_800129A4(8);
+    if (arg0->stage == 0) {
+        arg0->unk8 = func_8001E850(D_800F231C, 1);
+        arg0->unk1 += 5;
+    } else if ((saturn_backup_status & SATURN_BACKUP_UNAVAILABLE) == SATURN_BACKUP_UNAVAILABLE) {
+        arg0->unk8 = func_8001E850(D_800F2338, 1);
+        arg0->unk1 += 3;
+    } else {
+        arg0->unk8 = func_8001E850(D_800F2328, 1);
+        arg0->unk1++;
+    }
+}
+#else
 void func_80020580(struct EngineObj* arg0)
 {
     s8 next_state;
@@ -133,7 +194,23 @@ void func_80020580(struct EngineObj* arg0)
     }
     arg0->unk1 = next_state;
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020638(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (saturn_pad_pressed & SATURN_PAD_CONFIRM) {
+            func_8001540C(0, SATURN_SE_CONFIRM, 0);
+            if ((s8)main_bss_state.transition.selection != 2U) {
+                func_800129F0(8);
+            }
+            arg0->unk1++;
+        }
+    }
+}
+#else
 void func_80020638(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -147,7 +224,64 @@ void func_80020638(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_800206D0(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        switch (main_bss_state.transition.selection) {
+        case 0:
+            saturn_display_mode = 15;
+            func_8001E980(1);
+            if (D_80171EA8 != 0) {
+                func_800127C8(1);
+                func_80013014();
+                D_80171EA8 = 0;
+            }
+            if (engine_obj.collected_upgrades & 0x8000) {
+                arg0->player_lives = 4;
+            } else {
+                arg0->player_lives = 2;
+            }
+            arg0->checkpoint = 0;
+            arg0->unk1E = 0;
+            arg0->state = 5;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 1:
+            saturn_display_mode = 15;
+            func_8001E980(1);
+            if (engine_obj.collected_upgrades & 0x8000) {
+                arg0->player_lives = 4;
+            } else {
+                arg0->player_lives = 2;
+            }
+            arg0->state = 3;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 2:
+            arg0->unk4 = arg0->state;
+            arg0->state = 0xC;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        default:
+            saturn_soft_reset_mode = 0;
+            saturn_controller_refresh = 1;
+            saturn_display_mode = 15;
+            func_8001E980(1);
+            func_80012740(0, &func_8001DAF8);
+            func_800127FC();
+        }
+    }
+}
+#else
 void func_800206D0(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -195,7 +329,21 @@ void func_800206D0(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020808(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (saturn_pad_pressed & SATURN_PAD_CONFIRM) {
+            func_8001540C(0, SATURN_SE_CONFIRM, 0);
+            func_800129F0(8);
+            arg0->unk1++;
+        }
+    }
+}
+#else
 void func_80020808(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -207,7 +355,54 @@ void func_80020808(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_8002088C(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        saturn_display_mode = 15;
+        func_8001E980(1);
+        switch (main_bss_state.transition.selection) {
+        case 0:
+            if (D_80171EA8 != 0) {
+                func_800127C8(1);
+                func_80013014();
+                D_80171EA8 = 0;
+            }
+            if (engine_obj.collected_upgrades & 0x8000) {
+                arg0->player_lives = 4;
+            } else {
+                arg0->player_lives = 2;
+            }
+            arg0->checkpoint = 0;
+            arg0->unk1E = 0;
+            arg0->state = 5;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 1:
+            if (engine_obj.collected_upgrades & 0x8000) {
+                arg0->player_lives = 4;
+            } else {
+                arg0->player_lives = 2;
+            }
+            arg0->state = 3;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 2:
+        default:
+            saturn_soft_reset_mode = 0;
+            saturn_controller_refresh = 1;
+            func_80012740(0, &func_8001DAF8);
+            func_800127FC();
+        }
+    }
+}
+#else
 void func_8002088C(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -250,3 +445,4 @@ void func_8002088C(struct EngineObj* arg0)
         }
     }
 }
+#endif

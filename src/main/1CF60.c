@@ -4,6 +4,12 @@
 #include "main/collision.h"
 
 u8 func_8002D7E4(struct PlayerObj*, s16, s16);
+#include "compiler.h"
+#ifdef MMX4_SATURN
+#define TILE_ATTRIBUTE(word) ((u8)((word) >> 24))
+#else
+#define TILE_ATTRIBUTE(word) (word)
+#endif
 
 void func_8002C9E4(struct PlayerObj* arg0);
 s32 func_8002D1F8(struct PlayerObj* arg0, u8 arg1, s32 arg2);
@@ -187,6 +193,8 @@ s32 func_8002CD70(struct PlayerObj* arg0, u8 arg1)
     default:
 #ifdef MMX4_PC
         return 0;
+#elif defined(MMX4_SATURN)
+        return arg1;
 #endif
         ;
     }
@@ -495,7 +503,7 @@ s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1)
     }
 }
 
-static __inline u16 stage_tile_entry(u8 block, s32 row, s32 column)
+static MMX4_INLINE u16 stage_tile_entry(u8 block, s32 row, s32 column)
 {
     u16(*tiles)[16][16] = (u16(*)[16][16])SP_BG_TILE_PIXELS;
 
@@ -522,7 +530,7 @@ u8 func_8002D724(struct PlayerObj* player, s16 x, s16 y)
     if (block == 0 || block_row < 0 || block_column < 0) {
         attribute = 0;
     } else {
-        attribute = SP_BG_TILE_ATTRS[stage_tile_entry(block, tile_row, tile_column) & 0x3FFF];
+        attribute = TILE_ATTRIBUTE(SP_BG_TILE_ATTRS[stage_tile_entry(block, tile_row, tile_column) & 0x3FFF]);
     }
     return attribute;
 }
@@ -548,7 +556,7 @@ u8 func_8002D7E4(struct PlayerObj* player, s16 x, s16 y)
         player->unk6C = x & 0xF;
         player->unk6E = y & 0xF;
 
-        attribute = SP_BG_TILE_ATTRS[stage_tile_entry(block, tile_row, tile_column) & 0x3FFF];
+        attribute = TILE_ATTRIBUTE(SP_BG_TILE_ATTRS[stage_tile_entry(block, tile_row, tile_column) & 0x3FFF]);
     }
     return attribute;
 }

@@ -34,7 +34,7 @@ void func_80013890(u32, u8*);
 extern void func_80013E68(u8 status, u8* result);
 void func_80013650(void);
 s8 func_800136B0();
-void func_800137F0();
+void func_800137F0(void);
 void MyCdReadyCallback(u8 status, u8* result);
 
 void func_80014C70(void);

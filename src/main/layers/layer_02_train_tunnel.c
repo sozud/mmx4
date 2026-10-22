@@ -25,6 +25,7 @@ void train_tunnel_idle(struct LayerObj*);
 void train_tunnel_shake_running(struct LayerObj*);
 void train_tunnel_shake_braking(struct LayerObj*);
 void train_tunnel_spawn_scroll_prop(struct LayerObj*);
+#include "weapon_resources.h"
 
 void train_tunnel_accelerate(struct LayerObj* arg0);
 void train_tunnel_brake(struct LayerObj* arg0);
@@ -65,7 +66,7 @@ void func_800D9268(struct LayerObj* self)
     background_objects[1].unk4D = 2;
     background_objects[2].unk4D = 2;
     background_objects[2].unk4E = 5;
-    func_8001540C(5, 9, NULL);
+    func_8001540C(5, SATURN_SOUND(9, 0x42), NULL);
     train_tunnel_main(self);
 }
 
@@ -134,7 +135,7 @@ void train_tunnel_wait_stop_point(struct LayerObj* arg0)
         if (train_tunnel_player_at_lock(arg0)) {
             background_objects[0].unk24 = 0x16B0;
             background_objects[0].unk26 = 0x16B0;
-            player_start_script_action(0x14, 0x40);
+            player_start_script_action(0x14, PLAYER_FACING_RIGHT);
             arg0->unk7 = 1;
             return;
         }
@@ -158,7 +159,7 @@ void train_tunnel_start_braking(struct LayerObj* arg0)
 {
     arg0->unk17 = 2;
     engine_obj.character_state.bytes[0] = 1;
-    func_8001540C(5, 0xA, NULL);
+    func_8001540C(5, SATURN_SOUND(0xA, 0x43), NULL);
     arg0->unk7 = 0;
     arg0->unk6++;
 }
@@ -175,7 +176,7 @@ void train_tunnel_brake(struct LayerObj* arg0)
         background_objects[0].unk1C = 0x24E0;
         background_objects[0].unk24 = 0x24E0;
         player_end_script_action();
-        func_8001540C(5, 0xB, NULL);
+        func_8001540C(5, SATURN_SOUND(0xB, 0x44), NULL);
         arg0->unk7 = 1;
         arg0->unk17 = 0;
         return;
@@ -200,8 +201,8 @@ void train_tunnel_start_departure(struct LayerObj* arg0)
 {
     if (engine_obj.checkpoint != 3) {
         background_objects[0].unk26 = 0x1DE0;
-        player_start_script_action(0x14, 0x40);
-        func_8001540C(5, 9, NULL);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
+        func_8001540C(5, SATURN_SOUND(9, 0x42), NULL);
         arg0->unk18.val = FIXED(2);
     } else {
         arg0->unk18.val = FIXED(8);
@@ -343,11 +344,12 @@ u8 train_tunnel_player_at_lock(struct LayerObj* arg0)
 }
 
 // train_tunnel_update_lights
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D9B48(struct LayerObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D9B48(struct LayerObj* self)
 {
     u8* private_bytes = (u8*)&self->private_state;

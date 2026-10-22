@@ -5,7 +5,7 @@
 #include "main/objects.h"
 #include "main/object_motion.h"
 
-extern void (*teleport_intro_state_funcs[])();
+extern void (*teleport_intro_state_funcs[])(struct EffectObj*);
 
 // teleport_intro_state_funcs
 void teleport_intro_init(struct EffectObj* arg0);

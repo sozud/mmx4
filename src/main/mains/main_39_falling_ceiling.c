@@ -1,14 +1,18 @@
 // MainObj, main_object_update_funcs[39]
 // 80061590..80061DC0
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_39_falling_ceiling.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/CB184.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/collision_bounds.h"
+#include "main/visuals/visual_03_small_effect.h"
+#include "main/stage_objects.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
 #include "main/stage_objects.h"
 #include "main/visuals/visual_03_small_effect.h"
@@ -37,7 +41,12 @@ void falling_ceiling_update(struct MainObj* self)
 }
 
 // falling_ceiling_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80061B58(struct MainObj* self);
 void func_80061918(struct MainObj* self);
 void func_800615CC(struct MainObj* self);
@@ -47,13 +56,14 @@ extern s8 D_800FE94C[4];
 extern union AnimationStep* falling_ceiling_animations[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800615CC(struct MainObj* self)
 {
+    u8* ext;
     static const u16 top[6] = { 0xB20, 0xC20, 0xD20, 0xE20, 0xEA0, 0xF20 };
     static const u16 left[6] = { 0xB60, 0xC60, 0xD60, 0xE60, 0xEE0, 0xF60 };
     static const u16 center[6] = { 0xB70, 0xBF0, 0xCE0, 0xDD0, 0xE50, 0xEB0 };
-    u8* ext = (u8*)&self->ext;
+    ext = (u8*)&self->ext;
 
     self->contact_damage = 0x14;
     self->hp = 6;
@@ -64,7 +74,7 @@ void func_800615CC(struct MainObj* self)
     self->hurt_box = D_800FE944;
     self->attack_box = D_800FE948;
     self->air_state = 0;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk15 = 0;
     self->bg_offset = g_Player.bg_offset;
     set_animation(self, 0);
@@ -121,10 +131,11 @@ void falling_ceiling_despawn(struct MainObj* self)
 }
 
 // falling_ceiling_wait
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80061918(struct MainObj* self)
 {
     struct Main39Ext* ext = &self->ext.main_39;
+    s32 target_x;
 
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -146,7 +157,7 @@ void func_80061918(struct MainObj* self)
         ext->unk8C = 0x3000000;
     if (g_Player.y_pos.val >= ext->unk8C || self->y_pos.val >= g_Player.y_pos.val)
         return;
-    s32 target_x = g_Player.x_pos.i.hi + (self->unk2 & 1 ? 0x10 : -0x10);
+    target_x = g_Player.x_pos.i.hi + (self->unk2 & 1 ? 0x10 : -0x10);
     if (target_x - self->x_pos.i.hi >= -0x10 && target_x - self->x_pos.i.hi <= 0x10) {
         self->gravity = 0x8000;
         self->unk5 = 2;
@@ -177,12 +188,13 @@ void falling_ceiling_drop_start(struct MainObj* self)
 }
 
 // falling_ceiling_drop_fall
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80061B58(struct MainObj* self)
 {
     struct Main39Ext* ext = &self->ext.main_39;
+    s32 i;
     if (--ext->unk94 == 0) {
-        func_8001540C(2, 0x59, self);
+        func_8001540C(2, SATURN_SOUND(0x59, 0x40), self);
         ext->unk94 = 0x1E;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -202,7 +214,7 @@ void func_80061B58(struct MainObj* self)
         self->unk6 = 2;
         return;
     }
-    for (s32 i = 0; i < 2; i++) {
+    for (i = 0; i < 2; i++) {
         struct ItemObj* item = find_free_item_obj();
         if (item != NULL) {
             item->active = 0x41;
@@ -250,29 +262,29 @@ s8 D_800FE948[4] = { -12, -5, 22, 26 };
 s8 D_800FE94C[4] = { 0, 0, 16, 26 };
 
 union AnimationStep falling_ceiling_anim_0[] = {
-    { 0x00010001 },
-    { 0x01010001 },
-    { 0x02FE0001 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, -2, 0x02 },
 };
 
 union AnimationStep falling_ceiling_anim_1[] = {
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05000101 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 1, 0, 0x05 },
 };
 
 union AnimationStep falling_ceiling_anim_2[] = {
-    { 0x07010003 },
-    { 0x08010003 },
-    { 0x09010003 },
-    { 0x0A010003 },
-    { 0x0B010003 },
-    { 0x0C010003 },
-    { 0x0D010003 },
-    { 0x06F90003 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x0A },
+    { 3, 0, 1, 0x0B },
+    { 3, 0, 1, 0x0C },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, -7, 0x06 },
 };
 
 union AnimationStep* falling_ceiling_animations[4] = {

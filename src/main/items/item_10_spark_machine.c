@@ -7,10 +7,6 @@
 #include "main/55C4.h"
 #include "main/CB184.h"
 
-#ifdef MMX4_PC
-#include "main/1E1BC.h"
-#endif
-
 // spark_machine_state_funcs
 extern void (*spark_machine_state_funcs[])(struct ItemObj*);
 
@@ -19,6 +15,11 @@ void spark_machine_break(struct ItemObj*);
 void spark_machine_broken(struct ItemObj*);
 
 extern u8 spark_machine_debris[8];
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/1E1BC.h"
+#endif
 
 struct Item10AnimationStep {
     u8 duration;
@@ -186,7 +187,11 @@ void spark_machine_update(struct ItemObj* arg0)
 }
 
 // spark_machine_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C2528(struct ItemObj* self);
 void func_800C2638(struct ItemObj* self);
 // src/main/items/item_10_spark_machine.c
@@ -198,14 +203,14 @@ extern struct Item10Offset spark_machine_spark_offsets[5];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C2528(struct ItemObj* self)
 {
     self->active = 0x41;
-    self->unk16 = 5;
-    self->unk40 = (u16)(D_801406A8[func_8002938C(0x9D)] >> 7);
+    self->unk16 = VISUAL_SATURN_LAYER(5);
+    self->unk40 = (u16)(OBJECT_STAGE_TEXTURE(func_8002938C(0x9D)));
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x9D));
-    self->unk42 = 0x7986;
+    self->unk42 = OBJECT_CLUT(0x7986);
     self->animation_table = (const u8* const*)spark_machine_animations;
     self->unk68 = (struct Unk_unk68*)spark_machine_terrain_box;
     self->unk54 = spark_machine_hit_box;
@@ -229,7 +234,7 @@ INCLUDE_ASM("main/nonmatchings/items/item_10_spark_machine", func_800C2528);
 #endif
 
 // spark_machine_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C2638(struct ItemObj* self)
 {
     s32 hit = func_8002DD04((struct MainObj*)self);
@@ -249,7 +254,7 @@ void func_800C2638(struct ItemObj* self)
             if (spark != NULL) {
                 spark->active = 0x41;
                 spark->id = 9;
-                spark->unk15 = get_random() & 0x40;
+                spark->unk15 = get_random() & PLAYER_FACING_RIGHT;
                 spark->state = 0;
                 spark->unk5 = 0;
                 spark->unk6 = 0;
@@ -313,7 +318,7 @@ void spark_machine_spawn_spark_a(struct ItemObj* arg0)
         if (obj != NULL) {
             obj->active = 0x41;
             obj->id = 0x24;
-            obj->unk15 = get_random() & 0x40;
+            obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
             obj->state = 0;
             obj->unk5 = 0;
             obj->unk6 = 0;
@@ -335,7 +340,7 @@ void spark_machine_spawn_spark_b(struct ItemObj* arg0)
         if (obj != NULL) {
             obj->active = 0x41;
             obj->id = 0x24;
-            obj->unk15 = get_random() & 0x40;
+            obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
             obj->state = 0;
             obj->unk5 = 0;
             obj->unk6 = 0;
@@ -357,7 +362,7 @@ void spark_machine_spawn_spark_c(struct ItemObj* arg0)
         if (obj != NULL) {
             obj->active = 0x41;
             obj->id = 0x24;
-            obj->unk15 = get_random() & 0x40;
+            obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
             obj->state = 0;
             obj->unk5 = 0;
             obj->unk6 = 0;

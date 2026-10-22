@@ -3,15 +3,19 @@
 #include "main/1CF60.h"
 #include "main/1E1BC.h"
 #include "main/collision.h"
-
-#ifdef MMX4_PC
-#include "main/55C4.h"
-#include "main/collision_bounds.h"
 #include "main/objects.h"
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/sprite_animations.h"
-s32 func_8002DE30(struct MainObj*, struct WeaponObj*);
-void func_8002DF7C(struct WeaponObj*, s32);
-s32 func_8002BD58(struct MainObj*, struct MainObj*, s16*, s16*);
+#include "main/collision_bounds.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#endif
+#ifdef MMX4_SATURN
+#define WEAPON_HIT_TEXTURE WEAPON_TEXTURE_BASE
+#else
+#define WEAPON_HIT_TEXTURE 0
 #endif
 
 void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2);
@@ -155,13 +159,13 @@ struct EffectSpawnData D_800F460C[64] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 0x0C, 0x02, 0x01, 0x01, 0x0C },
-    { 0x0C, 0x02, 0x01, 0x01, 0x0C },
+    { 0x0C, 0x02, 0x01, 0x01, SATURN_SOUND(0x0C, 0x35) },
+    { 0x0C, 0x02, 0x01, 0x01, SATURN_SOUND(0x0C, 0x35) },
     { 0x0C, 0x04, 0x00, 0x00, 0x00 },
-    { 0x0C, 0x02, 0x01, 0x00, 0x09 },
-    { 0x0C, 0x02, 0x01, 0x00, 0x09 },
-    { 0x0C, 0x03, 0x00, 0x00, 0x08 },
-    { 0x0C, 0x03, 0x00, 0x00, 0x08 },
+    { 0x0C, 0x02, 0x01, 0x00, SATURN_SOUND(0x09, 0x66) },
+    { 0x0C, 0x02, 0x01, 0x00, SATURN_SOUND(0x09, 0x66) },
+    { 0x0C, 0x03, 0x00, 0x00, SATURN_SOUND(0x08, 0x40) },
+    { 0x0C, 0x03, 0x00, 0x00, SATURN_SOUND(0x08, 0x40) },
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
 };
 
@@ -266,7 +270,7 @@ ret_u8 func_8002D9BC(void* object)
         if (player->x_pos.i.hi >= shot->x_pos.i.hi) {
             player->hit_facing = 0;
         } else {
-            player->hit_facing = 0x40;
+            player->hit_facing = PLAYER_FACING_RIGHT;
         }
     }
     if (player->unk2 == 0) {
@@ -286,14 +290,22 @@ ret_u8 func_8002D9BC(void* object)
     return 1;
 }
 // check_weapon_hits
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1);
+void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1);
+void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot);
+s32 func_8002DE30(struct MainObj*, struct WeaponObj*);
+void func_8002DF7C(struct WeaponObj*, s32);
+s32 func_8002BD58(struct MainObj*, struct MainObj*, s16*, s16*);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
-#ifdef MMX4_PC
-// src/main/1E1BC.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 ret_s8 func_8002DD04(struct MainObj* object)
 {
     struct WeaponObj* weapon;
@@ -327,7 +339,7 @@ ret_s8 func_8002DD04(struct MainObj* object)
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DD04);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
 {
     const u8* table;
@@ -379,7 +391,7 @@ s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DE30);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
 {
     const struct EffectSpawnData* entry = &D_800F460C[arg0->id];
@@ -394,7 +406,7 @@ void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
         if (entry->set_facing != 0) {
             arg0->unk98 = -1;
         }
-        func_8001540C(0, 6, arg0);
+        func_8001540C(0, SATURN_SOUND(6, 0x0F), arg0);
         visual_id = 0;
     } else {
         if (entry->set_facing != 0 && (arg1 == 0 || entry->keep_facing == 0)) {
@@ -405,7 +417,7 @@ void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
             func_8001540C(1, entry->animation_id, arg0);
             break;
         case 1:
-            func_8001540C(1, arg1 != 0 ? 0xA : 9, arg0);
+            func_8001540C(1, arg1 != 0 ? SATURN_SOUND(0xA, 0x2A) : SATURN_SOUND(9, 0x29), arg0);
             break;
         case 2:
         case 3:
@@ -424,13 +436,13 @@ void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
     visual->unk2 = (s8)visual_id;
     visual->bg_offset = arg0->bg_offset;
     visual->animation_table = D_8011BF40;
-    visual->unk40 = 0;
-    visual->unk42 = 0x7802;
+    visual->unk40 = WEAPON_HIT_TEXTURE;
+    visual->unk42 = WEAPON_PALETTE_2;
     visual->unk16 = 0;
     visual->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
     visual->x_pos.i.hi = (s16)((u16*)&arg0->unk80)[0];
     visual->y_pos.i.hi = (s16)((u16*)&arg0->unk80)[1];
-    visual->unk15 = arg0->unk15 ^ 0x40;
+    visual->unk15 = arg0->unk15 ^ PLAYER_FACING_RIGHT;
 }
 #else
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DF7C);
@@ -460,7 +472,7 @@ void collide_with_players(struct PlayerObj* arg0)
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
 {
     s16 x_overlap;

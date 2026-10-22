@@ -12,6 +12,7 @@ extern void (*wave_rider_jet_state_funcs[])(struct VisualObj*);
 void wave_rider_jet_init(struct VisualObj*);
 void wave_rider_jet_main(struct VisualObj*);
 void wave_rider_jet_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void wave_rider_jet_init(struct VisualObj* arg0)
 {
@@ -24,7 +25,7 @@ void wave_rider_jet_init(struct VisualObj* arg0)
     arg0->bg_offset = temp_v1->bg_offset;
     arg0->x_pos.val = temp_v1->x_pos.val;
     arg0->y_pos.val = temp_v1->y_pos.val;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk2 = wave_rider_jet_animations[temp_v1->animation_step.fields.frame_index];
     set_animation(arg0, arg0->unk2);
     arg0->state++;

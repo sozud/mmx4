@@ -394,7 +394,7 @@ static u32 test_clone_vanish_transitions(u32 row)
         g_Entity.unk17 = 0x62;
         g_Entity.unk3C = (u8*)&clone_sprite_archive[1];
         g_Entity.animation_cursor = (u32*)&D_80119DF0[0x62][starts[row]];
-        g_Entity.animation_step.packed = D_80119DF0[0x62][starts[row]];
+        g_Entity.animation_step.packed = D_80119DF0[0x62][starts[row]].packed;
         g_Entity.animation_step.fields.duration = durations[row];
         g_Entity.previous_animation_index = g_Entity.animation_step.fields.frame_index;
     }

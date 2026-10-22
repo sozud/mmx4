@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[3]
 // 80043340..8004441C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_03_spike_marl.h"
 #include "main/1CF60.h"
 #include "main/1E1BC.h"
@@ -74,7 +75,8 @@ void spike_marl_update(struct MainObj* self)
 }
 
 // spike_marl_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80043390(struct MainObj* arg0);
 void func_80043C0C(struct MainObj* arg0);
 extern union AnimationStep* D_800F9E1C[];
@@ -82,7 +84,7 @@ extern struct Unk_unk68 spike_marl_terrain_box;
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80043390(struct MainObj* arg0)
 {
     s32 index;
@@ -95,20 +97,24 @@ void func_80043390(struct MainObj* arg0)
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     arg0->animation_table = (const u8* const*)D_800F9E1C;
     arg0->terrain_box = &spike_marl_terrain_box;
     arg0->hurt_box = (const u8*)&spike_marl_walk_hurt_box;
     arg0->attack_box = (const u8*)&spike_marl_walk_attack_box;
-    arg0->unk16 = 4;
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
     index = func_8002938C(3);
-    arg0->unk40 = (u16)((u32)D_801406A8[index] >> 7);
+    arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(index));
     index = func_8002938C(3);
     arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
     column = (func_8002938C(3) << 2) + 0x18;
     row = func_8002938C(3);
+#ifdef MMX4_SATURN
+    arg0->unk42 = column;
+#else
     arg0->unk42 = (u16)((column - ((column >> 4) << 4))
         | ((((row + 6) >> 2) + 0x1E0) << 6));
+#endif
     arg0->air_state = 0;
     switch (arg0->unk2) {
     case 0:
@@ -207,7 +213,7 @@ void spike_marl_patrol(struct MainObj* self)
 void spike_marl_patrol_begin(struct MainObj* self)
 {
     self->unk6 = 1;
-    self->x_speed = self->unk15 & 0x40 ? FIXED(0.8) : FIXED(-0.8);
+    self->x_speed = self->unk15 & PLAYER_FACING_RIGHT ? FIXED(0.8) : FIXED(-0.8);
     animate_object(ANIMATED_OBJECT(self));
 }
 
@@ -248,7 +254,7 @@ void spike_marl_turn_flip(struct PlayerObj* self)
 {
     if (self->animation_step.fields.event != 0) {
         self->unk28 = 0;
-        self->unk15 ^= 0x40;
+        self->unk15 ^= PLAYER_FACING_RIGHT;
         set_animation(self, 1);
         self->x_vel.val = 0;
         self->unk5 = 2;
@@ -281,7 +287,7 @@ void spike_marl_curl_update(struct MainObj* self)
         self->unk6 = 0;
         break;
     case 2:
-        func_8001540C(2, 0, self);
+        func_8001540C(2, SATURN_SOUND(0, 0x0E), self);
         break;
     case 3:
         self->hurt_box = (const u8*)&spike_marl_curl_hurt_box;
@@ -303,9 +309,9 @@ void spike_marl_roll(struct MainObj* self)
 void spike_marl_roll_begin(struct MainObj* self)
 {
     if (self->unk7C == 0) {
-        func_8001540C(2, 1, self);
+        func_8001540C(2, SATURN_SOUND(1, 0x0F), self);
         set_animation(self, 5);
-        self->x_speed = self->unk15 & 0x40 ? FIXED(4) : FIXED(-4);
+        self->x_speed = self->unk15 & PLAYER_FACING_RIGHT ? FIXED(4) : FIXED(-4);
         self->unk6 = 1;
     } else {
         self->unk7C--;
@@ -339,7 +345,7 @@ void spike_marl_roll_update(struct MainObj* self)
 }
 
 // spike_marl_roll_slow
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80043C0C(struct MainObj* arg0)
 {
     s32 magnitude = arg0->x_speed;
@@ -446,7 +452,7 @@ void spike_marl_roll_entry_update(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     if (--self->unk7C == 0) {
-        self->x_speed = self->unk15 & 0x40 ? FIXED(2) : FIXED(-2);
+        self->x_speed = self->unk15 & PLAYER_FACING_RIGHT ? FIXED(2) : FIXED(-2);
         self->unk5 = 5;
         self->unk6 = 0;
     }
@@ -590,121 +596,121 @@ struct Unk_unk68 spike_marl_curl_attack_box = { -7, -10, 15, 25 };
 struct Unk_unk68 spike_marl_curl_hurt_box = { -13, -19, 26, 36 };
 
 union AnimationStep D_800F9CE0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep D_800F9CE4[] = {
-    { 0x01010006 },
-    { 0x02010004 },
-    { 0x01010006 },
-    { 0x03010006 },
-    { 0x04010004 },
-    { 0x03010006 },
-    { 0x0501000E },
-    { 0x06010006 },
-    { 0x07010004 },
-    { 0x06010006 },
-    { 0x08010006 },
-    { 0x09010004 },
-    { 0x08010006 },
-    { 0x0AF3000E },
+    { 6, 0, 1, 0x01 },
+    { 4, 0, 1, 0x02 },
+    { 6, 0, 1, 0x01 },
+    { 6, 0, 1, 0x03 },
+    { 4, 0, 1, 0x04 },
+    { 6, 0, 1, 0x03 },
+    { 14, 0, 1, 0x05 },
+    { 6, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 6, 0, 1, 0x06 },
+    { 6, 0, 1, 0x08 },
+    { 4, 0, 1, 0x09 },
+    { 6, 0, 1, 0x08 },
+    { 14, 0, -13, 0x0A },
 };
 
 union AnimationStep D_800F9D1C[] = {
-    { 0x0B01000E },
-    { 0x0C010006 },
-    { 0x0D010004 },
-    { 0x0C010008 },
-    { 0x0E01000D },
-    { 0x0E000101 },
+    { 14, 0, 1, 0x0B },
+    { 6, 0, 1, 0x0C },
+    { 4, 0, 1, 0x0D },
+    { 8, 0, 1, 0x0C },
+    { 13, 0, 1, 0x0E },
+    { 1, 1, 0, 0x0E },
 };
 
 union AnimationStep D_800F9D34[] = {
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x00010002 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x00010002 },
-    { 0x11010004 },
-    { 0x12010002 },
-    { 0x14010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x12010006 },
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x16010301 },
-    { 0x16010001 },
-    { 0x18010002 },
-    { 0x19010002 },
-    { 0x1A010002 },
-    { 0x1B010002 },
-    { 0x1A010002 },
-    { 0x1B010406 },
-    { 0x1C010002 },
-    { 0x1D010005 },
-    { 0x1D010201 },
-    { 0x1D010004 },
-    { 0x1E010006 },
-    { 0x1F010002 },
-    { 0x1D01000E },
-    { 0x1D000101 },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x00 },
+    { 4, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 6, 0, 1, 0x12 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 1, 3, 1, 0x16 },
+    { 1, 0, 1, 0x16 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x1A },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1A },
+    { 6, 4, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 5, 0, 1, 0x1D },
+    { 1, 2, 1, 0x1D },
+    { 4, 0, 1, 0x1D },
+    { 6, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 14, 0, 1, 0x1D },
+    { 1, 1, 0, 0x1D },
 };
 
 union AnimationStep D_800F9DB0[] = {
-    { 0x1D010002 },
-    { 0x1C010002 },
-    { 0x1B010006 },
-    { 0x1A010302 },
-    { 0x19010002 },
-    { 0x18010002 },
-    { 0x19010002 },
-    { 0x18010002 },
-    { 0x16010002 },
-    { 0x15010202 },
-    { 0x12010006 },
-    { 0x13010002 },
-    { 0x12010002 },
-    { 0x14010002 },
-    { 0x12010002 },
-    { 0x11010001 },
-    { 0x11000101 },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1C },
+    { 6, 0, 1, 0x1B },
+    { 2, 3, 1, 0x1A },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x16 },
+    { 2, 2, 1, 0x15 },
+    { 6, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x12 },
+    { 1, 0, 1, 0x11 },
+    { 1, 1, 0, 0x11 },
 };
 
 union AnimationStep D_800F9DF4[] = {
-    { 0x1D010003 },
-    { 0x20010003 },
-    { 0x21FE0003 },
+    { 3, 0, 1, 0x1D },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, -2, 0x21 },
 };
 
 union AnimationStep D_800F9E00[] = {
-    { 0x22000002 },
+    { 2, 0, 0, 0x22 },
 };
 
 union AnimationStep D_800F9E04[] = {
-    { 0x23000001 },
+    { 1, 0, 0, 0x23 },
 };
 
 union AnimationStep D_800F9E08[] = {
-    { 0x24000001 },
+    { 1, 0, 0, 0x24 },
 };
 
 union AnimationStep D_800F9E0C[] = {
-    { 0x25000001 },
+    { 1, 0, 0, 0x25 },
 };
 
 union AnimationStep D_800F9E10[] = {
-    { 0x26000001 },
+    { 1, 0, 0, 0x26 },
 };
 
 union AnimationStep D_800F9E14[] = {
-    { 0x27000001 },
+    { 1, 0, 0, 0x27 },
 };
 
 union AnimationStep D_800F9E18[] = {
-    { 0x28000001 },
+    { 1, 0, 0, 0x28 },
 };
 
 union AnimationStep* D_800F9E1C[] = {

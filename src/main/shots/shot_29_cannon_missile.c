@@ -4,18 +4,22 @@
 #include "main/objects.h"
 #include "main/shots/shot_29_cannon_missile.h"
 #include "main/object_motion.h"
-
-#ifdef MMX4_PC
-#include "main/1E1BC.h"
-#include "main/55C4.h"
 #include "main/collision_bounds.h"
-#endif
+#include "main/55C4.h"
+#include "main/1E1BC.h"
 
 // cannon_missile_state_funcs
 extern void (*cannon_missile_state_funcs[])(struct ShotObj*);
 
 void cannon_missile_despawn(struct ShotObj*);
 void cannon_missile_idle(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#endif
 
 u8 cannon_missile_boxes[8] = { 0xF5, 0xFD, 0x1B, 0x0A, 2, 2, 0x0D, 4 };
 s32 cannon_missile_speeds[2] = { 0x5000, -0x5000 };
@@ -27,14 +31,15 @@ void cannon_missile_update(struct ShotObj* self)
 }
 
 // cannon_missile_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009F674(struct ShotObj* arg0);
 void func_8009F7C0(struct ShotObj* arg0);
 void func_8009F89C(struct ShotObj* arg0);
 extern void (*cannon_missile_step_funcs[])(struct ShotObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009F674(struct ShotObj* arg0)
 {
     struct MainObj* owner;
@@ -72,7 +77,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F674);
 #endif
 
 // cannon_missile_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009F7C0(struct ShotObj* arg0)
 {
     s32 speed;
@@ -102,14 +107,14 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F7C0);
 #endif
 
 // cannon_missile_launch
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009F89C(struct ShotObj* arg0)
 {
     u8 timer = arg0->unk8C.bytes[3];
     u8 blink;
 
     if (timer == 0) {
-        arg0->x_vel.val = cannon_missile_speeds[(arg0->unk15 & 0x40) ? 1 : 0];
+        arg0->x_vel.val = cannon_missile_speeds[(arg0->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
         arg0->y_vel.val = cannon_missile_accels[arg0->unk2 != 0 ? 1 : 0];
         arg0->unk42 &= 0x7FFF;
         arg0->unk5++;
@@ -188,7 +193,7 @@ vertical_done:
                 effect->active = 0x21;
                 effect->id = 0x17;
                 effect->unk2 = 0;
-                effect->unk15 = get_random() & 0x40;
+                effect->unk15 = get_random() & PLAYER_FACING_RIGHT;
                 effect->ext.misc_5.animation = 0;
                 if (shot->unk15 == 0) {
                     effect->x_pos.i.hi = (u16)shot->x_pos.i.hi + 0x10;
@@ -199,7 +204,7 @@ vertical_done:
                 effect->x_vel.val = 0;
                 effect->y_vel.val = 0;
                 effect->unk7 = 1;
-                effect->unk16 = 7;
+                effect->unk16 = VISUAL_SATURN_LAYER(7);
             }
             shot->unk8C.bytes[2] = 1;
         }

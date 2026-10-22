@@ -20,6 +20,9 @@
 #include "main/background.h"
 #include "main/player_common.h"
 #include "main/stage_objects.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#endif
 
 extern RECT D_800F2428;
 extern RECT D_800F2430;
@@ -92,7 +95,11 @@ RECT D_800F2430 = { 0x240, 0, 0x100, 0x50 };
 
 void func_8001FAFC(struct EngineObj* arg0)
 {
+#ifdef MMX4_SATURN
+    saturn_sprite_reset_queues();
+#else
     func_8002B460();
+#endif
     D_800F23DC[arg0->unk1](arg0);
     func_8001F118();
 }
@@ -120,10 +127,20 @@ void engine_state_2(struct EngineObj* arg0)
 
 void engine_state_4(struct EngineObj* arg0)
 {
+#ifdef MMX4_SATURN_STAGE_BOOT
+    extern void saturn_stage_boot_apply(struct EngineObj*);
+    saturn_stage_boot_apply(arg0);
+#endif
     func_80013014();
     arg0->checkpoint = 0;
     arg0->unk1E = 0;
     D_80171EA8 = 0;
+#ifdef MMX4_SATURN_STAGE_BOOT
+    {
+        extern void saturn_stage_boot_checkpoint(struct EngineObj*);
+        saturn_stage_boot_checkpoint(arg0);
+    }
+#endif
     arg0->state = 5;
 }
 
@@ -178,6 +195,15 @@ void func_8001FC20(struct EngineObj* arg0)
     } else {
         func_8001FEC0();
     }
+#ifdef MMX4_SATURN
+    if (arg0->cur_character == CHARACTER_X && arg0->stage == 9) {
+        for (var_v1 = 0; var_v1 < 0x20; var_v1++) {
+            ((u16*)((u8*)SP_PALETTE + 0xA00))[var_v1] = 0;
+        }
+        need_palette_load |= 1;
+        saturn_display_mode = 11;
+    }
+#endif
     func_800129A4(8);
     arg0->state++;
 }
@@ -239,7 +265,12 @@ void func_8001FEC0(void)
     if (engine_obj.stage == 9) {
         return;
     }
+#ifdef MMX4_SATURN
+    func_800127C8(8);
+    saturn_music_start(engine_obj.stage, 0);
+#else
     func_800164D8();
+#endif
 }
 
 // in a stage
@@ -249,6 +280,25 @@ void engine_state_6(struct EngineObj* arg0)
 }
 
 // D_800F241C state 0
+#ifdef MMX4_SATURN
+void func_8001FF8C(struct EngineObj* arg0)
+{
+    if (!arg0->gameplay_locked && !main_bss_state.transition.active && ((saturn_pad_pressed & SATURN_PAD_START) || saturn_pause_request != 0) && !arg0->unk10 && !arg0->unkF) {
+        arg0->unk1 = 2;
+        func_80023D68();
+        saturn_pause_latch = saturn_pause_request;
+        return;
+    }
+    if (g_Player.state == 3) {
+        arg0->unk1++;
+        func_800129F0(8);
+    }
+    saturn_sprite_reset_queues();
+    get_random();
+    func_80021158();
+    func_80023D68();
+}
+#else
 void func_8001FF8C(struct EngineObj* arg0)
 {
     if (!arg0->gameplay_locked && !main_bss_state.transition.active &&
@@ -274,27 +324,39 @@ void func_8001FF8C(struct EngineObj* arg0)
     }
     func_80023D68();
 }
+#endif
 
 // D_800F241C state 1
 void func_80020060(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active != 0) {
+#ifdef MMX4_SATURN
+        saturn_sprite_reset_queues();
+#endif
         func_80021158();
         func_80023D68();
     } else {
         func_800200D4(arg0);
+#ifdef MMX4_SATURN
+        saturn_music_request(3, 0, 0, 0);
+        if (arg0->unk42 == 0) {
+            saturn_sound_stop_all();
+        }
+        saturn_stage_commit_video();
+#else
         stop_sound(0xFF, 0);
         if (arg0->unk42 == 0) {
             func_80016F0C();
         }
+#endif
     }
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800200D4(struct EngineObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800200D4(struct EngineObj* arg0)
 {
     s32 i;
@@ -319,7 +381,7 @@ void func_800200D4(struct EngineObj* arg0)
                 arg0->substage = 1;
                 arg0->state = 4;
             }
-        } else if (*(u16*)&arg0->stage == 0x10C) {
+        } else if (arg0->stage == 0xC && arg0->substage == 1) {
             arg0->state = 0xB;
         } else {
             arg0->state = 9;
@@ -347,7 +409,7 @@ void func_800200D4(struct EngineObj* arg0)
         }
         arg0->unk60 = g_Player.weapon;
         if (arg0->stage != 0xC
-            || (*(u16*)&arg0->stage == 0xC && arg0->checkpoint == 0xA)) {
+            || (arg0->stage == 0xC && arg0->substage == 0 && arg0->checkpoint == 0xA)) {
             arg0->unk42 = 1;
         }
         arg0->state = 5;
@@ -355,7 +417,7 @@ void func_800200D4(struct EngineObj* arg0)
         arg0->player_lives--;
         if (arg0->player_lives < 0) {
             arg0->state = 8;
-            if (*(u16*)&arg0->stage == 0xC) {
+            if (arg0->stage == 0xC && arg0->substage == 0) {
                 for (i = 0; i < 0x10; i++) {
                     arg0->character_state.bytes[i] = 0;
                 }
@@ -365,7 +427,7 @@ void func_800200D4(struct EngineObj* arg0)
             if (func_8001FD7C(arg0) != 0) {
                 arg0->checkpoint = 1;
             }
-            if (*(u16*)&arg0->stage == 0x10C && D_80171EA8 != 0) {
+            if (arg0->stage == 0xC && arg0->substage == 1 && D_80171EA8 != 0) {
                 arg0->state = 4;
             } else {
                 arg0->state = 5;
@@ -386,6 +448,43 @@ void func_80020368(struct EngineObj* arg0)
     func_8002FCAC();
 }
 
+#ifdef MMX4_SATURN
+void func_80020390(struct EngineObj* arg0)
+{
+    s32 i;
+
+    for (i = 0; i < 6; i++) {
+        saturn_warm_buffer[0x8A + i] = 0;
+    }
+    saturn_video_start();
+    if (arg0->stage == 0xB && arg0->cur_character != CHARACTER_X) {
+        saturn_movie_play("Z3.CPK", 1);
+    }
+    if (arg0->stage == 0xC && arg0->cur_character != CHARACTER_X) {
+        saturn_movie_play("Z4.CPK", 1);
+    }
+    saturn_video_start();
+    func_800129F0(8);
+    arg0->unk1++;
+}
+
+void func_8002044C(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        saturn_archive_load_blocking("ASCII.ARC");
+        if (arg0->cur_character != 0) {
+            saturn_archive_load_blocking("PL01.ARC");
+        } else if (arg0->unk37 != 0) {
+            saturn_archive_load_blocking("PL02.ARC");
+        } else {
+            saturn_archive_load_blocking("PL00.ARC");
+        }
+        arg0->substage = 1;
+        arg0->state = 4;
+        arg0->unk1 = 0;
+    }
+}
+#else
 void func_80020390(struct EngineObj* arg0)
 {
     MoveImage(&D_800F2428, 0x240, 0);
@@ -407,6 +506,7 @@ void func_8002044C(struct EngineObj* arg0)
     arg0->state = 4;
     arg0->unk1 = 0;
 }
+#endif
 
 void func_80020464(struct EngineObj* arg0)
 {

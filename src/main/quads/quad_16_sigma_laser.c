@@ -3,8 +3,9 @@
 #include "common.h"
 #include "main/quads/quad_16_sigma_laser.h"
 #include "main/objects.h"
+#include "main/visuals/visual_03_small_effect.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/visuals/visual_03_small_effect.h"
 #endif
 
@@ -32,7 +33,8 @@ void sigma_laser_despawn(struct QuadObj*);
 void sigma_laser_cancel(struct QuadObj*);
 
 // sigma_laser_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D802C(struct QuadObj* self);
 void func_800D845C(struct QuadObj* self);
 // src/main/quads/quad_16_sigma_laser.c
@@ -41,7 +43,7 @@ extern s16 sigma_laser_origin_offsets[2][2];
 extern s16 sigma_laser_start_offsets[8][2];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D802C(struct QuadObj* self)
 {
     s32 i;
@@ -186,7 +188,7 @@ void sigma_laser_cancel_wait(struct QuadObj* arg0)
 }
 
 // sigma_laser_cancel_shrink
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D845C(struct QuadObj* self)
 {
     struct MainObj* owner = MAIN_OBJECT(self->unk5C);

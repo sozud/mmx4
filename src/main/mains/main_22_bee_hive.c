@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[22]
 // 80054FE8..80055C54
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_22_bee_hive.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
@@ -35,9 +36,9 @@ void func_80055024(struct MainObj* self)
     self->collision_data = (const u16*)D_80106D74;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    self->unk42 = CLUT_FROM_ID(5);
+    self->unk42 = OBJECT_STAGE_CLUT(5);
     self->animation_table = (const u8* const*)bee_hive_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
@@ -127,18 +128,19 @@ void bee_hive_open_start(struct MainObj* self)
 }
 
 // bee_hive_open_move
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80055358(struct MainObj* self);
 void func_800559BC(struct MainObj* self);
 void func_800559BC(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
-// src/main/mains/main_22_bee_hive.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80055358(struct MainObj* self)
 {
+    struct Main22Ext* ext;
+    u8 i;
     static const struct {
         s16 x;
         s16 y;
@@ -155,8 +157,7 @@ void func_80055358(struct MainObj* self)
         { -26, -28, 3 },
         { 26, -28, 3 },
     };
-    struct Main22Ext* ext = &self->ext.main_22;
-    u8 i;
+    ext = &self->ext.main_22;
 
     animate_object(ANIMATED_OBJECT(self));
     if (--ext->unk84 != 0)
@@ -180,10 +181,14 @@ void func_80055358(struct MainObj* self)
             child->x_pos.i.hi = self->x_pos.i.hi + ((part & 1) ? 0x10 : -0x10);
             child->y_pos.i.hi = self->y_pos.i.hi + 9;
             resource = func_8002938C(5);
-            child->unk40 = D_801406A8[resource] >> 7;
+            child->unk40 = OBJECT_STAGE_TEXTURE(resource);
             resource = func_8002938C(5);
             column = resource * 4 + 0x18;
+#ifdef MMX4_SATURN
+            child->unk42 = column;
+#else
             child->unk42 = (column % 16) | (((resource + 6) / 4 + 0x1E0) << 6);
+#endif
             resource = func_8002938C(5);
             child->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
             ext->unk90++;
@@ -307,7 +312,7 @@ void bee_hive_explode_start(struct MainObj* self)
 void bee_hive_explode_smoke(struct MainObj* self)
 {
     if (--self->ext.main_22.unk84 != 0) {
-        if ((main_bss_state.frame_counter & 3) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 3) == 0) {
             func_800AF878(BASE_OBJECT(self), 1, 0x18, 0x30);
         }
     } else {
@@ -320,9 +325,13 @@ void bee_hive_explode_done(void)
 }
 
 // bee_hive_spawn_bees
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800559BC(struct MainObj* self)
 {
+    struct Main22Ext* ext;
+    u8 spawned;
+    u8 side;
+    u8 part;
     static const struct {
         s16 x;
         s16 y;
@@ -339,10 +348,9 @@ void func_800559BC(struct MainObj* self)
         { -26, -28, 3 },
         { 26, -28, 3 },
     };
-    struct Main22Ext* ext = &self->ext.main_22;
-    u8 spawned = 0;
-    u8 side = 0;
-    u8 part;
+    ext = &self->ext.main_22;
+    spawned = 0;
+    side = 0;
 
     for (part = 0; part < 10 && spawned < 2; part++) {
         struct MainObj* child;
@@ -379,10 +387,14 @@ void func_800559BC(struct MainObj* self)
         if (child->x_pos.val < g_Player.x_pos.val && !(part & 1))
             child->ext.main_5.target_y -= 8;
         resource = func_8002938C(5);
-        child->unk40 = D_801406A8[resource] >> 7;
+        child->unk40 = OBJECT_STAGE_TEXTURE(resource);
         resource = func_8002938C(5);
         column = resource * 4 + 0x18;
+#ifdef MMX4_SATURN
+        child->unk42 = column;
+#else
         child->unk42 = (column % 16) | (((resource + 6) / 4 + 0x1E0) << 6);
+#endif
         resource = func_8002938C(5);
         child->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
         ext->parts_mask |= 1u << part;
@@ -397,52 +409,52 @@ INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_800559BC);
 struct Unk_unk68 bee_hive_hurt_box = { -19, -48, 37, 92 };
 
 union AnimationStep bee_hive_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep bee_hive_anim_1[] = {
-    { 0x01010003 },
-    { 0x02010004 },
-    { 0x03010005 },
-    { 0x02010004 },
-    { 0x01010003 },
-    { 0x00010014 },
-    { 0x04010002 },
-    { 0x05010002 },
-    { 0x06010002 },
-    { 0x07010001 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x0A000001 },
+    { 3, 0, 1, 0x01 },
+    { 4, 0, 1, 0x02 },
+    { 5, 0, 1, 0x03 },
+    { 4, 0, 1, 0x02 },
+    { 3, 0, 1, 0x01 },
+    { 20, 0, 1, 0x00 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 0, 0x0A },
 };
 
 union AnimationStep bee_hive_anim_2[] = {
-    { 0x09010003 },
-    { 0x08010003 },
-    { 0x07010003 },
-    { 0x06010003 },
-    { 0x05010003 },
-    { 0x04000003 },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x05 },
+    { 3, 0, 0, 0x04 },
 };
 
 union AnimationStep bee_hive_anim_3[] = {
-    { 0x0B000003 },
+    { 3, 0, 0, 0x0B },
 };
 
 union AnimationStep bee_hive_anim_4[] = {
-    { 0x0C000003 },
+    { 3, 0, 0, 0x0C },
 };
 
 union AnimationStep bee_hive_anim_5[] = {
-    { 0x0D000003 },
+    { 3, 0, 0, 0x0D },
 };
 
 union AnimationStep bee_hive_anim_6[] = {
-    { 0x0E000003 },
+    { 3, 0, 0, 0x0E },
 };
 
 union AnimationStep bee_hive_anim_7[] = {
-    { 0x0F000003 },
+    { 3, 0, 0, 0x0F },
 };
 
 union AnimationStep* bee_hive_animations[8] = {

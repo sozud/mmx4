@@ -17,6 +17,7 @@ extern void (*double_bouncer_step_funcs[])(struct ShotObj*);
 extern void (*double_bouncer_state_funcs[])(struct ShotObj*);
 
 void double_bouncer_main(struct ShotObj*);
+#include "weapon_resources.h"
 
 void (*double_bouncer_step_funcs[])(struct ShotObj*) = {
     double_toss_land,
@@ -25,19 +26,18 @@ void (*double_bouncer_step_funcs[])(struct ShotObj*) = {
 };
 
 // double_bouncer_launch
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AA2FC(struct ShotObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/shots/shot_50_double_bouncer.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AA2FC(struct ShotObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5++;
         set_animation(self, 0x19);
-        func_8001540C(2, 0xF9, NULL);
+        func_8001540C(2, SATURN_SOUND(0xF9, 0xD6), NULL);
         self->x_vel.val = self->x_pos.i.hi < g_Player.x_pos.i.hi ? FIXED(-2) : FIXED(2);
         self->y_vel.val = FIXED(-2);
         self->unk28 = 0;

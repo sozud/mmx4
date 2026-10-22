@@ -8,6 +8,7 @@
 extern void (*rock_dropper_state_funcs[])(struct EffectObj*);
 
 void rock_dropper_idle(struct EffectObj*);
+#include "weapon_resources.h"
 
 void rock_dropper_update(struct EffectObj* self)
 {
@@ -15,7 +16,8 @@ void rock_dropper_update(struct EffectObj* self)
 }
 
 // rock_dropper_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BC784(struct EffectObj* arg0);
 static void effect_33_spawn_dropper(struct EffectObj* arg0);
 void func_800BC92C(struct EffectObj* arg0);
@@ -36,7 +38,7 @@ static void effect_33_spawn_dropper(struct EffectObj* arg0)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BC784(struct EffectObj* arg0)
 {
     struct Effect33Ext* ext = &arg0->ext.effect_33;
@@ -125,7 +127,7 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_33_rock_dropper", func_800BC784);
 #endif
 
 // rock_dropper_drop
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BC92C(struct EffectObj* arg0)
 {
     struct Effect33Ext* ext = &arg0->ext.effect_33;
@@ -181,7 +183,7 @@ void func_800BC92C(struct EffectObj* arg0)
                 if (shot != NULL) {
                     shot->active = 0x41;
                     shot->id = 0x21;
-                    shot->unk15 = 0x40;
+                    shot->unk15 = PLAYER_FACING_RIGHT;
                 }
             }
             if (shot != NULL) {

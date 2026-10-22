@@ -32,10 +32,10 @@ extern void func_8001DAA0 (void);
 
 void func_8001DC30(void);
 
-void func_8001D064();
-void func_8001D134();
-void func_8001DAF8();
+void func_8001D064(void);
+void func_8001D134(void);
+void func_8001DAF8(void);
 
-void func_8001D230();
+void func_8001D230(struct GameInfo* arg0);
 
 #endif

@@ -13,6 +13,7 @@ extern void (*drop_pillar_state_funcs[])(struct ItemObj*);
 void drop_pillar_init(struct ItemObj*);
 void drop_pillar_fall(struct ItemObj*);
 void drop_pillar_land(struct ItemObj*);
+#include "weapon_resources.h"
 
 void drop_pillar_update(struct ItemObj* arg0)
 {
@@ -23,7 +24,7 @@ void drop_pillar_update(struct ItemObj* arg0)
 
 void drop_pillar_init(struct ItemObj* arg0)
 {
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->animation_table = NULL;
     arg0->unk5C = 0;
     arg0->unk61 = 0;
@@ -45,7 +46,7 @@ void drop_pillar_fall(struct ItemObj* arg0)
 {
     move_with_gravity(ANIMATED_OBJECT(arg0));
     if (arg0->y_pos.i.hi > (0x188 - (arg0->unk2 << 6))) {
-        func_8001540C(2, 0x88, arg0);
+        func_8001540C(2, SATURN_SOUND(0x88, 0x59), arg0);
         arg0->state = 2;
     }
     update_on_screen(BASE_OBJECT(arg0), 0x40, 0x60);

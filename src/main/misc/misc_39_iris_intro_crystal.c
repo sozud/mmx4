@@ -19,6 +19,7 @@ void iris_intro_crystal_charge(struct MiscObj*);
 
 void iris_intro_crystal_wait(struct MiscObj*);
 void iris_intro_crystal_leave(struct MiscObj*);
+#include "weapon_resources.h"
 
 void iris_intro_crystal_update(struct MiscObj* self)
 {
@@ -39,7 +40,7 @@ void iris_intro_crystal_despawn(struct MiscObj* self)
 void iris_intro_crystal_start(struct MiscObj* self)
 {
     self->unk16 = 0;
-    self->unk15 = 0x40;
+    self->unk15 = PLAYER_FACING_RIGHT;
     self->x_vel.val = 0;
     self->y_vel.val = FIXED(0.5);
     self->ext.misc_39.timer = 0xD6;
@@ -70,11 +71,15 @@ void iris_intro_crystal_charge(struct MiscObj* self)
 }
 
 // iris_intro_crystal_transform
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CF950(struct MiscObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CF950(struct MiscObj* self)
 {
     struct MiscObj* piece;
@@ -86,7 +91,7 @@ void func_800CF950(struct MiscObj* self)
     }
     set_animation(self, 0x10);
     set_animation(((struct MainObj*)self->ext.misc_39.related), 0x24);
-    func_8001540C(2, 0xDE, ((struct MainObj*)self->ext.misc_39.related));
+    func_8001540C(2, SATURN_SOUND(0xDE, 0x9F), ((struct MainObj*)self->ext.misc_39.related));
     ((struct MainObj*)self->ext.misc_39.related)->unk6 = 8;
     for (i = 0; i < 5; i++) {
         piece = find_free_misc_obj();

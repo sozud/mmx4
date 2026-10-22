@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[32]
 // 8005C824..8005D1F4
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_32_bomb_bat.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -62,7 +63,7 @@ void func_8005C860(struct MainObj* self)
     self->bg_offset = g_Player.bg_offset;
     self->collision_data = (const u16*)D_80107274;
     self->animation_table = (const u8* const*)bomb_bat_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->hurt_box = (const u8*)&bomb_bat_body_box;
     self->x_speed = 0;
     self->y_speed = 0;
@@ -155,13 +156,14 @@ void bomb_bat_hover_start(struct MainObj* self)
 }
 
 // bomb_bat_hover_track
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005CB90(struct MainObj* arg0);
 void func_8005CF9C(struct MainObj* arg0);
 extern s32 D_800FDC98[2];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005CB90(struct MainObj* arg0)
 {
     s32 limit;
@@ -244,7 +246,7 @@ void bomb_bat_fly_off_start(struct MainObj* self)
 
     set_animation(self, 3);
     velocity = bomb_bat_fly_speeds;
-    if (self->unk15 & 0x40) {
+    if (self->unk15 & PLAYER_FACING_RIGHT) {
         velocity++;
     }
     selected = *velocity;
@@ -280,7 +282,7 @@ void bomb_bat_flee_start(struct MainObj* self)
 
     set_animation(self, 3);
     velocity = bomb_bat_fly_speeds;
-    if (self->unk15 & 0x40) {
+    if (self->unk15 & PLAYER_FACING_RIGHT) {
         velocity++;
     }
     selected = *velocity;
@@ -304,7 +306,7 @@ void bomb_bat_dive(struct MainObj* self)
 }
 
 // bomb_bat_dive_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005CF9C(struct MainObj* arg0)
 {
     s32 spread;
@@ -312,7 +314,7 @@ void func_8005CF9C(struct MainObj* arg0)
     set_animation(arg0, 3);
     spread = get_random() << 8;
     spread += get_random();
-    arg0->x_speed = D_800FDC98[(arg0->unk15 & 0x40) ? 1 : 0];
+    arg0->x_speed = D_800FDC98[(arg0->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
     if (get_random() & 1)
         arg0->x_speed += spread & 0xFFFF;
     else
@@ -355,7 +357,7 @@ void bomb_bat_face_player(struct MainObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -377,7 +379,7 @@ void bomb_bat_drop_bomb(struct MainObj* self)
         temp_v0->x_pos.val = self->x_pos.val;
         temp_v0->y_pos.val = self->y_pos.val;
         temp_v0->unk7C = WEAPON_OBJECT(self);
-        temp_v0->unk16 = 6;
+        temp_v0->unk16 = VISUAL_SATURN_LAYER(6);
     }
 }
 
@@ -395,53 +397,53 @@ s32 bomb_bat_fly_speeds[2] = { (s32)0xFFFD0000, (s32)0x00030000 };
 s32 D_800FDC98[2] = { (s32)0xFFFC8000, (s32)0x00038000 };
 
 union AnimationStep bomb_bat_anim_0[] = {
-    { 0x00010003 },
-    { 0x01010003 },
-    { 0x02010004 },
-    { 0x03010003 },
-    { 0x04010003 },
-    { 0x05FB0005 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 4, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 5, 0, -5, 0x05 },
 };
 
 union AnimationStep bomb_bat_anim_1[] = {
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x03010002 },
-    { 0x08010003 },
-    { 0x09010003 },
-    { 0x0A000003 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x03 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 0, 0x0A },
 };
 
 union AnimationStep bomb_bat_anim_2[] = {
-    { 0x0B010002 },
-    { 0x0C010002 },
-    { 0x0B010002 },
-    { 0x0DFD0002 },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, -3, 0x0D },
 };
 
 union AnimationStep bomb_bat_anim_3[] = {
-    { 0x0E010005 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x11010005 },
-    { 0x12010003 },
-    { 0x13FB0003 },
+    { 5, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 5, 0, 1, 0x11 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, -5, 0x13 },
 };
 
 union AnimationStep bomb_bat_anim_4[] = {
-    { 0x14000001 },
+    { 1, 0, 0, 0x14 },
 };
 
 union AnimationStep bomb_bat_anim_5[] = {
-    { 0x15000001 },
+    { 1, 0, 0, 0x15 },
 };
 
 union AnimationStep bomb_bat_anim_6[] = {
-    { 0x16000001 },
+    { 1, 0, 0, 0x16 },
 };
 
 union AnimationStep bomb_bat_anim_7[] = {
-    { 0x17000001 },
+    { 1, 0, 0, 0x17 },
 };
 
 union AnimationStep* bomb_bat_animations[8] = {

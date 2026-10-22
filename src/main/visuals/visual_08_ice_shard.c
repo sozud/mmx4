@@ -4,16 +4,19 @@
 #include "main/objects.h"
 #include "main/visuals/visual_08_ice_shard.h"
 #include "main/object_motion.h"
-
-#ifdef MMX4_PC
 #include "main/55C4.h"
-#endif
 
 // ice_shard_state_funcs
 extern void (*ice_shard_state_funcs[])(struct VisualObj*);
 
 void ice_shard_despawn(struct VisualObj*);
 void ice_shard_idle(struct VisualObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/55C4.h"
+#endif
+extern s8 ice_shard_offsets[4][2];
 
 s8 ice_shard_offsets[4][2] = {
     { 0, -32 },
@@ -28,13 +31,14 @@ void ice_shard_update(struct VisualObj* arg0)
 }
 
 // ice_shard_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B0CA0(s32 type, s32 mode, struct MainObj* source, s32 radius, s32 count);
 void func_800B08CC(struct VisualObj* self);
 void func_800B0B48(struct VisualObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B08CC(struct VisualObj* self)
 {
     s32 kind = self->unk2 % 4;
@@ -56,7 +60,7 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B08CC);
 #endif
 
 // ice_shard_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B0B48(struct VisualObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk50;
@@ -95,7 +99,7 @@ void ice_shard_idle(struct VisualObj* arg0)
 }
 
 // spawn_dust_puffs_at_object
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B0CA0(s32 type, s32 mode, struct MainObj* source, s32 radius,
     s32 count)
 {

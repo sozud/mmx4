@@ -15,6 +15,7 @@ void laser_target_despawn(struct ItemObj*);
 
 void laser_target_track(struct ItemObj*);
 void laser_target_lock(struct ItemObj*);
+#include "weapon_resources.h"
 
 void laser_target_update(struct ItemObj* arg0)
 {
@@ -43,7 +44,7 @@ void laser_target_init(struct ItemObj* self)
     self->x_vel.val *= 8;
     self->y_vel.val *= 8;
     set_animation(self, 0xA);
-    func_8001540C(2, 0xC5, self);
+    func_8001540C(2, SATURN_SOUND(0xC5, 0x8C), self);
 }
 
 void laser_target_track(struct ItemObj* arg0)

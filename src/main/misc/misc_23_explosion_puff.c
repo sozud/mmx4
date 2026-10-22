@@ -5,6 +5,7 @@
 #include "main/object_motion.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#include "weapon_resources.h"
 
 void explosion_puff_animate(struct MiscObj* self);
 void explosion_puff_init(struct MiscObj* self);
@@ -24,11 +25,11 @@ void explosion_puff_init(struct MiscObj* self)
     self->unk38 = 0;
     self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[2];
     self->animation_table = explosion_animations;
-    self->unk40 = 0;
+    self->unk40 = WEAPON_TEXTURE_BASE;
     if (self->ext.unk.unk54 != 2) {
-        self->unk42 = 0x7805;
+        self->unk42 = OBJECT_CLUT(0x7805);
     } else {
-        self->unk42 = 0x7806;
+        self->unk42 = OBJECT_CLUT(0x7806);
     }
     if (self->unk7 == 0) {
         self->unk16 = 1;
@@ -50,51 +51,51 @@ void explosion_puff_animate(struct MiscObj* self)
         ZeroObjectState(self);
     } else {
         self->on_screen = 0;
-        if (((self->ext.unk.unk54 & 3) && !(self->ext.unk.unk54 & 1)) || (BLINK_CLOCK(main_bss_state.frame_counter) & 1) == self->unk7) {
+        if (((self->ext.unk.unk54 & 3) && !(self->ext.unk.unk54 & 1)) || (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 1) == self->unk7) {
             is_on_screen(self);
         }
     }
 }
 
-u32 explosion_anim_0[7] = {
-    0x12010002,
-    0x13010002,
-    0x14010002,
-    0x15010003,
-    0x16010004,
-    0x17010005,
-    0x18000106,
+union AnimationStep explosion_anim_0[7] = {
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x14 },
+    { 3, 0, 1, 0x15 },
+    { 4, 0, 1, 0x16 },
+    { 5, 0, 1, 0x17 },
+    { 6, 1, 0, 0x18 },
 };
 
-u32 explosion_anim_1[8] = {
-    0x19010004,
-    0x1A010004,
-    0x1B010004,
-    0x1C010005,
-    0x1D010006,
-    0x1E010007,
-    0x1F010007,
-    0x20000107,
+union AnimationStep explosion_anim_1[8] = {
+    { 4, 0, 1, 0x19 },
+    { 4, 0, 1, 0x1A },
+    { 4, 0, 1, 0x1B },
+    { 5, 0, 1, 0x1C },
+    { 6, 0, 1, 0x1D },
+    { 7, 0, 1, 0x1E },
+    { 7, 0, 1, 0x1F },
+    { 7, 1, 0, 0x20 },
 };
 
-u32 explosion_anim_2[17] = {
-    0x02010002,
-    0x03010002,
-    0x04010002,
-    0x05010002,
-    0x06010002,
-    0x07010002,
-    0x08010002,
-    0x09010002,
-    0x0A010002,
-    0x0B010002,
-    0x0C010002,
-    0x0D010003,
-    0x0E010003,
-    0x0F010004,
-    0x10010005,
-    0x11010006,
-    0x11000160,
+union AnimationStep explosion_anim_2[17] = {
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 4, 0, 1, 0x0F },
+    { 5, 0, 1, 0x10 },
+    { 6, 0, 1, 0x11 },
+    { 96, 1, 0, 0x11 },
 };
 
 u32* explosion_animations[3] = {

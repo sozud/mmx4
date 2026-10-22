@@ -34,7 +34,8 @@ void airship_bob_update(struct LayerObj* arg0)
 }
 
 // airship_bob_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static s32 layer_05_scroll(struct LayerObj* arg0);
 void func_800DA2D4(struct LayerObj* arg0);
 void func_800DA358(struct LayerObj* arg0);
@@ -50,7 +51,7 @@ static s32 layer_05_scroll(struct LayerObj* arg0)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800DA2D4(struct LayerObj* arg0)
 {
     s32 scroll = 0x8000;
@@ -75,7 +76,7 @@ INCLUDE_ASM("main/nonmatchings/layers/layer_05_airship_bob", func_800DA2D4);
 #endif
 
 // airship_bob_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800DA358(struct LayerObj* arg0)
 {
     s32 half = (background_objects[0].unk14.val - background_objects[0].x_pos.val) / 2;

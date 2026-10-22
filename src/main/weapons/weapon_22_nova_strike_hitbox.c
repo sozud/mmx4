@@ -7,6 +7,7 @@
 #include "main/weapons/weapon_00_lemon.h"
 
 extern u16 buster_muzzle_offsets[48];
+#include "weapon_resources.h"
 
 void nova_strike_hitbox_update(struct WeaponObj* arg0)
 {

@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[34]
 // 8005E570..8005EC58
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_34_highway_trooper.h"
 #include "main/objects.h"
 #include "main/55C4.h"
@@ -39,14 +40,15 @@ void highway_trooper_update(struct MainObj* self)
 }
 
 // highway_trooper_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005E5C0(struct MainObj* arg0);
 void func_8005EB40(struct MainObj* arg0);
 extern u16 D_800FE18C[8];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005E5C0(struct MainObj* arg0)
 {
     s32 resource;
@@ -54,17 +56,21 @@ void func_8005E5C0(struct MainObj* arg0)
     s32 clut_y;
 
     resource = func_8002938C(0x22);
-    arg0->unk40 = D_801406A8[resource] >> 7;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
     clut_x = func_8002938C(0x22);
     clut_y = func_8002938C(0x22);
+#ifdef MMX4_SATURN
+    arg0->unk42 = clut_x * 4 + 0x1A;
+#else
     arg0->unk42 = ((clut_x * 4 + 0x1A) % 16) | (((clut_y + 6) / 4 + 0x1E0) << 6);
+#endif
     resource = func_8002938C(0x22);
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->x_pos.i.hi = ((s16(*)[2])D_800FE18C)[arg0->unk2][0];
-    arg0->y_pos.i.hi = ((s16(*)[2])D_800FE18C)[arg0->unk2][1];
+    arg0->x_pos.i.hi = D_800FE18C[arg0->unk2 * 2];
+    arg0->y_pos.i.hi = D_800FE18C[arg0->unk2 * 2 + 1];
     arg0->animation_table = (const u8* const*)highway_trooper_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->x_speed = -0x1C000;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
@@ -198,7 +204,7 @@ void highway_trooper_attack_end(struct MainObj* self)
 }
 
 // highway_trooper_hit
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005EB40(struct MainObj* arg0)
 {
     if (--SP_CUR_MAIN_OBJ->ext.main_34.unk80 > 0)
@@ -212,7 +218,7 @@ void func_8005EB40(struct MainObj* arg0)
         arg0->unk5 = 4;
     } else {
         arg0->terrain_box = NULL;
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = 0x38000;
         arg0->y_speed = 0;
         arg0->gravity = 0;
@@ -243,162 +249,162 @@ struct Unk_unk68 highway_trooper_terrain_box = { 0, 0, 16, 21 };
 u16 highway_trooper_stop_x[4] = { 0x09D0, 0x0E28, 0x14D8, 0x1B48 };
 
 union AnimationStep highway_trooper_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep highway_trooper_anim_1[] = {
-    { 0x01010004 },
-    { 0x02010003 },
-    { 0x03010003 },
-    { 0x04010003 },
-    { 0x05010004 },
-    { 0x06010003 },
-    { 0x07010003 },
-    { 0x08F90003 },
+    { 4, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, -7, 0x08 },
 };
 
 union AnimationStep highway_trooper_anim_2[] = {
-    { 0x09010002 },
-    { 0x0A010004 },
-    { 0x0B010003 },
-    { 0x0C010102 },
-    { 0x0D000212 },
+    { 2, 0, 1, 0x09 },
+    { 4, 0, 1, 0x0A },
+    { 3, 0, 1, 0x0B },
+    { 2, 1, 1, 0x0C },
+    { 18, 2, 0, 0x0D },
 };
 
 union AnimationStep highway_trooper_anim_3[] = {
-    { 0x0D010006 },
-    { 0x0EFF0004 },
+    { 6, 0, 1, 0x0D },
+    { 4, 0, -1, 0x0E },
 };
 
 union AnimationStep highway_trooper_anim_4[] = {
-    { 0x0F010004 },
-    { 0x10FF0004 },
+    { 4, 0, 1, 0x0F },
+    { 4, 0, -1, 0x10 },
 };
 
 union AnimationStep highway_trooper_anim_5[] = {
-    { 0x10000004 },
+    { 4, 0, 0, 0x10 },
 };
 
 union AnimationStep highway_trooper_anim_6[] = {
-    { 0x11000004 },
+    { 4, 0, 0, 0x11 },
 };
 
 union AnimationStep highway_trooper_anim_7[] = {
-    { 0x0001000F },
-    { 0x1201000E },
-    { 0x0001000F },
-    { 0x13FD0010 },
+    { 15, 0, 1, 0x00 },
+    { 14, 0, 1, 0x12 },
+    { 15, 0, 1, 0x00 },
+    { 16, 0, -3, 0x13 },
 };
 
 union AnimationStep highway_trooper_anim_8[] = {
-    { 0x0001000B },
-    { 0x1401000A },
-    { 0x1501000A },
-    { 0x1601000B },
-    { 0x1501000A },
-    { 0x14FD000A },
+    { 11, 0, 1, 0x00 },
+    { 10, 0, 1, 0x14 },
+    { 10, 0, 1, 0x15 },
+    { 11, 0, 1, 0x16 },
+    { 10, 0, 1, 0x15 },
+    { 10, 0, -3, 0x14 },
 };
 
 union AnimationStep highway_trooper_anim_25[] = {
-    { 0x17010102 },
-    { 0x18010003 },
-    { 0x19010005 },
-    { 0x1A010006 },
-    { 0x1B000007 },
+    { 2, 1, 1, 0x17 },
+    { 3, 0, 1, 0x18 },
+    { 5, 0, 1, 0x19 },
+    { 6, 0, 1, 0x1A },
+    { 7, 0, 0, 0x1B },
 };
 
 union AnimationStep highway_trooper_anim_9[] = {
-    { 0x1C010008 },
-    { 0x27FF0009 },
+    { 8, 0, 1, 0x1C },
+    { 9, 0, -1, 0x27 },
 };
 
 union AnimationStep highway_trooper_anim_23[] = {
-    { 0x1D01000A },
-    { 0x1E010007 },
-    { 0x18000006 },
+    { 10, 0, 1, 0x1D },
+    { 7, 0, 1, 0x1E },
+    { 6, 0, 0, 0x18 },
 };
 
 union AnimationStep highway_trooper_anim_10[] = {
-    { 0x1F010006 },
-    { 0x2000000A },
+    { 6, 0, 1, 0x1F },
+    { 10, 0, 0, 0x20 },
 };
 
 union AnimationStep highway_trooper_anim_11[] = {
-    { 0x2001000A },
-    { 0x1F000006 },
+    { 10, 0, 1, 0x20 },
+    { 6, 0, 0, 0x1F },
 };
 
 union AnimationStep highway_trooper_anim_12[] = {
-    { 0x21010014 },
-    { 0x22010310 },
-    { 0x22000010 },
+    { 20, 0, 1, 0x21 },
+    { 16, 3, 1, 0x22 },
+    { 16, 0, 0, 0x22 },
 };
 
 union AnimationStep highway_trooper_anim_13[] = {
-    { 0x23010014 },
-    { 0x24010310 },
-    { 0x24000010 },
+    { 20, 0, 1, 0x23 },
+    { 16, 3, 1, 0x24 },
+    { 16, 0, 0, 0x24 },
 };
 
 union AnimationStep highway_trooper_anim_14[] = {
-    { 0x25010014 },
-    { 0x26010310 },
-    { 0x26000010 },
+    { 20, 0, 1, 0x25 },
+    { 16, 3, 1, 0x26 },
+    { 16, 0, 0, 0x26 },
 };
 
 union AnimationStep highway_trooper_anim_15[] = {
-    { 0x28010002 },
-    { 0x29010003 },
-    { 0x2AFF0005 },
+    { 2, 0, 1, 0x28 },
+    { 3, 0, 1, 0x29 },
+    { 5, 0, -1, 0x2A },
 };
 
 union AnimationStep highway_trooper_anim_24[] = {
-    { 0x2B010004 },
-    { 0x2C010005 },
-    { 0x2D010006 },
-    { 0x2E010006 },
-    { 0x2F010005 },
-    { 0x30000004 },
+    { 4, 0, 1, 0x2B },
+    { 5, 0, 1, 0x2C },
+    { 6, 0, 1, 0x2D },
+    { 6, 0, 1, 0x2E },
+    { 5, 0, 1, 0x2F },
+    { 4, 0, 0, 0x30 },
 };
 
 union AnimationStep highway_trooper_anim_16[] = {
-    { 0x31010002 },
-    { 0x32010002 },
-    { 0x33010002 },
-    { 0x3AFD0002 },
+    { 2, 0, 1, 0x31 },
+    { 2, 0, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 2, 0, -3, 0x3A },
 };
 
 union AnimationStep highway_trooper_anim_17[] = {
-    { 0x34000002 },
+    { 2, 0, 0, 0x34 },
 };
 
 union AnimationStep highway_trooper_anim_18[] = {
-    { 0x35000002 },
+    { 2, 0, 0, 0x35 },
 };
 
 union AnimationStep highway_trooper_anim_19[] = {
-    { 0x36000002 },
+    { 2, 0, 0, 0x36 },
 };
 
 union AnimationStep highway_trooper_anim_20[] = {
-    { 0x37000002 },
+    { 2, 0, 0, 0x37 },
 };
 
 union AnimationStep highway_trooper_anim_21[] = {
-    { 0x38000002 },
+    { 2, 0, 0, 0x38 },
 };
 
 union AnimationStep highway_trooper_anim_22[] = {
-    { 0x39000002 },
+    { 2, 0, 0, 0x39 },
 };
 
 union AnimationStep highway_trooper_anim_26[] = {
-    { 0x09010008 },
-    { 0x0A010005 },
-    { 0x0B010004 },
-    { 0x0C010003 },
-    { 0x0D010112 },
-    { 0x0D000003 },
+    { 8, 0, 1, 0x09 },
+    { 5, 0, 1, 0x0A },
+    { 4, 0, 1, 0x0B },
+    { 3, 0, 1, 0x0C },
+    { 18, 1, 1, 0x0D },
+    { 3, 0, 0, 0x0D },
 };
 
 union AnimationStep* highway_trooper_animations[27] = {

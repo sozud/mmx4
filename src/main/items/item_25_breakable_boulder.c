@@ -12,6 +12,7 @@
 #include "main/objects.h"
 
 extern u8 breakable_boulder_hit_box[4];
+#include "weapon_resources.h"
 
 void breakable_boulder_update(struct ItemObj* arg0)
 {
@@ -22,9 +23,9 @@ void breakable_boulder_update(struct ItemObj* arg0)
         arg0->animation_table = (const u8* const*)D_8010DF48;
         arg0->bg_offset = g_Player.bg_offset;
         arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x99)];
-        arg0->unk40 = D_801406A8[func_8002938C(0x99)] >> 7;
-        arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x99));
-        arg0->unk16 = 7;
+        arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x99));
+        arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x99));
+        arg0->unk16 = VISUAL_SATURN_LAYER(7);
         arg0->unk15 = 0;
     } else if (func_8002DD04(MAIN_OBJECT(arg0)) != 0) {
         apply_tile_effect(0x26, 0x430, 0x170);

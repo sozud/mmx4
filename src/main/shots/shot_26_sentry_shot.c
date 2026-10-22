@@ -102,7 +102,7 @@ void func_8009EEC8(struct ShotObj* shot)
         shot->y_pos.i.hi += sentry_shot_spawn_offsets[11];
         break;
     default:
-        if (shot->unk15 & 0x40) {
+        if (shot->unk15 & PLAYER_FACING_RIGHT) {
             shot->x_pos.i.hi += sentry_shot_spawn_offsets[2];
             shot->y_pos.i.hi += sentry_shot_spawn_offsets[3];
         } else {

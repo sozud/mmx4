@@ -11,18 +11,22 @@ extern void (*flame_pillar_state_funcs[])(struct ShotObj*);
 
 void flame_pillar_active(struct ShotObj*);
 void flame_pillar_despawn(struct ShotObj*);
+#include "weapon_resources.h"
+
+extern union AnimationStep* ice_block_animations[9];
 
 u8 flame_pillar_short_box[4] = { 0xF8, 0xCC, 0x0F, 0x23 };
 u8 flame_pillar_tall_box[4] = { 0xF8, 0xCC, 0x0F, 0x65 };
 
 // flame_pillar_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A0170(struct ShotObj* arg0);
 extern union AnimationStep* ice_block_animations[9];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A0170(struct ShotObj* arg0)
 {
     struct WeaponObj* owner;
@@ -38,9 +42,9 @@ void func_800A0170(struct ShotObj* arg0)
     arg0->unk5C = 1;
     arg0->animation_table = (u32**)ice_block_animations;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk42 = CLUT_FROM_ID(0x14);
+    arg0->unk42 = OBJECT_STAGE_CLUT(0x14);
     resource = func_8002938C(0x14);
-    arg0->unk40 = D_801406A8[resource] >> 7;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
     resource = func_8002938C(0x14);
     owner = arg0->unk7C;
     arg0->unk16 = 1;

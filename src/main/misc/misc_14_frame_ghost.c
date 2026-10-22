@@ -9,6 +9,7 @@
 extern void (*frame_ghost_state_funcs[])(struct MiscObj*);
 void frame_ghost_init(struct MiscObj*);
 void frame_ghost_fade(struct MiscObj*);
+#include "weapon_resources.h"
 
 void frame_ghost_init(register struct MiscObj* self)
 {
@@ -22,7 +23,7 @@ void frame_ghost_init(register struct MiscObj* self)
     self->unk3C = source->unk3C;
     self->bg_offset = source->bg_offset;
     self->unk15 = 0;
-    self->unk16 = 7;
+    self->unk16 = VISUAL_SATURN_LAYER(7);
     state = self->state + 1;
     self->state = state;
     set_animation_frame(ANIMATED_OBJECT(self), 2, self->unk2);

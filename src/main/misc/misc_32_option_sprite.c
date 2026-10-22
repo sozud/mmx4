@@ -4,8 +4,20 @@
 #include "main/misc/misc_32_option_sprite.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#include "main/misc/misc_31_option_toggle.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#include "saturn/game_low.h"
+#define OPTION_PAD_PRESSED saturn_pad_pressed
+#define OPTION_PAD_CANCEL SATURN_PAD_CANCEL
+#define OPTION_PAD_START SATURN_PAD_START
+#else
+#define OPTION_PAD_PRESSED controller_input.pressed
+#define OPTION_PAD_CANCEL PAD_SELECTION_ALT
+#define OPTION_PAD_START PADstart
+#endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/misc/misc_31_option_toggle.h"
 #endif
 
@@ -13,21 +25,31 @@
 extern void (*option_sprite_state_funcs[])(struct MiscObj*);
 
 // option_sprite_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CE114(struct MiscObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CE114(struct MiscObj* arg0)
 {
     const u8* rows = (const u8*)arg0->ext.misc_32.owner;
 
+#ifdef MMX4_SATURN
+    arg0->unk40 = SATURN_OPTION_CURSOR_TEXTURE;
+    arg0->unk3C = (s8*)SATURN_OPTION_CURSOR_FRAMES + *(s32*)SATURN_OPTION_CURSOR_FRAMES;
+    arg0->animation_table = (u32**)option_toggle_animations;
+    arg0->bg_offset = -1;
+    arg0->unk15 = 0;
+    arg0->unk42 = SATURN_OPTION_CURSOR_PALETTE;
+#else
     arg0->unk40 = 0x1E00;
     arg0->animation_table = (u32**)option_toggle_animations;
     arg0->bg_offset = -1;
     arg0->unk42 = 0x7806;
     arg0->unk15 = 0;
     arg0->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
+#endif
     arg0->x_pos.i.hi += 8;
     arg0->y_pos.i.hi = rows[main_bss_state.transition.selection * 2 + 2] + 8;
     arg0->unk16 = 0x10;
@@ -44,12 +66,12 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_32_option_sprite", func_800CE114);
 void func_800CE1D4(struct MiscObj* self)
 {
     if (self->ext.misc_32.timer == 0) {
-        if ((self->unk2 == -1) || (controller_input.pressed & PAD_SELECTION_ALT)
-            || ((controller_input.pressed & PADstart) && (game_info.unk0 == 0xA))) {
+        if ((self->unk2 == -1) || (OPTION_PAD_PRESSED & OPTION_PAD_CANCEL)
+            || ((OPTION_PAD_PRESSED & OPTION_PAD_START) && (game_info.unk0 == 0xA))) {
             self->unk2 = -1;
         }
-        if ((self->unk2 == -1) || (controller_input.pressed & PAD_SELECTION_ALT)
-            || ((controller_input.pressed & PADstart) && (game_info.unk0 == 8))) {
+        if ((self->unk2 == -1) || (OPTION_PAD_PRESSED & OPTION_PAD_CANCEL)
+            || ((OPTION_PAD_PRESSED & OPTION_PAD_START) && (game_info.unk0 == 8))) {
             self->unk2 = -1;
         }
     }

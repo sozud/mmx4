@@ -3,17 +3,22 @@
 #include "common.h"
 #include "main/weapons/weapon_60_ride_armor_missile.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
-#include "main/55C4.h"
 #include "main/object_motion.h"
+#include "main/55C4.h"
 #include "main/weapons/weapon_59_ride_armor_shot.h"
-#endif
 
 // ride_armor_missile_state_funcs
 extern void (*ride_armor_missile_state_funcs[])(struct WeaponObj*);
 
 void ride_armor_missile_despawn(struct WeaponObj*);
+void func_80098DA0(struct WeaponObj* arg0);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/weapons/weapon_59_ride_armor_shot.h"
+#endif
 
 void ride_armor_missile_update(struct WeaponObj* arg0)
 {
@@ -21,7 +26,8 @@ void ride_armor_missile_update(struct WeaponObj* arg0)
 }
 
 // ride_armor_missile_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80098DA0(struct WeaponObj* arg0);
 void func_80098F88(struct WeaponObj* self);
 void func_80099118(struct WeaponObj* arg0);
@@ -29,11 +35,18 @@ extern u8 ride_armor_missile_hit_box[4];
 extern struct Weapon60SpawnOffset ride_armor_missile_offsets[3];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80098F88(struct WeaponObj* self)
 {
     u8 direction;
+#ifdef MMX4_SHC
+    struct Weapon60SpawnOffset offset;
+
+    offset.x = ride_armor_missile_offsets[self->unk2].x;
+    offset.y = ride_armor_missile_offsets[self->unk2].y;
+#else
     struct Weapon60SpawnOffset offset = ride_armor_missile_offsets[self->unk2];
+#endif
 
     self->state = 1;
     self->on_screen = 1;
@@ -77,7 +90,7 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_60_ride_armor_missile", func_80098
 #endif
 
 // ride_armor_missile_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80099118(struct WeaponObj* arg0)
 {
     s32 target_direction;
@@ -87,7 +100,7 @@ void func_80099118(struct WeaponObj* arg0)
         arg0->unk88.half--;
         arg0->unk84.word = 0;
     }
-    if (!(main_bss_state.frame_counter & 1) && (s16)arg0->unk88.half == 0) {
+    if (!(WEAPON_FRAME_COUNTER & 1) && (s16)arg0->unk88.half == 0) {
         if (++arg0->unk84.word >= 0x1E0)
             arg0->unk88.half = 0x3C;
         func_80098DA0(arg0);

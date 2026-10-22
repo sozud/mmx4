@@ -14,6 +14,10 @@
 #include "main/object_update.h"
 #include "main/stage_objects.h"
 #include "main/xa_sequence_data.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#include "saturn/player_resources.h"
+#endif
 
 #ifdef MMX4_PC
 #include <psyz/audio.h>
@@ -28,7 +32,7 @@ extern u8 D_800F2C58[];
 extern u8 D_800F2D18[];
 extern u32 D_800F2F08[12];
 extern u32 D_800F2F38[2];
-extern u32 D_800F2F60[];
+extern union AnimationStep D_800F2F60[];
 extern union AnimationStep D_800F3000[10];
 extern union AnimationStep D_800F3028[11];
 extern union AnimationStep D_800F3054[10];
@@ -152,6 +156,7 @@ extern u8 D_801397D8;
 
 extern s16 D_801397E0;
 
+#ifndef MMX4_SATURN
 void func_8002328C(struct AbcObj* arg0)
 {
     s16 temp_v0_2;
@@ -284,6 +289,158 @@ void func_8002328C(struct AbcObj* arg0)
     }
     arg0->unkD = var_v0_4;
 }
+#endif
+#ifdef MMX4_SATURN
+#define ENDING_SHADOW_WORDS 6
+#define ENDING_SHADOW_OFFSET 0x114
+#define ENDING_SCROLL_RISE 0x7000
+#define ENDING_SCROLL_STEP 0x8000
+#define ENDING_TEXT_TOP 0x10D0
+#define ENDING_TEXT_END 0x1180
+#define ENDING_TEXT_DELAY 0x1A4
+#define ENDING_LOGO_DELAY 0xB4
+#define ENDING_DISPLAY_TEXT 5
+#define ENDING_DISPLAY_LOGO 6
+#define ENDING_MUSIC_DELAY 60
+#define ENDING_MUSIC 0x51
+#define ENDING_FADE 8
+#define ENDING_SPARKLES 5
+
+void saturn_thread_sleep(u32 frames);
+void saturn_background_copy_screen_tiles(void);
+extern u16 saturn_vdp2_shadow[];
+extern s16 saturn_fade_level_b;
+
+void func_80023624(struct EngineObj* arg0)
+{
+    s32 i;
+
+    reset_objects();
+    func_8002AB20();
+    arg0->unk1F = 0;
+    arg0->enable_boss = 0;
+    saturn_archive_queue_cancel();
+    for (i = 0; i < ENDING_SHADOW_WORDS; i++)
+        saturn_vdp2_shadow[ENDING_SHADOW_OFFSET / 2 + i] = 0;
+    saturn_fade_level_b = 0;
+    saturn_video_start();
+    saturn_movie_play(arg0->cur_character == CHARACTER_X ? "X4.CPK" : "Z5.CPK", 1);
+    saturn_video_start();
+    func_800129F0(ENDING_FADE);
+    arg0->unk1++;
+}
+
+void func_80023684(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        saturn_archive_load_blocking("ASCII.ARC");
+        arg0->unk1++;
+    }
+}
+
+static void ending_spawn_sparkle(void)
+{
+    struct MiscObj* obj = find_free_misc_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x38;
+        obj->unk2 = get_random() & 1;
+        obj->ext.title_logo.palette_shift_speed = get_random();
+    }
+}
+
+void func_80023698(struct EngineObj* arg0)
+{
+    u8 i;
+
+    for (i = 0; i < 16; i++)
+        arg0->character_state.bytes[i] = 0;
+    arg0->stage = 0xF;
+    arg0->substage = 1;
+    func_80013014();
+    saturn_background_copy_screen_tiles();
+    func_80028BF0();
+    func_8002771C();
+    if (arg0->cur_character != CHARACTER_X)
+        background_objects[1].y_pos.val = FIXED(768);
+    func_80023CE0();
+    need_palette_load |= 1;
+    saturn_display_mode = ENDING_DISPLAY_TEXT;
+    for (i = 0; i < ENDING_SPARKLES; i++)
+        ending_spawn_sparkle();
+    arg0->unk1++;
+    arg0->unk2 = 0;
+    saturn_thread_sleep(ENDING_MUSIC_DELAY);
+    saturn_music_play(ENDING_MUSIC, 0);
+    func_800129A4(ENDING_FADE);
+}
+
+void func_800237E4(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active != 0)
+        return;
+    if (arg0->unk2 == 0) {
+        arg0->unk2++;
+        return;
+    }
+    background_objects[0].y_pos.val += ENDING_SCROLL_RISE;
+    if (background_objects[0].y_pos.i.hi == ENDING_TEXT_TOP) {
+        arg0->unk1++;
+        arg0->unk2 = 0;
+        arg0->unk4 = ENDING_TEXT_DELAY;
+    }
+}
+
+void func_80023870(struct EngineObj* arg0)
+{
+    struct MiscObj* obj;
+
+    if (--arg0->unk4 == 0) {
+        arg0->unk1++;
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->active = 0x41;
+            obj->id = 0x38;
+            obj->unk2 = 2;
+            obj->ext.title_logo.palette_shift_speed = 0;
+        }
+        arg0->unk4 = ENDING_LOGO_DELAY;
+    }
+}
+
+void func_800238F0(struct EngineObj* arg0)
+{
+    if (arg0->unk4 != 0) {
+        arg0->unk4--;
+        return;
+    }
+    background_objects[0].y_pos.val += ENDING_SCROLL_STEP;
+    if (background_objects[0].y_pos.i.hi == ENDING_TEXT_END) {
+        arg0->unk1++;
+        saturn_display_mode = ENDING_DISPLAY_LOGO;
+    }
+}
+
+void func_80023970(struct EngineObj* arg0)
+{
+    background_objects[1].y_pos.val += ENDING_SCROLL_STEP;
+    if (background_objects[1].y_pos.i.hi == D_800F2FDC[arg0->cur_character]) {
+        arg0->unk1++;
+        func_800129F0(ENDING_FADE);
+    }
+}
+
+void func_800239E0(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        saturn_demo_return = 1;
+        saturn_soft_reset_mode = 0;
+        saturn_controller_refresh = 1;
+        func_80012740(0, &func_8001DAF8);
+        func_800127FC();
+    }
+}
+#else
 void func_80023624(struct EngineObj* arg0)
 {
     reset_objects();
@@ -438,6 +595,8 @@ void func_800239E0(struct EngineObj* arg0)
     }
 }
 
+#endif
+
 void func_80023A54(struct EngineObj* arg0)
 {
 #ifdef VERSION_EU
@@ -452,7 +611,37 @@ void func_80023A54(struct EngineObj* arg0)
     func_80023D68();
 }
 
+#ifdef MMX4_SATURN
+#define SPARKLE_STATIC 2
+#define SPARKLE_X_CENTER 0x100
+#define SPARKLE_Y_CENTER 0x98
+#define SPARKLE_STATIC_X 0xCA
+#define SPARKLE_STATIC_Y (SPARKLE_STATIC_X + 5)
+#define SPARKLE_CLUT 0x18
+#define SPARKLE_LAYER 0x42
+
+void func_80023AA8(struct MiscObj* arg0)
+{
+    arg0->state++;
+    arg0->bg_offset = -1;
+    arg0->unk40 = PLAYER_STAGE_TEXTURE(0);
+    arg0->unk42 = SPARKLE_CLUT;
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0];
+    arg0->animation_table = (u32**)D_800F307C;
+    arg0->unk16 = SPARKLE_LAYER;
+    if (arg0->unk2 < SPARKLE_STATIC) {
+        arg0->x_pos.i.hi = D_800F3088[get_random() & 15] + SPARKLE_X_CENTER;
+        arg0->y_pos.i.hi = D_800F30A8[get_random() & 15] + SPARKLE_Y_CENTER;
+    } else {
+        arg0->x_pos.i.hi = SPARKLE_STATIC_X;
+        arg0->y_pos.i.hi = SPARKLE_STATIC_Y;
+    }
+    arg0->unk15 = 0;
+    set_animation(arg0, arg0->unk2);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/13A8C", func_80023AA8);
+#endif
 void func_80023B98(struct MiscObj* arg0)
 {
     s8 timer;

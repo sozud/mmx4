@@ -31,6 +31,14 @@ void double_cyclone_charged_offscreen(struct WeaponObj*);
 
 void double_cyclone_charged_despawn(struct WeaponObj*);
 
+extern u8 double_cyclone_spawn_offsets[4];
+extern struct Unk_unk68 double_cyclone_hit_box[];
+extern union AnimationStep* D_8011C0F0[5];
+extern u8 double_cyclone_charged_spawn_offsets[4];
+extern struct Unk_unk68 double_cyclone_charged_hit_box[];
+
+#include "weapon_resources.h"
+
 s32 double_cyclone_charged_check_expired(struct WeaponObj* arg0);
 s32 double_cyclone_check_expired(struct WeaponObj* arg0);
 
@@ -58,19 +66,19 @@ void double_cyclone_update(struct WeaponObj* arg0)
 }
 
 // double_cyclone_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80096EA4(struct WeaponObj* arg0);
 void func_80097430(struct WeaponObj* arg0);
 void func_80097670(struct WeaponObj* arg0);
 extern struct Unk_unk68 double_cyclone_hit_box[];
 extern u8 double_cyclone_spawn_offsets[4];
-extern u32* D_8011C0F0[5];
 extern u8 double_cyclone_charged_spawn_offsets[4];
 extern struct Unk_unk68 double_cyclone_charged_hit_box[];
 void double_cyclone_charged_draw(struct WeaponObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80096EA4(struct WeaponObj* arg0)
 {
     s32* player_gfx = SP_PLAYER_GFX;
@@ -84,22 +92,22 @@ void func_80096EA4(struct WeaponObj* arg0)
     arg0->unk38 = (u8*)player_gfx + player_gfx[8];
     arg0->unk16 = 1;
     arg0->animation_table = D_8011C0F0;
-    arg0->unk42 = 0x7801;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x10];
     if (arg0->unk2 == 0) {
-        arg0->unk40 = 0x520;
+        arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
         arg0->x_vel.val = -0x26000;
         arg0->unk15 = 0;
     } else {
         arg0->x_vel.val = 0x26000;
-        arg0->unk40 = 0x530;
-        arg0->unk15 = 0x40;
+        arg0->unk40 = WEAPON_TEXTURE_SPECIAL_1;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
     }
     if (g_Player.unk15 == 0) {
         arg0->x_pos.i.hi = g_Player.x_pos.i.hi + dx;
     } else {
         arg0->x_pos.i.hi = g_Player.x_pos.i.hi - dx;
-        arg0->unk15 ^= 0x40;
+        arg0->unk15 ^= PLAYER_FACING_RIGHT;
         arg0->x_vel.val = -arg0->x_vel.val;
     }
     arg0->unk28.val = 0;
@@ -111,7 +119,7 @@ void func_80096EA4(struct WeaponObj* arg0)
     arg0->ext.weapon_7.unk90 = 8;
     arg0->ext.weapon_7.unk91 = 4;
     set_animation(arg0, 0);
-    func_8001540C(0, 0x1E, arg0);
+    func_8001540C(0, WEAPON_SOUND_CYCLONE, arg0);
     arg0->state++;
     double_cyclone_draw(arg0);
 }
@@ -258,7 +266,7 @@ void double_cyclone_charged_update(struct WeaponObj* arg0)
 }
 
 // double_cyclone_charged_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80097430(struct WeaponObj* arg0)
 {
     s32* player_gfx = SP_PLAYER_GFX;
@@ -269,14 +277,14 @@ void func_80097430(struct WeaponObj* arg0)
 
     arg0->unk38 = (u8*)player_gfx + player_gfx[8];
     arg0->animation_table = D_8011C0F0;
-    arg0->unk40 = 0x530;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_1;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0;
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x10];
     if (arg0->unk2 < 0) {
         side = 1;
         arg0->x_vel.val = 0x60000;
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
     } else {
         side = 0;
         arg0->x_vel.val = -0x60000;
@@ -288,7 +296,7 @@ void func_80097430(struct WeaponObj* arg0)
         arg0->x_pos.i.hi = g_Player.x_pos.i.hi + dx;
     } else {
         arg0->x_pos.i.hi = g_Player.x_pos.i.hi - dx;
-        arg0->unk15 ^= 0x40;
+        arg0->unk15 ^= PLAYER_FACING_RIGHT;
         arg0->x_vel.val = -arg0->x_vel.val;
     }
     arg0->unk28.val = 0;
@@ -300,7 +308,7 @@ void func_80097430(struct WeaponObj* arg0)
     arg0->ext.weapon_16.delay = (arg0->unk2 & 0x7F) << 2;
     arg0->unk49 = 1;
     set_animation(arg0, 4);
-    func_8001540C(0, 0x1E, arg0);
+    func_8001540C(0, WEAPON_SOUND_CYCLONE, arg0);
     func_8001540C(1, 0xA, arg0);
     arg0->unk5 = 0;
     arg0->state++;
@@ -331,7 +339,7 @@ void double_cyclone_charged_main(struct WeaponObj* arg0)
 }
 
 // double_cyclone_charged_gather
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80097670(struct WeaponObj* arg0)
 {
     if (arg0->ext.weapon_16.delay != 0) {

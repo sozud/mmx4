@@ -17,6 +17,7 @@ extern void (*scripted_slider_state_funcs[])(struct MiscObj*);
 
 void scripted_slider_main(struct MiscObj*);
 void scripted_slider_despawn(struct MiscObj*);
+#include "weapon_resources.h"
 
 u8 stage_cutscene_data[24] = {
     0,
@@ -61,22 +62,22 @@ struct Misc45PositionData {
     s16 height;
 };
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D0E48(struct MiscObj* self);
 void func_800D11B0(struct MiscObj* self);
 void func_800D0D68(struct MiscObj* self, u8 kind);
 extern struct Misc45PositionData scripted_slider_offsets[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D0E48(struct MiscObj* self)
 {
     self->active = 0x41;
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0];
-    self->unk42 = 0x7848;
+    self->unk42 = OBJECT_CLUT(0x7848);
     self->bg_offset = -1;
     self->ext.misc_45.direction = 1;
-    self->unk40 = D_801406A8[0] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(0);
     self->unk16 = 0;
     self->state++;
     self->unk15 = 0;
@@ -172,7 +173,7 @@ void scripted_slider_follow_owner(struct MiscObj* self)
 }
 
 // scripted_slider_step_4
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D11B0(struct MiscObj* self)
 {
     self->unk28 = 0;

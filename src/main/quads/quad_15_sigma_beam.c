@@ -18,6 +18,7 @@ extern void (*sigma_beam_state_funcs[])(struct QuadObj*);
 void sigma_beam_init(struct QuadObj*);
 void sigma_beam_main(struct QuadObj*);
 void sigma_beam_despawn(struct QuadObj*);
+#include "weapon_resources.h"
 
 void sigma_beam_init(struct QuadObj* arg0)
 {
@@ -25,7 +26,7 @@ void sigma_beam_init(struct QuadObj* arg0)
     arg0->state++;
     arg0->active = -0x7D;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk36 = 6;
+    arg0->unk36 = VISUAL_SATURN_LAYER(6);
     arg0->unk34 = 0x10;
     arg0->x_pos.i.hi = obj->x_pos.i.hi;
     arg0->y_pos.i.hi = obj->y_pos.i.hi - 0x17;
@@ -61,7 +62,7 @@ void sigma_beam_sweep(struct QuadObj* arg0)
         arg0->ext.unk_ext4.unk3C = 0x46U;
         return;
     }
-    if (!(main_bss_state.frame_counter % 4)) {
+    if (!(WEAPON_FRAME_COUNTER % 4)) {
         obj = find_free_shot_obj();
         if (obj != NULL) {
             obj->active = 0x41;
@@ -78,7 +79,7 @@ void sigma_beam_fade(struct QuadObj* arg0)
 {
     struct ShotObj* temp_v0;
 
-    if (!(main_bss_state.frame_counter % 4)) {
+    if (!(WEAPON_FRAME_COUNTER % 4)) {
         temp_v0 = find_free_shot_obj();
         if (temp_v0 != NULL) {
             temp_v0->active = 0x41;

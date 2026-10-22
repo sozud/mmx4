@@ -11,6 +11,7 @@ void title_facet_init(struct QuadObj*);
 void title_facet_follow(struct QuadObj*);
 void title_facet_finish(struct QuadObj*);
 void title_facet_despawn(struct QuadObj*);
+#include "weapon_resources.h"
 
 extern u8 title_facet_vertex_indices[][4];
 extern union TitleScratch D_80169498;
@@ -50,8 +51,8 @@ void title_facet_init(struct QuadObj* arg0)
     arg0->unk36 = 0x11;
     arg0->ext.unk_ext.unk38 = 0x3C;
     arg0->state = state;
-    arg0->unk34 = 0x7FFF;
-    arg0->on_screen = 1;
+    arg0->unk34 = SATURN_ALT(0x7FFF, 0x17F);
+    QUAD_SET_ON_SCREEN(arg0);
 }
 
 void title_facet_follow(struct QuadObj* arg0)
@@ -74,7 +75,7 @@ void title_facet_follow(struct QuadObj* arg0)
         arg0->state++;
         arg0->ext.unk_ext.unk38 = 5;
     }
-    arg0->on_screen = 1;
+    QUAD_SET_ON_SCREEN(arg0);
 }
 
 void title_facet_finish(struct QuadObj* arg0)
@@ -104,6 +105,17 @@ void title_facet_update(struct QuadObj* arg0)
     title_facet_state_funcs[arg0->state](arg0);
 }
 
+#ifdef MMX4_SATURN
+u8 title_facet_vertex_indices[7][4] = {
+    { 0, 1, 5, 4 },
+    { 2, 3, 6, 6 },
+    { 4, 5, 16, 17 },
+    { 6, 3, 8, 7 },
+    { 7, 8, 9, 9 },
+    { 10, 11, 13, 12 },
+    { 17, 16, 11, 10 },
+};
+#else
 u8 title_facet_vertex_indices[9][4] = {
     { 0, 1, 5, 4 },
     { 2, 3, 6, 6 },
@@ -115,6 +127,7 @@ u8 title_facet_vertex_indices[9][4] = {
     { 14, 15, 16, 17 },
     { 14, 17, 8, 7 },
 };
+#endif
 
 void (*title_facet_state_funcs[])(struct QuadObj*) = {
     title_facet_init,

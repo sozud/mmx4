@@ -10,6 +10,7 @@ extern void (*ride_chaser_flash_state_funcs[])(struct VisualObj*);
 void ride_chaser_flash_init(struct VisualObj*);
 void ride_chaser_flash_main(struct VisualObj*);
 void ride_chaser_flash_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void ride_chaser_flash_update(struct VisualObj* arg0)
 {
@@ -21,7 +22,7 @@ void ride_chaser_flash_init(struct VisualObj* arg0)
     arg0->state = 1;
     arg0->on_screen = 1;
     arg0->unk54 = 3;
-    arg0->unk16 = 2;
+    arg0->unk16 = VISUAL_SATURN_LAYER(2);
     set_animation(arg0, 0x19);
 }
 

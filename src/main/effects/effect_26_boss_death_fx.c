@@ -6,11 +6,8 @@
 #include "main/object_motion.h"
 #include "main/player_common.h"
 #include "main/visuals/visual_03_small_effect.h"
-
-#ifdef MMX4_PC
-#include "main/1A5BC.h"
 #include "main/55C4.h"
-#endif
+#include "main/1A5BC.h"
 
 // boss_death_fx_state_funcs
 extern void (*boss_death_fx_state_funcs[])(struct EffectObj*);
@@ -21,6 +18,12 @@ void boss_death_fx_rays(struct EffectObj*);
 void boss_death_fx_wait(struct EffectObj*);
 
 void boss_death_fx_finish(struct EffectObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/1A5BC.h"
+#include "main/55C4.h"
+#endif
 
 void boss_death_fx_init(struct EffectObj* self)
 {
@@ -73,7 +76,8 @@ void boss_death_fx_spawn_explosions(struct EffectObj* self)
 }
 
 // boss_death_fx_start_flash
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static void effect_26_spawn_spark(struct EffectObj* arg0, u8 angle);
 void func_800BB364(struct EffectObj* arg0);
 void func_800BB750(struct EffectObj* arg0);
@@ -94,7 +98,7 @@ static void effect_26_spawn_spark(struct EffectObj* arg0, u8 angle)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BB364(struct EffectObj* arg0)
 {
     effect_26_spawn_spark(arg0, arg0->unk2);
@@ -114,11 +118,19 @@ void func_800BB364(struct EffectObj* arg0)
     g_FilterAmountR = 0;
     g_FilterAmountG = 0;
     g_FilterAmountB = 0;
+#ifdef MMX4_SATURN
+    D_8013E188[0] = 0x7F;
+#else
     D_8013E188[0] = -1;
     D_8013E188[1] = -1;
     D_8013E188[2] = -1;
     D_8013E188[3] = -1;
+#endif
+#ifdef MMX4_SATURN
+    saturn_music_stop();
+#else
     func_80016F0C();
+#endif
     engine_obj.unk42 = 0;
 }
 #else
@@ -209,7 +221,7 @@ void boss_death_fx_rays(struct EffectObj* self)
 }
 
 // boss_death_fx_whiteout
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BB750(struct EffectObj* arg0)
 {
     arg0->ext.effect_26.timer++;
@@ -241,7 +253,7 @@ void boss_death_fx_wait(struct EffectObj* self)
 }
 
 // boss_death_fx_fade_in
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BB888(struct EffectObj* arg0)
 {
     if (++arg0->ext.effect_26.timer % 5 != 0)

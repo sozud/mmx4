@@ -57,6 +57,7 @@ void lightning_web_charged_fade(struct WeaponObj*);
 extern void (*lightning_web_charged_part_step_funcs[])(struct WeaponObj*);
 
 void lightning_web_charged_part_drift(struct WeaponObj*);
+#include "weapon_resources.h"
 
 void lightning_web_buzz_sound(struct WeaponObj* arg0, u8* arg1);
 void lightning_web_draw(struct WeaponObj* arg0);
@@ -107,8 +108,8 @@ void lightning_web_init(struct WeaponObj* arg0)
     arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[2];
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[10];
     arg0->animation_table = D_8011C070;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0;
     arg0->unk15 = player->unk15;
     ext = &arg0->ext.weapon_1;
@@ -205,7 +206,7 @@ void lightning_web_hang(struct WeaponObj* arg0)
     if ((arg0->unk76 != 0) && ((arg0->unk72 & 3) != 0)) {
         set_animation(arg0, 4);
         if (arg0->unk72 & 1) {
-            arg0->unk15 = 0x40;
+            arg0->unk15 = PLAYER_FACING_RIGHT;
         } else {
             arg0->unk15 = 0;
         }
@@ -217,7 +218,7 @@ void lightning_web_buzz_sound(struct WeaponObj* arg0, u8* arg1)
 {
     if (arg1[4] == 0) {
         arg1[4] = 0xA;
-        func_8001540C(0, 0x19, arg0);
+        func_8001540C(0, WEAPON_SOUND_WEB, arg0);
         return;
     }
     arg1[4]--;
@@ -310,8 +311,8 @@ void lightning_web_charged_init(struct WeaponObj* arg0)
     arg0->unk38 = (u8*)player_gfx + gfx_offset;
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[10];
     arg0->animation_table = D_8011C070;
-    arg0->unk40 = 0x530;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_1;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0;
     arg0->unk15 = player->unk15;
     ext = &arg0->ext.weapon_10;
@@ -402,20 +403,19 @@ void lightning_web_charged_fade(struct WeaponObj* arg0)
 }
 
 // lightning_web_charged_part_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80093930(struct WeaponObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/weapons/weapon_01_lightning_web.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80093930(struct WeaponObj* self)
 {
     self->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[2];
     self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[10];
     self->animation_table = D_8011C070;
-    self->unk40 = 0x540;
-    self->unk42 = 0x7801;
+    self->unk40 = WEAPON_TEXTURE_SPECIAL_2;
+    self->unk42 = WEAPON_PALETTE_1;
     self->unk16 = 1;
     self->unk15 = 0;
     set_velocity_from_angle(MOVING_OBJECT(self), ((self->unk2 - 1) * 4) & 0xFC);

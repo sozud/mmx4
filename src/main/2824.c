@@ -10,6 +10,9 @@
 #include "main/menu.h"
 #include "main/objects.h"
 #include "main/psxsdk/libgte/msc00.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#endif
 
 extern s32 D_800EE458;
 
@@ -49,6 +52,7 @@ void mmx4_pc_finish_cd_load(void);
 #endif
 
 // entrypoint
+#ifndef MMX4_SATURN
 void func_80012024(void)
 {
     tile_effect_nop();
@@ -84,7 +88,9 @@ void func_80012024(void)
 #endif
     }
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_8001213C(void)
 {
 #ifdef VERSION_EU
@@ -121,7 +127,9 @@ void func_8001213C(void)
     D_80141BD2 = 0x78;
     func_80012740(0, &func_8001D064);
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_800122E0(struct DrawInfo* arg0)
 {
     ClearOTagR(&arg0->ordering_table.start, 0xC);
@@ -139,9 +147,13 @@ void func_800122E0(struct DrawInfo* arg0)
     arg0->dispenv.screen.w = 0;
 #endif
 }
+#endif
 
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/2824", func_80012328);
+#endif
 
+#ifndef MMX4_SATURN
 void func_80012454(void)
 {
     if ((D_8013BD44 != 0) && (main_bss_state.transition.active == 0)) {
@@ -166,12 +178,16 @@ void func_80012454(void)
         }
     }
 }
+#endif
 
 extern void (*D_800EE45C[9])();
 
 #ifdef VERSION_EU
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/2824", func_80012560);
+#endif
 #else
+#ifndef MMX4_SATURN
 void func_80012560(void)
 {
 #ifdef MMX4_PC
@@ -217,7 +233,9 @@ void func_80012560(void)
 #endif
 }
 #endif
+#endif
 
+#ifndef MMX4_SATURN
 void func_80012600(void)
 {
 #ifdef MMX4_PC
@@ -258,10 +276,14 @@ void func_80012600(void)
     } while (CUR_GAME_THREAD < &GAME_THREADS[4]);
 #endif
 }
+#endif
 
 #ifdef VERSION_EU
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/2824", func_80012740);
+#endif
 #else
+#ifndef MMX4_SATURN
 void func_80012740(s32 arg0, void* arg1)
 {
 #ifdef MMX4_PC
@@ -280,10 +302,14 @@ void func_80012740(s32 arg0, void* arg1)
 #endif
 }
 #endif
+#endif
 
 #ifdef VERSION_EU
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/2824", func_800127C8);
+#endif
 #else
+#ifndef MMX4_SATURN
 void func_800127C8(s32 arg0)
 {
     D_801F8300->timer = arg0;
@@ -295,7 +321,9 @@ void func_800127C8(s32 arg0)
 #endif
 }
 #endif
+#endif
 
+#ifndef MMX4_SATURN
 void func_800127FC()
 {
 #ifdef MMX4_PC
@@ -309,10 +337,14 @@ void func_800127FC()
     ChangeTh(0xFF000000);
 #endif
 }
+#endif
 
 #ifdef VERSION_EU
+#ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/2824", func_80012854);
+#endif
 #else
+#ifndef MMX4_SATURN
 void func_80012854(s32 arg0)
 {
 #ifdef MMX4_PC
@@ -332,7 +364,9 @@ void func_80012854(s32 arg0)
 #endif
 }
 #endif
+#endif
 
+#ifndef MMX4_SATURN
 void func_800128B8(void (*arg0)(void))
 {
 #ifdef MMX4_PC
@@ -343,7 +377,9 @@ void func_800128B8(void (*arg0)(void))
     ChangeTh(0xFF000000);
 #endif
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_800128EC(s32 arg0)
 {
 #ifdef MMX4_PC
@@ -355,7 +391,9 @@ void func_800128EC(s32 arg0)
 #endif
     *temp_a0 |= 0x40;
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_80012910(s32 arg0)
 {
 #ifdef MMX4_PC
@@ -365,15 +403,21 @@ void func_80012910(s32 arg0)
 #endif
     *temp_a0 &= ~0x40;
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_80012934(s32 arg0)
 {
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_8001293C(void)
 {
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_80012944(void)
 {
     s32 i;
@@ -386,7 +430,9 @@ void func_80012944(void)
         (i + *(u8**)0x801F8300)[0x71] = 0;
     }
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_800129A4(s8 arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -395,7 +441,9 @@ void func_800129A4(s8 arg0)
         func_80012740(2, func_80012A3C);
     }
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_800129F0(s32 amount)
 {
     if (main_bss_state.transition.active == 0) {
@@ -404,6 +452,7 @@ void func_800129F0(s32 amount)
         func_80012740(2, func_80012A3C);
     }
 }
+#endif
 
 #ifdef VERSION_JP
 char D_800EE40C[36] = "CAPCOM Jun 20 1997 12:14:39 CAPCOM";
@@ -415,6 +464,21 @@ char D_800EE40C[36] = "CAPCOM May 12 1998 19:28:57 CAPCOM";
 char D_800EE40C[36] = "CAPCOM Aug 19 1997 19:54:17 CAPCOM";
 #endif
 
+#ifdef MMX4_SATURN
+u16 D_800EE430[16] = {
+    SATURN_PAD_RIGHT,
+    SATURN_PAD_LEFT,
+    SATURN_PAD_UP,
+    SATURN_PAD_DOWN,
+    SATURN_PAD_A,
+    SATURN_PAD_X,
+    SATURN_PAD_Y,
+    SATURN_PAD_B,
+    SATURN_PAD_C,
+    SATURN_PAD_R,
+    SATURN_PAD_L,
+};
+#else
 u16 D_800EE430[16] = {
     0x2000,
     0x8000,
@@ -433,6 +497,7 @@ u16 D_800EE430[16] = {
     0,
     0,
 };
+#endif
 
 RECT D_800EE450 = { 0, 0, 1024, 512 };
 #ifdef MMX4_WIN32
@@ -441,6 +506,7 @@ u8 pc_2824_data[24] = { 0x48, 0x00, 0x69, 0x00, 0x00, 0xB0, 0x2C, 0x00, 0x00, 0x
 
 s32 D_800EE458 = 0;
 
+#ifndef MMX4_SATURN
 void (*D_800EE45C[9])() = {
     func_80012740,
     func_800127C8,
@@ -452,3 +518,4 @@ void (*D_800EE45C[9])() = {
     func_80012934,
     func_8001293C,
 };
+#endif

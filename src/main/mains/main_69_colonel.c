@@ -1,6 +1,10 @@
 // MainObj, main_object_update_funcs[69]
 // 80085F08..80088BA0
 #include "common.h"
+#ifdef MMX4_SATURN
+extern u8 saturn_colonel_init_mode;
+#endif
+#include "weapon_resources.h"
 #include "main/mains/main_69_colonel.h"
 #include "main/objects.h"
 #include "main/player_common.h"
@@ -11,8 +15,9 @@
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
 #include "main/stage_objects.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -167,7 +172,11 @@ void colonel_spawn_warning(struct MainObj* self)
 }
 
 // colonel_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80086008(struct MainObj* arg0);
 void func_80086124(struct MainObj* arg0);
 void func_800877A4(struct MainObj* arg0);
@@ -184,7 +193,7 @@ void colonel_spawn_afterimages(struct MainObj*);
 void colonel_face_player(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80086008(struct MainObj* arg0)
 {
     struct Main69Ext* ext = &arg0->ext.main_69;
@@ -196,7 +205,7 @@ void func_80086008(struct MainObj* arg0)
     } else {
         arg0->unk6 = 1;
     }
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->contact_damage = 6;
     arg0->air_state = 0;
     arg0->unk15 = 0;
@@ -214,7 +223,7 @@ void func_80086008(struct MainObj* arg0)
     arg0->animation_table = (const u8* const*)D_80104770;
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+    arg0->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
     set_animation(arg0, 0);
     colonel_spawn_afterimages(arg0);
     engine_obj.unk25 = 1;
@@ -223,13 +232,16 @@ void func_80086008(struct MainObj* arg0)
     ext->state.bytes.unk8D = 0;
     ext->state.bytes.unk8E = 0;
     arg0->unk5 = 2;
+#ifdef MMX4_SATURN
+    saturn_colonel_init_mode = 15;
+#endif
 }
 #else
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086008);
 #endif
 
 // colonel_run
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80086124(struct MainObj* arg0)
 {
     struct Main69Ext* ext = &arg0->ext.main_69;
@@ -285,7 +297,7 @@ void colonel_defeat_start(struct MainObj* self)
     } else {
         facing = 0;
     }
-    facing <<= 6;
+    facing <<= PLAYER_FACING_SHIFT;
     colonel_face_player(self);
     player_start_script_action(0x14, facing);
     func_8002B560(0x25, 0x10);
@@ -314,7 +326,7 @@ void colonel_defeat_fall(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     flags = self->collision_flags;
     if (flags & 8) {
-        func_8001540C(2, 0xD1, self);
+        func_8001540C(2, SATURN_SOUND(0xD1, 0x93), self);
         set_animation(self, 4);
         start_screen_shake_y(0x18, 2, 1);
         self->air_state = 0;
@@ -426,7 +438,7 @@ void colonel_retreat_start(struct MainObj* self)
     self->hurt_box = NULL;
     self->attack_box = NULL;
     self->unk6++;
-    func_8001540C(2, 0xD3, self);
+    func_8001540C(2, SATURN_SOUND(0xD3, 0x95), self);
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -464,7 +476,7 @@ void func_80086860(struct MainObj* self)
         self->x_speed = FIXED(32);
         self->x_accel = FIXED(-1);
         colonel_face_player(self);
-        func_8001540C(2, 0xD3, self);
+        func_8001540C(2, SATURN_SOUND(0xD3, 0x95), self);
         self->unk6++;
     }
 }
@@ -509,7 +521,7 @@ void colonel_retreat_start_again(struct MainObj* self)
     self->hurt_box = NULL;
     self->attack_box = NULL;
     self->unk6++;
-    func_8001540C(2, 0xD3, self);
+    func_8001540C(2, SATURN_SOUND(0xD3, 0x95), self);
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -575,7 +587,7 @@ void func_80086C00(struct MainObj* self)
         self->unk7C = 0x10;
         self->ext.main_69.linked_object = visual_obj;
         self->unk7++;
-        func_8001540C(2, 0xD7, self);
+        func_8001540C(2, SATURN_SOUND(0xD7, 0x99), self);
     }
 }
 
@@ -621,7 +633,7 @@ void colonel_intro_port_pose(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
-        func_8001540C(2, 0xD5, self);
+        func_8001540C(2, SATURN_SOUND(0xD5, 0x97), self);
     }
     if (self->animation_step.fields.relative_step == 0) {
         set_animation(self, 0);
@@ -651,7 +663,7 @@ void colonel_intro_port_fill_health(struct MainObj* self)
 
     if (update_boss_music_delay() == 0) {
         if (--self->unk7E == 0) {
-            func_8001540C(0, 0xE, NULL);
+            func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
             self->unk7E = 3;
         }
         if (++self->hp == 0x30) {
@@ -678,7 +690,7 @@ void colonel_intro_hall_wait_player(struct MainObj* self)
 
     object_x = self->x_pos.i.hi;
     if (ABS(g_Player.x_pos.i.hi, object_x) <= 0xB0) {
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         background_objects[0].unk24 = 0x2C0;
         background_objects[0].unk26 = 0x2A0;
         self->unk7C = 0x78;
@@ -794,7 +806,7 @@ void colonel_intro_hall_fill_health(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (update_boss_music_delay() == 0) {
         if (--self->unk7E == 0) {
-            func_8001540C(0, 0xE, NULL);
+            func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
             self->unk7E = 3;
         }
         if (++self->hp == 0x30) {
@@ -886,7 +898,7 @@ void colonel_teleport_slash_vanish(struct MainObj* self)
     self->gravity = 0;
     self->hurt_box = NULL;
     self->attack_box = NULL;
-    func_8001540C(2, 0xD3, self);
+    func_8001540C(2, SATURN_SOUND(0xD3, 0x95), self);
     self->unk6++;
 }
 
@@ -911,7 +923,7 @@ void colonel_teleport_slash_shake(struct MainObj* self)
 }
 
 // colonel_teleport_slash_reappear
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800877A4(struct MainObj* arg0)
 {
     s16 player_x;
@@ -925,7 +937,7 @@ void func_800877A4(struct MainObj* arg0)
         arg0->x_pos.i.hi = player_x - 0x30;
     colonel_face_player(arg0);
     set_animation(arg0, 5);
-    func_8001540C(2, 0xD4, arg0);
+    func_8001540C(2, SATURN_SOUND(0xD4, 0x96), arg0);
     arg0->hurt_box = &D_80104508;
     arg0->attack_box = &D_80104504;
     arg0->unk7C = 0x1E;
@@ -981,12 +993,12 @@ void colonel_dash_start(struct MainObj* self)
     self->attack_box = NULL;
     self->unk4B = 1;
     set_animation(self, 6);
-    func_8001540C(2, 0xD2, self);
+    func_8001540C(2, SATURN_SOUND(0xD2, 0x94), self);
     self->unk6++;
 }
 
 // colonel_dash_run
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80087A00(struct MainObj* arg0)
 {
     s32 speed;
@@ -1045,7 +1057,7 @@ void colonel_saber_waves(struct MainObj* self)
 void colonel_saber_waves_start(struct MainObj* self)
 {
     set_animation(self, 4);
-    func_8001540C(2, 0xDA, self);
+    func_8001540C(2, SATURN_SOUND(0xDA, 0x9C), self);
     self->hurt_box = (const u8*)&D_80104508;
     self->attack_box = (const u8*)&D_80104504;
     if (self->ext.main_69.state.bytes.variant == 0) {
@@ -1064,7 +1076,7 @@ void colonel_saber_waves_fire(struct MainObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         if (--self->unk7C == 0) {
             set_animation(self, 5);
-            func_8001540C(2, 0xDA, self);
+            func_8001540C(2, SATURN_SOUND(0xDA, 0x9C), self);
             self->unk7C = (s8)self->ext.main_69.state.bytes.wave_delay;
             self->unk6++;
         }
@@ -1090,7 +1102,7 @@ void colonel_saber_waves_fire_high(struct MainObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         if (--self->unk7C == 0) {
             set_animation(ANIMATED_OBJECT(self), 4);
-            func_8001540C(2, 0xDA, self);
+            func_8001540C(2, SATURN_SOUND(0xDA, 0x9C), self);
             self->unk7C = self->ext.main_69.state.bytes.wave_delay;
             self->unk6++;
         }
@@ -1166,7 +1178,7 @@ void colonel_flash_strike(struct MainObj* self)
 void colonel_flash_strike_vanish(struct MainObj* self)
 {
     set_animation(self, 6);
-    func_8001540C(2, 0xD3, self);
+    func_8001540C(2, SATURN_SOUND(0xD3, 0x95), self);
     self->unk7C = 0x20;
     self->x_speed = 0;
     self->x_accel = FIXED(1);
@@ -1207,7 +1219,7 @@ void colonel_flash_strike_reappear(struct MainObj* self)
         self->unk7C = 0x14;
         self->x_speed = FIXED(32);
         self->x_accel = (s32)0xFFFF0000;
-        func_8001540C(2, 0xD3, self);
+        func_8001540C(2, SATURN_SOUND(0xD3, 0x95), self);
         self->unk6++;
     }
 }
@@ -1241,7 +1253,7 @@ void func_800881F8(struct MainObj* self)
     struct EffectObj* effect;
 
     if (self->animation_step.fields.event == 1) {
-        func_8001540C(2, 0xD5, self);
+        func_8001540C(2, SATURN_SOUND(0xD5, 0x97), self);
         visual = find_free_visual_obj();
         if (visual != NULL) {
             visual->active = 0x41;
@@ -1291,7 +1303,7 @@ void colonel_flash_strike_flash(struct MainObj* self)
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
-        func_8001540C(2, 0xD6, self);
+        func_8001540C(2, SATURN_SOUND(0xD6, 0x98), self);
         self->unk6++;
     }
     is_on_screen(BASE_OBJECT(self));
@@ -1314,7 +1326,7 @@ void func_800883CC(struct MainObj* self)
                 shot->unk7C = WEAPON_OBJECT(self);
                 shot->unk8C.object = OBJECT_HEADER(self);
             }
-            func_8001540C(2, 0xD7, self);
+            func_8001540C(2, SATURN_SOUND(0xD7, 0x99), self);
         }
         visual = find_free_visual_obj();
         if (visual != NULL) {
@@ -1366,7 +1378,7 @@ void colonel_jump_slam_jump(struct MainObj* self)
     self->x_accel = 0;
     self->gravity = FIXED(0.2578125);
     set_animation(self, 3);
-    func_8001540C(2, 0xD0, self);
+    func_8001540C(2, SATURN_SOUND(0xD0, 0x92), self);
     self->hurt_box = (const u8*)&D_80104510;
     self->attack_box = (const u8*)&D_8010450C;
     self->unk6++;
@@ -1402,11 +1414,11 @@ void colonel_jump_slam_drop(struct MainObj* self)
     if (self->air_state == 1 && self->y_speed < 0) {
         self->air_state = -1;
         self->unk7C = 0x10;
-        func_8001540C(2, 0xD8, self);
+        func_8001540C(2, SATURN_SOUND(0xD8, 0x9A), self);
     }
 
     if (self->air_state == -1 && (self->collision_flags & 8)) {
-        func_8001540C(2, 0xD1, self);
+        func_8001540C(2, SATURN_SOUND(0xD1, 0x93), self);
         set_animation(self, 4);
         start_screen_shake_y(0x18, 2, 1);
         self->air_state = 0;
@@ -1420,7 +1432,7 @@ void colonel_jump_slam_shockwave(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
-        func_8001540C(2, 0xD5, self);
+        func_8001540C(2, SATURN_SOUND(0xD5, 0x97), self);
     }
     if (self->animation_step.fields.relative_step == 0) {
         shot = find_free_shot_obj();
@@ -1432,7 +1444,7 @@ void colonel_jump_slam_shockwave(struct MainObj* self)
             shot->unk7C = WEAPON_OBJECT(self);
             shot->unk8C.object = OBJECT_HEADER(self);
         }
-        func_8001540C(2, 0xD9, self);
+        func_8001540C(2, SATURN_SOUND(0xD9, 0x9B), self);
         self->unk7C = 0x50;
         self->unk6++;
     }
@@ -1482,7 +1494,7 @@ void colonel_face_player(struct MainObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -1491,14 +1503,14 @@ void colonel_face_center(struct BaseObj* self)
     s16 right_edge = background_objects[0].x_pos.i.hi + 0xB0;
 
     if (self->x_pos.i.hi < right_edge) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
     }
 }
 
 // colonel_pick_script
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800889DC(struct MainObj* arg0)
 {
     struct Main69Ext* ext = &arg0->ext.main_69;
@@ -1541,7 +1553,7 @@ void colonel_spawn_afterimages(struct MainObj* self)
             visual_obj->unk3C = (void*)self->sprite_frames;
             visual_obj->animation_table = (u32**)self->animation_table;
             visual_obj->unk42 = self->unk42;
-            visual_obj->unk16 = 6;
+            visual_obj->unk16 = VISUAL_SATURN_LAYER(6);
             visual_obj->unk5C.owner = PLAYER_OBJECT(self);
             if (i != 0) {
                 visual_obj->unk50 = PLAYER_OBJECT(previous);
@@ -1603,21 +1615,21 @@ struct Unk_unk68 D_8010450C = { -22, -13, 40, 43 };
 struct Unk_unk68 D_80104510 = { -29, -22, 47, 52 };
 
 union AnimationStep D_80104514[] = {
-    { 0x00000018 },
+    { 24, 0, 0, 0x00 },
 };
 
 union AnimationStep D_80104518[] = {
-    { 0x01010002 },
-    { 0x0201000A },
-    { 0x03010002 },
-    { 0x04010002 },
-    { 0x05010004 },
-    { 0x06010004 },
-    { 0x07010004 },
-    { 0x08010004 },
-    { 0x09010006 },
-    { 0x0A010003 },
-    { 0x0B000002 },
+    { 2, 0, 1, 0x01 },
+    { 10, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 4, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 4, 0, 1, 0x08 },
+    { 6, 0, 1, 0x09 },
+    { 3, 0, 1, 0x0A },
+    { 2, 0, 0, 0x0B },
 };
 
 struct Unk_unk68 D_80104544[3] = {
@@ -1636,22 +1648,22 @@ struct Unk_unk68 D_80104550[6] = {
 };
 
 union AnimationStep D_80104568[] = {
-    { 0x14010006 },
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17010101 },
-    { 0x18010002 },
-    { 0x19000004 },
+    { 6, 0, 1, 0x14 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 1, 1, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 4, 0, 0, 0x19 },
 };
 
 union AnimationStep D_80104580[] = {
-    { 0x1A010006 },
-    { 0x1B010002 },
-    { 0x1C010002 },
-    { 0x1D010101 },
-    { 0x1E010002 },
-    { 0x1F010003 },
-    { 0x1F000001 },
+    { 6, 0, 1, 0x1A },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 1, 1, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 3, 0, 1, 0x1F },
+    { 1, 0, 0, 0x1F },
 };
 
 struct Unk_unk68 D_8010459C[4] = {
@@ -1662,80 +1674,80 @@ struct Unk_unk68 D_8010459C[4] = {
 };
 
 union AnimationStep D_801045AC[] = {
-    { 0x24010002 },
-    { 0x2501000A },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x28010003 },
-    { 0x28010101 },
-    { 0x29010004 },
-    { 0x2A010004 },
-    { 0x2B010004 },
-    { 0x2C010006 },
-    { 0x2D010003 },
-    { 0x2E010002 },
-    { 0x2F010003 },
-    { 0x3001000C },
-    { 0x31010002 },
-    { 0x32010002 },
-    { 0x33000008 },
+    { 2, 0, 1, 0x24 },
+    { 10, 0, 1, 0x25 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 3, 0, 1, 0x28 },
+    { 1, 1, 1, 0x28 },
+    { 4, 0, 1, 0x29 },
+    { 4, 0, 1, 0x2A },
+    { 4, 0, 1, 0x2B },
+    { 6, 0, 1, 0x2C },
+    { 3, 0, 1, 0x2D },
+    { 2, 0, 1, 0x2E },
+    { 3, 0, 1, 0x2F },
+    { 12, 0, 1, 0x30 },
+    { 2, 0, 1, 0x31 },
+    { 2, 0, 1, 0x32 },
+    { 8, 0, 0, 0x33 },
 };
 
 union AnimationStep D_801045F0[] = {
-    { 0x2F010003 },
-    { 0x3000000C },
+    { 3, 0, 1, 0x2F },
+    { 12, 0, 0, 0x30 },
 };
 
 union AnimationStep D_801045F8[] = {
-    { 0x34010002 },
-    { 0x3500000C },
+    { 2, 0, 1, 0x34 },
+    { 12, 0, 0, 0x35 },
 };
 
 union AnimationStep D_80104600[] = {
-    { 0x36000018 },
+    { 24, 0, 0, 0x36 },
 };
 
 union AnimationStep D_80104604[] = {
-    { 0x3D010002 },
-    { 0x3E010101 },
-    { 0x3E010001 },
-    { 0x37010002 },
-    { 0x38010002 },
-    { 0x37010002 },
-    { 0x3E010002 },
-    { 0x3D000002 },
+    { 2, 0, 1, 0x3D },
+    { 1, 1, 1, 0x3E },
+    { 1, 0, 1, 0x3E },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, 1, 0x3E },
+    { 2, 0, 0, 0x3D },
 };
 
 union AnimationStep D_80104624[] = {
-    { 0x3D010002 },
-    { 0x3E010002 },
-    { 0x37010101 },
-    { 0x37010001 },
-    { 0x38010002 },
-    { 0x39010002 },
-    { 0x38010002 },
-    { 0x37010002 },
-    { 0x3E010002 },
-    { 0x3D000002 },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x3E },
+    { 1, 1, 1, 0x37 },
+    { 1, 0, 1, 0x37 },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, 1, 0x3E },
+    { 2, 0, 0, 0x3D },
 };
 
 union AnimationStep D_8010464C[] = {
-    { 0x3D010002 },
-    { 0x3E010002 },
-    { 0x37010002 },
-    { 0x38010101 },
-    { 0x38010001 },
-    { 0x39010002 },
-    { 0x3A010002 },
-    { 0x3B010002 },
-    { 0x3C010002 },
-    { 0x3B010002 },
-    { 0x3A010002 },
-    { 0x39010002 },
-    { 0x38010002 },
-    { 0x37010002 },
-    { 0x3E010002 },
-    { 0x3D000002 },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x3E },
+    { 2, 0, 1, 0x37 },
+    { 1, 1, 1, 0x38 },
+    { 1, 0, 1, 0x38 },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x3B },
+    { 2, 0, 1, 0x3C },
+    { 2, 0, 1, 0x3B },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, 1, 0x3E },
+    { 2, 0, 0, 0x3D },
 };
 
 struct Unk_unk68 D_8010468C[3] = {
@@ -1804,25 +1816,25 @@ struct Unk_unk68 D_8010472C[4] = {
 };
 
 union AnimationStep D_8010473C[] = {
-    { 0x04010002 },
-    { 0x05010004 },
-    { 0x06010003 },
-    { 0x06010101 },
-    { 0x07010004 },
-    { 0x08010004 },
-    { 0x09010008 },
-    { 0x0A010006 },
-    { 0x0B010005 },
-    { 0x0B000001 },
+    { 2, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 1, 1, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 4, 0, 1, 0x08 },
+    { 8, 0, 1, 0x09 },
+    { 6, 0, 1, 0x0A },
+    { 5, 0, 1, 0x0B },
+    { 1, 0, 0, 0x0B },
 };
 
 union AnimationStep D_80104764[] = {
-    { 0x0F010003 },
-    { 0x10000006 },
+    { 3, 0, 1, 0x0F },
+    { 6, 0, 0, 0x10 },
 };
 
 union AnimationStep D_8010476C[] = {
-    { 0x65000003 },
+    { 3, 0, 0, 0x65 },
 };
 
 void* D_80104770[25] = {

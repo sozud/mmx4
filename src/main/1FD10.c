@@ -14,6 +14,9 @@
 #include "main/object_update.h"
 #include "main/stage_objects.h"
 #include "main/xa_sequence_data.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#endif
 
 // D_800F486C
 extern void (*D_800F486C[])(struct EngineObj*);
@@ -113,6 +116,9 @@ void func_8002F6E4(struct EngineObj* arg0)
     func_8002AB20();
     func_80028BF0();
     func_8002771C();
+#ifdef MMX4_SATURN
+    func_800160AC();
+#endif
     func_80023CE0();
     background_objects[1].unk4C = 1;
     background_objects[1].x_pos.val = FIXED((D_8013B810 - 1) << 9);
@@ -140,10 +146,31 @@ void func_8002F828(struct EngineObj* arg0)
     if (main_bss_state.transition.active == 0) {
         arg0->unk2++;
         arg0->unk4 = 0x10;
+#ifdef MMX4_SATURN
+        func_8001663C(D_8013B810 + 0x47, 0);
+#else
         func_8001663C(D_8013B810 + (MUSIC_BOSS_INTRO_WEB_SPIDER - 1), 0x7F);
+#endif
     }
 }
 
+#ifdef MMX4_SATURN
+void func_8002F87C(struct EngineObj* arg0)
+{
+    if (arg0->unk4 != 0) {
+        arg0->unk4--;
+        return;
+    }
+    background_objects[1].y_pos.val -= FIXED(5);
+    background_objects[2].y_pos.val += FIXED(5);
+    if (background_objects[1].y_pos.val < 0) {
+        background_objects[1].y_pos.val = 0;
+        background_objects[2].y_pos.val = FIXED(256);
+        arg0->unk4 = 0x1E;
+        arg0->unk2++;
+    }
+}
+#else
 void func_8002F87C(struct EngineObj* arg0)
 {
     if (2 == D_80173C84) {
@@ -157,6 +184,7 @@ void func_8002F87C(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
 void func_8002F8F8(struct EngineObj* arg0)
 {
@@ -201,6 +229,12 @@ void func_8002F9EC(struct EngineObj* arg0)
 
     if (g_FilterAmountR == 0x1F) {
         func_8002B560(2, 0xC);
+#ifdef MMX4_SATURN
+        D_8013E188[0] = 0;
+        g_FilterAmountR = 0;
+        g_FilterAmountG = 0;
+        g_FilterAmountB = 0;
+#else
         for (var_a0 = 0; var_a0 < 4; var_a0++) {
             D_8013E188[var_a0] = 0;
         }
@@ -208,6 +242,7 @@ void func_8002F9EC(struct EngineObj* arg0)
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
         need_palette_load |= 1;
+#endif
         obj = (struct BaseObj*)find_free_misc_obj();
         if (obj != NULL) {
             obj->active = 0x41;
@@ -239,7 +274,12 @@ void func_8002FAE4(struct EngineObj* arg0)
 void func_8002FB54(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
+#ifdef MMX4_SATURN
+        saturn_vram_clear_alternate(0xF);
+        saturn_sound_stop_all();
+#else
         func_8001D134();
+#endif
         arg0->stage = D_8013B810;
         arg0->substage = D_8013B814;
         arg0->state++;
@@ -262,7 +302,11 @@ void func_8002FBDC(struct EngineObj* arg0)
 // videos / loading / briefing room
 void engine_state_3(struct EngineObj* arg0)
 {
+#ifdef MMX4_SATURN
+    saturn_sprite_reset_queues();
+#else
     func_8002B460();
+#endif
     engine_state_3_update_funcs[arg0->unk1](arg0);
     update_effect_objects();
     update_misc_objects();

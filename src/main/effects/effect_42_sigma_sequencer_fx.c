@@ -48,11 +48,12 @@ void sigma_sequencer_fx_wait_player(struct EffectObj* self)
 }
 
 // sigma_sequencer_fx_summon
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BE364(struct EffectObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BE364(struct EffectObj* self)
 {
     struct Main73PartsExt* owner = &self->ext.effect_42.owner.main->ext.main_73_parts;

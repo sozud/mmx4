@@ -7,10 +7,7 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 extern u8 sigma_spike_box[4];
 
@@ -48,9 +45,24 @@ extern void (*sigma_final_shot_state_funcs[])(struct ShotObj*);
 void sigma_final_shot_run(struct ShotObj*);
 
 void sigma_final_shot_despawn(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
+
+extern u8 sigma_final_shot_box_0[4];
+extern u8 sigma_final_shot_box_1[4];
+extern u8 sigma_final_shot_box_2[4];
+extern s16 sigma_final_shot_offsets[4];
+extern u8 sigma_final_shot_tall_box[4];
+extern u8 sigma_final_shot_terrain_box_0[4];
+extern u8 sigma_final_shot_terrain_box_1[4];
+extern u8 sigma_final_shot_wide_box[4];
 
 // sigma_final_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800ABE08(struct ShotObj* self);
 extern u8 sigma_final_shot_box_0[4];
 extern u8 sigma_final_shot_box_1[4];
@@ -62,7 +74,7 @@ extern u8 sigma_final_shot_terrain_box_1[4];
 extern s16 sigma_final_shot_offsets[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800ABE08(struct ShotObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk7C;
@@ -81,7 +93,7 @@ void func_800ABE08(struct ShotObj* self)
         self->x_vel.val = 0x40000;
         self->timer = 0x19;
         self->unk50.data = sigma_final_shot_box_0;
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->unk68 = NULL;
         self->y_pos.i.hi += 0x10;
         self->x_pos.i.hi += 0x18;
@@ -132,7 +144,7 @@ void func_800ABE08(struct ShotObj* self)
             self->y_vel.val = odd ? 0x40000 : 0xFFFC0000;
             self->unk50.data = sigma_final_shot_tall_box;
         }
-        self->unk15 = (odd == 0) << 6;
+        self->unk15 = (odd == 0) << PLAYER_FACING_SHIFT;
         self->unk5 = 6;
         self->unk5C = 1;
         self->unk60 = 6;
@@ -140,7 +152,7 @@ void func_800ABE08(struct ShotObj* self)
         break;
     case 7:
         set_animation(self, 0x14);
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->unk5 = 5;
         self->unk5C = 1;
         self->unk60 = 0x18;
@@ -198,7 +210,7 @@ void sigma_lightning_fly(struct ShotObj* self)
         if (self->unk70 & 0xC) {
             shot_type = 3;
         }
-        func_8001540C(2, 2, self);
+        func_8001540C(2, SATURN_SOUND(2, 0xE6), self);
         shot = find_free_shot_obj();
         if (shot != 0) {
             shot->active = 0x41;

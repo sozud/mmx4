@@ -8,6 +8,7 @@
 #include "main/visuals/visual_00_wall_slide_dust.h"
 
 extern struct VisualAttachmentOffset dash_dust_offsets[2];
+#include "weapon_resources.h"
 
 void dash_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1);
 
@@ -22,9 +23,9 @@ void dash_dust_update(struct VisualObj* arg0)
         arg0->unk38 = 0;
         arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
         arg0->animation_table = D_8011BF40;
-        arg0->unk40 = 0;
-        arg0->unk42 = 0x7802;
-        arg0->unk16 = 3;
+        arg0->unk40 = WEAPON_TEXTURE_BASE;
+        arg0->unk42 = WEAPON_PALETTE_2;
+        arg0->unk16 = VISUAL_SATURN_LAYER(3);
 
         dash_dust_attach(arg0, entity);
         set_animation(arg0, 2);

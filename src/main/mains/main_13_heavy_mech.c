@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[13]
 // 8004C734..8004CF24
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_13_heavy_mech.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -58,7 +59,7 @@ void heavy_mech_init(struct MainObj* self)
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->terrain_box = &heavy_mech_terrain_box;
     self->hurt_box = &heavy_mech_hurt_box;
     self->attack_box = &heavy_mech_attack_box;
@@ -140,11 +141,12 @@ void heavy_mech_idle_start(struct MainObj* self)
 }
 
 // heavy_mech_idle_wait
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004CA94(struct MainObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004CA94(struct MainObj* arg0)
 {
     u8 roll;
@@ -217,7 +219,7 @@ void heavy_mech_throw_anim(struct MainObj* self)
         self->unk6 = 0;
         break;
     case 2:
-        func_8001540C(2, 0x31, self);
+        func_8001540C(2, SATURN_SOUND(0x31, 0x33), self);
         if (self->animation_step.fields.event != 0) {
             shot = find_free_shot_obj();
             if (shot != NULL) {
@@ -284,7 +286,7 @@ void heavy_mech_face_player(struct AnimatedObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -295,120 +297,120 @@ struct Unk_unk68 heavy_mech_attack_box = { -18, -21, 33, 46 };
 struct Unk_unk68 heavy_mech_terrain_box = { 0, 27, 26, 3 };
 
 union AnimationStep heavy_mech_anim_0[] = {
-    { 0x0001000C },
-    { 0x0101000C },
-    { 0x0201000C },
-    { 0x0301000C },
-    { 0x0001000C },
-    { 0x0101000C },
-    { 0x0201000C },
-    { 0x0301000C },
-    { 0x0401000C },
-    { 0x0501000C },
-    { 0x0201000C },
-    { 0x0301000C },
-    { 0x0401000C },
-    { 0x0501000C },
-    { 0x0201000C },
-    { 0x03F1010C },
+    { 12, 0, 1, 0x00 },
+    { 12, 0, 1, 0x01 },
+    { 12, 0, 1, 0x02 },
+    { 12, 0, 1, 0x03 },
+    { 12, 0, 1, 0x00 },
+    { 12, 0, 1, 0x01 },
+    { 12, 0, 1, 0x02 },
+    { 12, 0, 1, 0x03 },
+    { 12, 0, 1, 0x04 },
+    { 12, 0, 1, 0x05 },
+    { 12, 0, 1, 0x02 },
+    { 12, 0, 1, 0x03 },
+    { 12, 0, 1, 0x04 },
+    { 12, 0, 1, 0x05 },
+    { 12, 0, 1, 0x02 },
+    { 12, 1, -15, 0x03 },
 };
 
 union AnimationStep heavy_mech_anim_1[] = {
-    { 0x0601000A },
-    { 0x07010006 },
-    { 0x0801000E },
-    { 0x0901000D },
-    { 0x0D010201 },
-    { 0x0D010004 },
-    { 0x0A01000E },
-    { 0x0B010009 },
-    { 0x0B000101 },
+    { 10, 0, 1, 0x06 },
+    { 6, 0, 1, 0x07 },
+    { 14, 0, 1, 0x08 },
+    { 13, 0, 1, 0x09 },
+    { 1, 2, 1, 0x0D },
+    { 4, 0, 1, 0x0D },
+    { 14, 0, 1, 0x0A },
+    { 9, 0, 1, 0x0B },
+    { 1, 1, 0, 0x0B },
 };
 
 union AnimationStep heavy_mech_anim_2[] = {
-    { 0x0601000A },
-    { 0x0E010008 },
-    { 0x0F010010 },
-    { 0x10010008 },
-    { 0x11010201 },
-    { 0x11010001 },
-    { 0x1201000E },
-    { 0x13010009 },
-    { 0x13000101 },
+    { 10, 0, 1, 0x06 },
+    { 8, 0, 1, 0x0E },
+    { 16, 0, 1, 0x0F },
+    { 8, 0, 1, 0x10 },
+    { 1, 2, 1, 0x11 },
+    { 1, 0, 1, 0x11 },
+    { 14, 0, 1, 0x12 },
+    { 9, 0, 1, 0x13 },
+    { 1, 1, 0, 0x13 },
 };
 
 union AnimationStep heavy_mech_anim_3[] = {
-    { 0x1B010010 },
-    { 0x1C010212 },
-    { 0x1B01000C },
-    { 0x1A010212 },
-    { 0x1B01000C },
-    { 0x1C010212 },
-    { 0x1B01000C },
-    { 0x1A010211 },
-    { 0x1A000101 },
+    { 16, 0, 1, 0x1B },
+    { 18, 2, 1, 0x1C },
+    { 12, 0, 1, 0x1B },
+    { 18, 2, 1, 0x1A },
+    { 12, 0, 1, 0x1B },
+    { 18, 2, 1, 0x1C },
+    { 12, 0, 1, 0x1B },
+    { 17, 2, 1, 0x1A },
+    { 1, 1, 0, 0x1A },
 };
 
 union AnimationStep heavy_mech_anim_4[] = {
-    { 0x14010003 },
-    { 0x15010010 },
-    { 0x16010004 },
-    { 0x17010005 },
-    { 0x18010006 },
-    { 0x19010006 },
-    { 0x19000101 },
+    { 3, 0, 1, 0x14 },
+    { 16, 0, 1, 0x15 },
+    { 4, 0, 1, 0x16 },
+    { 5, 0, 1, 0x17 },
+    { 6, 0, 1, 0x18 },
+    { 6, 0, 1, 0x19 },
+    { 1, 1, 0, 0x19 },
 };
 
 union AnimationStep heavy_mech_anim_5[] = {
-    { 0x0C000101 },
+    { 1, 1, 0, 0x0C },
 };
 
 union AnimationStep heavy_mech_anim_6[] = {
-    { 0x1D000101 },
+    { 1, 1, 0, 0x1D },
 };
 
 union AnimationStep heavy_mech_anim_7[] = {
-    { 0x1E000101 },
+    { 1, 1, 0, 0x1E },
 };
 
 union AnimationStep heavy_mech_anim_8[] = {
-    { 0x1F000101 },
+    { 1, 1, 0, 0x1F },
 };
 
 union AnimationStep heavy_mech_anim_9[] = {
-    { 0x20000101 },
+    { 1, 1, 0, 0x20 },
 };
 
 union AnimationStep heavy_mech_anim_10[] = {
-    { 0x21000101 },
+    { 1, 1, 0, 0x21 },
 };
 
 union AnimationStep heavy_mech_anim_11[] = {
-    { 0x22000101 },
+    { 1, 1, 0, 0x22 },
 };
 
 union AnimationStep heavy_mech_anim_12[] = {
-    { 0x24000101 },
+    { 1, 1, 0, 0x24 },
 };
 
 union AnimationStep heavy_mech_anim_13[] = {
-    { 0x25000101 },
+    { 1, 1, 0, 0x25 },
 };
 
 union AnimationStep heavy_mech_anim_14[] = {
-    { 0x26000101 },
+    { 1, 1, 0, 0x26 },
 };
 
 union AnimationStep heavy_mech_anim_15[] = {
-    { 0x23000101 },
+    { 1, 1, 0, 0x23 },
 };
 
 union AnimationStep heavy_mech_anim_16[] = {
-    { 0x27000101 },
+    { 1, 1, 0, 0x27 },
 };
 
 union AnimationStep heavy_mech_anim_17[] = {
-    { 0x28000101 },
+    { 1, 1, 0, 0x28 },
 };
 
 union AnimationStep* heavy_mech_animations[] = {

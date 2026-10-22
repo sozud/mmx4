@@ -19,6 +19,7 @@ extern void search_light_move(struct Unk22* arg0);
 void search_light_init(struct QuadObj*);
 
 void search_light_despawn(struct QuadObj*);
+#include "weapon_resources.h"
 
 // search lights in background of intro stage
 void SearchLightUpdate(struct QuadObj* arg0)
@@ -64,12 +65,13 @@ void search_light_init(struct QuadObj* arg0)
 
 // SearchLight state 1
 // search_light_sweep
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D3C58(struct QuadObj* arg0);
 extern s32 search_light_accels[3];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D3C58(struct QuadObj* arg0)
 {
     const struct SearchLightInit* init = &search_light_shapes[(u8)arg0->unk2];
@@ -152,7 +154,7 @@ void func_800D3C58(struct QuadObj* arg0)
         arg0->link.direction = direction;
     }
     if (search_light_is_visible(arg0)) {
-        arg0->on_screen = 1;
+        QUAD_SET_ON_SCREEN(arg0);
     } else {
         arg0->on_screen = 0;
         arg0->state = 2;
@@ -222,7 +224,11 @@ s32 search_light_speeds[3] = { 0x28000, 0x20000, 0x10000 };
 s32 search_light_accels[3] = { 0x2000, 0x1000, 0x0400 };
 
 struct SearchLightColorLookup search_light_colors = {
+#ifdef MMX4_SATURN
+    { 0x0771, 0x0772, 0x0773 },
+#else
     { 0x33ff, 0x179e, 0x0e9c },
+#endif
     0,
 };
 struct SearchLightIntensityLookup search_light_blend_modes = {

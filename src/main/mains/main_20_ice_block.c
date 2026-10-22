@@ -1,14 +1,17 @@
 // MainObj, main_object_update_funcs[20]
 // 8005458C..80054C50
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_20_ice_block.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/mains/main_26_ice_wall.h"
 #include "main/objects.h"
+#include "main/1CF60.h"
+#include "main/misc/misc_02_rubble.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1CF60.h"
 #include "main/misc/misc_02_rubble.h"
 #endif
@@ -29,7 +32,7 @@ void ice_block_break_remove(struct MainObj* arg0);
 
 extern void (*ice_block_state_funcs[])(struct MainObj*);
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern union AnimationStep* ice_block_animations[9];
 extern struct Unk_unk68 D_80106C74[];
 extern struct Unk_unk68 D_800FC844;
@@ -52,20 +55,19 @@ void ice_block_update(struct MainObj* self)
 }
 
 // ice_block_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800545EC(struct MainObj* arg0);
 void func_800548B8(struct MainObj* arg0);
 #endif
 
-#ifdef MMX4_PC
-// src/main/mains/main_20_ice_block.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800545EC(struct MainObj* arg0)
 {
     arg0->unk5 = 2;
     arg0->state++;
     arg0->animation_table = (const u8* const*)ice_block_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->collision_data = D_80106C74;
     arg0->unk15 = 0;
     arg0->terrain_box = NULL;
@@ -141,7 +143,7 @@ void ice_block_main(struct MainObj* self)
 }
 
 // ice_block_break_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800548B8(struct MainObj* arg0)
 {
     struct WeaponObj* weapon;
@@ -252,95 +254,95 @@ struct Unk_unk68 D_800FC85C = { -15, -48, 29, 96 };
 struct Unk_unk68 ice_block_crumble_attack_box = { 0, 0, 0, 0 };
 
 union AnimationStep ice_block_anim_0[] = {
-    { 0x0001000C },
-    { 0x01010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x01010001 },
-    { 0x00010001 },
-    { 0x01010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x01010001 },
-    { 0x01F40001 },
+    { 12, 0, 1, 0x00 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, -12, 0x01 },
 };
 
 union AnimationStep ice_block_anim_1[] = {
-    { 0x04010003 },
-    { 0x05010002 },
-    { 0x06010003 },
-    { 0x07010008 },
-    { 0x00010002 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0A010001 },
-    { 0x09010001 },
-    { 0x08F60002 },
+    { 3, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 8, 0, 1, 0x07 },
+    { 2, 0, 1, 0x00 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x09 },
+    { 2, 0, -10, 0x08 },
 };
 
 union AnimationStep ice_block_anim_6[] = {
-    { 0x10010003 },
-    { 0x11010004 },
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x14010002 },
-    { 0x15010002 },
-    { 0x16010003 },
-    { 0x17010103 },
-    { 0x18010003 },
-    { 0x19010004 },
-    { 0x1A010004 },
-    { 0x1AF50001 },
+    { 3, 0, 1, 0x10 },
+    { 4, 0, 1, 0x11 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x15 },
+    { 3, 0, 1, 0x16 },
+    { 3, 1, 1, 0x17 },
+    { 3, 0, 1, 0x18 },
+    { 4, 0, 1, 0x19 },
+    { 4, 0, 1, 0x1A },
+    { 1, 0, -11, 0x1A },
 };
 
 union AnimationStep ice_block_anim_7[] = {
-    { 0x1B010003 },
-    { 0x1C010004 },
-    { 0x1D010003 },
-    { 0x1E010003 },
-    { 0x1F010002 },
-    { 0x20010002 },
-    { 0x21010003 },
-    { 0x22010103 },
-    { 0x23010003 },
-    { 0x24010004 },
-    { 0x25010004 },
-    { 0x25F50001 },
+    { 3, 0, 1, 0x1B },
+    { 4, 0, 1, 0x1C },
+    { 3, 0, 1, 0x1D },
+    { 3, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x20 },
+    { 3, 0, 1, 0x21 },
+    { 3, 1, 1, 0x22 },
+    { 3, 0, 1, 0x23 },
+    { 4, 0, 1, 0x24 },
+    { 4, 0, 1, 0x25 },
+    { 1, 0, -11, 0x25 },
 };
 
 union AnimationStep ice_block_anim_8[] = {
-    { 0x26010003 },
-    { 0x27010004 },
-    { 0x28010003 },
-    { 0x29010003 },
-    { 0x2A010002 },
-    { 0x2B010002 },
-    { 0x2C010003 },
-    { 0x2D010103 },
-    { 0x2E010003 },
-    { 0x2F010004 },
-    { 0x30010004 },
-    { 0x30F50001 },
+    { 3, 0, 1, 0x26 },
+    { 4, 0, 1, 0x27 },
+    { 3, 0, 1, 0x28 },
+    { 3, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, 1, 0x2B },
+    { 3, 0, 1, 0x2C },
+    { 3, 1, 1, 0x2D },
+    { 3, 0, 1, 0x2E },
+    { 4, 0, 1, 0x2F },
+    { 4, 0, 1, 0x30 },
+    { 1, 0, -11, 0x30 },
 };
 
 union AnimationStep ice_block_anim_2[] = {
-    { 0x0C000001 },
+    { 1, 0, 0, 0x0C },
 };
 
 union AnimationStep ice_block_anim_3[] = {
-    { 0x0D000001 },
+    { 1, 0, 0, 0x0D },
 };
 
 union AnimationStep ice_block_anim_4[] = {
-    { 0x0E000001 },
+    { 1, 0, 0, 0x0E },
 };
 
 union AnimationStep ice_block_anim_5[] = {
-    { 0x0F000001 },
+    { 1, 0, 0, 0x0F },
 };
 
 union AnimationStep* ice_block_animations[9] = {

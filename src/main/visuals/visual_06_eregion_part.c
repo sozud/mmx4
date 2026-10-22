@@ -8,6 +8,8 @@
 void eregion_part_mouth(struct VisualObj*);
 void eregion_part_legs(struct VisualObj*);
 void eregion_part_mirror(struct VisualObj*);
+#include "weapon_resources.h"
+extern union AnimationStep* D_800FADD0[];
 
 s8 eregion_part_offsets_left[58][2] = {
     { -6, -78 },
@@ -264,13 +266,14 @@ void func_800AFF78(struct VisualObj* arg0)
 }
 
 // eregion_part_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B0320(struct VisualObj* arg0);
 extern union AnimationStep* D_800FADD0[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B0320(struct VisualObj* arg0)
 {
     struct PlayerObj* owner = arg0->unk50;
@@ -282,11 +285,16 @@ void func_800B0320(struct VisualObj* arg0)
         s32 resource;
 
         arg0->animation_table = (u32**)D_800FADD0;
+#ifdef MMX4_SATURN
+        arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(9));
+        arg0->unk40 = (u16)((((saturn_stage_graphics_offsets_pointer[1] >> 7) + 0xB0) * 128u + 0x25C24000u) >> 3);
+#else
         column = (func_8002938C(9) << 2) + 0x18;
         row = func_8002938C(9);
         arg0->unk42 = (u16)((column - ((column >> 4) << 4))
             | ((((row + 6) >> 2) + 0x1E0) << 6));
         arg0->unk40 = (u16)((D_801406A8[1] >> 7) + 0xB0);
+#endif
         resource = func_8002938C(9);
         arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
     } else {
@@ -300,21 +308,21 @@ void func_800B0320(struct VisualObj* arg0)
     arg0->unk15 = owner->unk15;
     switch (arg0->unk2) {
     case 0:
-        arg0->unk16 = 7;
+        arg0->unk16 = VISUAL_SATURN_LAYER(7);
         arg0->state++;
         animation = owner->unk17 + 1;
         break;
     case 1:
-        arg0->unk16 = 7;
+        arg0->unk16 = VISUAL_SATURN_LAYER(7);
         animation = 0x15;
         break;
     case 2:
-        arg0->unk16 = 5;
+        arg0->unk16 = VISUAL_SATURN_LAYER(5);
         animation = 0x16;
         break;
     case 3:
         animation = owner->unk17;
-        arg0->unk16 = 7;
+        arg0->unk16 = VISUAL_SATURN_LAYER(7);
         arg0->unk54 = 0;
         arg0->state += 2;
         break;
@@ -324,7 +332,7 @@ void func_800B0320(struct VisualObj* arg0)
         break;
     case 5:
         animation = 0x17;
-        arg0->unk16 = 4;
+        arg0->unk16 = VISUAL_SATURN_LAYER(4);
         arg0->state += 3;
         break;
     default:
@@ -342,7 +350,7 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_06_eregion_part", func_800B0320);
 void eregion_part_slash(struct VisualObj* arg0)
 {
     if (arg0->animation_step.fields.event == 2) {
-        MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = 0x20;
+        MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = VISUAL_SOUND_EREGION_SLASH;
     }
     if (arg0->animation_step.fields.event == 1 || (arg0->unk2 == 1 && (arg0->unk50->state != 1 || arg0->unk50->unk5 != 5))) {
         ZeroObjectState(OBJECT_HEADER(arg0));
@@ -398,9 +406,9 @@ void eregion_part_legs(struct VisualObj* arg0)
             }
         } else {
             if ((u8)arg0->unk50->animation_step.fields.frame_index == 0x18 || (u8)arg0->unk50->animation_step.fields.frame_index == 0x1B || (u8)arg0->unk50->animation_step.fields.frame_index == 0x1C || (u8)arg0->unk50->animation_step.fields.frame_index == 0x1D) {
-                arg0->unk16 = 7;
+                arg0->unk16 = VISUAL_SATURN_LAYER(7);
             } else {
-                arg0->unk16 = 5;
+                arg0->unk16 = VISUAL_SATURN_LAYER(5);
             }
             animation = arg0->unk50->unk17 + 1;
             if (arg0->unk17 != animation) {
@@ -411,9 +419,9 @@ void eregion_part_legs(struct VisualObj* arg0)
         }
         if (arg0->animation_step.fields.event != 0) {
             if (arg0->unk54 != 0) {
-                MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = 0x1A;
+                MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = SATURN_SOUND(0x1A, 5);
             } else {
-                MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = 0x1B;
+                MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = SATURN_SOUND(0x1B, 6);
             }
             arg0->animation_step.fields.event = 0;
             arg0->unk54 ^= 1;

@@ -10,6 +10,7 @@ extern void (*charge_ring_state_funcs[])(struct VisualObj*);
 void charge_ring_init(struct VisualObj*);
 
 void charge_ring_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void charge_ring_update(struct VisualObj* arg0)
 {
@@ -26,11 +27,12 @@ void charge_ring_init(struct VisualObj* arg0)
 }
 
 // charge_ring_main
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B1864(struct VisualObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B1864(struct VisualObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk50;

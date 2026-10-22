@@ -1,12 +1,14 @@
 // MainObj, main_object_update_funcs[62]
 // 8007B90C..8007BFF4
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_62_flame_jet.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#include "main/misc/misc_02_rubble.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/misc/misc_02_rubble.h"
 #endif
 
@@ -34,7 +36,8 @@ void flame_jet_setup(struct BarObj* arg0);
 void flame_jet_extinguished(struct BarObj* arg0);
 
 // flame_jet_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static struct VisualObj* main_62_spawn_arm(struct MainObj* arg0, s8 side);
 void func_8007B90C(struct MainObj* arg0);
 u8 func_8007BABC(struct MainObj* arg0);
@@ -62,13 +65,13 @@ static struct VisualObj* main_62_spawn_arm(struct MainObj* arg0, s8 side)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007B90C(struct MainObj* arg0)
 {
     struct VisualObj* visual = NULL;
 
     arg0->active |= 4;
-    arg0->unk15 = (arg0->unk2 & 1) ? 0x40 : 0;
+    arg0->unk15 = (arg0->unk2 & 1) ? PLAYER_FACING_RIGHT : 0;
     arg0->unk7C = flame_jet_intervals[arg0->unk2];
     if (arg0->unk2 < 4) {
         main_62_spawn_arm(arg0, 1);
@@ -95,7 +98,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007B90C);
 #endif
 
 // flame_jet_is_vent_blocked
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_8007BABC(struct MainObj* arg0)
 {
     struct WeaponObj* weapon;
@@ -163,7 +166,7 @@ void flame_jet_pause(struct MainObj* self)
             self->unk5--;
             set_animation(self, 2);
             if (self->ext.main_62.unk86 != 0) {
-                func_8001540C(2, 0xA2, self);
+                func_8001540C(2, SATURN_SOUND(0xA2, 0x73), self);
             }
         }
     } else {
@@ -195,7 +198,7 @@ void flame_jet_main(struct MainObj* self)
 }
 
 // flame_jet_extinguish
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007BE40(struct MainObj* arg0)
 {
     s32 index;
@@ -302,54 +305,54 @@ struct Unk_unk68* flame_jet_attack_boxes[9] = {
 };
 
 union AnimationStep flame_jet_anim_0[] = {
-    { 0x00010002 },
-    { 0x01010101 },
-    { 0x01000102 },
+    { 2, 0, 1, 0x00 },
+    { 1, 1, 1, 0x01 },
+    { 2, 1, 0, 0x01 },
 };
 
 union AnimationStep flame_jet_anim_1[] = {
-    { 0x02000006 },
+    { 6, 0, 0, 0x02 },
 };
 
 union AnimationStep flame_jet_anim_2[] = {
-    { 0x00010007 },
-    { 0x03010007 },
-    { 0x04010007 },
-    { 0x05010007 },
-    { 0x06010007 },
-    { 0x07010007 },
-    { 0x08010007 },
-    { 0x09010007 },
-    { 0x0A010007 },
-    { 0x0B010007 },
-    { 0x0C010007 },
-    { 0x13010007 },
-    { 0x14010006 },
-    { 0x14000001 },
+    { 7, 0, 1, 0x00 },
+    { 7, 0, 1, 0x03 },
+    { 7, 0, 1, 0x04 },
+    { 7, 0, 1, 0x05 },
+    { 7, 0, 1, 0x06 },
+    { 7, 0, 1, 0x07 },
+    { 7, 0, 1, 0x08 },
+    { 7, 0, 1, 0x09 },
+    { 7, 0, 1, 0x0A },
+    { 7, 0, 1, 0x0B },
+    { 7, 0, 1, 0x0C },
+    { 7, 0, 1, 0x13 },
+    { 6, 0, 1, 0x14 },
+    { 1, 0, 0, 0x14 },
 };
 
 union AnimationStep flame_jet_anim_3[] = {
-    { 0x0D000001 },
+    { 1, 0, 0, 0x0D },
 };
 
 union AnimationStep flame_jet_anim_4[] = {
-    { 0x0E000001 },
+    { 1, 0, 0, 0x0E },
 };
 
 union AnimationStep flame_jet_anim_5[] = {
-    { 0x0F000001 },
+    { 1, 0, 0, 0x0F },
 };
 
 union AnimationStep flame_jet_anim_6[] = {
-    { 0x10000001 },
+    { 1, 0, 0, 0x10 },
 };
 
 union AnimationStep flame_jet_anim_7[] = {
-    { 0x11000001 },
+    { 1, 0, 0, 0x11 },
 };
 
 union AnimationStep flame_jet_anim_8[] = {
-    { 0x12000001 },
+    { 1, 0, 0, 0x12 },
 };
 
 union AnimationStep* flame_jet_animations[9] = {

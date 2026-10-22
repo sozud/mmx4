@@ -4,6 +4,9 @@
 #include "main/3D88.h"
 #include "main/55C4.h"
 #include "main/3A6C.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#endif
 
 extern u8 D_800EE480[8];
 
@@ -50,6 +53,7 @@ struct MoviePlaybackData {
 
 // uncomment to skip movies
 // #define SKIP_MDEC
+#ifndef MMX4_SATURN
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/323C", func_80012A3C);
 #else
@@ -177,13 +181,30 @@ void func_80012E38(void)
 #endif
     func_80014C70();
 }
+#endif
 
+#ifdef MMX4_SATURN
+#define CHECKPOINT_ARCHIVE_DIGIT 6
+
+void saturn_music_stop_paced(void);
+void saturn_stage_select_sound(void);
+
+static char checkpoint_archive[] = "STC_0_0.ARC";
+
+void func_80012E80()
+{
+    saturn_archive_load_blocking("CAPCOM.ARC");
+    saturn_stage_vram_marker = 0;
+}
+#else
 void func_80012E80()
 {
     func_80013AD8(0, 0, 0);
     func_80014C70();
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_80012EB0(void)
 {
 }
@@ -223,7 +244,20 @@ void func_80012EB8(void)
     saved_vab_address = loaded_vab_address;
     func_80015C10();
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80012F44(void)
+{
+    saturn_music_stop_paced();
+    saturn_stage_select_sound();
+    checkpoint_archive[CHECKPOINT_ARCHIVE_DIGIT] = '0' + engine_obj.checkpoint;
+    saturn_archive_load_blocking(checkpoint_archive);
+    saturn_stage_sound_finalize();
+    need_palette_load |= 1;
+    D_80171EA8 = engine_obj.checkpoint;
+}
+#else
 void func_80012F44(void)
 {
     u8* saved_data;
@@ -258,6 +292,7 @@ void func_80012F44(void)
     need_palette_load |= 1;
     D_80171EA8 = (u8)engine_obj.checkpoint;
 }
+#endif
 
 extern u8 D_80110064[64];
 
@@ -275,6 +310,7 @@ extern u8 stage_x_archives[16][2];
 extern u8 stage_zero_archives[16][2];
 extern u8 stage13_character_archives[8];
 
+#ifndef MMX4_SATURN
 void func_80013014(void)
 {
     u16* source;
@@ -324,6 +360,7 @@ void func_80013014(void)
     func_80016074();
     need_palette_load |= 1;
 }
+#endif
 
 extern u8 D_801374BC[0x800];
 
@@ -535,7 +572,9 @@ extern u8 D_8013BD40;
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#ifndef MMX4_SATURN
 s16 SsVabTransCompleted();
+#endif
 
 extern u8 D_801374B4;
 

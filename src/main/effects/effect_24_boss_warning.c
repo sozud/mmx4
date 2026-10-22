@@ -18,16 +18,16 @@ extern void (*boss_warning_state_funcs[])(struct EffectObj*);
 
 void boss_warning_main(struct EffectObj*);
 void boss_warning_despawn(struct EffectObj*);
+#include "weapon_resources.h"
 
 // boss_warning_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BABA8(struct EffectObj* arg0);
 void func_800BAC58(struct EffectObj* arg0);
 #endif
 
-#ifdef MMX4_PC
-// src/main/effects/effect_24_boss_warning.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BABA8(struct EffectObj* arg0)
 {
     struct EffectObj* spawned;
@@ -55,7 +55,7 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BABA8);
 #endif
 
 // boss_warning_spawn_tiles
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BAC58(struct EffectObj* arg0)
 {
     struct QuadObj* quad;
@@ -100,7 +100,11 @@ void boss_warning_wait_tiles(struct EffectObj* self)
     s32 expected;
 
     spawned = self->ext.effect_24.spawned_effect;
+#ifdef MMX4_SATURN
+    if (spawned->id != 4 || *(u16*)spawned == 0x0004) {
+#else
     if (spawned->id != 4 || *(u16*)spawned == 0x400) {
+#endif
         index = 0;
         count = 0;
         expected = 1;
@@ -132,7 +136,11 @@ void boss_warning_advance_tiles(struct EffectObj* self)
         self->unk5 = old_unk5 + 1;
         self->ext.effect_24.timer = 0x3C;
         if (engine_obj.stage == 0) {
+#ifdef MMX4_SATURN
+            saturn_music_play(0x12, 0);
+#else
             func_8001653C();
+#endif
         }
     }
 }
@@ -149,7 +157,7 @@ void boss_warning_main(struct EffectObj* self)
 {
     boss_warning_step_funcs[self->unk5](self);
     if (self->ext.effect_24.unk1A == 0) {
-        func_8001540C(0, 0x13, 0);
+        func_8001540C(0, SATURN_SOUND(0x13, 0x15), 0);
         self->ext.effect_24.unk1A = 0x3C;
     } else {
         self->ext.effect_24.unk1A--;

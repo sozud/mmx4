@@ -16,6 +16,7 @@ void web_piece_fall(struct VisualObj*);
 extern void (*web_piece_step_funcs[])(struct VisualObj*);
 
 void web_piece_hang(struct VisualObj*);
+#include "weapon_resources.h"
 
 s16 web_piece_positions_a[4][2] = {
     { 0x12C0, 0x538 },
@@ -37,7 +38,8 @@ void web_piece_update(struct VisualObj* arg0)
 }
 
 // web_piece_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static const s16* visual_17_target(struct VisualObj* arg0);
 void func_800B20CC(struct VisualObj* arg0);
 void func_800B22B4(struct VisualObj* arg0);
@@ -48,7 +50,7 @@ static const s16* visual_17_target(struct VisualObj* arg0)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B20CC(struct VisualObj* arg0)
 {
     const s16* target;
@@ -58,11 +60,11 @@ void func_800B20CC(struct VisualObj* arg0)
     arg0->state = 1;
     arg0->on_screen = 1;
     if (arg0->unk2 == 0) {
-        arg0->unk16 = 3;
+        arg0->unk16 = VISUAL_SATURN_LAYER(3);
         set_animation(arg0, 0x18);
         return;
     }
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     set_animation(arg0, 0x17);
     target = visual_17_target(arg0);
     direction = angle_from_delta(arg0->x_pos.val - (target[0] << 16), arg0->y_pos.val - (target[1] << 16));
@@ -103,7 +105,7 @@ void web_piece_main(struct VisualObj* arg0)
 }
 
 // web_piece_attach
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B22B4(struct VisualObj* arg0)
 {
     const s16* target = visual_17_target(arg0);

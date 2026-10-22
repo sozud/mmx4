@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[37]
 // 8005FDBC..80060A88
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_37_rocket_spiker.h"
 #include "main/visuals/visual_08_ice_shard.h"
 #include "main/1E1BC.h"
@@ -11,8 +12,9 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 #include "main/visuals/visual_03_small_effect.h"
+#include "main/collision_bounds.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
 #endif
 
@@ -60,7 +62,8 @@ void rocket_spiker_update(struct MainObj* self)
 }
 
 // rocket_spiker_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005FE1C(struct MainObj* arg0);
 void func_800608CC(struct MainObj* arg0);
 #define MAIN_37_U8(object, offset) (((u8*)&(object)->ext.main_37)[(offset)-0x80])
@@ -75,15 +78,15 @@ extern struct Unk_unk68 D_80107474[];
 void rocket_spiker_face_player(struct AnimatedObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005FE1C(struct MainObj* arg0)
 {
+    u8 lane;
     static const s16 lanes[3][3] = {
         { 0x3F0, 0x480, 0x410 },
         { 0x390, 0x40B, 0x3B0 },
         { 0x330, 0x380, 0x350 },
     };
-    u8 lane;
 
     arg0->hp = 6;
     arg0->contact_damage = 4;
@@ -93,7 +96,7 @@ void func_8005FE1C(struct MainObj* arg0)
     arg0->terrain_box = &D_800FE4E4;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->air_state = 0;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     switch (arg0->unk2) {
     case 0:
         arg0->collision_data = (const u16*)D_80107474;
@@ -110,7 +113,7 @@ void func_8005FE1C(struct MainObj* arg0)
         arg0->collision_data = (const u16*)D_80107474;
         arg0->hurt_box = (const u8*)&D_800FE4D4;
         arg0->attack_box = (const u8*)&D_800FE4D8;
-        arg0->unk15 = arg0->unk2 == 2 ? 0x40 : 0;
+        arg0->unk15 = arg0->unk2 == 2 ? PLAYER_FACING_RIGHT : 0;
         arg0->x_speed = arg0->unk2 == 2 ? 0x18000 : -0x18000;
         arg0->y_speed = 0;
         set_animation(arg0, 0);
@@ -132,7 +135,7 @@ void func_8005FE1C(struct MainObj* arg0)
             MAIN_37_S16(arg0, 0x84) = 0x1710;
             arg0->x_pos.val = 0x17080000;
             arg0->x_speed = -0x10000;
-            arg0->unk15 = 0x40;
+            arg0->unk15 = PLAYER_FACING_RIGHT;
             MAIN_37_U8(arg0, 0x81) = 1;
         }
         if (arg0->y_pos.i.hi < 0x370)
@@ -261,7 +264,7 @@ void rocket_spiker_crawl_move(struct MainObj* self)
     }
     if (direction_mask != 0) {
         self->unk6 = 2;
-        self->unk15 ^= 0x40;
+        self->unk15 ^= PLAYER_FACING_RIGHT;
         self->x_speed = -self->x_speed;
         set_animation(self, 2);
         return;
@@ -303,7 +306,7 @@ void rocket_spiker_boost_wait(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->ext.main_37.unk8C.bytes[1] == 0) {
-        func_8001540C(2, 0x59, self);
+        func_8001540C(2, SATURN_SOUND(0x59, 0x40), self);
         self->ext.main_37.unk8C.bytes[1] = 0x1E;
     }
     if (g_Player.y_pos.i.hi <= self->ext.main_37.unk88.i.lo) {
@@ -312,9 +315,9 @@ void rocket_spiker_boost_wait(struct MainObj* self)
     }
     if (!(self->unk7E & 3)) {
         if (self->unk15 == 0) {
-            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[self->ext.main_37.unk8C.bytes[0]], self, 0x7988, FIXED(-32), 0);
+            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[self->ext.main_37.unk8C.bytes[0]], self, OBJECT_CLUT(0x7988), FIXED(-32), 0);
         } else {
-            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[self->ext.main_37.unk8C.bytes[0]], self, 0x7988, FIXED(32), 0);
+            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[self->ext.main_37.unk8C.bytes[0]], self, OBJECT_CLUT(0x7988), FIXED(32), 0);
         }
         if (++self->ext.main_37.unk8C.bytes[0] == 0xA) {
             self->ext.main_37.unk8C.bytes[0] = 0;
@@ -331,7 +334,7 @@ void func_800606D8(struct MainObj* main)
 {
     animate_object(ANIMATED_OBJECT(main));
     if (--main->ext.main_37.unk8C.bytes[1] == 0) {
-        func_8001540C(2, 0x59, main);
+        func_8001540C(2, SATURN_SOUND(0x59, 0x40), main);
         main->ext.main_37.unk8C.bytes[1] = 0x1E;
     }
     if (--main->unk7C == 0) {
@@ -344,9 +347,9 @@ void func_800606D8(struct MainObj* main)
     }
     if (!(main->unk7E & 3)) {
         if (main->unk15 == 0) {
-            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[main->ext.main_37.unk8C.bytes[0]], main, 0x7988, FIXED(-32), 0);
+            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[main->ext.main_37.unk8C.bytes[0]], main, OBJECT_CLUT(0x7988), FIXED(-32), 0);
         } else {
-            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[main->ext.main_37.unk8C.bytes[0]], main, 0x7988, FIXED(32), 0);
+            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[main->ext.main_37.unk8C.bytes[0]], main, OBJECT_CLUT(0x7988), FIXED(32), 0);
         }
         if (++main->ext.main_37.unk8C.bytes[0] == 0xA) {
             main->ext.main_37.unk8C.bytes[0] = 0;
@@ -369,7 +372,7 @@ void rocket_spiker_boost_launch(struct MainObj* self)
 }
 
 // rocket_spiker_boost_fly
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800608CC(struct MainObj* arg0)
 {
     s32 velocity;
@@ -380,7 +383,7 @@ void func_800608CC(struct MainObj* arg0)
         if (arg0->x_pos.i.hi >= 0x17A0)
             return;
         arg0->x_pos.i.hi = 0x17A0;
-        func_8001540C(2, 0x5A, arg0);
+        func_8001540C(2, SATURN_SOUND(0x5A, 0x6C), arg0);
         velocity = 0x58000;
     } else {
         if (arg0->x_pos.i.hi < 0x1781)
@@ -428,7 +431,7 @@ void rocket_spiker_face_player(struct AnimatedObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -443,100 +446,100 @@ struct Unk_unk68 D_800FE4E0 = { -18, -13, 22, 27 };
 struct Unk_unk68 D_800FE4E4 = { 0, 0, 23, 20 };
 
 union AnimationStep rocket_spiker_anim_0[] = {
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x08FE0002 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, -2, 0x08 },
 };
 
 union AnimationStep rocket_spiker_anim_1[] = {
-    { 0x20010002 },
-    { 0x21010002 },
-    { 0x22FE0002 },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, -2, 0x22 },
 };
 
 union AnimationStep rocket_spiker_anim_2[] = {
-    { 0x09010009 },
-    { 0x0A010009 },
-    { 0x0A000101 },
+    { 9, 0, 1, 0x09 },
+    { 9, 0, 1, 0x0A },
+    { 1, 1, 0, 0x0A },
 };
 
 union AnimationStep rocket_spiker_anim_3[] = {
-    { 0x20010004 },
-    { 0x20000101 },
+    { 4, 0, 1, 0x20 },
+    { 1, 1, 0, 0x20 },
 };
 
 union AnimationStep rocket_spiker_anim_4[] = {
-    { 0x00010001 },
-    { 0x01010001 },
-    { 0x02FE0001 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, -2, 0x02 },
 };
 
 union AnimationStep rocket_spiker_anim_5[] = {
-    { 0x03010002 },
-    { 0x04010002 },
-    { 0x05010002 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05000101 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 1, 0, 0x05 },
 };
 
 union AnimationStep rocket_spiker_anim_6[] = {
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x06010001 },
-    { 0x07010001 },
-    { 0x08010001 },
-    { 0x06010001 },
-    { 0x07010001 },
-    { 0x08010001 },
-    { 0x0B010002 },
-    { 0x0C010002 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x10010001 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x10010001 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x10010001 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x14010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x14010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x14010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x14010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x1A010003 },
-    { 0x1B010003 },
-    { 0x1C010003 },
-    { 0x1D010003 },
-    { 0x1E010002 },
-    { 0x1E010101 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x08 },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1C },
+    { 3, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 1, 1, 1, 0x1E },
 };
 
 union AnimationStep rocket_spiker_anim_7[] = {
-    { 0x17010003 },
-    { 0x18010003 },
-    { 0x19010003 },
-    { 0x1A010003 },
-    { 0x1B010003 },
-    { 0x1C010003 },
-    { 0x1D010003 },
-    { 0x1EF90003 },
+    { 3, 0, 1, 0x17 },
+    { 3, 0, 1, 0x18 },
+    { 3, 0, 1, 0x19 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1C },
+    { 3, 0, 1, 0x1D },
+    { 3, 0, -7, 0x1E },
 };
 
 #if defined(MMX4_PC) && !defined(MMX4_WIN32)
@@ -545,61 +548,61 @@ static struct {
     union AnimationStep rocket_spiker_anim_7[8];
 } rocket_spiker_anim_run = {
     {
-        { 0x03010001 },
-        { 0x04010001 },
-        { 0x05010001 },
-        { 0x03010001 },
-        { 0x04010001 },
-        { 0x05010001 },
-        { 0x06010001 },
-        { 0x07010001 },
-        { 0x08010001 },
-        { 0x06010001 },
-        { 0x07010001 },
-        { 0x08010001 },
-        { 0x0B010002 },
-        { 0x0C010002 },
-        { 0x0D010002 },
-        { 0x0E010001 },
-        { 0x0F010001 },
-        { 0x10010001 },
-        { 0x0E010001 },
-        { 0x0F010001 },
-        { 0x10010001 },
-        { 0x0E010001 },
-        { 0x0F010001 },
-        { 0x10010001 },
-        { 0x11010002 },
-        { 0x12010002 },
-        { 0x13010002 },
-        { 0x14010001 },
-        { 0x15010001 },
-        { 0x16010001 },
-        { 0x14010001 },
-        { 0x15010001 },
-        { 0x16010001 },
-        { 0x14010001 },
-        { 0x15010001 },
-        { 0x16010001 },
-        { 0x14010001 },
-        { 0x15010001 },
-        { 0x16010001 },
-        { 0x1A010003 },
-        { 0x1B010003 },
-        { 0x1C010003 },
-        { 0x1D010003 },
-        { 0x1E010002 },
-        { 0x1E010101 },
+        { 1, 0, 1, 0x03 },
+        { 1, 0, 1, 0x04 },
+        { 1, 0, 1, 0x05 },
+        { 1, 0, 1, 0x03 },
+        { 1, 0, 1, 0x04 },
+        { 1, 0, 1, 0x05 },
+        { 1, 0, 1, 0x06 },
+        { 1, 0, 1, 0x07 },
+        { 1, 0, 1, 0x08 },
+        { 1, 0, 1, 0x06 },
+        { 1, 0, 1, 0x07 },
+        { 1, 0, 1, 0x08 },
+        { 2, 0, 1, 0x0B },
+        { 2, 0, 1, 0x0C },
+        { 2, 0, 1, 0x0D },
+        { 1, 0, 1, 0x0E },
+        { 1, 0, 1, 0x0F },
+        { 1, 0, 1, 0x10 },
+        { 1, 0, 1, 0x0E },
+        { 1, 0, 1, 0x0F },
+        { 1, 0, 1, 0x10 },
+        { 1, 0, 1, 0x0E },
+        { 1, 0, 1, 0x0F },
+        { 1, 0, 1, 0x10 },
+        { 2, 0, 1, 0x11 },
+        { 2, 0, 1, 0x12 },
+        { 2, 0, 1, 0x13 },
+        { 1, 0, 1, 0x14 },
+        { 1, 0, 1, 0x15 },
+        { 1, 0, 1, 0x16 },
+        { 1, 0, 1, 0x14 },
+        { 1, 0, 1, 0x15 },
+        { 1, 0, 1, 0x16 },
+        { 1, 0, 1, 0x14 },
+        { 1, 0, 1, 0x15 },
+        { 1, 0, 1, 0x16 },
+        { 1, 0, 1, 0x14 },
+        { 1, 0, 1, 0x15 },
+        { 1, 0, 1, 0x16 },
+        { 3, 0, 1, 0x1A },
+        { 3, 0, 1, 0x1B },
+        { 3, 0, 1, 0x1C },
+        { 3, 0, 1, 0x1D },
+        { 2, 0, 1, 0x1E },
+        { 1, 1, 1, 0x1E },
     },
     {
-        { 0x17010003 },
-        { 0x18010003 },
-        { 0x19010003 },
-        { 0x1A010003 },
-        { 0x1B010003 },
-        { 0x1C010003 },
-        { 0x1D010003 },
-        { 0x1EF90003 },
+        { 3, 0, 1, 0x17 },
+        { 3, 0, 1, 0x18 },
+        { 3, 0, 1, 0x19 },
+        { 3, 0, 1, 0x1A },
+        { 3, 0, 1, 0x1B },
+        { 3, 0, 1, 0x1C },
+        { 3, 0, 1, 0x1D },
+        { 3, 0, -7, 0x1E },
     },
 };
 #define rocket_spiker_anim_6 rocket_spiker_anim_run.rocket_spiker_anim_6
@@ -607,83 +610,83 @@ static struct {
 #endif
 
 union AnimationStep rocket_spiker_anim_8[] = {
-    { 0x23000101 },
+    { 1, 1, 0, 0x23 },
 };
 
 union AnimationStep rocket_spiker_anim_9[] = {
-    { 0x24000101 },
+    { 1, 1, 0, 0x24 },
 };
 
 union AnimationStep rocket_spiker_anim_10[] = {
-    { 0x25000101 },
+    { 1, 1, 0, 0x25 },
 };
 
 union AnimationStep rocket_spiker_anim_11[] = {
-    { 0x26000101 },
+    { 1, 1, 0, 0x26 },
 };
 
 union AnimationStep rocket_spiker_anim_12[] = {
-    { 0x27000101 },
+    { 1, 1, 0, 0x27 },
 };
 
 union AnimationStep rocket_spiker_anim_13[] = {
-    { 0x28000101 },
+    { 1, 1, 0, 0x28 },
 };
 
 union AnimationStep rocket_spiker_anim_14[] = {
-    { 0x29000101 },
+    { 1, 1, 0, 0x29 },
 };
 
 union AnimationStep rocket_spiker_anim_15[] = {
-    { 0x2A000101 },
+    { 1, 1, 0, 0x2A },
 };
 
 union AnimationStep rocket_spiker_anim_16[] = {
-    { 0x2B000101 },
+    { 1, 1, 0, 0x2B },
 };
 
 union AnimationStep rocket_spiker_anim_17[] = {
-    { 0x2C000101 },
+    { 1, 1, 0, 0x2C },
 };
 
 union AnimationStep rocket_spiker_anim_18[] = {
-    { 0x2D000101 },
+    { 1, 1, 0, 0x2D },
 };
 
 union AnimationStep rocket_spiker_anim_19[] = {
-    { 0x2E000101 },
+    { 1, 1, 0, 0x2E },
 };
 
 union AnimationStep rocket_spiker_anim_20[] = {
-    { 0x2F000101 },
+    { 1, 1, 0, 0x2F },
 };
 
 union AnimationStep rocket_spiker_anim_21[] = {
-    { 0x30000101 },
+    { 1, 1, 0, 0x30 },
 };
 
 union AnimationStep rocket_spiker_anim_22[] = {
-    { 0x31000101 },
+    { 1, 1, 0, 0x31 },
 };
 
 union AnimationStep rocket_spiker_anim_23[] = {
-    { 0x32000101 },
+    { 1, 1, 0, 0x32 },
 };
 
 union AnimationStep rocket_spiker_anim_24[] = {
-    { 0x33000101 },
+    { 1, 1, 0, 0x33 },
 };
 
 union AnimationStep rocket_spiker_anim_25[] = {
-    { 0x34000101 },
+    { 1, 1, 0, 0x34 },
 };
 
 union AnimationStep rocket_spiker_anim_26[] = {
-    { 0x35000101 },
+    { 1, 1, 0, 0x35 },
 };
 
 union AnimationStep rocket_spiker_anim_27[] = {
-    { 0x36000101 },
+    { 1, 1, 0, 0x36 },
 };
 
 union AnimationStep* rocket_spiker_animations[28] = {

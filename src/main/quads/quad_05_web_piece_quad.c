@@ -10,6 +10,7 @@ void web_piece_quad_init(struct QuadObj*);
 void web_piece_quad_scale(struct QuadObj*);
 
 void web_piece_quad_despawn(struct QuadObj*);
+#include "weapon_resources.h"
 
 void web_piece_quad_update(struct QuadObj* arg0)
 {
@@ -19,8 +20,8 @@ void web_piece_quad_update(struct QuadObj* arg0)
 void web_piece_quad_init(struct QuadObj* arg0)
 {
     arg0->active |= 0x80;
-    arg0->unk36 = 4;
-    arg0->unk34 = 0x7EC0;
+    arg0->unk36 = VISUAL_SATURN_LAYER(4);
+    arg0->unk34 = SATURN_ALT(0x7EC0, 0xFEC0);
     arg0->state = 1;
     arg0->bg_offset = 0;
     arg0->ext.quad_5.scale = 0x100;
@@ -54,7 +55,7 @@ void web_piece_quad_main(struct QuadObj* arg0)
     arg0->ext.quad_5.data = web_piece_quad_frame_table[arg0->ext.quad_5.index];
     web_piece_quad_scale(arg0);
     if ((web_piece_quad_is_visible(arg0) << 16) != 0) {
-        arg0->on_screen = 1;
+        QUAD_SET_ON_SCREEN(arg0);
         return;
     }
 

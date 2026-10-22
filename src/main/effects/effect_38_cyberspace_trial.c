@@ -78,7 +78,7 @@ void cyberspace_trial_wait_goal(struct EffectObj* self)
     cyberspace_trial_delete_unused_items();
     subtype = self->unk2;
     if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype].goal_x && (subtype != 6 || g_Player.y_pos.i.hi < 0x400)) {
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         cyberspace_trial_clear_objects(self);
         if ((engine_obj.checkpoint % 2) || engine_obj.substage != 0) {
             self->ext.effect_38.active = 1;
@@ -103,7 +103,7 @@ void cyberspace_trial_delay(struct EffectObj* self)
 void cyberspace_trial_wait_rank(struct EffectObj* self)
 {
     if (--self->ext.effect_38.timer == 0 && self->ext.effect_38.active != 0) {
-        player_start_script_action(0x15, 0x40);
+        player_start_script_action(0x15, PLAYER_FACING_RIGHT);
         cyberspace_trial_spawn_rank_warp(self);
         self->ext.effect_38.timer = 0x64;
         self->state++;

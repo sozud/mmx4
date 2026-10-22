@@ -16,6 +16,7 @@ void web_thread_main(struct ShotObj*);
 void web_thread_despawn(struct ShotObj*);
 
 void web_thread_idle(struct ShotObj*);
+#include "weapon_resources.h"
 
 void web_thread_update(struct ShotObj* self)
 {
@@ -26,7 +27,7 @@ void web_thread_init(struct ShotObj* self)
 {
     self->state = 1;
     self->on_screen = 1;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->timer = -0x32;
     if (self->unk2 != 0) {
         self->unk5 = 2;

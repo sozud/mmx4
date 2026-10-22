@@ -6,10 +6,7 @@
 #include "main/object_motion.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // gunship_shot_state_funcs
 extern void (*gunship_shot_state_funcs[])(struct ShotObj*);
@@ -19,6 +16,15 @@ void gunship_shot_missile_fly(struct ShotObj*);
 
 void gunship_shot_despawn(struct ShotObj*);
 void gunship_shot_idle(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
+
+extern u8 gunship_shot_bullet_hit_box[4];
+extern u8 gunship_shot_missile_hit_box[4];
+extern s32 gunship_shot_missile_speeds[2];
 
 void gunship_shot_update(struct ShotObj* self)
 {
@@ -26,7 +32,8 @@ void gunship_shot_update(struct ShotObj* self)
 }
 
 // gunship_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A699C(struct ShotObj* arg0);
 void func_800A6DF4(struct ShotObj* arg0);
 extern u8 gunship_shot_bullet_hit_box[4];
@@ -34,7 +41,7 @@ extern u8 gunship_shot_missile_hit_box[4];
 extern s32 gunship_shot_missile_speeds[2];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A699C(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
@@ -139,14 +146,14 @@ void gunship_shot_missile_fly(struct ShotObj* self)
             misc->active = 0x21;
             misc->id = 0x17;
             misc->unk2 = 0;
-            misc->unk15 = get_random() & 0x40;
+            misc->unk15 = get_random() & PLAYER_FACING_RIGHT;
             misc->ext.unk.unk54 = 0;
             misc->x_pos.i.hi = self->x_pos.i.hi;
             misc->y_pos.i.hi = self->y_pos.i.hi;
             misc->unk7 = 1;
             misc->x_vel.val = 0;
             misc->y_vel.val = 0;
-            misc->unk16 = 7;
+            misc->unk16 = VISUAL_SATURN_LAYER(7);
         }
         self->unk7 = 2;
     } else {
@@ -169,7 +176,7 @@ void gunship_shot_idle(struct ShotObj* self)
 }
 
 // gunship_shot_missile_steer
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A6DF4(struct ShotObj* arg0)
 {
     u8 timer = arg0->unk90.bytes[1];
@@ -182,7 +189,7 @@ void func_800A6DF4(struct ShotObj* arg0)
     if (timer != 0)
         return;
     arg0->unk90.bytes[1] = 1;
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     target = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
     current = arg0->unk90.bytes[0];
     if (current < target) {

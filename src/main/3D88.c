@@ -1039,7 +1039,9 @@ void func_800148EC()
 #endif
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#ifndef MMX4_SATURN
 s16 SsVabTransCompleted();
+#endif
 
 extern u8 D_801374B4;
 

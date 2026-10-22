@@ -6,25 +6,28 @@
 #include "main/CB184.h"
 #include "main/collision.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/mains/main_41_data_hopper.h"
-#endif
 
 // hopper_switch_state_funcs
 extern void (*hopper_switch_state_funcs[])(struct ItemObj*);
 
 void hopper_switch_main(struct ItemObj*);
 void hopper_switch_despawn(struct ItemObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/mains/main_41_data_hopper.h"
+#endif
 
 // hopper_switch_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C52CC(struct ItemObj* self);
 extern u8 hopper_switch_box[4];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C52CC(struct ItemObj* self)
 {
     s32 index = func_8002938C(0x29);
@@ -35,9 +38,9 @@ void func_800C52CC(struct ItemObj* self)
     self->on_screen = 0;
     self->animation_table = (const u8* const*)data_hopper_animations;
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
-    self->unk40 = D_801406A8[index] >> 7;
-    self->unk42 = (column - (column & 0x7F0)) | (((row / 4 + 0x1E0) << 6) & 0xFFFF);
-    self->unk16 = 6;
+    self->unk40 = OBJECT_STAGE_TEXTURE(index);
+    self->unk42 = OBJECT_CLUT((column - (column & 0x7F0)) | (((row / 4 + 0x1E0) << 6) & 0xFFFF));
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk68 = (struct Unk_unk68*)hopper_switch_box;
     self->state = 1;
 }

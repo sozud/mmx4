@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[36]
 // 8005F510..8005FDBC
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_36_latcher.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -33,28 +34,29 @@ void latcher_update(struct MainObj* self)
 }
 
 // latcher_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005F558(struct MainObj* arg0);
 extern struct Unk_unk68 latcher_hurt_box;
 extern struct Unk_unk68 D_801073F4[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005F558(struct MainObj* arg0)
 {
     struct MainObj* current;
     s32 resource;
 
     resource = func_8002938C(0x24);
-    arg0->unk40 = D_801406A8[resource] >> 7;
-    arg0->unk42 = CLUT_FROM_ID(0x24);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
+    arg0->unk42 = OBJECT_STAGE_CLUT(0x24);
     resource = func_8002938C(0x24);
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
     arg0->attack_box = &latcher_hurt_box;
     arg0->hurt_box = &latcher_hurt_box;
     arg0->animation_table = (const u8* const*)latcher_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk62 = 3;
     arg0->collision_data = D_801073F4;
     arg0->hp = 0x10;
@@ -79,7 +81,7 @@ void func_8005F558(struct MainObj* arg0)
         break;
     case 2:
         set_animation(arg0, 1);
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = -0x18000;
         break;
     }
@@ -216,7 +218,7 @@ void latcher_grab_drain(struct MainObj* self)
         }
     }
     if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8A & 7) == 0) {
-        func_8001540C(2, 0xED, self);
+        func_8001540C(2, SATURN_SOUND(0xED, 0xAE), self);
     }
 }
 #endif
@@ -269,128 +271,128 @@ void latcher_check_hit(struct MainObj* self)
 struct Unk_unk68 latcher_hurt_box = { -14, -14, 28, 28 };
 
 union AnimationStep latcher_anim_0[] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x02010002 },
-    { 0x03010002 },
-    { 0x04010002 },
-    { 0x05010002 },
-    { 0x06010002 },
-    { 0x07F90002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, -7, 0x07 },
 };
 
 union AnimationStep latcher_anim_1[] = {
-    { 0x00010002 },
-    { 0x08010002 },
-    { 0x09010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0C010002 },
-    { 0x0D010002 },
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x14010002 },
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x19010002 },
-    { 0x1AED0002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, -19, 0x1A },
 };
 
 union AnimationStep latcher_anim_2[] = {
-    { 0x00010002 },
-    { 0x1A010002 },
-    { 0x19010002 },
-    { 0x18010002 },
-    { 0x17010002 },
-    { 0x16010002 },
-    { 0x15010002 },
-    { 0x14010002 },
-    { 0x13010002 },
-    { 0x12010002 },
-    { 0x11010002 },
-    { 0x10010002 },
-    { 0x0F010002 },
-    { 0x0E010002 },
-    { 0x0D010002 },
-    { 0x0C010002 },
-    { 0x0B010002 },
-    { 0x0A010002 },
-    { 0x09010002 },
-    { 0x08ED0002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x1A },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, -19, 0x08 },
 };
 
 union AnimationStep latcher_anim_3[] = {
-    { 0x00010002 },
-    { 0x1B010002 },
-    { 0x1C010002 },
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1F000102 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 2, 1, 0, 0x1F },
 };
 
 union AnimationStep latcher_anim_4[] = {
-    { 0x20010002 },
-    { 0x24010002 },
-    { 0x23010002 },
-    { 0x25010002 },
-    { 0x21010002 },
-    { 0x26010002 },
-    { 0x22010002 },
-    { 0x27F90002 },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, -7, 0x27 },
 };
 
 union AnimationStep latcher_anim_5[] = {
-    { 0x28010002 },
-    { 0x3D010002 },
-    { 0x24010002 },
-    { 0x3D010002 },
-    { 0x28010002 },
-    { 0x3D010002 },
-    { 0x25010002 },
-    { 0x3D010002 },
-    { 0x38010002 },
-    { 0x3D010002 },
-    { 0x36010002 },
-    { 0x3D010002 },
-    { 0x38010002 },
-    { 0x3D010002 },
-    { 0x37010002 },
-    { 0x3DF10002 },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x36 },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, -15, 0x3D },
 };
 
 union AnimationStep latcher_anim_6[] = {
-    { 0x1F010002 },
-    { 0x1E010002 },
-    { 0x1D010002 },
-    { 0x1C010002 },
-    { 0x1B010002 },
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x2B010002 },
-    { 0x2C010002 },
-    { 0x2D010002 },
-    { 0x2E010002 },
-    { 0x2F010002 },
-    { 0x30010002 },
-    { 0x31010002 },
-    { 0x32010002 },
-    { 0x33010002 },
-    { 0x34010002 },
-    { 0x35010002 },
-    { 0x36010002 },
-    { 0x37010002 },
-    { 0x38010002 },
-    { 0x39010002 },
-    { 0x3A010002 },
-    { 0x3B010002 },
-    { 0x3C010002 },
-    { 0x3D000102 },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, 1, 0x2B },
+    { 2, 0, 1, 0x2C },
+    { 2, 0, 1, 0x2D },
+    { 2, 0, 1, 0x2E },
+    { 2, 0, 1, 0x2F },
+    { 2, 0, 1, 0x30 },
+    { 2, 0, 1, 0x31 },
+    { 2, 0, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 2, 0, 1, 0x34 },
+    { 2, 0, 1, 0x35 },
+    { 2, 0, 1, 0x36 },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x3B },
+    { 2, 0, 1, 0x3C },
+    { 2, 1, 0, 0x3D },
 };
 
 union AnimationStep* latcher_animations[7] = {

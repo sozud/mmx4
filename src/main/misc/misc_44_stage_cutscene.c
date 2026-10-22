@@ -23,6 +23,7 @@ void stage_cutscene_wait_first(struct UnkObj*);
 void stage_cutscene_second_line(struct UnkObj*);
 void stage_cutscene_finish(struct UnkObj*);
 void stage_cutscene_idle(struct UnkObj*);
+#include "weapon_resources.h"
 
 extern union AnimationStep* stage_cutscene_animations[3];
 
@@ -50,11 +51,11 @@ void func_800D0828(struct MiscObj* self)
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->unk2C = 0x2000;
-    self->unk40 = D_801406A8[func_8002938C(0x42)] >> 7;
-    self->unk42 = CLUT_FROM_ID(0x42);
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x42));
+    self->unk42 = OBJECT_STAGE_CLUT(0x42);
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x42)];
     self->animation_table = (u32**)stage_cutscene_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk15 = 0;
     self->state = 1;
     self->unk5 = 0;
@@ -78,7 +79,7 @@ void stage_cutscene_despawn(struct MiscObj* self)
 void stage_cutscene_wait_player(struct UnkObj* self)
 {
     if (g_Player.x_pos.i.hi >= 0xFE0) {
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         background_objects[g_Player.bg_offset].unk26 = 0xFD0;
         background_objects[g_Player.bg_offset].unk24 = 0xFD0;
         self->unk5 = 1;
@@ -164,7 +165,8 @@ void func_800D0C68(struct MiscObj* self)
 }
 
 // stage_cutscene_spawn_part
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D0D68(struct MiscObj* self, u8 kind);
 struct Misc45PositionData {
     s16 x;
@@ -175,7 +177,7 @@ struct Misc45PositionData {
 extern struct Misc45PositionData scripted_slider_offsets[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D0D68(struct MiscObj* self, u8 kind)
 {
     struct MiscObj* child;
@@ -201,26 +203,26 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0D68);
 #endif
 
 union AnimationStep stage_cutscene_anim_0[6] = {
-    { 0x00010048 },
-    { 0x01010002 },
-    { 0x02010003 },
-    { 0x00010006 },
-    { 0x01010002 },
-    { 0x02FB0003 },
+    { 72, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 6, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, -5, 0x02 },
 };
 
 union AnimationStep stage_cutscene_anim_1[2] = {
-    { 0x03010005 },
-    { 0x03000101 },
+    { 5, 0, 1, 0x03 },
+    { 1, 1, 0, 0x03 },
 };
 
 union AnimationStep stage_cutscene_anim_2[6] = {
-    { 0x04010048 },
-    { 0x05010002 },
-    { 0x06010003 },
-    { 0x04010006 },
-    { 0x05010002 },
-    { 0x06FB0003 },
+    { 72, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 6, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 3, 0, -5, 0x06 },
 };
 
 union AnimationStep* stage_cutscene_animations[3] = {

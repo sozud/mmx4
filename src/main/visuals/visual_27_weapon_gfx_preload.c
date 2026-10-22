@@ -4,6 +4,7 @@
 #include "main/visuals/visual_27_weapon_gfx_preload.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#include "weapon_resources.h"
 
 void weapon_gfx_preload_update(struct VisualObj* arg0)
 {
@@ -13,7 +14,7 @@ void weapon_gfx_preload_update(struct VisualObj* arg0)
         arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0x24 / 4];
     }
 
-    arg0->unk40 = 0x520;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->previous_animation_index = -1;
     arg0->animation_step.fields.frame_index = 0;
 

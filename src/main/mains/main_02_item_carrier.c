@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[2]
 // 80042914..80043340
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_02_item_carrier.h"
 #include "main/55C4.h"
 #include "main/collision.h"
@@ -8,7 +9,7 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -62,7 +63,11 @@ void item_carrier_update(struct MainObj* self)
 }
 
 // item_carrier_check_needed
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80042950(struct MainObj* arg0);
 void func_80042AFC(struct MainObj* arg0);
 extern struct Unk_unk68* item_carrier_part_hurtboxes[2];
@@ -71,7 +76,7 @@ extern u8 item_carrier_part_debris_counts[4];
 extern void (*item_carrier_action_funcs[])(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80042950(struct MainObj* arg0)
 {
     u8* ext = (u8*)&arg0->ext;
@@ -113,9 +118,9 @@ void func_80042A48(struct MainObj* self)
     self->bg_offset = g_Player.bg_offset;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << 6;
+    self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << PLAYER_FACING_SHIFT;
     self->animation_table = (const u8* const*)item_carrier_animations;
-    self->unk16 = 4;
+    self->unk16 = VISUAL_SATURN_LAYER(4);
     self->hp = 1;
     self->contact_damage = 1;
     self->attack_box = NULL;
@@ -130,7 +135,7 @@ void func_80042A48(struct MainObj* self)
 }
 
 // item_carrier_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80042AFC(struct MainObj* arg0)
 {
     struct ItemObj* item;
@@ -274,7 +279,7 @@ void item_carrier_hover_turn(struct MainObj* self)
         self->unk5 = 0;
         self->unk6 = 0;
         if ((self->x_pos.val - g_Player.x_pos.val) < 0) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         } else {
             self->unk15 = 0;
         }
@@ -417,85 +422,85 @@ struct Unk_unk68 D_800F9B30 = { -13, -38, 25, 44 };
 struct Unk_unk68 item_carrier_capsule_hurtbox = { -10, -19, 20, 32 };
 
 union AnimationStep item_carrier_anim_0[] = {
-    { 0x00010005 },
-    { 0x01010005 },
-    { 0x02010005 },
-    { 0x01010005 },
-    { 0x00010005 },
-    { 0x03FB0005 },
+    { 5, 0, 1, 0x00 },
+    { 5, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 5, 0, 1, 0x01 },
+    { 5, 0, 1, 0x00 },
+    { 5, 0, -5, 0x03 },
 };
 
 union AnimationStep item_carrier_anim_1[] = {
-    { 0x04010005 },
-    { 0x05010005 },
-    { 0x06010005 },
-    { 0x07010005 },
-    { 0x08010005 },
-    { 0x09010004 },
-    { 0x09000001 },
+    { 5, 0, 1, 0x04 },
+    { 5, 0, 1, 0x05 },
+    { 5, 0, 1, 0x06 },
+    { 5, 0, 1, 0x07 },
+    { 5, 0, 1, 0x08 },
+    { 4, 0, 1, 0x09 },
+    { 1, 0, 0, 0x09 },
 };
 
 union AnimationStep item_carrier_anim_2[] = {
-    { 0x09010005 },
-    { 0x08010005 },
-    { 0x07010005 },
-    { 0x06010005 },
-    { 0x05010005 },
-    { 0x04010004 },
-    { 0x04000001 },
+    { 5, 0, 1, 0x09 },
+    { 5, 0, 1, 0x08 },
+    { 5, 0, 1, 0x07 },
+    { 5, 0, 1, 0x06 },
+    { 5, 0, 1, 0x05 },
+    { 4, 0, 1, 0x04 },
+    { 1, 0, 0, 0x04 },
 };
 
 union AnimationStep item_carrier_anim_3[] = {
-    { 0x0A010005 },
-    { 0x0B010005 },
-    { 0x0C010005 },
-    { 0x0B010005 },
-    { 0x0A010005 },
-    { 0x0DFB0005 },
+    { 5, 0, 1, 0x0A },
+    { 5, 0, 1, 0x0B },
+    { 5, 0, 1, 0x0C },
+    { 5, 0, 1, 0x0B },
+    { 5, 0, 1, 0x0A },
+    { 5, 0, -5, 0x0D },
 };
 
 union AnimationStep item_carrier_anim_4[] = {
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x14010002 },
-    { 0x15F90002 },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, -7, 0x15 },
 };
 
 union AnimationStep item_carrier_anim_5[] = {
-    { 0x16010003 },
-    { 0x17010003 },
-    { 0x18010003 },
-    { 0x19010003 },
-    { 0x1A010003 },
-    { 0x1BFB0003 },
+    { 3, 0, 1, 0x16 },
+    { 3, 0, 1, 0x17 },
+    { 3, 0, 1, 0x18 },
+    { 3, 0, 1, 0x19 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, -5, 0x1B },
 };
 
-union AnimationStep item_carrier_anim_6[] = { { 0x1C000001 } };
+union AnimationStep item_carrier_anim_6[] = { { 1, 0, 0, 0x1C } };
 
-union AnimationStep item_carrier_anim_7[] = { { 0x1D000001 } };
+union AnimationStep item_carrier_anim_7[] = { { 1, 0, 0, 0x1D } };
 
 union AnimationStep item_carrier_anim_8[] = {
-    { 0x1E010002 },
-    { 0x1F010002 },
-    { 0x20010002 },
-    { 0x21010002 },
-    { 0x22010002 },
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x28010002 },
-    { 0x29F50002 },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, -11, 0x29 },
 };
 
-union AnimationStep item_carrier_anim_9[] = { { 0x2A000001 } };
+union AnimationStep item_carrier_anim_9[] = { { 1, 0, 0, 0x2A } };
 
-union AnimationStep item_carrier_anim_10[] = { { 0x2B000001 } };
+union AnimationStep item_carrier_anim_10[] = { { 1, 0, 0, 0x2B } };
 
 union AnimationStep* item_carrier_animations[11] = {
     item_carrier_anim_0,

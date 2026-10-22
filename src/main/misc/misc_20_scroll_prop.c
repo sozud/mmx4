@@ -9,6 +9,7 @@ extern void (*scroll_prop_state_funcs[])(struct MiscObj*);
 void scroll_prop_init(struct MiscObj*);
 void scroll_prop_scroll(struct MiscObj*);
 void scroll_prop_despawn(struct MiscObj*);
+#include "weapon_resources.h"
 
 void scroll_prop_update(struct MiscObj* self)
 {
@@ -23,9 +24,9 @@ void scroll_prop_init(struct MiscObj* self)
 
     self->unk16 = 0x12;
     self->unk15 = 0;
-    self->unk40 = (s16)((u32)*D_801406A8 >> 7);
+    self->unk40 = (s16)((u32)OBJECT_STAGE_TEXTURE(0));
     self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 0);
-    self->unk42 = 0x7987;
+    self->unk42 = OBJECT_CLUT(0x7987);
     self->x_pos.i.hi = background_objects[0].x_pos.u.hi + 0x160;
     self->y_pos.i.hi = background_objects[0].y_pos.u.hi + 0x80;
     self->animation_step.fields.frame_index = 0;
