@@ -5,7 +5,7 @@
 #include "main/11184.h"
 #include "main/objects.h"
 #include "main/menu.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 extern void func_80020DEC(u8* arg0, s16 arg1);
 void func_80020ED4(struct EngineObj*);
 void func_80020F24(struct EngineObj*);

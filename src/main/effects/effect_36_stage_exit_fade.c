@@ -3,7 +3,7 @@
 #include "common.h"
 #include "main/effects/effect_36_stage_exit_fade.h"
 #include "main/objects.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/effects/effect_35_palette_pulse.h"
 
 // stage_exit_fade_state_funcs

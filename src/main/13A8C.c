@@ -3,7 +3,7 @@
 #include "main/165A0.h"
 #include "main/2824.h"
 #include "main/objects.h"
-#include "main/125BC.h"
+#include "main/1263C.h"
 #include "main/144A4.h"
 #include "main/object_motion.h"
 #include "main/128C4.h"

@@ -1,5 +1,5 @@
-#ifndef MAIN_125BC_H
-#define MAIN_125BC_H
+#ifndef MAIN_1263C_H
+#define MAIN_1263C_H
 
 #ifdef MMX4_PC
 extern void func_80021E3C (void);

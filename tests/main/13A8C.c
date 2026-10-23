@@ -10,7 +10,7 @@
 #include "main/objects.h"
 #include "main/hud_origins.h"
 #include "main/stage_layouts.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/3D88.h"
 extern struct Unk5 D_800F0E18[];
 extern struct BackgroundLayoutConfigData D_800F3188;

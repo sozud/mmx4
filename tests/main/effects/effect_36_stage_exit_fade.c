@@ -4,7 +4,7 @@
 
 #include "support/pool_full.h"
 #include "main/14A60.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 static u32 pool_full_stage_exit_fade_init(void)
 {
     u32 actual;

@@ -5,7 +5,7 @@
 #include "main/objects.h"
 #include "main/player_common.h"
 #include "main/128C4.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
 

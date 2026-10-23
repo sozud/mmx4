@@ -4,7 +4,6 @@
 #include "saturn/game_low.h"
 #endif
 #include "main/1A5BC.h"
-#include "main/stage_menu_funcs.h"
 #include "main/14A60.h"
 #include "main/2824.h"
 #include "main/E47C.h"
@@ -496,115 +495,9 @@ void func_8002A41C(struct GameInfo* arg0)
 }
 #endif
 
-#ifdef MMX4_SATURN
-static u16 color_filter_offset(u16 scaled, u8 subtract)
-{
-    if (subtract && scaled != 0) {
-        scaled = -scaled | SATURN_COLOR_OFFSET_SIGN;
-    }
-    return scaled & SATURN_COLOR_OFFSET_MASK;
-}
+u16 D_800F44E8[8] = { 0x10, 0x80, 0x100, 0x40, 0x20, 0x200, 0x400, 0xFFFF };
 
-void func_8002A484(void)
-{
-    u16 red;
-    u16 green;
-    u16 blue;
-
-    if (saturn_fade_state != 0) {
-        return;
-    }
-    SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_CLOFEN) = (SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_CLOFEN) & 0xFF80) | saturn_color_filter_screens;
-    red = color_filter_offset((g_FilterAmountR << 3) | (g_FilterAmountR >> 2), g_FilterModeR && g_FilterAmountR);
-    green = color_filter_offset((g_FilterAmountG >> 2) | (g_FilterAmountG >> 7), g_FilterModeG && g_FilterAmountG);
-    blue = color_filter_offset((g_FilterAmountB >> 7) | (g_FilterAmountB >> 12), g_FilterModeB && g_FilterAmountB);
-    SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_COAR) = red;
-    SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_COAG) = green;
-    SATURN_VDP2_SHADOW_WORD(SATURN_VDP2_COAB) = blue;
-}
-#else
-void func_8002A484(void)
-{
-    u32 mask;
-    u32 color;
-    u16* dst;
-    u16* src;
-    u32 component;
-    u32 blue;
-    u32 green;
-    u32 color_index;
-    u32 red;
-    u32 palette_index;
-
-    if (((g_FilterAmountR | g_FilterAmountG | g_FilterAmountB) != 0) || (need_palette_load & 4)) {
-        if ((lastFilterAmountR != g_FilterAmountR) || (lastFilterAmountG != g_FilterAmountG) || (lastFilterAmountB != g_FilterAmountB) || (need_palette_load != 0)) {
-            src = dst = SP_PALETTE;
-            dst = D_80141F70;
-            for (palette_index = 0; palette_index < 128; palette_index++) {
-                if (!(palette_index & 0x1F)) {
-                    mask = D_8013E188[palette_index >> 5];
-                }
-                color_index = 0;
-                if ((s32)mask <= -1) {
-                    do {
-                        color = *src;
-                        src++;
-                        if (color != 0) {
-                            if (g_FilterModeR != 0) {
-                                red = (color & 0x1F) < g_FilterAmountR ? 0 : (color & 0x1F) - g_FilterAmountR;
-                            } else {
-                                component = (color & 0x1F) + g_FilterAmountR;
-                                red = 0x1F;
-                                if (component < 0x20U) {
-                                    red = component;
-                                }
-                            }
-                            if (g_FilterModeG != 0) {
-                                green = (color & 0x3E0) < g_FilterAmountG ? 0 : (color & 0x3E0) - g_FilterAmountG;
-                            } else {
-                                component = (color & 0x3E0) + g_FilterAmountG;
-                                green = 0x3E0;
-                                if (component < 0x3E1U) {
-                                    green = component;
-                                }
-                            }
-                            if (g_FilterModeB != 0) {
-                                blue = (color & 0x7C00) < g_FilterAmountB ? 0 : (color & 0x7C00) - g_FilterAmountB;
-                            } else {
-                                component = (color & 0x7C00) + g_FilterAmountB;
-                                if (component < 0x7C01U) {
-                                    blue = component;
-                                } else {
-                                    blue = 0x7C00;
-                                }
-                            }
-                            *dst = red | green | blue | (color & 0x8000);
-                        }
-                        color_index += 1;
-                        dst++;
-                    } while (color_index < 0x10U);
-                } else {
-                    do {
-                        *dst = *src;
-                        src++;
-                        color_index += 1;
-                        dst++;
-                    } while (color_index < 0x10U);
-                }
-                mask <<= 1;
-            }
-            lastFilterAmountR = g_FilterAmountR;
-            lastFilterAmountG = g_FilterAmountG;
-            lastFilterAmountB = g_FilterAmountB;
-            need_palette_load = 2;
-        }
-    }
-}
-#endif
-
-extern u16 D_800F44E8[8];
-
-extern u16 D_800F44F8[8];
+u16 D_800F44F8[8] = { 0x80, 0x10, 0x40, 0x20, 4, 1, 8, 2 };
 
 #ifdef MMX4_WIN32
 u8 D_800F4508[] = { 0x5F, 0x11, 0x00, 0x60, 0x1F, 0x00, 0x61, 0x2D, 0x01, 0x62, 0x3B, 0x02, 0x63, 0x49, 0x03, 0x64, 0x57, 0x04, 0x65, 0x65, 0x04, 0x66, 0x73, 0x05, 0x67, 0x82, 0x06, 0x76, 0x91, 0x07, 0x77, 0x9F, 0x08, 0x78, 0xAD, 0x09, 0x79, 0xBB, 0x0A, 0x70, 0xCB, 0x0B, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -771,4 +664,8 @@ u8 D_800F457C[0x14] = {
 };
 #endif
 
-extern void (*D_800F4590[])(struct GameInfo* arg0);
+void (*D_800F4590[])(struct GameInfo* arg0) = {
+    func_80029E1C,
+    func_8002A098,
+    func_8002A394,
+};

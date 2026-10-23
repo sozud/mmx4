@@ -2,7 +2,7 @@
 // 8002A6FC..8002B694
 #include "common.h"
 #include "main/objects.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #ifdef MMX4_SATURN
 #define VISIBILITY_BACKGROUND(obj) (*(struct BackgroundObj*)((u8*)background_objects + (u8)(84 * (u8)(obj)->bg_offset)))
 void saturn_queue_object(void*);

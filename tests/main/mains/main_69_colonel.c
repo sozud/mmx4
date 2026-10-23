@@ -1,6 +1,6 @@
 #include "test_runtime.h"
 #include "main/mains/main_69_colonel.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/55C4.h"
 #include "main/effects/effect_37_alarm_flash.h"
 #include "main/player.h"

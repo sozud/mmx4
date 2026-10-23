@@ -2,7 +2,7 @@
 // 800B5960..800B5CC4
 #include "common.h"
 #include "main/effects/effect_02_color_filter.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/objects.h"
 
 extern void (*g_TitleScalingXUpdateFuncs[])(struct EffectObj*);

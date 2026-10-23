@@ -9,7 +9,7 @@
 #include "main/object_motion.h"
 #include "main/102FC.h"
 #include "main/10CA4.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/323C.h"
 #include "main/55C4.h"
 #include "main/E47C_menu_data.h"

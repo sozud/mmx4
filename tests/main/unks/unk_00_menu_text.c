@@ -1,12 +1,13 @@
 #include "test_runtime.h"
 #include "main/2824.h"
+#include "main/unks/unk_00_menu_text.h"
 
 void menu_text_update(struct UnkObj*);
 extern u16 menu_button_bits_a[8], menu_button_bits_b[8];
 extern u8 D_800F4508[32], D_800F4528[28], D_800F4544[28];
 extern u8 D_800F4568[20], D_800F457C[20];
 extern u32* option_toggle_animations[1];
-extern union AnimationStep* menu_text_animations[1];
+extern union AnimationStep* falling_piece_animations[1];
 
 static struct UnkObj obj, expected;
 static struct PlayerObj player_before;
@@ -116,7 +117,7 @@ static void prepare(u32 fraction, u32 archive)
     obj.unk42 = 0x5678;
     obj.animation_step.packed = 0x55123456;
     obj.previous_animation_index = 0x35;
-    obj.animation_table = (u32**)menu_text_animations;
+    obj.animation_table = (u32**)falling_piece_animations;
     obj.link.data = D_800F457C;
     obj.ext.unk_0.selection_index = 0;
     g_Player.input.history = 0x12345678;
@@ -359,6 +360,44 @@ static u32 test_static_cursor(u32 row)
     return 1;
 }
 
+static u32 binding_case(u8 disabled)
+{
+    struct UnkObj obj;
+    u32 actual;
+
+    memset(&obj, 0, sizeof(obj));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    obj.bg_offset = -1;
+    obj.x_pos.i.hi = 90;
+    obj.y_pos.i.hi = 80;
+    obj.unk2 = disabled ? 7 : 0;
+    obj.animation_step.fields.frame_index = 0x55;
+    engine_obj.cur_character = 1;
+    if (disabled)
+        menu_button_bits_a[7] = menu_button_bits_a[0];
+    D_800EE430[4] = disabled ? menu_button_bits_b[3] : 0xFFFF;
+    func_800D3798(&obj);
+    assert(obj.unk2 == (disabled ? 7 : 0));
+    assert(obj.x_pos.i.hi == 90 && obj.y_pos.i.hi == 80);
+    assert(D_800EE430[4] == (disabled ? menu_button_bits_b[3] : 0xFFFF));
+    actual = obj.animation_step.fields.frame_index | ((u32)(u16)obj.unk42 << 8) | ((u32)obj.on_screen << 24);
+    return actual;
+}
+static u32 unmatched_button(void)
+{
+    return binding_case(0);
+}
+static u32 disabled_label(void)
+{
+    return binding_case(1);
+}
+static const CTestCase menu_binding_edges_cases[] = {
+    unmatched_button,
+    disabled_label,
+};
+static const u32 menu_binding_edges_cases_expected[] = { 0x1780055u, 0x178006Bu };
+
 const struct CTestGroup c_test_groups[] = {
     { "menu_label_initialization", 0, 0, 41, test_labels },
     { "menu_cursor_initialization", 0, 0, 8, test_cursor_init },
@@ -367,6 +406,7 @@ const struct CTestGroup c_test_groups[] = {
     { "menu_cursor_animation", 0, 0, 36, test_cursor_tick },
     { "menu_cursor_delay", 0, 0, 16, test_cursor_delay },
     { "menu_static_cursor", 0, 0, 8, test_static_cursor },
+    { "menu_binding_edges", menu_binding_edges_cases, menu_binding_edges_cases_expected, COUNT(menu_binding_edges_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 41 + 8 + 54 + 18 + 36 + 16 + 8;
+const u32 c_test_count = 41 + 8 + 54 + 18 + 36 + 16 + 8 + COUNT(menu_binding_edges_cases);

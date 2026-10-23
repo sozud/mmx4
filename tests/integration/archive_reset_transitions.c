@@ -1,6 +1,6 @@
 #include "test_runtime.h"
 #include "main/game_info.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 void character_select_state_6(struct EngineObj*);
 #ifdef MMX4_PC
 #include <unistd.h>

@@ -2,7 +2,7 @@
 #include "main/55C4.h"
 #include "main/memcard.h"
 #include "main/E47C_menu_data.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/144A4.h"
 #include "main/E47C.h"
 void func_800194C8(struct EngineObj* arg0);

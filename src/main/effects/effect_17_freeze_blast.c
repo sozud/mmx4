@@ -3,7 +3,7 @@
 #include "common.h"
 #include "main/effects/effect_17_freeze_blast.h"
 #include "main/objects.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/object_motion.h"
 
 // freeze_blast_state_funcs
@@ -16,7 +16,7 @@ void freeze_blast_finish(struct EffectObj*);
 #endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/object_motion.h"
 #endif
 

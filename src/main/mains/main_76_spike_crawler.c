@@ -1,5 +1,5 @@
 // MainObj, main_object_update_funcs[76]
-// 800919C4..800922D8
+// 800919C4..80091E38
 #include "common.h"
 #include "weapon_resources.h"
 #include "main/mains/main_76_spike_crawler.h"
@@ -8,7 +8,6 @@
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/collision_bounds.h"
-#include "main/enemy_reaction_data.h"
 #include "main/objects.h"
 #include "main/1CF60.h"
 
@@ -20,16 +19,11 @@ extern s8 spike_crawler_attack_box[4];
 extern s8 spike_crawler_hurt_box[4];
 
 // spike_crawler_state_funcs
-struct Main76HandlerTable {
-    void (*funcs[7])(struct MainObj*);
-};
-
 extern void (*spike_crawler_state_funcs[])(struct MainObj*);
 
 void spike_crawler_update_speed(struct MainObj*);
 void spike_crawler_main(struct MainObj*);
 void spike_crawler_despawn(struct MainObj*);
-void spike_crawler_hit_flash(struct MainObj*);
 
 void spike_crawler_update(struct MainObj* self)
 {
@@ -203,124 +197,6 @@ void spike_crawler_despawn(struct MainObj* self)
     despawn_object(OBJECT_HEADER(self));
 }
 
-void spike_crawler_hit_flash(struct MainObj* self)
-{
-    if (self->unk6 == 0) {
-        self->unk6++;
-        self->invincibility_timer = 0x28;
-    }
-    if (BLINK_CLOCK(self->invincibility_timer) & 7) {
-        self->unk42 &= 0x7FFF;
-    } else {
-        self->unk42 |= 0x8000;
-    }
-    if (--self->invincibility_timer == 0) {
-        self->unk5 = 1;
-        self->unk6 = 0;
-        self->unk42 &= 0x7FFF;
-    }
-}
-
-// spike_crawler_hit_bounce
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80091EC4(struct MainObj* self)
-{
-    s8 step;
-
-    if (self->unk6 == 0) {
-        self->unk6 = 1;
-        self->x_speed = 0;
-        self->x_accel = 0;
-        self->invincibility_timer = self->unk63 == 3 ? 0x12 : 3;
-        self->ext.main_76.bounce_step = 2;
-    }
-    step = self->ext.main_76.bounce_step;
-    self->ext.main_76.bounce_step = -step;
-    self->x_pos.u.hi = (u16)(self->x_pos.u.hi + step);
-    if ((s8)self->invincibility_timer % 9 != 0)
-        self->unk42 &= 0x7FFF;
-    else
-        self->unk42 |= 0x8000;
-    self->invincibility_timer = (u8)(self->invincibility_timer - 1);
-    if (self->invincibility_timer == 0) {
-        self->unk5 = 1;
-        self->unk6 = 0;
-        self->unk42 &= 0x7FFF;
-    }
-}
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", func_80091EC4);
-#endif
-
-extern s32 spike_crawler_knockback_speeds[2];
-
-void spike_crawler_hit_knockback(struct MainObj* self)
-{
-    s32 speed;
-    if (self->unk6 == 0) {
-        self->unk6 = self->unk6 + 1;
-        if (g_Player.x_pos.val < self->x_pos.val) {
-            self->x_speed = spike_crawler_knockback_speeds[self->unk63 - 5];
-        } else {
-            self->x_speed = -spike_crawler_knockback_speeds[self->unk63 - 5];
-        }
-        self->x_accel = 0x3000;
-        self->y_speed = 0;
-        self->gravity = 0;
-        if (self->unk63 == 5) {
-            self->invincibility_timer = 0x12;
-        } else {
-            self->invincibility_timer = 1;
-        }
-    }
-
-    move_with_gravity(ANIMATED_OBJECT(self));
-
-    speed = self->x_speed;
-    if (speed < 0) {
-        speed = -speed;
-    }
-    if (speed < 0x6000) {
-        self->x_speed = 0;
-        self->x_accel = 0;
-    }
-    if (self->collision_flags & 3) {
-        self->x_speed = 0;
-        self->x_accel = 0;
-    }
-
-    if ((s8)self->invincibility_timer % 9 != 0) {
-        self->unk42 &= 0x7FFF;
-    } else {
-        self->unk42 |= 0x8000;
-    }
-
-    self->invincibility_timer--;
-    if (self->invincibility_timer == 0) {
-        self->unk5 = 1;
-        self->unk6 = 0;
-        self->x_speed = 0;
-        self->x_accel = 0;
-        self->unk42 &= 0x7FFF;
-    }
-}
-
-void enemy_hit_reaction(struct MainObj* arg0)
-{
-    struct Main76HandlerTable handlers = { {
-        NULL,
-        spike_crawler_hit_flash,
-        NULL,
-        func_80091EC4,
-        func_80091EC4,
-        spike_crawler_hit_knockback,
-        spike_crawler_hit_knockback,
-    } };
-    struct MainObj* object = arg0;
-
-    handlers.funcs[object->unk63](arg0);
-}
-
 union AnimationStep spike_crawler_anim_0[16] = {
     { 2, 0, 1, 0x00 },
     { 2, 0, 1, 0x01 },
@@ -364,70 +240,8 @@ s8 spike_crawler_attack_box[4] = { -9, -6, 16, 15 };
 
 s8 spike_crawler_hurt_box[4] = { -11, -8, 20, 18 };
 
-#ifdef MMX4_SATURN
-void play_boss_voice(s32 arg0)
-{
-    u8 object_id = arg0 & 0xFF;
-
-    if (object_id >= 8) {
-        u8 track = object_id * 3 + (get_random() & 0xFF) % 3U + 0x21;
-        saturn_music_play(track, 0);
-        engine_obj.unk36.value = 1;
-    } else {
-        engine_obj.unk36.value = 0x3C;
-    }
-}
-#else
-void play_boss_voice(s32 arg0)
-{
-    s16 object_id;
-    u32 random_value;
-
-#ifndef VERSION_JP
-    object_id = arg0 & 0xFF;
-    if (object_id >= 8U) {
-#endif
-        random_value = get_random() & 0xFF;
-        random_value %= 3U;
-#ifdef VERSION_JP
-#endif
-        func_8001663C(boss_voice_tracks[(arg0 & 0xFF)][random_value & 0xFF], 0x7F);
-        engine_obj.unk36.value = 1;
-#ifndef VERSION_JP
-    } else {
-        engine_obj.unk36.value = 0x3C;
-    }
-#endif
-}
-#endif
-
-s32 update_boss_music_delay(void)
-{
-#ifdef VERSION_JP
-    if (D_80173C84 == 0) {
-        engine_obj.unk36.timer = 0;
-        func_8001653C();
-    }
-#else
-    if ((D_80173C84 == 0) && (engine_obj.unk36.timer != 0)) {
-        engine_obj.unk36.timer--;
-        if (engine_obj.unk36.timer == 0) {
-            engine_obj.unk36.timer = 0;
-            func_8001653C();
-        }
-    }
-#endif
-    return engine_obj.unk36.timer;
-}
-
 void (*spike_crawler_state_funcs[])(struct MainObj*) = {
     spike_crawler_init,
     spike_crawler_main,
     spike_crawler_despawn,
 };
-
-extern s32 spike_crawler_knockback_speeds[2];
-
-extern u8 boss_voice_tracks[13][3];
-
-extern u8 D_80105FEF_padding;
