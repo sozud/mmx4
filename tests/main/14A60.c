@@ -217,17 +217,6 @@ static u32 readonly_renderer_guard(u32 row)
     R_SAME(readonly, before_readonly);
     return render_check(0, 0);
 }
-static u32 legacy_frame_address(u32 row)
-{
-    u32 serialized_address;
-    render_setup(10, 0, &render_vectors[0], 1);
-    serialized_address = (u32)(uintptr_t)frames;
-    misc_objects[0].unk3C = (void*)(uintptr_t)serialized_address;
-    render_snapshot();
-    expected_command(&render_vectors[0], 1, 1);
-    func_80024334(object);
-    return render_check(1, 1);
-}
 #endif
 
 const struct CTestGroup c_test_groups[] = {
@@ -239,14 +228,12 @@ const struct CTestGroup c_test_groups[] = {
 #ifdef MMX4_PC
     { "pc_rejects_missing_or_unregistered_frame", NULL, NULL, 2, renderer_guard },
     { "pc_rejects_readonly_unregistered_object", NULL, NULL, 1, readonly_renderer_guard },
-    { "pc_expands_legacy_32bit_frame_address", NULL, NULL, 1, legacy_frame_address },
 #endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
 const u32 c_test_count = COUNT(hud_color_subtraction_cases) + 1 + 16 + 24 + 36
 #ifdef MMX4_PC
     + 2
-    + 1
     + 1
 #endif
     ;

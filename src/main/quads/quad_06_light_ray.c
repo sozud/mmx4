@@ -31,7 +31,7 @@ extern s32 D_800F45C0[];
 #define QUAD6_X_ACCEL(obj) ((obj)->runtime.search_light.y_accumulator)
 #define QUAD6_Y_ACCEL(obj) (*(s32*)&(obj)->runtime.search_light.pause_timer)
 #define QUAD6_X_ACCEL2(obj) ((obj)->runtime.search_light.base_speed)
-#define QUAD6_Y_ACCEL2(obj) (*(s32*)&(obj)->link)
+#define QUAD6_Y_ACCEL2(obj) ((obj)->link.y_accel)
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
 #endif
@@ -106,7 +106,7 @@ void light_ray_main(struct QuadObj* arg0)
     arg0->ext.ready_line.y_vel.val += arg0->runtime.quad_06.y_accumulator;
     arg0->ext.ready_line.x_accel.val += arg0->runtime.quad_06.acceleration;
     arg0->ext.ready_line.y_accel.val += arg0->runtime.quad_06.base_speed;
-    arg0->runtime.quad_06.x_accumulator += (s32)arg0->link.owner;
+    arg0->runtime.quad_06.x_accumulator += arg0->link.y_accel;
     arg0->vertices[1].x.val = arg0->vertices[0].x.val + FIXED(1);
     arg0->vertices[1].y.val = arg0->vertices[0].y.val + FIXED(1);
     arg0->vertices[3].x.val = arg0->vertices[2].x.val - FIXED(1);

@@ -398,7 +398,9 @@ extern u8 D_800F2300[];
 extern u8 D_800F2310[];
 extern u8 D_800F231C[];
 extern u8 D_800F2328[];
+#ifndef MMX4_SATURN
 extern RECT D_800F2388;
+#endif
 extern void (*D_800F2390[3])(struct GameInfo*);
 extern void (*D_800F239C[5])(struct GameInfo*);
 #ifdef VERSION_JP
@@ -605,7 +607,7 @@ void func_8001DE54(struct GameInfo* arg0)
 #ifdef VERSION_JP
     struct MiscObj* first;
 #else
-    s32 saved_reg_s2;
+    struct MiscUnk50_2* saved_reg_s2;
 #endif
 
     background_objects[1].x_pos.i.hi = 0x400;
@@ -627,7 +629,7 @@ void func_8001DE54(struct GameInfo* arg0)
 #ifdef VERSION_JP
             temp_v0->ext.unk.unk50 = (struct MiscUnk50_2*)first;
 #else
-            temp_v0->ext.unk.unk50 = (struct MiscUnk50_2*)saved_reg_s2;
+            temp_v0->ext.unk.unk50 = saved_reg_s2;
 #endif
             D_80139690 = OBJECT_HEADER(temp_v0);
         }
@@ -1071,6 +1073,29 @@ void func_8001E980(u8 arg0)
         }
     }
     need_palette_load |= 1;
+}
+
+#define TITLE_DISPLAY_MODE 4
+#define TITLE_WINDOW_VRAM 0x25E78000
+#define TITLE_WINDOW_SOURCE 0x002C5400
+#define TITLE_WINDOW_BYTES 0x200
+#define TITLE_NBG2_SCROLL 0x90
+
+extern volatile u8 saturn_frame_dma_pending;
+extern volatile u32 saturn_frame_dma_count;
+extern volatile u32 saturn_frame_dma_arg_0;
+extern volatile u32 saturn_frame_dma_arg_1;
+extern u16 saturn_vdp2_shadow[];
+
+void saturn_title_upload_window(void)
+{
+    saturn_display_mode = TITLE_DISPLAY_MODE;
+    saturn_frame_dma_pending = 1;
+    saturn_frame_dma_arg_0 = TITLE_WINDOW_VRAM;
+    saturn_frame_dma_arg_1 = TITLE_WINDOW_SOURCE;
+    saturn_frame_dma_count = TITLE_WINDOW_BYTES;
+    *(u16*)((u8*)saturn_vdp2_shadow + TITLE_NBG2_SCROLL) = 0;
+    *(u16*)((u8*)saturn_vdp2_shadow + TITLE_NBG2_SCROLL + 2) = 0;
 }
 
 static void saturn_menu_restore_backgrounds(struct GameInfo* arg0)

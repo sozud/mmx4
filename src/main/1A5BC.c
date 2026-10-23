@@ -164,6 +164,26 @@ void func_8002A41C(struct GameInfo* arg0)
 #define OPTIONS_SOUND_CONFIRM 0x27
 #define OPTIONS_SOUND_MOVE 0x0D
 
+const u16 saturn_options_actions[OPTIONS_BUTTON_COUNT] = {
+    0x0010,
+    0x0080,
+    0x0100,
+    0x0040,
+    0x0020,
+    0x0200,
+    0x0400,
+    0xFFFF,
+};
+const u16 saturn_options_buttons[OPTIONS_BUTTON_COUNT] = {
+    0x0400,
+    0x0100,
+    0x0200,
+    0x0040,
+    0x0020,
+    0x0010,
+    0x0080,
+    0x0008,
+};
 u8 saturn_options_rows_mode[] = {
     0x5F,
     0x28,
@@ -289,26 +309,6 @@ u8 saturn_options_labels[] = {
     0xB0,
     0x07,
     0xFF,
-};
-const u16 saturn_options_actions[OPTIONS_BUTTON_COUNT] = {
-    0x0010,
-    0x0080,
-    0x0100,
-    0x0040,
-    0x0020,
-    0x0200,
-    0x0400,
-    0xFFFF,
-};
-const u16 saturn_options_buttons[OPTIONS_BUTTON_COUNT] = {
-    0x0400,
-    0x0100,
-    0x0200,
-    0x0040,
-    0x0020,
-    0x0010,
-    0x0080,
-    0x0008,
 };
 extern u16 saturn_button_masks[];
 void saturn_sprite_reset_queues(void);

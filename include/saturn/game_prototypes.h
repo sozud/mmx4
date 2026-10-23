@@ -791,7 +791,7 @@ extern void ready_text_bounce (struct MiscObj *arg0);
 extern void ready_text_leave (struct MiscObj *arg0);
 extern void ready_text_blink (struct MiscObj *arg0);
 extern void ready_text_show (struct MiscObj *arg0);
-extern void ready_text_load_palette (s32 arg0, s32 arg1);
+extern void ready_text_load_palette (struct MiscObj *arg0, s32 arg1);
 extern void ready_text_despawn (struct MiscObj *arg0);
 extern void title_init (struct MiscObj *arg0);
 extern void title_draw (struct MiscObj *arg0);

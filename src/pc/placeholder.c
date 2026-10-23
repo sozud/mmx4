@@ -1,6 +1,7 @@
 #include "all.h"
 
 #include <libspu.h>
+#include <string.h>
 #include "memcard.h"
 #include "pc_replay.h"
 
@@ -174,6 +175,7 @@ void func_80012328(void)
     D_80166D50.pressed = buttons & (buttons ^ D_80166D50.previous);
 }
 
+#ifndef MMX4_SATURN
 void func_80016124(void)
 {
     SPRT* sprites = D_80139268[SP_DRAW_BUFFER];
@@ -221,7 +223,9 @@ void func_80016124(void)
     SetDrawMode(draw_mode, 0, 0, GetTPage(0, 0, 0x380, 0x100), 0);
     addPrim(&cur_draw_info->ordering_table.ui, draw_mode);
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
 {
     struct MiscObj* window;
@@ -315,6 +319,7 @@ void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
         set_animation(window, 0);
     }
 }
+#endif
 
 void func_80028FEC(s16 left, s16 right, s16 top, s16 bottom, u8 direction)
 {
@@ -408,6 +413,7 @@ void func_80028E24(void)
 static P_TAG* background_heads[2][6][8];
 static P_TAG* background_tails[2][6][8];
 
+#ifndef MMX4_SATURN
 struct PcSpriteFrame {
     void* data;
     u16 texture;
@@ -491,10 +497,6 @@ static s32 get_pc_sprite_frame(struct VisualObj* object,
         frame->index = item->animation_step.fields.frame_index;
     } else {
         return 0;
-    }
-
-    if (frame->data != NULL && pc_archive_slots[0] != NULL && ((uintptr_t)frame->data >> 32) != ((uintptr_t)pc_archive_slots[0] >> 32)) {
-        frame->data = (void*)(((uintptr_t)pc_archive_slots[0] & ~(uintptr_t)UINT32_MAX) | ((uintptr_t)frame->data & UINT32_MAX));
     }
 
     return frame->data != NULL;
@@ -675,6 +677,7 @@ void func_80024334(struct VisualObj* object)
     SP_PRIM_CURSOR = primitive;
     SP_DRAW_MODE_CURSOR = draw_mode;
 }
+#endif
 
 void func_8002588C(struct PlayerObj* arg0, s32 part, s32 clut)
 {
@@ -925,6 +928,7 @@ void func_80026894(s32 layer)
     }
 }
 
+#ifndef MMX4_SATURN
 void func_80026AA0(s32 layer)
 {
     struct BackgroundObj* bg = &background_objects[layer];
@@ -1016,6 +1020,7 @@ void func_800270F8(s32 x, s32 y, s32 tile_x, s32 tile_y)
 
     SP_BG_PRIM_CURSOR = sprite;
 }
+#endif
 
 void func_80027344(s32 layer, s32 x, s32 y)
 {
@@ -1268,307 +1273,6 @@ static s32 main_48_direction_pair(s8 direction, u8 facing)
 static int misc_32_cancelled(s8 mode)
 {
     return (controller_input.pressed & PAD_SELECTION_ALT) || ((controller_input.pressed & 0x800) && game_info.unk0 == mode);
-}
-
-#define BAR_BYTES(obj) ((u8*)(obj))
-extern u8 D_8013B818[0x10];
-
-void func_800304E4(struct BarObj* arg0)
-{
-    u8* bytes = BAR_BYTES(arg0);
-    s32 original = (u8)arg0->unk14;
-    s32 cursor;
-
-    switch (controller_input.pressed) {
-    case 0x800:
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        break;
-    case PAD_CONFIRM:
-        arg0->unk28 = 0;
-        arg0->unk2C = 0;
-        switch (arg0->unk14) {
-        case 10:
-            arg0->unk5 = 3;
-            if (TANK_VALUE(engine_obj.sub_tanks[0]) == 0x20)
-                arg0->unk28 = 1;
-            break;
-        case 11:
-            arg0->unk5 = 3;
-            if (TANK_VALUE(engine_obj.sub_tanks[1]) == 0x20)
-                arg0->unk28 = 1;
-            break;
-        case 12:
-            arg0->unk5 = 4;
-            if (TANK_VALUE(engine_obj.sub_tanks[2]) == 0x20)
-                arg0->unk2C = 1;
-            break;
-        }
-        break;
-    case 0x1000:
-        if (g_Player.unk2 != 0 || arg0->unk2 != 0)
-            break;
-        cursor = 9;
-        while ((s8)cursor != 0 && bytes[0x16 + (s8)cursor] == 0)
-            cursor--;
-        arg0->unk5 = 0;
-        arg0->unk14 = cursor;
-        break;
-    case 0x2000:
-        cursor = original;
-        for (;;) {
-            cursor++;
-            if ((s8)cursor >= 0xD) {
-                if (bytes[0x16 + (s8)cursor] == 0)
-                    cursor++;
-                arg0->unk5 = 2;
-                break;
-            }
-            if (bytes[0x16 + (s8)cursor] != 0)
-                break;
-        }
-        arg0->unk14 = cursor;
-        break;
-    case 0x8000:
-        cursor = original;
-        for (;;) {
-            cursor--;
-            if ((s8)cursor < 10) {
-                cursor = original;
-                break;
-            }
-            if (bytes[0x16 + (s8)cursor] != 0)
-                break;
-        }
-        arg0->unk14 = cursor;
-        break;
-    }
-    if (arg0->unk14 != (s8)original)
-        func_8001540C(0, 0xC, 0);
-}
-
-void func_80030728(struct BarObj* arg0)
-{
-    u8* bytes = BAR_BYTES(arg0);
-    s32 original = (u8)arg0->unk14;
-    s32 cursor;
-
-    if (controller_input.pressed & 0x800) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        goto done;
-    }
-    switch (controller_input.pressed) {
-    case PAD_CONFIRM:
-        if ((s8)original == 0xD) {
-            arg0->state = 2;
-            arg0->unk5 = 0;
-            arg0->unk30 = 1;
-        } else {
-            arg0->unk5 = 5;
-            arg0->unk6 = 0;
-            func_80023D90();
-        }
-        func_8001540C(0, 0x22, 0);
-        break;
-    case 0x1000:
-        cursor = original;
-        if (g_Player.unk2 != 0 || arg0->unk2 != 0) {
-            cursor--;
-            if ((s8)cursor < 0xD)
-                cursor = 0xD;
-            if (bytes[0x16 + (s8)cursor] != 0)
-                arg0->unk14 = cursor;
-            break;
-        }
-        for (;;) {
-            cursor--;
-            if ((s8)cursor < 0xD) {
-                cursor = 9;
-                while ((s8)cursor != 0 && bytes[0x16 + (s8)cursor] == 0)
-                    cursor--;
-                arg0->unk5 = 0;
-                break;
-            }
-            if (arg0->unk14 == (s8)cursor || bytes[0x16 + (s8)cursor] != 0)
-                break;
-        }
-        arg0->unk14 = cursor;
-        break;
-    case 0x4000:
-        cursor = original;
-        for (;;) {
-            cursor++;
-            if ((s8)cursor >= 0xF) {
-                cursor = 0xE;
-                break;
-            }
-            if (arg0->unk14 == (s8)cursor || bytes[0x16 + (s8)cursor] != 0)
-                break;
-        }
-        arg0->unk14 = cursor;
-        break;
-    case 0x8000:
-        cursor = 0xC;
-        if (g_Player.unk2 != 0 || arg0->unk2 != 0) {
-            for (;;) {
-                if ((s8)cursor == 0 || bytes[0x16 + (s8)cursor] != 0) {
-                    arg0->unk14 = cursor;
-                    arg0->unk5 = 1;
-                    break;
-                }
-                cursor--;
-                if ((s8)cursor < 10)
-                    break;
-            }
-            break;
-        }
-        while ((s8)cursor != 0 && bytes[0x16 + (s8)cursor] == 0)
-            cursor--;
-        arg0->unk14 = cursor;
-        arg0->unk5 = (s8)cursor < 10 ? 0 : 1;
-        break;
-    }
-done:
-    if (arg0->unk14 != (s8)original)
-        func_8001540C(0, 0xC, 0);
-}
-
-static void bar_merge_sub_tanks(void)
-{
-    s8 second = engine_obj.sub_tanks[1];
-
-    if (second >= 0)
-        return;
-    engine_obj.sub_tanks[0] = second;
-    engine_obj.sub_tanks[1] = TANK_DRAINED(second);
-}
-
-void func_80030A2C(struct BarObj* arg0)
-{
-    s32 frame = main_bss_state.frame_counter;
-    u32 tank;
-    u8 energy;
-    u8 health;
-    u8 player_health;
-
-    if (frame & 1)
-        return;
-    tank = arg0->unk14 != 10;
-    if (arg0->unk28 != 0) {
-        energy = TANK_VALUE(engine_obj.sub_tanks[tank]);
-        if (energy != 0) {
-            engine_obj.sub_tanks[tank] = (energy - 1) | 0x80;
-            health = HP_VALUE(g_Player.hp) + 1;
-            if (engine_obj.max_hp < (s8)health)
-                health = engine_obj.max_hp;
-            g_Player.hp = health;
-            if ((main_bss_state.frame_counter & 3) == 0)
-                func_8001540C(0, 0x17, 0);
-            return;
-        }
-        if (g_Player.hp != engine_obj.max_hp) {
-            health = HP_VALUE(g_Player.hp) + 1;
-            if (engine_obj.max_hp < (s8)health)
-                health = engine_obj.max_hp;
-            g_Player.hp = health;
-            if ((frame & 3) == 0)
-                func_8001540C(0, 0x17, 0);
-            return;
-        }
-        arg0->unk5 = 1;
-        arg0->unk28 = 0;
-        if (tank == 0)
-            bar_merge_sub_tanks();
-        return;
-    }
-    energy = TANK_VALUE(engine_obj.sub_tanks[tank]);
-    if (energy == 0) {
-        arg0->unk5 = 1;
-        if (tank == 0)
-            bar_merge_sub_tanks();
-        return;
-    }
-    engine_obj.sub_tanks[tank] = (energy - 1) | 0x80;
-    player_health = g_Player.hp;
-    health = HP_VALUE(player_health) + 1;
-    if (engine_obj.max_hp < (s8)health)
-        health = engine_obj.max_hp;
-    g_Player.hp = health | HP_DAMAGE_FLAG(player_health);
-    if ((main_bss_state.frame_counter & 3) == 0)
-        func_8001540C(0, 0x17, 0);
-}
-
-void func_80030C54(struct BarObj* arg0)
-{
-    u32 i;
-    s32 refilled = 0;
-    u8 energy;
-
-    if (main_bss_state.frame_counter & 1)
-        return;
-    if (arg0->unk2C != 0) {
-        for (i = 0; i < 9; i++) {
-            if (g_Player.weapon_energy[i] < 0x30) {
-                g_Player.weapon_energy[i]++;
-                refilled = 1;
-            } else {
-                g_Player.weapon_energy[i] = 0x30;
-            }
-        }
-        if (refilled == 0) {
-            energy = TANK_VALUE(engine_obj.sub_tanks[2]);
-            if (energy != 0) {
-                engine_obj.sub_tanks[2] = energy - 1;
-            } else {
-                arg0->unk5 = 1;
-                arg0->unk2C = 0;
-            }
-            return;
-        }
-    } else {
-        if (TANK_VALUE(engine_obj.sub_tanks[2]) == 0) {
-            arg0->unk5 = 1;
-            return;
-        }
-        for (i = 0; i < 9; i++) {
-            if (g_Player.weapon_energy[i] < 0x30 && (s8)(g_Player.weapon_energy[i] + 1) < 0x30) {
-                g_Player.weapon_energy[i]++;
-                refilled = 1;
-            } else {
-                g_Player.weapon_energy[i] = 0x30;
-            }
-        }
-        if (refilled == 0) {
-            arg0->unk5 = 1;
-            return;
-        }
-    }
-    energy = TANK_VALUE(engine_obj.sub_tanks[2]);
-    engine_obj.sub_tanks[2] = energy != 0 ? energy - 1 : energy;
-    if ((main_bss_state.frame_counter & 3) == 0)
-        func_8001540C(0, 0x17, 0);
-}
-
-void player_cancel_released_charge(void);
-
-void func_80031064(struct BarObj* arg0)
-{
-    if (arg0->unk30 == 0) {
-        if (g_Player.unk2 == 0) {
-            player_cancel_released_charge();
-            if ((s8)D_8013B818[0] != g_Player.weapon) {
-                player_reset_charge(&g_Player);
-                g_Player.stock_charge = 0;
-            }
-            player_update_shot_types(&g_Player);
-            if ((s8)D_8013B818[0] != g_Player.weapon)
-                player_equip_weapon(&g_Player);
-        }
-        func_80021158();
-        func_800129A4(8);
-    }
-    arg0->unk5 = 3;
 }
 
 static const u16* pause_screen_tiles;

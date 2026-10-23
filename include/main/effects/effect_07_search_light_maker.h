@@ -8,6 +8,6 @@ struct SearchLightSpawner {
 
 void search_light_maker_update(struct EffectObj* arg0);
 
-void search_light_maker_spawn_in_rect(s16, s16, s16, s16, s32);
+void search_light_maker_spawn_in_rect(s16, s16, s16, s16, struct EffectObj*);
 
 #endif

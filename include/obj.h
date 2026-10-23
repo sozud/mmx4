@@ -2377,6 +2377,7 @@ struct Unk16 {
     u32 unk9C;
 };
 
+#ifndef MMX4_SATURN
 struct BgDrawRelated {
     SPRT_16 sprites[0x400];
 };
@@ -2400,6 +2401,7 @@ struct OrderingTableBuffer {
 struct AuxiliaryPrimitiveBuffer {
     POLY_F4 data[5];
 };
+#endif
 
 struct StageSpriteSlot {
     s32 tag;
@@ -2467,6 +2469,7 @@ extern s16 easy_hp;
 extern struct BackgroundObj background_objects[3];
 extern u8 jet_stingray_bubble_index;
 
+#ifndef MMX4_SATURN
 extern struct BgDrawRelated D_8015D9D0[];
 extern struct MainPrimitiveBuffer temp1[];
 extern struct SecondaryPrimitiveBuffer temp2[];
@@ -2474,7 +2477,9 @@ extern struct BackgroundPrimitiveBuffer temp3[];
 extern struct OrderingTableBuffer temp4[];
 extern struct AuxiliaryPrimitiveBuffer temp5[];
 extern TILE D_80169D78[2];
+#endif
 extern struct FadeState D_8016DEA0;
+#ifndef MMX4_SATURN
 extern DR_TPAGE D_8012F498[2];
 extern TILE D_8013B7B0[2];
 extern POLY_FT4 D_80139F20[2];
@@ -2482,6 +2487,7 @@ extern POLY_F4 D_80139F70[2];
 extern DR_TPAGE D_80139FA0[2];
 extern POLY_F4 D_80139FB0[2][128];
 extern DR_TPAGE D_80171EB0[2][6][8];
+#endif
 extern u8 D_80141BE8[];
 extern u16 D_801441C8[3][32][32];
 
@@ -2489,6 +2495,7 @@ extern u16 D_801441C8[3][32][32];
 typedef u32 OT_TYPE;
 #endif
 
+#ifndef MMX4_SATURN
 extern P_TAG* D_8013BC40[2][4][8];
 extern P_TAG* D_8013E1E8[2][4][8];
 
@@ -2513,6 +2520,7 @@ struct DrawInfo {
 };
 
 extern struct DrawInfo draw_infos[2];
+#endif
 
 typedef union {
     s32* ptr;
@@ -2679,6 +2687,7 @@ union QuadRuntime {
 union QuadLink {
     struct EffectObj* owner;
     u16 direction;
+    s32 y_accel;
 };
 
 struct QuadVertex {

@@ -1,0 +1,2038 @@
+{
+ "cflags": [
+  "-m2",
+  "-mb",
+  "-mrenesas",
+  "-Os",
+  "-g",
+  "-std=gnu99",
+  "-DSKIP_ASM=1",
+  "-DMMX4_SATURN=1",
+  "-ffreestanding",
+  "-fno-builtin",
+  "-fno-pie",
+  "-fno-pic",
+  "-fno-strict-aliasing",
+  "-fomit-frame-pointer",
+  "-fno-optimize-sibling-calls",
+  "-ffunction-sections",
+  "-fdata-sections",
+  "-fno-merge-constants",
+  "-fno-delete-null-pointer-checks",
+  "-fno-isolate-erroneous-paths-dereference"
+ ],
+ "include": [
+  "include"
+ ],
+ "units": [
+  {
+   "source": "src/saturn/saturn_shc_runtime.S",
+   "flags": [
+    "-m2",
+    "-mb"
+   ]
+  },
+  {
+   "source": "src/saturn/saturn_sprite.S",
+   "flags": [
+    "-m2",
+    "-mb",
+    "-g"
+   ]
+  },
+  {
+   "source": "src/saturn/saturn_context.S",
+   "flags": [
+    "-m2",
+    "-mb",
+    "-g"
+   ]
+  },
+  {
+   "source": "src/saturn/shared_layout.c"
+  },
+  {
+   "source": "src/main/visuals/missile_smoke_data.c"
+  },
+  {
+   "source": "src/main/shots/eregion_fireball_data.c"
+  },
+  {
+   "source": "src/main/shots/eregion_wing_slash_data.c"
+  },
+  {
+   "source": "src/main/shots/general_shot_boxes_data.c"
+  },
+  {
+   "source": "src/main/shots/general_shot_debris_data.c"
+  },
+  {
+   "source": "src/main/shots/gunner_shot_unused_data.c"
+  },
+  {
+   "source": "src/main/shots/mech_boulder_boxes.c"
+  },
+  {
+   "source": "src/main/shots/mech_boulder_data.c"
+  },
+  {
+   "source": "src/main/shots/turret_laser_beam_data.c"
+  },
+  {
+   "source": "src/main/effects/edge_spawner_data.c"
+  },
+  {
+   "source": "src/main/effects/sound_zone_data.c"
+  },
+  {
+   "source": "src/main/items/breakable_boulder_debris_table.c"
+  },
+  {
+   "source": "src/main/items/gate_core_box_data.c"
+  },
+  {
+   "source": "src/main/items/gate_core_boxes.c"
+  },
+  {
+   "source": "src/main/items/rising_platform_animation_data.c"
+  },
+  {
+   "source": "src/main/items/rising_platform_animation_steps.c"
+  },
+  {
+   "source": "src/main/misc/option_toggle_funcs.c"
+  },
+  {
+   "source": "src/main/misc/pod_effect_data.c"
+  },
+  {
+   "source": "src/main/mains/train_soldier_guard_box.c"
+  },
+  {
+   "source": "src/main/collision_bounds.c"
+  },
+  {
+   "source": "src/main/game_info.c"
+  },
+  {
+   "source": "src/main/E47C.c"
+  },
+  {
+   "source": "src/main/E47C_menu_funcs.c"
+  },
+  {
+   "source": "src/main/engine.c"
+  },
+  {
+   "source": "src/main/mech_state_data.c"
+  },
+  {
+   "source": "src/main/165A0.c"
+  },
+  {
+   "source": "src/main/sprite_animations.c"
+  },
+  {
+   "source": "src/main/E47C_menu_data.c"
+  },
+  {
+   "source": "src/main/player_animations.c"
+  },
+  {
+   "source": "src/main/player_animations_2.c"
+  },
+  {
+   "source": "src/main/stage_object_record_tables.c"
+  },
+  {
+   "source": "src/main/engine_transition_data.c"
+  },
+  {
+   "source": "src/main/11184_dispatch_data.c"
+  },
+  {
+   "source": "src/main/engine_dispatch_data.c"
+  },
+  {
+   "source": "src/main/tile_effects.c"
+  },
+  {
+   "source": "src/main/stage_object_records.c"
+  },
+  {
+   "source": "src/main/stage_object_records_01.c"
+  },
+  {
+   "source": "src/main/stage_object_records_02.c"
+  },
+  {
+   "source": "src/main/stage_object_records_03.c"
+  },
+  {
+   "source": "src/main/stage_object_records_04.c"
+  },
+  {
+   "source": "src/main/stage_object_records_05.c"
+  },
+  {
+   "source": "src/main/stage_object_records_06.c"
+  },
+  {
+   "source": "src/main/stage_object_records_07.c"
+  },
+  {
+   "source": "src/main/stage_object_records_08.c"
+  },
+  {
+   "source": "src/main/stage_object_records_09.c"
+  },
+  {
+   "source": "src/main/stage_object_records_10.c"
+  },
+  {
+   "source": "src/main/stage_object_records_11.c"
+  },
+  {
+   "source": "src/main/stage_object_records_12.c"
+  },
+  {
+   "source": "src/main/stage_object_records_13.c"
+  },
+  {
+   "source": "src/main/14A60.c"
+  },
+  {
+   "source": "src/main/2824.c"
+  },
+  {
+   "source": "src/main/stage_layouts.c"
+  },
+  {
+   "source": "src/saturn/platform_storage.c"
+  },
+  {
+   "source": "src/saturn/saturn.c",
+   "extra_flags": [
+    "-O2"
+   ]
+  },
+  {
+   "source": "src/saturn/platform_startup.c"
+  },
+  {
+   "source": "src/saturn/platform_pad.c"
+  },
+  {
+   "source": "src/saturn/platform_interrupt.c"
+  },
+  {
+   "source": "src/saturn/platform_debug.c"
+  },
+  {
+   "source": "src/saturn/platform_slave.c"
+  },
+  {
+   "source": "src/saturn/platform_vdp1.c",
+   "extra_flags": [
+    "-O2"
+   ]
+  },
+  {
+   "source": "src/saturn/platform_video.c"
+  },
+  {
+   "source": "src/saturn/platform_transfer.c",
+   "extra_flags": [
+    "-O2"
+   ]
+  },
+  {
+   "source": "src/saturn/platform_sound.c"
+  },
+  {
+   "source": "src/saturn/platform_movie.c"
+  },
+  {
+   "source": "src/main/55C4.c"
+  },
+  {
+   "source": "src/saturn/platform_boot.c"
+  },
+  {
+   "source": "src/saturn/platform_save.c"
+  },
+  {
+   "source": "src/saturn/platform_text.c"
+  },
+  {
+   "source": "src/saturn/platform_fade.c"
+  },
+  {
+   "source": "src/saturn/platform_background.c"
+  },
+  {
+   "source": "src/saturn/platform_sprite.c"
+  },
+  {
+   "source": "src/saturn/platform_texture.c"
+  },
+  {
+   "source": "src/saturn/platform_hud.c"
+  },
+  {
+   "source": "src/saturn/platform_menu.c"
+  },
+  {
+   "source": "src/saturn/platform_loading.c"
+  },
+  {
+   "source": "src/saturn/platform_cd.c",
+   "extra_flags": [
+    "-O2"
+   ]
+  },
+  {
+   "source": "src/main/323C.c"
+  },
+  {
+   "source": "src/saturn/platform_pause_screen.c"
+  },
+  {
+   "source": "src/main/102FC.c"
+  },
+  {
+   "source": "src/main/object_update.c"
+  },
+  {
+   "source": "src/main/10CA4.c"
+  },
+  {
+   "source": "src/main/11184.c"
+  },
+  {
+   "source": "src/main/CB184.c"
+  },
+  {
+   "source": "src/main/background.c"
+  },
+  {
+   "source": "src/main/13A8C.c"
+  },
+  {
+   "source": "src/main/144A4.c"
+  },
+  {
+   "source": "src/main/stage_objects.c"
+  },
+  {
+   "source": "src/main/1AC84.c"
+  },
+  {
+   "source": "src/main/195B4.c"
+  },
+  {
+   "source": "src/main/enemy_reaction.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_56_ride_chaser_shot.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_57_ride_chaser_ram.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_58_ice_block_hitbox.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_59_ride_armor_shot.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_60_ride_armor_missile.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_61_ride_armor_punch.c"
+  },
+  {
+   "source": "src/main/bike.c"
+  },
+  {
+   "source": "src/main/mech.c"
+  },
+  {
+   "source": "src/main/character_select.c"
+  },
+  {
+   "source": "src/main/1EC20.c"
+  },
+  {
+   "source": "src/main/1FD10.c"
+  },
+  {
+   "source": "src/main/collision.c"
+  },
+  {
+   "source": "src/main/1CF60.c"
+  },
+  {
+   "source": "src/main/1E1BC.c"
+  },
+  {
+   "source": "src/main/unks/unk_00_menu_text.c"
+  },
+  {
+   "source": "src/main/unks/unk_01_menu_label.c"
+  },
+  {
+   "source": "src/main/128C4.c"
+  },
+  {
+   "source": "src/main/mains/main_00_background_dragon.c"
+  },
+  {
+   "source": "src/main/mains/main_01_armored_walker.c"
+  },
+  {
+   "source": "src/main/mains/main_02_item_carrier.c"
+  },
+  {
+   "source": "src/main/mains/main_03_spike_marl.c"
+  },
+  {
+   "source": "src/main/mains/main_04_drill_copter.c"
+  },
+  {
+   "source": "src/main/mains/main_05_robot_bee.c"
+  },
+  {
+   "source": "src/main/mains/main_06_bulldozer.c"
+  },
+  {
+   "source": "src/main/mains/main_07_ambush_gunner.c"
+  },
+  {
+   "source": "src/main/mains/main_08_eregion.c"
+  },
+  {
+   "source": "src/main/mains/main_09_unused.c"
+  },
+  {
+   "source": "src/main/mains/main_10_dragonfly.c"
+  },
+  {
+   "source": "src/main/mains/main_11_wall_crawler.c"
+  },
+  {
+   "source": "src/main/mains/main_12_hover_sentry.c"
+  },
+  {
+   "source": "src/main/mains/main_13_heavy_mech.c"
+  },
+  {
+   "source": "src/main/mains/main_14_ice_bird.c"
+  },
+  {
+   "source": "src/main/mains/main_15_shell_crawler.c"
+  },
+  {
+   "source": "src/main/mains/main_16_trident_mech.c"
+  },
+  {
+   "source": "src/main/mains/main_17_snowman_bomb.c"
+  },
+  {
+   "source": "src/main/mains/main_18_ice_core.c"
+  },
+  {
+   "source": "src/main/mains/main_19_surface_hopper.c"
+  },
+  {
+   "source": "src/main/mains/main_20_ice_block.c"
+  },
+  {
+   "source": "src/main/mains/main_21_falling_icicle.c"
+  },
+  {
+   "source": "src/main/mains/main_22_bee_hive.c"
+  },
+  {
+   "source": "src/main/mains/main_23_slope_skier.c"
+  },
+  {
+   "source": "src/main/mains/main_24_jet_drone.c"
+  },
+  {
+   "source": "src/main/mains/main_25_caterkiller.c"
+  },
+  {
+   "source": "src/main/mains/main_26_ice_wall.c"
+  },
+  {
+   "source": "src/main/mains/main_27_dash_gunner.c"
+  },
+  {
+   "source": "src/main/mains/main_28_spawner_pod.c"
+  },
+  {
+   "source": "src/main/mains/main_29_pod_spawner.c"
+  },
+  {
+   "source": "src/main/mains/main_30_regen_turret.c"
+  },
+  {
+   "source": "src/main/mains/main_31_thorn_trap.c"
+  },
+  {
+   "source": "src/main/mains/main_32_bomb_bat.c"
+  },
+  {
+   "source": "src/main/mains/main_33_spike_sled.c"
+  },
+  {
+   "source": "src/main/mains/main_34_highway_trooper.c"
+  },
+  {
+   "source": "src/main/mains/main_35_wheel_charger.c"
+  },
+  {
+   "source": "src/main/mains/main_36_latcher.c"
+  },
+  {
+   "source": "src/main/mains/main_37_rocket_spiker.c"
+  },
+  {
+   "source": "src/main/mains/main_38_train_cannon.c"
+  },
+  {
+   "source": "src/main/mains/main_39_falling_ceiling.c"
+  },
+  {
+   "source": "src/main/mains/main_40_breakable_terrain.c"
+  },
+  {
+   "source": "src/main/mains/main_41_data_hopper.c"
+  },
+  {
+   "source": "src/main/mains/main_42_homing_orb.c"
+  },
+  {
+   "source": "src/main/mains/main_43_web_spider.c"
+  },
+  {
+   "source": "src/main/mains/main_44_anchored_mine.c"
+  },
+  {
+   "source": "src/main/mains/main_45_train_boss.c"
+  },
+  {
+   "source": "src/main/mains/main_46_train_boss_turret.c"
+  },
+  {
+   "source": "src/main/mains/main_47_train_boss_armor.c"
+  },
+  {
+   "source": "src/main/mains/main_48_sentry_drone.c"
+  },
+  {
+   "source": "src/main/mains/main_49_train_soldier.c"
+  },
+  {
+   "source": "src/main/mains/main_50_train_crate.c"
+  },
+  {
+   "source": "src/main/mains/main_51_fortress_cannon.c"
+  },
+  {
+   "source": "src/main/mains/main_52_jump_shooter.c"
+  },
+  {
+   "source": "src/main/mains/main_53_wave_rider.c"
+  },
+  {
+   "source": "src/main/mains/main_54_slash_beast.c"
+  },
+  {
+   "source": "src/main/mains/main_55_jet_stingray_flyby.c"
+  },
+  {
+   "source": "src/main/mains/main_56_jet_stingray.c"
+  },
+  {
+   "source": "src/main/mains/main_57_frost_walrus.c"
+  },
+  {
+   "source": "src/main/mains/main_58_beam_drone.c"
+  },
+  {
+   "source": "src/main/mains/main_59_timed_explosion.c"
+  },
+  {
+   "source": "src/main/mains/main_60_storm_owl.c"
+  },
+  {
+   "source": "src/main/mains/main_61_split_mushroom.c"
+  },
+  {
+   "source": "src/main/mains/main_62_flame_jet.c"
+  },
+  {
+   "source": "src/main/mains/main_63_hatch_turret.c"
+  },
+  {
+   "source": "src/main/mains/main_64_cyber_peacock.c"
+  },
+  {
+   "source": "src/main/mains/main_65_magma_dragoon.c"
+  },
+  {
+   "source": "src/main/mains/main_66_iris.c"
+  },
+  {
+   "source": "src/main/mains/main_67_gunship.c"
+  },
+  {
+   "source": "src/main/mains/main_68_sigma.c"
+  },
+  {
+   "source": "src/main/mains/main_69_colonel.c"
+  },
+  {
+   "source": "src/main/mains/main_70_drone_pod.c"
+  },
+  {
+   "source": "src/main/mains/main_71_ride_armor_pilot.c"
+  },
+  {
+   "source": "src/main/mains/main_72_unused_ride_armor.c"
+  },
+  {
+   "source": "src/main/mains/main_73_double.c"
+  },
+  {
+   "source": "src/main/mains/main_74_sigma_final.c"
+  },
+  {
+   "source": "src/main/mains/main_75_general.c"
+  },
+  {
+   "source": "src/main/mains/main_76_spike_crawler.c"
+  },
+  {
+   "source": "src/main/shots/shot_00_dragon_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_01_drill_copter_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_02_gunner_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_06_wall_crawler_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_07_dropped_bomb.c"
+  },
+  {
+   "source": "src/main/shots/shot_08_shell_crawler_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_09_trident_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_10_dragon_spread_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_11_enemy_bullet.c"
+  },
+  {
+   "source": "src/main/shots/shot_12_ice_core_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_13_jet_drone_bullet.c"
+  },
+  {
+   "source": "src/main/shots/shot_14_dash_gunner_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_15_turret_laser.c"
+  },
+  {
+   "source": "src/main/shots/shot_16_linked_spark.c"
+  },
+  {
+   "source": "src/main/shots/shot_17_depth_charge.c"
+  },
+  {
+   "source": "src/main/shots/shot_18_aimed_bullet.c"
+  },
+  {
+   "source": "src/main/shots/shot_19_trooper_bomb.c"
+  },
+  {
+   "source": "src/main/shots/shot_20_cannon_blast.c"
+  },
+  {
+   "source": "src/main/shots/shot_21_cannon_shell.c"
+  },
+  {
+   "source": "src/main/shots/shot_22_web_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_23_web_thread.c"
+  },
+  {
+   "source": "src/main/shots/shot_24_train_boss_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_25_grenade.c"
+  },
+  {
+   "source": "src/main/shots/shot_26_sentry_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_27_jump_shooter_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_28_melee_hitbox.c"
+  },
+  {
+   "source": "src/main/shots/shot_29_cannon_missile.c"
+  },
+  {
+   "source": "src/main/shots/shot_30_cannon_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_31_slash_beast_crescent.c"
+  },
+  {
+   "source": "src/main/shots/shot_32_flame_pillar.c"
+  },
+  {
+   "source": "src/main/shots/shot_33_falling_rock.c"
+  },
+  {
+   "source": "src/main/shots/shot_34_ray_trap.c"
+  },
+  {
+   "source": "src/main/shots/shot_35_walrus_ice.c"
+  },
+  {
+   "source": "src/main/shots/shot_36_drone_beam.c"
+  },
+  {
+   "source": "src/main/shots/shot_37_owl_feather.c"
+  },
+  {
+   "source": "src/main/shots/shot_38_owl_cyclone.c"
+  },
+  {
+   "source": "src/main/shots/shot_39_mushroom_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_40_hatch_blast.c"
+  },
+  {
+   "source": "src/main/shots/shot_41_magma_fire.c"
+  },
+  {
+   "source": "src/main/shots/shot_42_peacock_missile.c"
+  },
+  {
+   "source": "src/main/shots/shot_43_gunship_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_44_iris_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_45_colonel_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_46_sigma_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_48_double_ball.c"
+  },
+  {
+   "source": "src/main/shots/shot_49_double_aerial.c"
+  },
+  {
+   "source": "src/main/shots/shot_50_double_bouncer.c"
+  },
+  {
+   "source": "src/main/shots/shot_51_double_mine.c"
+  },
+  {
+   "source": "src/main/shots/shot_52_double_mine_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_53_sigma_head.c"
+  },
+  {
+   "source": "src/main/shots/shot_54_sigma_final_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_55_general_shot.c"
+  },
+  {
+   "source": "src/main/shots/shot_56_sigma_spit.c"
+  },
+  {
+   "source": "src/main/shots/shot_57_sigma_beam_hitbox.c"
+  },
+  {
+   "source": "src/main/charge_glow.c"
+  },
+  {
+   "source": "src/main/afterimage.c"
+  },
+  {
+   "source": "src/main/visuals/visual_00_wall_slide_dust.c"
+  },
+  {
+   "source": "src/main/visuals/visual_01_dash_dust.c"
+  },
+  {
+   "source": "src/main/visuals/visual_02_charge_muzzle_flash.c"
+  },
+  {
+   "source": "src/main/visuals/visual_07_water_wake.c"
+  },
+  {
+   "source": "src/main/visuals/visual_03_small_effect.c"
+  },
+  {
+   "source": "src/main/visuals/visual_04_blast.c"
+  },
+  {
+   "source": "src/main/visuals/visual_05_object_afterimage.c"
+  },
+  {
+   "source": "src/main/visuals/visual_06_eregion_part.c"
+  },
+  {
+   "source": "src/main/visuals/visual_08_ice_shard.c"
+  },
+  {
+   "source": "src/main/visuals/visual_09_dust_puff.c"
+  },
+  {
+   "source": "src/main/visuals/visual_10_dragon_fx.c"
+  },
+  {
+   "source": "src/main/visuals/visual_11_charge_ring.c"
+  },
+  {
+   "source": "src/main/visuals/visual_12_ride_dust.c"
+  },
+  {
+   "source": "src/main/visuals/visual_13_ride_chaser_jet.c"
+  },
+  {
+   "source": "src/main/visuals/visual_14_lift_effect.c"
+  },
+  {
+   "source": "src/main/visuals/visual_15_ride_chaser_flash.c"
+  },
+  {
+   "source": "src/main/visuals/visual_16_enemy_charge_glow.c"
+  },
+  {
+   "source": "src/main/visuals/visual_17_web_piece.c"
+  },
+  {
+   "source": "src/main/visuals/visual_20_web_flash.c"
+  },
+  {
+   "source": "src/main/visuals/visual_21_wave_rider_jet.c"
+  },
+  {
+   "source": "src/main/visuals/visual_22_missile_smoke.c"
+  },
+  {
+   "source": "src/main/visuals/visual_23_jet_stingray_fx.c"
+  },
+  {
+   "source": "src/main/visuals/visual_24_frost_walrus_fx.c"
+  },
+  {
+   "source": "src/main/visuals/visual_25_flame_jet_fx.c"
+  },
+  {
+   "source": "src/main/visuals/visual_28_storm_owl_fx.c"
+  },
+  {
+   "source": "src/main/visuals/visual_29_peacock_target.c"
+  },
+  {
+   "source": "src/main/visuals/visual_30_colonel_fx.c"
+  },
+  {
+   "source": "src/main/visuals/visual_31_gunship_exhaust.c"
+  },
+  {
+   "source": "src/main/visuals/visual_32_sigma_fx.c"
+  },
+  {
+   "source": "src/main/visuals/visual_34_split_mushroom_fx.c"
+  },
+  {
+   "source": "src/main/effects/effect_00_camera_trigger.c"
+  },
+  {
+   "source": "src/main/effects/effect_01_tile_animator.c"
+  },
+  {
+   "source": "src/main/effects/effect_02_color_filter.c"
+  },
+  {
+   "source": "src/main/effects/effect_03_palette_animator.c"
+  },
+  {
+   "source": "src/main/effects/effect_04_stage_music.c"
+  },
+  {
+   "source": "src/main/effects/effect_05_tile_scanner.c"
+  },
+  {
+   "source": "src/main/effects/effect_06_checkpoint_trigger.c"
+  },
+  {
+   "source": "src/main/effects/effect_07_search_light_maker.c"
+  },
+  {
+   "source": "src/main/effects/effect_08_bg_zone_controller.c"
+  },
+  {
+   "source": "src/main/effects/effect_09_bg_wind.c"
+  },
+  {
+   "source": "src/main/effects/effect_10.c"
+  },
+  {
+   "source": "src/main/effects/effect_11_null_effect.c"
+  },
+  {
+   "source": "src/main/effects/effect_12_enemy_spawner.c"
+  },
+  {
+   "source": "src/main/effects/effect_13_edge_spawner.c"
+  },
+  {
+   "source": "src/main/effects/effect_14_item_scatter.c"
+  },
+  {
+   "source": "src/main/effects/effect_15_bg_zone_controller_b.c"
+  },
+  {
+   "source": "src/main/effects/effect_16_autoscroll_segment.c"
+  },
+  {
+   "source": "src/main/effects/effect_17_freeze_blast.c"
+  },
+  {
+   "source": "src/main/effects/effect_18_world_flip.c"
+  },
+  {
+   "source": "src/main/effects/effect_19_bg_zone_controller_c.c"
+  },
+  {
+   "source": "src/main/effects/effect_20_bg_zone_controller_d.c"
+  },
+  {
+   "source": "src/main/effects/effect_21_crumble_sequencer.c"
+  },
+  {
+   "source": "src/main/effects/effect_22_bg_zone_controller_e.c"
+  },
+  {
+   "source": "src/main/effects/effect_23_tile_flicker.c"
+  },
+  {
+   "source": "src/main/effects/effect_24_boss_warning.c"
+  },
+  {
+   "source": "src/main/effects/effect_25_bg_zone_controller_f.c"
+  },
+  {
+   "source": "src/main/effects/effect_26_boss_death_fx.c"
+  },
+  {
+   "source": "src/main/effects/effect_27_teleport_intro.c"
+  },
+  {
+   "source": "src/main/effects/effect_28_fortress_collapse.c"
+  },
+  {
+   "source": "src/main/effects/effect_29_tile_anim_trigger.c"
+  },
+  {
+   "source": "src/main/effects/effect_30_qux_spawner.c"
+  },
+  {
+   "source": "src/main/effects/effect_31_floor_trap.c"
+  },
+  {
+   "source": "src/main/effects/effect_32_proximity_door.c"
+  },
+  {
+   "source": "src/main/effects/effect_33_rock_dropper.c"
+  },
+  {
+   "source": "src/main/effects/effect_34_rock_drop_sequence.c"
+  },
+  {
+   "source": "src/main/effects/effect_35_palette_pulse.c"
+  },
+  {
+   "source": "src/main/effects/effect_36_stage_exit_fade.c"
+  },
+  {
+   "source": "src/main/effects/effect_37_alarm_flash.c"
+  },
+  {
+   "source": "src/main/effects/effect_38_cyberspace_trial.c"
+  },
+  {
+   "source": "src/main/effects/effect_39_tile_strip_anim.c"
+  },
+  {
+   "source": "src/main/effects/effect_40_tile_loop_anim.c"
+  },
+  {
+   "source": "src/main/effects/effect_41_tile_blink_anim.c"
+  },
+  {
+   "source": "src/main/effects/effect_42_sigma_sequencer_fx.c"
+  },
+  {
+   "source": "src/main/effects/effect_43_sigma_collapse.c"
+  },
+  {
+   "source": "src/main/effects/effect_44_stage_dialogue_trigger.c"
+  },
+  {
+   "source": "src/main/layers/layer_00_train_scroll.c"
+  },
+  {
+   "source": "src/main/layers/layer_01_jungle_parallax.c"
+  },
+  {
+   "source": "src/main/layers/layer_02_train_tunnel.c"
+  },
+  {
+   "source": "src/main/layers/layer_03.c"
+  },
+  {
+   "source": "src/main/layers/layer_04_volcano_camera.c"
+  },
+  {
+   "source": "src/main/layers/layer_05_airship_bob.c"
+  },
+  {
+   "source": "src/main/layers/layer_06_final_weapon_bg_cycle.c"
+  },
+  {
+   "source": "src/main/layers/layer_07_space_port_parallax.c"
+  },
+  {
+   "source": "src/main/items/item_01_stage_block.c"
+  },
+  {
+   "source": "src/main/items/item_02_pickup.c"
+  },
+  {
+   "source": "src/main/items/item_03_falling_pillar.c"
+  },
+  {
+   "source": "src/main/items/item_04_destructible_core.c"
+  },
+  {
+   "source": "src/main/items/item_05_moving_lift.c"
+  },
+  {
+   "source": "src/main/items/item_06_gate_core.c"
+  },
+  {
+   "source": "src/main/items/item_07_rising_platform.c"
+  },
+  {
+   "source": "src/main/items/item_08_boss_door.c"
+  },
+  {
+   "source": "src/main/items/item_09_moving_block.c"
+  },
+  {
+   "source": "src/main/items/item_10_spark_machine.c"
+  },
+  {
+   "source": "src/main/items/item_11_teleporter.c"
+  },
+  {
+   "source": "src/main/items/item_12_crusher_wall.c"
+  },
+  {
+   "source": "src/main/items/item_13_trap_floor.c"
+  },
+  {
+   "source": "src/main/items/item_14_big_elevator.c"
+  },
+  {
+   "source": "src/main/items/item_15_rising_slab.c"
+  },
+  {
+   "source": "src/main/items/item_16_sliding_floor.c"
+  },
+  {
+   "source": "src/main/items/item_17_crumble_trigger.c"
+  },
+  {
+   "source": "src/main/items/item_25_breakable_boulder.c"
+  },
+  {
+   "source": "src/main/items/item_18_drop_pillar.c"
+  },
+  {
+   "source": "src/main/items/item_19_data_capsule.c"
+  },
+  {
+   "source": "src/main/items/item_20_gravity_switch.c"
+  },
+  {
+   "source": "src/main/items/item_00_breakable_wall.c"
+  },
+  {
+   "source": "src/main/items/item_21_hopper_switch.c"
+  },
+  {
+   "source": "src/main/items/item_22_layout_gate.c"
+  },
+  {
+   "source": "src/main/items/item_23_laser_target.c"
+  },
+  {
+   "source": "src/main/items/item_24_breakable_panel.c"
+  },
+  {
+   "source": "src/main/items/item_26_light_capsule.c"
+  },
+  {
+   "source": "src/main/items/item_27_boss_teleporter.c"
+  },
+  {
+   "source": "src/main/misc/misc_00_static_sprite.c"
+  },
+  {
+   "source": "src/main/misc/misc_01_common_effect.c"
+  },
+  {
+   "source": "src/main/misc/misc_02_rubble.c"
+  },
+  {
+   "source": "src/main/misc/misc_03_debris.c"
+  },
+  {
+   "source": "src/main/misc/misc_04_dragon_rubble.c"
+  },
+  {
+   "source": "src/main/misc/misc_05_pod_effect.c"
+  },
+  {
+   "source": "src/main/misc/misc_06_homing_point.c"
+  },
+  {
+   "source": "src/main/misc/misc_07_attached_effect.c"
+  },
+  {
+   "source": "src/main/misc/misc_08_crumbling_tile.c"
+  },
+  {
+   "source": "src/main/misc/misc_09_owner_fx.c"
+  },
+  {
+   "source": "src/main/misc/misc_10_briefing_character.c"
+  },
+  {
+   "source": "src/main/misc/misc_11_blink_marker.c"
+  },
+  {
+   "source": "src/main/misc/misc_12_stage_icon.c"
+  },
+  {
+   "source": "src/main/misc/misc_13_stage_portrait.c"
+  },
+  {
+   "source": "src/main/misc/misc_14_frame_ghost.c"
+  },
+  {
+   "source": "src/main/misc/misc_15_vent.c"
+  },
+  {
+   "source": "src/main/misc/misc_16_vent_puff.c"
+  },
+  {
+   "source": "src/main/misc/misc_18_ready_text.c"
+  },
+  {
+   "source": "src/main/misc/misc_19_title.c"
+  },
+  {
+   "source": "src/main/misc/misc_21_center_sprite.c"
+  },
+  {
+   "source": "src/main/misc/misc_20_scroll_prop.c"
+  },
+  {
+   "source": "src/main/misc/misc_22_dialogue_ui.c"
+  },
+  {
+   "source": "src/main/misc/misc_23_explosion_puff.c"
+  },
+  {
+   "source": "src/main/misc/misc_24_enemy_hatch.c"
+  },
+  {
+   "source": "src/main/misc/misc_25_sentry_flash.c"
+  },
+  {
+   "source": "src/main/misc/misc_26_slash_beast_afterimage.c"
+  },
+  {
+   "source": "src/main/misc/misc_27_owner_aura.c"
+  },
+  {
+   "source": "src/main/misc/misc_28_select_a_character.c"
+  },
+  {
+   "source": "src/main/misc/misc_29_title_logo.c"
+  },
+  {
+   "source": "src/main/misc/misc_30_spore_rain_fx.c"
+  },
+  {
+   "source": "src/main/misc/misc_31_option_toggle.c"
+  },
+  {
+   "source": "src/main/misc/misc_32_option_sprite.c"
+  },
+  {
+   "source": "src/main/misc/misc_33_cyberspace_warp.c"
+  },
+  {
+   "source": "src/main/misc/misc_34_cyberspace_guide.c"
+  },
+  {
+   "source": "src/main/misc/misc_35_cyclone_trail.c"
+  },
+  {
+   "source": "src/main/misc/misc_36_item_sparkle.c"
+  },
+  {
+   "source": "src/main/misc/misc_38_dragoon_flame.c"
+  },
+  {
+   "source": "src/main/misc/misc_39_iris_intro_crystal.c"
+  },
+  {
+   "source": "src/main/misc/misc_40_ambient_bubble.c"
+  },
+  {
+   "source": "src/main/misc/misc_42_menu_icon.c"
+  },
+  {
+   "source": "src/main/misc/misc_43_intro_messenger.c"
+  },
+  {
+   "source": "src/main/misc/misc_44_stage_cutscene.c"
+  },
+  {
+   "source": "src/main/misc/misc_45_scripted_slider.c"
+  },
+  {
+   "source": "src/main/misc/misc_46_post_boss_cutscene.c"
+  },
+  {
+   "source": "src/main/misc/misc_49_double_afterimage.c"
+  },
+  {
+   "source": "src/main/misc/misc_50_cutscene_actor.c"
+  },
+  {
+   "source": "src/main/misc/misc_51_capsule_part.c"
+  },
+  {
+   "source": "src/main/misc/misc_52_npc_cutscene.c"
+  },
+  {
+   "source": "src/main/misc/misc_53_final_cutscene.c"
+  },
+  {
+   "source": "src/main/misc/misc_55_sigma_final_fx.c"
+  },
+  {
+   "source": "src/main/misc/misc_57_falling_piece.c"
+  },
+  {
+   "source": "src/main/quads/quad_00_search_light.c"
+  },
+  {
+   "source": "src/main/quads/quad_01_stage_select_panel.c"
+  },
+  {
+   "source": "src/main/quads/quad_02_stage_select_flyout.c"
+  },
+  {
+   "source": "src/main/quads/quad_03_boss_warning_quad.c"
+  },
+  {
+   "source": "src/main/quads/quad_04_boss_death_shard.c"
+  },
+  {
+   "source": "src/main/quads/quad_05_web_piece_quad.c"
+  },
+  {
+   "source": "src/main/quads/quad_06_light_ray.c"
+  },
+  {
+   "source": "src/main/quads/quad_07_ready_line.c"
+  },
+  {
+   "source": "src/main/quads/quad_08_flash_band.c"
+  },
+  {
+   "source": "src/main/quads/quad_11_title_quad.c"
+  },
+  {
+   "source": "src/main/quads/quad_12_title_facet.c"
+  },
+  {
+   "source": "src/main/quads/quad_13_null.c"
+  },
+  {
+   "source": "src/main/quads/quad_14_colonel_beam.c"
+  },
+  {
+   "source": "src/main/quads/quad_15_sigma_beam.c"
+  },
+  {
+   "source": "src/main/quads/quad_16_sigma_laser.c"
+  },
+  {
+   "source": "src/main/objects.c"
+  },
+  {
+   "source": "src/main/object_motion.c",
+   "extra_flags": [
+    "-fwrapv"
+   ]
+  },
+  {
+   "source": "src/main/player_check.c"
+  },
+  {
+   "source": "src/main/player_enter.c"
+  },
+  {
+   "source": "src/main/player_common.c"
+  },
+  {
+   "source": "src/main/player_weapon.c"
+  },
+  {
+   "source": "src/main/player.c"
+  },
+  {
+   "source": "src/main/player_special.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_00_lemon.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_09_charge_shot.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_19_stock_shot.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_20_plasma_shot.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_22_nova_strike_hitbox.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_01_lightning_web.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_02_frost_tower.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_03_soul_body.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_04_rising_fire.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_05_ground_hunter.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_06_aiming_laser_charged.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_07_double_cyclone.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_08_twin_slasher.c"
+  },
+  {
+   "source": "src/main/weapons/weapon_24_zero_saber.c"
+  },
+  {
+   "source": "src/main/125BC.c"
+  },
+  {
+   "source": "src/main/1A5BC.c"
+  },
+  {
+   "source": "src/main/pause_menu.c"
+  },
+  {
+   "source": "src/main/1263C.c"
+  },
+  {
+   "source": "src/main/visuals/visual_18_aiming_laser_scope.c"
+  },
+  {
+   "source": "src/main/visuals/visual_19_double_cyclone_charged_fan.c"
+  },
+  {
+   "source": "src/main/visuals/visual_26_weapon_overlay.c"
+  },
+  {
+   "source": "src/main/visuals/visual_27_weapon_gfx_preload.c"
+  },
+  {
+   "source": "src/main/visuals/visual_33_hover_jet.c"
+  },
+  {
+   "source": "src/main/misc/misc_17_death_orb.c"
+  },
+  {
+   "source": "src/main/quads/quad_09_aiming_laser_beam.c"
+  },
+  {
+   "source": "src/main/quads/quad_10_aiming_laser_charged_beam.c"
+  }
+ ],
+ "symbols": {
+  "D_800F1D90": "saturn_save_options",
+  "D_80141BE8": "0x607c000",
+  "D_80169498": "0x60bb040",
+  "SND_ChgPcm": "saturn_sound_pcm_change_now",
+  "SND_StartPcm": "saturn_sound_pcm_start",
+  "SND_StopPcm": "saturn_sound_pcm_stop",
+  "decompress_player_gfx": "saturn_update_object_texture",
+  "func_80012740": "saturn_thread_create",
+  "func_800127C8": "saturn_thread_sleep",
+  "func_800127FC": "saturn_thread_exit",
+  "func_80012854": "saturn_thread_kill",
+  "func_800129A4": "saturn_fade_start_in",
+  "func_800129F0": "saturn_fade_start_out",
+  "func_80013014": "saturn_stage_resource_setup",
+  "func_800160AC": "saturn_background_copy_screen_tiles",
+  "func_8001653C": "saturn_stage_music_play",
+  "func_8001663C": "saturn_music_play",
+  "func_800193D8": "func_8001A9EC",
+  "func_8001C3E8": "saturn_save_capture_options",
+  "func_80023CE0": "saturn_background_load_layout",
+  "func_80023D68": "saturn_render_frame",
+  "saturn_archive_destination_9": "saturn_color_ram+0x300",
+  "saturn_archive_metadata_pointer": "saturn_stage_graphics_offsets_pointer",
+  "saturn_archive_queue_busy": "saturn_archive_queue+0x42",
+  "saturn_audio_frame": "saturn_vdp2_commit_frame",
+  "saturn_background_layout": "0x607c000",
+  "saturn_background_layouts": "D_8010FFDC",
+  "saturn_bios_bup_init": "0x6000358",
+  "saturn_bios_bup_vector": "0x6000354",
+  "saturn_bios_change_clock": "0x6000320",
+  "saturn_bios_change_scu_mask": "0x6000344",
+  "saturn_bios_clock_mode": "0x6000324",
+  "saturn_bios_scu_mask": "0x6000344",
+  "saturn_bios_set_slave_vector": "0x6000310",
+  "saturn_button_masks": "D_800EE430",
+  "saturn_cd_close": "GFS_Close",
+  "saturn_cd_copy16": "DMA_CpuMemCopy2",
+  "saturn_cd_copy32": "DMA_CpuMemCopy4",
+  "saturn_cd_dma_result": "DMA_CpuResult",
+  "saturn_cd_error_hook": "0x600026c",
+  "saturn_cd_execute": "GFS_NwExecOne",
+  "saturn_cd_file_size": "GFS_GetFileSize",
+  "saturn_cd_get_status": "GFS_NwGetStat",
+  "saturn_cd_name_to_id": "GFS_NameToId",
+  "saturn_cd_open": "GFS_Open",
+  "saturn_cd_read": "GFS_NwFread",
+  "saturn_cd_read_ahead": "GFS_NwCdRead",
+  "saturn_cd_set_get_mode": "GFS_SetGmode",
+  "saturn_cd_set_transfer_mode": "GFS_SetTmode",
+  "saturn_cd_start_pending": "GFS_CdMovePickup",
+  "saturn_cd_stop": "GFS_NwStop",
+  "saturn_colonel_init_mode": "saturn_display_mode",
+  "saturn_color_filter_screens": "D_8013E188",
+  "saturn_color_ram_shadow": "saturn_color_ram+0x800",
+  "saturn_current_effect_object": "0x600d010",
+  "saturn_current_item_object": "0x600d018",
+  "saturn_current_layer_object": "0x600d014",
+  "saturn_current_main_object": "0x600d000",
+  "saturn_current_misc_object": "0x600d01c",
+  "saturn_current_quad_object": "0x600d020",
+  "saturn_current_shot_object": "0x600d004",
+  "saturn_current_thread": "0x600cc94",
+  "saturn_current_unk_object": "0x600d01c",
+  "saturn_current_visual_object": "0x600d008",
+  "saturn_current_weapon_object": "0x600d004",
+  "saturn_debug_text": "0x60fa000",
+  "saturn_demo_data": "0x2c2c00",
+  "saturn_engine_bytes": "engine_obj",
+  "saturn_entity_bytes": "g_Entity",
+  "saturn_fade_state": "main_bss_state+0x4",
+  "saturn_frame_counter": "main_bss_state",
+  "saturn_frame_dma_copy": "DMA_CpuMemCopy4",
+  "saturn_frame_dma_result": "DMA_CpuResult",
+  "saturn_gameplay_limit_word": "saturn_tile_column_offset",
+  "saturn_gameplay_reset_word": "saturn_tile_staging_offset",
+  "saturn_gfx_decompress_entry": "saturn_decompress_gfx_job",
+  "saturn_gfx_staging": "0x6003000",
+  "saturn_loading_resource": "0x2d2000",
+  "saturn_low_warm_buffer": "0x200000",
+  "saturn_main_bss_bytes": "main_bss_state",
+  "saturn_menu_string_width": "func_8001E850",
+  "saturn_movie_vblank": "CPK_VblIn",
+  "saturn_music_fading": "saturn_sound_fade+0xA",
+  "saturn_overlay_objects": "foo_objects",
+  "saturn_pad_held": "saturn_pads+0x4",
+  "saturn_pad_pressed": "saturn_pads+0x8",
+  "saturn_pad_previous": "saturn_pads+0x6",
+  "saturn_pause_menu": "bar_object",
+  "saturn_pause_menu_resource": "0x2d0000",
+  "saturn_peripheral_poll_count": "saturn_peripheral_attempts",
+  "saturn_peripheral_query": "PER_LGetPer",
+  "saturn_player_bytes": "g_Player",
+  "saturn_player_companion_0": "baz_objects",
+  "saturn_player_companion_1": "baz_objects+0x50",
+  "saturn_player_palette_destination": "0x600d044",
+  "saturn_player_palette_source": "0x600d040",
+  "saturn_player_resource_section0": "0x600d030",
+  "saturn_player_resource_section1": "0x600d038",
+  "saturn_reset_flag_b": "saturn_title_skip",
+  "saturn_runtime_flag_0": "saturn_sound_effect_request_read",
+  "saturn_runtime_flag_1": "saturn_sound_effect_request_write",
+  "saturn_runtime_header_words": "0x600d000",
+  "saturn_save_cursor_animations": "option_toggle_animations",
+  "saturn_save_load_text": "D_800F2310",
+  "saturn_save_slots_text": "D_800F2338",
+  "saturn_scheduler_stack_pointer": "0x600cc98",
+  "saturn_scroll_positions": "0x600d070",
+  "saturn_scu_dma_initialize": "DMA_ScuInit",
+  "saturn_set_scu_interrupt": "INT_SetScuFunc",
+  "saturn_smpc_command": "PER_LInit",
+  "saturn_smpc_result": "saturn_peripheral_result",
+  "saturn_sound_effects": "0x2fe800",
+  "saturn_sound_stop_all": "saturn_music_stop_paced",
+  "saturn_sprite_cameras": "background_objects",
+  "saturn_sprite_group_ids": "D_80173C6C",
+  "saturn_sprite_hidden_bits": "saturn_dialogue_flags",
+  "saturn_sprite_hidden_mode": "abc_object+0xC",
+  "saturn_stage_background_attrs": "0x600d038",
+  "saturn_stage_background_header": "0x60bb040",
+  "saturn_stage_background_layout": "0x600d040",
+  "saturn_stage_background_tiles": "0x600d030",
+  "saturn_stage_background_work": "0x60a7040",
+  "saturn_stage_background_workspace": "0x600d03c",
+  "saturn_stage_flags": "need_palette_load",
+  "saturn_stage_frame_banks": "0x600d03c",
+  "saturn_stage_layout_height": "layout_height",
+  "saturn_stage_layout_size": "layout_size",
+  "saturn_stage_layout_width": "layout_width",
+  "saturn_stage_mode": "saturn_archive_queue+0x42",
+  "saturn_stage_prepare_video": "saturn_debug_text_setup",
+  "saturn_stage_restore_video": "saturn_color_offset_resume",
+  "saturn_stage_screen_tile_buffer": "0x607d000",
+  "saturn_stage_screen_tiles": "0x600d028",
+  "saturn_stage_screens": "0x600d024",
+  "saturn_stage_select_word": "saturn_fade_level_b",
+  "saturn_stage_sound_command": "saturn_loading_draw",
+  "saturn_stage_tile_cells": "0x600d02c",
+  "saturn_stage_video_shadow": "saturn_vdp2_shadow",
+  "saturn_stage_vram_marker": "0x25e6fffe",
+  "saturn_stage_work_0": "0x607c000",
+  "saturn_stage_work_1": "0x607d000",
+  "saturn_stage_work_2": "0x609d000",
+  "saturn_stage_work_3": "0x2db000",
+  "saturn_stage_work_pointer_0": "0x600d024",
+  "saturn_stage_work_pointer_1": "0x600d028",
+  "saturn_stage_work_pointer_2": "0x600d02c",
+  "saturn_stage_work_pointer_3": "0x600d048",
+  "saturn_stream": "saturn_stream_state",
+  "saturn_stream_active": "D_80173C84",
+  "saturn_text_cells": "0x600e000",
+  "saturn_threads": "0x600cc04",
+  "saturn_title_palette": "0x2c5c00",
+  "saturn_title_palette_backup": "0x2c6000",
+  "saturn_vdp1_command_0": "0x25c00000",
+  "saturn_vdp1_command_1": "0x25c00002",
+  "saturn_vdp1_copy_bytes": "DMA_ScuMemCopy",
+  "saturn_vdp1_dma_result": "DMA_ScuResult",
+  "saturn_vdp1_draw_trigger": "0x25d00004",
+  "saturn_vdp1_fbcr": "0x25d00002",
+  "saturn_vdp1_local_x": "0x600d060",
+  "saturn_vdp1_local_y": "0x600d062",
+  "saturn_vdp1_status": "0x25d00014",
+  "saturn_vdp1_tvmr": "0x25d00000",
+  "saturn_vdp2_initialize": "saturn_vdp2_set_color_ram_mode",
+  "saturn_vram_clear": "saturn_vram_clear_banks",
+  "saturn_vram_clear_alternate": "saturn_text_layers_clear",
+  "saturn_warm_buffer": "saturn_vdp2_shadow",
+  "saturn_warm_buffer_copy": "saturn_vdp2_shadow_copy",
+  "saturn_warm_start": "saturn_reset_flag_a",
+  "saturn_weapon_get_palettes": "0x60a5040"
+ },
+ "storage": {
+  "web_spider_arena_x": "0x00296FA8",
+  "web_spider_arena_y": "0x00296FAA",
+  "D_80139690": "0x002A8938",
+  "saturn_title_window_backup": "0x002A893C",
+  "D_801396B8": "0x002A895C",
+  "D_801396BC": "0x002A8960",
+  "D_801396C0": "0x002A8964",
+  "D_801396C4": "0x002A8968",
+  "saturn_demo_return": "0x002A896C",
+  "D_8013B80C": "0x002A8970",
+  "D_8013B810": "0x002A8974",
+  "D_8013B814": "0x002A8975",
+  "D_8013B808": "0x002A8978",
+  "D_801396C8": "0x002A897C",
+  "D_801397BC": "0x002A8A70",
+  "D_801397C0": "0x002A8A74",
+  "D_801397C4": "0x002A8A78",
+  "D_801397C8": "0x002A8A7C",
+  "D_801397CC": "0x002A8A80",
+  "D_801397D0": "0x002A8A84",
+  "D_801397D4": "0x002A8A88",
+  "D_801397D8": "0x002A8A8C",
+  "D_801397DC": "0x002A8A90",
+  "D_801397E0": "0x002A8A94",
+  "D_801397E4": "0x002A8A96",
+  "D_80139824": "0x002A8AD6",
+  "D_80139828": "0x002A8AD7",
+  "saturn_dialogue_flags": "0x002A8AD8",
+  "D_8013B828": "0x002A8AE4",
+  "D_8013B82C": "0x002A8AE8",
+  "D_8013B830": "0x002A8AEC",
+  "D_8013B834": "0x002A8AF0",
+  "jet_stingray_bubble_index": "0x002A8AF4",
+  "magma_dragoon_arena_right": "0x002A8AF8",
+  "magma_dragoon_arena_center": "0x002A8AFA",
+  "magma_dragoon_arena_left": "0x002A8AFC",
+  "magma_dragoon_arena_floor": "0x002A8AFE",
+  "magma_dragoon_arena_ceiling": "0x002A8B00",
+  "D_8013B858": "0x002A8B04",
+  "D_8013B878": "0x002A8B24",
+  "D_8013B898": "0x002A8B44",
+  "D_8013B89C": "0x002A8B45",
+  "D_8013B8A0": "0x002A8B46",
+  "D_8013B8A4": "0x002A8B47",
+  "D_8013B8A8": "0x002A8B48",
+  "sigma_sequencer": "0x002A8B4C",
+  "D_8013B8B0": "0x002A8B50",
+  "D_8013B8B4": "0x002A8B54",
+  "D_8013B8B8": "0x002A8B58",
+  "general_fists": "0x002A8B5C",
+  "D_8013B8DC": "0x002A8B6C",
+  "D_8013B8C8": "0x002A8B6E",
+  "D_8013B8CC": "0x002A8B70",
+  "D_8013B8D0": "0x002A8B72",
+  "D_8013B8E0": "0x002A8B74",
+  "D_8013B8E4": "0x002A8B75",
+  "boss_warning_tiles": "0x002A8B78",
+  "D_8013B940": "0x002A8BD0",
+  "D_8013B960": "0x002A8BF0",
+  "saturn_error_context": "0x060463A0",
+  "saturn_reset_flag_a": "0x060472E7",
+  "saturn_title_skip": "0x060472E8",
+  "saturn_backup_cart_status": "0x060472EA",
+  "saturn_soft_reset_request": "0x060509B8",
+  "saturn_peripheral_result": "0x060509BC",
+  "saturn_peripheral_attempts": "0x060509C0",
+  "saturn_smpc_attempts": "0x060509C4",
+  "saturn_debug_register_save": "0x060509D8",
+  "saturn_debug_dump_address": "0x06050AF8",
+  "saturn_debug_vram_save": "0x06050AFC",
+  "saturn_debug_query_attempts": "0x06050B00",
+  "saturn_debug_query_result": "0x06050B04",
+  "saturn_debug_reset_request": "0x06050B08",
+  "saturn_vdp1_group_start": "0x06050B0C",
+  "saturn_debug_column": "0x06050B10",
+  "saturn_debug_row": "0x06050B14",
+  "saturn_debug_margin": "0x06050B18",
+  "saturn_debug_top": "0x06050B1C",
+  "saturn_transfer_lock": "0x06050B20",
+  "saturn_transfer_saved_handler": "0x06050B24",
+  "saturn_transfer_join": "0x06050B3C",
+  "saturn_transfer_join_secondary": "0x06050B3D",
+  "saturn_transfer_primary": "0x06050B40",
+  "saturn_transfer_profiles": "0x06050F00",
+  "saturn_transfer_command_count": "0x06051400",
+  "saturn_transfer_profile_count": "0x06051401",
+  "saturn_transfer_secondary": "0x06051404",
+  "saturn_transfer_command_count_secondary": "0x06051CC4",
+  "saturn_transfer_profile_count_secondary": "0x06051CC5",
+  "saturn_sound_driver_header": "0x06051CC8",
+  "saturn_sound_command_queue": "0x06051CCC",
+  "saturn_sound_driver_area": "0x06051CD0",
+  "saturn_sound_command_slot": "0x06051CD4",
+  "saturn_sound_table_d8": "0x06051CD8",
+  "saturn_sound_sequence_table": "0x06051CDC",
+  "saturn_sound_table_e0": "0x06051CE0",
+  "saturn_sound_table_e4": "0x06051CE4",
+  "saturn_sound_pcm_table": "0x06051CE8",
+  "saturn_sound_table_ec": "0x06051CEC",
+  "saturn_sound_driver_buffer": "0x06051CF0",
+  "saturn_sound_driver_bytes": "0x06051CF4",
+  "saturn_sound_map_buffer": "0x06051CF8",
+  "saturn_sound_map_bytes": "0x06051CFC",
+  "saturn_sound_command_lock": "0x06051D00",
+  "saturn_sound_effect_data": "0x06051D04",
+  "saturn_sound_channel_effects": "0x06051D12",
+  "saturn_music_thread_track": "0x06051D24",
+  "saturn_music_thread_arg": "0x06051D26",
+  "saturn_music_thread_active": "0x06051D28",
+  "saturn_stream_error_object": "0x06051D2A",
+  "saturn_boot_state": "0x06051D58",
+  "saturn_boot_substate": "0x06051D5C",
+  "saturn_boot_timer": "0x06051D60",
+  "saturn_save_icons": "0x06051D74",
+  "saturn_save_box_objects": "0x06051DBC",
+  "saturn_save_cursor": "0x06051DC0",
+  "saturn_save_cursor_rows": "0x06051DC4",
+  "saturn_save_draw_mode": "0x06051DCC",
+  "saturn_save_device": "0x06051DCD",
+  "saturn_save_slot": "0x06051DCE",
+  "saturn_save_selection": "0x06051DCF",
+  "saturn_fade_out_step": "0x06051DE4",
+  "saturn_background_staging_offset": "0x06051FB8",
+  "saturn_background_tile_column": "0x06051FBA",
+  "saturn_background_tile_row": "0x06051FBC",
+  "saturn_background_run_destination": "0x06051FC0",
+  "saturn_background_staging_cursor": "0x06051FC4",
+  "saturn_background_staging": "0x06051FC8",
+  "saturn_background_tile_source": "0x06052640",
+  "saturn_background_run_start": "0x06052644",
+  "saturn_background_run_state": "0x06052646",
+  "saturn_background_run_bytes": "0x06052648",
+  "saturn_sprite_palette_group": "0x0605264C",
+  "saturn_background_scroll_word": "0x06052650",
+  "saturn_player_part": "0x06052658",
+  "saturn_hud_sprite": "0x060526A8",
+  "saturn_hud_color": "0x060526B8",
+  "saturn_hud_offsets": "0x060526BA",
+  "saturn_color_offset_saved": "0x060526CE",
+  "saturn_archive_indicator_state": "0x060526DA",
+  "saturn_cd_access_mode": "0x060536DC",
+  "saturn_cd_transferred_bytes": "0x060536E0",
+  "saturn_cd_status": "0x060536E4",
+  "saturn_pause_palette_save": "0x060536F0",
+  "saturn_pause_shadow_save": "0x06053AF0",
+  "saturn_pause_sprite_counts_save": "0x06053C10",
+  "saturn_pause_sprite_lists_save": "0x06053C24",
+  "saturn_pause_player_visible": "0x060548A4",
+  "main_bss_state": "0x060548A8",
+  "game_info": "0x060548B6",
+  "engine_obj": "0x060548C8",
+  "g_Player": "0x0605492C",
+  "g_Entity": "0x06054A10",
+  "foo_objects": "0x06054AF4",
+  "baz_objects": "0x06054C14",
+  "main_objects": "0x06054CB4",
+  "weapon_objects": "0x060569F4",
+  "shot_objects": "0x060573B4",
+  "visual_objects": "0x06058734",
+  "background_objects": "0x06059534",
+  "effect_objects": "0x06059630",
+  "item_objects": "0x06059C30",
+  "misc_objects": "0x0605ADB0",
+  "layer_objects": "0x0605C5B0",
+  "g_QuadObjects": "0x0605C670",
+  "qux_object": "0x0605D270",
+  "bar_object": "0x0605D320",
+  "abc_object": "0x0605D354",
+  "unk_objects": "0x0605D368",
+  "saturn_color_ram": "0x0605DAE8",
+  "need_palette_load": "0x0605EAE8",
+  "g_FilterAmountR": "0x0605EAEA",
+  "g_FilterAmountG": "0x0605EAEC",
+  "g_FilterAmountB": "0x0605EAEE",
+  "D_8013E188": "0x0605EAF8",
+  "g_FilterModeR": "0x0605EB08",
+  "g_FilterModeG": "0x0605EB09",
+  "g_FilterModeB": "0x0605EB0A",
+  "D_80171EA8": "0x0605EB0B",
+  "D_80173C6C": "0x0605EB0C",
+  "layout_width": "0x0605EB10",
+  "layout_height": "0x0605EB11",
+  "layout_size": "0x0605EB12",
+  "saturn_stage_graphics_offsets_pointer": "0x0605EB14",
+  "cur_random": "0x0605EB18",
+  "saturn_movie_active": "0x0605EB1A",
+  "saturn_vblank_count": "0x0605EB1C",
+  "saturn_frame_request": "0x0605EB1E",
+  "saturn_frame_ready": "0x0605EB22",
+  "saturn_peripheral_ready": "0x0605EB24",
+  "saturn_vdp1_phase": "0x0605EB26",
+  "saturn_sprite_pending": "0x0605EB28",
+  "saturn_vdp1_submitted_phase": "0x0605EB2A",
+  "saturn_present_inhibit": "0x0605EB2C",
+  "saturn_vdp1_ticks": "0x0605EB2E",
+  "saturn_vdp1_end_tick": "0x0605EB30",
+  "saturn_soft_reset_mode": "0x0605EB32",
+  "saturn_reset_inhibit": "0x0605EB33",
+  "saturn_fade_level_b": "0x0605EB36",
+  "saturn_screen_width": "0x0605EB38",
+  "saturn_screen_height": "0x0605EB3A",
+  "saturn_vdp1_uploaded_pending": "0x0605EB3C",
+  "saturn_archive_queue": "0x0605EB40",
+  "saturn_peripheral_record": "0x0605EB84",
+  "saturn_peripheral_data": "0x0605EB88",
+  "saturn_peripheral_work": "0x0605EB8C",
+  "saturn_smpc_parameters": "0x0605EB92",
+  "saturn_controller_refresh": "0x0605ED86",
+  "saturn_pads": "0x0605ED88",
+  "saturn_pause_request": "0x0605EDA0",
+  "saturn_pause_latch": "0x0605EDA2",
+  "saturn_sound_peak": "0x0605EDA4",
+  "saturn_sound_level": "0x0605EDA6",
+  "saturn_sprite_list_counts": "0x0605EDA8",
+  "saturn_sprite_object_lists": "0x0605EDBC",
+  "saturn_frame_dma_pending": "0x0606084C",
+  "saturn_frame_dma_count": "0x06060850",
+  "saturn_frame_dma_arg_0": "0x06060854",
+  "saturn_frame_dma_arg_1": "0x06060858",
+  "saturn_gfx_job": "0x0606085C",
+  "saturn_gfx_source": "0x06060864",
+  "saturn_gfx_destination": "0x06060868",
+  "saturn_save_slots": "0x0606087A",
+  "saturn_save_checksum": "0x060608F8",
+  "saturn_vdp1_link_slots": "0x060608FA",
+  "saturn_vdp1_saved_link": "0x0606091A",
+  "saturn_sprite_command_count": "0x0606091C",
+  "saturn_vdp1_active_group": "0x0606091E",
+  "saturn_sprite_commands": "0x06060920",
+  "saturn_sprite_pass_count": "0x06068920",
+  "saturn_vdp1_frame_started": "0x06068922",
+  "saturn_gfx_staging_cursor": "0x06068924",
+  "saturn_vdp2_shadow": "0x0606892C",
+  "saturn_background_redraw_word": "0x060689C6",
+  "saturn_vdp2_shadow_copy": "0x06068A4C",
+  "saturn_vdp2_ram_control_config": "0x06068B6C",
+  "saturn_color_ram_pending": "0x06068B72",
+  "saturn_color_ram_copy": "0x06068B74",
+  "saturn_text_dirty_a": "0x06069F78",
+  "saturn_text_dirty_b": "0x06069F79",
+  "saturn_display_mode": "0x06069F7C",
+  "saturn_gfs_work": "0x06069F80",
+  "saturn_gfs_dir_table": "0x0606AD30",
+  "saturn_gfs_dir_names": "0x0606AD3C",
+  "saturn_cd_seek_position": "0x0606C524",
+  "saturn_cd_error": "0x0606C52C",
+  "saturn_cd_file_id": "0x0606C530",
+  "saturn_cd_handle": "0x0606C534",
+  "saturn_cd_retries": "0x0606C538",
+  "saturn_sound_counter": "0x0606C53C",
+  "saturn_sound_requests": "0x0606C540",
+  "saturn_sound_effect_requests": "0x0606C600",
+  "saturn_sound_mode": "0x0606C6C8",
+  "saturn_sound_stage_map": "0x0606C6C9",
+  "saturn_sound_total_volume": "0x0606C6CA",
+  "saturn_sound_mix_count": "0x0606C6CC",
+  "saturn_sound_effect_mode": "0x0606C6CE",
+  "saturn_sound_fade": "0x0606C6D0",
+  "saturn_sound_pending_word": "0x0606C6DC",
+  "saturn_sound_driver_busy": "0x0606C6E1",
+  "saturn_sound_request_read": "0x0606C6E2",
+  "saturn_sound_request_write": "0x0606C6E3",
+  "saturn_sound_effect_request_read": "0x0606C6E4",
+  "saturn_sound_effect_request_write": "0x0606C6E5",
+  "saturn_sound_last_group": "0x0606C6E7",
+  "saturn_stream_state": "0x0606C6F4",
+  "saturn_stream_status": "0x0606C715",
+  "saturn_stream_track": "0x0606C71A",
+  "D_80173C84": "0x0606C71C",
+  "saturn_stream_pitch": "0x0606C71E",
+  "saturn_stream_stereo": "0x0606C754",
+  "saturn_stm_work": "0x0606C75C",
+  "saturn_sound_wait_retries": "0x0606C828",
+  "D_80141BD0": "0x0606C829",
+  "saturn_tile_staging_offset": "0x0606C82C",
+  "saturn_tile_column_offset": "0x0606C82E",
+  "saturn_vdp2_field": "0x0606C830",
+  "saturn_tile_run_destination": "0x0606C834",
+  "saturn_tile_staging_cursor": "0x0606C838",
+  "saturn_tile_staging": "0x0606C83C",
+  "saturn_tile_column_high": "0x0606D43C",
+  "saturn_tile_column_low": "0x0606D440",
+  "saturn_tile_source": "0x0606D444",
+  "saturn_tile_run_start": "0x0606D448",
+  "saturn_tile_column_start": "0x0606D44A",
+  "saturn_tile_run_length": "0x0606D44C",
+  "saturn_tile_column": "0x0606D44E",
+  "saturn_tile_row": "0x0606D450",
+  "saturn_tile_run_state": "0x0606D452",
+  "saturn_tile_screen_state": "0x0606D453",
+  "D_8013B7D8": "0x0606D454",
+  "D_8013B7DC": "0x0606D455",
+  "D_8013B7E0": "0x0606D456",
+  "D_8013B7E4": "0x0606D458",
+  "D_8013B7E8": "0x0606D45A",
+  "D_8013B7EC": "0x0606D45C",
+  "D_8013B7F0": "0x0606D45E",
+  "D_8013B7F4": "0x0606D460",
+  "D_8013B7F8": "0x0606D462",
+  "D_8013B7FC": "0x0606D464",
+  "D_8013B800": "0x0606D466",
+  "D_8013B804": "0x0606D468",
+  "D_8013B7D0": "0x0606D46C",
+  "saturn_pause_weapon": "0x0606D470",
+  "saturn_runtime_error": "0x0606D474",
+  "saturn_rtc_time": "0x0606D880",
+  "saturn_smpc_output": "0x0606D884",
+  "saturn_smpc_status": "0x0606D890"
+ },
+ "storage_object": "src/saturn/platform_storage.c",
+ "reserved": [
+  [
+   "0x060509B8",
+   "0x0606E9E0"
+  ]
+ ],
+ "entry": "saturn_entry",
+ "entry_address": "0x06010000",
+ "program": {
+  "main": [
+   "0x06009000",
+   "0x0606D9E8"
+  ],
+  "low": [
+   "0x00220000",
+   "0x002A9FFF"
+  ]
+ },
+ "sdk": {
+  "source": [
+   {
+    "library": "GFS",
+    "segalib": "toolkit/iso/pc/SATURN/SEGALIB",
+    "units": [
+     "gfs",
+     "gfs_buf",
+     "gfs_cdb",
+     "gfs_cdc",
+     "gfs_cdf",
+     "gfs_dir",
+     "gfs_trn"
+    ],
+    "asm_units": []
+   },
+   {
+    "library": "STM",
+    "segalib": "toolkit/iso/pc/SATURN/SEGALIB",
+    "units": [
+     "stm_acc",
+     "stm_init",
+     "stm_loc",
+     "stm_svr",
+     "stm_trn"
+    ],
+    "asm_units": []
+   },
+   {
+    "library": "CSH",
+    "segalib": "toolkit/iso/pc/SATURN/SEGALIB",
+    "units": [
+     "csh_main"
+    ],
+    "asm_units": []
+   },
+   {
+    "library": "INT",
+    "segalib": "dts-1996-11/fs/LIBRARY/SBL6/SEGALIB",
+    "units": [
+     "int"
+    ],
+    "asm_units": [
+     "int_trmp"
+    ]
+   }
+  ],
+  "prebuilt": [
+   {
+    "archive": "SEGA_CDC.A",
+    "segalib": "toolkit/iso/pc/SATURN/SEGALIB",
+    "units": [
+     "cdc_cmn",
+     "cdc_drv",
+     "cdc_reg",
+     "cdc_sub",
+     "cdc_dev",
+     "cdc_sel",
+     "cdc_bif",
+     "cdc_bio",
+     "cdc_cfs"
+    ]
+   },
+   {
+    "archive": "SEGA_DMA.A",
+    "segalib": "toolkit/iso/pc/SATURN/SEGALIB",
+    "units": [
+     "dma_cpu1",
+     "dma_cpu2",
+     "dma_cpu3",
+     "dma_cpu5",
+     "dma_scu0",
+     "dma_scu1",
+     "dma_cpu0"
+    ]
+   },
+   {
+    "archive": "SEGA_SYS.A",
+    "segalib": "toolkit/iso/pc/SATURN/SEGALIB",
+    "units": [
+     "sys_mac1"
+    ]
+   },
+   {
+    "archive": "SEGA_CPK.A",
+    "segalib": "toolkit/iso/pc/SATURN/SEGALIB",
+    "units": [
+     "cpk_lib",
+     "cpk_gfs",
+     "cpk_stm",
+     "cpk_mp",
+     "cpk_time",
+     "cpk_vide",
+     "cpk_audi",
+     "cpk_etc",
+     "cpk_deb",
+     "cpk_decf",
+     "cpk_er",
+     "cpk_ra",
+     "cpk_scu",
+     "cpk_mc",
+     "slavesh"
+    ]
+   },
+   {
+    "archive": "SEGA_PER.A",
+    "segalib": "dts-1996-11/fs/LIBRARY/SBL6/SEGALIB",
+    "units": [
+     "per_prt"
+    ]
+   }
+  ]
+ },
+ "sdk_libc": "src/saturn/saturn_sdk_libc.c"
+}

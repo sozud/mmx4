@@ -11,6 +11,8 @@ extern u8 D_800F2328[];
 
 extern u8 D_800F2338[];
 extern u16 menu_window_palette[16];
+#ifndef MMX4_SATURN
 extern RECT D_800F2388;
+#endif
 
 #endif

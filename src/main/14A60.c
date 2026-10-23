@@ -14,6 +14,9 @@ extern u8 x_ready_text_flags[];
 void func_80024F5C(struct PlayerObj* arg0);
 void func_8002509C(struct PlayerObj* arg0);
 
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#endif
 #ifdef MMX4_PC
 #include <psyz/audio.h>
 #include <psyz/spu.h>
@@ -803,6 +806,58 @@ const union AnimationStep* const* D_800F2EE8[] = {
     animation_98
 };
 
+#ifdef MMX4_SATURN
+u8 saturn_dialogue_tracks[SATURN_DIALOGUE_X_TRACKS + SATURN_DIALOGUE_ZERO_TRACKS] = {
+    0xFE,
+    0x20,
+    0xFE,
+    0xFE,
+    0xFF,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0x20,
+    0xFE,
+    0x1F,
+    0x1E,
+    0xFF,
+    0xFF,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0x20,
+    0xFE,
+    0xFE,
+    0xFE,
+    0x20,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0x1F,
+    0x1E,
+    0x1E,
+    0xFF,
+    0xFF,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0xFE,
+    0x20,
+    0xFE,
+    0xFF,
+};
+#else
 u32 D_800F2F08[12] = {
     0xFEFE19FE,
     0xFEFEFEFF,
@@ -817,6 +872,7 @@ u32 D_800F2F08[12] = {
     0xFEFEFEFE,
     0x00FE19FE,
 };
+#endif
 
 u32 D_800F2F38[2] = { 0x00010001, 0 };
 
@@ -870,6 +926,10 @@ union AnimationStep D_800F2F60[] = {
     { 3, 0, 1, 0x27 },
     { 4, 1, 0, 0x28 },
 };
+
+#ifdef MMX4_SATURN
+u32* saturn_dialogue_window_animations[] = { (u32*)D_800F2F60 };
+#endif
 
 #if defined(VERSION_JP) || defined(MMX4_WIN32)
 const u32* D_800F2FD4[1] = { D_800F2F60 };

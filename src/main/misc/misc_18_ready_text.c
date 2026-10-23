@@ -28,7 +28,7 @@ void ready_text_bounce(struct MiscObj* arg0);
 void ready_text_leave(struct MiscObj* arg0);
 #include "weapon_resources.h"
 
-void ready_text_load_palette(s32 arg0, s32 arg1);
+void ready_text_load_palette(struct MiscObj* arg0, s32 arg1);
 
 #ifdef MMX4_SATURN
 #define READY_TEXT_TEXTURE 0xE000
@@ -148,7 +148,7 @@ extern u8 ready_text_palette_cycle[];
 void ready_text_appear(struct MiscObj* self)
 {
     if (self->ext.ready_text.owner->ext.unk_effect.unk16 != 0) {
-        ready_text_load_palette((s32)self, (s32)NULL);
+        ready_text_load_palette(self, 0);
         self->unk5 = 1;
         self->ext.ready_text.unk54 = 8;
         if (self->unk2 != 0) {
@@ -168,7 +168,7 @@ void ready_text_appear(struct MiscObj* self)
             return;
         }
         // cycle palette when "READY" first appears
-        ready_text_load_palette((s32)self, (s32)ready_text_palette_cycle[self->ext.ready_text.palette_pos]);
+        ready_text_load_palette(self, (s32)ready_text_palette_cycle[self->ext.ready_text.palette_pos]);
         self->ext.ready_text.palette_pos++;
         if (self->ext.ready_text.palette_pos > 13) {
             self->ext.ready_text.palette_pos = 0;
@@ -262,7 +262,7 @@ void ready_text_show(struct MiscObj* self)
 
 // "READY" has wrong palette if nopped out
 // asm(".rept 22 ; nop ; .endr");
-void ready_text_load_palette(s32 arg0, s32 arg1)
+void ready_text_load_palette(struct MiscObj* arg0, s32 arg1)
 {
     u16* var_a0;
     u16* var_v1;

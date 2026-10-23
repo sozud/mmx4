@@ -8,6 +8,8 @@
 #include "main/main_palette_data.h"
 #include "main/movie_hud_data.h"
 
+#ifndef MMX4_SATURN
+
 extern s8 D_801307F8;
 
 #ifdef MMX4_PC
@@ -690,6 +692,8 @@ void func_80015C10(void)
 }
 #endif
 
+#endif
+
 s32 set_animation(void* object, s32 animation)
 {
     struct AnimatedObj* arg0 = object;
@@ -716,6 +720,7 @@ void animate_object(struct AnimatedObj* arg0)
     }
 }
 
+#ifndef MMX4_SATURN
 void clear_vram_rect_ptrs(void)
 {
     u32 i;
@@ -842,6 +847,8 @@ extern union MainPaletteData D_800F1660;
 
 extern RECT D_800F1860;
 
+#endif
+
 #ifdef MMX4_SATURN
 #define SCREEN_RESET_BANKS 3
 
@@ -874,6 +881,8 @@ void func_800160F4(void)
     LoadImage(&D_800F1860, &D_800F1660);
 }
 #endif
+
+#ifndef MMX4_SATURN
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80016124);
 
@@ -1954,3 +1963,4 @@ void func_800192F8(void)
         }
     }
 }
+#endif
