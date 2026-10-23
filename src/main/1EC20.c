@@ -34,13 +34,7 @@
 #endif
 #ifdef MMX4_SATURN
 extern u8 mission_stage_order[];
-char* saturn_route_movies[5] = {
-    "X1.CPK",
-    "Z1.CPK",
-    "X2.CPK",
-    "X3.CPK",
-    "Z2.CPK",
-};
+extern char* saturn_route_movies[5];
 extern u16 saturn_stage_select_word;
 #endif
 
@@ -833,6 +827,15 @@ u8 mission_stage_order[12] = {
     0,
 };
 u8 mission_palette_order[8] = { 0, 7, 5, 3, 4, 1, 2, 6 };
+#ifdef MMX4_SATURN
+char* saturn_route_movies[5] = {
+    "X1.CPK",
+    "Z1.CPK",
+    "X2.CPK",
+    "X3.CPK",
+    "Z2.CPK",
+};
+#endif
 u8 mission_route_b[8] = { 2, 6, 3, 4, 7, 0, 0, 0 };
 RECT mission_route_a_positions = { 0x0140, 0x00B0, 0x0100, 0x0050 };
 RECT mission_route_b_positions = { 0x0240, 0, 0x0100, 0x50 };

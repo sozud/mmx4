@@ -175,8 +175,11 @@ u8 D_800F247C[20] = {
     0x00,
 };
 
+#endif
+
 u8 D_800F2490[8] = { 0x70, 0x00, 0x90, 0x01, 0xFF, 0, 0, 0 };
 
+#ifndef MMX4_SATURN
 void (*D_800F2498[])(struct EngineObj*) = {
     func_80020ED4,
     func_80020F24,
@@ -495,7 +498,6 @@ void func_80020D98(struct EngineObj* arg0)
 }
 #endif
 
-#ifndef MMX4_SATURN
 void func_80020DEC(u8* arg0, s16 arg1)
 {
     struct UnkObj* obj;
@@ -522,6 +524,7 @@ void func_80020DEC(u8* arg0, s16 arg1)
     }
 }
 
+#ifndef MMX4_SATURN
 void func_80020ED4(struct EngineObj* arg0)
 {
     arg0->unk7 = 1;

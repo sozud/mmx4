@@ -96,4 +96,6 @@ u16 menu_window_palette[16] = {
     0x5880,
 };
 
+#ifndef MMX4_SATURN
 RECT D_800F2388 = { 0, 480, 256, 2 };
+#endif

@@ -156,7 +156,7 @@ typedef s32 arg_s16;
 #include <libapi.h>
 #include <libcd.h>
 #include <libpress.h>
-#else
+#elif !defined(MMX4_SATURN)
 #include "psy-q-4.0/SYS/TYPES.H"
 #ifdef MMX4_WIN32
 #define _INC_TYPES
@@ -170,6 +170,13 @@ typedef s32 arg_s16;
 #include "psy-q-4.0/KERNEL.H"
 #include "psy-q-4.0/LIBCD.H"
 #include "psy-q-4.0/LIBPRESS.H"
+#endif
+
+#ifdef MMX4_SATURN
+typedef struct {
+    s16 x, y;
+    s16 w, h;
+} RECT;
 #endif
 
 #include "scratchpad.h"
@@ -398,10 +405,12 @@ struct OffsetInfo {
     u8 pad[77];
 };
 
+#ifndef MMX4_SATURN
 struct RectPtrPair {
     RECT rect;
     u_long* ptr;
 };
+#endif
 
 extern struct QuadObj g_QuadObjects[0x20];
 
@@ -607,7 +616,9 @@ extern struct BootTransitionDataRegion g_BootTransitionDataRegion;
 #else
 extern u8 D_800F1C0F[];
 #endif
+#ifndef MMX4_SATURN
 extern CdlATV D_80139644;
+#endif
 extern u8 D_80171EA9;
 extern u8 D_80166D68;
 extern u8 D_8012F46C[0x22];
@@ -615,7 +626,9 @@ extern u16 cur_random;
 extern s32 D_8013BD44;
 extern s16 D_80141BD2;
 extern u8 D_80139528;
+#ifndef MMX4_SATURN
 extern CdlATV D_80139520;
+#endif
 extern s32 D_80137CD8;
 extern u16 D_80141F70[0x800];
 extern u16 lastFilterAmountR, lastFilterAmountG, lastFilterAmountB;
@@ -634,8 +647,10 @@ extern u8* D_80137CC4;
 extern s32 D_80137CCC;
 extern u8 D_80137CE8;
 extern s32 D_80137CEC;
+#ifndef MMX4_SATURN
 extern CdlLOC D_80137CF8;
 extern DISPENV old_dispenv[2];
+#endif
 extern s8 D_80166C20;
 extern s8 D_80166C21;
 extern s8 D_80166CC0;
@@ -664,8 +679,10 @@ extern u8 g_FilterModeB;
 // how much to add or subtract to each channel
 extern u16 g_FilterAmountR;
 extern u16 g_FilterAmountB;
+#ifndef MMX4_SATURN
 extern struct RectPtrPair vram_rect_ptrs[];
 extern struct RectPtrPair* vram_rect_ptr;
+#endif
 
 extern u8* D_80141F00;
 extern u8* D_80141EE8[];
@@ -674,7 +691,9 @@ extern u8* cur_draw_info_dispenv_screen_w;
 extern u8* cur_draw_info_drawenv;
 
 extern union CdSectorBuffer D_8012F4B4;
+#ifndef MMX4_SATURN
 extern RECT D_80137CFC;
+#endif
 extern s32 D_80137D08[];
 
 void enemy_hit_reaction(struct MainObj*);

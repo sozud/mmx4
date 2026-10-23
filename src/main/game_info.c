@@ -833,6 +833,12 @@ void (*D_800F2170[4])(struct GameInfo*) = {
 };
 
 #ifdef MMX4_SATURN
+char* saturn_demo_archives[4] = {
+    "PLDEMO00.ARC",
+    "PLDEMO01.ARC",
+    "PLDEMO02.ARC",
+    "PLDEMO03.ARC",
+};
 #elif defined(VERSION_EU)
 u8 D_800F2180[4] = { 0x51, 0x52, 0x53, 0x54 };
 #else

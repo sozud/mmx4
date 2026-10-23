@@ -366,7 +366,9 @@ extern u8 D_801374BC[0x800];
 
 extern s32 D_80137CCC;
 
+#ifndef MMX4_SATURN
 extern CdlLOC D_80137DE8;
+#endif
 
 extern s32 D_80137CBC;
 
@@ -530,7 +532,9 @@ extern s32 D_80137CCC;
 
 extern s32 D_80137CEC;
 
+#ifndef MMX4_SATURN
 extern CdlLOC D_80137CF8;
+#endif
 
 extern void func_800137F0(void);
 
@@ -554,7 +558,9 @@ extern s32 D_80137DC8;
 
 extern u8* D_80137DCC;
 
+#ifndef MMX4_SATURN
 extern CdlLOC D_80137DE8;
+#endif
 
 extern union TitleScratch D_80169498;
 

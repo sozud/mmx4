@@ -595,6 +595,57 @@ void func_8002B450(void)
 {
 }
 
+#ifdef MMX4_SATURN
+extern const volatile s8 saturn_sprite_group_ids[4];
+extern volatile s8 saturn_sprite_list_counts[20];
+extern volatile u32 saturn_sprite_object_lists[768];
+volatile u32* const saturn_sprite_list_targets[20] = {
+    (volatile u32*)(saturn_sprite_object_lists + 0),
+    (volatile u32*)(saturn_sprite_object_lists + 32),
+    (volatile u32*)(saturn_sprite_object_lists + 64),
+    (volatile u32*)(saturn_sprite_object_lists + 96),
+    (volatile u32*)(saturn_sprite_object_lists + 160),
+    (volatile u32*)(saturn_sprite_object_lists + 192),
+    (volatile u32*)(saturn_sprite_object_lists + 224),
+    (volatile u32*)(saturn_sprite_object_lists + 256),
+    (volatile u32*)(saturn_sprite_object_lists + 320),
+    (volatile u32*)(saturn_sprite_object_lists + 352),
+    (volatile u32*)(saturn_sprite_object_lists + 384),
+    (volatile u32*)(saturn_sprite_object_lists + 416),
+    (volatile u32*)(saturn_sprite_object_lists + 480),
+    (volatile u32*)(saturn_sprite_object_lists + 512),
+    (volatile u32*)(saturn_sprite_object_lists + 544),
+    (volatile u32*)(saturn_sprite_object_lists + 576),
+    (volatile u32*)(saturn_sprite_object_lists + 640),
+    (volatile u32*)(saturn_sprite_object_lists + 672),
+    (volatile u32*)(saturn_sprite_object_lists + 704),
+    (volatile u32*)(saturn_sprite_object_lists + 736),
+};
+
+static void queue_sprite_object(volatile u8* object, unsigned priority_offset)
+{
+    object[3] = 0;
+    u8 priority = object[priority_offset];
+    unsigned group = priority >> 4, pass = priority & 15;
+    if (group >= 5 || pass >= 4)
+        return;
+    unsigned index = group * 4 + pass;
+    u8 count = (u8)saturn_sprite_list_counts[index];
+    if ((unsigned)count + 1 >= 32)
+        return;
+    saturn_sprite_list_targets[index][count] = (u32)(u32)object;
+    object[3] = 1;
+    saturn_sprite_list_counts[index] = (s8)(count + 1);
+}
+void saturn_queue_object(void* object) { queue_sprite_object(object, 0x16); }
+void saturn_queue_frozen_quad(struct QuadObj* object) { queue_sprite_object((volatile u8*)object, 0x36); }
+void saturn_sprite_reset_queues(void)
+{
+    for (unsigned i = 0; i < 20; ++i)
+        saturn_sprite_list_counts[i] = 0;
+}
+#endif
+
 void func_8002B458(struct QuadObj* arg0)
 {
 }

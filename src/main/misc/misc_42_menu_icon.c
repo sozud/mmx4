@@ -16,21 +16,27 @@ extern void (*menu_icon_state_funcs[])(struct MiscObj*);
 #include "main/objects.h"
 #endif
 
+#ifdef MMX4_SATURN
+void menu_icon_update(struct MiscObj* self)
+{
+}
+#else
 void menu_icon_update(struct MiscObj* self)
 {
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     menu_icon_state_funcs[self->state](self);
 }
+#endif
 
 // menu_icon_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_PC
 void func_800CFEE0(struct MiscObj* self);
 void func_800D0118(struct MiscObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_PC
 void func_800CFEE0(struct MiscObj* self)
 {
     u8* archive = WINDOW_ARCHIVE_DATA;
@@ -106,7 +112,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800CFEE0);
 #endif
 
 // menu_icon_animate
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_PC
 void func_800D0118(struct MiscObj* self)
 {
     is_on_screen(BASE_OBJECT(self));
@@ -176,7 +182,9 @@ void func_800D0118(struct MiscObj* self)
 INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800D0118);
 #endif
 
+#ifndef MMX4_SATURN
 void (*menu_icon_state_funcs[2])(struct MiscObj*) = {
     func_800CFEE0,
     func_800D0118,
 };
+#endif

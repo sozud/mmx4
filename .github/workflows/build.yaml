@@ -450,3 +450,22 @@ jobs:
           git commit -m "Update reports for $GITHUB_SHA"
           git push origin HEAD:main
         working-directory: info
+
+  saturn-native:
+    name: Build Saturn with GCC
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Clone main repo
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes gcc-sh-elf binutils-sh-elf ninja-build
+      - name: Get the SEGA SDK subset
+        run: git submodule update --init tools/saturn/sdk
+      - name: Build Saturn image
+        run: |
+          python3 tools/saturn/saturn_native_build.py --output build/saturn-native --jobs $(nproc) --no-disc

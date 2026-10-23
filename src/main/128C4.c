@@ -156,93 +156,6 @@ static void copy_dialogue_palette(u16* dst, const u16* src, u32 count)
     }
 }
 
-void func_8002328C(struct AbcObj* arg0)
-{
-    struct MiscObj* text;
-    u8 skip;
-
-    do {
-        arg0->unk4 = *arg0->unk0;
-        if ((arg0->unk4 & 0x1FF) != 0x1FF) {
-            if (D_801397E0 == 0 && D_801397C0 == NULL) {
-                text = find_free_misc_obj();
-                if (text != NULL) {
-                    D_801397C0 = text;
-                    text->active = 1;
-                    text->id = 0x16;
-                    text->unk2 = 0;
-                    text->unk16 = 0x10;
-                    text->unk40 = SATURN_DIALOGUE_TEXT_TEXTURE;
-                    text->unk3C = &D_801396C8.count;
-                    text->unk42 = engine_obj.stage == 0xD ? SATURN_DIALOGUE_FORTRESS_TEXT_PALETTE : SATURN_DIALOGUE_TEXT_PALETTE;
-                    text->bg_offset = -1;
-                    text->x_pos.val = 0xA00000;
-                    if (!(arg0->unk4 & 0x800)) {
-                        text->y_pos.val = D_801397D8 == 0x80 ? 0x380000 : 0;
-                    } else {
-                        text->y_pos.val = D_801397D8 == 0xFF ? 0x780000 : 0x700000;
-                    }
-                    text->animation_step.fields.frame_index = 0;
-                    text->unk15 = 0;
-                }
-                D_801396C8.active = 1;
-            }
-            D_801396C8.glyphs[D_801397E0].frame = 0;
-            D_801396C8.glyphs[D_801397E0].character = (u8)arg0->unk4;
-            D_801396C8.glyphs[D_801397E0].x = (u8)arg0->unk6;
-            D_801396C8.glyphs[D_801397E0].y = (u8)arg0->unk8;
-            D_801397E0++;
-            D_801396C8.count = D_801397E0;
-        }
-        arg0->unk0++;
-        if (arg0->unk4 & 0x4000) {
-            arg0->unk8 += 0x12;
-            arg0->unk6 = -0x78;
-        } else {
-            arg0->unk6 += 0xC;
-        }
-        if (arg0->unkF == 0) {
-            arg0->unk4 &= 0xEFFF;
-        }
-    } while (!(arg0->unk4 & 0xB000));
-    func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
-    if ((arg0->unk4 & 0xB000) == 0x1000) {
-        if (DIALOGUE_PAD_PRESSED != 0 && arg0->unkF != 0) {
-            arg0->unkF--;
-        }
-        arg0->unkA = 4;
-        arg0->unkD = 2;
-        return;
-    }
-    arg0->unkF = 2;
-    if (arg0->unk4 & 0x2000) {
-        text = find_free_misc_obj();
-        if (text != NULL) {
-            D_801397C4 = text;
-            text->active = 1;
-            text->id = 0x16;
-            text->unk2 = 1;
-            text->unk16 = 0x10;
-            text->unk40 = SATURN_DIALOGUE_ARROW_TEXTURE;
-            text->unk3C = D_800F2F38;
-            text->unk42 = engine_obj.stage == 0xD ? SATURN_DIALOGUE_FORTRESS_TEXT_PALETTE : SATURN_DIALOGUE_TEXT_PALETTE;
-            text->bg_offset = -1;
-            text->x_pos.i.hi = 0x98;
-            if (!(arg0->unk4 & 0x800)) {
-                text->y_pos.i.hi = D_801397D8 == 0x80 ? 0x85 : 0x4D;
-            } else {
-                text->y_pos.i.hi = D_801397D8 == 0xFF ? 0xC5 : 0xBD;
-            }
-            text->animation_step.fields.frame_index = 0;
-            text->unk15 = 0;
-            text->ext.title_logo.palette_shift_speed = 0;
-            text->ext.ready_text.stay_up_timer = 0x20;
-        }
-    }
-    arg0->unkC = 0xFF;
-    arg0->unkD = 3;
-}
-
 void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
 {
     struct MiscObj* window;
@@ -320,7 +233,7 @@ void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
     }
     if (engine_obj.cur_character == 0) {
         if (message >= SATURN_DIALOGUE_X_TRACK_FIRST) {
-            track = saturn_dialogue_tracks_x[message - SATURN_DIALOGUE_X_TRACK_FIRST];
+            track = saturn_dialogue_tracks[message - SATURN_DIALOGUE_X_TRACK_FIRST];
         } else if (message == SATURN_DIALOGUE_CAPSULE_MESSAGE) {
             track = SATURN_DIALOGUE_CAPSULE_TRACK;
         } else {
@@ -328,7 +241,7 @@ void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
         }
     } else {
         if (message >= SATURN_DIALOGUE_ZERO_TRACK_FIRST) {
-            track = saturn_dialogue_tracks_zero[message - SATURN_DIALOGUE_ZERO_TRACK_FIRST];
+            track = saturn_dialogue_tracks[SATURN_DIALOGUE_X_TRACKS + message - SATURN_DIALOGUE_ZERO_TRACK_FIRST];
         } else if (message == SATURN_DIALOGUE_CAPSULE_MESSAGE) {
             track = SATURN_DIALOGUE_CAPSULE_TRACK;
         } else {
@@ -345,6 +258,7 @@ void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
     abc_object.unkA = 0x27;
     abc_object.unkD = 0;
 }
+
 #else
 INCLUDE_ASM("main/nonmatchings/128C4", func_8002217C);
 #endif
@@ -824,4 +738,93 @@ void func_80022730(struct AbcObj* arg0)
         break;
     }
 }
+
+#ifdef MMX4_SATURN
+void func_8002328C(struct AbcObj* arg0)
+{
+    struct MiscObj* text;
+    u8 skip;
+
+    do {
+        arg0->unk4 = *arg0->unk0;
+        if ((arg0->unk4 & 0x1FF) != 0x1FF) {
+            if (D_801397E0 == 0 && D_801397C0 == NULL) {
+                text = find_free_misc_obj();
+                if (text != NULL) {
+                    D_801397C0 = text;
+                    text->active = 1;
+                    text->id = 0x16;
+                    text->unk2 = 0;
+                    text->unk16 = 0x10;
+                    text->unk40 = SATURN_DIALOGUE_TEXT_TEXTURE;
+                    text->unk3C = &D_801396C8.count;
+                    text->unk42 = engine_obj.stage == 0xD ? SATURN_DIALOGUE_FORTRESS_TEXT_PALETTE : SATURN_DIALOGUE_TEXT_PALETTE;
+                    text->bg_offset = -1;
+                    text->x_pos.val = 0xA00000;
+                    if (!(arg0->unk4 & 0x800)) {
+                        text->y_pos.val = D_801397D8 == 0x80 ? 0x380000 : 0;
+                    } else {
+                        text->y_pos.val = D_801397D8 == 0xFF ? 0x780000 : 0x700000;
+                    }
+                    text->animation_step.fields.frame_index = 0;
+                    text->unk15 = 0;
+                }
+                D_801396C8.active = 1;
+            }
+            D_801396C8.glyphs[D_801397E0].frame = 0;
+            D_801396C8.glyphs[D_801397E0].character = (u8)arg0->unk4;
+            D_801396C8.glyphs[D_801397E0].x = (u8)arg0->unk6;
+            D_801396C8.glyphs[D_801397E0].y = (u8)arg0->unk8;
+            D_801397E0++;
+            D_801396C8.count = D_801397E0;
+        }
+        arg0->unk0++;
+        if (arg0->unk4 & 0x4000) {
+            arg0->unk8 += 0x12;
+            arg0->unk6 = -0x78;
+        } else {
+            arg0->unk6 += 0xC;
+        }
+        if (arg0->unkF == 0) {
+            arg0->unk4 &= 0xEFFF;
+        }
+    } while (!(arg0->unk4 & 0xB000));
+    func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
+    if ((arg0->unk4 & 0xB000) == 0x1000) {
+        if (DIALOGUE_PAD_PRESSED != 0 && arg0->unkF != 0) {
+            arg0->unkF--;
+        }
+        arg0->unkA = 4;
+        arg0->unkD = 2;
+        return;
+    }
+    arg0->unkF = 2;
+    if (arg0->unk4 & 0x2000) {
+        text = find_free_misc_obj();
+        if (text != NULL) {
+            D_801397C4 = text;
+            text->active = 1;
+            text->id = 0x16;
+            text->unk2 = 1;
+            text->unk16 = 0x10;
+            text->unk40 = SATURN_DIALOGUE_ARROW_TEXTURE;
+            text->unk3C = D_800F2F38;
+            text->unk42 = engine_obj.stage == 0xD ? SATURN_DIALOGUE_FORTRESS_TEXT_PALETTE : SATURN_DIALOGUE_TEXT_PALETTE;
+            text->bg_offset = -1;
+            text->x_pos.i.hi = 0x98;
+            if (!(arg0->unk4 & 0x800)) {
+                text->y_pos.i.hi = D_801397D8 == 0x80 ? 0x85 : 0x4D;
+            } else {
+                text->y_pos.i.hi = D_801397D8 == 0xFF ? 0xC5 : 0xBD;
+            }
+            text->animation_step.fields.frame_index = 0;
+            text->unk15 = 0;
+            text->ext.title_logo.palette_shift_speed = 0;
+            text->ext.ready_text.stay_up_timer = 0x20;
+        }
+    }
+    arg0->unkC = 0xFF;
+    arg0->unkD = 3;
+}
+#endif
 #endif

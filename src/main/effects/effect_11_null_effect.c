@@ -37,73 +37,7 @@ struct LineWave {
 };
 
 extern u16 saturn_vdp2_shadow[];
-const u16 null_effect_wave_table[] = {
-    0x0,
-    0x312,
-    0x645,
-    0x978,
-    0xc8b,
-    0xf9d,
-    0x12b0,
-    0x15c2,
-    0x18f5,
-    0x1c08,
-    0x1ef9,
-    0x220c,
-    0x251e,
-    0x2810,
-    0x2b02,
-    0x2df3,
-    0x30e5,
-    0x33d7,
-    0x36a7,
-    0x3978,
-    0x3c49,
-    0x3ef9,
-    0x41ca,
-    0x447a,
-    0x470a,
-    0x49ba,
-    0x4c28,
-    0x4eb8,
-    0x5126,
-    0x5395,
-    0x55e3,
-    0x5831,
-    0x5a7e,
-    0x5cac,
-    0x5eb8,
-    0x60e5,
-    0x62f1,
-    0x64dd,
-    0x66c8,
-    0x6893,
-    0x6a5e,
-    0x6c08,
-    0x6db2,
-    0x6f5c,
-    0x70c4,
-    0x724d,
-    0x7395,
-    0x74fd,
-    0x7624,
-    0x774b,
-    0x7872,
-    0x7978,
-    0x7a5e,
-    0x7b43,
-    0x7c28,
-    0x7ced,
-    0x7d70,
-    0x7e14,
-    0x7e97,
-    0x7ef9,
-    0x7f5c,
-    0x7f9d,
-    0x7fbe,
-    0x7fdf,
-    0x8000,
-};
+extern u16 sound_zone_data[65];
 void saturn_transfer_enqueue(u32 source, u32 destination, u32 byte_length);
 void saturn_transfer_profile(u32 add_a, u32 add_b, u32 attribute_index);
 
@@ -118,7 +52,7 @@ static s32 line_wave(s32 line, u16 phase, u16 scale)
     s32 value;
     if (angle & 64)
         index = 64 - index;
-    value = null_effect_wave_table[index];
+    value = sound_zone_data[index];
     if (angle & 0x80)
         value = -value;
     return value;
@@ -231,6 +165,21 @@ static void line_wave_vertical(struct EffectObj* self)
     line_wave_step_y(wave);
 }
 
+static void null_effect_surface(struct EffectObj* self);
+static void null_effect_split(struct EffectObj* self);
+static void null_effect_vertical(struct EffectObj* self);
+
+static void (*const null_effect_variants[])(struct EffectObj*) = {
+    null_effect_surface,
+    null_effect_split,
+    null_effect_vertical,
+};
+
+void null_effect_update(struct EffectObj* self)
+{
+    null_effect_variants[self->unk2](self);
+}
+
 static void null_effect_surface(struct EffectObj* self)
 {
     if (self->state == 0) {
@@ -263,17 +212,6 @@ static void null_effect_vertical(struct EffectObj* self)
         self->state = 1;
     }
     line_wave_vertical(self);
-}
-
-static void (*const null_effect_variants[])(struct EffectObj*) = {
-    null_effect_surface,
-    null_effect_split,
-    null_effect_vertical,
-};
-
-void null_effect_update(struct EffectObj* self)
-{
-    null_effect_variants[self->unk2](self);
 }
 #else
 void null_effect_update(struct EffectObj* self)

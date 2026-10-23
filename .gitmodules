@@ -18,3 +18,6 @@
 	path = tools/mednafen
 	url = https://github.com/sozud/mednafen-git.git
 	branch = mmx4-oracle
+[submodule "tools/saturn/sdk"]
+	path = tools/saturn/sdk
+	url = https://github.com/sozud/mmx4-saturn-sdk.git

@@ -140,7 +140,7 @@ static u32 blizzard_case(u32 mode)
         expected_shots[29].unk50.data = NULL;
         expected_shots[29].unk54 = NULL;
         expected_shots[29].unk68 = NULL;
-        expected_shots[29].unk98 = NULL;
+        expected_shots[29].unk98 = 0;
         expected_shots[29].unk61 = expected_shots[29].unk64 = expected_shots[29].unk65 = 0;
         expected_shots[29].unk66 = expected_shots[29].unk72 = expected_shots[29].unk73 = 0;
         expected_shots[29].unk74 = expected_shots[29].unk76 = expected_shots[29].unk77 = 0;

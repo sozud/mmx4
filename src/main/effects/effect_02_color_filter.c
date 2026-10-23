@@ -12,25 +12,7 @@ extern s32 color_filter_masks[][4];
 void color_filter_step(struct EffectObj*);
 
 #ifdef MMX4_SATURN
-static const u8 color_filter_saturn_masks[17] = {
-    0x02,
-    0x02,
-    0x02,
-    0x02,
-    0x02,
-    0x02,
-    0x02,
-    0x02,
-    0x02,
-    0x02,
-    0x02,
-    0x02,
-    0x67,
-    0x67,
-    0x06,
-    0x06,
-    0x04,
-};
+extern const u8 color_filter_saturn_masks[17];
 #endif
 
 // scaling X animation in logo graphics
@@ -334,6 +316,28 @@ struct Unk14* color_filter_scripts[17] = {
     color_filter_script_15,
     color_filter_script_16,
 };
+
+#ifdef MMX4_SATURN
+const u8 color_filter_saturn_masks[17] = {
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x02,
+    0x67,
+    0x67,
+    0x06,
+    0x06,
+    0x04,
+};
+#endif
 
 s32 color_filter_masks[17][4] = {
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0xFFFF0000u, (s32)0x00000000u },

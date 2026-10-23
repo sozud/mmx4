@@ -431,7 +431,6 @@ void saturn_sound_frame(void);
 void saturn_stream_frame(void);
 
 void saturn_transfer_flush(void);
-void saturn_spawn_tile_objects(u8* list, s16 argument);
 s32 CDC_GetPeriStat(void* status);
 s32 CDC_GetHirqReq(void);
 void saturn_cd_vblank(void);
