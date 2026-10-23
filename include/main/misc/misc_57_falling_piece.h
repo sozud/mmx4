@@ -3,9 +3,4 @@
 
 void falling_piece_update(struct MiscObj* arg0);
 
-void menu_text_init(struct UnkObj*);
-void menu_text_highlight(struct UnkObj*);
-void func_800D3798(struct UnkObj*);
-void menu_text_cursor(struct UnkObj*);
-
 #endif

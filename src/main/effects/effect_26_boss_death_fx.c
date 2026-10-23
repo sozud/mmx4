@@ -7,7 +7,7 @@
 #include "main/player_common.h"
 #include "main/visuals/visual_03_small_effect.h"
 #include "main/55C4.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 
 // boss_death_fx_state_funcs
 extern void (*boss_death_fx_state_funcs[])(struct EffectObj*);
@@ -21,7 +21,7 @@ void boss_death_fx_finish(struct EffectObj*);
 #include "weapon_resources.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/55C4.h"
 #endif
 

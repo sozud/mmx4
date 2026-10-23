@@ -1,7 +1,7 @@
 #include "test_runtime.h"
 #include "main/mains/main_64_cyber_peacock.h"
 #include "main/effects/effect_26_boss_death_fx.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/mains/main_56_jet_stingray.h"
 #include "main/mains/main_61_split_mushroom.h"
 void boss_death_fx_finish(struct EffectObj*);

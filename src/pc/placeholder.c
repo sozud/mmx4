@@ -1902,7 +1902,7 @@ static void save_icon_lifetime(struct MiscObj* obj, u8 mode)
 
 #include <string.h>
 
-// src/main/125BC.c
+// src/main/1263C.c
 
 void func_80021C14(void);
 void func_80021D84(void);

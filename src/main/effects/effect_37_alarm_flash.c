@@ -2,7 +2,7 @@
 // 800BD384..800BD654
 #include "common.h"
 #include "main/effects/effect_37_alarm_flash.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/objects.h"
 
 // alarm_flash_state_funcs

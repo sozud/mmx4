@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/character_select.h"
 #include "main/1A5BC.h"
+#include "main/1AC84.h"
 void character_select_state_1(struct EngineObj*);
 
 static u32 select_case(u32 available)

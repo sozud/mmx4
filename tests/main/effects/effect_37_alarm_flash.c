@@ -1,6 +1,6 @@
 #include "test_runtime.h"
 #include "main/effects/effect_37_alarm_flash.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 
 static const u32 alarm_flash_red_expected[] = { 0u, 0u, 0u, 5u, 0u, 0u, 0u, 0u };
 static u32 test_alarm_flash_red(u32 row)

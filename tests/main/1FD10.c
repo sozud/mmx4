@@ -2,7 +2,7 @@
 #include "main/1FD10.h"
 #include "main/55C4.h"
 #include "main/2824.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/3D88.h"
 
 static u32 transition_case(u32 mode)

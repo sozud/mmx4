@@ -4,7 +4,7 @@
 #include "main/items/item_22_layout_gate.h"
 #include "main/objects.h"
 #include "main/object_motion.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"

@@ -1,7 +1,7 @@
 #include "test_runtime.h"
 #include "main/mains/main_08_eregion.h"
 #include "main/effects/effect_26_boss_death_fx.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/55C4.h"
 void boss_death_fx_finish(struct EffectObj*);
 void boss_death_fx_wait(struct EffectObj*);

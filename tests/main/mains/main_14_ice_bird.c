@@ -3,7 +3,7 @@
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
 #include "main/effects/effect_17_freeze_blast.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 

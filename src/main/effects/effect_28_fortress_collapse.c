@@ -3,7 +3,7 @@
 #include "common.h"
 #include "main/effects/effect_28_fortress_collapse.h"
 #include "main/object_motion.h"
-#include "main/1A5BC.h"
+#include "main/1AC84.h"
 #include "main/55C4.h"
 #include "main/effects/effect_29_tile_anim_trigger.h"
 #include "main/objects.h"
