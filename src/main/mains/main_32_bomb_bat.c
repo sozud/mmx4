@@ -157,37 +157,31 @@ void bomb_bat_hover_start(struct MainObj* self)
 
 // bomb_bat_hover_track
 
+extern s32 D_800FDC98[2];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005CB90(struct MainObj* arg0);
 void func_8005CF9C(struct MainObj* arg0);
-extern s32 D_800FDC98[2];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", func_8005CB90);
+#else
 void func_8005CB90(struct MainObj* arg0)
 {
-    s32 limit;
-    s32 distance;
+    u8 angle;
 
     animate_object(ANIMATED_OBJECT(arg0));
     move_object(MOVING_OBJECT(arg0));
-    set_velocity_from_angle(MOVING_OBJECT(arg0),
-        angle_to_point(OBJECT_HEADER(arg0), g_Player.x_pos.val, g_Player.y_pos.val - 0x500000) & 0xFF);
+    angle = angle_to_point(OBJECT_HEADER(arg0), g_Player.x_pos.val, g_Player.y_pos.val - 0x500000);
+    set_velocity_from_angle(MOVING_OBJECT(arg0), angle);
     arg0->x_speed += arg0->x_speed / 2;
-    limit = arg0->x_speed;
-    if (limit < 0)
-        limit = -limit;
-    limit += 0x20000;
-    distance = g_Player.x_pos.val - arg0->x_pos.val;
-    if (distance < 0)
-        distance = arg0->x_pos.val - g_Player.x_pos.val;
-    if (limit < distance && --arg0->unk7C != 0)
-        return;
-    arg0->unk5 = 3;
-    arg0->unk6 = 0;
+    if ((g_Player.x_pos.val - arg0->x_pos.val >= 0 ? g_Player.x_pos.val - arg0->x_pos.val : arg0->x_pos.val - g_Player.x_pos.val)
+            <= (arg0->x_speed >= 0 ? arg0->x_speed : -arg0->x_speed) + 0x20000
+        || --arg0->unk7C == 0) {
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", func_8005CB90);
 #endif
 
 void bomb_bat_drop(struct MainObj* self)
@@ -306,21 +300,22 @@ void bomb_bat_dive(struct MainObj* self)
 }
 
 // bomb_bat_dive_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", func_8005CF9C);
+#else
 void func_8005CF9C(struct MainObj* arg0)
 {
-    s32 spread;
+    u16 spread;
 
     set_animation(arg0, 3);
-    spread = get_random() << 8;
-    spread += get_random();
-    arg0->x_speed = D_800FDC98[(arg0->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
+    spread = (get_random() << 8) + get_random();
+    arg0->x_speed = D_800FDC98[(arg0->unk15 & PLAYER_FACING_RIGHT) != 0];
     if (get_random() & 1)
-        arg0->x_speed += spread & 0xFFFF;
+        arg0->x_speed += spread;
     else
-        arg0->x_speed -= spread & 0xFFFF;
-    arg0->y_speed = 0x18000;
+        arg0->x_speed -= spread;
     arg0->x_accel = -0x1000;
+    arg0->y_speed = 0x18000;
     arg0->attack_box = (const u8*)&bomb_bat_body_box;
     arg0->ext.main_32.unk88 = 1;
     if (arg0->unk2 == 2) {
@@ -330,8 +325,6 @@ void func_8005CF9C(struct MainObj* arg0)
         arg0->unk6 += 2;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", func_8005CF9C);
 #endif
 
 void bomb_bat_dive_wait(struct MainObj* self)

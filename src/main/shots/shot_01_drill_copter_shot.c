@@ -41,26 +41,32 @@ void drill_copter_shot_update(struct ShotObj* self)
 void func_80099B6C(struct ShotObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_01_drill_copter_shot", func_80099B6C);
+#else
 void func_80099B6C(struct ShotObj* self)
 {
+    s8(*offsets)[2];
     self->on_screen = 1;
-    self->x_vel.val = self->y_vel.val = self->unk28 = self->unk2C = 0;
-    self->animation_table = (u32**)&drill_copter_shot_animation;
-    self->unk15 = (self->unk2 == 0) << PLAYER_FACING_SHIFT;
     self->state++;
-    self->x_vel.val = self->unk15 != 0 ? FIXED(6) : FIXED(-6);
-    self->x_pos.i.hi = (u16)self->x_pos.i.hi + drill_copter_shot_spawn_offsets[(s8)self->unk2][0];
-    self->y_pos.i.hi = (u16)self->y_pos.i.hi + drill_copter_shot_spawn_offsets[(s8)self->unk2][1];
+    self->x_vel.val = 0;
+    self->unk28 = 0;
+    self->y_vel.val = 0;
+    self->unk2C = 0;
+    self->unk15 = self->unk2 ? 0 : PLAYER_FACING_RIGHT;
+    self->animation_table = (u32**)&drill_copter_shot_animation;
+    self->x_vel.val = self->unk15 ? FIXED(6) : FIXED(-6);
+    offsets = drill_copter_shot_spawn_offsets;
+    self->x_pos.i.hi += offsets[(s8)self->unk2][0];
+    self->y_pos.i.hi += offsets[(s8)self->unk2][1];
     self->unk16 = VISUAL_SATURN_LAYER(6);
-    self->unk58.collision_data = D_80106070;
-    self->unk54 = self->unk50.data = drill_copter_shot_hit_box;
-    self->unk60 = 2;
     self->unk68 = NULL;
+    self->unk58.collision_data = D_80106070;
+    self->unk54 = drill_copter_shot_hit_box;
+    self->unk50.data = drill_copter_shot_hit_box;
+    self->unk60 = 2;
     set_animation(ANIMATED_OBJECT(self), 0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_01_drill_copter_shot", func_80099B6C);
 #endif
 
 void drill_copter_shot_fly(struct ShotObj* self)

@@ -333,7 +333,6 @@ void general_fist_wait_launch(struct ShotObj* self)
 }
 
 // general_fist_launch
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800ACDE4(struct ShotObj* self)
 {
     s16 player_y;
@@ -355,9 +354,6 @@ void func_800ACDE4(struct ShotObj* self)
     else
         self->timer = 3;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800ACDE4);
-#endif
 
 void general_fist_fly_to_row(struct ShotObj* self)
 {
@@ -525,7 +521,6 @@ void general_fist_sweep_turn(struct ShotObj* self)
 }
 
 // general_fist_return
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AD338(struct ShotObj* self)
 {
     self->unk68 = NULL;
@@ -538,13 +533,13 @@ void func_800AD338(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
     if (sigma_final_shot_at_position(self, self->unk84.shot_55.x, self->unk84.shot_55.y) & 0xFF) {
         self->unk5++;
-        set_animation(self, self->unk2 == 3 ? 0x13 : 0xE);
+        if (self->unk2 == 3)
+            set_animation(self, 0x13);
+        else
+            set_animation(self, 0xE);
         func_8001540C(2, SATURN_SOUND(6, 0xE0), self);
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AD338);
-#endif
 
 void general_fist_docked(struct ShotObj* self)
 {
@@ -618,29 +613,28 @@ void general_shot_fist(struct ShotObj* self)
 }
 
 // general_ring_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AD6DC);
+#else
 void func_800AD6DC(struct ShotObj* self)
 {
+    u8 angle;
+
     animate_object(ANIMATED_OBJECT(self));
     self->unk42 = self->unk7C->unk42;
     if (--self->timer != 0)
         return;
     self->unk5++;
-    if (self->unk15 != 0)
-        self->x_pos.i.hi -= general_ring_offsets[(self->unk2 - 4) * 2];
-    else
-        self->x_pos.i.hi += general_ring_offsets[(self->unk2 - 4) * 2];
-    self->y_pos.i.hi += general_ring_offsets[(self->unk2 - 4) * 2 + 1];
+    self->x_pos.i.hi += self->unk15 != 0 ? -general_ring_offsets[(self->unk2 - 4) << 1] : general_ring_offsets[(self->unk2 - 4) << 1];
+    self->y_pos.i.hi += general_ring_offsets[((self->unk2 - 4) << 1) + 1];
     set_animation(self, 0x23);
-    set_velocity_from_angle(MOVING_OBJECT(self),
-        (u8)angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)));
+    angle = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+    set_velocity_from_angle(MOVING_OBJECT(self), angle);
     self->x_vel.val *= 3;
     self->y_vel.val *= 3;
     self->unk42 &= 0x7FFF;
     func_8001540C(2, SATURN_SOUND(7, 0xE1), self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AD6DC);
 #endif
 
 void general_ring_fly(struct ShotObj* self)

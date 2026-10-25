@@ -176,15 +176,15 @@ void colonel_spawn_warning(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern struct Unk_unk68 D_801044F8;
+extern void* D_80104770[25];
+extern void (*colonel_step_funcs[9])();
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80086008(struct MainObj* arg0);
 void func_80086124(struct MainObj* arg0);
 void func_800877A4(struct MainObj* arg0);
 void func_80087A00(struct MainObj* arg0);
 void func_800889DC(struct MainObj* arg0);
-extern struct Unk_unk68 D_801044F8;
-extern void* D_80104770[25];
-extern void (*colonel_step_funcs[9])();
 extern u8 D_801044A0[8];
 extern u8 D_801044A8[8];
 extern void* D_801044EC[2];
@@ -193,74 +193,76 @@ void colonel_spawn_afterimages(struct MainObj*);
 void colonel_face_player(struct MainObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086008);
+#else
 void func_80086008(struct MainObj* arg0)
 {
-    struct Main69Ext* ext = &arg0->ext.main_69;
-
-    if (ext->state.bytes.variant == 0) {
-        if (ext->effect->active != 0)
+    if (arg0->ext.main_69.state.bytes.variant == 0) {
+        if (arg0->ext.main_69.effect->active != 0)
             return;
         arg0->unk6 = 0;
     } else {
         arg0->unk6 = 1;
     }
-    arg0->unk16 = VISUAL_SATURN_LAYER(5);
-    arg0->contact_damage = 6;
-    arg0->air_state = 0;
-    arg0->unk15 = 0;
-    arg0->hp = 0;
-    arg0->invincibility_timer = 0;
-    arg0->terrain_box = &D_801044F8;
     arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->unk15 = 0;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
+    arg0->hp = 0;
+    arg0->contact_damage = 6;
+    arg0->invincibility_timer = 0;
+    arg0->terrain_box = &D_801044F8;
     arg0->hurt_box = NULL;
     arg0->attack_box = NULL;
     arg0->collision_data = NULL;
     arg0->animation_table = (const u8* const*)D_80104770;
-    arg0->unk1C.val = arg0->y_pos.val;
-    arg0->unk18.val = arg0->x_pos.val;
     arg0->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
     set_animation(arg0, 0);
     colonel_spawn_afterimages(arg0);
     engine_obj.unk25 = 1;
     engine_obj.boss_ptr = arg0;
     arg0->state = 1;
-    ext->state.bytes.unk8D = 0;
-    ext->state.bytes.unk8E = 0;
+    arg0->ext.main_69.state.bytes.unk8D = 0;
+    arg0->ext.main_69.state.bytes.unk8E = 0;
     arg0->unk5 = 2;
 #ifdef MMX4_SATURN
     saturn_colonel_init_mode = 15;
 #endif
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086008);
 #endif
 
 // colonel_run
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086124);
+#else
 void func_80086124(struct MainObj* arg0)
 {
-    struct Main69Ext* ext = &arg0->ext.main_69;
     s32 collision;
 
     colonel_step_funcs[arg0->unk5](arg0);
     collision = func_8002DD04(arg0);
-    if (ext->state.bytes.unk8D != 0) {
-        if (ext->state.bytes.unk8D & 1)
-            arg0->unk42 &= 0x7FFF;
-        else
+    if (arg0->ext.main_69.state.bytes.unk8D != 0) {
+        if (!(arg0->ext.main_69.state.bytes.unk8D & 1))
             arg0->unk42 |= 0x8000;
-        if (--ext->state.bytes.unk8D == 0) {
+        else
+            arg0->unk42 &= 0x7FFF;
+        if (--arg0->ext.main_69.state.bytes.unk8D == 0) {
             arg0->collision_data = D_80108084;
-            ext->state.bytes.unk8E = 0;
+            arg0->ext.main_69.state.bytes.unk8E = 0;
         }
     } else if (collision < 0) {
         arg0->state = 2;
-        arg0->unk5 = ext->state.bytes.variant != 0 ? 1 : 0;
+        if (arg0->ext.main_69.state.bytes.variant == 0)
+            arg0->unk5 = 0;
+        else
+            arg0->unk5 = 1;
         arg0->unk6 = 0;
         arg0->unk42 &= 0x7FFF;
         g_Player.spike_immune = 1;
@@ -268,13 +270,11 @@ void func_80086124(struct MainObj* arg0)
         return;
     } else if (collision != 0 && collision != 0x7F) {
         arg0->collision_data = D_801060F0;
-        ext->state.bytes.unk8D = 0x40;
-        ext->state.bytes.unk8E = 1;
+        arg0->ext.main_69.state.bytes.unk8D = 0x40;
+        arg0->ext.main_69.state.bytes.unk8E = 1;
     }
     func_8002D9BC(arg0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086124);
 #endif
 
 void colonel_death(struct MainObj* self)
@@ -923,7 +923,6 @@ void colonel_teleport_slash_shake(struct MainObj* self)
 }
 
 // colonel_teleport_slash_reappear
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800877A4(struct MainObj* arg0)
 {
     s16 player_x;
@@ -943,9 +942,6 @@ void func_800877A4(struct MainObj* arg0)
     arg0->unk7C = 0x1E;
     arg0->unk6++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_800877A4);
-#endif
 
 void colonel_teleport_slash_swing(struct MainObj* self)
 {

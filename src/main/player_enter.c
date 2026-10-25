@@ -394,7 +394,9 @@ void player_enter_wall_cling(struct PlayerObj* self)
 void func_800349F4(struct PlayerObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_enter", func_800349F4);
+#else
 void func_800349F4(struct PlayerObj* arg0)
 {
     player_set_animation_shooting(arg0, 0xE);
@@ -410,21 +412,25 @@ void func_800349F4(struct PlayerObj* arg0)
     }
     if (arg0->unk88.bytes.collision_flags & 1) {
         arg0->unk15 = PLAYER_FACING_RIGHT;
-        arg0->x_vel.val = arg0->dash_momentum != 0 ? FIXED(-4.125) : FIXED(-2);
+        if (arg0->dash_momentum != 0)
+            arg0->x_vel.val = FIXED(-4.125);
+        else
+            arg0->x_vel.val = FIXED(-2);
     } else {
         arg0->unk15 = 0;
-        arg0->x_vel.val = arg0->dash_momentum != 0 ? FIXED(4.125) : FIXED(2);
+        if (arg0->dash_momentum != 0)
+            arg0->x_vel.val = FIXED(4.125);
+        else
+            arg0->x_vel.val = FIXED(2);
     }
-    arg0->y_vel.val = FIXED(5.625);
     arg0->unk28 = 0;
+    arg0->y_vel.val = FIXED(5.625);
     arg0->unk2C = 0x4200;
     arg0->unk8A.bytes.low = 10;
     player_spawn_wall_kick_spark(arg0);
     arg0->unk5 = 10;
     arg0->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/player_enter", func_800349F4);
 #endif
 void player_enter_wall_slide(struct PlayerObj* self)
 {
@@ -538,20 +544,22 @@ void player_enter_ladder_down(struct PlayerObj* self)
 }
 
 // player_start_script
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-#ifdef MMX4_SATURN
-s32 func_80034E2C(struct PlayerObj* player)
-{
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_enter", func_80034E2C);
 #else
-s32 func_80034E2C(void)
+#ifdef MMX4_PC
+void func_80034E2C(void)
 {
     struct PlayerObj* player = &g_Player;
+#else
+void func_80034E2C(struct PlayerObj* player)
+{
 #endif
 
     player->unk6 = 0;
     player->unk5 = player->script_action;
     player_clear_dash_and_attack(player);
-    switch ((u8)(player->unk5 - 0x14)) {
+    switch ((s8)(player->unk5 - 0x14)) {
     case 0:
         if ((u8)(player->unk17 - 5) >= 2)
             player_set_idle_animation(player);
@@ -563,7 +571,7 @@ s32 func_80034E2C(void)
         player->y_vel.val = 0;
         player->unk28 = 0;
         player->unk2C = 0;
-        if (player->script_facing == 0) {
+        if ((u8)player->script_facing == 0) {
             player_script_walk_to_mark(player);
             break;
         }
@@ -590,10 +598,7 @@ s32 func_80034E2C(void)
         player->unk15 = player->script_facing;
         break;
     }
-    return 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/player_enter", func_80034E2C);
 #endif
 void player_start_stage_clear(struct PlayerObj* self)
 {

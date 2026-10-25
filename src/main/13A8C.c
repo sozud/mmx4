@@ -14,6 +14,7 @@
 #include "main/object_update.h"
 #include "main/stage_objects.h"
 #include "main/xa_sequence_data.h"
+#include "weapon_resources.h"
 #ifdef MMX4_SATURN
 #include "saturn/menu.h"
 #include "saturn/player_resources.h"
@@ -611,24 +612,24 @@ void func_80023A54(struct EngineObj* arg0)
     func_80023D68();
 }
 
-#ifdef MMX4_SATURN
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/13A8C", func_80023AA8);
+#else
 #define SPARKLE_STATIC 2
 #define SPARKLE_X_CENTER 0x100
 #define SPARKLE_Y_CENTER 0x98
 #define SPARKLE_STATIC_X 0xCA
 #define SPARKLE_STATIC_Y (SPARKLE_STATIC_X + 5)
-#define SPARKLE_CLUT 0x18
-#define SPARKLE_LAYER 0x42
 
 void func_80023AA8(struct MiscObj* arg0)
 {
     arg0->state++;
     arg0->bg_offset = -1;
-    arg0->unk40 = PLAYER_STAGE_TEXTURE(0);
-    arg0->unk42 = SPARKLE_CLUT;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(0);
+    arg0->unk42 = OBJECT_CLUT(0x7848);
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0];
     arg0->animation_table = (u32**)D_800F307C;
-    arg0->unk16 = SPARKLE_LAYER;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     if (arg0->unk2 < SPARKLE_STATIC) {
         arg0->x_pos.i.hi = D_800F3088[get_random() & 15] + SPARKLE_X_CENTER;
         arg0->y_pos.i.hi = D_800F30A8[get_random() & 15] + SPARKLE_Y_CENTER;
@@ -639,8 +640,6 @@ void func_80023AA8(struct MiscObj* arg0)
     arg0->unk15 = 0;
     set_animation(arg0, arg0->unk2);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/13A8C", func_80023AA8);
 #endif
 void func_80023B98(struct MiscObj* arg0)
 {

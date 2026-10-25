@@ -56,33 +56,35 @@ extern void (*cyber_peacock_state_funcs[])(struct MainObj*);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern struct Unk_unk68 cyber_peacock_intro_hurt_box;
+extern struct Unk_unk68 D_80107CFC[];
+extern void (*cyber_peacock_step_funcs[6])();
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007C30C(struct MainObj* arg0);
 void func_8007CA68(struct MainObj* arg0);
 void func_8007D5D0(struct MainObj* arg0);
 void func_8007D710(struct MainObj* arg0);
 void func_8007D838(struct MainObj* arg0);
-extern struct Unk_unk68 cyber_peacock_intro_hurt_box;
-extern struct Unk_unk68 D_80107CFC[];
 extern u8 cyber_peacock_attack_animations[];
 extern u8 cyber_peacock_attack_steps[];
 void cyber_peacock_face_player(struct MainObj* arg0);
 u8 cyber_peacock_choose_attack(struct MainObj* arg0);
 void cyber_peacock_start_teleport(struct MainObj* arg0);
-extern void (*cyber_peacock_step_funcs[6])();
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007C30C);
+#else
 void func_8007C30C(struct MainObj* arg0)
 {
+    arg0->state = 0;
+    arg0->unk5 = 1;
     arg0->unk7C = 0x80;
     arg0->contact_damage = 5;
     arg0->animation_table = (const u8* const*)cyber_peacock_animations;
     arg0->hurt_box = &cyber_peacock_intro_hurt_box;
     arg0->attack_box = &cyber_peacock_hit_box;
     arg0->collision_data = D_80107CFC;
-    arg0->state = 0;
-    arg0->unk5 = 1;
     arg0->unk6 = 0;
     arg0->unk7 = 0;
     arg0->on_screen = 0;
@@ -114,8 +116,6 @@ void func_8007C30C(struct MainObj* arg0)
         arg0->ext.main_64.arena_y = 0x600;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007C30C);
 #endif
 
 void cyber_peacock_intro_wait_player(struct MainObj* self)
@@ -670,7 +670,6 @@ void cyber_peacock_attack(struct MainObj* self)
 }
 
 // cyber_peacock_hit_vanish
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007D5D0(struct MainObj* arg0)
 {
     switch (arg0->unk6) {
@@ -704,12 +703,8 @@ void func_8007D5D0(struct MainObj* arg0)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D5D0);
-#endif
 
 // cyber_peacock_guard_vanish
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007D710(struct MainObj* arg0)
 {
     s16 count;
@@ -718,8 +713,8 @@ void func_8007D710(struct MainObj* arg0)
     case 0:
         arg0->ext.main_64.shot_count = 0;
         arg0->unk7C = 0;
-        arg0->unk7 = 0;
         arg0->unk6++;
+        arg0->unk7 = 0;
         set_animation(arg0, 0x21);
         func_8001540C(2, SATURN_SOUND(0xC8, 0x8F), arg0);
         arg0->attack_box = NULL;
@@ -728,8 +723,9 @@ void func_8007D710(struct MainObj* arg0)
     case 1:
         count = arg0->unk7C;
         if (count >= 3) {
-            arg0->unk7C = 0x3C;
+            arg0->unk7C = 0;
             arg0->unk6++;
+            arg0->unk7C = 0x3C;
             set_animation(arg0, 0x22);
             break;
         }
@@ -747,12 +743,11 @@ void func_8007D710(struct MainObj* arg0)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D710);
-#endif
 
 // cyber_peacock_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D838);
+#else
 void func_8007D838(struct MainObj* arg0)
 {
     s32 hit;
@@ -768,9 +763,9 @@ void func_8007D838(struct MainObj* arg0)
     ((void (*)(struct MainObj*))cyber_peacock_step_funcs[arg0->unk5])(arg0);
     hit = func_8002DD04(arg0);
     if (arg0->ext.main_64.flash_timer != 0) {
-        arg0->ext.main_64.flash_timer--;
         arg0->hp = arg0->ext.main_64.saved_health;
-        if (arg0->ext.main_64.flash_timer & 1)
+        arg0->ext.main_64.flash_timer--;
+        if (BLINK_CLOCK(arg0->ext.main_64.flash_timer) & 1)
             arg0->unk42 |= 0x8000;
         else
             arg0->unk42 &= 0x7FFF;
@@ -796,8 +791,6 @@ void func_8007D838(struct MainObj* arg0)
     func_8002D9BC(arg0);
     is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D838);
 #endif
 
 void cyber_peacock_death_start(struct MainObj* self)

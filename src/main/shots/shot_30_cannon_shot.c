@@ -80,16 +80,16 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FB9C);
 #endif
 
 // cannon_shot_fly
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FD00);
+#else
 void func_8009FD00(struct ShotObj* arg0)
 {
     s32 speed;
 
     animate_object(ANIMATED_OBJECT(arg0));
     move_with_gravity(ANIMATED_OBJECT(arg0));
-    speed = arg0->x_vel.val;
-    if (speed < 0)
-        speed = -speed;
+    speed = arg0->x_vel.val >= 0 ? arg0->x_vel.val : -arg0->x_vel.val;
     if (speed > 0x30000)
         arg0->unk28 = 0;
     if (func_8002DD04((struct MainObj*)arg0) < 0) {
@@ -97,12 +97,9 @@ void func_8009FD00(struct ShotObj* arg0)
     } else {
         func_8002D9BC(arg0);
         if (--arg0->unk84.value == 0 && arg0->unk17 != 4) {
-            arg0->unk28 = 0x600;
             arg0->x_vel.val = cannon_shot_speeds[(arg0->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
-            if (arg0->unk15 & PLAYER_FACING_RIGHT)
-                arg0->x_pos.i.hi += 0x10;
-            else
-                arg0->x_pos.i.hi -= 0x10;
+            arg0->unk28 = 0x600;
+            arg0->x_pos.i.hi += (arg0->unk15 & PLAYER_FACING_RIGHT) ? 0x10 : -0x10;
             set_animation(arg0, 4);
         }
         if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
@@ -113,8 +110,6 @@ void func_8009FD00(struct ShotObj* arg0)
     arg0->unk8C.word = 1;
     arg0->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FD00);
 #endif
 
 void cannon_shot_despawn(struct ShotObj* self)

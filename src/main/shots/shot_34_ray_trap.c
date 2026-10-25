@@ -27,28 +27,18 @@ void ray_trap_despawn(struct ShotObj*);
 
 void func_80021DBC(s16* arg0, s16* arg1, s32 arg2);
 
-struct Shot34Data {
-    struct Unk_unk68 bounds[6];
-    u8 effect_animation_ids[3][4];
-    s8 trailing_data[4];
+struct Unk_unk68 ray_trap_box0 = { -6, -10, 10, 18 };
+struct Unk_unk68 ray_trap_box1 = { -17, -10, 33, 18 };
+struct Unk_unk68 ray_trap_box2 = { 0, -1, 11, 3 };
+struct Unk_unk68 ray_trap_box3 = { -6, -5, 10, 11 };
+struct Unk_unk68 ray_trap_box4 = { -7, -15, 13, 30 };
+struct Unk_unk68 ray_trap_box5 = { 0, 0, 7, 8 };
+u8 ray_trap_effect_animation_ids[3][4] = {
+    { 10, 10, 10, 11 },
+    { 40, 40, 40, 42 },
+    { 41, 41, 41, 42 },
 };
-
-struct Shot34Data ray_trap_data = {
-    {
-        { -6, -10, 10, 18 },
-        { -17, -10, 33, 18 },
-        { 0, -1, 11, 3 },
-        { -6, -5, 10, 11 },
-        { -7, -15, 13, 30 },
-        { 0, 0, 7, 8 },
-    },
-    {
-        { 10, 10, 10, 11 },
-        { 40, 40, 40, 42 },
-        { 41, 41, 41, 42 },
-    },
-    { 18, 9, -18, 9 },
-};
+s8 ray_trap_trailing_data[4] = { 18, 9, -18, 9 };
 
 s32 ray_trap_wall_animations[4] = { 7, 6, 11, 15 };
 
@@ -80,7 +70,6 @@ void (*ray_trap_step_funcs[])(struct ShotObj*) = {
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A16FC(struct ShotObj* arg0);
-static void shot_34_orbit(struct ShotObj* arg0, struct MainObj* owner);
 void func_800A19A8(struct ShotObj* arg0);
 void func_800A1B1C(struct ShotObj* arg0);
 void func_800A1BEC(struct ShotObj* arg0);
@@ -89,12 +78,6 @@ void func_800A1E3C(struct ShotObj* arg0);
 void func_800A2098(struct ShotObj* arg0);
 void func_80021DBC(s16* arg0, s16* arg1, s32 arg2);
 void ray_trap_check_airborne(struct ShotObj* arg0);
-static void shot_34_orbit(struct ShotObj* arg0, struct MainObj* owner)
-{
-    arg0->unk84.halves[0] = 0x20;
-    arg0->unk84.halves[1] = 0x20;
-    func_80021DBC((s16*)&arg0->unk84.halves[0], (s16*)&arg0->unk84.halves[1], arg0->unk8C.bytes[0]);
-}
 #endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -110,27 +93,27 @@ void func_800A16FC(struct ShotObj* arg0)
     arg0->unk1C.val = arg0->y_pos.val;
     switch (arg0->unk2) {
     case 0:
-        arg0->unk54 = (u8*)&ray_trap_data.bounds[4];
-        arg0->unk50.data = (u8*)&ray_trap_data.bounds[3];
-        arg0->unk68 = &ray_trap_data.bounds[5];
+        arg0->unk54 = (u8*)&ray_trap_box4;
+        arg0->unk50.data = (u8*)&ray_trap_box3;
+        arg0->unk68 = &ray_trap_box5;
         arg0->unk5C = 1;
         arg0->unk8C.bytes[3] = 0;
         arg0->timer = 0;
         arg0->unk15 = arg0->x_pos.val < g_Player.x_pos.val ? PLAYER_FACING_RIGHT : 0;
         break;
     case 1:
-        arg0->unk54 = (u8*)&ray_trap_data.bounds[1];
+        arg0->unk54 = (u8*)&ray_trap_box1;
         arg0->unk5C = 1;
-        arg0->unk50.data = (u8*)&ray_trap_data.bounds[0];
+        arg0->unk50.data = (u8*)&ray_trap_box0;
         arg0->unk68 = NULL;
         arg0->timer = 0;
         break;
     case 2:
     case 3:
         arg0->unk5C = 3;
-        arg0->unk54 = (u8*)&ray_trap_data.bounds[1];
-        arg0->unk50.data = (u8*)&ray_trap_data.bounds[0];
-        arg0->unk68 = &ray_trap_data.bounds[2];
+        arg0->unk54 = (u8*)&ray_trap_box1;
+        arg0->unk50.data = (u8*)&ray_trap_box0;
+        arg0->unk68 = &ray_trap_box2;
         arg0->x_vel.val = arg0->unk15 != 0 ? 0x30000 : -0x30000;
         arg0->unk8C.bytes[3] = 1;
         arg0->timer = 0xE10;
@@ -196,23 +179,25 @@ void ray_trap_fall(struct ShotObj* arg0)
 }
 
 // ray_trap_ride_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A19A8);
+#else
 void func_800A19A8(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
 
     switch (arg0->unk7) {
     case 0:
-        arg0->unk7 = 1;
+        arg0->unk7++;
         arg0->y_vel.val = 0xA0000;
         arg0->x_vel.val = 0;
         arg0->unk8C.bytes[1] = 2;
     case 1:
-        if (arg0->unk8C.bytes[1] != 0) {
-            arg0->unk8C.bytes[1]--;
-        } else {
+        if (arg0->unk8C.bytes[1] == 0) {
             arg0->y_vel.val = 0;
             arg0->unk7++;
+        } else {
+            arg0->unk8C.bytes[1]--;
         }
         move_object(MOVING_OBJECT(arg0));
         break;
@@ -222,7 +207,9 @@ void func_800A19A8(struct ShotObj* arg0)
             arg0->unk6++;
             break;
         }
-        shot_34_orbit(arg0, owner);
+        arg0->unk84.halves[0] = 0x20;
+        arg0->unk84.halves[1] = 0x20;
+        func_80021DBC((s16*)&arg0->unk84.halves[0], (s16*)&arg0->unk84.halves[1], arg0->unk8C.bytes[0]);
         if (arg0->timer == 0) {
             arg0->timer = 3;
             arg0->unk8C.bytes[0] = (arg0->unk8C.bytes[0] - 1) & 0xF;
@@ -237,48 +224,51 @@ void func_800A19A8(struct ShotObj* arg0)
     if (owner->active == 0)
         arg0->state = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A19A8);
 #endif
 
 // ray_trap_ride_wait
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1B1C);
+#else
 void func_800A1B1C(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
 
     if (!((owner->ext.main_55.unk88 >> arg0->unk8A) & 1)) {
+        arg0->unk15 = arg0->x_pos.val <= g_Player.x_pos.val ? PLAYER_FACING_RIGHT : 0;
         arg0->unk7 = 0;
-        arg0->unk15 = g_Player.x_pos.val >= arg0->x_pos.val ? PLAYER_FACING_RIGHT : 0;
         arg0->unk6++;
     }
-    shot_34_orbit(arg0, owner);
+    arg0->unk84.halves[0] = 0x20;
+    arg0->unk84.halves[1] = 0x20;
+    func_80021DBC((s16*)&arg0->unk84.halves[0], (s16*)&arg0->unk84.halves[1], arg0->unk8C.bytes[0]);
     arg0->x_pos.i.hi = owner->x_pos.i.hi + arg0->unk84.halves[0];
     arg0->y_pos.i.hi = owner->y_pos.i.hi + arg0->unk84.halves[1];
     animate_object(ANIMATED_OBJECT(arg0));
     if (owner->active == 0)
         arg0->state = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1B1C);
 #endif
 
 // ray_trap_ride_return
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1BEC);
+#else
 void func_800A1BEC(struct ShotObj* arg0)
 {
+    struct PlayerObj* player = &g_Player;
+    u8 angle;
+
     if (arg0->unk7 == 0) {
-        arg0->unk7 = 1;
-        arg0->unk15 = g_Player.x_pos.val >= arg0->x_pos.val ? PLAYER_FACING_RIGHT : 0;
-        set_velocity_from_angle(MOVING_OBJECT(arg0),
-            angle_to_point(OBJECT_HEADER(arg0), g_Player.x_pos.val + 0x1400000, g_Player.y_pos.val) & 0xFF);
+        arg0->unk7++;
+        arg0->unk15 = arg0->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
+        angle = angle_to_point(OBJECT_HEADER(arg0), g_Player.x_pos.val + 0x1400000, player->y_pos.val);
+        set_velocity_from_angle(MOVING_OBJECT(arg0), angle);
         arg0->y_vel.val -= 0x30000;
     }
     move_object(MOVING_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1BEC);
 #endif
 
 void ray_trap_ride(struct ShotObj* self)
@@ -287,26 +277,29 @@ void ray_trap_ride(struct ShotObj* self)
 }
 
 // ray_trap_crawl_wall
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1CCC);
+#else
 void func_800A1CCC(struct ShotObj* arg0)
 {
     u8 flags;
-    s32 reverse;
+    u8 reverse;
 
     arg0->unk8C.bytes[3] = 1;
     animate_object(ANIMATED_OBJECT(arg0));
     move_object(MOVING_OBJECT(arg0));
-    arg0->unk54 = (u8*)&ray_trap_data.bounds[1];
-    arg0->unk50.data = (u8*)&ray_trap_data.bounds[0];
-    arg0->unk68 = &ray_trap_data.bounds[2];
+    arg0->unk54 = (u8*)&ray_trap_box1;
+    arg0->unk50.data = (u8*)&ray_trap_box0;
+    arg0->unk68 = &ray_trap_box2;
     if (arg0->unk6 == 0) {
         flags = arg0->unk70;
+        reverse = 0;
         if ((flags & 3) == 0)
             return;
         if (arg0->unk15 != 0)
             reverse = flags & 1;
-        else
-            reverse = (flags & 2) != 0;
+        else if (flags & 2)
+            reverse = 1;
         if (!(arg0->unk70 & 8)) {
             arg0->unk6++;
             arg0->x_vel.val = 0;
@@ -324,27 +317,27 @@ void func_800A1CCC(struct ShotObj* arg0)
     arg0->unk6 = 0;
     arg0->y_vel.val = -0x30000;
     set_animation(arg0, ray_trap_crawl_boxes[1][arg0->unk2]);
-    arg0->unk68 = &ray_trap_data.bounds[5];
+    arg0->unk68 = &ray_trap_box5;
     arg0->x_pos.i.hi += arg0->unk15 != 0 ? -0x10 : 0x10;
     arg0->unk67 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1CCC);
 #endif
 
 // ray_trap_crawl_floor
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1E3C);
+#else
 void func_800A1E3C(struct ShotObj* arg0)
 {
     arg0->unk8C.bytes[3] = 0;
     animate_object(ANIMATED_OBJECT(arg0));
     move_object(MOVING_OBJECT(arg0));
-    arg0->unk54 = (u8*)&ray_trap_data.bounds[4];
-    arg0->unk50.data = (u8*)&ray_trap_data.bounds[3];
-    arg0->unk68 = &ray_trap_data.bounds[5];
+    arg0->unk54 = (u8*)&ray_trap_box4;
+    arg0->unk50.data = (u8*)&ray_trap_box3;
+    arg0->unk68 = &ray_trap_box5;
     if (arg0->unk6 == 0) {
         if (arg0->unk70 & 8) {
-            arg0->unk6 = 1;
+            arg0->unk6++;
             arg0->y_vel.val = 0;
             set_animation(arg0, ray_trap_crawl_boxes[2][arg0->unk2]);
         }
@@ -352,20 +345,18 @@ void func_800A1E3C(struct ShotObj* arg0)
     }
     if (arg0->animation_step.fields.relative_step != 0)
         return;
+    arg0->unk15 = arg0->x_pos.val < g_Player.x_pos.val ? PLAYER_FACING_RIGHT : 0;
     arg0->unk5 = 3;
     arg0->unk6 = 0;
-    arg0->unk15 = arg0->x_pos.val < g_Player.x_pos.val ? PLAYER_FACING_RIGHT : 0;
     if (arg0->unk2 < 2)
         arg0->x_vel.val = arg0->unk15 != 0 ? 0x90000 : -0x10000;
     else
         arg0->x_vel.val = arg0->unk15 != 0 ? 0x30000 : -0x30000;
     set_animation(arg0, ray_trap_crawl_boxes[3][arg0->unk2]);
-    arg0->unk68 = &ray_trap_data.bounds[2];
-    arg0->unk67 = 0;
     arg0->y_pos.i.hi += 0x10;
+    arg0->unk68 = &ray_trap_box2;
+    arg0->unk67 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1E3C);
 #endif
 
 void ray_trap_chase(struct ShotObj* self)
@@ -399,15 +390,18 @@ void ray_trap_chase(struct ShotObj* self)
         self->unk6 = 0;
         self->y_vel.val = FIXED(-3);
         set_animation(self, 0x10);
-        self->unk68 = &ray_trap_data.bounds[2];
+        self->unk68 = &ray_trap_box2;
     }
 }
 
 // ray_trap_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A2098);
+#else
 void func_800A2098(struct ShotObj* arg0)
 {
     s32 hit = func_8002DD04((struct MainObj*)arg0);
+    s8 st;
 
     if (arg0->unk2 >= 2) {
         if (((struct BaseObj*)arg0->unk7C)->state == 2)
@@ -419,27 +413,32 @@ void func_800A2098(struct ShotObj* arg0)
     }
     if (hit < 0) {
         spawn_explosion(BASE_OBJECT(arg0));
-        if (arg0->unk2 == 2)
-            spawn_debris(4, ray_trap_data.effect_animation_ids[1], arg0);
-        else if (arg0->unk2 == 3)
-            spawn_debris(4, ray_trap_data.effect_animation_ids[2], arg0);
-        else if (arg0->unk2 >= 0 && arg0->unk2 < 2)
-            spawn_debris(4, ray_trap_data.effect_animation_ids[0], arg0);
+        switch (arg0->unk2) {
+        case 0:
+        case 1:
+            spawn_debris(4, ray_trap_effect_animation_ids[0], arg0);
+            break;
+        case 2:
+            spawn_debris(4, ray_trap_effect_animation_ids[1], arg0);
+            break;
+        case 3:
+            spawn_debris(4, ray_trap_effect_animation_ids[2], arg0);
+            break;
+        }
         arg0->state = 2;
         return;
     }
     arg0->unk8C.bytes[2] = 1;
+    st = 2;
     func_8002D9BC(arg0);
     if (arg0->unk2 == 0)
         ray_trap_check_airborne(arg0);
     ray_trap_step_funcs[arg0->unk5](arg0);
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) != 0)
-        arg0->state = 2;
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) == 0)
+        ((void (*)(struct BaseObj*, s32, s32))is_on_screen)(BASE_OBJECT(arg0), 0x10, 0x10);
     else
-        is_on_screen(BASE_OBJECT(arg0));
+        arg0->state = st;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A2098);
 #endif
 
 void ray_trap_despawn(struct ShotObj* self)

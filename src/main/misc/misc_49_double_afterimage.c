@@ -14,12 +14,11 @@ void double_afterimage_despawn(struct MiscObj*);
 
 // double_afterimage_init
 
+extern u8 double_afterimage_angles[4];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D1990(struct MiscObj* arg0);
-extern u8 double_afterimage_angles[4];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D1990(struct MiscObj* arg0)
 {
     arg0->state = 1;
@@ -28,22 +27,19 @@ void func_800D1990(struct MiscObj* arg0)
     arg0->unk5 = 0;
     arg0->unk6 = 0;
     arg0->unk7 = 0;
-    if (arg0->unk2 == 4) {
+    if (arg0->unk2 != 4) {
+        set_animation(arg0, 0x12);
+        set_velocity_from_angle(MOVING_OBJECT(arg0), double_afterimage_angles[arg0->unk2]);
+        arg0->unk2C = 0x4000;
+        arg0->ext.misc_49.timer = 0xA;
+        arg0->unk28 = 0;
+        arg0->x_vel.val *= 2;
+        arg0->y_vel.val *= 3;
+    } else {
         arg0->ext.misc_49.timer = 0x14;
         set_animation(arg0, 0x1E);
-        return;
     }
-    set_animation(arg0, 0x12);
-    set_velocity_from_angle(MOVING_OBJECT(arg0), double_afterimage_angles[arg0->unk2]);
-    arg0->unk2C = 0x4000;
-    arg0->ext.misc_49.timer = 0xA;
-    arg0->unk28 = 0;
-    arg0->x_vel.val *= 2;
-    arg0->y_vel.val *= 3;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_49_double_afterimage", func_800D1990);
-#endif
 
 // double_afterimage_fade
 void func_800D1A48(struct MiscObj* self)

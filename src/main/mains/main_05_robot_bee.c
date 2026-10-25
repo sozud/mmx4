@@ -564,38 +564,33 @@ void func_8004619C(struct MainObj* self)
 }
 
 // robot_bee_circle_orbit
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046220);
+#else
 void func_80046220(struct MainObj* self)
 {
-    struct Main5Ext* ext = &self->ext.main_5;
-    s32 distance;
-
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
-    self->unk7C--;
-    if (self->unk7C == 0x1E) {
-        ext->unk81 = ext->unk81 == 0;
+    if (--self->unk7C == 0x1E) {
+        self->ext.main_5.unk81 = self->ext.main_5.unk81 == 0;
         self->gravity = -self->gravity;
-        self->y_speed = D_800FA130[ext->unk81];
+        self->y_speed = D_800FA130[self->ext.main_5.unk81 ? 1 : 0];
     }
     if (self->unk7C == 0) {
-        ext->unk80 = ext->unk80 == 0;
+        self->ext.main_5.unk80 = self->ext.main_5.unk80 == 0;
         self->x_speed = 0;
+        self->ext.main_5.unk81 = self->ext.main_5.unk81 == 0;
         self->x_accel = -self->x_accel;
-        ext->unk81 = ext->unk81 == 0;
         self->gravity = -self->gravity;
+        self->y_speed = D_800FA130[self->ext.main_5.unk81 ? 1 : 0];
         self->unk7C = 0x3C;
-        self->y_speed = D_800FA130[ext->unk81];
     }
-    distance = g_Player.x_pos.val - self->x_pos.val;
-    if (distance >= -0x6FFFFF && distance <= 0x6FFFFF) {
+    if ((g_Player.x_pos.val - self->x_pos.val >= 0 ? g_Player.x_pos.val - self->x_pos.val : self->x_pos.val - g_Player.x_pos.val) <= 0x6FFFFF) {
         set_animation(self, 2);
         self->unk5 = 7;
         self->unk6 = 0;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046220);
 #endif
 
 void robot_bee_drop(struct MainObj* self)

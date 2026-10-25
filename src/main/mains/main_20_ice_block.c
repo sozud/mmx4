@@ -32,7 +32,6 @@ void ice_block_break_remove(struct MainObj* arg0);
 
 extern void (*ice_block_state_funcs[])(struct MainObj*);
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern union AnimationStep* ice_block_animations[9];
 extern struct Unk_unk68 D_80106C74[];
 extern struct Unk_unk68 D_800FC844;
@@ -44,7 +43,6 @@ extern struct Unk_unk68 D_800FC858;
 extern struct Unk_unk68 D_800FC85C;
 extern u8 ice_block_debris[4];
 extern union AnimationStep* ice_wall_animations[];
-#endif
 
 void ice_block_update(struct MainObj* self)
 {
@@ -61,11 +59,14 @@ void func_800545EC(struct MainObj* arg0);
 void func_800548B8(struct MainObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800545EC);
+#else
 void func_800545EC(struct MainObj* arg0)
 {
     arg0->unk5 = 2;
     arg0->state++;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)ice_block_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->collision_data = D_80106C74;
@@ -76,7 +77,6 @@ void func_800545EC(struct MainObj* arg0)
     arg0->contact_damage = 3;
     arg0->ext.main_20.unk80 = 9;
     arg0->ext.main_20.unk81 = 2;
-    arg0->bg_offset = g_Player.bg_offset;
     if (arg0->unk2 != 0) {
         arg0->attack_box = &D_800FC844;
         arg0->hurt_box = &D_800FC848;
@@ -90,13 +90,13 @@ void func_800545EC(struct MainObj* arg0)
     arg0->gravity = 0;
     arg0->air_state = 0;
     arg0->unk7C = 0;
-    arg0->x_pos.i.hi = (arg0->x_pos.i.hi & ~0xF) + 8;
-    arg0->y_pos.i.hi = (arg0->y_pos.i.hi & ~0xF) + 0x14;
+    arg0->x_pos.i.hi &= ~0xF;
+    arg0->y_pos.i.hi &= ~0xF;
+    arg0->x_pos.i.hi += 8;
+    arg0->y_pos.i.hi += 0x14;
     set_animation(arg0, 0);
     update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800545EC);
 #endif
 
 void ice_block_start_idle(struct MainObj* self)
@@ -143,29 +143,41 @@ void ice_block_main(struct MainObj* self)
 }
 
 // ice_block_break_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800548B8);
+#else
 void func_800548B8(struct MainObj* arg0)
 {
     struct WeaponObj* weapon;
-    u8 flags = 0;
+    u8 flags;
     u8 top;
     u8 bottom;
 
-    if (arg0->unk2 == 0) {
+    if (arg0->unk2 == 0)
         func_800583B0(arg0, arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi - 0x10), 0xA);
+    flags = 0;
+    if (arg0->unk2 == 0) {
         top = func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi - 0x30));
         bottom = func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi + 0x30));
-        if (top >= 0x30) {
-            if (top < 0x32 || top == 0x3C)
-                func_800583B0(arg0, arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi - 0x40), 0xA);
-            else if (top == 0x38)
-                flags = 1;
+        switch (top) {
+        case 0x30:
+        case 0x31:
+        case 0x3C:
+            func_800583B0(arg0, arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi - 0x40), 0xA);
+            break;
+        case 0x38:
+            flags = 1;
+            break;
         }
-        if (bottom >= 0x30) {
-            if (bottom < 0x32 || bottom == 0x3C)
-                func_800583B0(arg0, arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi + 0x20), 0xA);
-            else if (bottom == 0x38)
-                flags += 2;
+        switch (bottom) {
+        case 0x30:
+        case 0x31:
+        case 0x3C:
+            func_800583B0(arg0, arg0->x_pos.i.hi, (s16)(arg0->y_pos.i.hi + 0x20), 0xA);
+            break;
+        case 0x38:
+            flags += 2;
+            break;
         }
     }
     switch (flags) {
@@ -181,6 +193,7 @@ void func_800548B8(struct MainObj* arg0)
         arg0->unk7C = 1;
         arg0->attack_box = &D_800FC858;
         break;
+    case 0:
     default:
         set_animation(arg0, 8);
         arg0->attack_box = &D_800FC85C;
@@ -202,8 +215,6 @@ void func_800548B8(struct MainObj* arg0)
     if (arg0->unk2 == 0)
         func_800C842C(0xC, ice_wall_debris, arg0, 0x1A, ice_wall_animations);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800548B8);
 #endif
 
 void ice_block_break_crumble(struct MainObj* self)

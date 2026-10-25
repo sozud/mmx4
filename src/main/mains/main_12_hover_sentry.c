@@ -439,7 +439,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C394);
 #endif
 
 // hover_sentry_attack_4
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004C56C(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -451,7 +450,7 @@ void func_8004C56C(struct MainObj* self)
         bounds = self->terrain_box;
         x = (u16)self->x_pos.u.hi + bounds->unk0;
         y = (u16)self->y_pos.u.hi + bounds->unk1 + bounds->unk3;
-        if (self->unk7 == 0 && func_8002D724(PLAYER_OBJECT(self), x, y) == 0x24) {
+        if (self->unk7 == 0 && ((s32(*)(struct PlayerObj*, s16, s16))func_8002D724)(PLAYER_OBJECT(self), x, y) == 0x24) {
             spawn_common_effect(self, 1);
             self->unk7 = 1;
             func_8001540C(2, SATURN_SOUND(0x25, 0x1F), self);
@@ -464,9 +463,6 @@ void func_8004C56C(struct MainObj* self)
         }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C56C);
-#endif
 
 void hover_sentry_despawn(struct MainObj* self)
 {

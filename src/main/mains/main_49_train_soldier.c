@@ -58,13 +58,13 @@ void train_soldier_update(struct MainObj* self)
 
 // train_soldier_init
 
+extern u8 train_soldier_guard_hurt_box[];
+extern u32 D_801076F8[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80068548(struct MainObj* arg0);
 void func_80068B80(struct MainObj* arg0);
 extern union AnimationStep* highway_trooper_animations[27];
 extern u8 D_800FFB5C[4];
-extern u8 train_soldier_guard_hurt_box[];
-extern u32 D_801076F8[];
 extern u32 D_801076F8[];
 extern ret_u8 func_8002938C(s32);
 #endif
@@ -252,29 +252,22 @@ void train_soldier_walk(struct MainObj* self)
 }
 
 // train_soldier_walk_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80068B80(struct MainObj* arg0)
 {
-    s32 velocity;
-
     arg0->collision_data = (const u16*)D_801076F8;
     arg0->hurt_box = train_soldier_guard_hurt_box;
     arg0->unk6 = (u8)arg0->unk6 + 1;
     arg0->attack_box = train_soldier_guard_attack_box;
     if (((u8*)&SP_CUR_MAIN_OBJ->ext)[6] == 0) {
-        velocity = arg0->unk15 != 0 ? FIXED(1.75) : -FIXED(1.75);
+        arg0->x_speed = arg0->unk15 != 0 ? FIXED(1.75) : -FIXED(1.75);
     } else {
-        velocity = arg0->unk15 != 0 ? FIXED(3) : -FIXED(3);
+        arg0->x_speed = arg0->unk15 != 0 ? FIXED(3) : -FIXED(3);
     }
-    arg0->x_speed = velocity;
     arg0->x_accel = 0;
     arg0->y_speed = 0;
     arg0->gravity = 0;
     set_animation(arg0, 1);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_49_train_soldier", func_80068B80);
-#endif
 
 void train_soldier_walk_move(struct MainObj* self)
 {

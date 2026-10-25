@@ -49,6 +49,8 @@ void shell_crawler_buried(struct MainObj* self)
 
 // shell_crawler_check_hop
 
+extern struct Unk_unk68 shell_crawler_terrain_box;
+extern union AnimationStep* shell_crawler_animations[14];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004D9CC(struct MainObj* arg0);
 void func_8004DCB0(struct MainObj* arg0);
@@ -56,8 +58,6 @@ static void main_15_spawn_spark(struct MainObj* arg0, u8 index);
 void func_8004E300(struct MainObj* arg0);
 void func_8004E490(struct MainObj* arg0);
 void func_8004E55C(struct MainObj* arg0);
-extern struct Unk_unk68 shell_crawler_terrain_box;
-extern union AnimationStep* shell_crawler_animations[14];
 static void main_15_spawn_spark(struct MainObj* arg0, u8 index)
 {
     struct ShotObj* shot = find_free_shot_obj();
@@ -353,7 +353,9 @@ void shell_crawler_walk(struct MainObj* self)
 }
 
 // shell_crawler_frozen
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E300);
+#else
 void func_8004E300(struct MainObj* arg0)
 {
     u8 i;
@@ -361,11 +363,11 @@ void func_8004E300(struct MainObj* arg0)
     switch (arg0->unk6) {
     case 0:
         arg0->unk6++;
-        arg0->gravity = 0x4200;
-        arg0->air_state = -1;
         arg0->y_speed = 0;
         arg0->x_speed = 0;
         arg0->x_accel = 0;
+        arg0->gravity = 0x4200;
+        arg0->air_state = -1;
         arg0->collision_data = D_801069F4;
         set_animation(arg0, 0xD);
         /* fallthrough */
@@ -380,21 +382,34 @@ void func_8004E300(struct MainObj* arg0)
     if (func_8002DD04(arg0) != 0 || func_8002D9BC(arg0) != 0) {
         arg0->state = 2;
         spawn_explosion(BASE_OBJECT(arg0));
-        for (i = 0; i < 0x10; i += 2)
-            main_15_spawn_spark(arg0, i);
+        for (i = 0; i < 0x10; i += 2) {
+            struct ShotObj* shot = find_free_shot_obj();
+
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0xA;
+                shot->unk42 = OBJECT_CLUT(0x7885);
+                shot->bg_offset = arg0->bg_offset;
+                shot->x_pos.val = arg0->x_pos.val;
+                shot->y_pos.val = arg0->y_pos.val;
+                shot->unk2 = i * 2;
+                set_velocity_from_angle(MOVING_OBJECT(shot), (s8)(i * 2));
+                arg0->unk7C = 0xA;
+            }
+        }
     }
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) != 0) {
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
+        update_on_screen(BASE_OBJECT(arg0), 0x25, 0x25);
+    } else {
         arg0->state = 2;
-        return;
     }
-    update_on_screen(BASE_OBJECT(arg0), 0x25, 0x25);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E300);
 #endif
 
 // shell_crawler_thaw
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E490);
+#else
 void func_8004E490(struct MainObj* arg0)
 {
     u8 i;
@@ -402,24 +417,38 @@ void func_8004E490(struct MainObj* arg0)
     if (--arg0->unk7C != 0)
         return;
     arg0->state = 2;
-    for (i = 1; i < 0x10; i += 2)
-        main_15_spawn_spark(arg0, i);
+    for (i = 1; i < 0x10; i += 2) {
+        struct ShotObj* shot = find_free_shot_obj();
+
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0xA;
+            shot->unk42 = OBJECT_CLUT(0x7885);
+            shot->bg_offset = arg0->bg_offset;
+            shot->x_pos.val = arg0->x_pos.val;
+            shot->y_pos.val = arg0->y_pos.val;
+            shot->unk2 = i * 2;
+            set_velocity_from_angle(MOVING_OBJECT(shot), (s8)(i * 2));
+            arg0->unk7C = 0xA;
+        }
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E490);
 #endif
 
 // shell_crawler_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E55C);
+#else
 void func_8004E55C(struct MainObj* arg0)
 {
     struct Main0Ext* ext = &arg0->ext.main_0;
 
     arg0->unk5 = 1;
     arg0->state++;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     arg0->animation_table = (const u8* const*)shell_crawler_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = &shell_crawler_terrain_box;
@@ -438,20 +467,19 @@ void func_8004E55C(struct MainObj* arg0)
     ext->flags[0] = 0;
     ext->index = 0;
     ext->flags[1] = 0;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     if ((u8)(arg0->unk2 - 2) < 2) {
         arg0->state = 5;
         arg0->hurt_box = NULL;
         arg0->attack_box = NULL;
-        arg0->x_pos.i.hi = (arg0->x_pos.i.hi & ~0xF) + 8;
-        arg0->y_pos.i.hi = (arg0->y_pos.i.hi & ~0xF) + 0x14;
+        arg0->x_pos.i.hi &= ~0xF;
+        arg0->y_pos.i.hi &= ~0xF;
+        arg0->x_pos.i.hi += 8;
+        arg0->y_pos.i.hi += 0x14;
         set_animation(arg0, 0);
     } else {
         set_animation(arg0, 1);
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E55C);
 #endif
 
 void shell_crawler_main(struct MainObj* self)

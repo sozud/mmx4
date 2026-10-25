@@ -106,6 +106,7 @@ void ice_core_update(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern struct Unk_unk68 D_800FBF08;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005077C(struct MainObj* arg0);
 void func_80050874(struct MainObj* arg0);
@@ -122,7 +123,6 @@ void ice_core_pick_attack(struct MainObj* arg0);
 void ice_core_check_rebuild(struct MainObj* arg0);
 void ice_core_shed_ice(struct MainObj* arg0);
 extern u16 D_800FBEDC[12];
-extern struct Unk_unk68 D_800FBF08;
 #endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -658,10 +658,11 @@ void ice_core_build_open(struct MainObj* self)
 }
 
 // ice_core_build_gather
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_800517D0);
+#else
 void func_800517D0(struct MainObj* arg0)
 {
-    struct Main18Ext* ext = &arg0->ext.main_18;
     struct ShotObj* shot;
     struct MiscObj* misc;
     s16 i;
@@ -669,7 +670,7 @@ void func_800517D0(struct MainObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event == 3) {
         for (i = 0; i < 10; i++) {
-            if (D_800FBEDC[i] & ext->ice_pieces)
+            if (arg0->ext.main_18.ice_pieces & D_800FBEDC[i])
                 continue;
             shot = find_free_shot_obj();
             if (shot == NULL)
@@ -681,14 +682,14 @@ void func_800517D0(struct MainObj* arg0)
             shot->unk42 = arg0->unk42;
             shot->animation_table = (u32**)arg0->animation_table;
             shot->unk3C = (void*)arg0->sprite_frames;
+            shot->bg_offset = arg0->bg_offset;
             shot->x_pos.val = (i << 21) + 0x17B10000;
             shot->y_pos.val = 0x8200000;
             shot->state = 3;
             shot->unk15 = 0;
-            shot->unk7C = (struct WeaponObj*)&ext->ice_pieces;
-            shot->bg_offset = arg0->bg_offset;
+            shot->unk7C = (struct WeaponObj*)&arg0->ext.main_18.ice_pieces;
         }
-        ext->ice_pieces = 0x83FF;
+        arg0->ext.main_18.ice_pieces = 0x83FF;
     }
     if (arg0->animation_step.fields.event == 4) {
         arg0->attack_box = (const u8*)&D_800FBF08;
@@ -709,15 +710,15 @@ void func_800517D0(struct MainObj* arg0)
             misc->unk3C = (void*)arg0->sprite_frames;
             misc->bg_offset = arg0->bg_offset;
             misc->x_pos.val = arg0->x_pos.val;
+            misc->y_pos.val = arg0->y_pos.val;
             misc->unk15 = 0;
             misc->state = 0;
-            misc->y_pos.val = arg0->y_pos.val;
         }
         arg0->invincibility_timer = -0x80;
     }
     if (arg0->animation_step.fields.event != 1)
         return;
-    if (ext->unk88 == 0) {
+    if (arg0->ext.main_18.unk88 == 0) {
         arg0->attack_box = (const u8*)&D_800FBEF8;
         arg0->hurt_box = (const u8*)&D_800FBEF8;
         set_animation(arg0, 0xA);
@@ -727,11 +728,9 @@ void func_800517D0(struct MainObj* arg0)
         arg0->hurt_box = (const u8*)&D_800FBEF4;
         set_animation(arg0, 9);
     }
-    ext->state.runtime.unk85 = 3;
+    arg0->ext.main_18.state.runtime.unk85 = 3;
     arg0->unk6 = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_800517D0);
 #endif
 
 void ice_core_build_grow(struct MainObj* self)
@@ -1152,7 +1151,9 @@ void ice_core_face_player(struct AnimatedObj* self)
 }
 
 // ice_core_end_attack
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_800527F0);
+#else
 void func_800527F0(struct MainObj* arg0)
 {
     arg0->unk5 = 7;
@@ -1160,13 +1161,11 @@ void func_800527F0(struct MainObj* arg0)
     arg0->x_speed = 0;
     arg0->x_accel = 0;
     arg0->y_speed = 0;
-    if (arg0->ext.main_18.state.runtime.unk84 == 0)
-        arg0->gravity = arg0->y_pos.i.hi < 0x891 ? 0x1000 : -0x1000;
+    if ((arg0->ext.main_18.state.runtime.unk84 == 0 && arg0->y_pos.i.hi > 0x890) || (arg0->ext.main_18.state.runtime.unk84 != 0 && arg0->y_pos.i.hi > 0x8B0))
+        arg0->gravity = -0x1000;
     else
-        arg0->gravity = arg0->y_pos.i.hi >= 0x8B1 ? -0x1000 : 0x1000;
+        arg0->gravity = 0x1000;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_800527F0);
 #endif
 
 u16 D_800FBEDC[12] = {

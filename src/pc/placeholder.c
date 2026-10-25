@@ -1082,40 +1082,6 @@ void func_80027344(s32 layer, s32 x, s32 y)
     }
 }
 
-void func_800275DC(s32 layer, s32 x, s32 y)
-{
-    s32 block_x, block_y;
-    s32 tile_x, tile_y;
-    s32 inner_x, inner_y;
-    s32 layer_offset, row_offset;
-    s32 i;
-    u8 block;
-
-    if (y < 0)
-        return;
-
-    block_x = x / 256;
-    block_y = y / 256;
-    tile_x = (x % 512) / 16;
-    tile_y = (y % 512) / 16;
-    inner_x = tile_x & 15;
-    inner_y = tile_y & 15;
-    layer_offset = layer * layout_size;
-    row_offset = layout_width * block_y;
-    block = SP_BG_TILEMAP[layer_offset + row_offset + block_x];
-
-    for (i = 0; i < 21; i++) {
-        D_801441C8[layer][tile_y][tile_x] = SP_BG_TILE_PIXELS[block * 256 + inner_y * 16 + inner_x];
-        tile_x = (tile_x + 1) & 31;
-        inner_x++;
-        if (inner_x == 16) {
-            inner_x = 0;
-            block_x++;
-            block = SP_BG_TILEMAP[layer_offset + row_offset + block_x];
-        }
-    }
-}
-
 void func_800E0D0C(void)
 {
     SpuSetReverb(1);
@@ -1156,21 +1122,6 @@ static void main_37_debris(struct MainObj* arg0)
             (s16)(MAIN_37_S16(arg0, 0x86) + 0x10), (s16)(MAIN_37_S16(arg0, 0x84) + 0x20),
             (s16)(MAIN_37_S16(arg0, 0x86) + 0x30), 1);
     }
-}
-
-void func_80033108(struct PlayerObj* arg0)
-{
-    if (engine_obj.unkF != 0) {
-        player_start_stage_clear(arg0);
-        return;
-    }
-    arg0->x_vel.val = arg0->animation_step.fields.event == 0 ? 0x8000 : 0x20000;
-    if (arg0->unk15 == 0)
-        arg0->x_vel.val = -arg0->x_vel.val;
-    move_object(MOVING_OBJECT(arg0));
-    animate_object(ANIMATED_OBJECT(arg0));
-    if (arg0->script_facing == 0)
-        player_script_walk_to_mark(arg0);
 }
 
 static s32 shot_33_touches_floor(struct ShotObj* arg0, s32 dx_extra, s32 dy_extra)
@@ -1619,39 +1570,6 @@ void update_visual_objects(void);
 void update_item_objects(void);
 void update_layer_objects(void);
 
-void func_80021F34(void)
-{
-    struct ReplayData* replay = (struct ReplayData*)REPLAY_DATA;
-
-    g_Player.input.buttons.previous = g_Player.input.buttons.held;
-    if (replay->frame == 0xE10) {
-        g_Player.input.buttons.held = 0;
-    } else {
-        g_Player.input.buttons.held = replay->inputs[replay->frame++];
-    }
-    g_Player.pressed_input = g_Player.input.buttons.held & (g_Player.input.buttons.held ^ g_Player.input.buttons.previous);
-    func_80021C14();
-    player_update();
-    update_weapon_objects();
-    update_main_objects();
-    update_shot_objects();
-    update_visual_objects();
-    update_effect_objects();
-    update_item_objects();
-    update_misc_objects();
-    update_quad_objects();
-    func_80028E24();
-    CollisionRelated(&g_Player);
-    func_80027850();
-    func_80027D40();
-    func_800281E8();
-    update_layer_objects();
-    func_8002A484();
-    func_80021D84();
-    func_80021CC8();
-    decompress_player_gfx(GRAPHICS_OBJECT(&g_Player), 0x140, 0);
-}
-
 // src/main/1A5BC.c
 
 void func_8002A098(struct GameInfo* info)
@@ -1807,80 +1725,6 @@ s32 func_8001CB24(u8* buffer, s32 device_num, s32 size)
 
 // src/main/menu.c
 
-void func_8001A498(struct EngineObj* engine)
-{
-    s32 status;
-    memcard_menu.timer--;
-    if (memcard_menu.timer != 0)
-        return;
-    status = func_8001CDE4(memcard_menu.port);
-    if (status != 0) {
-        engine->unk1 = 11;
-        memcard_menu.result = status == 1 ? 1 : 2;
-        func_8001B644(status == 1 ? D_800F1DFC : D_800F1E24);
-        main_bss_state.transition.selection = 0;
-        return;
-    }
-    status = func_8001CD70(memcard_menu.port);
-    if (status == 1) {
-        engine->unk1 = 11;
-        memcard_menu.result = 1;
-        func_8001B644(D_800F1DFC);
-        return;
-    }
-    if (status == 2) {
-        reset_objects();
-        engine->unk1 = 3;
-        engine->unk2 = 0;
-        return;
-    }
-    if (status == 3) {
-        reset_objects();
-        engine->unk1 = 11;
-        memcard_menu.result = 1;
-        main_bss_state.transition.selection = 0;
-        func_8001B644(D_800F1E24);
-        return;
-    }
-    if (status == 0) {
-        func_8001CC5C(memcard_menu.port, (&memcard_files), D_80010058);
-        if (memcard_files.total_size == 0x1E000) {
-            func_8001CC5C(memcard_menu.port, (&memcard_files), D_8001005C);
-            if (memcard_files.count == 0) {
-                engine->unk1 = 11;
-                memcard_menu.result = 3;
-                main_bss_state.transition.selection = 0;
-                reset_objects();
-                func_8001B644(D_800F1E34);
-                return;
-            }
-        }
-    }
-    engine->unk1 = 8;
-    reset_objects();
-    memcard_menu.timer = 5;
-    func_8001B718(0x30, (memcard_menu.selection + memcard_menu.port * 3 + 0x1A) & 0xFF, 0xFF);
-    func_8001B644(D_800F1E78);
-    func_8001B7C0(0xA0, 0x78, 1);
-}
-
-void func_8001A710(struct EngineObj* engine)
-{
-    memcard_menu.timer--;
-    if (memcard_menu.timer != 0)
-        return;
-    func_8001C07C();
-    func_8001C4B4(&memcard_menu);
-    if (engine->unk1 == 11)
-        return;
-    engine->unk1 = 9;
-    reset_objects();
-    func_8001B718(0x30, (memcard_menu.selection + memcard_menu.port * 3 + 0x1A) & 0xFF, 0xFF);
-    func_8001B644(D_800F1E88);
-    func_8001B7C0(0xA0, 0x78, 1);
-    memcard_menu.timer = 0x8C;
-}
-
 static void menu_icon_set_lifetime(struct MiscObj* obj, u8 persistent)
 {
     obj->ext.misc_42.unk55 = persistent ? 1 : 3;
@@ -1996,30 +1840,6 @@ void func_8001B8B0(s16 x, s16 y, u8 persistent)
     }
 }
 
-void func_8001BCAC(s16 x, s16 y, u8 persistent)
-{
-    struct MiscObj* obj = find_free_misc_obj();
-    if (obj == NULL)
-        return;
-    obj->active = 1;
-    obj->id = 0x2A;
-    obj->unk16 = 4;
-    if (memcard_menu.slot->character != 0xFF) {
-        obj->unk2 = 2;
-        obj->animation_step.fields.frame_index = memcard_menu.slot->character == 0 ? 0x2C : 0x2B;
-        obj->unk42 = memcard_menu.slot->unk29 ? (memcard_menu.slot->character == 0 ? 0x784F : 0x784B) : 0x7808;
-        obj->x_pos.i.hi = x;
-        obj->y_pos.i.hi = y;
-    } else {
-        obj->animation_step.fields.frame_index = 0x5D;
-        obj->x_pos.i.hi = (s16)(x + 0x14);
-        obj->y_pos.i.hi = (s16)(y - 8);
-        obj->unk2 = 0;
-        obj->ext.misc_42.unk56 = -1;
-    }
-    menu_icon_set_lifetime(obj, persistent);
-}
-
 void func_8001BE10(s16 x, s16 y, u8 persistent)
 {
     s32 i;
@@ -2057,32 +1877,6 @@ void func_8001BE10(s16 x, s16 y, u8 persistent)
         obj->y_pos.i.hi = y;
         menu_icon_set_lifetime(obj, persistent);
     }
-}
-
-void func_8001C4B4(struct MemcardMenuState* menu)
-{
-    u8* buffer = menu->buffer;
-    u8 port = menu->port;
-    u8* message;
-    buffer[0] = 's';
-    buffer[1] = 'c';
-    buffer[2] = 0x13;
-    menu->result = func_8001CDE4(port);
-    if (menu->result != 0) {
-        engine_obj.unk1 = 11;
-        reset_objects();
-        message = D_800F1DFC;
-    } else {
-        func_8001C5A8(&menu->buffer);
-        menu->result = func_8001C8F4(buffer, port, 0x2000);
-        if (menu->result == 0)
-            return;
-        engine_obj.unk1 = 11;
-        reset_objects();
-        message = D_800F1E14;
-    }
-    main_bss_state.transition.selection = 0;
-    func_8001B644(message);
 }
 
 void enemy_hit_reaction_shot(struct ShotObj* object)

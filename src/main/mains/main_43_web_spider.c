@@ -166,6 +166,8 @@ void web_spider_intro_setup(struct MainObj* self)
 
 // web_spider_intro_enter
 
+extern void (*web_spider_step_funcs[7])();
+extern RECT* web_spider_swing_paths[6];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 static u8 main43_column(s16 index);
 void func_8006346C(struct MainObj* arg0);
@@ -176,9 +178,7 @@ void func_80064154(struct MainObj* arg0);
 void func_800646EC(struct MainObj* arg0);
 void func_80065574(struct MainObj* arg0);
 extern u8 D_800FF724[16];
-extern void (*web_spider_step_funcs[7])();
 void web_spider_check_big_web(struct MainObj* arg0);
-extern RECT* web_spider_swing_paths[6];
 extern u16 web_spider_arena_y;
 u8 angle_from_delta(s32 arg0, s32 arg1);
 extern struct FixedPointPosition spiderling_velocities[8];
@@ -362,7 +362,9 @@ void web_spider_intro_climb(struct MainObj* self)
 }
 
 // web_spider_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006398C);
+#else
 void func_8006398C(struct MainObj* arg0)
 {
     s32 result;
@@ -398,8 +400,6 @@ void func_8006398C(struct MainObj* arg0)
     func_8002D9BC(arg0);
     is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006398C);
 #endif
 
 void web_spider_drop(struct MainObj* self)
@@ -408,7 +408,9 @@ void web_spider_drop(struct MainObj* self)
 }
 
 // web_spider_drop_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80063B20);
+#else
 void func_80063B20(struct MainObj* arg0)
 {
     s32 threshold;
@@ -416,9 +418,12 @@ void func_80063B20(struct MainObj* arg0)
     switch (arg0->unk7) {
     case 0:
         arg0->unk7 = 1;
-        arg0->unk7C = g_Player.stun_timer != 0 ? 0x10 : 0x40;
+        if (g_Player.stun_timer != 0)
+            arg0->unk7C = 0x10;
+        else
+            arg0->unk7C = 0x40;
         if (g_Player.stun_timer == 0) {
-            if ((get_random() & 7) < 5)
+            if ((u32)(get_random() & 7) < 5)
                 arg0->ext.main_43.unk94 = ((g_Player.x_pos.i.hi - (s16)web_spider_arena_x) / 40 + 4) & 7;
             else
                 arg0->ext.main_43.unk94 = get_random() & 7;
@@ -432,25 +437,26 @@ void func_80063B20(struct MainObj* arg0)
         set_animation(arg0, 0);
         break;
     case 1:
-        if (arg0->unk7C != 0) {
+        if (arg0->unk7C == 0) {
+            if (arg0->y_speed <= -0x80000) {
+                arg0->y_speed = -0x80000;
+                arg0->gravity = 0;
+            }
+            if (g_Player.stun_timer == 0 && (get_random() & 3) == 0)
+                threshold = 0x50;
+            else
+                threshold = 0x80;
+            if (arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi >= threshold) {
+                arg0->unk7 = 2;
+                arg0->unk7C = 0xA;
+                arg0->y_speed = 0x10000;
+                arg0->gravity = 0;
+                set_animation(arg0, 0x20);
+            }
+            move_with_gravity(ANIMATED_OBJECT(arg0));
+        } else {
             arg0->unk7C--;
-            break;
         }
-        if (arg0->y_speed <= -0x80000) {
-            arg0->y_speed = -0x80000;
-            arg0->gravity = 0;
-        }
-        threshold = 0x80;
-        if (g_Player.stun_timer == 0 && (get_random() & 3) == 0)
-            threshold = 0x50;
-        if (arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi >= threshold) {
-            arg0->unk7 = 2;
-            arg0->unk7C = 0xA;
-            arg0->y_speed = 0x10000;
-            arg0->gravity = 0;
-            set_animation(arg0, 0x20);
-        }
-        move_with_gravity(ANIMATED_OBJECT(arg0));
         break;
     case 2:
         move_with_gravity(ANIMATED_OBJECT(arg0));
@@ -470,8 +476,6 @@ void func_80063B20(struct MainObj* arg0)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80063B20);
 #endif
 
 void web_spider_drop_climb(struct MainObj* self)
@@ -576,7 +580,9 @@ void web_spider_swing_start(struct MainObj* self)
 }
 
 // web_spider_swing_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80064154);
+#else
 void func_80064154(struct MainObj* arg0)
 {
     const u16* point;
@@ -623,8 +629,6 @@ void func_80064154(struct MainObj* arg0)
     }
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80064154);
 #endif
 
 void web_spider_swing_wait(struct MainObj* self)
@@ -644,7 +648,6 @@ void web_spider_attack(struct MainObj* self)
 }
 
 // web_spider_attack_spiderlings
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800643B0(struct MainObj* arg0)
 {
     struct MainObj* child;
@@ -656,33 +659,33 @@ void func_800643B0(struct MainObj* arg0)
         set_animation(arg0, 0xB);
         break;
     case 1:
-        if (arg0->animation_step.fields.relative_step == 0) {
+        if (arg0->animation_step.fields.relative_step != 0) {
+            if (arg0->animation_step.fields.event != 0) {
+                for (i = 0; i < 4; i++) {
+                    child = find_free_main_obj();
+                    if (child == NULL)
+                        continue;
+                    child->active = 0x41;
+                    child->id = 0x2B;
+                    child->unk2 = i + 1;
+                    child->x_pos.val = arg0->x_pos.val;
+                    child->y_pos.val = arg0->y_pos.val;
+                    child->y_pos.i.hi -= 0x18;
+                    child->animation_table = arg0->animation_table;
+                    child->unk40 = arg0->unk40;
+                    child->sprite_frames = arg0->sprite_frames;
+                    child->unk42 = arg0->unk42 & 0x7FFF;
+                    child->unk16 = arg0->unk16;
+                    child->unk15 = arg0->unk15;
+                    child->ext.main_43.effect = (struct EffectObj*)arg0;
+                }
+                arg0->animation_step.fields.event = 0;
+                func_8001540C(2, 0x71, arg0);
+            }
+        } else {
             arg0->unk6 = 2;
             set_animation(arg0, 0xC);
-            break;
         }
-        if (arg0->animation_step.fields.event == 0)
-            break;
-        for (i = 0; i < 4; i++) {
-            child = find_free_main_obj();
-            if (child == NULL)
-                continue;
-            child->active = 0x41;
-            child->id = 0x2B;
-            child->unk2 = i + 1;
-            child->x_pos.val = arg0->x_pos.val;
-            child->y_pos.val = arg0->y_pos.val;
-            child->y_pos.i.hi -= 0x18;
-            child->animation_table = arg0->animation_table;
-            child->unk40 = arg0->unk40;
-            child->sprite_frames = arg0->sprite_frames;
-            child->unk42 = arg0->unk42 & 0x7FFF;
-            child->unk16 = arg0->unk16;
-            child->ext.main_43.effect = (struct EffectObj*)arg0;
-            child->unk15 = arg0->unk15;
-        }
-        arg0->animation_step.fields.event = 0;
-        func_8001540C(2, 0x71, arg0);
         break;
     case 2:
         if (arg0->animation_step.fields.relative_step != 0)
@@ -698,9 +701,6 @@ void func_800643B0(struct MainObj* arg0)
     }
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_800643B0);
-#endif
 
 void web_spider_attack_web(struct MainObj* self)
 {
@@ -744,7 +744,9 @@ void web_spider_big_web(struct MainObj* self)
 }
 
 // web_spider_big_web_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_800646EC);
+#else
 void func_800646EC(struct MainObj* arg0)
 {
     switch (arg0->unk7) {
@@ -763,22 +765,22 @@ void func_800646EC(struct MainObj* arg0)
         set_animation(arg0, 0);
         break;
     case 1:
-        if (arg0->unk7C != 0) {
+        if (arg0->unk7C == 0) {
+            if (arg0->y_speed <= -0x80000) {
+                arg0->y_speed = -0x80000;
+                arg0->gravity = 0;
+            }
+            if (arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi >= 0x58) {
+                arg0->unk7 = 2;
+                arg0->unk7C = 0x1E;
+                set_animation(arg0, 0x20);
+                arg0->y_speed = 0x10000;
+                arg0->gravity = 0;
+            }
+            move_with_gravity(ANIMATED_OBJECT(arg0));
+        } else {
             arg0->unk7C--;
-            break;
         }
-        if (arg0->y_speed <= -0x80000) {
-            arg0->y_speed = -0x80000;
-            arg0->gravity = 0;
-        }
-        if (arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi >= 0x58) {
-            arg0->unk7 = 2;
-            arg0->unk7C = 0x1E;
-            set_animation(arg0, 0x20);
-            arg0->y_speed = 0x10000;
-            arg0->gravity = 0;
-        }
-        move_with_gravity(ANIMATED_OBJECT(arg0));
         break;
     case 2:
         move_with_gravity(ANIMATED_OBJECT(arg0));
@@ -798,8 +800,6 @@ void func_800646EC(struct MainObj* arg0)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_800646EC);
 #endif
 
 void web_spider_big_web_spin(struct MainObj* arg0)
@@ -1074,7 +1074,6 @@ void web_spider_spawn_web_shot(struct AnimatedObj* self, u8 arg1)
 }
 
 // web_spider_aim_swing
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80065168(struct MainObj* arg0, s16 x, s16 y)
 {
     s32 dx = arg0->x_pos.val - (x << 16);
@@ -1090,9 +1089,6 @@ void func_80065168(struct MainObj* arg0, s16 x, s16 y)
     }
     arg0->ext.main_43.move_direction = direction;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80065168);
-#endif
 
 #ifdef MMX4_PC
 

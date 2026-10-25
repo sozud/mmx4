@@ -145,7 +145,9 @@ extern s16 walrus_ice_icicle_offsets[2][2];
 extern struct Unk_unk68 walrus_ice_ball_terrain_box;
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_35_walrus_ice", func_800A241C);
+#else
 void func_800A241C(struct ShotObj* arg0)
 {
     struct WeaponObj* owner = arg0->unk7C;
@@ -155,22 +157,23 @@ void func_800A241C(struct ShotObj* arg0)
     arg0->unk28 = 0;
     arg0->unk2C = 0;
     arg0->x_pos.val = owner->x_pos.val;
+    arg0->y_pos.val = owner->y_pos.val;
     arg0->unk68 = &walrus_ice_ball_terrain_box;
+    arg0->unk54 = NULL;
+    arg0->unk50.data = NULL;
     arg0->unk5C = 5;
     arg0->unk60 = 6;
     arg0->unk16 = VISUAL_SATURN_LAYER(4);
-    arg0->unk54 = NULL;
-    arg0->unk50.data = NULL;
-    arg0->y_pos.val = owner->y_pos.val;
     arg0->unk42 = owner->unk42;
-    set_animation(arg0, (s8)arg0->unk2 >= 2 ? 9 : 8);
+    if ((s8)arg0->unk2 > 1)
+        set_animation(arg0, 9);
+    else
+        set_animation(arg0, 8);
     if ((s8)arg0->unk2 == 0) {
         walrus_ice_choose_drop_pattern(arg0);
     }
     arg0->unk5++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_35_walrus_ice", func_800A241C);
 #endif
 
 void walrus_ice_icicle_main(struct ShotObj* self)
@@ -202,7 +205,9 @@ void walrus_ice_icicle_main(struct ShotObj* self)
 }
 
 // walrus_ice_icicle_form
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_35_walrus_ice", func_800A25EC);
+#else
 void func_800A25EC(struct ShotObj* arg0)
 {
     struct WeaponObj* owner = arg0->unk7C;
@@ -236,18 +241,12 @@ void func_800A25EC(struct ShotObj* arg0)
             visual->active = 0x41;
             visual->id = 0x18;
             visual->unk2 = 0;
-            if (owner->unk15 != 0) {
-                visual->x_pos.i.hi = owner->x_pos.i.hi + walrus_ice_icicle_offsets[i][0];
-            } else {
-                visual->x_pos.i.hi = owner->x_pos.i.hi - walrus_ice_icicle_offsets[i][0];
-            }
-            visual->unk50 = (struct PlayerObj*)owner;
+            visual->x_pos.i.hi = owner->x_pos.i.hi + (owner->unk15 != 0 ? walrus_ice_icicle_offsets[i][0] : -walrus_ice_icicle_offsets[i][0]);
             visual->y_pos.i.hi = owner->y_pos.i.hi - 0x1F;
+            visual->unk50 = (struct PlayerObj*)owner;
         }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_35_walrus_ice", func_800A25EC);
 #endif
 
 void walrus_ice_icicle_rise(struct ShotObj* self)

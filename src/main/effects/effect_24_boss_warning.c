@@ -27,18 +27,18 @@ void func_800BABA8(struct EffectObj* arg0);
 void func_800BAC58(struct EffectObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BABA8);
+#else
 void func_800BABA8(struct EffectObj* arg0)
 {
     struct EffectObj* spawned;
-    s32 stage = engine_obj.stage;
 
-    if (stage >= 1 && stage <= 8
-        && ((engine_obj.palette_flags >> (stage - 1)) & 1) != 0) {
+    if (engine_obj.stage > 0 && engine_obj.stage < 9
+        && ((u8)engine_obj.palette_flags & (1 << (engine_obj.stage - 1)))) {
         engine_obj.unkF = 1;
         return;
     }
-
     spawned = find_free_effect_obj();
     if (spawned != NULL) {
         spawned->active = 1;
@@ -47,11 +47,9 @@ void func_800BABA8(struct EffectObj* arg0)
     }
     arg0->ext.effect_24.timer = 0;
     arg0->ext.effect_24.unk1A = 5;
-    arg0->ext.effect_24.unk1B = 0;
     arg0->state++;
+    arg0->ext.effect_24.unk1B = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BABA8);
 #endif
 
 // boss_warning_spawn_tiles

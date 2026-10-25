@@ -71,36 +71,38 @@ void trident_mech_update(struct MainObj* self)
 
 // trident_mech_init
 
+extern union AnimationStep* trident_mech_animations[];
+extern struct Unk_unk68 D_800FBBC8;
+extern struct Unk_unk68 D_80106A74[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004E8E0(struct MainObj* arg0);
 void func_8004FD38(struct MainObj* arg0, s32 animation);
 void func_8004ED60(struct MainObj* arg0);
 void func_8004FAE4(struct MainObj* self);
 extern void* common_effect_animations[];
-extern union AnimationStep* trident_mech_animations[];
-extern struct Unk_unk68 D_800FBBC8;
-extern struct Unk_unk68 D_80106A74[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004E8E0);
+#else
 void func_8004E8E0(struct MainObj* arg0)
 {
     arg0->hp = 0x10;
     arg0->contact_damage = 3;
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_80106A74;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)trident_mech_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = &D_800FBBC8;
     arg0->hurt_box = &trident_mech_stunned_hurt_box;
-    arg0->attack_box = &trident_mech_attack_box;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->air_state = 0;
-    arg0->bg_offset = g_Player.bg_offset;
+    arg0->attack_box = &trident_mech_attack_box;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     trident_mech_face_player(ANIMATED_OBJECT(arg0));
@@ -147,8 +149,6 @@ void func_8004E8E0(struct MainObj* arg0)
     arg0->unk6 = 0;
     arg0->unk7 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004E8E0);
 #endif
 
 void trident_mech_main(struct MainObj* self)
@@ -247,79 +247,69 @@ void trident_mech_idle_start(struct MainObj* self)
 }
 
 // trident_mech_idle_think
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004ED60);
+#else
+#define TRIDENT_STATE6(arg0)                                    \
+    do {                                                        \
+        (arg0)->ext.main_16.unk8C = 1;                          \
+        (arg0)->invincibility_timer = engine_obj.cur_character; \
+        trident_mech_fire_tracked_shot(arg0);                   \
+        (arg0)->unk5 = 6;                                       \
+        (arg0)->unk6 = 0;                                       \
+    } while (0)
+#define TRIDENT_STATE4(arg0)                        \
+    do {                                            \
+        set_animation(ANIMATED_OBJECT(arg0), 0x10); \
+        (arg0)->ext.main_16.unk80 = 1;              \
+        (arg0)->ext.main_16.unk90 = 1;              \
+        (arg0)->unk5 = 4;                           \
+        (arg0)->unk6 = 0;                           \
+    } while (0)
 void func_8004ED60(struct MainObj* arg0)
 {
-    s32 random;
-    s32 distance;
+    s8 random;
 
     trident_mech_face_player(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
     if (--arg0->unk7C != 0)
         return;
-
     arg0->ext.main_16.unk8C = 0;
-    distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-    if (distance < 0)
-        distance = -distance;
-
-    if (distance < 0x61) {
-        if (weapon_objects[0].active != 0)
-            goto choose_state_6;
-        if ((get_random() & 7) < 5)
-            goto choose_state_6;
-        set_animation(ANIMATED_OBJECT(arg0), 0x10);
-        arg0->ext.main_16.unk80 = 1;
-        arg0->ext.main_16.unk90 = 1;
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
+    if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi < 0 ? arg0->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - arg0->x_pos.i.hi) <= 0x60) {
+        if (weapon_objects[0].active == 0 && (get_random() & 7) >= 5) {
+            TRIDENT_STATE4(arg0);
+        } else {
+            arg0->ext.main_16.unk8C = 1;
+            arg0->invincibility_timer = engine_obj.cur_character;
+            trident_mech_fire_tracked_shot(arg0);
+            arg0->unk5 = 6;
+            arg0->unk6 = 0;
+        }
         return;
     }
-
     random = get_random() & 0xF;
     if (weapon_objects[0].active != 0) {
         if (random < 0xC) {
             set_animation(ANIMATED_OBJECT(arg0), 0x10);
-            arg0->ext.main_16.unk90 = 1;
             arg0->ext.main_16.unk80 = 0;
-            arg0->unk5 = 4;
-            arg0->unk6 = 0;
-            return;
-        }
-        if (random < 0xE) {
-            set_animation(ANIMATED_OBJECT(arg0), 0x10);
-            arg0->ext.main_16.unk80 = 1;
             arg0->ext.main_16.unk90 = 1;
             arg0->unk5 = 4;
             arg0->unk6 = 0;
-            return;
+        } else if (random >= 0xE) {
+            TRIDENT_STATE6(arg0);
+        } else {
+            TRIDENT_STATE4(arg0);
         }
+    } else if (random < 0xC) {
+        set_animation(ANIMATED_OBJECT(arg0), 0x11);
+        arg0->unk5 = 8;
+        arg0->unk6 = 0;
+    } else if (random < 0xE) {
+        TRIDENT_STATE4(arg0);
     } else {
-        if (random < 0xC) {
-            set_animation(ANIMATED_OBJECT(arg0), 0x11);
-            arg0->unk5 = 8;
-            arg0->unk6 = 0;
-            return;
-        }
-        if (random < 0xE) {
-            set_animation(ANIMATED_OBJECT(arg0), 0x10);
-            arg0->ext.main_16.unk80 = 1;
-            arg0->ext.main_16.unk90 = 1;
-            arg0->unk5 = 4;
-            arg0->unk6 = 0;
-            return;
-        }
+        TRIDENT_STATE6(arg0);
     }
-
-choose_state_6:
-    arg0->ext.main_16.unk8C = 1;
-    arg0->invincibility_timer = (u8)engine_obj.cur_character;
-    trident_mech_fire_tracked_shot(arg0);
-    arg0->unk5 = 6;
-    arg0->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004ED60);
 #endif
 
 void trident_mech_fall(struct MainObj* self)
@@ -696,7 +686,9 @@ void trident_mech_wait_behind(struct MainObj* self)
 }
 
 // trident_mech_stunned
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FAE4);
+#else
 void func_8004FAE4(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -706,14 +698,14 @@ void func_8004FAE4(struct MainObj* self)
 
     self->hurt_box = &trident_mech_stunned_hurt_box;
     if (self->unk2 >= 4) {
-        if (self->collision_flags & 8) {
-            set_animation(ANIMATED_OBJECT(self), 0x11);
-            self->unk5 = 8;
-        } else {
+        if (!(self->collision_flags & 8)) {
             self->air_state = 0;
             self->y_speed = 0;
             self->gravity = 0;
             self->unk5 = 2;
+        } else {
+            set_animation(ANIMATED_OBJECT(self), 0x11);
+            self->unk5 = 8;
         }
     } else if (!(self->collision_flags & 8)) {
         self->air_state = 0;
@@ -734,8 +726,6 @@ void func_8004FAE4(struct MainObj* self)
     }
     self->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FAE4);
 #endif
 
 void trident_mech_check_fall(struct MainObj* self)

@@ -66,7 +66,6 @@ extern u8 turret_laser_full_beam_box[4];
 extern u8* turret_laser_beam_boxes[12];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009C45C(struct ShotObj* self)
 {
     struct WeaponObj* owner = self->unk7C;
@@ -78,9 +77,13 @@ void func_8009C45C(struct ShotObj* self)
             if (owner->active != 0 && owner->id == 0x1D && owner->state == 1 && owner->unk2 >= 0)
                 owner->unk5 = 4;
         } else {
+#ifdef MMX4_PC
             s8 index = self->animation_step.fields.event;
             self->unk50.data = index > 0 && index <= 12 ? turret_laser_beam_boxes[index - 1]
                                                         : turret_laser_full_beam_box;
+#else
+            self->unk50.data = turret_laser_beam_boxes[self->animation_step.fields.event - 1];
+#endif
         }
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -93,9 +96,6 @@ void func_8009C45C(struct ShotObj* self)
     else
         update_on_screen(BASE_OBJECT(self), 0x10, 0x68);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_16_linked_spark", func_8009C45C);
-#endif
 
 void linked_spark_despawn(struct ShotObj* self)
 {

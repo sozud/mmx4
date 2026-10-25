@@ -89,68 +89,64 @@ void iris_update(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80080700(struct MainObj* self);
-void func_80080834(struct MainObj* self);
-void func_80081718(struct MainObj* self);
-void func_80081BA0(struct MainObj* self);
-void func_80081E44(struct MainObj* self);
 extern void* iris_animations[];
 extern struct Unk_unk68 D_801035BC;
 extern struct Unk_unk68 D_801035C4;
 extern struct Unk_unk68 D_801035C8;
 extern struct Unk_unk68 D_801035C0;
 extern struct Unk_unk68 D_801035CC;
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void func_80080700(struct MainObj* self);
+void func_80080834(struct MainObj* self);
+void func_80081718(struct MainObj* self);
+void func_80081BA0(struct MainObj* self);
+void func_80081E44(struct MainObj* self);
 extern struct Unk_unk68 D_80107DFC[];
 void iris_face_player(struct MainObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080700);
+#else
 void func_80080700(struct MainObj* self)
 {
-    struct Main66Ext* ext = &self->ext.main_66;
-    s32 index;
-
     if (engine_obj.cur_character == 0) {
         despawn_object_permanently(OBJECT_HEADER(self));
         return;
     }
-    self->contact_damage = 4;
-    self->collision_data = D_80107DFC;
     self->hp = 0;
+    self->contact_damage = 4;
     self->invincibility_timer = 0;
-    index = func_8002938C(0x42);
-    self->unk40 = OBJECT_STAGE_TEXTURE(index);
+    self->collision_data = D_80107DFC;
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x42));
+    self->bg_offset = g_Player.bg_offset;
+    self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
-    self->unk2 = 0;
-    self->unk15 = 0;
-    self->unk18 = self->x_pos;
     self->animation_table = (const u8* const*)iris_animations;
     self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->unk2 = 0;
     self->terrain_box = &D_801035CC;
     self->hurt_box = &D_801035C0;
     self->attack_box = &D_801035BC;
-    self->bg_offset = g_Player.bg_offset;
+    self->unk15 = 0;
     set_animation(self, 9);
-    ext->hover_timer = 0xF0;
-    ext->release_countdown = 8;
+    self->ext.main_66.drone_count = 0;
+    self->ext.main_66.hover_timer = 0xF0;
+    self->ext.main_66.crystal_released = 0;
+    self->ext.main_66.release_countdown = 8;
+    self->ext.main_66.flash_timer = 0;
+    self->ext.main_66.blink_timer = 0;
+    self->ext.main_66.active = 0;
     self->state = 1;
-    ext->drone_count = 0;
-    ext->crystal_released = 0;
-    ext->flash_timer = 0;
-    ext->blink_timer = 0;
-    ext->active = 0;
     self->unk5 = 2;
     self->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080700);
 #endif
 
 // iris_run
@@ -589,32 +585,29 @@ void iris_robot_hover(struct MainObj* self)
 }
 
 // iris_robot_hover_chase
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081718);
+#else
 void func_80081718(struct MainObj* self)
 {
     s32 saved_y = g_Player.y_pos.val;
-    s32 direction;
-    s32 dx;
-    s32 dy;
+    u8 direction;
 
     if (g_Player.y_pos.i.hi < 0x150) {
         g_Player.y_pos.i.hi = 0x150;
     }
-    direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF;
+    direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
     g_Player.y_pos.val = saved_y;
     set_velocity_from_angle(MOVING_OBJECT(self), direction);
     self->x_speed += self->x_speed >> 16;
     self->y_speed += self->y_speed >> 16;
-    dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
-    dy = self->y_pos.i.hi - g_Player.y_pos.i.hi;
-    if ((dx >= 0 ? dx : -dx) >= 3 || (dy >= 0 ? dy : -dy) >= 3) {
+    if ((self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0 ? self->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - self->x_pos.i.hi) > 2
+        || (self->y_pos.i.hi - g_Player.y_pos.i.hi >= 0 ? self->y_pos.i.hi - g_Player.y_pos.i.hi : g_Player.y_pos.i.hi - self->y_pos.i.hi) > 2) {
         iris_face_player(self);
         move_object(MOVING_OBJECT(self));
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081718);
 #endif
 
 void iris_robot_dash(struct MainObj* self)
@@ -728,7 +721,9 @@ void iris_robot_release_crystal(struct MainObj* self)
 }
 
 // iris_robot_release_crystal_spawn
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081BA0);
+#else
 void func_80081BA0(struct MainObj* self)
 {
     struct MainObj* body;
@@ -744,26 +739,26 @@ void func_80081BA0(struct MainObj* self)
         body->unk2 = 1;
         body->contact_damage = 4;
         body->x_pos.val = self->x_pos.val;
+        body->y_pos.val = self->y_pos.val;
+        body->air_state = 0;
         body->collision_data = D_80107E84;
         body->hurt_box = &D_801035C8;
-        body->air_state = 0;
         body->attack_box = &D_801035C4;
         body->terrain_box = NULL;
-        body->y_pos.val = self->y_pos.val;
         body->bg_offset = self->bg_offset;
         body->animation_table = self->animation_table;
         body->unk40 = self->unk40;
         body->sprite_frames = self->sprite_frames;
+        body->unk42 = self->unk42 & 0x7FFF;
         body->unk16 = VISUAL_SATURN_LAYER(5);
         body->hp = 0x30;
-        body->unk42 = self->unk42 & 0x7FFF;
-        body->y_speed = 0x10000;
-        body->unk7C = 0x60;
+        body->unk15 = self->unk15;
         body->x_speed = 0;
         body->x_accel = 0;
+        body->y_speed = 0x10000;
         body->gravity = 0;
+        body->unk7C = 0x60;
         body->state = 1;
-        body->unk15 = self->unk15;
         body->unk5 = 5;
         body->unk6 = 2;
         engine_obj.boss_ptr = body;
@@ -774,8 +769,6 @@ void func_80081BA0(struct MainObj* self)
     }
     self->unk6 = 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081BA0);
 #endif
 
 void iris_robot_release_crystal_wait(struct MainObj* self)

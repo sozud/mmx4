@@ -44,23 +44,26 @@ void wheel_charger_update(struct MainObj* self)
 
 // wheel_charger_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_8005ECA8(struct MainObj* arg0);
-void func_8005EFB0(struct MainObj* arg0);
 extern struct Unk_unk68 D_80107374[];
 extern union AnimationStep* wheel_charger_animations[9];
 extern struct Unk_unk68 D_800FE1B0;
 extern struct Unk_unk68 D_800FE1B4;
 extern struct Unk_unk68 D_800FE1B8;
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void func_8005ECA8(struct MainObj* arg0);
+void func_8005EFB0(struct MainObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", func_8005ECA8);
+#else
 void func_8005ECA8(struct MainObj* arg0)
 {
-    arg0->contact_damage = 3;
     arg0->hp = 4;
+    arg0->contact_damage = 3;
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_80107374;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)wheel_charger_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = &D_800FE1B8;
@@ -73,7 +76,6 @@ void func_8005ECA8(struct MainObj* arg0)
     arg0->air_state = 0;
     arg0->attack_box = &D_800FE1B4;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->bg_offset = g_Player.bg_offset;
     switch (arg0->unk2) {
     case 0:
         arg0->x_speed = -0x28000;
@@ -106,8 +108,6 @@ void func_8005ECA8(struct MainObj* arg0)
     arg0->state = 1;
     arg0->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", func_8005ECA8);
 #endif
 
 void wheel_charger_main(struct MainObj* self)
@@ -160,7 +160,9 @@ void wheel_charger_drop(struct MainObj* self)
 }
 
 // wheel_charger_fall
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", func_8005EFB0);
+#else
 void func_8005EFB0(struct MainObj* arg0)
 {
     u32 mode;
@@ -171,19 +173,24 @@ void func_8005EFB0(struct MainObj* arg0)
         mode = arg0->ext.main_35.unk80;
         arg0->y_speed = 0;
         arg0->gravity = 0;
-        if (mode == 0) {
-            arg0->unk5 = 2;
-        } else if (mode == 1) {
-            arg0->ext.main_35.unk80 = 2;
-            set_animation(arg0, 1);
-            arg0->contact_damage = 4;
-            arg0->ext.main_35.sound_timer = 1;
-            arg0->unk5 = 5;
+        if (mode != 0) {
+            if (mode == 1) {
+                arg0->ext.main_35.unk80 = 2;
+                set_animation(arg0, 1);
+                arg0->contact_damage = 4;
+                arg0->ext.main_35.sound_timer = 1;
+                arg0->unk5 = 5;
+            } else {
+                if (arg0->unk15 == 0)
+                    arg0->x_speed = -0x40000;
+                else
+                    arg0->x_speed = 0x40000;
+                arg0->ext.main_35.sound_timer = 1;
+                arg0->unk5 = 5;
+                arg0->unk6 = 3;
+            }
         } else {
-            arg0->x_speed = arg0->unk15 != 0 ? 0x40000 : -0x40000;
-            arg0->ext.main_35.sound_timer = 1;
-            arg0->unk5 = 5;
-            arg0->unk6 = 3;
+            arg0->unk5 = 2;
         }
         return;
     }
@@ -200,8 +207,6 @@ void func_8005EFB0(struct MainObj* arg0)
         arg0->x_speed = -0x28000;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", func_8005EFB0);
 #endif
 
 void wheel_charger_wait_for_player(struct MainObj* self)

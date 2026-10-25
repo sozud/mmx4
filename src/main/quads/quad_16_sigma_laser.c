@@ -188,33 +188,30 @@ void sigma_laser_cancel_wait(struct QuadObj* arg0)
 }
 
 // sigma_laser_cancel_shrink
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D845C(struct QuadObj* self)
 {
     struct MainObj* owner = MAIN_OBJECT(self->unk5C);
-    u32 elapsed;
 
-    self->ext.unk38 = (s32)((u32)self->ext.unk38 - 1);
-    if (self->ext.unk38 == 0) {
+    if (--self->ext.unk38 != 0) {
+        if (self->unk2 != 0) {
+            self->vertices[2].x.val += FIXED(56);
+            self->vertices[3].x.val += FIXED(56);
+            ((struct VisualObj * (*)(s32, s32, s32, s32)) spawn_explosion_at)(1, 0x400 + (0x10 - self->ext.unk38) * 0x1E, 0x2E0, 1);
+        } else {
+            self->vertices[2].y.val += FIXED(-20);
+            self->vertices[3].y.val += FIXED(-20);
+            ((struct VisualObj * (*)(s32, s32, s32, s32)) spawn_explosion_at)(1, 0x430, 0x2F0 - (0x10 - self->ext.unk38) * 0x12, 0);
+        }
+        if ((u32)(self->ext.unk38 - 5) < 7) {
+            owner->ext.main_74.pad95 = 1;
+        } else {
+            owner->ext.main_74.pad95 = 0;
+        }
+    } else {
         self->state = 2;
         self->unk5++;
-        return;
     }
-    elapsed = 16u - (u32)self->ext.unk38;
-    if (self->unk2 != 0) {
-        self->vertices[2].x.val = (s32)((u32)self->vertices[2].x.val + 0x380000u);
-        self->vertices[3].x.val = (s32)((u32)self->vertices[3].x.val + 0x380000u);
-        spawn_explosion_at(1, (s32)(0x400u + 30u * elapsed), 0x2E0, 1);
-    } else {
-        self->vertices[2].y.val = (s32)((u32)self->vertices[2].y.val - 0x140000u);
-        self->vertices[3].y.val = (s32)((u32)self->vertices[3].y.val - 0x140000u);
-        spawn_explosion_at(1, 0x430, (s32)(0x2F0u - 18u * elapsed), 0);
-    }
-    owner->ext.main_74.pad95 = (u32)(self->ext.unk38 - 5u) < 7;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_16_sigma_laser", func_800D845C);
-#endif
 
 void sigma_laser_cancel(struct QuadObj* arg0)
 {

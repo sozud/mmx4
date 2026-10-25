@@ -48,53 +48,56 @@ void bulldozer_update(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80046B80(struct MainObj* arg0);
-void func_80046C8C(struct MainObj* arg0);
 extern struct Unk_unk68 D_801065F0[];
 extern struct Unk_unk68 bulldozer_terrain_box;
 extern struct Unk_unk68 bulldozer_hurt_boxes[2];
+extern union AnimationStep* D_800FA4E8[16];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void func_80046B80(struct MainObj* arg0);
+void func_80046C8C(struct MainObj* arg0);
 extern struct Unk_unk68 D_800FA430;
 extern struct Unk_unk68 D_800FA434[2];
-extern union AnimationStep* D_800FA4E8[16];
 extern u8 bulldozer_debris[16];
 extern void (*bulldozer_step_funcs[])(struct MainObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_06_bulldozer", func_80046B80);
+#else
 void func_80046B80(struct MainObj* arg0)
 {
+    arg0->unk7C = 0;
     arg0->hp = 0x7F;
     arg0->contact_damage = 4;
-    arg0->unk7C = 0;
     arg0->invincibility_timer = 0;
     arg0->collision_data = (const u16*)D_801065F0;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
-    arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
+    if (arg0->x_pos.val > g_Player.x_pos.val)
+        arg0->unk15 = 0;
+    else
+        arg0->unk15 = PLAYER_FACING_RIGHT;
     arg0->animation_table = (const u8* const*)D_800FA4E8;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = &bulldozer_terrain_box;
     arg0->hurt_box = (const u8*)bulldozer_hurt_boxes;
     arg0->attack_box = (const u8*)bulldozer_hurt_boxes;
+    arg0->air_state = 0;
     arg0->ext.main_6.armor_broken = 0;
     arg0->ext.main_6.ground_probe_distance = 0;
     arg0->ext.main_6.armor_health = 0x12;
     arg0->ext.main_6.core_health = 9;
     arg0->ext.main_6.hitbox_toggle = 0;
-    arg0->air_state = 0;
     set_animation(arg0, 0);
     arg0->state = 1;
     arg0->unk5 = 2;
     arg0->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_06_bulldozer", func_80046B80);
 #endif
 
 // bulldozer_main

@@ -372,33 +372,27 @@ void rocket_spiker_boost_launch(struct MainObj* self)
 }
 
 // rocket_spiker_boost_fly
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800608CC(struct MainObj* arg0)
 {
-    s32 velocity;
-
     move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->unk15 == 0) {
-        if (arg0->x_pos.i.hi >= 0x17A0)
-            return;
-        arg0->x_pos.i.hi = 0x17A0;
-        func_8001540C(2, SATURN_SOUND(0x5A, 0x6C), arg0);
-        velocity = 0x58000;
-    } else {
-        if (arg0->x_pos.i.hi < 0x1781)
-            return;
-        velocity = -0x58000;
+        if (arg0->x_pos.i.hi < 0x17A0) {
+            arg0->x_pos.i.hi = 0x17A0;
+            func_8001540C(2, SATURN_SOUND(0x5A, 0x6C), arg0);
+            arg0->unk7C = 0x28;
+            arg0->x_speed = 0x58000;
+            arg0->x_accel = 0x2000;
+            arg0->unk6 = 4;
+        }
+    } else if (arg0->x_pos.i.hi > 0x1780) {
         arg0->x_pos.i.hi = 0x1780;
+        arg0->unk7C = 0x28;
+        arg0->x_speed = -0x58000;
+        arg0->x_accel = 0x2000;
+        arg0->unk6 = 4;
     }
-    arg0->unk7C = 0x28;
-    arg0->x_accel = 0x2000;
-    arg0->x_speed = velocity;
-    arg0->unk6 = 4;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_37_rocket_spiker", func_800608CC);
-#endif
 
 void rocket_spiker_boost_pause(struct MainObj* self)
 {

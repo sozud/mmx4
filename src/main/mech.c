@@ -48,6 +48,14 @@ void func_8003D7A0(void);
 s32 func_8003E048(struct PlayerObj*);
 #endif
 
+#define RIDE_U8(object, offset) (((u8*)&(object)->unk7C)[(offset)-0x7C])
+#define RIDE_U16(object, offset) (*(u16*)&RIDE_U8(object, offset))
+extern union AnimationStep* D_800F9428[31];
+extern union AnimationStep* D_800F965C[38];
+extern struct Unk_unk68 D_800F9120;
+extern struct Unk_unk68 D_800F9128;
+#define RIDE_ARMOR_STATE(object, state) func_8003DC44(BASE_OBJECT(object), (state))
+#define RIDE_ARMOR_FLAGS(object) ((object)->unk94.bytes.unk97)
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003D4C8(struct RideArmorObj* arg0);
 void func_8003D9E0(struct RideArmorObj* arg0);
@@ -55,12 +63,6 @@ s32 func_8003DCD8(struct RideArmorObj* arg0);
 void func_8003E274(struct RideArmorObj* arg0);
 void func_80040248(struct RideArmorObj* arg0);
 void func_800403DC(struct RideArmorObj* arg0);
-#define RIDE_U8(object, offset) (((u8*)&(object)->unk7C)[(offset)-0x7C])
-#define RIDE_U16(object, offset) (*(u16*)&RIDE_U8(object, offset))
-extern union AnimationStep* D_800F9428[31];
-extern union AnimationStep* D_800F965C[38];
-extern struct Unk_unk68 D_800F9120;
-extern struct Unk_unk68 D_800F9128;
 extern void (*D_800F9150[])(struct RideArmorObj*);
 extern void (*D_800F9188[])(struct RideArmorObj*);
 void func_8003DC44(struct BaseObj*, s8);
@@ -75,31 +77,32 @@ void func_8003DF9C(struct PlayerObj*);
 void func_8003D9E0(struct RideArmorObj*);
 void func_8003DE84(struct RideArmorObj*);
 void func_80040248(struct RideArmorObj*);
-#define RIDE_ARMOR_STATE(object, state) func_8003DC44(BASE_OBJECT(object), (state))
-#define RIDE_ARMOR_FLAGS(object) ((object)->unk94.bytes.unk97)
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_8003D4C8);
+#else
 void func_8003D4C8(struct RideArmorObj* arg0)
 {
     u8 resource;
 
+    arg0->active |= 0x40;
     arg0->on_screen = 1;
     arg0->state = 1;
     arg0->unk5 = 0;
     arg0->unk6 = 0;
     arg0->bg_offset = 0;
     arg0->unk15 = 0;
-    arg0->active |= 0x40;
-    arg0->animation_table = (u32**)(arg0->unk2 != 0 ? D_800F965C : D_800F9428);
+    if (arg0->unk2 == 0)
+        arg0->animation_table = (u32**)D_800F9428;
+    else
+        arg0->animation_table = (u32**)D_800F965C;
     resource = func_8002938C(0x86);
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
     arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
     arg0->unk42 = VISUAL_STAGE_PALETTE(resource);
     arg0->hp = 0x20;
-    arg0->unk16 = 3;
-    arg0->unk68 = &D_800F9124;
     arg0->unk60 = 0;
     arg0->unk61 = 0;
     arg0->unk67 = 0;
@@ -107,8 +110,10 @@ void func_8003D4C8(struct RideArmorObj* arg0)
     arg0->y_vel.val = 0;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
+    arg0->unk16 = 3;
     arg0->unk54 = NULL;
     arg0->unk50 = NULL;
+    arg0->unk68 = &D_800F9124;
     arg0->unk58 = NULL;
     arg0->unk7D = 0;
     arg0->unk7E = 0;
@@ -127,8 +132,6 @@ void func_8003D4C8(struct RideArmorObj* arg0)
     RIDE_U8(arg0, 0x8C) = 0;
     arg0->unk87 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mech", func_8003D4C8);
 #endif
 
 void func_8003D638(struct VisualObj* arg0, u8 arg1)
@@ -242,7 +245,9 @@ s32 func_8003D8A8(struct RideArmorObj* owner, s32 shot_kind, s32 shot_variant)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_8003D9E0);
+#else
 void func_8003D9E0(struct RideArmorObj* arg0)
 {
     u16 mode;
@@ -271,7 +276,7 @@ void func_8003D9E0(struct RideArmorObj* arg0)
         if (--RIDE_U8(arg0, 0x95) != 0)
             return;
         RIDE_U8(arg0, 0x94) = 2;
-        if (arg0->unk2 == 0 || mode != 0x4000)
+        if (arg0->unk2 == 0 || (RIDE_U16(arg0, 0x96) & 0xC000) != 0x4000)
             return;
         func_8003D6EC(ANIMATED_OBJECT(arg0), 0x10);
         func_8001540C(5, SATURN_SOUND(8, 78), NULL);
@@ -285,24 +290,26 @@ void func_8003D9E0(struct RideArmorObj* arg0)
             STOP_SOUND(5, 8, 1);
             return;
         }
-        switch ((u8)arg0->unk5) {
-        case 3:
-        case 6:
-        case 9:
-        case 0xA:
-        case 0xB:
-        case 0xD:
-        case 0x10:
-        case 0x11:
-            RIDE_U8(arg0, 0x94) = 0;
-            arg0->unkA6 = 0;
-            STOP_SOUND(5, 8, 1);
-            return;
-        }
+        if ((u8)arg0->unk5 == 3)
+            goto stop;
+        if ((u8)arg0->unk5 == 6)
+            goto stop;
+        if ((u8)arg0->unk5 == 9)
+            goto stop;
+        if ((u8)arg0->unk5 == 0xA)
+            goto stop;
+        if ((u8)arg0->unk5 == 0xB)
+            goto stop;
+        if ((u8)arg0->unk5 == 0xD)
+            goto stop;
+        if ((u8)arg0->unk5 == 0x10)
+            goto stop;
+        if ((u8)arg0->unk5 == 0x11)
+            goto stop;
         parts = arg0->spawned_parts;
         for (i = 0; i < 3; i++) {
             if (!(parts & 1)) {
-                func_8003D8A8(arg0, i, 1);
+                func_8003D8A8(arg0, (u8)i, 1);
                 arg0->spawned_parts |= 1 << i;
             }
             parts >>= 1;
@@ -312,10 +319,13 @@ void func_8003D9E0(struct RideArmorObj* arg0)
         RIDE_U8(arg0, 0x94) = 0;
         arg0->unkA6 = 0;
         return;
+    stop:
+        RIDE_U8(arg0, 0x94) = 0;
+        arg0->unkA6 = 0;
+        STOP_SOUND(5, 8, 1);
+        return;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mech", func_8003D9E0);
 #endif
 
 void func_8003DC1C(struct PlayerObj* arg0, s8 arg1)
@@ -564,7 +574,9 @@ void func_8003E0D0(struct RideArmorObj* self)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_8003E274);
+#else
 void func_8003E274(struct RideArmorObj* arg0)
 {
     if (arg0->unk6 == 0) {
@@ -574,7 +586,10 @@ void func_8003E274(struct RideArmorObj* arg0)
         arg0->unk68 = &D_800F9120;
         set_animation(arg0, 0x12);
         func_8003DC1C((struct PlayerObj*)arg0, 0x39);
-        func_8001540C(5, SATURN_SOUND(arg0->id != 0 ? 4 : 6, arg0->id != 0 ? 74 : 62), NULL);
+        if (arg0->id == 0)
+            func_8001540C(5, SATURN_SOUND(6, 62), NULL);
+        else
+            func_8001540C(5, SATURN_SOUND(4, 74), NULL);
     }
     if (arg0->animation_step.fields.relative_step == 0) {
         if (RIDE_U8(arg0, 0x8C) == 0)
@@ -592,8 +607,6 @@ void func_8003E274(struct RideArmorObj* arg0)
     }
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mech", func_8003E274);
 #endif
 
 void func_8003E368(struct RideArmorObj* self)
@@ -1514,27 +1527,23 @@ void func_800401F8(struct PlayerObj* arg0)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_80040248);
+#else
 void func_80040248(struct RideArmorObj* arg0)
 {
-    u8 count;
-
-    if (!(RIDE_ARMOR_FLAGS(arg0) & 0x80))
-        return;
-    arg0->unk42 &= 0x7FFF;
-    if (--RIDE_U8(arg0, 0x92) != 0)
-        return;
-    count = RIDE_U8(arg0, 0x91);
-    RIDE_U8(arg0, 0x91) = count - 1;
-    arg0->unk42 |= 0x8000;
-    RIDE_U8(arg0, 0x92) = count;
-    if ((u8)(count - 1) != 0)
-        return;
-    RIDE_U8(arg0, 0x8D) = 1;
-    arg0->unk42 &= 0x7FFF;
+    if ((u8)RIDE_ARMOR_FLAGS(arg0) & 0x80) {
+        arg0->unk42 &= 0x7FFF;
+        if (--RIDE_U8(arg0, 0x92) == 0) {
+            arg0->unk42 |= 0x8000;
+            RIDE_U8(arg0, 0x92) = RIDE_U8(arg0, 0x91);
+            if (--RIDE_U8(arg0, 0x91) == 0) {
+                RIDE_U8(arg0, 0x8D) = 1;
+                arg0->unk42 &= 0x7FFF;
+            }
+        }
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mech", func_80040248);
 #endif
 
 void func_800402C4(struct PlayerObj* self)
@@ -1559,62 +1568,67 @@ void func_800402C4(struct PlayerObj* self)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_800403DC);
+#else
 void func_800403DC(struct RideArmorObj* arg0)
 {
-    u8 flags;
+    s32 flag;
 
     arg0->on_screen = 0;
-    if (func_8002B160(BASE_OBJECT(arg0)) != 0)
-        return;
-    if (arg0->hp < 0) {
-        if (arg0->hp == -0x80) {
-            RIDE_U8(arg0, 0x92) = 0x1E;
-            RIDE_U8(arg0, 0x91) = 0x1E;
-            RIDE_U8(arg0, 0x8C) = 0;
-            RIDE_ARMOR_FLAGS(arg0) |= 0x80;
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        if (arg0->hp < 0) {
+            if (arg0->hp == -0x80) {
+                RIDE_U8(arg0, 0x91) = RIDE_U8(arg0, 0x92) = 0x1E;
+                RIDE_U8(arg0, 0x8C) = 0;
+                flag = 0x80;
+                RIDE_ARMOR_FLAGS(arg0) |= flag;
+            }
+            arg0->launch_speed = 0x400;
+            RIDE_U8(arg0, 0x8C) = 0x79;
+            func_8003D638((struct VisualObj*)arg0, 8);
+            RIDE_U8(arg0, 0x93) = 1;
+            arg0->unk85 = 1;
+            RIDE_ARMOR_FLAGS(arg0) |= 2;
         }
-        arg0->launch_speed = 0x400;
-        RIDE_U8(arg0, 0x8C) = 0x79;
-        func_8003D638((struct VisualObj*)arg0, 8);
-        RIDE_U8(arg0, 0x93) = 1;
-        arg0->unk85 = 1;
-        RIDE_ARMOR_FLAGS(arg0) |= 2;
-    }
-    if (RIDE_U8(arg0, 0x8C) != 0 && --RIDE_U8(arg0, 0x8C) == 0 && (RIDE_ARMOR_FLAGS(arg0) & 1))
-        g_Player.on_screen = 1;
-    flags = RIDE_ARMOR_FLAGS(arg0);
-    if ((flags & 0x41) == 0x41 || (engine_obj.unkF != 0 && (flags & 0x40))) {
-        RIDE_ARMOR_FLAGS(arg0) = flags ^ 1;
-        RIDE_ARMOR_STATE(arg0, 0xB);
-    }
-    func_8003DE84(arg0);
-    func_8003DF9C((struct PlayerObj*)arg0);
-    func_8003D9E0(arg0);
-    if (RIDE_U8(arg0, 0x8D) == 0) {
-        if (arg0->unk2 == 0) {
-            if ((u8)arg0->unk5 < 14)
-                D_800F9150[(u8)arg0->unk5](arg0);
-            else if ((u8)arg0->unk5 < 32)
-                D_800F9188[(u8)arg0->unk5 - 14](arg0);
-        } else {
-            if (arg0->unk7E != 0)
-                arg0->unk7E--;
-            D_800F9188[arg0->unk5](arg0);
+        if (RIDE_U8(arg0, 0x8C) != 0) {
+            RIDE_U8(arg0, 0x8C)
+            --;
+            if (RIDE_U8(arg0, 0x8C) == 0 && (RIDE_ARMOR_FLAGS(arg0) & 1))
+                g_Player.on_screen = 1;
         }
-        func_8003FF9C(arg0);
-        CollisionRelated((struct PlayerObj*)arg0);
-        if (RIDE_ARMOR_FLAGS(arg0) & 0x40)
-            func_8003DDDC((struct PlayerObj*)arg0);
-        func_800401F8((struct PlayerObj*)arg0);
-        func_80040248(arg0);
-        func_8002B3C0(BASE_OBJECT(arg0));
+        if ((RIDE_ARMOR_FLAGS(arg0) & 0x41) == 0x41 || (engine_obj.unkF != 0 && (RIDE_ARMOR_FLAGS(arg0) & 0x40))) {
+            RIDE_ARMOR_FLAGS(arg0) ^= 1;
+            RIDE_ARMOR_STATE(arg0, 0xB);
+        }
+        func_8003DE84(arg0);
+        func_8003DF9C((struct PlayerObj*)arg0);
+        func_8003D9E0(arg0);
+        if (RIDE_U8(arg0, 0x8D) == 0) {
+            if (arg0->unk2 == 0) {
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+                if ((u8)arg0->unk5 >= 14)
+                    D_800F9188[(u8)arg0->unk5 - 14](arg0);
+                else
+#endif
+                    D_800F9150[arg0->unk5](arg0);
+            } else {
+                if (arg0->unk7E != 0)
+                    arg0->unk7E--;
+                D_800F9188[arg0->unk5](arg0);
+            }
+            func_8003FF9C(arg0);
+            CollisionRelated((struct PlayerObj*)arg0);
+            if (RIDE_ARMOR_FLAGS(arg0) & 0x40)
+                func_8003DDDC((struct PlayerObj*)arg0);
+            func_800401F8((struct PlayerObj*)arg0);
+            func_80040248(arg0);
+            func_8002B3C0(BASE_OBJECT(arg0));
+        }
+        func_800400C8((struct PlayerObj*)arg0);
+        func_800402C4((struct PlayerObj*)arg0);
     }
-    func_800400C8((struct PlayerObj*)arg0);
-    func_800402C4((struct PlayerObj*)arg0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mech", func_800403DC);
 #endif
 
 void func_800405D4(struct RideArmorObj* arg0)

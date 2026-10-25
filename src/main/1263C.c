@@ -218,9 +218,6 @@ void func_80021E74(void)
 #endif
 }
 
-#ifdef MMX4_SATURN
-#define REPLAY_FRAMES 0xE10
-
 void func_80021C14(void);
 void player_update(void);
 void update_weapon_objects(void);
@@ -240,6 +237,10 @@ void func_8002A484(void);
 void func_80021D84(void);
 void func_80021CC8(void);
 void CollisionRelated(struct PlayerObj*);
+
+#ifdef MMX4_SATURN
+#define REPLAY_FRAMES 0xE10
+
 void saturn_gameplay_prepare(void);
 void saturn_update_object_texture(void*);
 
@@ -280,7 +281,40 @@ void func_80021F34(void)
     saturn_update_object_texture(GRAPHICS_OBJECT(&g_Player));
 }
 #else
-INCLUDE_ASM("main/nonmatchings/1263C", func_80021F34);
+void func_80021F34(void)
+{
+    struct ReplayData* replay = (struct ReplayData*)REPLAY_DATA;
+    struct PlayerObj* player = &g_Player;
+
+    g_Player.input.buttons.previous = g_Player.input.buttons.held;
+    if (replay->frame != 0xE10) {
+        g_Player.input.buttons.held = replay->inputs[replay->frame];
+        replay->frame++;
+    } else {
+        g_Player.input.buttons.held = 0;
+    }
+    player->pressed_input = player->input.buttons.held & (player->input.buttons.held ^ player->input.buttons.previous);
+    func_80021C14();
+    player_update();
+    update_weapon_objects();
+    update_main_objects();
+    update_shot_objects();
+    update_visual_objects();
+    update_effect_objects();
+    update_item_objects();
+    update_misc_objects();
+    update_quad_objects();
+    func_80028E24();
+    CollisionRelated(&g_Player);
+    func_80027850();
+    func_80027D40();
+    func_800281E8();
+    update_layer_objects();
+    func_8002A484();
+    func_80021D84();
+    func_80021CC8();
+    decompress_player_gfx(GRAPHICS_OBJECT(&g_Player), 0x140, 0);
+}
 #endif
 
 // see also func_800220C4, func_80021E74

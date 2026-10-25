@@ -76,18 +76,19 @@ void spike_marl_update(struct MainObj* self)
 
 // spike_marl_init
 
+extern union AnimationStep* D_800F9E1C[];
+extern struct Unk_unk68 spike_marl_terrain_box;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80043390(struct MainObj* arg0);
 void func_80043C0C(struct MainObj* arg0);
-extern union AnimationStep* D_800F9E1C[];
-extern struct Unk_unk68 spike_marl_terrain_box;
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043390);
+#else
 void func_80043390(struct MainObj* arg0)
 {
-    s32 index;
     s32 column;
     s32 row;
 
@@ -97,23 +98,23 @@ void func_80043390(struct MainObj* arg0)
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
+    if (arg0->x_pos.val > g_Player.x_pos.val)
+        arg0->unk15 = 0;
+    else
+        arg0->unk15 = PLAYER_FACING_RIGHT;
     arg0->animation_table = (const u8* const*)D_800F9E1C;
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
     arg0->terrain_box = &spike_marl_terrain_box;
     arg0->hurt_box = (const u8*)&spike_marl_walk_hurt_box;
     arg0->attack_box = (const u8*)&spike_marl_walk_attack_box;
-    arg0->unk16 = VISUAL_SATURN_LAYER(4);
-    index = func_8002938C(3);
-    arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(index));
-    index = func_8002938C(3);
-    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
-    column = (func_8002938C(3) << 2) + 0x18;
+    arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(func_8002938C(3)));
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(3));
+    column = func_8002938C(3);
     row = func_8002938C(3);
 #ifdef MMX4_SATURN
-    arg0->unk42 = column;
+    arg0->unk42 = column * 4 + 0x18;
 #else
-    arg0->unk42 = (u16)((column - ((column >> 4) << 4))
-        | ((((row + 6) >> 2) + 0x1E0) << 6));
+    arg0->unk42 = CLUT_FROM_XY(column, row);
 #endif
     arg0->air_state = 0;
     switch (arg0->unk2) {
@@ -151,8 +152,6 @@ void func_80043390(struct MainObj* arg0)
     arg0->state = 1;
     arg0->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043390);
 #endif
 
 void spike_marl_run(struct MainObj* self)

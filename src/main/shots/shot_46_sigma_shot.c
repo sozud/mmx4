@@ -403,12 +403,11 @@ void sigma_shot_bolt(struct ShotObj* self)
 }
 
 // sigma_planted_scythe_fly
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A8E50);
+#else
 void func_800A8E50(struct ShotObj* self)
 {
-    s32 x_speed;
-    s32 y_speed;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->unk94);
@@ -421,8 +420,7 @@ void func_800A8E50(struct ShotObj* self)
         self->timer = 0x18;
         self->unk15 = ((self->unk70 & 2) == 0) << PLAYER_FACING_SHIFT;
         self->unk95 = 3;
-        x_speed = self->unk15 != 0 ? 0xFFED0000 : 0x130000;
-        y_speed = 0xFFEA0000;
+        spawn_debris_offset(6, sigma_shot_debris, MAIN_OBJECT(self), self->unk15 != 0 ? 0xFFED0000 : 0x130000, 0xFFEA0000);
     } else if (self->unk70 & 8) {
         self->unk5++;
         self->unk15 ^= PLAYER_FACING_RIGHT;
@@ -430,12 +428,10 @@ void func_800A8E50(struct ShotObj* self)
         set_animation(self, 0x20);
         self->timer = 0x24;
         self->unk95 = 4;
-        x_speed = self->unk15 != 0 ? 0xFFF10000 : 0xF0000;
-        y_speed = 0;
+        spawn_debris_offset(6, sigma_shot_debris, MAIN_OBJECT(self), self->unk15 != 0 ? 0xFFF10000 : 0xF0000, 0);
     } else {
         return;
     }
-    spawn_debris_offset(6, sigma_shot_debris, MAIN_OBJECT(self), x_speed, y_speed);
 #ifdef MMX4_SATURN
     func_8001540C(6, 6, NULL);
 #else
@@ -443,8 +439,6 @@ void func_800A8E50(struct ShotObj* self)
 #endif
     func_8001540C(2, SATURN_SOUND(6, 0xC5), self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A8E50);
 #endif
 
 void sigma_planted_scythe_stuck(struct ShotObj* self)
@@ -596,34 +590,34 @@ void sigma_shot_dart(struct ShotObj* self)
 }
 
 // sigma_shot_spin_scythe
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A9544);
+#else
+#define SD_ANGLE(o) (*(u8*)&(o)->unk94)
+#define SD_DELAY(o) (*(u8*)&(o)->unk96)
 void func_800A9544(struct ShotObj* self)
 {
     struct WeaponObj* owner = self->unk7C;
-    u8* angle = (u8*)&self->unk94;
-    u8* delay = (u8*)&self->unk96;
 
-    if (--*delay == 0) {
+    if (--SD_DELAY(self) == 0) {
         if (self->unk15 != 0)
-            *angle = (*angle - 1) & 0xF;
+            SD_ANGLE(self) = (SD_ANGLE(self) - 1) & 0xF;
         else
-            *angle = (*angle + 1) & 0xF;
-        *delay = 6;
+            SD_ANGLE(self) = (SD_ANGLE(self) + 1) & 0xF;
+        SD_DELAY(self) = 6;
     }
     self->unk90.i.lo = 0x40;
     self->unk90.i.hi = 0x40;
-    func_80021DBC(&self->unk90.i.lo, &self->unk90.i.hi, *angle);
-    self->x_pos.i.hi = owner->x_pos.i.hi + (self->unk15 != 0 ? self->unk90.i.lo + 0x30 : self->unk90.i.lo - 0x30);
-    self->y_pos.i.hi = owner->y_pos.i.hi + self->unk90.i.hi + 0x30;
+    func_80021DBC(&self->unk90.i.lo, &self->unk90.i.hi, SD_ANGLE(self));
+    self->x_pos.i.hi = owner->x_pos.i.hi + (self->unk15 != 0 ? 0x30 : -0x30) + self->unk90.i.lo;
+    self->y_pos.i.hi = owner->y_pos.i.hi + 0x30 + self->unk90.i.hi;
     animate_object(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
-    if (*angle == 6)
+    if (SD_ANGLE(self) == 6)
         self->state = 2;
     if (self->unk7C->state == 2)
         self->state = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A9544);
 #endif
 
 void sigma_shot_cloak_fire(struct ShotObj* self)

@@ -40,9 +40,8 @@ void npc_cutscene_finish(struct MiscObj*);
 extern void (*npc_cutscene_type_funcs[])(struct MiscObj*);
 
 // npc_cutscene_init
-#ifdef MMX4_SATURN
 #define NPC_RESOURCE 0xA5
-#define NPC_LAYER 0x42
+#define NPC_LAYER VISUAL_SATURN_LAYER(6)
 #define NPC_LISTENER 2
 #define NPC_LISTENER_ID 0x34
 #define NPC_SEEN 8
@@ -52,23 +51,24 @@ extern void (*npc_cutscene_type_funcs[])(struct MiscObj*);
 
 extern union AnimationStep* npc_cutscene_animations[];
 #define NPC_SCRIPT_ACTION 20
-#define NPC_SCRIPT_ARG 16
 
 void func_800D2190(struct MiscObj* self)
 {
     struct MiscObj* listener;
-    u8 resource;
 
     if (self->unk2 != NPC_LISTENER) {
-        if (engine_obj.substage == 0) {
+        switch (engine_obj.substage) {
+        case 0:
             engine_obj.character_state.bytes[NPC_SEEN] = 0;
             engine_obj.character_state.bytes[NPC_TALKED] = 0;
-        } else if (engine_obj.substage == 1) {
+            break;
+        case 1:
             if (engine_obj.character_state.bytes[NPC_SEEN] != 0) {
                 ZeroObjectState(OBJECT_HEADER(self));
                 return;
             }
             engine_obj.character_state.bytes[NPC_SEEN] = 1;
+            break;
         }
     }
     self->state++;
@@ -76,8 +76,7 @@ void func_800D2190(struct MiscObj* self)
     self->unk16 = NPC_LAYER;
     self->animation_table = (u32**)npc_cutscene_animations;
     self->unk15 = 0;
-    resource = func_8002938C(NPC_RESOURCE);
-    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(NPC_RESOURCE)];
     self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(NPC_RESOURCE));
     self->unk42 = OBJECT_STAGE_CLUT(NPC_RESOURCE);
     self->ext.misc_52.unk56 = NPC_BOB_PERIOD;
@@ -89,7 +88,7 @@ void func_800D2190(struct MiscObj* self)
         set_animation(self, 0);
         break;
     case 1:
-        player_start_script_action(NPC_SCRIPT_ACTION, NPC_SCRIPT_ARG);
+        player_start_script_action(NPC_SCRIPT_ACTION, PLAYER_FACING_RIGHT);
         self->x_pos.i.hi = 0x2A0;
         self->y_pos.i.hi = 0x198;
         set_animation(self, 0);
@@ -115,9 +114,6 @@ void func_800D2190(struct MiscObj* self)
         listener->y_pos.i.hi = self->y_pos.i.hi;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_52_npc_cutscene", func_800D2190);
-#endif
 
 void npc_cutscene_talk_wait_player(struct MiscObj* self)
 {
@@ -210,27 +206,23 @@ void npc_cutscene_reply(struct MiscObj* obj)
 }
 
 // npc_cutscene_listen
-#ifdef MMX4_SATURN
 void func_800D26F4(struct MiscObj* self)
 {
     struct MiscObj* parent = self->ext.misc_52.parent;
 
-    if (self->unk5 != 0) {
+    if (self->unk5 == 0) {
+        animate_object(ANIMATED_OBJECT(self));
+        self->x_pos.i.hi = parent->x_pos.i.hi;
+        self->y_pos.i.hi = parent->y_pos.i.hi;
+        self->on_screen = 0;
+        if (parent->on_screen != 0)
+            is_on_screen(BASE_OBJECT(self));
+        if (parent->active == 0)
+            self->unk5++;
+    } else {
         ZeroObjectState(OBJECT_HEADER(self));
-        return;
     }
-    animate_object(ANIMATED_OBJECT(self));
-    self->x_pos.i.hi = parent->x_pos.i.hi;
-    self->y_pos.i.hi = parent->y_pos.i.hi;
-    self->on_screen = 0;
-    if (parent->on_screen != 0)
-        is_on_screen(BASE_OBJECT(self));
-    if (parent->active == 0)
-        self->unk5++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_52_npc_cutscene", func_800D26F4);
-#endif
 
 void npc_cutscene_main(struct MiscObj* self)
 {

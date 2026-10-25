@@ -102,13 +102,12 @@ void ice_core_spray_despawn(struct ShotObj* self)
 }
 
 // ice_core_shard_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009BA6C(struct ShotObj* arg0)
 {
     arg0->state = 4;
+    arg0->on_screen = 1;
     arg0->unk58.data = (const u8*)D_80105FF0;
     arg0->unk68 = (struct Unk_unk68*)ice_core_shard_terrain_box;
-    arg0->on_screen = 1;
     arg0->unk5C = 1;
     arg0->unk54 = ice_core_shard_hit_box;
     arg0->unk50.data = ice_core_shard_hit_box;
@@ -119,9 +118,6 @@ void func_8009BA6C(struct ShotObj* arg0)
     arg0->unk42 &= 0x7FFF;
     set_animation(arg0, 0x1D);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_12_ice_core_shot", func_8009BA6C);
-#endif
 
 void ice_core_shard_hold(struct ShotObj* self)
 {

@@ -191,19 +191,21 @@ void spark_machine_update(struct ItemObj* arg0)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern u8 spark_machine_terrain_box[4];
+extern u8 spark_machine_hit_box[4];
+extern struct Unk_unk68 D_80108604[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C2528(struct ItemObj* self);
 void func_800C2638(struct ItemObj* self);
 // src/main/items/item_10_spark_machine.c
 
-extern u8 spark_machine_terrain_box[4];
-extern u8 spark_machine_hit_box[4];
-extern struct Unk_unk68 D_80108604[];
 extern struct Item10Offset spark_machine_spark_offsets[5];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_10_spark_machine", func_800C2528);
+#else
 void func_800C2528(struct ItemObj* self)
 {
     self->active = 0x41;
@@ -216,12 +218,12 @@ void func_800C2528(struct ItemObj* self)
     self->unk54 = spark_machine_hit_box;
     self->unk58 = (const u8*)D_80108604;
     self->unk15 = 0;
+    self->bg_offset = g_Player.bg_offset;
     self->unk61 = 0;
     self->unk75 = 1;
     self->unk67 = 0;
     self->unk5C = 0x10;
     self->state = 1;
-    self->bg_offset = g_Player.bg_offset;
     set_animation(self, 0xD);
     self->ext.packed = 0;
     self->tail_ext.unk1.unk84.bytes[0] = 0x10;
@@ -229,8 +231,6 @@ void func_800C2528(struct ItemObj* self)
     self->tail_ext.unk1.unk84.bytes[2] = 0x14;
     self->tail_ext.unk1.unk84.bytes[3] = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_10_spark_machine", func_800C2528);
 #endif
 
 // spark_machine_main

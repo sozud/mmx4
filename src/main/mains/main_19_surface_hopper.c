@@ -63,6 +63,8 @@ void surface_hopper_update(struct MainObj* self)
 
 // surface_hopper_init
 
+extern s16 D_800FC7E8[6];
+extern void (*surface_hopper_launched_step_funcs[6])(struct MainObj*);
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800528BC(struct MainObj* arg0);
 u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical);
@@ -80,7 +82,6 @@ extern struct Unk_unk68* D_800FC74C[2];
 extern struct Unk_unk68 D_80106BF4[];
 extern u8 D_800FC7D4[4];
 extern u8 D_800FC7D8[4];
-extern s16 D_800FC7E8[6];
 u8 surface_hopper_probe_collision(struct PlayerObj*, s16, s16);
 u8 surface_hopper_probe_tile(struct PlayerObj*, s16, s16);
 u8 surface_hopper_aim_at_player(struct MainObj*);
@@ -88,7 +89,6 @@ u8 surface_hopper_aim_at_player(struct MainObj*);
 
 extern union AnimationStep* surface_hopper_animations[27];
 extern u8 D_800FC80C[8];
-extern void (*surface_hopper_launched_step_funcs[6])(struct MainObj*);
 #endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -487,44 +487,42 @@ void surface_hopper_leap_start(struct MainObj* self)
 }
 
 // surface_hopper_leap_fly
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_8005368C);
+#else
 void func_8005368C(struct MainObj* arg0)
 {
     struct ShotObj* shot;
-    s32 index;
+    u8 index;
 
     if (arg0->animation_step.fields.relative_step < 0) {
         arg0->unk5 = 2;
         arg0->unk6 = 0;
-        arg0->ext.main_19.unk80 = get_random() & 1;
+        SP_CUR_MAIN_OBJ->ext.main_19.unk80 = get_random() & 1;
         return;
     }
-
-    if (arg0->animation_step.fields.event == 0) {
+    if (arg0->animation_step.fields.event != 0) {
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0xB;
+            index = SP_CUR_MAIN_OBJ->ext.main_19.animation_index * 2;
+            shot->x_pos.i.hi = arg0->x_pos.i.hi + D_800FC7E8[index];
+            shot->y_pos.i.hi = arg0->y_pos.i.hi + D_800FC7E8[(u8)(index | 1)];
+            shot->animation_table = (u32**)arg0->animation_table;
+            shot->unk40 = arg0->unk40;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->unk42 = arg0->unk42 & 0x7FFF;
+            shot->unk16 = arg0->unk16;
+            shot->unk7C = (struct WeaponObj*)arg0;
+            shot->unk15 = arg0->unk15;
+            set_velocity_from_angle(MOVING_OBJECT(shot), SP_CUR_MAIN_OBJ->ext.main_19.unk83);
+        }
+        arg0->animation_step.fields.event = 0;
+    } else {
         animate_object(ANIMATED_OBJECT(arg0));
-        return;
     }
-
-    shot = find_free_shot_obj();
-    if (shot != NULL) {
-        index = arg0->ext.main_19.animation_index;
-        shot->active = 0x41;
-        shot->id = 0xB;
-        shot->x_pos.i.hi = arg0->x_pos.i.hi + D_800FC7E8[index * 2];
-        shot->y_pos.i.hi = arg0->y_pos.i.hi + D_800FC7E8[index * 2 + 1];
-        shot->animation_table = (u32**)arg0->animation_table;
-        shot->unk40 = arg0->unk40;
-        shot->unk3C = (void*)arg0->sprite_frames;
-        shot->unk42 = arg0->unk42 & 0x7FFF;
-        shot->unk7C = (struct WeaponObj*)arg0;
-        shot->unk16 = arg0->unk16;
-        shot->unk15 = arg0->unk15;
-        set_velocity_from_angle(MOVING_OBJECT(shot), arg0->ext.main_19.unk83);
-    }
-    arg0->animation_step.fields.event = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_8005368C);
 #endif
 
 // surface_hopper_pick_surface
@@ -730,7 +728,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053D24);
 #endif
 
 // surface_hopper_launched_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80053EB8(struct MainObj* self)
 {
     s32 hit;
@@ -746,21 +743,20 @@ void func_80053EB8(struct MainObj* self)
         spawn_debris(8, surface_hopper_debris, self);
         x = self->x_pos.u.hi;
         y = self->y_pos.u.hi;
-        switch (SP_CUR_MAIN_OBJ->ext.main_19.unk80) {
-        case 0:
-            y += 16;
-            break;
-        case 1:
-            x -= 16;
-            break;
-        case 2:
-            self->state = 2;
-            return;
-        case 3:
-            x += 16;
-            break;
+        if (SP_CUR_MAIN_OBJ->ext.main_19.unk80 != 2) {
+            switch (SP_CUR_MAIN_OBJ->ext.main_19.unk80) {
+            case 0:
+                y += 16;
+                break;
+            case 1:
+                x -= 16;
+                break;
+            case 3:
+                x += 16;
+                break;
+            }
+            func_800BF638(BASE_OBJECT(self), 12, (s16)(x + 16), (s16)y);
         }
-        func_800BF638(BASE_OBJECT(self), 12, (s16)(x + 16), (s16)y);
         self->state = 2;
         return;
     }
@@ -768,18 +764,15 @@ void func_80053EB8(struct MainObj* self)
         self->unk5 = 1;
         self->unk6 = 0;
     }
-    if (func_8002B160(BASE_OBJECT(self)) != 0) {
-        self->state = 2;
-    } else {
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
         is_on_screen(BASE_OBJECT(self));
+    } else {
+        self->state = 2;
     }
     if (SP_CUR_MAIN_OBJ->ext.main_19.unk82 > 0x38) {
         self->state = 2;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053EB8);
-#endif
 
 // surface_hopper_launched_crawl
 #if defined(MMX4_PC) || defined(MMX4_SATURN)

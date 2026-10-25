@@ -1544,7 +1544,6 @@ s32 func_8003A1DC(struct PlayerObj* arg0);
 void player_zero_raijingeki(struct PlayerObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_8003A1DC(struct PlayerObj* arg0)
 {
     s8 combo;
@@ -1579,9 +1578,6 @@ s32 func_8003A1DC(struct PlayerObj* arg0)
     player_zero_raijingeki(arg0);
     return 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/player_special", func_8003A1DC);
-#endif
 s32 player_zero_check_ladder_or_walk(struct PlayerObj* self)
 {
     if (player_check_ladder(self)) {

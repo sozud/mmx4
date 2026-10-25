@@ -78,7 +78,9 @@ void func_800B8630(struct EffectObj* self)
 void func_800B875C(struct EffectObj* arg0, s16 unused);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_13_edge_spawner", func_800B875C);
+#else
 void func_800B875C(struct EffectObj* arg0, s16 unused)
 {
     s16 x;
@@ -88,9 +90,9 @@ void func_800B875C(struct EffectObj* arg0, s16 unused)
     x = arg0->x_pos.i.hi - 0x10;
     arg0->x_pos.i.hi = x;
     y = arg0->y_pos.i.hi - 0x10;
-    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) != 0) {
+    if (((s32(*)(struct PlayerObj*, s32, s32))func_8002D724)(PLAYER_OBJECT(arg0), x, y) != 0) {
         for (i = 1; i < 0x10; i++) {
-            if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, y + i * 16) == 0) {
+            if (((s32(*)(struct PlayerObj*, s32, s32))func_8002D724)(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, y + i * 16) == 0) {
                 arg0->y_pos.i.hi += i * 16;
                 func_800B8630(arg0);
                 return;
@@ -99,15 +101,13 @@ void func_800B875C(struct EffectObj* arg0, s16 unused)
         return;
     }
     for (i = 1; i < 0x10; i++) {
-        if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, y - i * 16) != 0) {
+        if (((s32(*)(struct PlayerObj*, s32, s32))func_8002D724)(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, y - i * 16) != 0) {
             arg0->y_pos.i.hi -= (i - 1) * 16;
             func_800B8630(arg0);
             return;
         }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_13_edge_spawner", func_800B875C);
 #endif
 
 // edge_spawner_spawn_items

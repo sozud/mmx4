@@ -65,7 +65,6 @@ extern u8 iris_drone_attack_box[4];
 extern u8 iris_drone_hurt_box[4];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A7008(struct ShotObj* self)
 {
     self->on_screen = 1;
@@ -81,7 +80,6 @@ void func_800A7008(struct ShotObj* self)
     self->unk54 = iris_drone_hurt_box;
     self->unk50.data = iris_drone_attack_box;
     self->timer = 0x10;
-    self->unk60 = 4;
     self->x_vel.val *= 5;
     self->y_vel.val *= 5;
     self->unk2C = 0;
@@ -90,13 +88,11 @@ void func_800A7008(struct ShotObj* self)
     self->unk5C = 1;
     self->x_pos.val += self->x_vel.val * 5;
     self->y_pos.val -= self->y_vel.val * 5;
+    self->unk60 = 4;
     set_animation(self, 0xD);
     self->state = 1;
     self->unk5 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A7008);
-#endif
 
 void iris_drone_run(struct ShotObj* self)
 {
@@ -186,12 +182,11 @@ void iris_laser_despawn(struct ShotObj* self)
 }
 
 // iris_pillar_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A73C4(struct ShotObj* self)
 {
+    self->on_screen = 1;
     self->timer = 0x78;
     self->unk60 = 8;
-    self->on_screen = 1;
     self->unk61 = 1;
     self->unk5C = 1;
     self->unk58.data = NULL;
@@ -209,9 +204,6 @@ void func_800A73C4(struct ShotObj* self)
     self->state = 7;
     self->unk5 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A73C4);
-#endif
 
 void iris_pillar_run(struct ShotObj* self)
 {

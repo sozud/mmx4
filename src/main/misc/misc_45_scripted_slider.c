@@ -173,7 +173,6 @@ void scripted_slider_follow_owner(struct MiscObj* self)
 }
 
 // scripted_slider_step_4
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D11B0(struct MiscObj* self)
 {
     self->unk28 = 0;
@@ -181,9 +180,6 @@ void func_800D11B0(struct MiscObj* self)
     self->unk5 = 2;
     self->x_pos.i.hi = self->ext.misc_45.target_x;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_45_scripted_slider", func_800D11B0);
-#endif
 
 void scripted_slider_main(struct MiscObj* self)
 {

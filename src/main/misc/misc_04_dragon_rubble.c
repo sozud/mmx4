@@ -158,41 +158,26 @@ struct Misc04SpawnPosition {
     u16 y;
 };
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800C8BDC(struct MiscObj* arg0);
-void func_800C8E90(struct MiscObj* arg0);
-extern u32* dragon_rubble_animations[14];
 extern u8 dragon_rubble_c_debris_0[8];
 extern u8 dragon_rubble_c_debris_1[8];
 extern u8 dragon_rubble_c_debris_2[8];
 extern struct Misc04SpawnPosition dragon_rubble_c_positions[3];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void func_800C8BDC(struct MiscObj* arg0);
+void func_800C8E90(struct MiscObj* arg0);
+extern u32* dragon_rubble_animations[14];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C8BDC(struct MiscObj* arg0)
 {
     struct MainObj* owner = arg0->ext.misc_4.owner;
-    s32 column;
-    s32 wrapped;
-    s32 row;
-    s32 index;
 
     arg0->unk5 = 0x10;
     arg0->state = (u8)arg0->state + 1;
     arg0->animation_table = (u32**)dragon_rubble_animations;
 
-#ifdef MMX4_SATURN
-    arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x85));
-#else
-    index = func_8002938C(0x85);
-    row = func_8002938C(0x85);
-    column = index * 4 + 0x18;
-    wrapped = column < 0 ? index * 4 + 0x27 : column;
-    row = row + 6 < 0 ? row + 9 : row + 6;
-    arg0->unk42 = (u16)((column - ((wrapped >> 4) << 4))
-        | (((row >> 2) + 0x1E0) << 6));
-#endif
+    arg0->unk42 = OBJECT_STAGE_CLUT(0x85);
     arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(func_8002938C(0x85)));
     arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x85));
 
@@ -214,12 +199,8 @@ void func_800C8BDC(struct MiscObj* arg0)
     spawn_explosion_at(2, arg0->x_pos.i.hi + 6, arg0->y_pos.i.hi + 0x2C, 0);
     spawn_explosion_at(2, arg0->x_pos.i.hi - 0xC, arg0->y_pos.i.hi + 0x20, 1);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_04_dragon_rubble", func_800C8BDC);
-#endif
 
 // dragon_rubble_c_explode
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C8E90(struct MiscObj* arg0)
 {
     s8 timer = arg0->unk5;
@@ -249,9 +230,6 @@ void func_800C8E90(struct MiscObj* arg0)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_04_dragon_rubble", func_800C8E90);
-#endif
 
 struct Misc04AnimationStep {
     u8 duration;

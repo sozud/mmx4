@@ -113,9 +113,9 @@ s16 D_8013B8CC;
 
 u8 D_8013B8D0[1];
 
-u8 D_8013B8E0[1];
+u8 D_8013B8E0;
 
-u8 D_8013B8E4[1];
+u8 D_8013B8E4;
 
 struct EffectObj* boss_warning_tiles[22];
 

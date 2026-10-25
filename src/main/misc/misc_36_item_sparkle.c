@@ -26,7 +26,9 @@ void item_sparkle_update(struct MiscObj* self)
 void func_800CF300(struct MiscObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_36_item_sparkle", func_800CF300);
+#else
 void func_800CF300(struct MiscObj* self)
 {
     struct AnimatedObj* owner = ANIMATED_OBJECT(self->ext.pointer.unk50);
@@ -44,11 +46,17 @@ void func_800CF300(struct MiscObj* self)
         set_animation(self, 9);
         break;
     case 1:
-        self->y_vel.val = (get_random() & 1) ? 0x10000 : 0x18000;
+        if (get_random() & 1)
+            self->y_vel.val = 0x10000;
+        else
+            self->y_vel.val = 0x18000;
         set_animation(self, 8);
         break;
     case 2:
-        self->y_vel.val = (get_random() & 1) ? 0x20000 : 0x28000;
+        if (get_random() & 1)
+            self->y_vel.val = 0x20000;
+        else
+            self->y_vel.val = 0x28000;
         set_animation(self, 7);
         break;
     }
@@ -57,8 +65,6 @@ void func_800CF300(struct MiscObj* self)
     self->unk2C = 0;
     self->state = (u8)self->state + 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_36_item_sparkle", func_800CF300);
 #endif
 
 void item_sparkle_move(struct MiscObj* self)

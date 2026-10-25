@@ -105,13 +105,12 @@ void bg_wind_main(struct EffectObj* self)
 
 // bg_wind_calm
 
+extern struct Effect09MovementStep bg_wind_steps_fast[3];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B76A4(struct EffectObj* arg0);
-extern struct Effect09MovementStep bg_wind_steps_fast[3];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-#ifdef MMX4_SATURN
+#if defined(MMX4_SATURN)
 void func_800B76A4(struct EffectObj* arg0)
 {
     struct Effect9Ext* ext = &arg0->ext.effect_9;
@@ -134,10 +133,13 @@ void func_800B76A4(struct EffectObj* arg0)
     ext->velocity = 0x10000;
     arg0->unk5++;
 }
+#elif defined(VERSION_EU)
+INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B76A4);
 #else
 void func_800B76A4(struct EffectObj* arg0)
 {
     struct Effect9Ext* ext = &arg0->ext.effect_9;
+    s32 x;
 
     if (ext->direction != 0) {
         background_objects[2].y_pos.val = 0;
@@ -154,13 +156,11 @@ void func_800B76A4(struct EffectObj* arg0)
     ext->timer = ext->movement_table[0];
     ext->frame = ext->movement_table[1];
     ext->target_x = ext->movement_table[2];
-    background_objects[2].x_pos.i.hi = (ext->target_x << 9) + (u8)background_objects[2].x_pos.i.hi;
+    x = (ext->target_x << 9) + (u8)background_objects[2].x_pos.i.hi;
+    background_objects[2].x_pos.i.hi = x;
     ext->velocity = 0x10000;
     arg0->unk5++;
 }
-#endif
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B76A4);
 #endif
 
 extern struct Effect09MovementStep bg_wind_steps_fast[3];

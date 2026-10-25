@@ -288,40 +288,39 @@ INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_8006630C);
 #endif
 
 // train_boss_update_projectiles
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80066478);
+#else
 void func_80066478(struct MainObj* self)
 {
-    struct Main45Ext* parts = &self->ext.main_45;
 
-    parts->unk84 = (u16)parts->unk84 - 1;
-    if (parts->unk84 == 0) {
-        if (parts->unk82 == 0) {
-            parts->unk81 = 1;
-            parts->unk82 = 1;
-            parts->unk83 = 0x20;
-            parts->unk84 = 0xF0;
+    self->ext.main_45.unk84 = (u16)self->ext.main_45.unk84 - 1;
+    if (self->ext.main_45.unk84 == 0) {
+        if (self->ext.main_45.unk82 == 0) {
+            self->ext.main_45.unk81 = 1;
+            self->ext.main_45.unk82 = 1;
+            self->ext.main_45.unk83 = 0x20;
+            self->ext.main_45.unk84 = 0xF0;
         } else {
-            parts->unk81 = 0xFF;
-            parts->unk82 = 0;
-            parts->unk83 = 0x20;
-            parts->unk84 = 0x12C;
+            self->ext.main_45.unk81 = -1;
+            self->ext.main_45.unk82 = 0;
+            self->ext.main_45.unk83 = 0x20;
+            self->ext.main_45.unk84 = 0x12C;
         }
     }
     collide_with_players(PLAYER_OBJECT(self));
-    if (parts->unk83 != 0) {
-        parts->unk83--;
-        if (parts->unk83 == 0) {
-            parts->unk81 = 0;
-            *parts->layer_bg_offset = 0;
-        } else if ((parts->unk83 & 1) == 0) {
+    if (self->ext.main_45.unk83 != 0) {
+        self->ext.main_45.unk83--;
+        if (self->ext.main_45.unk83 == 0) {
+            self->ext.main_45.unk81 = 0;
+            *self->ext.main_45.layer_bg_offset = 0;
+        } else if ((self->ext.main_45.unk83 & 1) == 0) {
             if (g_Player.wall_climbable != 0 || self->unk76 != 0)
-                *parts->layer_parameter = 1;
-            *parts->layer_bg_offset = parts->unk81;
+                *self->ext.main_45.layer_parameter = 1;
+            *self->ext.main_45.layer_bg_offset = self->ext.main_45.unk81;
         }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80066478);
 #endif
 
 void train_boss_arrive(struct MainObj* self)
@@ -330,13 +329,15 @@ void train_boss_arrive(struct MainObj* self)
 }
 
 // train_boss_arrive_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800665BC);
+#else
 void func_800665BC(struct MainObj* self)
 {
     struct LayerObj* layer = find_free_layer_obj();
     struct ItemObj* floor;
     struct MainObj* part;
-    unsigned index;
+    s32 index;
 
     if (layer != NULL) {
         struct Main45LayerSignals* signals = (struct Main45LayerSignals*)&layer->unk16;
@@ -345,7 +346,8 @@ void func_800665BC(struct MainObj* self)
         layer->id = 3;
         layer->unk2 = 1;
         layer->bg_offset = 0;
-        layer->unk16 = layer->unk17 = 0;
+        layer->unk16 = 0;
+        layer->unk17 = 0;
         signals->projectile_state[0] = 0;
         signals->projectile_state[1] = 0;
         signals->projectile_state[2] = 0;
@@ -363,15 +365,13 @@ void func_800665BC(struct MainObj* self)
         floor->unk42 = self->unk42;
         floor->animation_table = self->animation_table;
         floor->sprite_frames = self->sprite_frames;
-        floor->animation_step.fields.frame_index = 7;
         floor->bg_offset = self->bg_offset;
+        floor->animation_step.fields.frame_index = 7;
         floor->x_pos = self->x_pos;
         floor->y_pos = self->y_pos;
         floor->unk7C.train_boss = &self->ext.main_45;
-
-        assert(layer != NULL);
-        floor->ext.train_layer_parameter = &layer->unk15;
         floor->unk15 = 0;
+        floor->ext.train_layer_parameter = &layer->unk15;
         floor->state = 0;
     }
     part = find_free_main_obj();
@@ -383,12 +383,12 @@ void func_800665BC(struct MainObj* self)
         part->unk42 = self->unk42;
         part->animation_table = self->animation_table;
         part->sprite_frames = self->sprite_frames;
-        part->animation_step.fields.frame_index = 0x11;
         part->bg_offset = self->bg_offset;
+        part->animation_step.fields.frame_index = 0x11;
         part->x_pos = self->x_pos;
         part->y_pos = self->y_pos;
-        part->ext.main_46.owner = &self->ext.main_45;
         part->unk15 = 0;
+        part->ext.main_46.owner = &self->ext.main_45;
         part->state = 0;
     }
     for (index = 0; index < 3; index++) {
@@ -402,20 +402,18 @@ void func_800665BC(struct MainObj* self)
         part->unk42 = self->unk42;
         part->animation_table = self->animation_table;
         part->sprite_frames = self->sprite_frames;
-        part->animation_step.fields.frame_index = index + 0x13;
         part->bg_offset = self->bg_offset;
+        part->animation_step.fields.frame_index = index + 0x13;
         part->x_pos = self->x_pos;
         part->y_pos = self->y_pos;
         part->ext.main_47.train_boss = &self->ext.main_45;
-        part->ext.main_47.boss_hp = &self->hp;
         part->unk15 = 0;
+        part->ext.main_47.boss_hp = &self->hp;
         part->state = 0;
     }
     self->x_speed = 0x10000;
     self->unk6 = 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800665BC);
 #endif
 
 void train_boss_arrive_approach(struct MainObj* self)
@@ -472,14 +470,15 @@ void train_boss_fight_idle(void)
 }
 
 // train_boss_spawn_smoke
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80066970(struct MainObj* self)
 {
-    u16 x = self->x_pos.u.hi;
-    u16 y = self->y_pos.u.hi;
+    u16 x;
+    u16 y;
 
     self->unk7E = (u16)self->unk7E - 1;
     if (self->unk7E == 3) {
+        x = self->x_pos.u.hi;
+        y = self->y_pos.u.hi;
         self->x_pos.u.hi = x - 0x37;
         self->y_pos.u.hi = y + 0xB;
         func_800AF95C(OBJECT_HEADER(self), 1, 0x29, 0x59, 4);
@@ -487,6 +486,8 @@ void func_80066970(struct MainObj* self)
         self->y_pos.u.hi = y;
     }
     if (self->unk7E == 0) {
+        x = self->x_pos.u.hi;
+        y = self->y_pos.u.hi;
         self->x_pos.u.hi = x + 0x27;
         self->y_pos.u.hi = y + 0x34;
         func_800AF95C(OBJECT_HEADER(self), 1, 0x37, 0x28, 2);
@@ -495,9 +496,6 @@ void func_80066970(struct MainObj* self)
         self->unk7E = 6;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80066970);
-#endif
 
 s8 train_boss_terrain_box[4] = { -56, 12, 39, 86 };
 

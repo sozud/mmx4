@@ -77,11 +77,11 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F674);
 #endif
 
 // cannon_missile_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F7C0);
+#else
 void func_8009F7C0(struct ShotObj* arg0)
 {
-    s32 speed;
-
     cannon_missile_step_funcs[arg0->unk5](arg0);
     animate_object(ANIMATED_OBJECT(arg0));
     move_with_gravity(ANIMATED_OBJECT(arg0));
@@ -91,23 +91,20 @@ void func_8009F7C0(struct ShotObj* arg0)
         arg0->state++;
         return;
     }
-    speed = arg0->x_vel.val;
-    if (speed < 0)
-        speed = -speed;
-    if (speed > 0x40000)
+    if ((arg0->x_vel.val < 0 ? -arg0->x_vel.val : arg0->x_vel.val) > 0x40000)
         arg0->unk28 = 0;
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x20) != 0) {
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x20) == 0) {
+        update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
+    } else {
         arg0->state++;
-        return;
     }
-    update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F7C0);
 #endif
 
 // cannon_missile_launch
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F89C);
+#else
 void func_8009F89C(struct ShotObj* arg0)
 {
     u8 timer = arg0->unk8C.bytes[3];
@@ -121,8 +118,7 @@ void func_8009F89C(struct ShotObj* arg0)
         return;
     }
     arg0->unk8C.bytes[3] = timer - 1;
-    blink = arg0->unk90.bytes[0];
-    arg0->unk90.bytes[0] = blink - 1;
+    blink = arg0->unk90.bytes[0]--;
     if (blink == 0) {
         arg0->unk90.bytes[0] = 2;
         arg0->unk42 &= 0x7FFF;
@@ -130,8 +126,6 @@ void func_8009F89C(struct ShotObj* arg0)
         arg0->unk42 |= 0x8000;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F89C);
 #endif
 
 void cannon_missile_slow(struct ShotObj* self)

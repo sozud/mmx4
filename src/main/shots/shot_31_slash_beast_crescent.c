@@ -35,7 +35,9 @@ void slash_beast_crescent_update(struct ShotObj* self)
 void func_8009FF4C(struct ShotObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_31_slash_beast_crescent", func_8009FF4C);
+#else
 void func_8009FF4C(struct ShotObj* self)
 {
     self->state = 1;
@@ -51,10 +53,16 @@ void func_8009FF4C(struct ShotObj* self)
     self->y_pos.i.hi += slash_beast_crescent_offsets[self->unk2 * 2 + 1];
     if (self->unk2 == 0) {
         self->y_vel.val = 0;
-        self->x_vel.val = self->unk15 != 0 ? 0x50000 : 0xFFFB0000;
+        if (self->unk15 == 0)
+            self->x_vel.val = 0xFFFB0000;
+        else
+            self->x_vel.val = 0x50000;
     } else {
         self->y_vel.val = 0x38919;
-        self->x_vel.val = self->unk15 != 0 ? 0x38919 : 0xFFFC76E7;
+        if (self->unk15 == 0)
+            self->x_vel.val = 0xFFFC76E7;
+        else
+            self->x_vel.val = 0x38919;
     }
     self->unk5C = 1;
     self->unk60 = 6;
@@ -64,8 +72,6 @@ void func_8009FF4C(struct ShotObj* self)
     self->unk50.data = slash_beast_crescent_boxes[self->unk2];
     set_animation(self, self->unk2 + 0x1A);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_31_slash_beast_crescent", func_8009FF4C);
 #endif
 
 void slash_beast_crescent_fly(struct ShotObj* self)

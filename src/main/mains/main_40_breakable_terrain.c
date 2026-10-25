@@ -32,53 +32,53 @@ void breakable_terrain_update(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80061DFC(struct MainObj* arg0);
-void func_80061F2C(struct MainObj* arg0);
 extern struct Unk_unk68 D_80108504[];
 extern s8* D_800FEA24[7];
 extern union AnimationStep** D_800FEA40[7];
 extern struct Unk_unk68 D_800FEAA0;
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void func_80061DFC(struct MainObj* arg0);
+void func_80061F2C(struct MainObj* arg0);
 extern u8 D_800FEA1C[8];
 u8 func_80062338(struct MainObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80061DFC);
+#else
 void func_80061DFC(struct MainObj* arg0)
 {
-    struct Main40Ext* ext = &arg0->ext.main_40;
+    s8** boxes = D_800FEA24;
 
     arg0->invincibility_timer = 0;
-    ext->unk81 = arg0->unk2 & 0xF;
-    ext->unk80 = arg0->unk2 >> 4;
+    arg0->ext.main_40.unk80 = arg0->unk2 >> 4;
+    arg0->ext.main_40.unk81 = arg0->unk2 & 0xF;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->air_state = 0;
-    arg0->bg_offset = g_Player.bg_offset;
-    arg0->hurt_box = D_800FEA24[ext->unk80];
+    arg0->hurt_box = boxes[arg0->ext.main_40.unk80];
+    arg0->animation_table = (const u8* const*)D_800FEA40[arg0->ext.main_40.unk80];
     arg0->hp = 0;
     arg0->contact_damage = 0;
     arg0->attack_box = NULL;
     arg0->terrain_box = NULL;
-    arg0->animation_table = (const u8* const*)D_800FEA40[ext->unk80];
-    if (ext->unk80 == 1) {
+    if (arg0->ext.main_40.unk80 == 1) {
         set_animation(arg0, 0);
         arg0->hp = 3;
         arg0->contact_damage = 2;
+        arg0->attack_box = boxes[arg0->ext.main_40.unk80];
         arg0->terrain_box = &D_800FEAA0;
-        arg0->attack_box = D_800FEA24[ext->unk80];
     }
     arg0->collision_data = D_80108504;
     arg0->unk15 = 0;
     arg0->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80061DFC);
 #endif
 
 // breakable_terrain_main

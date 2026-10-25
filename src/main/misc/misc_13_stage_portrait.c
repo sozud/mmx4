@@ -14,21 +14,20 @@ void stage_portrait_show(struct MiscObj*);
 
 // stage_portrait_init
 
+extern union AnimationStep* stage_portrait_animations[1];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA52C(struct MiscObj* self);
-extern union AnimationStep* stage_portrait_animations[1];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA52C(struct MiscObj* self)
 {
     self->unk42 = OBJECT_PALETTE_FROM_COLOR(0x0B);
     self->unk40 = OBJECT_STAGE_TEXTURE(1);
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[1];
     self->animation_table = (u32**)stage_portrait_animations;
     self->bg_offset = 0;
     self->unk15 = 0;
     self->unk16 = 1;
-    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[1];
     if (self->unk2 == 0) {
         self->x_pos.val = 0xE40000;
         self->y_pos.val = 0x1880000;
@@ -43,9 +42,6 @@ void func_800CA52C(struct MiscObj* self)
         self->state = 2;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_13_stage_portrait", func_800CA52C);
-#endif
 
 void stage_portrait_select(struct MiscObj* self)
 {

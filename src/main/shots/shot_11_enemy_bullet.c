@@ -31,12 +31,10 @@ void enemy_bullet_update(struct ShotObj* self)
 void func_8009B6B8(struct ShotObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009B6B8(struct ShotObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
-    arg0->unk5C = 1;
     arg0->unk54 = enemy_bullet_hit_box;
     arg0->unk50.data = enemy_bullet_hit_box;
     arg0->unk58.collision_data = D_80106070;
@@ -45,11 +43,9 @@ void func_8009B6B8(struct ShotObj* arg0)
     arg0->unk60 = 3;
     arg0->x_vel.val *= 3;
     arg0->y_vel.val *= 3;
+    arg0->unk5C = 1;
     set_animation(ANIMATED_OBJECT(arg0), 0x11);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_11_enemy_bullet", func_8009B6B8);
-#endif
 
 void enemy_bullet_fly(struct ShotObj* self)
 {

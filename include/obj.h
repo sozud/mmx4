@@ -146,7 +146,7 @@ struct MainSavedState80Ext {
 };
 
 struct Main58Ext {
-    u32 saved_unk5, unk84, unk88;
+    u32 saved_unk5, unk84, unk88, unk8C, unk90, unk94;
 };
 struct Main10Ext {
     u32 timer;
@@ -330,7 +330,7 @@ struct Main11Ext {
     u8 pad81[3];
     u8 angle;
     u8 unk85;
-    u8 unk86;
+    s8 unk86;
     u8 saved_unk5;
 };
 
@@ -409,7 +409,7 @@ struct Main45LayerSignals {
 
 struct Main45Ext {
     u8 attack_flags;
-    u8 unk81;
+    s8 unk81;
     u8 unk82;
     u8 unk83;
     s16 unk84;
@@ -550,7 +550,7 @@ struct Main54Ext {
 };
 
 struct Main55Ext {
-    u8 pad80[4];
+    u32 distance;
     u8 unk84;
     u8 unk85;
     u8 unk86;

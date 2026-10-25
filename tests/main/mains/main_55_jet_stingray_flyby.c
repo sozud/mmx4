@@ -69,7 +69,7 @@ static u32 flyby_cruise_states_run(u32 mode)
         expected.x_speed = FIXED(4);
         expected.unk7C = 30;
         expected.unk6 = 2;
-        memcpy(expected.ext.main_55.pad80, &distance, sizeof(distance));
+        expected.ext.main_55.distance = distance;
         animation(0);
         break;
     case APPROACH_DONE:
