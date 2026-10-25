@@ -107,6 +107,8 @@ ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
 extern struct Unk_unk68 D_800FBF08;
+extern void (*ice_core_step_funcs[])(struct MainObj*);
+extern u8 D_800FC33C[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005077C(struct MainObj* arg0);
 void func_80050874(struct MainObj* arg0);
@@ -115,8 +117,6 @@ void func_800527F0(struct MainObj* arg0);
 void func_800517D0(struct MainObj* arg0);
 extern union AnimationStep* D_800FC2B4[34];
 extern struct Unk_unk68 D_800FBF0C;
-extern void (*ice_core_step_funcs[])(struct MainObj*);
-extern u8 D_800FC33C[];
 void ice_core_face_player(struct AnimatedObj* arg0);
 void func_800527F0(struct MainObj* arg0);
 void ice_core_pick_attack(struct MainObj* arg0);
@@ -170,12 +170,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_8005077C);
 #endif
 
 // ice_core_run
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_80050874);
+#else
 void func_80050874(struct MainObj* arg0)
 {
-    struct Main18Ext* ext = &arg0->ext.main_18;
     s32 hit;
-    u8 invulnerable;
 
     ice_core_pick_attack(arg0);
     ice_core_check_rebuild(arg0);
@@ -187,13 +187,8 @@ void func_80050874(struct MainObj* arg0)
         update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
         return;
     }
-    invulnerable = arg0->invincibility_timer;
-    if (invulnerable & 0x7F) {
-        arg0->invincibility_timer = invulnerable - 1;
-        if ((u8)(invulnerable - 1) == 0)
-            arg0->unk42 &= 0x7FFF;
-    } else {
-        ext->saved_unk5 = arg0->unk5;
+    if (!(arg0->invincibility_timer & 0x7F)) {
+        arg0->ext.main_18.saved_unk5 = arg0->unk5;
         hit = func_8002DD04(arg0);
         if (hit < 0) {
             g_Player.invincibility_timer = 0x7F;
@@ -203,45 +198,49 @@ void func_80050874(struct MainObj* arg0)
             spawn_debris(4, D_800FC33C, arg0);
             arg0->unk7C = 4;
             arg0->unk7E = 8;
-            ext->ice_pieces = 0;
-            ext->shed_timer = 0;
+            arg0->ext.main_18.ice_pieces = 0;
+            arg0->ext.main_18.shed_timer = 0;
             arg0->terrain_box = NULL;
             arg0->state = 2;
             arg0->unk42 &= 0x7FFF;
             return;
         }
-        if (hit == 0 || hit == 0x7F) {
-            ext->state.runtime.unk87 = 0;
-        } else {
-            arg0->invincibility_timer = engine_obj.cur_character != 0 ? 1 : 6;
-            ext->state.runtime.unk87 = 1;
+        if (hit != 0 && hit != 0x7F) {
+            if (engine_obj.cur_character == 0)
+                arg0->invincibility_timer = 6;
+            else
+                arg0->invincibility_timer = 1;
+            arg0->ext.main_18.state.runtime.unk87 = 1;
             arg0->unk42 |= 0x8000;
-            if (!(ext->state.runtime.unk80 & 0xC0))
-                ext->state.runtime.unk80 = (ext->state.runtime.unk80 | 0x40) + 1;
-            if (ext->state.runtime.unk81 != 0) {
+            if (!(arg0->ext.main_18.state.runtime.unk80 & 0xC0))
+                arg0->ext.main_18.state.runtime.unk80 = (arg0->ext.main_18.state.runtime.unk80 | 0x40) + 1;
+            if (arg0->ext.main_18.state.runtime.unk81 != 0) {
                 switch (hit - 1) {
                 case 0:
-                    ext->state.runtime.unk83 += 2;
+                    arg0->ext.main_18.state.runtime.unk83 += 2;
                     break;
                 case 9:
                 case 23:
                 case 24:
                 case 25:
                 case 26:
-                    ext->state.runtime.unk83 += 5;
+                    arg0->ext.main_18.state.runtime.unk83 += 5;
                     break;
                 case 18:
-                    ext->state.runtime.unk83 += 10;
+                    arg0->ext.main_18.state.runtime.unk83 += 10;
                     break;
                 }
             }
+        } else {
+            arg0->ext.main_18.state.runtime.unk87 = 0;
         }
+    } else {
+        if (--arg0->invincibility_timer == 0)
+            arg0->unk42 &= 0x7FFF;
     }
     func_8002D9BC(arg0);
     update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_80050874);
 #endif
 
 void ice_core_death_sink(struct MainObj* self)

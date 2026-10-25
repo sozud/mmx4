@@ -389,27 +389,13 @@ void caterkiller_fall_drop(struct MainObj* self)
 }
 
 // caterkiller_fall_land
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057C00);
+#else
 void func_80057C00(struct MainObj* self)
 {
-    s32 dy;
-
     animate_object(ANIMATED_OBJECT(self));
     switch (self->animation_step.fields.event) {
-    case 1:
-        dy = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-        if (dy > -0x1A && dy < 0x1A) {
-            set_animation(self, 1);
-            self->unk5 = 3;
-            self->unk6 = 0;
-        } else {
-            set_animation(self, 0);
-            self->unk5 = 2;
-            self->unk6 = 0;
-            self->ext.main_25.unk80 = 0x40;
-        }
-        self->ext.main_25.unk84 = 0;
-        break;
     case 2:
         self->y_pos.u.hi += 5;
         break;
@@ -433,10 +419,21 @@ void func_80057C00(struct MainObj* self)
     case 6:
         self->ext.main_25.unk84 = 5;
         break;
+    case 1:
+        if ((g_Player.y_pos.i.hi - self->y_pos.i.hi >= 0 ? g_Player.y_pos.i.hi - self->y_pos.i.hi : self->y_pos.i.hi - g_Player.y_pos.i.hi) < 0x1A) {
+            set_animation(self, 1);
+            self->unk5 = 3;
+            self->unk6 = 0;
+        } else {
+            set_animation(self, 0);
+            self->unk5 = 2;
+            self->unk6 = 0;
+            self->ext.main_25.unk80 = 0x40;
+        }
+        self->ext.main_25.unk84 = 0;
+        break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057C00);
 #endif
 
 void caterkiller_climb(struct MainObj* self)

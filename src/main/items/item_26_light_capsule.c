@@ -73,12 +73,12 @@ void light_capsule_update(struct ItemObj* self)
 
 // light_capsule_init
 
+extern u8 light_capsule_part_bits[8];
+extern u8 light_capsule_part_animations[8];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C63BC(struct ItemObj* arg0);
 void func_800C6EDC(struct VisualObj* arg0);
 extern u8 light_capsule_terrain_box[4];
-extern u8 light_capsule_part_bits[8];
-extern u8 light_capsule_part_animations[8];
 extern u8 light_capsule_part_visuals[8];
 extern struct Item26AnimationStep* light_capsule_animations[14];
 void collide_with_players(struct PlayerObj*);
@@ -427,34 +427,38 @@ void capsule_visual_init(struct VisualObj* arg0, struct PlayerObj* arg1)
 }
 
 // capsule_part_update
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_26_light_capsule", func_800C6EDC);
+#else
 void func_800C6EDC(struct VisualObj* arg0)
 {
     s32 resource;
     s32 column;
-    s32 index;
+    struct PlayerObj* player = &g_Player;
 
     if (arg0->state == 0) {
         arg0->active = 1;
         arg0->on_screen = 1;
         resource = func_8002938C(0xA2) & 0xFF;
         column = resource * 4 + 0x18;
-        index = (s8)light_capsule_part_animations[arg0->unk2];
-        arg0->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, index + 10);
-        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, index + 18);
+        arg0->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, (s8)light_capsule_part_animations[arg0->unk2] + 10);
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, (s8)light_capsule_part_animations[arg0->unk2] + 18);
         arg0->animation_table = D_8011BF40;
 #ifdef MMX4_SATURN
         arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
         arg0->unk42 = column;
 #else
         arg0->unk40 = 0x520;
-        arg0->unk42 = (column - (column & 0x7F0)) | ((((resource + 6) >> 2) + 0x1E0) << 6);
+        arg0->unk42 = (column % 16) | (((resource + 6) / 4 + 0x1E0) << 6);
 #endif
         arg0->unk16 = 0;
         arg0->unk15 = g_Player.unk15;
         arg0->x_pos.val = g_Player.x_pos.val;
         arg0->y_pos.val = g_Player.y_pos.val;
-        set_animation(ANIMATED_OBJECT(arg0), engine_obj.unk37 != 0 ? 0x26 : 0x25);
+        if (engine_obj.unk37 != 0)
+            set_animation(ANIMATED_OBJECT(arg0), 0x26);
+        else
+            set_animation(ANIMATED_OBJECT(arg0), 0x25);
         arg0->state++;
         decompress_player_gfx((struct GraphicsObj*)arg0, 0x140, 0x20);
     } else if (arg0->animation_step.fields.relative_step == 0) {
@@ -481,13 +485,11 @@ void func_800C6EDC(struct VisualObj* arg0)
                     engine_obj.arm_type = g_Player.arm_type;
                 }
             }
-            engine_obj.armor_parts = g_Player.armor_parts;
+            engine_obj.armor_parts = player->armor_parts;
         }
     }
     update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_26_light_capsule", func_800C6EDC);
 #endif
 
 struct Item26AnimationStep {

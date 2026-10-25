@@ -160,27 +160,23 @@ void ambush_gunner_emerge(struct MainObj* self)
 }
 
 // ambush_gunner_emerge_wait
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_07_ambush_gunner", func_80047818);
+#else
 void func_80047818(struct MainObj* arg0)
 {
-    s32 distance;
-
-    if (arg0->unk15 == 0) {
-        if (g_Player.x_pos.val >= arg0->x_pos.val)
-            return;
-    } else if (arg0->x_pos.val >= g_Player.x_pos.val) {
-        return;
-    }
-    distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
-    if (distance < 0)
-        distance = -distance;
-    if ((!arg0->ext.main_7.unk80 && distance < (s32)arg0->ext.main_7.unk84) || (arg0->ext.main_7.unk80 && distance > (s32)arg0->ext.main_7.unk84)) {
-        arg0->unk7A = 0;
-        arg0->unk6 = 1;
+    if ((arg0->unk15 == 0 && arg0->x_pos.val > g_Player.x_pos.val) || (arg0->unk15 != 0 && arg0->x_pos.val < g_Player.x_pos.val)) {
+        if (arg0->ext.main_7.unk80 == 0) {
+            if (ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi) < (s16)arg0->ext.main_7.unk84) {
+                arg0->unk7A = 0;
+                arg0->unk6 = 1;
+            }
+        } else if (ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi) > (s16)arg0->ext.main_7.unk84) {
+            arg0->unk7A = 0;
+            arg0->unk6 = 1;
+        }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_07_ambush_gunner", func_80047818);
 #endif
 
 void ambush_gunner_emerge_burst(struct MainObj* self)

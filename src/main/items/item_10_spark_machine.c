@@ -194,12 +194,12 @@ ret_s8 func_8002DD04(struct MainObj* object);
 extern u8 spark_machine_terrain_box[4];
 extern u8 spark_machine_hit_box[4];
 extern struct Unk_unk68 D_80108604[];
+extern struct Item10Offset spark_machine_spark_offsets[5];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C2528(struct ItemObj* self);
 void func_800C2638(struct ItemObj* self);
 // src/main/items/item_10_spark_machine.c
 
-extern struct Item10Offset spark_machine_spark_offsets[5];
 extern ret_u8 func_8002938C(s32);
 #endif
 
@@ -234,21 +234,21 @@ void func_800C2528(struct ItemObj* self)
 #endif
 
 // spark_machine_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_10_spark_machine", func_800C2638);
+#else
 void func_800C2638(struct ItemObj* self)
 {
     s32 hit = func_8002DD04((struct MainObj*)self);
 
     if (hit < 0) {
-        s32 x = func_8002938C(0x9D) * 4 + 0x18;
-        s32 y = func_8002938C(0x9D);
-        u32 palette = (u32)((y + 6) / 4 + 0x1E0) << 6;
-        unsigned index;
+        u8 index;
 
-        self->unk42 = (u16)((palette | (x % 16)) & 0x7FFF);
+        self->unk42 = OBJECT_STAGE_CLUT(0x9D);
         set_animation(self, 0);
         self->tail_ext.unk1.unk84.bytes[3] = 0x78;
         self->state++;
+        self->unk42 &= 0x7FFF;
         for (index = 0; index < 3; index++) {
             struct MiscObj* spark = find_free_misc_obj();
             if (spark != NULL) {
@@ -273,8 +273,6 @@ void func_800C2638(struct ItemObj* self)
             self->unk42 &= 0x7FFF;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_10_spark_machine", func_800C2638);
 #endif
 
 void spark_machine_sparking(struct ItemObj* arg0)
@@ -308,8 +306,6 @@ void spark_machine_broken(struct ItemObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
 }
-
-extern struct Item10Offset spark_machine_spark_offsets[5];
 
 void spark_machine_spawn_spark_a(struct ItemObj* arg0)
 {

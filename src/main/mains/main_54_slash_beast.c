@@ -133,6 +133,7 @@ extern struct Unk_unk68 D_801078F8[];
 #define M54_82(o) ((o)->ext.main_54.was_hit)
 #define M54_84(o) ((o)->ext.main_54.grab)
 #define M54_85(o) ((o)->ext.main_54.active)
+extern char D_801005B4[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006E920(struct MainObj* arg0, s32 value);
 void func_8006BB70(struct MainObj* arg0);
@@ -149,7 +150,6 @@ void func_8006D280(struct MainObj* arg0);
 void func_8006D3DC(struct MainObj* arg0);
 void func_8006DD44(struct MainObj* arg0);
 void func_8006E450(struct MainObj* arg0);
-extern char D_801005B4[];
 extern u16 D_801005B8[];
 extern u16 D_801005C8[];
 extern struct Unk_unk68 D_8010020C;
@@ -1378,7 +1378,9 @@ void slash_beast_stagger(struct MainObj* self)
 }
 
 // slash_beast_stagger_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006E450);
+#else
 void func_8006E450(struct MainObj* arg0)
 {
     s16 x;
@@ -1386,12 +1388,12 @@ void func_8006E450(struct MainObj* arg0)
 
     if (--arg0->ext.main_54.power_hits == 0) {
         y = arg0->y_pos.i.hi;
-        arg0->y_pos.i.hi = y - 4;
         x = arg0->x_pos.i.hi;
+        arg0->y_pos.i.hi = y - 4;
         if (arg0->unk15 == 0)
-            arg0->x_pos.i.hi = x + 0x1B;
+            arg0->x_pos.i.hi = arg0->x_pos.i.hi + 0x1B;
         else
-            arg0->x_pos.i.hi = x - 0x1B;
+            arg0->x_pos.i.hi = arg0->x_pos.i.hi - 0x1B;
         spawn_debris(3, D_801005B4, arg0);
         arg0->y_pos.i.hi = y + 0xC;
         if (arg0->unk15 == 0)
@@ -1404,7 +1406,7 @@ void func_8006E450(struct MainObj* arg0)
         M54_81(arg0) = 0;
     }
     set_animation(arg0, 0x11);
-    if (arg0->x_pos.i.hi < g_Player.x_pos.i.hi) {
+    if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi) {
         arg0->unk15 = 0;
         arg0->x_speed = -0x10000;
     } else {
@@ -1417,8 +1419,6 @@ void func_8006E450(struct MainObj* arg0)
     move_object(MOVING_OBJECT(arg0));
     arg0->unk6 = 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006E450);
 #endif
 
 void slash_beast_stagger_land(struct MainObj* self)

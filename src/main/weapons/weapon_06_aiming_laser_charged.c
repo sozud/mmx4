@@ -47,7 +47,9 @@ void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1);
 extern struct Unk_unk68 aiming_laser_charged_box[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800961B0);
+#else
 void func_800961B0(struct WeaponObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
@@ -70,29 +72,24 @@ void func_800961B0(struct WeaponObj* arg0)
     }
     owner = (struct MainObj*)arg0->owner;
     reset = player->input_locked != 0;
-    if (player->capsule_state != 0 || player->weapon != 6 || player->actions_reset != 0 || player->hp == 0 || owner->active == 0 || owner->hp == 0)
+    if (player->capsule_state != 0)
+        reset = 1;
+    if (player->weapon != 6)
+        reset = 1;
+    if (player->actions_reset != 0)
+        reset = 1;
+    if (player->hp == 0)
+        reset = 1;
+    if (owner->active == 0)
+        reset = 1;
+    if (owner->hp == 0)
         reset = 1;
     if (reset)
         arg0->state = 3;
     arg0->x_pos.val = owner->x_pos.val;
     arg0->y_pos.val = owner->y_pos.val;
-    switch (arg0->state) {
-    case 0:
-        aiming_laser_marker_init(arg0);
-        break;
-    case 1:
-        aiming_laser_marker_wait_fire(arg0, player, (struct PlayerObj*)owner);
-        break;
-    case 2:
-        aiming_laser_marker_fire(arg0);
-        break;
-    default:
-        aiming_laser_marker_despawn(arg0, player);
-        break;
-    }
+    ((void (*)(struct WeaponObj*, struct PlayerObj*, struct MainObj*))aiming_laser_marker_state_funcs[arg0->state])(arg0, player, owner);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800961B0);
 #endif
 
 void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
@@ -120,11 +117,14 @@ void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
 }
 
 // aiming_laser_reticle_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800963E8);
+#else
 void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
 {
     s32 hidden = player->weapon_energy[6] == 0;
-    u32 i;
+    struct MainObj* obj;
+    struct Weapon6Ext* ext = &arg0->ext.weapon_6;
 
     if (!(player->armor_parts & 1) && player->weapon_energy[6] < player_weapon_energy.charge.initial_thresholds[0])
         hidden = 1;
@@ -132,28 +132,30 @@ void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
         hidden = 1;
     if (player->hurt_phase > 0)
         hidden = 1;
-    if (player->attacking != 0 && (player->last_shot_type == 6 || player->last_shot_type == 0xF))
-        hidden = 1;
+    if (player->attacking != 0) {
+        if (player->last_shot_type == 6)
+            hidden = 1;
+        if (player->last_shot_type == 0xF)
+            hidden = 1;
+    }
     if (hidden) {
         arg0->on_screen = 0;
         return;
     }
     arg0->on_screen = 1;
     animate_object(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.weapon_6.direction != 0 && (player->input.buttons.held & 4))
-        arg0->ext.weapon_6.direction--;
-    if (arg0->ext.weapon_6.direction != 0x10 && (player->input.buttons.held & 8))
-        arg0->ext.weapon_6.direction++;
+    if (ext->direction != 0 && (player->input.buttons.held & 4))
+        ext->direction--;
+    if (ext->direction != 0x10 && (player->input.buttons.held & 8))
+        ext->direction++;
     aiming_laser_reticle_place(arg0, player);
     arg0->unk50 = aiming_laser_reticle_box;
-    for (i = 0; i < COUNT(main_objects); i++) {
-        if (aiming_laser_try_lock_on(arg0, player, &main_objects[i]))
+    for (obj = main_objects; obj < &main_objects[COUNT(main_objects)]; obj++) {
+        if (aiming_laser_try_lock_on(arg0, player, obj))
             return;
     }
     arg0->unk50 = NULL;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800963E8);
 #endif
 
 void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1)

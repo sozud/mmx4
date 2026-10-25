@@ -39,29 +39,40 @@ void func_8009F89C(struct ShotObj* arg0);
 extern void (*cannon_missile_step_funcs[])(struct ShotObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F674);
+#else
 void func_8009F674(struct ShotObj* arg0)
 {
     struct MainObj* owner;
-    s32 dx;
 
     arg0->on_screen = 1;
     arg0->unk5C = 1;
     arg0->unk60 = 5;
-    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->state++;
     arg0->unk50.data = cannon_missile_boxes;
+    arg0->unk58.animation_steps = D_80105FF0;
     arg0->unk54 = cannon_missile_boxes;
     arg0->x_vel.val = 0;
     arg0->unk28 = 0;
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
     arg0->unk68 = NULL;
-    arg0->state++;
     arg0->unk42 &= 0x7FFF;
     owner = (struct MainObj*)arg0->unk7C;
-    dx = arg0->unk15 != 0 ? -0x1A : 0x1A;
-    arg0->x_pos.i.hi = owner->x_pos.i.hi + dx;
-    arg0->y_pos.i.hi = owner->y_pos.i.hi + (arg0->unk2 == 0 ? -0x23 : -0x10);
+    if (arg0->unk2 == 0) {
+        if (arg0->unk15 == 0)
+            arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x1A;
+        else
+            arg0->x_pos.i.hi = owner->x_pos.i.hi - 0x1A;
+        arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x23;
+    } else {
+        if (arg0->unk15 == 0)
+            arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x1A;
+        else
+            arg0->x_pos.i.hi = owner->x_pos.i.hi - 0x1A;
+        arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x10;
+    }
     set_animation(arg0, 7);
     arg0->unk8C.bytes[3] = 0x20;
     arg0->unk5 = 0;
@@ -72,8 +83,6 @@ void func_8009F674(struct ShotObj* arg0)
     arg0->unk90.bytes[1] = 0;
     arg0->unk8C.bytes[0] = arg0->unk2 * 20 + 0x1E;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F674);
 #endif
 
 // cannon_missile_main

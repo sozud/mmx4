@@ -230,19 +230,20 @@ void func_8006AAB4(struct MainObj* arg0);
 void func_8006AE80(struct MainObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", func_8006AAB4);
+#else
 void func_8006AAB4(struct MainObj* arg0)
 {
     struct Unk_unk68* bounds;
     s16 x;
     s16 y;
-    s32 dy;
 
     move_object(MOVING_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
     bounds = arg0->terrain_box;
-    y = arg0->y_pos.i.hi + bounds->unk1 + (u8)bounds->unk3 + 0x10;
     x = arg0->x_pos.i.hi + bounds->unk0;
+    y = arg0->y_pos.i.hi + bounds->unk1 + (u8)bounds->unk3 + 0x10;
     x = arg0->unk15 == 0 ? x - 0x10 : x + 0x10;
     if (func_8002D724(PLAYER_OBJECT(arg0), x, y) == 0) {
         set_animation(arg0, 1);
@@ -277,11 +278,12 @@ countdown:
         return;
     }
     arg0->ext.main_52.unk8C = 1;
-    dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
-    if (dy < 0) {
-        dy = -dy;
+    if ((g_Player.y_pos.i.hi - arg0->y_pos.i.hi >= 0 ? g_Player.y_pos.i.hi - arg0->y_pos.i.hi : arg0->y_pos.i.hi - g_Player.y_pos.i.hi) > 0x20) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        return;
     }
-    if (dy > 0x20 || (get_random() & 0xF) < 3) {
+    if ((u32)(get_random() & 0xF) < 3) {
         arg0->unk5 = 2;
         arg0->unk6 = 0;
         return;
@@ -290,8 +292,6 @@ countdown:
     arg0->unk5 = 4;
     arg0->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", func_8006AAB4);
 #endif
 
 void jump_shooter_jump(struct MainObj* self)

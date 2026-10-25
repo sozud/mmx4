@@ -598,42 +598,35 @@ void storm_owl_patrol_start(struct MainObj* self)
 }
 
 // storm_owl_patrol_fly
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075E78);
+#else
 void func_80075E78(struct MainObj* arg0)
 {
     s32 target_x;
     s32 target_y;
-    s32 dx;
-    s32 dy;
-    u8 next;
-    const Main60Waypoint* waypoint = &storm_owl_waypoints[arg0->ext.main_60.corner];
-    target_x = (waypoint->x + background_objects[0].x_pos.i.hi) << 16;
-    target_y = (waypoint->y + background_objects[0].y_pos.i.hi) << 16;
+    target_x = (storm_owl_waypoints[arg0->ext.main_60.corner].x + background_objects[0].x_pos.i.hi) << 16;
+    target_y = (storm_owl_waypoints[arg0->ext.main_60.corner].y + background_objects[0].y_pos.i.hi) << 16;
 
     set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_point(OBJECT_HEADER(arg0), target_x, target_y) & 0xFF);
     arg0->x_speed <<= 1;
     arg0->y_speed <<= 1;
     animate_object(ANIMATED_OBJECT(arg0));
     move_object(MOVING_OBJECT(arg0));
-    dx = target_x - arg0->x_pos.val;
-    if (dx >= 0 ? dx > 0x3FFFF : arg0->x_pos.val - target_x > 0x3FFFF)
-        return;
-    dy = target_y - arg0->y_pos.val;
-    if (dy >= 0 ? dy > 0x3FFFF : arg0->y_pos.val - target_y > 0x3FFFF)
-        return;
-    arg0->x_speed = 0;
-    arg0->y_speed = 0;
-    if (arg0->ext.main_60.pattern[0] == 0xFF)
-        storm_owl_choose_pattern(arg0);
-    next = *arg0->ext.main_60.pattern++;
-    arg0->unk5 = next;
-    if (arg0->unk5 == 3)
-        arg0->unk6++;
-    else
-        arg0->unk6 = 0;
+    if ((target_x - arg0->x_pos.val >= 0 ? target_x - arg0->x_pos.val : arg0->x_pos.val - target_x) <= 0x3FFFF
+        && (target_y - arg0->y_pos.val >= 0 ? target_y - arg0->y_pos.val : arg0->y_pos.val - target_y) <= 0x3FFFF) {
+        arg0->x_speed = 0;
+        arg0->y_speed = 0;
+        if (arg0->ext.main_60.pattern[0] == 0xFF)
+            storm_owl_choose_pattern(arg0);
+        arg0->unk5 = *arg0->ext.main_60.pattern;
+        arg0->ext.main_60.pattern++;
+        if (arg0->unk5 != 3)
+            arg0->unk6 = 0;
+        else
+            arg0->unk6++;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075E78);
 #endif
 
 void storm_owl_patrol_wait(struct MainObj* self)

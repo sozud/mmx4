@@ -632,33 +632,24 @@ void background_dragon_sequence_begin(struct MainObj* self)
 }
 
 // background_dragon_swoop
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_800415B0);
+#else
 void func_800415B0(struct MainObj* arg0)
 {
     s32 offset = engine_obj.cur_character == 0 ? 0x480000 : 0x4A0000;
     struct ShotObj* shot;
     struct MiscObj* misc;
-    s32 target;
-    s32 distance;
 
     animate_object(ANIMATED_OBJECT(arg0));
-    target = arg0->unk15 != 0 ? g_Player.x_pos.val + offset
-                              : g_Player.x_pos.val - offset;
-    set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_point(OBJECT_HEADER(arg0), target, 0x02140000));
+    set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_point(OBJECT_HEADER(arg0), (g_Player.x_pos.val - (arg0->unk15 == 0 ? offset : -offset)), 0x02140000));
     arg0->x_speed *= 4;
     arg0->y_speed *= 4;
     move_object(MOVING_OBJECT(arg0));
 
-    distance = arg0->x_pos.val - target;
-    if (distance < 0) {
-        distance = -distance;
-    }
-    if (distance <= 0x7FFFF) {
-        distance = arg0->y_pos.i.hi - 0x214;
-        if (distance < 0) {
-            distance = -distance;
-        }
-        if (distance < 8) {
+    if ((arg0->x_pos.val - (g_Player.x_pos.val - (arg0->unk15 == 0 ? offset : -offset)) < 0 ? (g_Player.x_pos.val - (arg0->unk15 == 0 ? offset : -offset)) - arg0->x_pos.val : arg0->x_pos.val - (g_Player.x_pos.val - (arg0->unk15 == 0 ? offset : -offset))) <= 0x7FFFF
+        && (arg0->y_pos.i.hi - 0x214 >= 0 ? arg0->y_pos.i.hi - 0x214 : 0x214 - arg0->y_pos.i.hi) < 8) {
+        {
             shot = find_free_shot_obj();
             if (shot != NULL) {
                 shot->active = 0x41;
@@ -683,9 +674,12 @@ void func_800415B0(struct MainObj* arg0)
                 misc->ext.pointer.unk50 = arg0;
                 misc->state = 2;
             }
-            set_animation(arg0, arg0->unk7E != 0 ? 0xD : 0xF);
+            if (arg0->unk7E != 0)
+                set_animation(arg0, 0xD);
+            else
+                set_animation(arg0, 0xF);
             arg0->x_speed = 0;
-            arg0->x_pos.val = target;
+            arg0->x_pos.val = (g_Player.x_pos.val - (arg0->unk15 == 0 ? offset : -offset));
             arg0->y_pos.i.hi = 0x214;
             arg0->unk6 = (u8)arg0->unk6 + 1;
             func_8001540C(2, 4, arg0);
@@ -693,8 +687,6 @@ void func_800415B0(struct MainObj* arg0)
     }
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_800415B0);
 #endif
 
 void background_dragon_sequence_bob(struct MainObj* self)

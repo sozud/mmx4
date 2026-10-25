@@ -146,50 +146,51 @@ void stage_block_wait_trigger(struct ItemObj* self)
 }
 
 // stage_block_fall
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BEFCC);
+#else
 void func_800BEFCC(struct ItemObj* arg0)
 {
-    u8 kind = (u8)arg0->unk2;
-    const struct Item01StageEntry* entry = &stage_block_entries[kind];
-    u16 boundary;
-    int reached_boundary;
 
     if (--arg0->ext.timer == 0) {
-        if (kind == 8) {
+        switch (arg0->unk2) {
+        case 8:
             func_800B10E4(0x21, 0xA40, 0x1D0, 0xB80, 0x1F0, 1);
             func_800B10E4(0x22, 0xA40, 0x1D0, 0xB80, 0x1F0, 1);
-        } else if (kind == 9) {
+            break;
+        case 9:
             func_800B10E4(0x21, 0xB80, 0x1D0, 0xC40, 0x1F0, 1);
             func_800B10E4(0x22, 0xB80, 0x1D0, 0xC40, 0x1F0, 1);
+            break;
         }
         arg0->ext.timer = 4;
     }
 
-    if ((kind == 5 || kind == 8) && arg0->tail_ext.unk1.unk84.previous_value == 0) {
-        if (kind == 5 && arg0->tail_ext.unk1.unk88 == 0 && arg0->y_pos.i.hi >= 0x1C0) {
+    if ((arg0->unk2 == 5 || arg0->unk2 == 8) && arg0->tail_ext.unk1.unk84.previous_value == 0) {
+        if (arg0->unk2 == 5 && arg0->tail_ext.unk1.unk88 == 0 && arg0->y_pos.i.hi >= 0x1C0) {
             func_8001540C(5, 0, NULL);
             start_screen_shake_y(0x20, 4, 1);
             arg0->tail_ext.unk1.unk88++;
         }
-        if (arg0->y_pos.i.hi >= entry->trigger_x && !(entry->flags_and_palette & 0x40)) {
-            apply_tile_effect((u8)entry->sound_id, 0, 0);
+        if (arg0->y_pos.i.hi >= stage_block_entries[arg0->unk2].trigger_x && !((u8)stage_block_entries[arg0->unk2].flags_and_palette & 0x40)) {
+            apply_tile_effect((u8)stage_block_entries[arg0->unk2].sound_id, 0, 0);
             arg0->tail_ext.unk1.unk84.previous_value++;
         }
     }
 
     move_with_gravity(ANIMATED_OBJECT(arg0));
-    boundary = entry->right;
-    reached_boundary = kind == 9
-        ? arg0->y_pos.i.hi <= boundary
-        : arg0->y_pos.i.hi >= boundary;
-    if (reached_boundary) {
-        arg0->y_pos.i.hi = boundary;
+    if (arg0->unk2 != 9) {
+        if (arg0->y_pos.i.hi >= stage_block_entries[arg0->unk2].right) {
+            arg0->y_pos.i.hi = stage_block_entries[arg0->unk2].right;
+            arg0->ext.timer = 0;
+            arg0->unk5++;
+        }
+    } else if (arg0->y_pos.i.hi <= stage_block_entries[arg0->unk2].right) {
+        arg0->y_pos.i.hi = stage_block_entries[arg0->unk2].right;
         arg0->ext.timer = 0;
         arg0->unk5++;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BEFCC);
 #endif
 
 // stage_block_land

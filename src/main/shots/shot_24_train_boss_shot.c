@@ -85,14 +85,14 @@ void func_8009E8E0(struct ShotObj* self);
 extern u8 train_boss_arm_active_bits[4];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", func_8009E188);
+#else
 void func_8009E188(struct ShotObj* self)
 {
-    struct Main45Ext* owner = (struct Main45Ext*)self->unk7C;
-
     self->unk42 &= 0x7FFF;
     animate_object(ANIMATED_OBJECT(self));
-    if ((owner->attack_flags & 7) == 7 || (owner->attack_flags & 8))
+    if ((((struct Main45Ext*)self->unk7C)->attack_flags & 7) == 7 || (((struct Main45Ext*)self->unk7C)->attack_flags & 8))
         goto despawn;
     if (self->unk6 == 0) {
         self->unk84.shot_24.timer = (u16)self->unk84.shot_24.timer - 1;
@@ -101,7 +101,10 @@ void func_8009E188(struct ShotObj* self)
             set_velocity_from_angle(MOVING_OBJECT(self), (u8)angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)));
             self->x_vel.val = (u32)self->x_vel.val * 3;
             self->y_vel.val = (u32)self->y_vel.val * 3;
-            self->unk84.shot_24.timer = self->unk84.shot_24.owner_state == 3 ? 0 : 0x27;
+            if (self->unk84.shot_24.owner_state == 3)
+                self->unk84.shot_24.timer = 0;
+            else
+                self->unk84.shot_24.timer = 0x27;
             set_animation(self, 3);
             self->unk6 = 1;
         }
@@ -109,7 +112,7 @@ void func_8009E188(struct ShotObj* self)
         if (self->unk84.shot_24.timer == 0) {
             if (self->unk84.shot_24.owner_notified == 0) {
                 self->unk84.shot_24.owner_notified = 1;
-                owner->projectile_command = 0xFF;
+                ((struct Main45Ext*)self->unk7C)->projectile_command = 0xFF;
             }
         } else {
             self->unk84.shot_24.timer = (u16)self->unk84.shot_24.timer - 1;
@@ -131,8 +134,6 @@ despawn:
     self->on_screen = 0;
     self->state = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", func_8009E188);
 #endif
 
 void train_boss_bullet_despawn(struct ShotObj* self)

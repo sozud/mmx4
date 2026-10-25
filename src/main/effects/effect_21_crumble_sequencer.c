@@ -111,67 +111,63 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800B9F
 #endif
 
 // crumble_sequencer_triggered
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800BA178);
+#else
 void func_800BA178(struct EffectObj* arg0)
 {
-    struct Effect21Ext* ext = &arg0->ext.effect_21;
     struct MiscObj* misc;
     struct ItemObj* item;
     struct EffectObj* effect;
 
-    if (arg0->unk5 != 0) {
-        if (--ext->timer != 0)
-            return;
+    if (arg0->unk5 == 0) {
+        if (arg0->ext.effect_21.timer == 0) {
+            misc = find_free_misc_obj();
+            if (misc == NULL)
+                return;
+            misc->active = 0x41;
+            misc->id = 8;
+            misc->x_pos.i.hi = arg0->ext.effect_21.cursor->x;
+            misc->y_pos.i.hi = arg0->ext.effect_21.cursor->y;
+            misc->unk2 = arg0->ext.effect_21.cursor->object_id;
+            if (arg0->unk2 & 1) {
+                arg0->ext.effect_21.timer = 3;
+            } else {
+                misc->unk2 = arg0->ext.effect_21.cursor->flags | 0x80;
+                arg0->ext.effect_21.timer = 4;
+            }
+            if (arg0->ext.effect_21.cursor->flags & 0x80) {
+                if (arg0->unk2 == 4) {
+                    arg0->ext.effect_21.timer = 0x78;
+                    arg0->unk5++;
+                    return;
+                }
+                if (arg0->unk2 == 5) {
+                    item = find_free_item_obj();
+                    if (item != NULL) {
+                        item->active = 1;
+                        item->id = 0x11;
+                        item->unk2 = arg0->ext.effect_21.index - 8;
+                    }
+                }
+                arg0->state++;
+            } else {
+                arg0->ext.effect_21.cursor++;
+            }
+        } else {
+            arg0->ext.effect_21.timer--;
+        }
+    } else if (--arg0->ext.effect_21.timer == 0) {
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x15;
             effect->unk2 = 5;
-            effect->ext.effect_21.index = ext->index;
+            effect->ext.effect_21.index = arg0->ext.effect_21.index;
         }
         arg0->state++;
-        return;
     }
-
-    if (ext->timer != 0) {
-        ext->timer--;
-        return;
-    }
-    misc = find_free_misc_obj();
-    if (misc == NULL)
-        return;
-    misc->active = 0x41;
-    misc->id = 8;
-    misc->x_pos.i.hi = ext->cursor->x;
-    misc->y_pos.i.hi = ext->cursor->y;
-    misc->unk2 = ext->cursor->object_id;
-    if (!(arg0->unk2 & 1)) {
-        misc->unk2 = ext->cursor->flags | 0x80;
-        ext->timer = 4;
-    } else {
-        ext->timer = 3;
-    }
-    if (!(ext->cursor->flags & 0x80)) {
-        ext->cursor++;
-        return;
-    }
-    if (arg0->unk2 == 4) {
-        ext->timer = 0x78;
-        arg0->unk5++;
-        return;
-    }
-    if (arg0->unk2 == 5) {
-        item = find_free_item_obj();
-        if (item != NULL) {
-            item->active = 1;
-            item->id = 0x11;
-            item->unk2 = ext->index - 8;
-        }
-    }
-    arg0->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800BA178);
 #endif
 
 void crumble_sequencer_chain(struct EffectObj* self)

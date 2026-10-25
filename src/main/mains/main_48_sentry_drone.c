@@ -504,84 +504,85 @@ void func_800681C4(struct MainObj* arg0);
 void func_80068340(struct MainObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_800681C4);
+#else
 void func_800681C4(struct MainObj* arg0)
 {
-    struct Main48Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_48;
 
-    ext->unk88 = ext->collision_result & 0xFE;
-    switch ((u32)((s8)ext->collision_result & 0xFE)) {
+    SP_CUR_MAIN_OBJ->ext.main_48.unk88 = SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE;
+    switch ((u32)((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE)) {
     case 0:
-        ext->unk86 = 0x1E;
-        ext->unk87 = 2;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk86 = 0x1E;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 2;
         break;
     case 2:
     case 4:
     case 6:
-        ext->unk86 = 0;
-        ext->unk87 = 8;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk86 = 0;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 8;
         break;
     case 8:
-        ext->unk86 = 6;
-        ext->unk87 = 0xA;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk86 = 6;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 0xA;
         break;
     case 10:
     case 12:
     case 14:
-        ext->unk86 = 8;
-        ext->unk87 = 0x10;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk86 = 8;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 0x10;
         break;
     case 16:
-        ext->unk86 = 0xE;
-        ext->unk87 = 0x12;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk86 = 0xE;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 0x12;
         break;
     case 18:
     case 20:
     case 22:
-        ext->unk86 = 0x10;
-        ext->unk87 = 0x18;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk86 = 0x10;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 0x18;
         break;
     case 24:
-        ext->unk86 = 0x16;
-        ext->unk87 = 0x1A;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk86 = 0x16;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 0x1A;
         break;
     case 26:
     case 28:
     case 30:
-        ext->unk86 = 0x18;
-        ext->unk87 = 0;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk86 = 0x18;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 0;
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_800681C4);
 #endif
 
 // sentry_drone_rotate_aim
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_80068340);
+#else
 void func_80068340(struct MainObj* arg0)
 {
-    struct Main48Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_48;
-
-    switch ((u32)(s8)(ext->unk82 - 1)) {
+    switch ((s8)(SP_CUR_MAIN_OBJ->ext.main_48.unk82 - 1)) {
     case 0:
-    case 4:
-        ext->collision_result = ext->unk86;
+        SP_CUR_MAIN_OBJ->ext.main_48.collision_result = SP_CUR_MAIN_OBJ->ext.main_48.unk86;
         break;
     case 2:
+        SP_CUR_MAIN_OBJ->ext.main_48.collision_result = SP_CUR_MAIN_OBJ->ext.main_48.unk87;
+        break;
+    case 4:
+        SP_CUR_MAIN_OBJ->ext.main_48.collision_result = SP_CUR_MAIN_OBJ->ext.main_48.unk86;
+        break;
     case 6:
-        ext->collision_result = ext->unk87;
+        SP_CUR_MAIN_OBJ->ext.main_48.collision_result = SP_CUR_MAIN_OBJ->ext.main_48.unk87;
         break;
     case 1:
     case 3:
     case 5:
     case 7:
-        ext->collision_result = ext->unk88;
+        SP_CUR_MAIN_OBJ->ext.main_48.collision_result = SP_CUR_MAIN_OBJ->ext.main_48.unk88;
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_80068340);
 #endif
 
 void sentry_drone_despawn(struct MainObj* self)

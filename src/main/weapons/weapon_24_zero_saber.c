@@ -222,22 +222,26 @@ void func_80098338(struct VisualObj* self)
 }
 
 // ryuenjin_flame_update
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80098474);
+#else
 void func_80098474(struct MiscObj* self)
 {
+    struct PlayerObj* player = &g_Player;
+
     if (self->state == 0) {
-        u16 offset;
         self->on_screen = 1;
         self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[6];
         self->animation_table = D_8011C018;
         self->unk40 = WEAPON_TEXTURE_BASE;
         self->unk42 = WEAPON_PALETTE_4;
         self->unk16 = 1;
-        offset = ryuenjin_flame_offsets[(get_random() & 3) * 2];
-        self->x_pos.u.hi = g_Player.x_pos.u.hi + (g_Player.unk15 ? -offset : offset);
-        self->y_pos.u.hi = g_Player.y_pos.u.hi
-            + ryuenjin_flame_offsets[(get_random() & 3) * 2 + 1];
-        self->unk15 = g_Player.unk15;
+        if (g_Player.unk15 == 0)
+            self->x_pos.u.hi = g_Player.x_pos.u.hi + ryuenjin_flame_offsets[(get_random() & 3) * 2];
+        else
+            self->x_pos.u.hi = g_Player.x_pos.u.hi - ryuenjin_flame_offsets[(get_random() & 3) * 2];
+        self->y_pos.u.hi = player->y_pos.u.hi + ryuenjin_flame_offsets[(get_random() & 3) * 2 + 1];
+        self->unk15 = player->unk15;
         set_animation(self, ryuenjin_flame_animations[get_random() & 3]);
         self->state++;
     } else {
@@ -249,8 +253,6 @@ void func_80098474(struct MiscObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x18, 0x18);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80098474);
 #endif
 
 struct Unk_unk68 rakuhouha_orb_box[] = {

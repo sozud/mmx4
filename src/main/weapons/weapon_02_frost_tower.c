@@ -346,39 +346,37 @@ void frost_tower_charged_spawn_part(s8 arg0)
 }
 
 // frost_tower_charged_part_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_800944B8);
+#else
 void func_800944B8(struct WeaponObj* arg0)
 {
-    s32* player_gfx = SP_PLAYER_GFX;
-    s32* sprite_frames = SP_SPRITE_FRAMES;
-    struct BackgroundObj* background = &background_objects[g_Player.bg_offset];
-    u16 base;
+    struct PlayerObj* player;
 
     arg0->on_screen = 1;
-    arg0->unk38 = (u8*)player_gfx + player_gfx[3];
+    arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[3];
+    arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0xB];
     arg0->animation_table = D_8011C094;
     arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 1;
     arg0->unk15 = 0;
-    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xB];
-    base = background->x_pos.i.hi + 0xA0;
-    if (arg0->unk2 & 0x80)
-        arg0->x_pos.i.hi = base - frost_tower_charged_part_offsets[arg0->unk2 & 0x7F];
+    player = &g_Player;
+    arg0->x_pos.i.hi = background_objects[g_Player.bg_offset].x_pos.i.hi + 0xA0;
+    if (!(arg0->unk2 & 0x80))
+        arg0->x_pos.i.hi += frost_tower_charged_part_offsets[arg0->unk2 & 0x7F];
     else
-        arg0->x_pos.i.hi = base + frost_tower_charged_part_offsets[arg0->unk2 & 0x7F];
+        arg0->x_pos.i.hi -= frost_tower_charged_part_offsets[arg0->unk2 & 0x7F];
+    arg0->y_pos.i.hi = background_objects[player->bg_offset].y_pos.i.hi + 0x30;
     arg0->x_vel.val = 0;
     arg0->unk28.val = 0;
     arg0->y_vel.val = -0x80000;
     arg0->unk2C = 0;
-    arg0->y_pos.i.hi = background->y_pos.i.hi + 0x30;
     set_animation(arg0, 6);
     arg0->unk5 = 0;
     arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0x28, 0x38);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_800944B8);
 #endif
 
 void frost_tower_charged_part_main(struct WeaponObj* arg0)

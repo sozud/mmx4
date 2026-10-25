@@ -38,83 +38,84 @@ static void effect_33_spawn_dropper(struct EffectObj* arg0)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_33_rock_dropper", func_800BC784);
+#else
 void func_800BC784(struct EffectObj* arg0)
 {
-    struct Effect33Ext* ext = &arg0->ext.effect_33;
 
     switch (arg0->unk2 & 0xF0) {
     case 0x00:
-        if (arg0->x_pos.i.hi < g_Player.x_pos.i.hi) {
-            ext->timer = 1;
-            ext->period = 0x50;
+        if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi) {
+            arg0->ext.effect_33.timer = 1;
+            arg0->ext.effect_33.period = 0x50;
             arg0->state = 1;
         }
         return;
     case 0x10:
-        ext->timer = 0x3C;
-        ext->period = 0x26;
-        ext->cooldown = 0x8C;
-        ext->burst = 4;
+        arg0->ext.effect_33.timer = 0x3C;
+        arg0->ext.effect_33.period = 0x26;
+        arg0->ext.effect_33.cooldown = 0x8C;
+        arg0->ext.effect_33.burst = 4;
         arg0->state = 1;
         arg0->unk5 = 0;
-        ext->variant = arg0->unk2 & 0xF;
+        arg0->ext.effect_33.variant = arg0->unk2 & 0xF;
         return;
     case 0x20:
         switch (arg0->unk2 & 0xF) {
         case 0:
-            ext->timer = 1;
-            ext->period = 0x3C;
-            ext->proximity = 0;
-            ext->variant = 0;
+            arg0->ext.effect_33.timer = 1;
+            arg0->ext.effect_33.period = 0x3C;
+            arg0->ext.effect_33.proximity = 0;
+            arg0->ext.effect_33.variant = 0;
             break;
         case 1:
-            ext->timer = 1;
-            ext->period = 0x50;
-            ext->proximity = 0;
-            ext->variant = 0;
+            arg0->ext.effect_33.timer = 1;
+            arg0->ext.effect_33.period = 0x50;
+            arg0->ext.effect_33.proximity = 0;
+            arg0->ext.effect_33.variant = 0;
             break;
         case 2:
-            ext->timer = 1;
-            ext->period = 0x64;
-            ext->proximity = 0;
-            ext->variant = 0;
+            arg0->ext.effect_33.timer = 1;
+            arg0->ext.effect_33.period = 0x64;
+            arg0->ext.effect_33.proximity = 0;
+            arg0->ext.effect_33.variant = 0;
             break;
         case 3:
-            ext->timer = 0xB4;
-            ext->period = 0xB4;
-            ext->proximity = 1;
-            ext->variant = 0;
+            arg0->ext.effect_33.timer = 0xB4;
+            arg0->ext.effect_33.period = 0xB4;
+            arg0->ext.effect_33.proximity = 1;
+            arg0->ext.effect_33.variant = 0;
             break;
         case 4:
-            ext->timer = 1;
-            ext->period = 0x78;
-            ext->proximity = 0;
-            ext->variant = 1;
+            arg0->ext.effect_33.timer = 1;
+            arg0->ext.effect_33.period = 0x78;
+            arg0->ext.effect_33.proximity = 0;
+            arg0->ext.effect_33.variant = 1;
             break;
         case 5:
-            ext->timer = 1;
-            ext->period = 0xB4;
-            ext->proximity = 0;
-            ext->variant = 1;
+            arg0->ext.effect_33.timer = 1;
+            arg0->ext.effect_33.period = 0xB4;
+            arg0->ext.effect_33.proximity = 0;
+            arg0->ext.effect_33.variant = 1;
             break;
         case 6:
-            ext->timer = 0x3C;
-            ext->period = 0x3C;
-            ext->proximity = 1;
-            ext->variant = 0;
+            arg0->ext.effect_33.timer = 0x3C;
+            arg0->ext.effect_33.period = 0x3C;
+            arg0->ext.effect_33.proximity = 1;
+            arg0->ext.effect_33.variant = 0;
             break;
         case 7:
-            ext->timer = 1;
-            ext->period = 0x78;
-            ext->proximity = 0;
-            ext->variant = 2;
+            arg0->ext.effect_33.timer = 1;
+            arg0->ext.effect_33.period = 0x78;
+            arg0->ext.effect_33.proximity = 0;
+            arg0->ext.effect_33.variant = 2;
             break;
         case 8:
-            ext->timer = 1;
-            ext->period = 0xB4;
-            ext->proximity = 0;
-            ext->variant = 2;
+            arg0->ext.effect_33.timer = 1;
+            arg0->ext.effect_33.period = 0xB4;
+            arg0->ext.effect_33.proximity = 0;
+            arg0->ext.effect_33.variant = 2;
             break;
         }
         arg0->state = 1;
@@ -122,8 +123,6 @@ void func_800BC784(struct EffectObj* arg0)
         return;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_33_rock_dropper", func_800BC784);
 #endif
 
 // rock_dropper_drop

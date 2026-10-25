@@ -126,35 +126,44 @@ void big_elevator_arrive(struct ItemObj* arg0)
 void func_800C3BA4(struct ItemObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_14_big_elevator", func_800C3BA4);
+#else
 void func_800C3BA4(struct ItemObj* self)
 {
-    u8* phase = (u8*)&self->ext;
-    struct BackgroundObj* bg = &background_objects[0];
+    s8 phase;
 
-    if (self->y_pos.i.hi < 0x3B1 && bg->y_pos.i.hi == 0x2D0) {
-        bg->unk20 = 0x2D0;
-        bg->unk22 = 0x2D0;
-        start_screen_shake_y(0x1E, 2, 1);
+    if (self->y_pos.i.hi <= 0x3B0) {
+        if (background_objects[0].y_pos.i.hi == 0x2D0) {
+            background_objects[0].unk22 = 0x2D0;
+            background_objects[0].unk20 = 0x2D0;
+            start_screen_shake_y(0x1E, 2, 1);
 #ifdef MMX4_SATURN
-        func_8001540C(6, 6, NULL);
+            func_8001540C(6, 6, NULL);
 #else
-        stop_sound(5, 5);
+            stop_sound(5, 5);
 #endif
-        self->unk5++;
-        return;
+            self->unk5++;
+            return;
+        }
+        phase = 1 - self->ext.item_2.unk80;
+        self->ext.item_2.unk80 = phase;
+        if (phase & 0xFF) {
+            background_objects[0].unk47 = 1;
+        } else {
+            background_objects[0].unk47 = 0;
+        }
+    } else {
+        phase = 1 - self->ext.item_2.unk80;
+        self->ext.item_2.unk80 = phase;
+        if (phase & 0xFF) {
+            background_objects[0].unk47 = 1;
+        } else {
+            self->y_pos.i.hi--;
+            background_objects[0].unk47 = 0;
+        }
     }
-    *phase = 1 - *phase;
-    if (*phase != 0) {
-        bg->unk47 = 1;
-        return;
-    }
-    if (self->y_pos.i.hi >= 0x3B1)
-        self->y_pos.u.hi--;
-    bg->unk47 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_14_big_elevator", func_800C3BA4);
 #endif
 
 void big_elevator_restore_camera(struct ItemObj* arg0)

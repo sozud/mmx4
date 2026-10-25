@@ -52,6 +52,12 @@ extern void (*double_state_funcs[])(struct MainObj*);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern struct Unk_unk68 double_slide_attack_box;
+extern struct Unk_unk68 double_slide_hurt_box;
+extern struct Unk_unk68 D_80108204[];
+extern void (*double_step_funcs[6])(struct MainObj*);
+extern u8* double_script_table_0[2];
+extern void* double_script_table_1[2];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008CD80(struct MainObj* self);
 void func_8008C10C(struct MainObj* self);
@@ -61,12 +67,6 @@ void func_8008C664(struct MainObj* self);
 void double_spawn_afterimage(struct MainObj*, s8);
 extern void* double_animations[31];
 extern struct Unk_unk68 double_terrain_box;
-extern struct Unk_unk68 double_slide_attack_box;
-extern struct Unk_unk68 double_slide_hurt_box;
-extern struct Unk_unk68 D_80108204[];
-extern void (*double_step_funcs[6])(struct MainObj*);
-extern u8* double_script_table_0[2];
-extern void* double_script_table_1[2];
 extern ret_u8 func_8002938C(s32);
 #endif
 
@@ -299,32 +299,34 @@ void double_wait_start(struct MainObj* self)
 }
 
 // double_pick_attack
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C10C);
+#else
 void func_8008C10C(struct MainObj* self)
 {
-    struct Main73Ext* ext = &self->ext.main_73;
-    u8* step = &ext->cycle_step;
+    u8 frame;
 
-    if (self->unk7C != 0) {
+    if (self->unk7C == 0) {
+        if (self->ext.main_73.cycle_step == 0) {
+            if (self->hp > 0x18) {
+                self->ext.main_73.cycle_script = double_script_table_0[get_random() & 1];
+            } else {
+                self->ext.main_73.cycle_script = (u8*)double_script_table_1[get_random() & 1];
+            }
+        }
+        frame = self->ext.main_73.cycle_script[++self->ext.main_73.cycle_step];
+        self->unk5 = frame;
+        if ((s8)frame == -1) {
+            self->ext.main_73.cycle_step = 0;
+            self->unk5 = 2;
+        }
+        self->unk6 = 0;
+        self->unk7 = 0;
+    } else {
         self->unk7C--;
         animate_object(ANIMATED_OBJECT(self));
-        return;
     }
-    if (*step == 0) {
-        u32 index = get_random() & 1;
-        ext->cycle_script = self->hp < 0x19 ? (u8*)double_script_table_1[index] : double_script_table_0[index];
-    }
-    (*step)++;
-    self->unk5 = ext->cycle_script[*step];
-    if (self->unk5 == -1) {
-        *step = 0;
-        self->unk5 = 2;
-    }
-    self->unk6 = 0;
-    self->unk7 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C10C);
 #endif
 
 void double_wait(struct MainObj* self)
@@ -479,46 +481,49 @@ void double_dive_fall(struct MainObj* self)
 #endif
 
 // double_dive_slide
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C664);
+#else
 void func_8008C664(struct MainObj* self)
 {
     s32 direction;
-    s32 facing;
+    u16 facing;
 
-    if (--self->unk7C != 0) {
-        animate_object(ANIMATED_OBJECT(self));
-        return;
-    }
-    self->unk6++;
-    if ((self->collision_flags & 3) != 0)
-        facing = (self->collision_flags >> 1) & 1;
-    else
-        facing = self->x_pos.i.hi < g_Player.x_pos.i.hi;
-    self->unk15 = facing ? PLAYER_FACING_RIGHT : 0;
-    direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
-    if (facing) {
-        if ((u8)(direction - 2) < 14)
-            direction = 1;
-        if ((u8)(direction - 0x11) < 15)
-            direction = 0;
+    if (--self->unk7C == 0) {
+        self->unk6++;
+        facing = 0;
+        if (self->collision_flags & 3)
+            facing = (self->collision_flags >> 1) & 1;
+        else if (self->x_pos.i.hi - g_Player.x_pos.i.hi < 0)
+            facing = 1;
+        if (facing) {
+            self->unk15 = PLAYER_FACING_RIGHT;
+            direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+            if ((u8)(direction - 2) < 14)
+                direction = 1;
+            if ((u8)(direction - 0x11) < 15)
+                direction = 0;
+        } else {
+            self->unk15 = 0;
+            direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+            if ((u8)direction < 14)
+                direction = 15;
+            if ((u8)direction >= 17)
+                direction = 16;
+        }
+        set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
+        self->gravity = 0;
+        self->x_accel = 0;
+        self->x_speed *= 8;
+        self->y_speed *= 8;
+        move_with_gravity(ANIMATED_OBJECT(self));
+        set_animation(self, 7);
+        self->hurt_box = &double_slide_hurt_box;
+        self->attack_box = &double_slide_attack_box;
     } else {
-        if ((u8)direction < 14)
-            direction = 15;
-        if ((u8)direction >= 17)
-            direction = 16;
+        animate_object(ANIMATED_OBJECT(self));
     }
-    set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
-    self->x_accel = 0;
-    self->gravity = 0;
-    self->x_speed = (s32)((u32)self->x_speed * 8u);
-    self->y_speed = (s32)((u32)self->y_speed * 8u);
-    move_with_gravity(ANIMATED_OBJECT(self));
-    set_animation(self, 7);
-    self->hurt_box = &double_slide_hurt_box;
-    self->attack_box = &double_slide_attack_box;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C664);
 #endif
 
 void double_dive_hit_wall(struct MainObj* self)
@@ -702,10 +707,11 @@ void double_aerial_shot(struct MainObj* self)
 }
 
 // double_run
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008CD80);
+#else
 void func_8008CD80(struct MainObj* self)
 {
-    struct Main73Ext* ext = &self->ext.main_73;
     s32 collision;
 
     self->unk18 = self->x_pos;
@@ -714,14 +720,15 @@ void func_8008CD80(struct MainObj* self)
     CollisionRelated(PLAYER_OBJECT(self));
     collision = func_8002DD04(self);
 
-    if (ext->blink_delay != 0) {
-        ext->blink_delay--;
-        if (ext->blink_delay == 0)
+    if (self->ext.main_73.blink_delay != 0) {
+        if (--self->ext.main_73.blink_delay == 0) {
             self->collision_data = D_80108204;
-        if (ext->blink_delay & 1)
-            self->unk42 |= 0x8000;
-        else
             self->unk42 &= 0x7FFF;
+        } else if (self->ext.main_73.blink_delay & 1) {
+            self->unk42 |= 0x8000;
+        } else {
+            self->unk42 &= 0x7FFF;
+        }
     } else if (collision < 0) {
         self->state = 2;
         self->unk5 = 0;
@@ -730,21 +737,26 @@ void func_8008CD80(struct MainObj* self)
         g_Player.spike_immune = 1;
     } else if (collision > 0 && collision != 0x7F) {
         self->collision_data = D_801060F0;
-        ext->blink_delay = 0x40;
-        if (collision < 0x13 || collision > 0x17) {
-            s32 kind = (get_random() & 1) ? 2 : 3;
-            s8 i;
-            double_spawn_shot(self, kind, 0);
-            double_spawn_shot(self, kind, 1);
-            for (i = 0; i < 4; i++)
-                double_spawn_afterimage(self, i);
+        if ((u32)(collision - 0x13) < 2 || (u32)(collision - 0x15) < 2 || collision == 0x17) {
+            self->ext.main_73.blink_delay = 0x40;
+        } else {
+            self->ext.main_73.blink_delay = 0x40;
+            if (get_random() & 1) {
+                double_spawn_shot(self, 2, 0);
+                double_spawn_shot(self, 2, 1);
+            } else {
+                double_spawn_shot(self, 3, 0);
+                double_spawn_shot(self, 3, 1);
+            }
+            double_spawn_afterimage(self, 0);
+            double_spawn_afterimage(self, 1);
+            double_spawn_afterimage(self, 2);
+            double_spawn_afterimage(self, 3);
         }
     }
     func_8002D9BC(self);
     is_on_screen(BASE_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008CD80);
 #endif
 
 void double_death_flicker(struct MainObj* self)

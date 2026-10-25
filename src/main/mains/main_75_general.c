@@ -142,6 +142,12 @@ void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern struct Unk_unk68 D_801059C4[5];
+extern struct Unk_unk68 D_80108404[];
+extern struct Unk_unk68 D_80108384[];
+extern struct Unk_unk68 D_801059C0;
+extern void (*general_step_funcs[7])();
+extern union AnimationStep* final_cutscene_animations[1];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008FBCC(struct MainObj* self);
 void func_80091218(struct MainObj* self);
@@ -150,15 +156,9 @@ void func_800905D4(struct MainObj* self);
 void func_800915C4(struct MainObj* self);
 void func_800917AC(struct MainObj* self);
 extern struct Unk_unk68 D_801059BC;
-extern struct Unk_unk68 D_801059C4[5];
 extern void* general_animations[46];
-extern struct Unk_unk68 D_80108404[];
-extern struct Unk_unk68 D_80108384[];
-extern struct Unk_unk68 D_801059C0;
-extern void (*general_step_funcs[7])();
 // src/main/mains/main_75_general.c
 
-extern union AnimationStep* final_cutscene_animations[1];
 extern ret_u8 func_8002938C(s32);
 #endif
 
@@ -823,10 +823,11 @@ void general_slam(struct MainObj* self)
 }
 
 // general_fight
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_80091218);
+#else
 void func_80091218(struct MainObj* self)
 {
-    struct Main75Ext* ext = &self->ext.main_75;
     struct ShotObj* shot;
     s32 hit;
 
@@ -836,19 +837,19 @@ void func_80091218(struct MainObj* self)
     self->collision_data = D_80108404;
     self->hurt_box = D_801059C4;
     func_8002DD04(self);
-    if (ext->hit_active == 0)
+    if (self->ext.main_75.hit_active == 0)
         self->collision_data = D_80108384;
     self->hurt_box = &D_801059C0;
     hit = func_8002DD04(self);
     if (self->unk5 != 0)
-        ext->saved_unk5 = self->unk5;
-    if (ext->hit_active != 0) {
-        if (!(ext->hit_timer & 1))
+        self->ext.main_75.saved_unk5 = self->unk5;
+    if (self->ext.main_75.hit_active != 0) {
+        if (!(self->ext.main_75.hit_timer & 1))
             self->unk42 |= 0x8000;
         else
             self->unk42 &= 0x7FFF;
-        if (--ext->hit_timer == 0)
-            ext->hit_active = 0;
+        if (--self->ext.main_75.hit_timer == 0)
+            self->ext.main_75.hit_active = 0;
     } else if (hit < 0) {
         self->state = 2;
         self->unk5 = 0;
@@ -857,43 +858,51 @@ void func_80091218(struct MainObj* self)
         g_Player.spike_immune = 1;
         return;
     } else if (hit != 0) {
-        s32 spawn = 0;
-        s32 flash = 1;
-
         if (engine_obj.cur_character == 0) {
-            if (hit == 0x12 || hit == 9)
-                spawn = 1;
-            else if (hit == 0x7F)
-                flash = 0;
-        } else if (hit == 0x1E) {
-            spawn = 1;
-        } else if (hit < 0x1F) {
-            if (hit < 0x1A && hit >= 0x18)
-                flash = 0;
-        } else if (hit == 0x7F) {
-            flash = 0;
-        }
-        if (spawn) {
-            shot = find_free_shot_obj();
-            if (shot != NULL) {
-                shot->active = 0x41;
-                shot->id = 0x37;
-                shot->unk2 = 8;
-                shot->unk7C = (struct WeaponObj*)self;
+            switch (hit) {
+            case 9:
+            case 0x12:
+                shot = find_free_shot_obj();
+                if (shot != NULL) {
+                    shot->active = 0x41;
+                    shot->id = 0x37;
+                    shot->unk2 = 8;
+                    shot->unk7C = (struct WeaponObj*)self;
+                }
+            default:
+                self->collision_data = D_801060F0;
+                self->ext.main_75.hit_timer = 0x40;
+                self->ext.main_75.hit_active = 1;
+                break;
+            case 0x7F:
+                break;
             }
-        }
-        if (flash) {
-            self->collision_data = D_801060F0;
-            ext->hit_timer = 0x40;
-            ext->hit_active = 1;
+        } else {
+            switch (hit) {
+            case 0x1E:
+                shot = find_free_shot_obj();
+                if (shot != NULL) {
+                    shot->active = 0x41;
+                    shot->id = 0x37;
+                    shot->unk2 = 8;
+                    shot->unk7C = (struct WeaponObj*)self;
+                }
+            default:
+                self->collision_data = D_801060F0;
+                self->ext.main_75.hit_timer = 0x40;
+                self->ext.main_75.hit_active = 1;
+                break;
+            case 0x18:
+            case 0x19:
+            case 0x7F:
+                break;
+            }
         }
     }
     general_step_funcs[self->unk5](self);
     func_8002D9BC(self);
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_80091218);
 #endif
 
 void general_death_start(struct MainObj* self)
@@ -940,12 +949,13 @@ void general_death_blink(struct MainObj* self)
 }
 
 // general_death_explode
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800915C4);
+#else
 void func_800915C4(struct MainObj* self)
 {
     struct ObjectHeader* effect = OBJECT_HEADER(self->ext.main_75.object.effect);
     u16 timer;
-    s32 column, row;
 
     self->on_screen = 0;
     if (effect->active == 0)
@@ -962,27 +972,19 @@ void func_800915C4(struct MainObj* self)
     }
 
     self->unk5++;
-    background_objects[0].unk24 = background_objects[0].x_pos.u.hi;
-    background_objects[0].unk26 = background_objects[0].x_pos.u.hi;
-    background_objects[0].unk28 = background_objects[0].y_pos.u.hi;
     background_objects[0].unk2A = background_objects[0].y_pos.u.hi;
+    background_objects[0].unk28 = background_objects[0].y_pos.u.hi;
+    background_objects[0].unk26 = background_objects[0].x_pos.u.hi;
+    background_objects[0].unk24 = background_objects[0].x_pos.u.hi;
     self->unk40 = (OBJECT_STAGE_TEXTURE(1)) + OBJECT_TEXTURE_OFFSET(0xB0);
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0xA3));
-    column = func_8002938C(0xA3) * 4 + 0x18;
-    row = func_8002938C(0xA3) + 6;
-#ifdef MMX4_SATURN
-    self->unk42 = column;
-#else
-    self->unk42 = (column % 16) | ((row / 4 + 0x1E0) << 6);
-#endif
+    self->unk42 = OBJECT_STAGE_CLUT(0xA3);
     self->animation_table = (const u8* const*)final_cutscene_animations;
     self->x_pos.u.hi = background_objects[0].x_pos.u.hi + 0xE0;
     self->y_pos.u.hi = background_objects[0].y_pos.u.hi + 0x68;
     self->unk15 = 0;
     set_animation(self, 0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800915C4);
 #endif
 
 void general_death_wait_explosion(struct MainObj* self)

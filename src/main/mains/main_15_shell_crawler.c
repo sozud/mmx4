@@ -76,46 +76,40 @@ static void main_15_spawn_spark(struct MainObj* arg0, u8 index)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004D9CC);
+#else
 void func_8004D9CC(struct MainObj* arg0)
 {
-    struct Main0Ext* ext = &arg0->ext.main_0;
-    s32 dy;
-
-    if (arg0->air_state != 0 || (ext->background_relative & 3))
+    if (arg0->air_state != 0 || (arg0->ext.main_0.background_relative & 3))
         return;
-    if (ext->flags[1] != 0) {
-        ext->flags[1]--;
+    if (arg0->ext.main_0.flags[1] != 0) {
+        arg0->ext.main_0.flags[1]--;
         return;
     }
-    dy = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
-    if (dy < 0)
-        dy = -dy;
-    if (dy >= 0x28) {
-        ext->index = 0;
-        return;
-    }
-    if (arg0->unk15 != 0) {
-        if (g_Player.x_pos.i.hi < arg0->x_pos.i.hi + 0x50)
-            ext->index++;
-        else
-            ext->index = 0;
+    if ((arg0->y_pos.i.hi - g_Player.y_pos.i.hi >= 0 ? arg0->y_pos.i.hi - g_Player.y_pos.i.hi : g_Player.y_pos.i.hi - arg0->y_pos.i.hi) < 0x28) {
+        if (arg0->unk15 != 0) {
+            if (g_Player.x_pos.i.hi < arg0->x_pos.i.hi + 0x50)
+                arg0->ext.main_0.index++;
+            else
+                arg0->ext.main_0.index = 0;
+        } else {
+            if (arg0->x_pos.i.hi - 0x50 < g_Player.x_pos.i.hi)
+                arg0->ext.main_0.index++;
+            else
+                arg0->ext.main_0.index = 0;
+        }
+        if (arg0->ext.main_0.index >= 0x3D) {
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            set_animation(arg0, 7);
+            arg0->ext.main_0.index = 0;
+            arg0->ext.main_0.background_relative |= 2;
+        }
     } else {
-        if (arg0->x_pos.i.hi - 0x50 < g_Player.x_pos.i.hi)
-            ext->index++;
-        else
-            ext->index = 0;
-    }
-    if (ext->index >= 0x3D) {
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
-        set_animation(arg0, 7);
-        ext->index = 0;
-        ext->background_relative |= 2;
+        arg0->ext.main_0.index = 0;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004D9CC);
 #endif
 
 // shell_crawler_check_shell

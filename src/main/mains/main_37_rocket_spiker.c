@@ -63,9 +63,6 @@ void rocket_spiker_update(struct MainObj* self)
 
 // rocket_spiker_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_8005FE1C(struct MainObj* arg0);
-void func_800608CC(struct MainObj* arg0);
 #define MAIN_37_U8(object, offset) (((u8*)&(object)->ext.main_37)[(offset)-0x80])
 #define MAIN_37_S16(object, offset) (*(s16*)&MAIN_37_U8(object, offset))
 extern union AnimationStep* rocket_spiker_animations[28];
@@ -75,26 +72,24 @@ extern struct Unk_unk68 D_800FE4DC;
 extern struct Unk_unk68 D_800FE4E0;
 extern struct Unk_unk68 D_800FE4E4;
 extern struct Unk_unk68 D_80107474[];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void func_8005FE1C(struct MainObj* arg0);
 void rocket_spiker_face_player(struct AnimatedObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_37_rocket_spiker", func_8005FE1C);
+#else
 void func_8005FE1C(struct MainObj* arg0)
 {
-    u8 lane;
-    static const s16 lanes[3][3] = {
-        { 0x3F0, 0x480, 0x410 },
-        { 0x390, 0x40B, 0x3B0 },
-        { 0x330, 0x380, 0x350 },
-    };
 
     arg0->hp = 6;
     arg0->contact_damage = 4;
     arg0->invincibility_timer = 0;
     arg0->unk62 = 2;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)rocket_spiker_animations;
     arg0->terrain_box = &D_800FE4E4;
-    arg0->bg_offset = g_Player.bg_offset;
     arg0->air_state = 0;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     switch (arg0->unk2) {
@@ -109,12 +104,21 @@ void func_8005FE1C(struct MainObj* arg0)
         arg0->unk5 = 2;
         break;
     case 1:
+        arg0->collision_data = (const u16*)D_80107474;
+        arg0->hurt_box = (const u8*)&D_800FE4D4;
+        arg0->attack_box = (const u8*)&D_800FE4D8;
+        arg0->unk15 = 0;
+        arg0->x_speed = -0x18000;
+        arg0->y_speed = 0;
+        set_animation(arg0, 0);
+        arg0->unk5 = 3;
+        break;
     case 2:
         arg0->collision_data = (const u16*)D_80107474;
         arg0->hurt_box = (const u8*)&D_800FE4D4;
         arg0->attack_box = (const u8*)&D_800FE4D8;
-        arg0->unk15 = arg0->unk2 == 2 ? PLAYER_FACING_RIGHT : 0;
-        arg0->x_speed = arg0->unk2 == 2 ? 0x18000 : -0x18000;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->x_speed = 0x18000;
         arg0->y_speed = 0;
         set_animation(arg0, 0);
         arg0->unk5 = 3;
@@ -142,11 +146,25 @@ void func_8005FE1C(struct MainObj* arg0)
             MAIN_37_U8(arg0, 0x81) += 2;
         if (arg0->y_pos.i.hi < 0x3D0)
             MAIN_37_U8(arg0, 0x81) += 2;
-        lane = MAIN_37_U8(arg0, 0x81);
-        if (lane < 6) {
-            MAIN_37_S16(arg0, 0x86) = lanes[lane / 2][0];
-            MAIN_37_S16(arg0, 0x88) = lanes[lane / 2][1];
-            arg0->y_pos.val = lanes[lane / 2][2] << 16;
+        switch (MAIN_37_U8(arg0, 0x81)) {
+        case 0:
+        case 1:
+            MAIN_37_S16(arg0, 0x86) = 0x3F0;
+            MAIN_37_S16(arg0, 0x88) = 0x480;
+            arg0->y_pos.val = 0x4100000;
+            break;
+        case 2:
+        case 3:
+            MAIN_37_S16(arg0, 0x86) = 0x390;
+            MAIN_37_S16(arg0, 0x88) = 0x40B;
+            arg0->y_pos.val = 0x3B00000;
+            break;
+        case 4:
+        case 5:
+            MAIN_37_S16(arg0, 0x86) = 0x330;
+            MAIN_37_S16(arg0, 0x88) = 0x380;
+            arg0->y_pos.val = 0x3500000;
+            break;
         }
         set_animation(arg0, 7);
         arg0->unk5 = 4;
@@ -161,8 +179,6 @@ void func_8005FE1C(struct MainObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_37_rocket_spiker", func_8005FE1C);
 #endif
 
 extern void (*rocket_spiker_step_funcs[])(struct MainObj*);
