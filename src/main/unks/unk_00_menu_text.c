@@ -137,30 +137,38 @@ void menu_text_highlight(struct UnkObj* self)
 void func_800D3798(struct UnkObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/unks/unk_00_menu_text", func_800D3798);
+#else
 void func_800D3798(struct UnkObj* self)
 {
     u16 mask;
-    u8 bit, button;
-    mask = menu_button_bits_a[self->unk2];
+    u16 key;
+    u32 i;
+    s32 bit;
+    u8 button;
 
-    for (bit = 0; bit < 16; bit++) {
-        if (mask == (1U << bit))
+    mask = menu_button_bits_a[self->unk2];
+    for (i = 0; (u8)i < 16; i++) {
+        if ((1 << i) == mask) {
+            bit = (u8)i;
             break;
+        }
     }
+    key = D_800EE430[bit];
     for (button = 0; button < 8; button++) {
-        if (D_800EE430[bit] == menu_button_bits_b[button]) {
+        if (key == menu_button_bits_b[button]) {
             self->animation_step.fields.frame_index = button + 0x68;
             break;
         }
     }
     self->unk42 = MENU_TEXT_PALETTE;
-    if (main_bss_state.character_mode == 0 && engine_obj.cur_character != 0 && self->unk2 < 7 && self->unk2 >= 5)
-        self->unk42 = MENU_TEXT_LOCKED_PALETTE;
+    if (main_bss_state.character_mode == 0 && engine_obj.cur_character != 0 && self->unk2 < 7) {
+        if (self->unk2 >= 5)
+            self->unk42 = MENU_TEXT_LOCKED_PALETTE;
+    }
     is_on_screen(self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/unks/unk_00_menu_text", func_800D3798);
 #endif
 
 void menu_text_cursor(struct UnkObj* self)

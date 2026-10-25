@@ -142,39 +142,46 @@ void tile_scanner_init(struct EffectObj* self)
 }
 
 // tile_scanner_scan
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_05_tile_scanner", func_800B64BC);
+#else
 void func_800B64BC(struct EffectObj* arg0)
 {
-    struct Effect5Ext* ext = &arg0->ext.effect_5;
 
-    ext->unk1F = 0;
+    arg0->ext.effect_5.unk1F = 0;
     if (g_Player.state != 1)
         return;
 
     switch (g_Player.unk5) {
     case 48:
-        if (ext->unk1C != 0x32)
+        if (arg0->ext.effect_5.unk1C != 0x32)
             return;
-        ext->unk14 = g_Player.x_vel.val;
+        arg0->ext.effect_5.unk14 = g_Player.x_vel.val;
         goto adjust;
     case 2:
-        ext->unk14 = g_Player.x_pos.val - g_Player.unk18.val;
+        arg0->ext.effect_5.unk14 = g_Player.x_pos.val - g_Player.unk18.val;
     adjust:
-        if (ext->unk1C == 3)
-            ext->unk14 = ext->unk1E != 0 ? 0x8000 : -0x8000;
-        if (ext->unk1C == 4)
-            ext->unk14 = ext->unk1E != 0 ? 0x20000 : -0x20000;
+        if (arg0->ext.effect_5.unk1C == 3)
+            if (arg0->ext.effect_5.unk1E != 0)
+                arg0->ext.effect_5.unk14 = 0x8000;
+            else
+                arg0->ext.effect_5.unk14 = -0x8000;
+        if (arg0->ext.effect_5.unk1C == 4)
+            if (arg0->ext.effect_5.unk1E != 0)
+                arg0->ext.effect_5.unk14 = 0x20000;
+            else
+                arg0->ext.effect_5.unk14 = -0x20000;
         goto accelerate;
     case 5:
     case 8:
-        ext->unk14 = g_Player.x_vel.val;
+        arg0->ext.effect_5.unk14 = g_Player.x_vel.val;
     accelerate:
-        if (ext->unk1E != 0) {
-            ext->unk18 = -0x1800;
-            ext->unk1D = 1;
+        if (arg0->ext.effect_5.unk1E != 0) {
+            arg0->ext.effect_5.unk18 = -0x1800;
+            arg0->ext.effect_5.unk1D = 1;
         } else {
-            ext->unk18 = 0x1800;
-            ext->unk1D = 0;
+            arg0->ext.effect_5.unk18 = 0x1800;
+            arg0->ext.effect_5.unk1D = 0;
         }
         break;
     case 12: {
@@ -182,28 +189,24 @@ void func_800B64BC(struct EffectObj* arg0)
 
         if (g_Player.unk6 != 2)
             return;
-        ext->unk14 = 0;
-        speed = g_Player.x_vel.val;
-        if (speed < 0)
-            speed = -speed;
-        ext->unk1F = speed / 0xC000;
-        ext->unk1E = g_Player.unk15;
-        if (g_Player.unk15 != 0) {
-            ext->unk18 = 0x2800;
-            ext->unk1D = 3;
+        arg0->ext.effect_5.unk14 = 0;
+        arg0->ext.effect_5.unk1F = (g_Player.x_vel.val >= 0 ? g_Player.x_vel.val : -g_Player.x_vel.val) / 0xC000;
+        arg0->ext.effect_5.unk1E = g_Player.unk15;
+        if (arg0->ext.effect_5.unk1E != 0) {
+            arg0->ext.effect_5.unk18 = 0x2800;
+            arg0->ext.effect_5.unk1D = 3;
         } else {
-            ext->unk18 = -0x2800;
-            ext->unk1D = 2;
+            arg0->ext.effect_5.unk18 = -0x2800;
+            arg0->ext.effect_5.unk1D = 2;
         }
         break;
     }
+    case 0:
     default:
         return;
     }
     arg0->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_05_tile_scanner", func_800B64BC);
 #endif
 
 // tile_scanner_flood_fill

@@ -170,24 +170,24 @@ scan:
 }
 
 // wave_rider_float
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B2A4);
+#else
 void func_8006B2A4(struct MainObj* arg0)
 {
-    struct Main53Ext* ext = &arg0->ext.main_53;
 
-    ext->unk81 = func_8006B1C4(arg0, 0);
+    arg0->ext.main_53.unk81 = func_8006B1C4(arg0, 0);
     arg0->air_state = 0;
-    if (ext->unk81 == ext->unk80) {
+    if (arg0->ext.main_53.unk81 == arg0->ext.main_53.unk80) {
         animate_object(ANIMATED_OBJECT(arg0));
         return;
     }
-    switch (ext->unk81) {
-    case 0:
-        set_animation(arg0, 2);
-        arg0->y_speed = 0x68000;
-        arg0->gravity = 0x5000;
-        arg0->air_state = 1;
-        arg0->unk6++;
+    switch (arg0->ext.main_53.unk81) {
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+        set_animation(arg0, 1);
         break;
     case 1:
     case 2:
@@ -195,20 +195,19 @@ void func_8006B2A4(struct MainObj* arg0)
     case 4:
         set_animation(arg0, 2);
         break;
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-        set_animation(arg0, 1);
-        break;
     case 0x38:
         set_animation(arg0, 0);
         break;
+    case 0:
+        set_animation(arg0, 2);
+        arg0->y_speed = 0x68000;
+        arg0->gravity = 0x5000;
+        arg0->air_state = 1;
+        arg0->unk6++;
+        break;
     }
-    ext->unk80 = ext->unk81;
+    arg0->ext.main_53.unk80 = arg0->ext.main_53.unk81;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B2A4);
 #endif
 
 // wave_rider_bob

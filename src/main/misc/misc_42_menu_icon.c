@@ -36,11 +36,11 @@ void func_800CFEE0(struct MiscObj* self);
 void func_800D0118(struct MiscObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(VERSION_EU) || defined(MMX4_SATURN)
+INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800CFEE0);
+#else
 void func_800CFEE0(struct MiscObj* self)
 {
-    u8* archive = WINDOW_ARCHIVE_DATA;
-
     self->active = 1;
     self->on_screen = 1;
     self->unk15 = 0;
@@ -48,45 +48,53 @@ void func_800CFEE0(struct MiscObj* self)
     switch ((s8)self->unk2) {
     case 0:
         self->unk16 = 2;
+        self->unk3C = (u8*)WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[0];
         self->unk40 = 0x1F00;
-        self->unk3C = archive + ((s32*)archive)[0];
         if (self->y_pos.i.hi == 0x10) {
             self->unk42 = 0x7802;
         } else {
-            self->unk42 = self->ext.misc_42.unk56 == main_bss_state.transition.selection ? 0x7803 : 0x7800;
+            if (self->ext.misc_42.unk56 == main_bss_state.transition.selection)
+                self->unk42 = 0x7803;
+            else
+                self->unk42 = 0x7800;
         }
         break;
     case 1:
         self->unk16 = VISUAL_SATURN_LAYER(6);
         self->unk40 = 0x1E00;
         self->unk42 = 0x7807;
-        self->unk3C = archive + ((s32*)archive)[2];
+        self->unk3C = (u8*)WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
         break;
     case 2:
         self->unk15 = PLAYER_FACING_RIGHT;
         self->unk40 = 0x1E00;
-        self->unk3C = archive + ((s32*)archive)[2];
+        self->unk3C = (u8*)WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
         break;
     case 3:
         self->unk16 = 3;
         self->unk40 = 0x1DE0;
-        self->unk3C = archive + ((s32*)archive)[3];
+        self->unk3C = (u8*)WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[3];
         break;
     case 4:
         self->unk40 = 0x1E00;
-        self->unk3C = archive + ((s32*)archive)[2];
+        self->unk3C = (u8*)WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
         self->animation_table = (const u8* const*)option_toggle_animations;
-        self->unk16 = 0;
         self->ext.misc_42.unk57 = main_bss_state.transition.selection;
+        self->unk16 = 0;
         set_animation(self, 0);
         switch (self->ext.misc_42.unk58) {
         case 0:
-            self->y_pos.i.hi = 0x78;
             if (memcard_menu.card_status[1] == 0 && memcard_menu.card_status[0] != 0) {
                 main_bss_state.transition.selection = 1;
                 self->y_pos.i.hi = 0x98;
+            } else {
+                self->y_pos.i.hi = 0x78;
             }
+#ifdef VERSION_JP
+            self->x_pos.i.hi = 0x58;
+#else
             self->x_pos.i.hi = 0x50;
+#endif
             break;
         case 1:
         case 3:
@@ -94,8 +102,13 @@ void func_800CFEE0(struct MiscObj* self)
             self->y_pos.i.hi = 0x78;
             break;
         case 2:
+#ifdef VERSION_JP
+            self->x_pos.i.hi = 0x80;
+            self->y_pos.i.hi = 0x98;
+#else
             self->x_pos.i.hi = 0x88;
             self->y_pos.i.hi = 0xB8;
+#endif
             break;
         case 4:
             self->x_pos.i.hi = 0x98;
@@ -107,8 +120,6 @@ void func_800CFEE0(struct MiscObj* self)
     self->state = 1;
     self->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800CFEE0);
 #endif
 
 // menu_icon_animate

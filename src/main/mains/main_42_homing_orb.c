@@ -26,26 +26,24 @@ void homing_orb_update(struct MainObj* self)
 
 // homing_orb_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80062D9C(struct MainObj* arg0);
 extern struct Unk_unk68 D_80107574[];
 extern s8 homing_orb_hurt_box[4];
 extern s8 homing_orb_attack_box[4];
 extern union AnimationStep* homing_orb_animations[7];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80062D9C(struct MainObj* arg0)
 {
     arg0->unk5 = 2;
     arg0->state++;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk15 = 0;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->hp = 3;
     arg0->contact_damage = 3;
     arg0->collision_data = D_80107574;
+    arg0->animation_table = (const u8* const*)homing_orb_animations;
     arg0->attack_box = homing_orb_hurt_box;
     arg0->hurt_box = homing_orb_attack_box;
-    arg0->unk15 = 0;
     arg0->terrain_box = NULL;
     arg0->invincibility_timer = 0;
     arg0->animation_table = (const u8* const*)homing_orb_animations;
@@ -57,13 +55,9 @@ void func_80062D9C(struct MainObj* arg0)
     arg0->unk7C = 0xB4;
     arg0->ext.main_42.background_relative = 0;
     arg0->ext.main_42.unk84 = NULL;
-    arg0->bg_offset = g_Player.bg_offset;
     set_animation(arg0, 0);
     update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_42_homing_orb", func_80062D9C);
-#endif
 
 void homing_orb_start_idle(struct MainObj* self)
 {

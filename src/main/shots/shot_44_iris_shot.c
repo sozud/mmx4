@@ -268,12 +268,11 @@ void iris_drone_hover(struct ShotObj* self)
 }
 
 // iris_drone_chase
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A766C);
+#else
 void func_800A766C(struct ShotObj* self)
 {
-    s32 dx;
-    s32 dy;
-
     if (--self->unk8A == 0) {
         set_animation(self, 0xE);
         self->unk5 = 4;
@@ -284,8 +283,8 @@ void func_800A766C(struct ShotObj* self)
             self->unk2 = 1;
             self->timer = 0xB4;
         } else {
-            self->timer = 0x78;
             self->unk2 = 0;
+            self->timer = 0x78;
         }
     }
     if (!(WEAPON_FRAME_COUNTER & 3)) {
@@ -296,15 +295,12 @@ void func_800A766C(struct ShotObj* self)
             self->y_vel.val *= 2;
         }
     }
-    dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
-    dy = self->y_pos.i.hi - g_Player.y_pos.i.hi;
-    if ((dx >= 0 ? dx : -dx) >= 3 || (dy >= 0 ? dy : -dy) >= 3) {
+    if ((self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0 ? self->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - self->x_pos.i.hi) >= 3
+        || (self->y_pos.i.hi - g_Player.y_pos.i.hi >= 0 ? self->y_pos.i.hi - g_Player.y_pos.i.hi : g_Player.y_pos.i.hi - self->y_pos.i.hi) >= 3) {
         move_object(MOVING_OBJECT(self));
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A766C);
 #endif
 
 void iris_drone_burst(struct ShotObj* self)

@@ -96,56 +96,58 @@ void jet_stingray_flyby_wait_on_screen(struct MainObj* self)
 }
 
 // jet_stingray_flyby_enter_straight
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006ED44);
+#else
 void func_8006ED44(struct MainObj* self)
 {
-    struct Main55Ext* ext = &self->ext.main_55;
-    switch (ext->unk84) {
+    u8 bit;
+
+    switch (self->ext.main_55.unk84) {
     case 0:
-        ext->unk84 = 1;
-        ext->unk87 = 0;
+        self->ext.main_55.unk84 = 1;
+        self->ext.main_55.unk87 = 0;
         self->unk5 = 5;
         self->unk6 = 0;
         self->unk7 = 0;
         self->unk7C = 0;
         break;
     case 1:
-        if (ext->unk85 == 0)
-            ext->unk84 = 3;
-        if (self->unk7C == 0xF0 || ext->unk85 < 5) {
-            ext->unk87 = 1;
-            ext->unk84 = 2;
+        if (self->ext.main_55.unk85 == 0)
+            self->ext.main_55.unk84 = 3;
+        if (self->unk7C == 0xF0 || self->ext.main_55.unk85 < 5) {
+            self->ext.main_55.unk87 = 1;
+            self->ext.main_55.unk84 = 2;
             self->unk7C = 20;
         } else {
             self->unk7C = (s16)((u16)self->unk7C + 1);
         }
         break;
     case 2:
-        if (self->unk7C != 0) {
-            self->unk7C = (s16)((u16)self->unk7C - 1);
-        } else {
-            unsigned bit;
-            if (ext->unk88 == 0)
-                ext->unk84 = 3;
+        if (self->unk7C == 0) {
+            if (self->ext.main_55.unk88 == 0)
+                self->ext.main_55.unk84 = 3;
             for (bit = 0; bit < 8; bit++) {
-                if ((ext->unk88 >> bit) & 1) {
-                    ext->unk88 &= ~(1U << bit);
+                if ((self->ext.main_55.unk88 >> bit) & 1) {
+                    self->ext.main_55.unk88 &= ~(1 << bit);
                     self->unk7C = 30;
                     break;
                 }
             }
+        } else {
+            self->unk7C = (s16)((u16)self->unk7C - 1);
         }
         break;
     case 3:
-        ext->unk84 = 0;
+        self->ext.main_55.unk84 = 0;
         self->unk5 = 4;
         self->unk6 = 0;
         self->unk7 = 0;
         break;
     }
     animate_object(ANIMATED_OBJECT(self));
-    self->y_speed = 0;
     self->x_speed = (s32)background_objects[(s8)self->bg_offset].unk47 * FIXED(1);
+    self->y_speed = 0;
     move_object(MOVING_OBJECT(self));
     if (self->x_pos.i.hi >= 0x1E16) {
         self->unk5 = 6;
@@ -153,19 +155,19 @@ void func_8006ED44(struct MainObj* self)
         self->x_speed = FIXED(8);
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006ED44);
 #endif
 
 // jet_stingray_flyby_enter_aimed
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EF28);
+#else
 void func_8006EF28(struct MainObj* self)
 {
     s16 dx;
-    s32 dy;
+    s16 dy;
 
     if (self->unk6 == 0) {
-        self->unk6 = 1;
+        self->unk6++;
         self->unk7C = 0x5A;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -173,8 +175,8 @@ void func_8006EF28(struct MainObj* self)
     self->x_speed = (s32)background_objects[self->bg_offset].unk47 * FIXED(1);
     move_object(MOVING_OBJECT(self));
     dx = (u16)g_Player.x_pos.i.hi - (u16)self->x_pos.i.hi;
-    dy = (s16)((u16)g_Player.y_pos.i.hi - (u16)self->y_pos.i.hi);
-    if (dx < 0x50 && (dy < 0 ? -dy : dy) < 0x20 && (get_random() & 0xF) < 3) {
+    dy = g_Player.y_pos.i.hi - self->y_pos.i.hi;
+    if (dx < 0x50 && (dy < 0 ? -dy : dy) < 0x20 && (u32)(get_random() & 0xF) < 3) {
         self->unk5 = 3;
         self->unk6 = 0;
     }
@@ -191,8 +193,6 @@ void func_8006EF28(struct MainObj* self)
         self->unk6 = 0;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EF28);
 #endif
 
 void jet_stingray_flyby_enter(struct MainObj* self)

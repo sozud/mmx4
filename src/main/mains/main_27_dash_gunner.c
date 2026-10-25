@@ -50,9 +50,6 @@ extern void (*dash_gunner_turn_funcs[])(struct MainObj*);
 extern void (*dash_gunner_shoot_funcs[])(struct MainObj*);
 extern void (*dash_gunner_dash_funcs[])(struct MainObj*);
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-extern union AnimationStep* dash_gunner_animations[12];
-extern struct Unk_unk68 dash_gunner_boxes[10];
 extern struct Unk_unk68* D_8013B828;
 extern struct Unk_unk68* D_8013B82C;
 extern struct Unk_unk68* D_8013B830;
@@ -60,6 +57,9 @@ extern struct Unk_unk68* D_8013B834;
 extern void (*dash_gunner_step_funcs[])(struct MainObj*);
 extern struct Unk_unk68 D_80106FF4[];
 extern u8 dash_gunner_debris[4];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+extern union AnimationStep* dash_gunner_animations[12];
+extern struct Unk_unk68 dash_gunner_boxes[10];
 #endif
 
 void dash_gunner_update(struct MainObj* self)
@@ -192,12 +192,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80058740);
 #endif
 
 // dash_gunner_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80058AC8);
+#else
 void func_80058AC8(struct MainObj* arg0)
 {
-    struct Main27Ext* ext = &arg0->ext.main_27;
-    s32 facing_player;
-
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     dash_gunner_step_funcs[arg0->unk5](arg0);
@@ -211,17 +210,18 @@ void func_80058AC8(struct MainObj* arg0)
     }
     if (arg0->unk5 == 3)
         return;
-    ext->saved_unk5 = arg0->unk5;
-    ext->unk84 = g_Player.x_pos.val;
+    arg0->ext.main_27.unk84 = g_Player.x_pos.val;
+    arg0->ext.main_27.saved_unk5 = arg0->unk5;
     if (arg0->state != 2) {
-        arg0->attack_box = (const u8*)(ext->unk8B != 0 ? D_8013B82C : D_8013B828);
+        if (arg0->ext.main_27.unk8B == 0)
+            arg0->attack_box = (const u8*)D_8013B828;
+        else
+            arg0->attack_box = (const u8*)D_8013B82C;
         func_8002D9BC(arg0);
         arg0->attack_box = (const u8*)D_8013B834;
         func_8002D9BC(arg0);
     }
-    facing_player = arg0->unk15 == 0 ? g_Player.x_pos.i.hi < arg0->x_pos.i.hi
-                                     : arg0->x_pos.i.hi < g_Player.x_pos.i.hi;
-    if (ext->unk8B == 0 && facing_player) {
+    if (arg0->ext.main_27.unk8B == 0 && (arg0->unk15 == 0 ? arg0->x_pos.i.hi > g_Player.x_pos.i.hi : arg0->x_pos.i.hi < g_Player.x_pos.i.hi)) {
         arg0->collision_data = (const u16*)D_801060F0;
         arg0->hurt_box = (const u8*)D_8013B828;
         func_8002DD04(arg0);
@@ -242,15 +242,13 @@ void func_80058AC8(struct MainObj* arg0)
     }
     if (arg0->state == 2)
         return;
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x60, 0x60) != 0) {
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x60, 0x60) == 0) {
+        update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
+    } else {
         STOP_SOUND(2, 0x51, 0x5);
         arg0->state = 3;
-        return;
     }
-    update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80058AC8);
 #endif
 
 void dash_gunner_explode(struct MainObj* self)
@@ -533,14 +531,13 @@ void func_80059590(struct MainObj* self)
 }
 
 // dash_gunner_hop
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80059640);
+#else
 void func_80059640(struct MainObj* arg0)
 {
-    struct Main27Ext* ext = &arg0->ext.main_27;
-    s32 dy;
-    s32 dx;
 
-    if (--ext->unk8C == 0 && (arg0->unk15 == 0 ? g_Player.x_pos.i.hi < arg0->x_pos.i.hi : arg0->x_pos.i.hi < g_Player.x_pos.i.hi)) {
+    if (--arg0->ext.main_27.unk8C == 0 && (arg0->unk15 == 0 ? g_Player.x_pos.i.hi < arg0->x_pos.i.hi : g_Player.x_pos.i.hi > arg0->x_pos.i.hi)) {
         set_animation(arg0, 3);
         arg0->x_speed = 0;
         STOP_SOUND(2, 0x51, 0x5);
@@ -548,9 +545,9 @@ void func_80059640(struct MainObj* arg0)
         arg0->unk6 = 0;
         return;
     }
-    if (--ext->unk82 == 0) {
-        ext->unk82 = 0x1E;
-        if ((get_random() & 7) < 5) {
+    if (--arg0->ext.main_27.unk82 == 0) {
+        arg0->ext.main_27.unk82 = 0x1E;
+        if ((u32)(get_random() & 7) < 5) {
             arg0->unk7C = 0xA;
             arg0->x_speed = 0;
             arg0->unk5 = 7;
@@ -558,27 +555,24 @@ void func_80059640(struct MainObj* arg0)
             return;
         }
     }
-    if (ext->unk89 != 0)
-        ext->unk89--;
+    if (arg0->ext.main_27.unk89 != 0)
+        arg0->ext.main_27.unk89--;
     animate_object(ANIMATED_OBJECT(arg0));
-    if (ext->unk88 == 0) {
-        dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
-        if (dy < 0)
-            dy = -dy;
-        if (dy < 0x31) {
-            dx = arg0->unk15 == 0 ? ext->unk84 - g_Player.x_pos.val
-                                  : g_Player.x_pos.val - ext->unk84;
-            if (dx > 0x3FFFF) {
-                ext->unk88 = 1;
+    if (arg0->ext.main_27.unk88 == 0) {
+        if ((g_Player.y_pos.i.hi - arg0->y_pos.i.hi >= 0 ? g_Player.y_pos.i.hi - arg0->y_pos.i.hi : arg0->y_pos.i.hi - g_Player.y_pos.i.hi) < 0x31) {
+            if (arg0->unk15 == 0) {
+                if (arg0->ext.main_27.unk84 - g_Player.x_pos.val > 0x3FFFF) {
+                    arg0->ext.main_27.unk88 = 1;
+                    set_animation(arg0, 7);
+                }
+            } else if (g_Player.x_pos.val - arg0->ext.main_27.unk84 > 0x3FFFF) {
+                arg0->ext.main_27.unk88 = 1;
                 set_animation(arg0, 7);
             }
         }
     } else {
-        dx = g_Player.x_pos.val - ext->unk84;
-        if (dx < 0)
-            dx = ext->unk84 - g_Player.x_pos.val;
-        if (dx <= 0x3FFFF) {
-            ext->unk88 = 0;
+        if ((g_Player.x_pos.val - arg0->ext.main_27.unk84 >= 0 ? g_Player.x_pos.val - arg0->ext.main_27.unk84 : arg0->ext.main_27.unk84 - g_Player.x_pos.val) <= 0x3FFFF) {
+            arg0->ext.main_27.unk88 = 0;
             set_animation(arg0, 1);
         }
     }
@@ -590,7 +584,7 @@ void func_80059640(struct MainObj* arg0)
         arg0->unk6 = 0;
         return;
     }
-    if (ext->unk89 == 0 && (arg0->unk15 == 0 ? arg0->x_pos.i.hi < g_Player.x_pos.i.hi : g_Player.x_pos.i.hi < arg0->x_pos.i.hi)) {
+    if (arg0->ext.main_27.unk89 == 0 && (arg0->unk15 == 0 ? g_Player.x_pos.i.hi > arg0->x_pos.i.hi : g_Player.x_pos.i.hi < arg0->x_pos.i.hi)) {
         arg0->unk7C = 0x14;
         arg0->x_accel = -0x2000;
         arg0->y_speed = 0;
@@ -598,14 +592,18 @@ void func_80059640(struct MainObj* arg0)
         arg0->unk6 = 0;
         return;
     }
-    if (ext->unk88 == 0)
-        arg0->x_speed = arg0->unk15 != 0 ? 0x20000 : -0x20000;
-    else
-        arg0->x_speed = arg0->unk15 != 0 ? 0x40000 : -0x40000;
+    if (arg0->ext.main_27.unk88 == 0) {
+        if (arg0->unk15 != 0)
+            arg0->x_speed = 0x20000;
+        else
+            arg0->x_speed = -0x20000;
+    } else if (arg0->unk15 != 0) {
+        arg0->x_speed = 0x40000;
+    } else {
+        arg0->x_speed = -0x40000;
+    }
     move_object(MOVING_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80059640);
 #endif
 
 void dash_gunner_dash(struct MainObj* self)

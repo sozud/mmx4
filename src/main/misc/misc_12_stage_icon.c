@@ -24,31 +24,38 @@ struct Misc12Position {
     s16 y;
 };
 
+extern union AnimationStep* stage_icon_animations[2];
+extern struct Misc12Position stage_icon_positions[8];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CA228(struct MiscObj* self);
 void func_800CA40C(struct MiscObj* self);
-extern union AnimationStep* stage_icon_animations[2];
-extern struct Misc12Position stage_icon_positions[8];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_12_stage_icon", func_800CA228);
+#else
 void func_800CA228(struct MiscObj* self)
 {
     s32 index;
 
     self->unk40 = OBJECT_STAGE_TEXTURE(0);
-    self->animation_table = (u32**)stage_icon_animations;
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0];
+    self->animation_table = (u32**)stage_icon_animations;
+#ifdef MMX4_PC
     index = self->unk2 & 0x7F;
     self->x_pos.val = index < 8 ? stage_icon_positions[index].x << 16 : 0;
     self->y_pos.val = index < 8 ? stage_icon_positions[index].y << 16 : 0;
+#else
+    self->x_pos.val = stage_icon_positions[self->unk2 & 0x7F].x << 16;
+    self->y_pos.val = stage_icon_positions[self->unk2 & 0x7F].y << 16;
+#endif
     self->bg_offset = 0;
     self->unk15 = 0;
     if (self->unk2 < 0) {
         index = self->unk2 & 0x7F;
-        self->unk42 = OBJECT_CLUT((index & 0xF) | (((index >> 4) | 0x1E0) << 6));
+        self->unk42 = OBJECT_CLUT((s8)(index % 16) | (((index / 16) | 0x1E0) << 6));
         self->unk16 = 0x12;
-        set_animation_frame(ANIMATED_OBJECT(self), 1, index);
+        set_animation_frame(ANIMATED_OBJECT(self), 1, self->unk2 & 0x7F);
         self->state = 2;
     } else {
         self->unk42 = OBJECT_CLUT(0x780A);
@@ -71,8 +78,6 @@ void func_800CA228(struct MiscObj* self)
     }
     self->unk7 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_12_stage_icon", func_800CA228);
 #endif
 
 void stage_icon_highlight(struct MiscObj* self)

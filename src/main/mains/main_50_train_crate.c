@@ -34,15 +34,17 @@ ret_s8 func_8002DD04(struct MainObj* object);
 extern u8 D_800FFBDC[6];
 extern u8 train_crate_debris[6];
 extern void (*train_crate_step_funcs[2])();
+extern u8 train_crate_hurt_box[4];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80069748(struct MainObj* arg0);
 void func_800698D8(struct MainObj* arg0);
 extern struct Unk_unk68 D_80108504[];
-extern u8 train_crate_hurt_box[4];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_80069748);
+#else
 void func_80069748(struct MainObj* arg0)
 {
     s32 resource;
@@ -55,11 +57,12 @@ void func_80069748(struct MainObj* arg0)
     arg0->unk42 = OBJECT_STAGE_CLUT(0x28);
     resource = func_8002938C(0x28);
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->hurt_box = train_crate_hurt_box;
     arg0->animation_table = (const u8* const*)train_crate_animations;
-    arg0->unk18.val = arg0->x_pos.val;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
@@ -67,17 +70,17 @@ void func_80069748(struct MainObj* arg0)
     arg0->air_state = 0;
     arg0->attack_box = NULL;
     arg0->terrain_box = NULL;
-    arg0->bg_offset = g_Player.bg_offset;
     arg0->ext.main_50.unk84 = (u8)arg0->unk2 >> 4;
     arg0->unk2 &= 0xF;
-    arg0->collision_data = arg0->ext.main_50.unk84 == 8 ? D_80108584 : D_80108504;
+    if (arg0->ext.main_50.unk84 != 8)
+        arg0->collision_data = D_80108504;
+    else
+        arg0->collision_data = D_80108584;
     arg0->hp = 3;
     arg0->unk15 = 0;
     arg0->state = 1;
     arg0->unk5 = 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_80069748);
 #endif
 
 // train_crate_main

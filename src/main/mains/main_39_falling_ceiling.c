@@ -188,14 +188,15 @@ void falling_ceiling_drop_start(struct MainObj* self)
 }
 
 // falling_ceiling_drop_fall
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061B58);
+#else
 void func_80061B58(struct MainObj* self)
 {
-    struct Main39Ext* ext = &self->ext.main_39;
     s32 i;
-    if (--ext->unk94 == 0) {
+    if (--self->ext.main_39.unk94 == 0) {
         func_8001540C(2, SATURN_SOUND(0x59, 0x40), self);
-        ext->unk94 = 0x1E;
+        self->ext.main_39.unk94 = 0x1E;
     }
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -207,7 +208,7 @@ void func_80061B58(struct MainObj* self)
     if ((self->unk7E & 7) == 0 && (!(background_objects[0].unk34 & 0x10) || (((u8*)&background_objects[0].unk3E)[0] & 7) != 4))
         start_screen_shake_x(8, 4, 2);
     if ((self->unk7E & 0xF) == 0)
-        spawn_explosion_at(0, self->x_pos.i.hi, self->y_pos.i.hi + 0x10, 1);
+        ((void (*)(s32, s32, s32, s32))spawn_explosion_at)(0, self->x_pos.i.hi, self->y_pos.i.hi + 0x10, 1);
     if (--self->unk7C != 0)
         return;
     if (self->unk2 & 1) {
@@ -219,19 +220,20 @@ void func_80061B58(struct MainObj* self)
         if (item != NULL) {
             item->active = 0x41;
             item->id = 0xF;
-            item->unk2 = self->unk2 < 8 ? i : i + 2;
+            if (self->unk2 < 8)
+                item->unk2 = i;
+            else
+                item->unk2 = i + 2;
             item->bg_offset = self->bg_offset;
             item->x_pos.val = 0;
+            item->x_pos.u.hi = self->ext.main_39.unk80.h.unk80;
             item->y_pos.val = 0;
-            item->x_pos.u.hi = ext->unk80.h.unk80;
-            item->y_pos.u.hi = ext->unk84.h.unk86;
+            item->y_pos.u.hi = self->ext.main_39.unk84.h.unk86;
             item->state = 0;
         }
     }
     self->unk6 = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061B58);
 #endif
 
 void falling_ceiling_drop_land(struct MainObj* self)
