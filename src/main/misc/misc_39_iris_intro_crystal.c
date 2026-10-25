@@ -79,7 +79,9 @@ s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
 void func_800CF950(struct MiscObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_39_iris_intro_crystal", func_800CF950);
+#else
 void func_800CF950(struct MiscObj* self)
 {
     struct MiscObj* piece;
@@ -103,10 +105,14 @@ void func_800CF950(struct MiscObj* self)
         piece->unk2 = 8;
         switch (i) {
         case 0:
-        case 2:
             piece->unk16 = 0x21;
             break;
         case 1:
+            piece->unk16 = 0;
+            break;
+        case 2:
+            piece->unk16 = 0x21;
+            break;
         case 3:
             piece->unk16 = 0;
             break;
@@ -120,8 +126,8 @@ void func_800CF950(struct MiscObj* self)
         piece->animation_table = self->animation_table;
         piece->unk40 = self->unk40;
         piece->unk3C = self->unk3C;
-        piece->ext.unk.unk56.byte = 0x30;
         piece->unk42 = self->unk42 & 0x7FFF;
+        piece->ext.unk.unk56.byte = 0x30;
         set_animation(piece, i + 0x12);
         piece->unk5 = 0;
         piece->unk6 = 0;
@@ -129,8 +135,6 @@ void func_800CF950(struct MiscObj* self)
     self->ext.misc_39.timer = 0x88;
     self->unk5 = 4;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_39_iris_intro_crystal", func_800CF950);
 #endif
 
 void iris_intro_crystal_wait(struct MiscObj* self)

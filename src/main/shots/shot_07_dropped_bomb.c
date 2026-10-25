@@ -34,7 +34,6 @@ void dropped_bomb_update(struct ShotObj* self)
 void func_8009AD6C(struct ShotObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009AD6C(struct ShotObj* arg0)
 {
     arg0->y_vel.val = -0x10000;
@@ -43,8 +42,8 @@ void func_8009AD6C(struct ShotObj* arg0)
     arg0->unk54 = dropped_bomb_terrain_box;
     arg0->unk50.data = dropped_bomb_terrain_box;
     arg0->unk58.data = (const u8*)D_80105FF0;
-    arg0->unk60 = 5;
     arg0->on_screen = 1;
+    arg0->unk60 = 5;
     arg0->unk5C = 1;
     arg0->x_vel.val = 0;
     arg0->unk28 = 0;
@@ -52,9 +51,6 @@ void func_8009AD6C(struct ShotObj* arg0)
     arg0->unk42 &= 0x7FFF;
     set_animation(arg0, 2);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_07_dropped_bomb", func_8009AD6C);
-#endif
 
 void dropped_bomb_fall(struct ShotObj* arg0)
 {

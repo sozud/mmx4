@@ -187,7 +187,6 @@ void pod_spawner_wait(struct MainObj* self)
 }
 
 // pod_spawner_step_4
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005AA14(struct MainObj* self)
 {
     switch (self->unk6) {
@@ -204,9 +203,10 @@ void func_8005AA14(struct MainObj* self)
     case 2:
         if (self->animation_step.fields.relative_step == 0) {
             struct MainObj* controller = (struct MainObj*)SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.target;
-            if (controller != NULL) {
+#ifdef MMX4_PC
+            if (controller != NULL)
+#endif
                 controller->unk6 = 1;
-            }
             self->unk6 = 3;
         }
         break;
@@ -229,9 +229,6 @@ void func_8005AA14(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005AA14);
-#endif
 
 u8 pod_spawner_player_quadrant(struct MainObj* self)
 {
@@ -300,7 +297,6 @@ void pod_spawner_despawn(struct MainObj* self)
 }
 
 // pod_spawner_state_3
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005AD00(struct MainObj* self)
 {
     struct Main29Record* record;
@@ -308,15 +304,19 @@ void func_8005AD00(struct MainObj* self)
 
     switch (self->unk5) {
     case 0:
-        record = SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.record;
         target = (struct ObjectHeader*)SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.target;
+        record = SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.record;
         if (record != NULL && record->unk0 != 0 && record->unk1 == 0x10) {
             record->unk4 = 2;
         }
+#ifdef MMX4_PC
         if (target != NULL) {
+#endif
             target->state = 3;
             target->unk5 = 0;
+#ifdef MMX4_PC
         }
+#endif
         self->unk5 = 1;
         self->unk7C = 0x3C;
         self->x_speed = 0;
@@ -330,7 +330,9 @@ void func_8005AD00(struct MainObj* self)
     case 1:
         if (--self->unk7C == 0) {
             target = (struct ObjectHeader*)SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.target;
+#ifdef MMX4_PC
             if (target != NULL)
+#endif
                 target->unk5 = 2;
             self->unk5 = 2;
         } else {
@@ -350,9 +352,6 @@ void func_8005AD00(struct MainObj* self)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005AD00);
-#endif
 
 void pod_spawner_copy_init(struct MainObj* self)
 {
@@ -473,27 +472,30 @@ INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005AF5C);
 #endif
 
 // pod_spawner_copy_state_2
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B24C);
+#else
 void func_8005B24C(struct MainObj* self)
 {
-    struct Main29Ext* ext = &self->ext.main_29;
     u32 i;
 
-    ext->unk94 = 0;
+    self->ext.main_29.unk94 = 0;
     for (i = 0; i < 4; i++) {
-        struct MainObj* child = ext->slots.children[i];
-        if (child != NULL && child->active != 0 && child->id == 0x1C)
-            child->state = 3;
-        ext->slots.children[i] = NULL;
+        struct MainObj* child = self->ext.main_29.slots.children[i];
+        if (child != NULL) {
+            if (child->active != 0 && child->id == 0x1C)
+                child->state = 3;
+            self->ext.main_29.slots.children[i] = NULL;
+        }
     }
     ZeroObjectState(OBJECT_HEADER(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B24C);
 #endif
 
 // pod_spawner_copy_state_3
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B2C8);
+#else
 void func_8005B2C8(struct MainObj* self)
 {
     struct MainObj* source = self->ext.main_29.source;
@@ -531,8 +533,6 @@ void func_8005B2C8(struct MainObj* self)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B2C8);
 #endif
 
 union AnimationStep pod_spawner_anim_0[] = {

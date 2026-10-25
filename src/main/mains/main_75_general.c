@@ -449,40 +449,41 @@ void general_fly_start(struct MainObj* self)
 }
 
 // general_fly_cross
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800905D4);
+#else
 void func_800905D4(struct MainObj* self)
 {
-    s32 dx;
-    s32 turned;
+    u8 turned;
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    if (self->ext.main_75.random_index == 0 && self->y_pos.i.hi + 0x30 < g_Player.y_pos.i.hi) {
-        dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
-        if (dx < 0)
-            dx = -dx;
-        if (dx < 8) {
-            self->unk5 = 6;
-            self->unk6 = 0;
-            self->unk7 = 0;
-            self->unk7C = 0x1E;
-            return;
-        }
-    }
-    if (!(self->collision_flags & 3))
-        return;
-    turned = self->unk15 != 0 ? self->collision_flags & 1 : self->collision_flags & 2;
-    if (turned) {
-        self->unk5 = 2;
+    turned = 0;
+    if (self->ext.main_75.random_index == 0 && self->y_pos.i.hi + 0x30 < g_Player.y_pos.i.hi
+        && (self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0 ? self->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - self->x_pos.i.hi) < 8) {
+        self->unk5 = 6;
         self->unk6 = 0;
         self->unk7 = 0;
-        self->x_speed = 0;
-        self->y_speed = 0;
-        self->unk15 ^= PLAYER_FACING_RIGHT;
+        self->unk7C = 0x1E;
+        return;
+    }
+    if (self->collision_flags & 3) {
+        if (self->unk15 != 0) {
+            if (self->collision_flags & 1)
+                turned = 1;
+        } else if (self->collision_flags & 2) {
+            turned = 1;
+        }
+        if (turned) {
+            self->unk5 = 2;
+            self->unk6 = 0;
+            self->unk7 = 0;
+            self->unk15 ^= PLAYER_FACING_RIGHT;
+            self->x_speed = 0;
+            self->y_speed = 0;
+        }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800905D4);
 #endif
 
 void general_fly(struct MainObj* self)
@@ -994,7 +995,6 @@ void general_death_wait_explosion(struct MainObj* self)
 }
 
 // general_death_finish
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800917AC(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -1016,9 +1016,6 @@ void func_800917AC(struct MainObj* self)
         }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800917AC);
-#endif
 
 // general_death
 void func_80091898(struct MainObj* self)

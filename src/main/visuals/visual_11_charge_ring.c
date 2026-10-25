@@ -32,17 +32,20 @@ void charge_ring_init(struct VisualObj* arg0)
 void func_800B1864(struct VisualObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_11_charge_ring", func_800B1864);
+#else
 void func_800B1864(struct VisualObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk50;
-    s32 variant = parent->ext.main_14.visual_variant;
+    s32 variant;
 
     if (parent->active != 0)
         parent->id = 0xE;
     else
         self->state++;
 
+    variant = parent->ext.main_14.visual_variant;
     if (variant == 0xFF || parent->state == 2) {
         self->state++;
         return;
@@ -54,16 +57,16 @@ void func_800B1864(struct VisualObj* self)
     animate_object(ANIMATED_OBJECT(self));
     self->x_pos.u.hi = parent->x_pos.u.hi;
     self->y_pos.u.hi = parent->y_pos.u.hi;
-    if (parent->unk5 == 1)
-        self->y_pos.u.hi -= 5;
-    else if (parent->unk5 != 0) {
-        self->x_pos.u.hi -= 2;
-        self->y_pos.u.hi -= 10;
+    if (parent->unk5 != 0) {
+        if (parent->unk5 == 1) {
+            self->y_pos.u.hi -= 5;
+        } else {
+            self->x_pos.u.hi -= 2;
+            self->y_pos.u.hi -= 10;
+        }
     }
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_11_charge_ring", func_800B1864);
 #endif
 
 void charge_ring_despawn(struct VisualObj* arg0)

@@ -172,16 +172,15 @@ void drone_pod_intro_fill_health(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern void (*drone_pod_step_funcs[4])(struct MainObj*);
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80088EA4(struct MainObj* self);
 void func_80089588(struct MainObj* self);
-extern void (*drone_pod_step_funcs[4])(struct MainObj*);
 extern u8 D_801049B8[20];
 extern s16 D_801049CC[12];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80088EA4(struct MainObj* self)
 {
     s8 old_unk5C = self->hp;
@@ -202,9 +201,6 @@ void func_80088EA4(struct MainObj* self)
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", func_80088EA4);
-#endif
 
 void drone_pod_death(struct MainObj* self)
 {

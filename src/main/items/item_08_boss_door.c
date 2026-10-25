@@ -180,11 +180,12 @@ s8 func_800C1E7C(struct ItemObj* arg0);
 void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", func_800C1C88);
+#else
 void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
 {
-    static const s16 offsets[7] = { 0, 0x30, 0xA0, 0, 0x50, 0xB0, 0x5A0 };
     (void)arg2;
 
     if (arg0->animation_step.fields.event < 2) {
@@ -195,16 +196,34 @@ void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
         }
         return;
     }
-
     arg1->unk10 = 0;
     arg1->unk12 = 0;
-    if ((u8)arg0->unk2 < COUNT(offsets))
-        background_objects[0].unk24 = arg0->x_pos.i.hi + offsets[(u8)arg0->unk2];
+    switch (arg0->unk2) {
+    case 0:
+        background_objects[0].unk24 = arg0->x_pos.i.hi;
+        break;
+    case 1:
+        background_objects[0].unk24 = arg0->x_pos.i.hi + 0x30;
+        break;
+    case 2:
+        background_objects[0].unk24 = arg0->x_pos.i.hi + 0xA0;
+        break;
+    case 3:
+        background_objects[0].unk24 = arg0->x_pos.i.hi;
+        break;
+    case 4:
+        background_objects[0].unk24 = arg0->x_pos.i.hi + 0x50;
+        break;
+    case 5:
+        background_objects[0].unk24 = arg0->x_pos.i.hi + 0xB0;
+        break;
+    case 6:
+        background_objects[0].unk24 = arg0->x_pos.i.hi + 0x5A0;
+        break;
+    }
     background_objects[0].unk26 = arg0->x_pos.i.hi;
     arg0->unk5 = 3;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", func_800C1C88);
 #endif
 
 void boss_door_walk_through(struct ItemObj* arg0, struct EngineObj* arg1,

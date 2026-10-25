@@ -251,22 +251,20 @@ void magma_dragoon_spawn_flames(struct AnimatedObj* self, u32 arg1)
 }
 
 // cyber_peacock_is_player_near_random
-#ifdef MMX4_SATURN
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD0C);
+#else
 #define DRAGOON_NEAR_X 64
 #define DRAGOON_NEAR_CHANCE 96
 
 s32 func_8007DD0C(struct MainObj* self)
 {
-    s32 dx = g_Player.x_pos.i.hi - self->x_pos.i.hi;
-
-    if (dx < 0)
-        dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
-    if (dx > DRAGOON_NEAR_X)
+    if ((g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0 ? g_Player.x_pos.i.hi - self->x_pos.i.hi : self->x_pos.i.hi - g_Player.x_pos.i.hi) > DRAGOON_NEAR_X)
+        return 0;
+    if ((g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0 ? g_Player.x_pos.i.hi - self->x_pos.i.hi : self->x_pos.i.hi - g_Player.x_pos.i.hi) > 0x70)
         return 0;
     return (s32)get_random() <= DRAGOON_NEAR_CHANCE;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD0C);
 #endif
 
 // magma_dragoon_init
@@ -275,6 +273,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD0C);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern struct Unk_unk68 D_80107D7C[];
+extern void (*magma_dragoon_step_funcs[14])(struct MainObj*);
+extern struct Unk_unk68 magma_dragoon_dive_kick_attack_box;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007DD98(struct MainObj* arg0);
 void func_8007F174(struct MainObj* arg0);
@@ -286,9 +287,6 @@ void func_8007F780(struct MainObj* arg0);
 void func_8007FAA4(struct MainObj* arg0);
 void func_8007FFFC(struct MainObj* arg0);
 extern void* magma_dragoon_animations[38];
-extern struct Unk_unk68 D_80107D7C[];
-extern void (*magma_dragoon_step_funcs[14])(struct MainObj*);
-extern struct Unk_unk68 magma_dragoon_dive_kick_attack_box;
 void magma_dragoon_face_player(struct MainObj* arg0);
 static struct ShotObj* main_65_spawn_shot(struct MainObj* arg0, s8 subtype)
 {
@@ -534,7 +532,6 @@ void magma_dragoon_face_player(struct MainObj* self)
 }
 
 // magma_dragoon_think
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007E4C8(struct MainObj* arg0)
 {
     u8 roll;
@@ -542,7 +539,7 @@ void func_8007E4C8(struct MainObj* arg0)
     magma_dragoon_face_player(arg0);
     roll = get_random() & 0xF;
     arg0->ext.main_65.attack_repeat = 0;
-    if (arg0->hp >= 0x19) {
+    if (arg0->hp > 0x18) {
         if (roll < 6)
             arg0->ext.main_65.attack = 0;
         else if (roll < 10)
@@ -566,11 +563,13 @@ void func_8007E4C8(struct MainObj* arg0)
         arg0->unk5 = 4;
         break;
     case 2:
-    case 5:
         arg0->unk5 = 5;
         break;
     case 3:
         arg0->unk5 = 8;
+        break;
+    case 5:
+        arg0->unk5 = 5;
         break;
     case 6:
         arg0->unk5 = 0xA;
@@ -579,9 +578,6 @@ void func_8007E4C8(struct MainObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E4C8);
-#endif
 
 void magma_dragoon_dive_kick_jump(struct MainObj* self)
 {
@@ -614,12 +610,20 @@ void magma_dragoon_dive_kick_rise(struct MainObj* self)
 }
 
 // magma_dragoon_dive_kick_dive
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E6F8);
+#else
 void func_8007E6F8(struct MainObj* arg0)
 {
     s16 x;
 
-    arg0->attack_box = arg0->animation_step.fields.event != 0 ? &magma_dragoon_dive_kick_attack_box : &magma_dragoon_attack_box;
+    if (arg0->animation_step.fields.event != 0)
+
+        arg0->attack_box = &magma_dragoon_dive_kick_attack_box;
+
+    else
+
+        arg0->attack_box = &magma_dragoon_attack_box;
     if (arg0->collision_flags & 8) {
         arg0->unk6++;
         set_animation(arg0, 6);
@@ -630,18 +634,21 @@ void func_8007E6F8(struct MainObj* arg0)
     }
     if (arg0->animation_step.fields.event == 2) {
         x = arg0->x_pos.i.hi;
-        if (x < g_Player.x_pos.i.hi)
-            arg0->unk15 = x < magma_dragoon_arena_right - 0x50 ? PLAYER_FACING_RIGHT : 0;
+        if (g_Player.x_pos.i.hi > x)
+            if (x < magma_dragoon_arena_right - 0x50)
+                arg0->unk15 = PLAYER_FACING_RIGHT;
+            else
+                arg0->unk15 = 0;
+        else if (x < magma_dragoon_arena_left + 0x50)
+            arg0->unk15 = PLAYER_FACING_RIGHT;
         else
-            arg0->unk15 = x < magma_dragoon_arena_left + 0x50 ? PLAYER_FACING_RIGHT : 0;
+            arg0->unk15 = 0;
         arg0->x_speed = arg0->unk15 != 0 ? 0x80000 : -0x80000;
     }
     if (arg0->animation_step.fields.event == 1)
         move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E6F8);
 #endif
 
 // magma_dragoon_dive_kick_land
@@ -681,15 +688,23 @@ void magma_dragoon_flame_burst_start(struct MainObj* self)
 }
 
 // magma_dragoon_flame_burst_fire
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007E95C(struct MainObj* arg0)
 {
     struct ShotObj* shot;
 
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event != 0) {
-        shot = main_65_spawn_shot(arg0, 0);
-        func_8001540C(2, (arg0->animation_step.fields.event & 1) ? 6 : 7, shot);
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x29;
+            shot->unk2 = 0;
+            shot->unk7C = (struct WeaponObj*)arg0;
+        }
+        if (arg0->animation_step.fields.event & 1)
+            func_8001540C(2, 6, shot);
+        else
+            func_8001540C(2, 7, shot);
         arg0->animation_step.fields.event = 0;
     }
     if (arg0->animation_step.fields.relative_step != 0)
@@ -704,9 +719,6 @@ void func_8007E95C(struct MainObj* arg0)
         set_animation(arg0, 0);
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E95C);
-#endif
 
 void magma_dragoon_flame_burst(struct MainObj* self)
 {
@@ -1180,7 +1192,6 @@ void magma_dragoon_rising_punch(struct MainObj* self)
 }
 
 // magma_dragoon_stagger_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007FAA4(struct MainObj* arg0)
 {
     struct MiscObj* misc;
@@ -1188,8 +1199,8 @@ void func_8007FAA4(struct MainObj* arg0)
     set_animation(arg0, 0xD);
     arg0->attack_box = &magma_dragoon_attack_box;
     arg0->hurt_box = &magma_dragoon_hurt_box;
-    arg0->y_speed = 0x40000;
     arg0->contact_damage = 4;
+    arg0->y_speed = 0x40000;
     arg0->gravity = 0x1C00;
     arg0->x_speed = 0;
     arg0->x_accel = 0;
@@ -1203,9 +1214,6 @@ void func_8007FAA4(struct MainObj* arg0)
     }
     arg0->unk6++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FAA4);
-#endif
 
 void magma_dragoon_stagger_rise(struct MainObj* self)
 {
@@ -1268,7 +1276,9 @@ void magma_dragoon_hold(struct MainObj* self)
 }
 
 // magma_dragoon_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FD24);
+#else
 void func_8007FD24(struct MainObj* arg0)
 {
     s32 hit = func_8002DD04(arg0);
@@ -1294,9 +1304,8 @@ void func_8007FD24(struct MainObj* arg0)
         }
     }
 
-    flash = arg0->ext.main_65.flash_timer;
-    if (flash != 0) {
-        arg0->ext.main_65.flash_timer--;
+    if (arg0->ext.main_65.flash_timer != 0) {
+        flash = arg0->ext.main_65.flash_timer--;
         if ((flash & 2) != 0)
             arg0->unk42 |= 0x8000;
         else
@@ -1307,12 +1316,10 @@ void func_8007FD24(struct MainObj* arg0)
         }
     }
 
-    magma_dragoon_step_funcs[(u8)arg0->unk5](arg0);
+    magma_dragoon_step_funcs[arg0->unk5](arg0);
     CollisionRelated((struct PlayerObj*)arg0);
     func_8002D9BC(arg0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FD24);
 #endif
 
 void magma_dragoon_death_start(struct MainObj* self)

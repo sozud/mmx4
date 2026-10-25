@@ -550,27 +550,25 @@ void storm_owl_intro_fill_health(struct MainObj* self)
 }
 
 // storm_owl_intro_takeoff
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075C6C);
+#else
 void func_80075C6C(struct MainObj* arg0)
 {
     u8 index;
-    const Main60Waypoint* waypoint;
 
     animate_object(ANIMATED_OBJECT(arg0));
     set_animation(arg0, 1);
-    index = (engine_obj.stage != 7) * 2;
+    index = engine_obj.stage == 7 ? 0 : 2;
     arg0->ext.main_60.corner = index;
-    waypoint = &storm_owl_waypoints[index];
     set_velocity_from_angle(MOVING_OBJECT(arg0),
-        angle_to_point(OBJECT_HEADER(arg0), (waypoint->x + background_objects[0].x_pos.i.hi) << 16,
-            (waypoint->y + background_objects[0].y_pos.i.hi) << 16)
+        angle_to_point(OBJECT_HEADER(arg0), (storm_owl_waypoints[index].x + background_objects[0].x_pos.i.hi) << 16,
+            (storm_owl_waypoints[index].y + background_objects[0].y_pos.i.hi) << 16)
             & 0xFF);
     arg0->x_speed <<= 1;
     arg0->y_speed <<= 1;
     arg0->unk6++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075C6C);
 #endif
 
 void storm_owl_intro_rise(struct MainObj* self)
@@ -654,29 +652,33 @@ void storm_owl_patrol_wait(struct MainObj* self)
 }
 
 // storm_owl_patrol_fall
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_800760C4);
+#else
 void func_800760C4(struct MainObj* arg0)
 {
-    s16 distance;
-
     animate_object(ANIMATED_OBJECT(arg0));
     move_with_gravity(ANIMATED_OBJECT(arg0));
     arg0->y_speed += 0x400;
-    distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-    if ((distance < 0 ? -distance : distance) > 0x30)
-        return;
-    if ((get_random() & 7) < 5) {
-        arg0->unk5 = g_Player.y_pos.i.hi < arg0->y_pos.i.hi ? 6 : 4;
-        arg0->unk6 = 0;
-        arg0->x_speed = 0;
-        arg0->y_speed = 0;
-    } else {
-        arg0->ext.main_60.corner ^= 2;
-        arg0->unk6++;
+    if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi < 0 ? arg0->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - arg0->x_pos.i.hi) <= 0x30) {
+        if ((u8)(get_random() & 7) < 5) {
+            if (g_Player.y_pos.i.hi >= arg0->y_pos.i.hi) {
+                arg0->unk5 = 4;
+                arg0->unk6 = 0;
+                arg0->x_speed = 0;
+                arg0->y_speed = 0;
+            } else {
+                arg0->unk5 = 6;
+                arg0->unk6 = 0;
+                arg0->x_speed = 0;
+                arg0->y_speed = 0;
+            }
+        } else {
+            arg0->ext.main_60.corner ^= 2;
+            arg0->unk6++;
+        }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_800760C4);
 #endif
 
 void storm_owl_patrol_return(struct MainObj* self)
@@ -724,41 +726,55 @@ void storm_owl_grab_dive(struct MainObj* self)
 }
 
 // storm_owl_grab_swoop
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076364);
+#else
 void func_80076364(struct MainObj* arg0)
 {
-    s16 distance;
-
     animate_object(ANIMATED_OBJECT(arg0));
     move_object(MOVING_OBJECT(arg0));
     if (arg0->y_pos.i.hi + 0x14 >= g_Player.y_pos.i.hi) {
-        arg0->x_speed = arg0->unk15 != 0 ? 0x20000 : -0x20000;
+        if (arg0->unk15 != 0)
+            arg0->x_speed = 0x20000;
+        else
+            arg0->x_speed = -0x20000;
         arg0->y_speed = -0x10000;
         set_animation(arg0, 1);
-        main_60_release(arg0);
+        g_Player.stun_timer = 0;
+        arg0->contact_damage = 6;
+        arg0->terrain_box = &storm_owl_slam_terrain_box;
+        arg0->attack_box = &storm_owl_attack_box;
+        arg0->unk62 = 0;
+        arg0->unk16 = VISUAL_SATURN_LAYER(5);
         arg0->unk6 = 5;
         return;
     }
     if (g_Player.stun_timer != 0) {
         func_8001540C(2, SATURN_SOUND(0xBA, 0xB7), arg0);
-        distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-        if ((distance < 0 ? -distance : distance) < 8)
+        if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0 ? g_Player.x_pos.i.hi - arg0->x_pos.i.hi : arg0->x_pos.i.hi - g_Player.x_pos.i.hi) >= 8) {
+            if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi)
+                arg0->x_speed = 0x10000;
+            else
+                arg0->x_speed = -0x10000;
+        } else {
             arg0->x_speed = 0;
-        else
-            arg0->x_speed = arg0->x_pos.i.hi < g_Player.x_pos.i.hi ? 0x10000 : -0x10000;
+        }
         arg0->y_speed = 0;
         arg0->unk6++;
         return;
     }
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 1) {
         storm_owl_choose_corner(arg0);
-        main_60_release(arg0);
+        g_Player.stun_timer = 0;
+        arg0->contact_damage = 6;
+        arg0->terrain_box = &storm_owl_slam_terrain_box;
+        arg0->attack_box = &storm_owl_attack_box;
+        arg0->unk62 = 0;
+        arg0->unk16 = VISUAL_SATURN_LAYER(5);
         arg0->unk5 = 5;
         arg0->unk6 = 0;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076364);
 #endif
 
 // storm_owl_grab_rise

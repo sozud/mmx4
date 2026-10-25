@@ -292,38 +292,50 @@ extern struct Unk_unk68 ground_hunter_charged_hit_box[];
 extern struct Unk_unk68 ground_hunter_charged_shot_box[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", func_80095E3C);
+#else
 void func_80095E3C(struct WeaponObj* self)
 {
+    struct PlayerObj* player;
+
     self->on_screen = 1;
     self->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[6];
     self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[14];
     self->animation_table = D_8011C0C8;
     self->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     self->unk42 = WEAPON_PALETTE_1;
-    self->x_vel.val = self->unk28.val = self->y_vel.val = self->unk2C = 0;
+    player = &g_Player;
     self->unk15 = g_Player.unk15;
+    self->x_vel.val = 0;
+    self->unk28.val = 0;
+    self->y_vel.val = 0;
+    self->unk2C = 0;
     set_animation(self, self->unk2 + 3);
     self->state++;
     if (self->unk2 == 0) {
         self->unk16 = 0;
         self->unk50 = ground_hunter_charged_hit_box;
         self->unk64 = 1;
-        buster_shot_place_at_muzzle((struct VisualObj*)self, &g_Player, self->id);
-        self->x_vel.val = self->unk15 ? FIXED(6) : FIXED(-6);
+        buster_shot_place_at_muzzle((struct VisualObj*)self, player, self->id);
+        if (self->unk15)
+            self->x_vel.val = FIXED(6);
+        else
+            self->x_vel.val = FIXED(-6);
         func_8001540C(1, 9, self);
         self->unk5 = 0;
     } else {
         self->unk50 = ground_hunter_charged_shot_box;
         self->unk16 = 1;
         self->unk64 = 0;
-        self->y_vel.val = self->unk2 == 1 ? FIXED(8) : FIXED(-8);
+        if (self->unk2 == 1)
+            self->y_vel.val = FIXED(8);
+        else
+            self->y_vel.val = FIXED(-8);
         self->unk5 = 2;
     }
     update_on_screen(BASE_OBJECT(self), 0x2C, 0x18);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", func_80095E3C);
 #endif
 
 void ground_hunter_charged_main(struct WeaponObj* arg0)

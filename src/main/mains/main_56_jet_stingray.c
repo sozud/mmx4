@@ -459,44 +459,46 @@ void jet_stingray_swim_start(struct MainObj* self)
 
 // jet_stingray_swim_move
 
+extern u8 jet_stingray_splash_x_offsets[4];
+extern u8 jet_stingray_splash_y_offsets[4];
+extern void (*jet_stingray_ambush_funcs[])(struct MainObj*);
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80070514(struct MainObj* arg0);
 void func_80070A38(struct MainObj* arg0);
 void func_800710D4(struct MainObj* arg0);
 void func_80071740(struct MainObj* arg0);
 extern s16 jet_stingray_vortex_debris_offsets[24];
-extern u8 jet_stingray_splash_x_offsets[4];
-extern u8 jet_stingray_splash_y_offsets[4];
-extern void (*jet_stingray_ambush_funcs[])(struct MainObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80070514);
+#else
 void func_80070514(struct MainObj* arg0)
 {
-    struct BackgroundObj* background = &background_objects[arg0->bg_offset];
     s16 target_x;
     s16 target_y;
+    u8 angle;
 
-    if (arg0->x_pos.val < background->x_pos.val + 0xA00000) {
+    if (arg0->x_pos.val < background_objects[arg0->bg_offset].x_pos.val + 0xA00000) {
+        target_x = background_objects[arg0->bg_offset].unk1E + 0x40;
+        target_y = background_objects[arg0->bg_offset].unk22 + 0x98;
         arg0->unk15 = PLAYER_FACING_RIGHT;
-        target_x = background->unk1E + 0x40;
     } else {
+        target_x = background_objects[arg0->bg_offset].unk1E + 0x120;
+        target_y = background_objects[arg0->bg_offset].unk22 + 0x98;
         arg0->unk15 = 0;
-        target_x = background->unk1E + 0x120;
     }
-    target_y = background->unk22 + 0x98;
-    set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_point(OBJECT_HEADER(arg0), target_x << 16, target_y << 16) & 0xFF);
+    angle = angle_to_point(OBJECT_HEADER(arg0), target_x << 16, target_y << 16);
+    set_velocity_from_angle(MOVING_OBJECT(arg0), angle);
     arg0->x_speed <<= 1;
     arg0->y_speed <<= 1;
     if (jet_stingray_at_target(arg0, target_x, target_y) & 0xFF) {
         arg0->x_speed = 0;
         arg0->y_speed = 0;
-        arg0->unk7C = 0;
         arg0->unk6++;
+        arg0->unk7C = 0;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80070514);
 #endif
 
 void jet_stingray_swim_next(struct MainObj* self)
@@ -775,7 +777,9 @@ void jet_stingray_ambush_return(struct MainObj* self)
 }
 
 // jet_stingray_ambush
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_800710D4);
+#else
 void func_800710D4(struct MainObj* arg0)
 {
     struct MainObj* debris;
@@ -788,26 +792,31 @@ void func_800710D4(struct MainObj* arg0)
     tile = jet_stingray_check_surface(PLAYER_OBJECT(arg0), 0, 0);
     if (tile == 0)
         return;
-    if (tile < 3) {
-        if (arg0->ext.main_56.flags & 1)
-            return;
-        for (i = 0; i < 4; i++) {
-            debris = func_8006FB20(arg0, ((s8*)jet_stingray_splash_x_offsets)[get_random() & 3], 0);
-            if (debris != NULL)
+    switch (tile) {
+    case 1:
+    case 2:
+        if (!(arg0->ext.main_56.flags & 1)) {
+            for (i = 0; i < 4; i++) {
+                debris = func_8006FB20(arg0, ((s8*)jet_stingray_splash_x_offsets)[get_random() & 3], 0);
+#ifdef MMX4_PC
+                if (debris == NULL) {
+                    get_random();
+                    continue;
+                }
+#endif
                 debris->y_pos.i.hi = ((s8*)jet_stingray_splash_y_offsets)[get_random() & 3] + 0x13B;
-            else
-                get_random();
+            }
+            arg0->ext.main_56.flags |= 1;
         }
-        arg0->ext.main_56.flags |= 1;
-    } else if (tile == 3) {
-        if (arg0->ext.main_56.flags & 2)
-            return;
-        jet_stingray_spawn_splash(arg0);
-        arg0->ext.main_56.flags |= 2;
+        break;
+    case 3:
+        if (!(arg0->ext.main_56.flags & 2)) {
+            jet_stingray_spawn_splash(arg0);
+            arg0->ext.main_56.flags |= 2;
+        }
+        break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_800710D4);
 #endif
 
 void jet_stingray_dash_start(struct MainObj* self)
@@ -951,19 +960,24 @@ void jet_stingray_leap(struct MainObj* self)
 }
 
 // jet_stingray_missiles_fire
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80071740);
+#else
 void func_80071740(struct MainObj* arg0)
 {
     struct ShotObj* shot;
 
     switch (arg0->unk7) {
     case 0:
-        arg0->unk7 = 1;
+        arg0->unk7++;
         func_8001540C(2, SATURN_SOUND(0xB2, 0x1D), arg0);
         arg0->unk7C = 0x32;
     case 1:
         if (--arg0->unk7C == 0) {
-            arg0->unk7E = arg0->unk5 == 9 ? 4 : 3;
+            if (arg0->unk5 == 9)
+                arg0->unk7E = 4;
+            else
+                arg0->unk7E = 3;
             arg0->unk7++;
             set_animation(arg0, 9);
         }
@@ -976,7 +990,10 @@ void func_80071740(struct MainObj* arg0)
             if (shot != NULL) {
                 shot->active = 0x41;
                 shot->id = 0x22;
-                shot->unk2 = arg0->unk5 == 9 ? 3 : 2;
+                if (arg0->unk5 == 9)
+                    shot->unk2 = 3;
+                else
+                    shot->unk2 = 2;
                 shot->unk40 = arg0->unk40;
                 shot->animation_table = (u32**)arg0->animation_table;
                 shot->unk3C = (void*)arg0->sprite_frames;
@@ -984,8 +1001,8 @@ void func_80071740(struct MainObj* arg0)
                 shot->bg_offset = arg0->bg_offset;
                 shot->x_pos.val = arg0->x_pos.val;
                 shot->y_pos.val = arg0->y_pos.val;
-                shot->unk7C = (struct WeaponObj*)arg0;
                 shot->unk15 = arg0->unk15;
+                shot->unk7C = (struct WeaponObj*)arg0;
             }
         }
         if (arg0->animation_step.fields.event == 2) {
@@ -997,8 +1014,6 @@ void func_80071740(struct MainObj* arg0)
     }
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80071740);
 #endif
 
 void jet_stingray_missiles_repeat(struct MainObj* self)

@@ -59,15 +59,17 @@ void rubble_update(struct MiscObj* self)
 
 // rubble_init
 
+extern s32 rubble_x_speeds[8];
+extern s32 rubble_y_speeds[8];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C7F1C(struct MiscObj* arg0);
 void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation_table);
-extern s32 rubble_x_speeds[8];
-extern s32 rubble_y_speeds[8];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", func_800C7F1C);
+#else
 void func_800C7F1C(struct MiscObj* arg0)
 {
     s32 index;
@@ -97,8 +99,6 @@ void func_800C7F1C(struct MiscObj* arg0)
     arg0->state++;
     is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", func_800C7F1C);
 #endif
 
 void rubble_fall(struct MiscObj* self)

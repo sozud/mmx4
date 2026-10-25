@@ -21,8 +21,8 @@ extern void (*train_boss_armor_state_funcs[])(struct MainObj*);
 
 extern u16 train_boss_armor_smoke_offsets[3][2];
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern s8 train_boss_armor_hurt_boxes[3][16];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern u8 D_800FF9FC[4], D_800FFA00[4], D_800FFA04[8];
 extern void (*train_boss_armor_step_funcs[3])(struct MainObj*);
 #endif
@@ -42,17 +42,19 @@ void func_80066DE8(struct MainObj* self);
 void func_80066F1C(struct MainObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80066DE8(struct MainObj* self)
 {
     struct ShotObj* shot;
 
-    self->hp = self->unk5D = 0x10;
-    self->collision_data = D_80107678;
+    self->hp = 0x10;
+    self->unk5D = 0x10;
     self->contact_damage = 2;
+    self->collision_data = D_80107678;
     self->invincibility_timer = 0;
     self->x_speed = FIXED(1);
-    self->y_speed = self->x_accel = self->gravity = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
     self->air_state = 0;
     self->unk16 = 3;
     self->terrain_box = NULL;
@@ -72,16 +74,13 @@ void func_80066DE8(struct MainObj* self)
         shot->x_pos = self->x_pos;
         shot->y_pos = self->y_pos;
         shot->unk15 = 0;
-        shot->state = 3;
         shot->unk7C = (struct WeaponObj*)self->ext.main_47.train_boss;
+        shot->state = 3;
     }
     self->state = 1;
     self->unk5 = 2;
     self->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066DE8);
-#endif
 
 // train_boss_armor_main
 #if defined(MMX4_PC) || defined(MMX4_SATURN)

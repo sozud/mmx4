@@ -73,11 +73,13 @@ extern u8 ryuenjin_flame_animations[];
 extern u16 ryuenjin_flame_offsets[8];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80097FC4);
+#else
 void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
 {
     u8 animation;
-    u8 palette;
+    s32 palette;
     s32 index;
 
     weapon->on_screen = 1;
@@ -89,9 +91,9 @@ void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
         weapon->unk40 = player->unk40;
         weapon->unk3C = player->unk3C;
     }
+    weapon->animation_table = player->animation_table;
     weapon->unk42 = WEAPON_PALETTE_1;
     weapon->unk16 = 2;
-    weapon->animation_table = player->animation_table;
     index = (weapon->id - 0x18) * 2;
     animation = zero_saber_animations[index];
     palette = zero_saber_animations[index + 1];
@@ -111,8 +113,6 @@ void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
     need_palette_load |= 1;
     weapon->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80097FC4);
 #endif
 
 #ifdef VERSION_EU
@@ -145,17 +145,19 @@ void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
 // WeaponObj, weapon_object_update_funcs[36]
 
 // rakuhouha_orb_update
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_800981CC);
+#else
 void func_800981CC(struct WeaponObj* self)
 {
     if (self->state == 0) {
         self->on_screen = 1;
         self->unk50 = rakuhouha_orb_box;
+        self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[6];
         self->animation_table = D_8011C018;
         self->unk42 = WEAPON_PALETTE_3;
-        self->unk16 = 1;
         self->unk40 = WEAPON_TEXTURE_BASE;
-        self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[6];
+        self->unk16 = 1;
         self->x_pos.u.hi = g_Player.x_pos.u.hi;
         self->y_pos.u.hi = g_Player.y_pos.u.hi + 0x15;
         self->unk15 = 0;
@@ -167,18 +169,15 @@ void func_800981CC(struct WeaponObj* self)
         move_object(MOVING_OBJECT(self));
         move_object(MOVING_OBJECT(self));
         self->state++;
-    } else {
-        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) != 0 || self->unk98 != 0) {
-            ZeroObjectState(OBJECT_HEADER(self));
-            return;
-        }
+    } else if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0 && self->unk98 == 0) {
         animate_object(ANIMATED_OBJECT(self));
         move_object(MOVING_OBJECT(self));
+    } else {
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
     }
-    is_on_screen(BASE_OBJECT(self));
+    ((void (*)(struct BaseObj*, s32, s32))is_on_screen)(BASE_OBJECT(self), 0x20, 0x20);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_800981CC);
 #endif
 
 // rising_flame_trail_update

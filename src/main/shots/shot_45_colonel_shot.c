@@ -366,7 +366,6 @@ void colonel_shockwave(struct ShotObj* self)
 }
 
 // colonel_shockwave_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A83C4(struct ShotObj* arg0)
 {
     u8 kind;
@@ -393,9 +392,6 @@ void func_800A83C4(struct ShotObj* arg0)
     }
     arg0->unk6++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A83C4);
-#endif
 
 void colonel_shockwave_spread(struct ShotObj* self)
 {

@@ -606,10 +606,13 @@ void player_enter_ladder_step_off_bottom(struct PlayerObj* self);
 void player_enter_ladder_climb_off_top(struct PlayerObj* self);
 
 // player_check_ladder_end
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_check", func_80033FF0);
+#else
 s32 func_80033FF0(struct PlayerObj* arg0)
 {
     u8 attribute = func_8002D994(arg0);
+    s32 leave;
 
     if (arg0->unk88.bytes.collision_flags & 8) {
         player_enter_ladder_step_off_bottom(arg0);
@@ -619,15 +622,19 @@ s32 func_80033FF0(struct PlayerObj* arg0)
         player_enter_ladder_climb_off_top(arg0);
         return 1;
     }
-    if ((u8)(attribute - 0x20) < 2 && !(arg0->pressed_input & 0x80))
-        return 0;
-    player_set_animation(arg0, 0x1E);
-    arg0->unk5 = 0xE;
-    arg0->unk6 = 4;
-    return 1;
+    leave = 0;
+    if (attribute != 0x20 && attribute != 0x21)
+        leave = 1;
+    if (arg0->pressed_input & 0x80)
+        leave = 1;
+    if (leave) {
+        player_set_animation(arg0, 0x1E);
+        arg0->unk5 = 0xE;
+        arg0->unk6 = 4;
+        return 1;
+    }
+    return 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/player_check", func_80033FF0);
 #endif
 s32 player_check_off_ladder(struct PlayerObj* self)
 {

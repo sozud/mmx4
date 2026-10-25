@@ -678,7 +678,6 @@ s32 player_check_shoot_ladder(struct PlayerObj* self)
 }
 
 // player_enter_weapon_pose
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80037484(struct PlayerObj* arg0, s32 arg1)
 {
     switch ((s8)(arg0->shot_type - 2)) {
@@ -701,9 +700,6 @@ void func_80037484(struct PlayerObj* arg0, s32 arg1)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/player_weapon", func_80037484);
-#endif
 s32 player_check_hover(struct PlayerObj* self)
 {
     if (!(self->armor_parts & 8)) {
@@ -916,10 +912,12 @@ void player_fire_charged_buster(struct PlayerObj* self)
 }
 
 // player_fire_twin_slasher
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_weapon", func_80037C28);
+#else
 void func_80037C28(struct PlayerObj* arg0)
 {
-    s32 count;
+    s8 count;
     s8 i;
 
     if (arg0->shot_type == 8) {
@@ -935,8 +933,6 @@ void func_80037C28(struct PlayerObj* arg0)
     arg0->shot_count += count;
     arg0->special_shot_count += count;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/player_weapon", func_80037C28);
 #endif
 void player_fire_lightning_web_charged(struct PlayerObj* self)
 {

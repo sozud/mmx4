@@ -408,7 +408,6 @@ void lightning_web_charged_fade(struct WeaponObj* arg0)
 void func_80093930(struct WeaponObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80093930(struct WeaponObj* self)
 {
     self->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[2];
@@ -425,9 +424,6 @@ void func_80093930(struct WeaponObj* self)
     set_animation(self, 6);
     self->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", func_80093930);
-#endif
 
 void lightning_web_charged_part_wait(struct WeaponObj* arg0)
 {

@@ -107,146 +107,159 @@ s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1)
 INCLUDE_ASM("main/nonmatchings/collision", func_8002BB80);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-s32 func_8002BD58(struct MainObj* obj0, struct MainObj* obj1, s16* out_x,
-    s16* out_y)
+s32 func_8002BD58(struct MainObj* arg0, struct MainObj* arg1, s16* arg2, s16* arg3)
 {
-    const struct Unk_unk68* box0;
-    const struct Unk_unk68* box1;
-    s32 flip0;
-    s32 flip1;
-    s32 a0;
-    s32 a1;
-    s32 a2;
-    s32 sum;
-    s32 t0;
-    s32 t1;
-    s32 t2;
-    s32 result;
+    s32 var_a0;
+    s32 var_a1;
+    s32 var_a2;
+    s32 var_v0;
+    u16 temp_t0;
+    u8 temp_t1;
+    u8 temp_t2;
 
-    if (obj1->invincibility_timer != 0) {
-        return 0;
-    }
-    box0 = (const struct Unk_unk68*)obj0->attack_box;
-    if (box0 == NULL) {
-        return 0;
-    }
-    box1 = (const struct Unk_unk68*)obj1->hurt_box;
-    if (box1 == NULL) {
+    if (arg1->invincibility_timer != 0 || arg0->attack_box == 0 || arg1->hurt_box == 0) {
         return 0;
     }
 
-    flip0 = (u8)obj0->unk15 & PLAYER_FACING_RIGHT;
-    flip1 = (u8)obj1->unk15 & PLAYER_FACING_RIGHT;
-    t1 = box0->unk2;
-    t2 = box1->unk2;
-    sum = t1 + t2;
-    a2 = flip0 ? obj0->x_pos.i.hi - box0->unk0 : obj0->x_pos.i.hi + box0->unk0;
-    a0 = flip1 ? obj1->x_pos.i.hi - box1->unk0 : obj1->x_pos.i.hi + box1->unk0;
-    a1 = a0 - a2;
-    if (a1 < 0) {
-        a1 = a2 - a0;
+    temp_t0 = ((const struct Unk_unk68*)arg0->attack_box)->unk2 + ((const struct Unk_unk68*)arg1->hurt_box)->unk2;
+    temp_t1 = ((const struct Unk_unk68*)arg0->attack_box)->unk2;
+    temp_t2 = ((const struct Unk_unk68*)arg1->hurt_box)->unk2;
+    if (arg0->unk15 & 0x40) {
+        var_a2 = arg0->x_pos.i.hi - ((const struct Unk_unk68*)arg0->attack_box)->unk0;
+    } else {
+        var_a2 = arg0->x_pos.i.hi + ((const struct Unk_unk68*)arg0->attack_box)->unk0;
     }
-
-    if (a0 < a2) {
-        if (flip0 && flip1) {
-            if (!(a1 < t1)) {
+    if (arg1->unk15 & 0x40) {
+        var_a0 = arg1->x_pos.i.hi - ((const struct Unk_unk68*)arg1->hurt_box)->unk0;
+    } else {
+        var_a0 = arg1->x_pos.i.hi + ((const struct Unk_unk68*)arg1->hurt_box)->unk0;
+    }
+    var_a1 = var_a0 - var_a2;
+    if (var_a1 < 0) {
+        var_a1 = var_a2 - var_a0;
+    }
+    if (var_a0 < var_a2) {
+        if (arg0->unk15 & 0x40) {
+            if (arg1->unk15 & 0x40) {
+                if (var_a1 < temp_t1) {
+                    if (var_a2 >= var_a0 && temp_t1 >= (temp_t2 + var_a1)) {
+                        *arg2 = var_a0 - (temp_t2 / 2);
+                    } else {
+                        *arg2 = var_a0 + ((temp_t1 - var_a1) / 2);
+                    }
+                    goto dummy;
+                }
                 return 0;
             }
-            if (a2 < a0 || t1 < t2 + a1) {
-                result = a0 + (t1 - a1) / 2;
-            } else {
-                result = a0 - (t2 >> 1);
-            }
-        } else if (flip0) {
-            if (!(a1 < sum)) {
-                return 0;
-            }
-            if (!(a0 < a2 - t1) && t2 < a1) {
-                result = a0 + (t2 >> 1);
-            } else if (!(t2 + a0 < a2) && t1 < a1) {
-                result = a2 - (t1 >> 1);
-            } else {
-                t0 = a2 - t1;
-                if (t0 < a0) {
-                    result = a0 + a1 / 2;
+            if (var_a1 < temp_t0) {
+                if (var_a0 >= (var_a2 - temp_t1)) {
+                    if (temp_t2 < var_a1) {
+                        *arg2 = var_a0 + (temp_t2 / 2);
+                        goto dummy;
+                    }
+                }
+
+                if (((temp_t2 + var_a0) >= var_a2) && temp_t1 < var_a1) {
+                    *arg2 = var_a2 - (temp_t1 / 2);
                 } else {
-                    result = t0 + ((t2 + a0) - t0) / 2;
+                    if ((var_a2 - temp_t1) < var_a0) {
+                        *arg2 = var_a0 + (var_a1 / 2);
+                    } else {
+                        *arg2 = (var_a2 - temp_t1) + ((temp_t2 + var_a0 - (var_a2 - temp_t1)) / 2);
+                    }
+                }
+                goto dummy;
+            }
+            return 0;
+        }
+
+        if (!(arg1->unk15 & 0x40)) {
+            if (var_a1 < temp_t2) {
+                if (var_a2 >= var_a0 && temp_t2 >= (var_a1 + temp_t1)) {
+                    *arg2 = var_a2 + (temp_t1 / 2);
+                } else {
+                    *arg2 = var_a2 + ((temp_t2 - var_a1) / 2);
+                }
+                goto dummy;
+            }
+        }
+        return 0;
+    }
+
+    if (arg0->unk15 & 0x40) {
+        if (arg1->unk15 & 0x40) {
+            if (var_a1 < temp_t2) {
+                if (temp_t2 >= (var_a1 + temp_t1)) {
+                    *arg2 = var_a2 - (temp_t1 / 2);
+                } else {
+                    *arg2 = var_a2 - ((temp_t2 - var_a1) / 2);
+                }
+                goto dummy;
+            }
+        }
+        return 0;
+    }
+
+    if (arg1->unk15 & 0x40) {
+        if (var_a1 < temp_t0) {
+            if (temp_t1 < var_a1) {
+                *arg2 = var_a2 + (temp_t1 / 2);
+            } else {
+                if (temp_t2 < var_a1) {
+                    *arg2 = var_a0 - (temp_t2 / 2);
+                } else {
+                    *arg2 = var_a0 - ((var_a0 - var_a2) / 2);
                 }
             }
-        } else if (flip1) {
-            return 0;
-        } else {
-            if (!(a1 < t2)) {
-                return 0;
-            }
-            if (a2 < a0 || t2 < a1 + t1) {
-                result = a2 + (t2 - a1) / 2;
-            } else {
-                result = (t1 >> 1) + a2;
-            }
+            goto dummy;
         }
-    } else if (flip0) {
-        if (!flip1 || !(a1 < t2)) {
-            return 0;
-        }
-        if (t2 < a1 + t1) {
-            result = a2 - (t2 - a1) / 2;
-        } else {
-            result = a2 - (t1 >> 1);
-        }
-    } else if (flip1) {
-        if (!(a1 < sum)) {
-            return 0;
-        }
-        if (t1 < a1) {
-            result = (t1 >> 1) + a2;
-        } else if (t2 < a1) {
-            result = a0 - (t2 >> 1);
-        } else {
-            result = a0 - (a0 - a2) / 2;
-        }
-    } else {
-        if (!(a1 < t1)) {
-            return 0;
-        }
-        result = a0 + (t1 - a1) / 2;
+        return 0;
     }
-    *out_x = (s16)result;
 
-    t1 = box0->unk3;
-    t2 = box1->unk3;
-    a2 = obj0->y_pos.i.hi + box0->unk1;
-    a0 = obj1->y_pos.i.hi + box1->unk1;
-    a1 = a0 - a2;
-    if (a1 < 0) {
-        a1 = a2 - a0;
+    if (var_a1 >= temp_t1) {
+        return 0;
     }
-    if (a0 < a2) {
-        if (!(a1 < t2)) {
+
+    if (temp_t1 >= (var_a1 + temp_t2)) {
+        *arg2 = var_a0 + (temp_t2 / 2);
+    }
+
+    *arg2 = var_a0 + ((temp_t1 - var_a1) / 2);
+
+dummy:
+    temp_t1 = ((const struct Unk_unk68*)arg0->attack_box)->unk3;
+    temp_t2 = ((const struct Unk_unk68*)arg1->hurt_box)->unk3;
+    var_a2 = arg0->y_pos.i.hi + ((const struct Unk_unk68*)arg0->attack_box)->unk1;
+    var_a0 = arg1->y_pos.i.hi + ((const struct Unk_unk68*)arg1->hurt_box)->unk1;
+    var_a1 = var_a0 - var_a2;
+    if (var_a1 < 0) {
+        var_a1 = var_a2 - var_a0;
+    }
+
+    if (var_a0 < var_a2) {
+        if (var_a1 >= temp_t2) {
             return 0;
         }
-        if (a2 < a0 || t2 < a1 + t1) {
-            result = a2 + (t2 - a1) / 2;
+
+        if (var_a2 >= var_a0 && temp_t2 >= (var_a1 + temp_t1)) {
+            *arg3 = var_a2 + (temp_t1 / 2);
         } else {
-            result = (t1 >> 1) + a2;
+            *arg3 = var_a2 + ((temp_t2 - var_a1) / 2);
         }
     } else {
-        if (!(a1 < t1)) {
+        if (var_a1 >= temp_t1) {
             return 0;
         }
-        if (t1 < a1 + t2) {
-            result = a0 + (t1 - a1) / 2;
+
+        if (temp_t1 >= (var_a1 + temp_t2)) {
+            *arg3 = var_a0 + (temp_t2 / 2);
         } else {
-            result = a0 + (t2 >> 1);
+            *arg3 = var_a0 + ((temp_t1 - var_a1) / 2);
         }
     }
-    *out_y = (s16)result;
+
     return 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/collision", func_8002BD58);
-#endif
 
 s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1)
 {

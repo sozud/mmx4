@@ -305,7 +305,10 @@ void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+extern u16 D_80106070[64];
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DD04);
+#else
 ret_s8 func_8002DD04(struct MainObj* object)
 {
     struct WeaponObj* weapon;
@@ -335,11 +338,11 @@ ret_s8 func_8002DD04(struct MainObj* object)
     object->unk65 = 0;
     return 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DD04);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DE30);
+#else
 s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
 {
     const u8* table;
@@ -364,9 +367,21 @@ s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
     if ((s8)kind == 2) {
         return 0;
     }
-    if (((s8)id >= 0x1A && (s8)id < 0x24)
-        || ((s8)id >= 0x3D && (s8)id < 0x3F)) {
+    switch ((s8)id) {
+    case 0x1A:
+    case 0x1B:
+    case 0x1C:
+    case 0x1D:
+    case 0x1E:
+    case 0x1F:
+    case 0x20:
+    case 0x21:
+    case 0x22:
+    case 0x23:
+    case 0x3D:
+    case 0x3E:
         g_Player.update_delay_request = 1;
+        break;
     }
     if (arg0->unk63 == -1) {
         func_8002DF7C(arg1, -1);
@@ -387,8 +402,6 @@ s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
     func_8002DF7C(arg1, 0);
     return (s8)(id + 1);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DE30);
 #endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)

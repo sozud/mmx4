@@ -78,26 +78,22 @@ void func_8009C638(struct ShotObj* self)
 void func_8009C784(struct ShotObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009C784(struct ShotObj* self)
 {
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     func_8002D9BC(self);
-    if ((u32)(self->x_pos.u.hi - 0x1721) >= 0xFF && self->unk2 != 0) {
+    if ((self->x_pos.i.hi <= 0x1720 || self->x_pos.i.hi >= 0x1820) && self->unk2 != 0) {
         self->x_vel.val = 0;
         self->y_vel.val = -0x20000;
     }
     if (self->y_pos.i.hi - background_objects[(s8)self->bg_offset].y_pos.i.hi >= 0xAC && self->unk2 != 0) {
-        self->unk2C = 0x1000;
-        self->unk28 = 0;
         self->y_vel.val = 0x10000 - self->y_vel.val;
         self->unk5++;
+        self->unk28 = 0;
+        self->unk2C = 0x1000;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_17_depth_charge", func_8009C784);
-#endif
 
 void depth_charge_fall(struct ShotObj* self)
 {

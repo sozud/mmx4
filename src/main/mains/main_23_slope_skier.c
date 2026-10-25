@@ -38,14 +38,14 @@ extern void (*slope_skier_jump_funcs[])(struct MainObj*);
 extern void (*slope_skier_slide_funcs[])(struct MainObj*);
 extern void (*slope_skier_step_funcs[])(struct MainObj*);
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern union AnimationStep* slope_skier_animations[31];
 extern struct Unk_unk68 slope_skier_hurt_box[];
 extern struct Unk_unk68 slope_skier_terrain_box;
+extern struct Unk_unk68 D_80106DF4[];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern struct VisualSpawnOffset D_800FCE90[5];
 extern struct Unk_unk68 D_800FCE9C[];
 extern union AnimationStep jet_drone_anim_3[];
-extern struct Unk_unk68 D_80106DF4[];
 
 static struct VisualObj* main_23_spawn_visual(struct MainObj* arg0, u8 facing);
 #endif
@@ -207,7 +207,6 @@ void func_800562AC(struct MainObj* arg0);
 void func_800564B4(struct MainObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80055F1C(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
@@ -226,9 +225,6 @@ void func_80055F1C(struct MainObj* arg0)
     }
     move_with_gravity(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_80055F1C);
-#endif
 
 void slope_skier_jump_rise(struct MainObj* self)
 {
@@ -348,17 +344,16 @@ void slope_skier_slide(struct MainObj* self)
 }
 
 // slope_skier_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800564B4(struct MainObj* arg0)
 {
     arg0->unk5 = 1;
     arg0->state++;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->bg_offset = g_Player.bg_offset;
     switch (arg0->unk2) {
     case 0:
-        arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
+        arg0->unk15 = arg0->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
         break;
     case 1:
         arg0->unk15 = 0;
@@ -386,9 +381,6 @@ void func_800564B4(struct MainObj* arg0)
     arg0->ext.main_23.unk82 = 0;
     set_animation(arg0, arg0->ext.main_23.unk80 + 4);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_800564B4);
-#endif
 
 void slope_skier_wait_for_player(struct MainObj* self)
 {

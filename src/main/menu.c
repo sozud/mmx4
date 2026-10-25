@@ -569,9 +569,109 @@ void func_8001A308(struct EngineObj* arg0)
     }
 }
 
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/menu", func_8001A498);
+#else
+void func_8001A498(struct EngineObj* arg0)
+{
+    u8* timer;
+    u8* script;
+    s32 status;
+    u8 remaining;
+    u8 result;
 
+    timer = &memcard_menu.timer;
+    remaining = *timer - 1;
+    *timer = remaining;
+    if (remaining != 0) {
+        return;
+    }
+
+    status = func_8001CDE4(memcard_menu.port);
+    if (status != 0) {
+        if (status == 1) {
+            script = D_800F1DFC;
+            arg0->unk1 = 0xB;
+            result = 1;
+        } else {
+            script = D_800F1E24;
+            arg0->unk1 = 0xB;
+            result = 2;
+        }
+        memcard_menu.result = result;
+        func_8001B644(script);
+        main_bss_state.transition.selection = 0;
+        return;
+    }
+
+    status = func_8001CD70(memcard_menu.port);
+    switch ((u32)status) {
+    case 1:
+        arg0->unk1 = 0xB;
+        memcard_menu.result = 1;
+        func_8001B644(D_800F1DFC);
+        return;
+    case 2:
+        reset_objects();
+        arg0->unk1 = 3;
+        arg0->unk2 = 0;
+        return;
+    case 3:
+        reset_objects();
+        arg0->unk1 = 0xB;
+        memcard_menu.result = 1;
+        main_bss_state.transition.selection = 0;
+        func_8001B644(D_800F1E24);
+        return;
+    case 0:
+        func_8001CC5C(memcard_menu.port, &memcard_files, D_80010058);
+        if (memcard_files.total_size == 0x1E000) {
+            func_8001CC5C(memcard_menu.port, &memcard_files, D_8001005C);
+            if (memcard_files.count == 0) {
+                arg0->unk1 = 0xB;
+                memcard_menu.result = 3;
+                main_bss_state.transition.selection = 0;
+                reset_objects();
+                func_8001B644(D_800F1E34);
+                return;
+            }
+        }
+    }
+    arg0->unk1 = 8;
+    reset_objects();
+    memcard_menu.timer = 5;
+    func_8001B718(0x30, memcard_menu.port * 3 + memcard_menu.selection + 0x1A, 0xFF);
+    func_8001B644(D_800F1E78);
+    func_8001B7C0(0xA0, 0x78, 1);
+}
+#endif
+
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/menu", func_8001A710);
+#else
+void func_8001A710(struct EngineObj* arg0)
+{
+    u8* timer;
+    u8 remaining;
+
+    timer = &memcard_menu.timer;
+    remaining = *timer - 1;
+    *timer = remaining;
+    if (remaining != 0) {
+        return;
+    }
+    func_8001C07C();
+    func_8001C4B4(&memcard_menu);
+    if (arg0->unk1 != 0xB) {
+        arg0->unk1 = 9;
+        reset_objects();
+        func_8001B718(0x30, memcard_menu.port * 3 + memcard_menu.selection + 0x1A, 0xFF);
+        func_8001B644(D_800F1E88);
+        func_8001B7C0(0xA0, 0x78, 1);
+        *timer = 0x8C;
+    }
+}
+#endif
 
 void func_8001A7D4(struct EngineObj* arg0)
 {
@@ -1091,9 +1191,66 @@ INCLUDE_ASM("main/nonmatchings/menu", func_8001B7C0);
 
 INCLUDE_ASM("main/nonmatchings/menu", func_8001B8B0);
 
+struct MemcardSignature {
+    u8 bytes[3];
+};
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+const struct MemcardSignature D_80010090 = { { 's', 'c', 0 } };
+#else
+extern const struct MemcardSignature D_80010090;
 INCLUDE_RODATA("main/nonmatchings/menu", D_80010090);
+#endif
 
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/menu", func_8001BCAC);
+#else
+void func_8001BCAC(s16 x, s16 y, u8 arg2)
+{
+    struct MiscObj* obj;
+    u8 mode;
+    u8 value;
+
+    obj = find_free_misc_obj();
+    if (obj != 0) {
+        obj->active = 1;
+        obj->id = 0x2A;
+        obj->unk16 = 4;
+        if (memcard_menu.slot->character != 0xFF) {
+            obj->unk2 = 2;
+            if (memcard_menu.slot->character == 0) {
+                obj->animation_step.fields.frame_index = 0x2C;
+                if (memcard_menu.slot->unk29 == 0)
+                    obj->unk42 = 0x7808;
+                else
+                    obj->unk42 = 0x784F;
+            } else {
+                obj->animation_step.fields.frame_index = 0x2B;
+                if (memcard_menu.slot->unk29 == 0)
+                    obj->unk42 = 0x7808;
+                else
+                    obj->unk42 = 0x784B;
+            }
+            obj->x_pos.i.hi = x;
+            obj->y_pos.i.hi = y;
+        } else {
+            obj->animation_step.fields.frame_index = 0x5D;
+            obj->x_pos.i.hi = x + 0x14;
+            obj->y_pos.i.hi = y - 8;
+            obj->unk2 = 0;
+            obj->ext.misc_42.unk56 = -1;
+        }
+        if (arg2 == 0) {
+            value = main_bss_state.transition.selection;
+            mode = 3;
+        } else {
+            value = engine_obj.unk1;
+            mode = 1;
+        }
+        obj->ext.misc_42.unk55 = mode;
+        obj->ext.misc_42.unk54 = value;
+    }
+}
+#endif
 
 INCLUDE_ASM("main/nonmatchings/menu", func_8001BE10);
 
@@ -1207,7 +1364,36 @@ void func_8001C3E8(void)
     save->unk28 = D_80171EA9;
 }
 
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/menu", func_8001C4B4);
+#else
+void func_8001C4B4(struct MemcardMenuState* menu)
+{
+    u8* buffer = menu->buffer;
+    u8 port;
+    u8* script;
+
+    port = menu->port;
+    *(struct MemcardSignature*)buffer = D_80010090;
+    menu->buffer[2] = 0x13;
+    menu->result = func_8001CDE4(port);
+    if (menu->result != 0) {
+        engine_obj.unk1 = 0xB;
+        reset_objects();
+        script = D_800F1DFC;
+    } else {
+        func_8001C5A8((u8**)menu);
+        menu->result = func_8001C8F4(buffer, port, 0x2000);
+        if (menu->result == 0)
+            return;
+        engine_obj.unk1 = 0xB;
+        reset_objects();
+        script = D_800F1E14;
+    }
+    main_bss_state.transition.selection = 0;
+    func_8001B644(script);
+}
+#endif
 
 void func_8001C5A8(u8** arg0)
 {

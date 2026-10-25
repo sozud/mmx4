@@ -58,38 +58,42 @@ extern struct Unk_unk68 twin_slasher_charged_hit_boxes[];
 extern u8 twin_slasher_charged_angles[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_800978DC);
+#else
 void func_800978DC(struct WeaponObj* arg0)
 {
-    s32* player_gfx = SP_PLAYER_GFX;
-    s32* sprite_frames = SP_SPRITE_FRAMES;
+    struct PlayerObj* player;
+    struct Weapon8Ext* ext = &arg0->ext.weapon_8;
 
     arg0->on_screen = 1;
     arg0->unk50 = twin_slasher_hit_boxes;
-    arg0->unk38 = (u8*)player_gfx + player_gfx[9];
+    arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[9];
+    arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x11];
     arg0->animation_table = D_8011C104;
     arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0;
-    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x11];
+    player = &g_Player;
     arg0->unk15 = g_Player.unk15;
-    buster_shot_place_at_muzzle((struct VisualObj*)arg0, &g_Player, arg0->id);
-    set_velocity_from_angle(MOVING_OBJECT(arg0), arg0->unk2 == 0 ? 2 : 0x1E);
+    buster_shot_place_at_muzzle((struct VisualObj*)arg0, player, arg0->id);
+    if (arg0->unk2 == 0)
+        set_velocity_from_angle(MOVING_OBJECT(arg0), 2);
+    else
+        set_velocity_from_angle(MOVING_OBJECT(arg0), 0x1E);
     arg0->x_vel.val *= 8;
     arg0->y_vel.val *= 8;
     if (arg0->unk15 == 0)
         arg0->x_vel.val = -arg0->x_vel.val;
     arg0->unk28.val = 0;
     arg0->unk2C = 0;
-    arg0->ext.weapon_8.timer = 0x18;
+    ext->timer = 0x18;
     set_animation(arg0, arg0->unk2);
     move_object(MOVING_OBJECT(arg0));
     arg0->unk5 = 0;
     arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_800978DC);
 #endif
 
 void twin_slasher_main(struct WeaponObj* arg0)
@@ -145,24 +149,26 @@ void twin_slasher_charged_update(struct WeaponObj* arg0)
 }
 
 // twin_slasher_charged_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_80097BA4);
+#else
 void func_80097BA4(struct WeaponObj* arg0)
 {
-    s32* player_gfx = SP_PLAYER_GFX;
-    s32* sprite_frames = SP_SPRITE_FRAMES;
+    struct PlayerObj* player;
     s32 level = arg0->unk2 >> 1;
 
     arg0->on_screen = 1;
     arg0->unk64 = 1;
     arg0->unk50 = &twin_slasher_charged_hit_boxes[level];
-    arg0->unk38 = (u8*)player_gfx + player_gfx[9];
+    arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[9];
+    arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x11];
     arg0->animation_table = D_8011C104;
     arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0;
-    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x11];
+    player = &g_Player;
     arg0->unk15 = g_Player.unk15;
-    buster_shot_place_at_muzzle((struct VisualObj*)arg0, &g_Player, arg0->id);
+    buster_shot_place_at_muzzle((struct VisualObj*)arg0, player, arg0->id);
     set_velocity_from_angle(MOVING_OBJECT(arg0), twin_slasher_charged_angles[arg0->unk2]);
     arg0->unk28.val = 0;
     arg0->unk2C = 0;
@@ -173,12 +179,10 @@ void func_80097BA4(struct WeaponObj* arg0)
     set_animation(arg0, level + 2);
     move_object(MOVING_OBJECT(arg0));
     arg0->ext.weapon_17.timer = 3;
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_80097BA4);
 #endif
 
 void twin_slasher_charged_main(struct WeaponObj* arg0)

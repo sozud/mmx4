@@ -15,9 +15,8 @@ extern u8 small_effect_animations[];
 
 extern struct Visual03Bounds small_effect_bounds[];
 #include "weapon_resources.h"
-extern u8 D_8013B8E4[4];
-extern u8 D_8013B8E0[];
-extern u8 D_8013B8E4[];
+extern u8 D_8013B8E0;
+extern u8 D_8013B8E4;
 
 u8 small_effect_animations[] = {
     0x00,
@@ -105,8 +104,6 @@ void spawn_explosion_variant(struct BaseObj* arg0, s8 arg1)
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range, s32 divisor);
 void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3);
-extern u8 D_8013B8E0[];
-extern u8 D_8013B8E4[4];
 #endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -129,8 +126,8 @@ void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3)
         y = arg0->y_pos.u.hi - (y & 0xFF);
     }
 
-    toggle = D_8013B8E0[0] + 1;
-    D_8013B8E0[0] = toggle;
+    toggle = D_8013B8E0 + 1;
+    D_8013B8E0 = toggle;
     spawn_explosion_at((s8)arg1, (s16)x, y, (toggle & 1) ^ 1);
 }
 #else
@@ -159,8 +156,8 @@ void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range
     roll = get_random_nonzero();
     divisor &= 0xFF;
     if (divisor == 0 || roll % divisor == 0) {
-        D_8013B8E4[0]++;
-        variant = (D_8013B8E4[0] & 1) ? 2 : 3;
+        D_8013B8E4++;
+        variant = (D_8013B8E4 & 1) ? 2 : 3;
     } else {
         variant = 0xFF;
     }

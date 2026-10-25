@@ -114,52 +114,55 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BA38);
 #endif
 
 // double_intro_warning
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BB6C);
+#else
 void func_8008BB6C(struct MainObj* self)
 {
     struct Main73Ext* ext = &self->ext.main_73;
     struct EffectObj* effect;
 
-    if (g_Player.capsule_state == 0) {
-        switch (self->unk6) {
-        case 0:
-            effect = find_free_effect_obj();
-            if (effect != NULL) {
-                effect->active = 1;
-                effect->id = 0x18;
-                ext->unk80.effect = effect;
-            }
-            player_start_script_action(0x14, PLAYER_FACING_RIGHT);
-            self->unk6 = 1;
-            self->unk7 = 0;
-            break;
-        case 1:
-            if (ext->unk80.effect->active == 0) {
-                self->contact_damage = 6;
-                self->invincibility_timer = -0x80;
-                self->unk6 = 2;
-                self->hp = 0;
-                self->unk62 = 0;
-                self->unk63 = 2;
-                self->unk7C = 0x20;
-                engine_obj.enable_boss = 0;
-                engine_obj.unk25 = 0;
-                engine_obj.boss_ptr = self;
-            }
-            break;
-        case 2:
-            if (--self->unk7C == 0) {
-                self->unk5 = 2;
-                self->unk6 = 0;
-                self->unk7 = 0;
-            }
-            break;
+    if (g_Player.capsule_state != 0) {
+        is_on_screen(BASE_OBJECT(self));
+        return;
+    }
+    switch (self->unk6) {
+    case 0:
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x18;
+            ext->unk80.effect = effect;
         }
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
+        self->unk6 = 1;
+        self->unk7 = 0;
+        break;
+    case 1:
+        effect = ext->unk80.effect;
+        if (effect->active == 0) {
+            self->unk6 = 2;
+            self->contact_damage = 6;
+            self->invincibility_timer = -0x80;
+            self->hp = 0;
+            self->unk62 = 0;
+            self->unk63 = 2;
+            self->unk7C = 0x20;
+            engine_obj.enable_boss = 0;
+            engine_obj.unk25 = 0;
+            engine_obj.boss_ptr = self;
+        }
+        break;
+    case 2:
+        if (--self->unk7C == 0) {
+            self->unk5 = 2;
+            self->unk6 = 0;
+            self->unk7 = 0;
+        }
+        break;
     }
     is_on_screen(BASE_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BB6C);
 #endif
 
 void double_intro_dialogue(struct MainObj* self)

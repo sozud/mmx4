@@ -187,12 +187,11 @@ void bg_zone_controller_b_idle(struct EffectObj* self)
 
 // bg_zone_controller_b_update_zone
 
+extern u16 bg_zone_controller_b_zone_bounds[6];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B8E74(struct EffectObj* arg0);
-extern u16 bg_zone_controller_b_zone_bounds[6];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B8E74(struct EffectObj* arg0)
 {
     s8 index;
@@ -216,9 +215,6 @@ void func_800B8E74(struct EffectObj* arg0)
         arg0->unk6 = 0;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_15_bg_zone_controller_b", func_800B8E74);
-#endif
 
 u16 bg_zone_controller_b_zone_bounds[6] = { 0x0760, 0x0BA0, 0x13F0, 0x1700, 0x1775, 0 };
 

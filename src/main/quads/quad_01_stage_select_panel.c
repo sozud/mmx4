@@ -21,51 +21,51 @@ void stage_select_panel_update(struct QuadObj* arg0)
 
 // quad_move_toward
 
+extern s32 D_800F459C[];
+extern s32 D_800F45C0[];
+extern s16 stage_select_panel_shapes[8][8];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y, s32 x_speed, s32 y_speed);
 void func_800D4334(struct QuadObj* self);
 void func_800D43F4(struct QuadObj* self);
-extern s32 D_800F459C[];
-extern s32 D_800F45C0[];
 u8 angle_from_delta(s32 arg0, s32 arg1);
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
-extern s16 stage_select_panel_shapes[8][8];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y,
     s32 x_speed, s32 y_speed)
 {
     u8 direction = angle_from_delta(*x - target_x, *y - target_y);
-    s32 table_index;
-    s32 x_sign;
-    s32 y_sign;
+    s16 table_index;
+    s16 x_sign;
+    s16 y_sign;
 
-    if (direction < 8) {
-        table_index = 8 - direction;
-        x_sign = 1;
-        y_sign = -1;
-    } else if (direction < 0x10) {
-        table_index = direction - 8;
-        x_sign = -1;
-        y_sign = -1;
-    } else if (direction < 0x18) {
-        table_index = 0x18 - direction;
-        x_sign = -1;
-        y_sign = 1;
+    if (direction < 0x10) {
+        if (direction < 8) {
+            y_sign = -1;
+            table_index = 8 - direction;
+            x_sign = 1;
+        } else {
+            y_sign = -1;
+            table_index = direction - 8;
+            x_sign = -1;
+        }
     } else {
-        table_index = direction - 0x18;
-        x_sign = 1;
-        y_sign = 1;
+        if (direction < 0x18) {
+            y_sign = 1;
+            table_index = 0x18 - direction;
+            x_sign = -1;
+        } else {
+            y_sign = 1;
+            table_index = direction - 0x18;
+            x_sign = 1;
+        }
     }
     *x += (D_800F459C[table_index] * x_sign * x_speed) >> 4;
     *y += (D_800F45C0[table_index] * y_sign * y_speed) >> 4;
     return direction;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D41EC);
-#endif
 
 // stage_select_panel_init
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -105,44 +105,43 @@ INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D4334)
 #endif
 
 // stage_select_panel_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D43F4);
+#else
 void func_800D43F4(struct QuadObj* self)
 {
-    f32* vertex_x;
-    f32* vertex_y;
+    struct QuadVertex* vertex;
     struct MiscObj* misc;
     struct EffectObj* effect;
     s16* target;
     s32 dx;
     s32 dy;
     s32 i;
-    u8 region;
+    s32 region;
 
     if (self->ext.quad_1.delay != 0) {
         self->ext.quad_1.delay--;
         quad_is_on_screen(self);
         return;
     }
-    vertex_x = &self->vertices[0].x;
-    vertex_y = &self->vertices[0].y;
+    vertex = self->vertices;
     for (i = 0; i < 4; i++) {
         target = &stage_select_panel_shapes[self->unk2][i * 2];
-        dx = vertex_x->val - (target[0] << 16);
-        dy = vertex_y->val - (target[1] << 16);
+        dx = vertex->x.val - (target[0] << 16);
+        dy = vertex->y.val - (target[1] << 16);
         region = angle_from_delta(dx, dy);
         if ((((self->ext.quad_1.region[i] ^ region) & 0x10) || self->ext.quad_1.settled[i] != 0) && self->ext.quad_1.unk42 == 0) {
             self->x_pos.i.lo = 0;
             self->y_pos.i.lo = 0;
             self->ext.quad_1.settled[i] = 1;
         } else {
-            vertex_x->val -= dx / (s32)self->ext.quad_1.steps;
-            vertex_y->val -= dy / (s32)self->ext.quad_1.steps;
+            vertex->x.val -= dx / (s32)self->ext.quad_1.steps;
+            vertex->y.val -= dy / (s32)self->ext.quad_1.steps;
             self->ext.quad_1.settled[i] = 0;
             if (i == 3)
                 self->ext.quad_1.unk42 = 0;
         }
-        vertex_x += 2;
-        vertex_y += 2;
+        vertex++;
         self->ext.quad_1.region[i] = region;
     }
     if (--self->ext.quad_1.steps == 0) {
@@ -165,20 +164,18 @@ void func_800D43F4(struct QuadObj* self)
             misc->unk2 = self->unk2 | 0x80;
         }
         target = stage_select_panel_shapes[self->unk2];
-        self->vertices[0].x.i.hi = target[0];
-        self->vertices[0].y.i.hi = target[1];
-        self->vertices[1].x.i.hi = target[2];
-        self->vertices[1].y.i.hi = target[3];
-        self->vertices[2].x.i.hi = target[4];
-        self->vertices[2].y.i.hi = target[5];
-        self->vertices[3].x.i.hi = target[6];
+        self->vertices[0].x.i.hi = *target++;
+        self->vertices[0].y.i.hi = *target++;
+        self->vertices[1].x.i.hi = *target++;
+        self->vertices[1].y.i.hi = *target++;
+        self->vertices[2].x.i.hi = *target++;
+        self->vertices[2].y.i.hi = *target++;
+        self->vertices[3].x.i.hi = *target;
+        self->vertices[3].y.i.hi = target[1];
         self->state = 2;
-        self->vertices[3].y.i.hi = target[7];
     }
     quad_is_on_screen(self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D43F4);
 #endif
 
 void stage_select_panel_idle(struct QuadObj* arg0)

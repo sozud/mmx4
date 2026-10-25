@@ -21,31 +21,30 @@ void hopper_switch_despawn(struct ItemObj*);
 
 // hopper_switch_init
 
+extern u8 hopper_switch_box[4];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C52CC(struct ItemObj* self);
-extern u8 hopper_switch_box[4];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_21_hopper_switch", func_800C52CC);
+#else
 void func_800C52CC(struct ItemObj* self)
 {
-    s32 index = func_8002938C(0x29);
-    s32 column = index * 4 + 0x18;
-    s32 row = index + 6;
+    u8 index;
 
     self->active |= 0x41;
     self->on_screen = 0;
+    index = func_8002938C(0x29);
     self->animation_table = (const u8* const*)data_hopper_animations;
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
     self->unk40 = OBJECT_STAGE_TEXTURE(index);
-    self->unk42 = OBJECT_CLUT((column - (column & 0x7F0)) | (((row / 4 + 0x1E0) << 6) & 0xFFFF));
+    self->unk42 = OBJECT_CLUT(CLUT_FROM_XY(index, index));
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk68 = (struct Unk_unk68*)hopper_switch_box;
     self->state = 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_21_hopper_switch", func_800C52CC);
 #endif
 
 s32 hopper_switch_hopper_touching(struct ItemObj* arg0)

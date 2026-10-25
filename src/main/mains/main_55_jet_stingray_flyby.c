@@ -201,12 +201,11 @@ void jet_stingray_flyby_enter(struct MainObj* self)
 }
 
 // jet_stingray_flyby_cruise
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006F0DC(struct MainObj* self)
 {
     switch (self->unk6) {
     case 0:
-        self->unk6 = 1;
+        self->unk6++;
         self->x_speed = FIXED(11);
         self->y_speed = 0;
         self->unk7C = 30;
@@ -217,11 +216,10 @@ void func_8006F0DC(struct MainObj* self)
             move_object(MOVING_OBJECT(self));
             self->unk7C = (u16)self->unk7C - 1;
         } else {
-            u32 distance = (u32)self->x_pos.val - (u32)background_objects[self->bg_offset].x_pos.val;
             self->x_speed = FIXED(4);
             self->unk7C = 30;
             self->unk6++;
-            memcpy(self->ext.main_55.pad80, &distance, sizeof(distance));
+            self->ext.main_55.distance = self->x_pos.val - background_objects[self->bg_offset].x_pos.val;
             set_animation(self, 0);
         }
         break;
@@ -236,9 +234,6 @@ void func_8006F0DC(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006F0DC);
-#endif
 
 void jet_stingray_flyby_attack_rise(struct MainObj* self)
 {

@@ -53,13 +53,13 @@ extern struct Effect17SpawnGroup freeze_blast_spawn_groups[4];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B913C(struct EffectObj* self)
 {
-    u32 i;
+    u8 i;
+
     engine_obj.unk10 = 1;
-    engine_obj.unk11 = 1;
     engine_obj.unk12 = 1;
+    engine_obj.unk11 = 1;
     engine_obj.unk13 = 1;
     self->ext.effect_17.phase = 1;
 #ifdef MMX4_SATURN
@@ -77,17 +77,15 @@ void func_800B913C(struct EffectObj* self)
     self->ext.effect_17.timer = 2;
     self->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B913C);
-#endif
 
 // freeze_blast_flash
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B91E0);
+#else
 void func_800B91E0(struct EffectObj* self)
 {
     struct Effect17Ext* ext = &self->ext.effect_17;
-    u8 phase = ext->phase;
-    ext->phase--;
+    u8 phase = ext->phase--;
     if (phase != 0)
         return;
     if ((u16)g_FilterAmountR >= 0x1E) {
@@ -98,8 +96,8 @@ void func_800B91E0(struct EffectObj* self)
         need_palette_load |= 1;
         func_800B9354(self);
         engine_obj.unk10 = 0;
-        engine_obj.unk11 = 0;
         engine_obj.unk12 = 0;
+        engine_obj.unk11 = 0;
         engine_obj.unk13 = 0;
         func_800B94B8(self);
         ext->timer = 2;
@@ -107,16 +105,14 @@ void func_800B91E0(struct EffectObj* self)
         return;
     }
     ext->phase = 1;
-    if (--ext->timer == 0) {
-        ext->timer = 2;
+    if (--ext->timer != 0) {
+        g_FilterAmountR += 2;
+        g_FilterAmountG += 0x40;
+        g_FilterAmountB += 0x800;
         return;
     }
-    g_FilterAmountR += 2;
-    g_FilterAmountG += 0x40;
-    g_FilterAmountB += 0x800;
+    ext->timer = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B91E0);
 #endif
 
 void freeze_blast_finish(struct EffectObj* self)

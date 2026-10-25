@@ -24,34 +24,28 @@ void breakable_wall_update(struct ItemObj* arg0)
 
 // breakable_wall_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800BE9E8(struct ItemObj* self);
 extern union AnimationStep* falling_rock_d_animations[];
 extern u8 breakable_wall_hit_box[4];
 extern struct Unk_unk68 D_80108684[];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void func_800BE9E8(struct ItemObj* self);
 extern union AnimationStep* falling_rock_d_animations[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_00_breakable_wall", func_800BE9E8);
+#else
 void func_800BE9E8(struct ItemObj* self)
 {
-    s32 column;
-    s32 row;
-    s32 index;
-
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->on_screen = 0;
     self->unk5C = 1;
     self->unk61 = 0;
     self->animation_table = (const u8* const*)falling_rock_d_animations;
-    column = func_8002938C(0x9A);
-    row = func_8002938C(0x9A);
-    self->unk42 = OBJECT_CLUT(((column * 4 + 0x18) & 0xF) | (((row + 6) / 4 + 0x1E0) << 6));
-    index = func_8002938C(0x9A);
-    self->unk40 = OBJECT_STAGE_TEXTURE(index);
-    index = func_8002938C(0x9A);
-    self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
+    self->unk42 = OBJECT_STAGE_CLUT(0x9A);
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x9A));
+    self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x9A));
     self->unk54 = breakable_wall_hit_box;
     self->unk50 = NULL;
     self->unk68 = NULL;
@@ -62,8 +56,6 @@ void func_800BE9E8(struct ItemObj* self)
     self->unk2C = 0;
     self->state = 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_00_breakable_wall", func_800BE9E8);
 #endif
 
 void breakable_wall_main(struct ItemObj* arg0)

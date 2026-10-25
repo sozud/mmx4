@@ -31,14 +31,14 @@ void train_crate_update(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern u8 D_800FFBDC[6];
+extern u8 train_crate_debris[6];
+extern void (*train_crate_step_funcs[2])();
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80069748(struct MainObj* arg0);
 void func_800698D8(struct MainObj* arg0);
 extern struct Unk_unk68 D_80108504[];
 extern u8 train_crate_hurt_box[4];
-extern u8 D_800FFBDC[6];
-extern u8 train_crate_debris[6];
-extern void (*train_crate_step_funcs[2])();
 extern ret_u8 func_8002938C(s32);
 #endif
 
@@ -81,32 +81,34 @@ INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_80069748);
 #endif
 
 // train_crate_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_800698D8);
+#else
 void func_800698D8(struct MainObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     train_crate_step_funcs[arg0->unk5](arg0);
-    if (func_8002DD04(arg0) >= 0) {
-        if (func_8002B160(BASE_OBJECT(arg0)) != 0)
-            despawn_object(OBJECT_HEADER(arg0));
-        return;
+    if (func_8002DD04(arg0) < 0) {
+        arg0->ext.main_50.timer = 0;
+        if (arg0->ext.main_50.unk84 == 8)
+            spawn_debris(6, train_crate_debris, arg0);
+        else
+            spawn_debris(6, D_800FFBDC, arg0);
+        if (engine_obj.stage == 8) {
+            ((void (*)(s32, s32, s32))apply_tile_effect)(arg0->unk2 + 8, arg0->x_pos.i.hi - 0x20, arg0->y_pos.i.hi - 0x40);
+        } else {
+            ((void (*)(s32, s32, s32))apply_tile_effect)(arg0->unk2, arg0->x_pos.i.hi - 0x20, arg0->y_pos.i.hi - 0x30);
+            if (arg0->ext.main_50.unk84 != 0)
+                ((void (*)(s32, s32, s32))apply_tile_effect)(arg0->ext.main_50.unk84, arg0->x_pos.i.hi - 0x20, arg0->y_pos.i.hi);
+        }
+        arg0->ext.main_50.unk84 = 0;
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    } else if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
+        despawn_object(OBJECT_HEADER(arg0));
     }
-    arg0->ext.main_50.timer = 0;
-    spawn_debris(6, arg0->ext.main_50.unk84 == 8 ? train_crate_debris : D_800FFBDC, arg0);
-    if (engine_obj.stage == 8) {
-        apply_tile_effect(arg0->unk2 + 8, arg0->x_pos.i.hi - 0x20, arg0->y_pos.i.hi - 0x40);
-    } else {
-        apply_tile_effect(arg0->unk2, arg0->x_pos.i.hi - 0x20, arg0->y_pos.i.hi - 0x30);
-        if (arg0->ext.main_50.unk84 != 0)
-            apply_tile_effect(arg0->ext.main_50.unk84, arg0->x_pos.i.hi - 0x20, arg0->y_pos.i.hi);
-    }
-    arg0->ext.main_50.unk84 = 0;
-    arg0->state = 2;
-    arg0->unk5 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_800698D8);
 #endif
 
 void train_crate_explode(struct MainObj* self)

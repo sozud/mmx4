@@ -136,33 +136,46 @@ void data_hopper_spawn_item(struct MainObj*);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern void (*data_hopper_step_funcs[8])();
+extern struct Unk_unk68 data_hopper_hurt_box;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80062778(struct MainObj* self);
 void func_80062BBC(struct MainObj* self);
 void func_80062650(struct MainObj* self);
 void func_80062AEC(struct MainObj*);
-extern void (*data_hopper_step_funcs[8])();
-extern struct Unk_unk68 data_hopper_hurt_box;
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062650);
+#else
 void func_80062650(struct MainObj* self)
 {
-    s32 x = self->x_pos.i.hi;
-    s32 y = (s16)((u16)self->y_pos.u.hi + self->terrain_box->unk1 + self->terrain_box->unk3);
-    u8 result = func_8002D724(PLAYER_OBJECT(self), x, y);
-    u8 index = result - 1;
-
-    if (index < 4 || index == 8 || index == 9)
+    switch (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi,
+        self->y_pos.i.hi + self->terrain_box->unk1 + self->terrain_box->unk3)) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 9:
+    case 10:
         self->ext.main_41.unk80 = 2;
-    else if ((index >= 4 && index < 8) || index == 10 || index == 11)
+        break;
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 11:
+    case 12:
         self->ext.main_41.unk80 = 1;
-    else
+        break;
+    case 16:
+        break;
+    default:
         self->ext.main_41.unk80 = 0;
+        break;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062650);
 #endif
 
 void data_hopper_land(struct MainObj* self)
@@ -331,24 +344,24 @@ void func_80062AEC(struct MainObj* self)
 }
 
 // data_hopper_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80062BBC(struct MainObj* self)
 {
-    struct Main41Ext* ext = &self->ext.main_41;
-    s32 status = 0;
+    s32 status;
 
-    self->unk1C = self->y_pos;
     self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
     self->on_screen = 0;
     if (self->unk5 != 7)
         func_80062AEC(self);
     ((void (*)(struct MainObj*))data_hopper_step_funcs[self->unk5])(self);
     CollisionRelated(PLAYER_OBJECT(self));
-    if (ext->unk84 != 0) {
+    if (self->ext.main_41.unk84 != 0) {
         func_8002D9BC(self);
         status = func_8002DD04(self);
+    } else {
+        status = 0;
     }
-    if (ext->unk83 != 0) {
+    if (self->ext.main_41.unk83 != 0) {
         self->unk76 = -1;
         self->unk75 = 1;
         collide_with_players(PLAYER_OBJECT(self));
@@ -372,9 +385,6 @@ void func_80062BBC(struct MainObj* self)
             self->unk7E--;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062BBC);
-#endif
 
 void data_hopper_idle(struct MainObj* self)
 {

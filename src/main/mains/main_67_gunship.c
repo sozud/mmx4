@@ -107,15 +107,17 @@ void func_80082470(struct MainObj* obj)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern void (*gunship_step_funcs[7])();
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80082574(struct MainObj* arg0);
 void func_800828B4(struct MainObj* arg0);
-extern void (*gunship_step_funcs[7])();
 void gunship_bob(struct MainObj*);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_80082574);
+#else
 void func_80082574(struct MainObj* arg0)
 {
     s32 collision;
@@ -138,20 +140,25 @@ void func_80082574(struct MainObj* arg0)
         arg0->state++;
         return;
     }
-    if (collision != 0
-        && (engine_obj.cur_character == 0 ? (collision == 2 || collision == 0xB) : collision == 0x21)
-        && arg0->unk5 != 6) {
-        arg0->unk5 = 6;
-        arg0->unk6 = 0;
+    if (collision != 0) {
+        if (engine_obj.cur_character == 0) {
+            if (collision != 2 && collision != 0xB)
+                goto skip;
+        } else if (collision != 0x21) {
+            goto skip;
+        }
+        if (arg0->unk5 != 6) {
+            arg0->unk5 = 6;
+            arg0->unk6 = 0;
+        }
     }
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x60, 0x60) != 0) {
-        despawn_object(OBJECT_HEADER(arg0));
+skip:
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x60, 0x60) == 0) {
+        update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
         return;
     }
-    update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
+    despawn_object(OBJECT_HEADER(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_80082574);
 #endif
 
 void gunship_destroyed(struct MainObj* self)

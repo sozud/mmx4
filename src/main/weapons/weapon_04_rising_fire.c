@@ -150,38 +150,38 @@ void rising_fire_charged_update(struct WeaponObj* arg0)
 }
 
 // rising_fire_charged_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095538);
+#else
 void func_80095538(struct WeaponObj* arg0)
 {
-    s32* player_gfx = SP_PLAYER_GFX;
-    s32* sprite_frames = SP_SPRITE_FRAMES;
-
     arg0->on_screen = 1;
     arg0->unk64 = 1;
-    arg0->unk38 = (u8*)player_gfx + player_gfx[5];
+    arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[5];
+    arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0xD];
     arg0->animation_table = D_8011C0B0;
     arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 1;
-    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xD];
     arg0->unk15 = g_Player.unk15;
     arg0->x_pos.val = g_Player.x_pos.val;
-    arg0->y_vel.val = 0x70000;
+    arg0->y_pos.val = g_Player.y_pos.val;
     arg0->x_vel.val = 0;
     arg0->unk28.val = 0;
+    arg0->y_vel.val = 0x70000;
     arg0->unk2C = 0;
     arg0->unk67 = 1;
     arg0->unk49 = 0;
     arg0->ext.weapon_13.timer = 4;
-    arg0->y_pos.val = g_Player.y_pos.val;
-    set_animation(arg0, arg0->unk2 == 0 ? 3 : 5);
+    if (arg0->unk2 == 0)
+        set_animation(arg0, 3);
+    else
+        set_animation(arg0, 5);
     func_8001540C(0, WEAPON_SOUND_FIRE, arg0);
     arg0->unk5 = 0;
     arg0->state++;
     rising_fire_charged_draw(arg0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095538);
 #endif
 
 void rising_fire_charged_main(struct WeaponObj* self)

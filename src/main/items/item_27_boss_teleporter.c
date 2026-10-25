@@ -277,13 +277,12 @@ void boss_teleporter_update(struct ItemObj* arg0)
 
 // boss_teleporter_init
 
+extern u8 boss_teleporter_box[4];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C71C0(struct ItemObj* arg0);
-extern u8 boss_teleporter_box[4];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C71C0(struct ItemObj* arg0)
 {
     s32 resource;
@@ -294,8 +293,7 @@ void func_800C71C0(struct ItemObj* arg0)
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk15 = 0;
     arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x88));
-    resource = func_8002938C(0x88);
-    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x88)];
     arg0->unk42 = OBJECT_STAGE_CLUT(0x88);
     arg0->animation_table = (const u8* const*)boss_teleporter_animations;
     arg0->unk67 = 0;
@@ -352,9 +350,6 @@ void func_800C71C0(struct ItemObj* arg0)
     arg0->unk5 = 0;
     arg0->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_27_boss_teleporter", func_800C71C0);
-#endif
 
 void boss_teleporter_main(struct ItemObj* arg0)
 {

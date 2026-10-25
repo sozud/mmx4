@@ -98,7 +98,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007B90C);
 #endif
 
 // flame_jet_is_vent_blocked
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_8007BABC(struct MainObj* arg0)
 {
     struct WeaponObj* weapon;
@@ -115,9 +114,6 @@ u8 func_8007BABC(struct MainObj* arg0)
     }
     return 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007BABC);
-#endif
 
 void flame_jet_wait_sync(struct MainObj* self)
 {

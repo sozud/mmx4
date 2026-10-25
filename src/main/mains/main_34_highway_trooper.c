@@ -204,7 +204,6 @@ void highway_trooper_attack_end(struct MainObj* self)
 }
 
 // highway_trooper_hit
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005EB40(struct MainObj* arg0)
 {
     if (--SP_CUR_MAIN_OBJ->ext.main_34.unk80 > 0)
@@ -226,9 +225,6 @@ void func_8005EB40(struct MainObj* arg0)
         arg0->unk5 = 5;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_34_highway_trooper", func_8005EB40);
-#endif
 
 void highway_trooper_fall_away(struct MainObj* self)
 {

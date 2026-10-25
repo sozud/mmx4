@@ -291,34 +291,33 @@ void caterkiller_lunge_start(struct MainObj* self)
 }
 
 // caterkiller_lunge_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057874);
+#else
 void func_80057874(struct MainObj* self)
 {
-    s32 dy;
-
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2)
         self->ext.main_25.unk84 = 1;
     if (self->animation_step.fields.event == 1)
         self->ext.main_25.unk84 = 0;
     move_object(MOVING_OBJECT(self));
-
-    dy = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-    if (dy <= -0x1A || dy >= 0x1A) {
+    if ((g_Player.y_pos.i.hi - self->y_pos.i.hi >= 0 ? g_Player.y_pos.i.hi - self->y_pos.i.hi : self->y_pos.i.hi - g_Player.y_pos.i.hi) > 0x19) {
         set_animation(self, 0);
         self->unk5 = 2;
         self->unk6 = 0;
         self->ext.main_25.unk80 = 0x40;
         self->ext.main_25.unk84 = 0;
-        return;
-    }
-    if ((self->unk15 == 0 && self->x_pos.i.hi < g_Player.x_pos.i.hi) || (self->unk15 != 0 && g_Player.x_pos.i.hi < self->x_pos.i.hi)) {
+    } else if (self->unk15 == 0) {
+        if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
+            self->x_accel = -0x1000;
+            self->unk6 = 2;
+        }
+    } else if (g_Player.x_pos.i.hi < self->x_pos.i.hi) {
         self->x_accel = -0x1000;
         self->unk6 = 2;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057874);
 #endif
 
 void caterkiller_lunge_end(struct MainObj* self)

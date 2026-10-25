@@ -39,19 +39,24 @@ extern struct Unk_unk68 D_8010871C[];
 extern struct Unk_unk68 D_80108720[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", func_800929DC);
+#else
 void func_800929DC(struct WeaponObj* self)
 {
     self->on_screen = 1;
+    self->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 12);
     self->animation_table = D_8011BF40;
     self->unk42 = WEAPON_PALETTE_2;
-    self->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 12);
     self->unk40 = WEAPON_TEXTURE_BASE;
     if (self->id == 0x14) {
         self->unk16 = 0;
         self->unk50 = D_8010871C;
         self->unk64 = 1;
-        self->x_vel.val = self->unk15 ? 0xB0000 : -0xB0000;
+        if (self->unk15)
+            self->x_vel.val = 0xB0000;
+        else
+            self->x_vel.val = -0xB0000;
         set_animation(self, 0x1D);
     } else {
         self->unk50 = D_80108720;
@@ -69,8 +74,6 @@ void func_800929DC(struct WeaponObj* self)
     self->state++;
     update_on_screen(BASE_OBJECT(self), 0x2A, 0x22);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", func_800929DC);
 #endif
 
 void plasma_shot_main(struct WeaponObj* arg0)
@@ -88,15 +91,19 @@ void plasma_shot_main(struct WeaponObj* arg0)
 }
 
 // plasma_shot_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", func_80092B5C);
+#else
 void func_80092B5C(struct WeaponObj* self)
 {
     struct WeaponObj* child;
+    struct PlayerObj* player;
 
     move_object(MOVING_OBJECT(self));
     if (self->unk98 != 0) {
         self->unk98 = 0;
-        if (g_Player.shot_count < 4) {
+        player = &g_Player;
+        if (player->shot_count < 4) {
             child = find_free_weapon_obj();
             if (child != NULL) {
                 child->active = 0x21;
@@ -112,8 +119,6 @@ void func_80092B5C(struct WeaponObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x2A, 0x22);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", func_80092B5C);
 #endif
 
 void plasma_orb_linger(struct WeaponObj* arg0)

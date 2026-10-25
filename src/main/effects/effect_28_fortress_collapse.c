@@ -70,7 +70,6 @@ void fortress_collapse_shake(struct EffectObj* self)
 void func_800BBD88(struct EffectObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BBD88(struct EffectObj* arg0)
 {
     if (arg0->ext.effect_28.finished) {
@@ -91,9 +90,6 @@ void func_800BBD88(struct EffectObj* arg0)
     }
     arg0->unk7--;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_28_fortress_collapse", func_800BBD88);
-#endif
 
 void fortress_collapse_despawn(struct EffectObj* self)
 {

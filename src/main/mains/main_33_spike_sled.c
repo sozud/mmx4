@@ -151,23 +151,24 @@ void spike_sled_run(struct MainObj* self)
 
 // spike_sled_death
 
+extern u8 D_800FDD90[8];
+extern u8 D_800FDF4C[8];
+#define MAIN_33_SLOT_X(index) ((s16)D_800FDDA0[(index)*2])
+#define MAIN_33_SLOT_Y(index) ((s16)D_800FDDA0[(index)*2 + 1])
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005D4E0(struct MainObj* arg0);
 void func_8005DC58(struct MainObj* arg0);
 void func_8005DED4(struct MainObj* arg0);
 void func_8005E108(struct MainObj* arg0);
 void func_8005E298(struct MainObj* arg0);
-extern u8 D_800FDD90[8];
 extern u8 D_800FDD98[8];
-extern u8 D_800FDF4C[8];
-#define MAIN_33_SLOT_X(index) ((s16)D_800FDDA0[(index)*2])
-#define MAIN_33_SLOT_Y(index) ((s16)D_800FDDA0[(index)*2 + 1])
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005D4E0);
+#else
 void func_8005D4E0(struct MainObj* arg0)
 {
-    struct Main33Ext* ext = &arg0->ext.main_33;
     s32 x;
     s32 y;
     s32 i;
@@ -181,7 +182,7 @@ void func_8005D4E0(struct MainObj* arg0)
             arg0->unk7E = 1;
             arg0->unk42 = OBJECT_CLUT(0x798F);
             for (i = 0; i < 7; i++) {
-                if (!(D_800FDD90[i] & ext->unk80))
+                if (!(arg0->ext.main_33.unk80 & D_800FDD90[i]))
                     continue;
                 arg0->x_pos.i.hi = MAIN_33_SLOT_X(i) + 0x20;
                 arg0->y_pos.i.hi = MAIN_33_SLOT_Y(i) + 0x20;
@@ -208,7 +209,7 @@ void func_8005D4E0(struct MainObj* arg0)
     case 1:
         if (--arg0->unk7C == 0) {
             arg0->unk7C = 0x80;
-            ext->unk88 = 0x1200;
+            arg0->ext.main_33.unk88 = 0x1200;
             arg0->unk5 = 2;
             return;
         }
@@ -216,7 +217,7 @@ void func_8005D4E0(struct MainObj* arg0)
             return;
         arg0->unk7E = 6;
         for (i = 0; i < 7; i++) {
-            if (!(D_800FDD90[i] & ext->unk80))
+            if (!(arg0->ext.main_33.unk80 & D_800FDD90[i]))
                 continue;
             arg0->x_pos.i.hi = MAIN_33_SLOT_X(i) + 0x20;
             arg0->y_pos.i.hi = MAIN_33_SLOT_Y(i) + 0x20;
@@ -228,15 +229,13 @@ void func_8005D4E0(struct MainObj* arg0)
             arg0->state = 3;
             return;
         }
-        ext->unk88 -= 2;
-        if (ext->unk88 < 0x1100)
-            ext->unk88 = 0x1100;
-        background_objects[0].unk26 = ext->unk88;
+        arg0->ext.main_33.unk88 -= 2;
+        if (arg0->ext.main_33.unk88 < 0x1100)
+            arg0->ext.main_33.unk88 = 0x1100;
+        background_objects[0].unk26 = arg0->ext.main_33.unk88;
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005D4E0);
 #endif
 
 void spike_sled_despawn(struct MainObj* self)
@@ -442,7 +441,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005DC58);
 #endif
 
 // spike_sled_charge_target
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005DED4(struct MainObj* arg0)
 {
     if (--arg0->unk7C == 0)
@@ -456,16 +454,13 @@ void func_8005DED4(struct MainObj* arg0)
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = 0x40000;
     } else {
-        arg0->x_speed = -0x40000;
         arg0->unk15 = 0;
+        arg0->x_speed = -0x40000;
     }
     set_animation(arg0, 3);
     arg0->x_accel = 0;
     arg0->unk6 = 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005DED4);
-#endif
 
 void spike_sled_charge_approach(struct MainObj* self)
 {
@@ -516,33 +511,32 @@ void spike_sled_bomb(struct MainObj* self)
 }
 
 // spike_sled_bomb_jump
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E108);
+#else
 void func_8005E108(struct MainObj* arg0)
 {
-    struct Main33Ext* ext = &arg0->ext.main_33;
     u8 slot;
     u8 mask;
 
     move_object(MOVING_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
-    slot = ext->variant;
-    mask = ext->unk80;
-    if (D_800FDD90[slot] & mask) {
+    slot = arg0->ext.main_33.variant;
+    mask = arg0->ext.main_33.unk80;
+    if (mask & D_800FDD90[slot]) {
         arg0->unk7C = 0xC;
     } else if (slot < 2 && (mask & 0x20)) {
-        ext->variant = 5;
+        arg0->ext.main_33.variant = 5;
         arg0->unk7C = 0x22;
     } else if (slot >= 2 && (u8)(slot - 3) < 2 && (mask & 0x40)) {
-        ext->variant = 6;
+        arg0->ext.main_33.variant = 6;
         arg0->unk7C = 0x22;
     } else {
-        ext->variant = 0xFF;
+        arg0->ext.main_33.variant = 0xFF;
         arg0->unk7C = 0x26;
     }
     arg0->unk6 = 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E108);
 #endif
 
 void spike_sled_bomb_rise(struct MainObj* self)

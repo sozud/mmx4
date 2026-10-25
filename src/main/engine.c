@@ -77,7 +77,6 @@ void func_8001F3D4(struct MainObj*);
 void func_8001F5D8(struct EngineObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8001F198(struct EngineObj* arg0)
 {
     s32* dst;
@@ -122,11 +121,10 @@ void func_8001F198(struct EngineObj* arg0)
         *dst++ = *src++;
     need_palette_load |= 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/engine", func_8001F198);
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/engine", func_8001F2BC);
+#else
 void func_8001F2BC(struct EngineObj* arg0)
 {
     u8 index;
@@ -138,7 +136,7 @@ void func_8001F2BC(struct EngineObj* arg0)
     func_80023CE0();
 #else
     func_800129A4(8);
-    func_8001663C(MUSIC_WEAPON_GET, 0x70);
+    func_8001663C(0x17, 0x70);
 #endif
     arg0->unk2 = 0;
     arg0->unk1++;
@@ -150,13 +148,12 @@ void func_8001F2BC(struct EngineObj* arg0)
         background_objects[1].x_pos.val = 0x3000000;
     }
     D_801396C0 = func_8001F150(arg0, arg0->cur_character != 0 ? 9 : 0);
-    index = arg0->character_state.bytes[0];
-    if (arg0->cur_character != 0)
-        index += 9;
+    if (arg0->cur_character == 0)
+        index = arg0->character_state.bytes[0];
+    else
+        index = arg0->character_state.bytes[0] + 9;
     D_801396C4 = func_8001F150(arg0, index);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/engine", func_8001F2BC);
 #endif
 
 void func_8001F398(struct EngineObj* arg0)
@@ -194,10 +191,12 @@ void func_8001F3D4(struct MainObj* obj)
     g_FilterAmountB = 0;
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/engine", func_8001F488);
+#else
 void func_8001F488(struct EngineObj* arg0)
 {
-    struct BackgroundObj* background;
+    s32 x;
 
     if (MENU_PAD_PRESSED & MENU_PAD_ANY) {
         func_8001F3D4((struct MainObj*)arg0);
@@ -210,18 +209,16 @@ void func_8001F488(struct EngineObj* arg0)
         D_801396C4->unk5 = 4;
         return;
     }
-    background = &background_objects[arg0->cur_character];
-    background->x_pos.val += D_801396B8;
+    background_objects[arg0->cur_character].x_pos.val += D_801396B8;
+    x = background_objects[arg0->cur_character].x_pos.val;
     if (arg0->cur_character == 0) {
-        if (background->x_pos.val <= 0x2000000)
+        if (x <= 0x2000000)
             return;
-    } else if (background->x_pos.val > 0xFFFFFF) {
+    } else if (x >= 0x1000000) {
         return;
     }
     func_8001F3D4((struct MainObj*)arg0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/engine", func_8001F488);
 #endif
 
 void func_8001F5D8(struct EngineObj* arg0)
@@ -237,7 +234,6 @@ void func_8001F5D8(struct EngineObj* arg0)
     }
 }
 
-#if defined(MMX4_WIN32) || defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8001F634(struct EngineObj* arg0)
 {
     if (--arg0->unk4 == 0) {
@@ -259,27 +255,26 @@ void func_8001F634(struct EngineObj* arg0)
     }
     need_palette_load |= 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/engine", func_8001F634);
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/engine", func_8001F6E8);
+#else
 void func_8001F6E8(struct EngineObj* arg0)
 {
-    if (D_801396C0->unk5 != 2 || D_801396C4->unk5 != 2) {
-        if (!(MENU_PAD_PRESSED & MENU_PAD_ANY))
-            return;
+    if (D_801396C0->unk5 == 2 && D_801396C4->unk5 == 2) {
+        arg0->unk3 = 0;
+        arg0->unk4 = 6;
+        arg0->unk2++;
+    } else if (MENU_PAD_PRESSED & MENU_PAD_ANY) {
         D_801396C0->state = 1;
         D_801396C4->state = 1;
         D_801396C0->unk5 = 4;
         D_801396C4->unk5 = 4;
+        arg0->unk3 = 0;
+        arg0->unk4 = 6;
+        arg0->unk2++;
     }
-    arg0->unk3 = 0;
-    arg0->unk4 = 6;
-    arg0->unk2++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/engine", func_8001F6E8);
 #endif
 
 #ifdef VERSION_EU
@@ -397,7 +392,9 @@ void func_8001F9DC(struct EngineObj* arg0)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/engine", func_8001FA24);
+#else
 void func_8001FA24(struct EngineObj* arg0)
 {
     u8 flags;
@@ -414,8 +411,6 @@ void func_8001FA24(struct EngineObj* arg0)
     for (i = 0; i < 0x10; i++)
         arg0->character_state.bytes[i] = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/engine", func_8001FA24);
 #endif
 
 void func_8001FAC0(struct EngineObj* arg0)

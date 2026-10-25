@@ -46,7 +46,9 @@ static s32 shot_21_abs(s32 value)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_21_cannon_shell", func_8009D23C);
+#else
 void func_8009D23C(struct ShotObj* arg0)
 {
     struct WeaponObj* owner;
@@ -54,15 +56,15 @@ void func_8009D23C(struct ShotObj* arg0)
     u32 half;
     u32 steps;
 
-    arg0->unk68 = (struct Unk_unk68*)cannon_shell_terrain_box;
-    arg0->unk58.animation_steps = D_80105FF0;
-    arg0->unk60 = 3;
-    arg0->on_screen = 1;
-    arg0->unk5C = 1;
-    arg0->unk54 = cannon_shell_hit_box;
     arg0->state++;
     arg0->unk42 &= 0x7FFF;
     owner = arg0->unk7C;
+    arg0->on_screen = 1;
+    arg0->unk68 = (struct Unk_unk68*)cannon_shell_terrain_box;
+    arg0->unk54 = cannon_shell_hit_box;
+    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
     if (arg0->unk2 != 0) {
         arg0->unk50.data = cannon_shell_flat_hit_box;
         arg0->x_pos.i.hi = owner->x_pos.i.hi + 0xA;
@@ -75,11 +77,8 @@ void func_8009D23C(struct ShotObj* arg0)
     arg0->x_vel.val = -0x28000;
     arg0->y_vel.val = 0x28000;
     arg0->unk28 = 0;
-    distance = arg0->x_pos.val - g_Player.x_pos.val;
-    if (distance < 0)
-        distance = -distance;
-    half = distance / 2;
-    if (half <= 0x1FFFFF)
+    half = (arg0->x_pos.val - g_Player.x_pos.val < 0 ? g_Player.x_pos.val - arg0->x_pos.val : arg0->x_pos.val - g_Player.x_pos.val) / 2;
+    if (half < 0x200000)
         half += 0x100000;
     if (half > 0x400000)
         half -= arg0->unk2 << 21;
@@ -95,8 +94,6 @@ void func_8009D23C(struct ShotObj* arg0)
     arg0->unk2C = (u32)arg0->y_vel.val / steps;
     set_animation(arg0, 7);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_21_cannon_shell", func_8009D23C);
 #endif
 
 void cannon_shell_fly(struct ShotObj* self)

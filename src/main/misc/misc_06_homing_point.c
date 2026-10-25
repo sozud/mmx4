@@ -28,7 +28,6 @@ void homing_point_update(struct MiscObj* self)
 void func_800C91EC(struct MiscObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C91EC(struct MiscObj* arg0)
 {
     set_animation(arg0, arg0->unk2 + 0x11);
@@ -42,9 +41,6 @@ void func_800C91EC(struct MiscObj* arg0)
     arg0->x_vel.val = -(arg0->x_vel.val * 4);
     arg0->y_vel.val = -(arg0->y_vel.val * 4);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_06_homing_point", func_800C91EC);
-#endif
 
 void homing_point_wait(struct MiscObj* self)
 {

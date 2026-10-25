@@ -112,7 +112,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", func_80044458);
 #endif
 
 // drill_copter_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80044508(struct MainObj* self)
 {
     self->unk18.val = self->x_pos.val;
@@ -131,14 +130,12 @@ void func_80044508(struct MainObj* self)
     if (self->unk2 == 0)
         func_80044DE4(self);
     drill_copter_step_funcs[(s8)self->unk5](self);
-    if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) != 0)
-        self->state = 2;
-    else
-        is_on_screen(BASE_OBJECT(self));
+    if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+        ((void (*)(struct BaseObj*, s32, s32))is_on_screen)(BASE_OBJECT(self), 0x20, 0x20);
+        return;
+    }
+    self->state = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", func_80044508);
-#endif
 
 void drill_copter_despawn(struct MainObj* self)
 {

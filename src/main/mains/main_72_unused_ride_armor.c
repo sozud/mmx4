@@ -129,15 +129,11 @@ void unused_ride_armor_spawn_shot(struct MainObj* self, s32 arg1)
 }
 
 // unused_ride_armor_idle
-#ifdef MMX4_SATURN
-#define RIDE_ARMOR_FAR_X 96
-#define RIDE_ARMOR_HIGH_Y (-48)
-
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B020);
+#else
 void func_8008B020(struct MainObj* self)
 {
-    s32 dx;
-    s8 step;
-
     if (self->unk6 == 0) {
         self->unk6++;
         self->air_state = 1;
@@ -145,29 +141,36 @@ void func_8008B020(struct MainObj* self)
         self->ext.main_72.lifetime = get_random() & 63;
         unused_ride_armor_face_player(self);
     }
-    if (self->ext.main_72.lifetime != 0) {
+    if (self->ext.main_72.lifetime == 0) {
+        if ((self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0 ? self->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - self->x_pos.i.hi) <= 0x60) {
+            if (self->y_pos.i.hi - g_Player.y_pos.i.hi <= -0x30) {
+                if (get_random() & 1)
+                    unused_ride_armor_set_step(BASE_OBJECT(self), 9);
+                else
+                    unused_ride_armor_set_step(BASE_OBJECT(self), 10);
+            } else {
+                if (get_random() & 1)
+                    unused_ride_armor_set_step(BASE_OBJECT(self), 8);
+                else
+                    unused_ride_armor_set_step(BASE_OBJECT(self), 6);
+            }
+        } else {
+            if (get_random() & 1)
+                unused_ride_armor_set_step(BASE_OBJECT(self), 8);
+            else
+                unused_ride_armor_set_step(BASE_OBJECT(self), 3);
+        }
+    } else {
         self->ext.main_72.lifetime--;
         animate_object(self);
-        return;
     }
-    dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
-    if (dx < 0)
-        dx = -dx;
-    if (dx > RIDE_ARMOR_FAR_X) {
-        step = (get_random() & 1) ? 8 : 3;
-    } else if (self->y_pos.i.hi - g_Player.y_pos.i.hi > RIDE_ARMOR_HIGH_Y) {
-        step = (get_random() & 1) ? 8 : 6;
-    } else {
-        step = (get_random() & 1) ? 9 : 10;
-    }
-    unused_ride_armor_set_step(BASE_OBJECT(self), step);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B020);
 #endif
 
 // unused_ride_armor_walk
-#ifdef MMX4_SATURN
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B188);
+#else
 #define RIDE_ARMOR_WALK_ATTACK 0x160
 #define RIDE_ARMOR_WALK_FRAMES 64
 
@@ -180,18 +183,18 @@ void func_8008B188(struct MainObj* self)
         unused_ride_armor_face_player(self);
         self->ext.main_72.lifetime = (get_random() & 31) + RIDE_ARMOR_WALK_FRAMES;
     }
-    if (--self->ext.main_72.lifetime == 0) {
-        unused_ride_armor_set_step(BASE_OBJECT(self), (self->collision_flags & 8) ? 5 : 2);
-        return;
+    if (--self->ext.main_72.lifetime != 0) {
+        unused_ride_armor_set_walk_speed(self);
+        unused_ride_armor_apply_x_speed(self);
+        animate_object(self);
+        if (self->animation_step.fields.event != 0)
+            func_8001540C(2, SATURN_SOUND(0x45, 0x149), self);
+    } else if (self->collision_flags & 8) {
+        unused_ride_armor_set_step(BASE_OBJECT(self), 5);
+    } else {
+        unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
-    unused_ride_armor_set_walk_speed(self);
-    unused_ride_armor_apply_x_speed(self);
-    animate_object(self);
-    if (self->animation_step.fields.event != 0)
-        func_8001540C(2, SATURN_SOUND(0x45, 0x149), self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B188);
 #endif
 
 void unused_ride_armor_shoot(struct MainObj* self)
@@ -270,29 +273,29 @@ void unused_ride_armor_land(struct MainObj* self)
 }
 
 // unused_ride_armor_dash
-#ifdef MMX4_SATURN
 #define RIDE_ARMOR_DASH_ATTACK 0x420
 #define RIDE_ARMOR_DASH_SPEED FIXED(4.125)
 #define RIDE_ARMOR_DASH_FLASH 30
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B4B8);
+#else
 void func_8008B4B8(struct MainObj* self)
 {
-    s32 dx;
-
     if (self->unk6 == 0) {
         unused_ride_armor_face_player(self);
         self->unk6 = 1;
         self->ext.main_72.unk84 = RIDE_ARMOR_DASH_ATTACK;
-        self->x_speed = self->unk15 != 0 ? RIDE_ARMOR_DASH_SPEED : -RIDE_ARMOR_DASH_SPEED;
+        if (self->unk15 != 0)
+            self->x_speed = RIDE_ARMOR_DASH_SPEED;
+        else
+            self->x_speed = -RIDE_ARMOR_DASH_SPEED;
         self->gravity = 0;
         self->y_speed = 0;
         self->ext.main_72.unk86 = RIDE_ARMOR_DASH_FLASH;
         set_animation(self, 7);
         func_8001540C(2, SATURN_SOUND(0x47, 0x14B), self);
-        dx = g_Player.x_pos.i.hi - self->x_pos.i.hi;
-        if (dx < 0)
-            dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
-        self->ext.main_72.lifetime = dx / 4;
+        self->ext.main_72.lifetime = ABS(g_Player.x_pos.i.hi, self->x_pos.i.hi) / 4;
     }
     if (--self->ext.main_72.lifetime == 0) {
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
@@ -301,8 +304,6 @@ void func_8008B4B8(struct MainObj* self)
     unused_ride_armor_apply_x_speed(self);
     animate_object(self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B4B8);
 #endif
 
 void unused_ride_armor_fall(struct MainObj* self)
@@ -333,7 +334,9 @@ void unused_ride_armor_fall(struct MainObj* self)
 }
 
 // unused_ride_armor_jump_shoot
-#ifdef MMX4_SATURN
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B69C);
+#else
 #define RIDE_ARMOR_FALL_LIMIT FIXED(-5.875)
 
 void func_8008B69C(struct MainObj* self)
@@ -351,27 +354,23 @@ void func_8008B69C(struct MainObj* self)
     }
     if (self->collision_flags & 8) {
         unused_ride_armor_set_step(BASE_OBJECT(self), 5);
-        return;
-    }
-    if (self->y_pos.i.hi - g_Player.y_pos.i.hi >= 0) {
+    } else if (self->y_pos.i.hi - g_Player.y_pos.i.hi >= 0) {
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
-        return;
+    } else {
+        self->x_speed = 0;
+        unused_ride_armor_set_jump_speed(self);
+        if (self->y_speed < RIDE_ARMOR_FALL_LIMIT)
+            self->y_speed = RIDE_ARMOR_FALL_LIMIT;
+        move_with_gravity(ANIMATED_OBJECT(self));
+        if (--self->ext.main_72.lifetime != 0) {
+            if (--self->ext.main_72.spawn_timer & 15)
+                unused_ride_armor_spawn_shot(self, 0);
+            animate_object(self);
+        } else {
+            unused_ride_armor_set_step(BASE_OBJECT(self), 2);
+        }
     }
-    self->x_speed = 0;
-    unused_ride_armor_set_jump_speed(self);
-    if (self->y_speed < RIDE_ARMOR_FALL_LIMIT)
-        self->y_speed = RIDE_ARMOR_FALL_LIMIT;
-    move_with_gravity(ANIMATED_OBJECT(self));
-    if (--self->ext.main_72.lifetime == 0) {
-        unused_ride_armor_set_step(BASE_OBJECT(self), 2);
-        return;
-    }
-    if (--self->ext.main_72.spawn_timer & 15)
-        unused_ride_armor_spawn_shot(self, 0);
-    animate_object(self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B69C);
 #endif
 
 void unused_ride_armor_rapid_fire(struct MainObj* self)

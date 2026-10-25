@@ -51,6 +51,8 @@ void background_dragon_update(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern union AnimationStep* D_800F9934[16];
+extern struct Unk_unk68 D_801062F0[32];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80040644(struct MainObj* arg0);
 void func_80040838(struct MainObj* arg0);
@@ -59,8 +61,6 @@ void func_80040CCC(struct MainObj* arg0);
 s32 func_80040ABC(struct MainObj* arg0);
 void func_80041060(struct MainObj* arg0);
 void func_800415B0(struct MainObj* arg0);
-extern union AnimationStep* D_800F9934[16];
-extern struct Unk_unk68 D_801062F0[32];
 void background_dragon_spawn_trail(struct PlayerObj*, s8);
 extern void (*background_dragon_step_funcs[13])(struct MainObj*);
 extern s16 D_800F98EC[36];
@@ -68,16 +68,18 @@ extern u8 background_dragon_attack_map[128];
 extern u16 D_800F99BC[4];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040644);
+#else
 void func_80040644(struct MainObj* arg0)
 {
     u8* ext = (u8*)&arg0->ext;
 
+    arg0->on_screen = 1;
     arg0->hp = 0x30;
     arg0->animation_table = (const u8* const*)D_800F9934;
     arg0->unk16 = 0x22;
     arg0->collision_data = (const u16*)D_801062F0;
-    arg0->on_screen = 1;
     arg0->unk15 = 0;
     arg0->bg_offset = 0;
     arg0->contact_damage = 1;
@@ -94,8 +96,8 @@ void func_80040644(struct MainObj* arg0)
     set_animation(arg0, 0);
 
     arg0->unk5 = 6;
-    arg0->y_speed = 0x18000;
     arg0->x_pos.val = 0x06200000;
+    arg0->y_speed = 0x18000;
     arg0->y_pos.val = 0;
     arg0->x_speed = 0;
     ext[0] = 1;
@@ -110,8 +112,6 @@ void func_80040644(struct MainObj* arg0)
     arg0->state = (u8)arg0->state + 1;
     update_on_screen(BASE_OBJECT(arg0), 0xA0, 0xA0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040644);
 #endif
 
 void background_dragon_spawn_trail(struct PlayerObj* self, s8 arg1)
@@ -327,37 +327,26 @@ INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040ABC);
 #endif
 
 // background_dragon_hover
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040CCC);
+#else
 void func_80040CCC(struct MainObj* arg0)
 {
-    s32 distance;
-
     animate_object(ANIMATED_OBJECT(arg0));
     arg0->y_pos.u.hi += (s8)arg0->animation_step.fields.event;
-
-    distance = g_Player.x_pos.val - arg0->x_pos.val;
-    if (distance < 0) {
-        distance = arg0->x_pos.val - g_Player.x_pos.val;
-    }
-    if (distance > 0x20000) {
-        distance = 0x20000;
-    }
-    arg0->x_speed = distance;
-    if (arg0->x_pos.val < g_Player.x_pos.val) {
-        arg0->x_speed = -distance;
-    }
-
+    arg0->x_speed = (g_Player.x_pos.val - arg0->x_pos.val < 0 ? arg0->x_pos.val - g_Player.x_pos.val : g_Player.x_pos.val - arg0->x_pos.val) > 0x20000 ? 0x20000 : (g_Player.x_pos.val - arg0->x_pos.val < 0 ? arg0->x_pos.val - g_Player.x_pos.val : g_Player.x_pos.val - arg0->x_pos.val);
+    if (g_Player.x_pos.val > arg0->x_pos.val)
+        arg0->x_speed = -arg0->x_speed;
     arg0->y_speed = 0;
     move_object(MOVING_OBJECT(arg0));
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
-
-    arg0->unk15 = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? PLAYER_FACING_RIGHT : 0;
-    if (arg0->animation_step.fields.relative_step < 0) {
+    if (g_Player.x_pos.i.hi < arg0->x_pos.i.hi)
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+    else
+        arg0->unk15 = 0;
+    if (arg0->animation_step.fields.relative_step < 0)
         arg0->unk5 = func_80040ABC(arg0);
-    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040CCC);
 #endif
 
 void background_dragon_wait_for_animation(struct MainObj* self)

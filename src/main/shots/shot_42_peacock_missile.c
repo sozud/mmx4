@@ -51,10 +51,13 @@ extern u8 peacock_missile_turn_steps_ccw[8];
 extern u8 peacock_missile_turn_steps_cw[8];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A63B0);
+#else
 void func_800A63B0(struct ShotObj* arg0)
 {
-    struct MainObj* boss = arg0->backref;
+    s32 index = arg0->unk2 * 2;
+    s16 dx;
 
     arg0->state = 1;
     arg0->on_screen = 1;
@@ -74,14 +77,15 @@ void func_800A63B0(struct ShotObj* arg0)
     arg0->unk58.data = NULL;
     arg0->unk61 = 0;
     arg0->unk8C.word = 0;
-    if (boss->unk15 != 0) {
-        arg0->x_pos.i.hi -= peacock_missile_launch_offsets[arg0->unk2][0];
+    dx = ((s16*)peacock_missile_launch_offsets)[index];
+    if (((struct MainObj*)arg0->backref)->unk15 != 0) {
+        arg0->x_pos.i.hi -= dx;
         arg0->unk84.value = peacock_missile_turn_steps_cw[arg0->unk2];
     } else {
-        arg0->x_pos.i.hi += peacock_missile_launch_offsets[arg0->unk2][0];
+        arg0->x_pos.i.hi += dx;
         arg0->unk84.value = peacock_missile_turn_steps_ccw[arg0->unk2];
     }
-    arg0->y_pos.i.hi += peacock_missile_launch_offsets[arg0->unk2][1];
+    arg0->y_pos.i.hi += ((s16*)peacock_missile_launch_offsets)[index + 1];
     set_animation(arg0, (arg0->unk84.value >> 1) + 0xD);
     set_velocity_from_angle(MOVING_OBJECT(arg0), (u8)arg0->unk84.value);
     arg0->unk2C = 0;
@@ -89,8 +93,6 @@ void func_800A63B0(struct ShotObj* arg0)
     arg0->x_vel.val *= 4;
     arg0->y_vel.val *= 4;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A63B0);
 #endif
 
 // peacock_missile_home

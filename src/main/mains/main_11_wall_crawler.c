@@ -53,6 +53,10 @@ ret_s8 func_8002DD04(struct MainObj* object);
 s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1);
 #endif
 
+extern struct Unk_unk68 wall_crawler_terrain_box;
+extern struct Unk_unk68 D_800FB56C;
+extern u8 wall_crawler_debris[];
+extern void (*wall_crawler_step_funcs[])(struct MainObj*);
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004B418(struct MainObj* self);
 void func_8004B0A0(struct MainObj* self);
@@ -61,13 +65,9 @@ void func_8004A9F4(struct MainObj* self);
 void func_8004AD18(struct MainObj* self);
 void func_8004B668(struct MainObj* self);
 void func_8004AB6C(struct MainObj* self);
-extern struct Unk_unk68 wall_crawler_terrain_box;
 extern struct Unk_unk68 D_800FB568;
-extern struct Unk_unk68 D_800FB56C;
 extern struct Unk_unk68 D_801067F0[];
 extern union AnimationStep* wall_crawler_animations[];
-extern u8 wall_crawler_debris[];
-extern void (*wall_crawler_step_funcs[])(struct MainObj*);
 #endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -140,11 +140,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A78C);
 #endif
 
 // wall_crawler_attach
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A9F4);
+#else
 void func_8004A9F4(struct MainObj* self)
 {
-    u16* timer = (u16*)((u8*)&SP_CUR_MAIN_OBJ->ext + 2);
-
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     if (engine_obj.character_state.fields.active != 0) {
@@ -159,8 +159,8 @@ void func_8004A9F4(struct MainObj* self)
         return;
     }
     if (self->unk2 == 0 && self->unk5 == 2) {
-        --*timer;
-        if (*timer == 0)
+        --*(s16*)((u8*)&SP_CUR_MAIN_OBJ->ext + 2);
+        if (*(s16*)((u8*)&SP_CUR_MAIN_OBJ->ext + 2) == 0)
             self->unk5 = 4;
     }
     SP_CUR_MAIN_OBJ->ext.main_11.saved_unk5 = self->unk5;
@@ -173,19 +173,16 @@ void func_8004A9F4(struct MainObj* self)
     }
     wall_crawler_step_funcs[self->unk5](self);
     func_8002D9BC(self);
-    if (func_8002B160(BASE_OBJECT(self)) != 0) {
-        self->state = 4;
-    } else {
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
         animate_object(ANIMATED_OBJECT(self));
         is_on_screen(BASE_OBJECT(self));
+    } else {
+        self->state = 4;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A9F4);
 #endif
 
 // wall_crawler_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004AB6C(struct MainObj* self)
 {
     s32 collision;
@@ -211,7 +208,7 @@ void func_8004AB6C(struct MainObj* self)
             shot->x_pos = self->x_pos;
             shot->y_pos = self->y_pos;
             shot->unk2 = i * 2;
-            set_velocity_from_angle(MOVING_OBJECT(shot), i * 2);
+            set_velocity_from_angle(MOVING_OBJECT(shot), (s8)(i * 2));
         }
         self->state++;
         return;
@@ -225,9 +222,6 @@ void func_8004AB6C(struct MainObj* self)
     if (!(self->collision_flags & 8))
         move_with_gravity(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004AB6C);
-#endif
 
 void wall_crawler_next_state(struct MainObj* self)
 {
@@ -243,13 +237,15 @@ void wall_crawler_despawn(struct MainObj* self)
 }
 
 // wall_crawler_step_7
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004AD18);
+#else
 void func_8004AD18(struct MainObj* self)
 {
     if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi, self->y_pos.i.hi) != 0)
         return;
     set_animation(self, 0);
-    if (g_Player.x_pos.val < self->x_pos.val) {
+    if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
         SP_CUR_MAIN_OBJ->ext.main_11.unk80 = 1;
         self->x_speed = -0x18000;
@@ -264,8 +260,6 @@ void func_8004AD18(struct MainObj* self)
     *(u16*)((u8*)&SP_CUR_MAIN_OBJ->ext + 2) = 0x3C;
     self->hurt_box = &wall_crawler_terrain_box;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004AD18);
 #endif
 
 void wall_crawler_resume_step(struct MainObj* self)
@@ -514,7 +508,7 @@ void func_8004B514(struct MainObj* self)
         if ((s8)SP_CUR_MAIN_OBJ->ext.main_11.unk85 == 3) {
             SP_CUR_MAIN_OBJ->ext.main_11.unk86 = 0x20;
             self->unk6++;
-        } else if ((s8)--SP_CUR_MAIN_OBJ->ext.main_11.unk86 <= 0) {
+        } else if (--SP_CUR_MAIN_OBJ->ext.main_11.unk86 <= 0) {
             SP_CUR_MAIN_OBJ->ext.main_11.unk86 = 0x20;
             self->unk6--;
         }
@@ -541,27 +535,24 @@ void func_8004B514(struct MainObj* self)
 }
 
 // wall_crawler_corner_3
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B668);
+#else
 void func_8004B668(struct MainObj* self)
 {
-    struct Main11Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_11;
-    u8 angle;
-    s32 animation = -1;
-
-    if ((s8)--ext->unk86 != 0)
+    if (--SP_CUR_MAIN_OBJ->ext.main_11.unk86 != 0)
         return;
-    angle = ext->angle & 0xFE;
-    switch (angle) {
+    switch (SP_CUR_MAIN_OBJ->ext.main_11.angle & 0xFE) {
     case 2:
     case 4:
     case 6:
     case 10:
     case 12:
     case 14:
-        animation = 0x12;
+        set_animation(self, 0x12);
         break;
     case 8:
-        animation = 0x13;
+        set_animation(self, 0x13);
         break;
     case 18:
     case 20:
@@ -569,19 +560,15 @@ void func_8004B668(struct MainObj* self)
     case 26:
     case 28:
     case 30:
-        animation = 0x14;
+        set_animation(self, 0x14);
         break;
     case 24:
-        animation = 0x15;
+        set_animation(self, 0x15);
         break;
     }
-    if (animation >= 0)
-        set_animation(self, animation);
     self->unk6++;
-    ext->unk85 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_11.unk85 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B668);
 #endif
 
 void wall_crawler_corner_end(struct MainObj* self)

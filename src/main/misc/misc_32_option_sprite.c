@@ -30,7 +30,6 @@ extern void (*option_sprite_state_funcs[])(struct MiscObj*);
 void func_800CE114(struct MiscObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CE114(struct MiscObj* arg0)
 {
     const u8* rows = (const u8*)arg0->ext.misc_32.owner;
@@ -44,23 +43,20 @@ void func_800CE114(struct MiscObj* arg0)
     arg0->unk42 = SATURN_OPTION_CURSOR_PALETTE;
 #else
     arg0->unk40 = 0x1E00;
+    arg0->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
     arg0->animation_table = (u32**)option_toggle_animations;
     arg0->bg_offset = -1;
     arg0->unk42 = 0x7806;
     arg0->unk15 = 0;
-    arg0->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
 #endif
     arg0->x_pos.i.hi += 8;
     arg0->y_pos.i.hi = rows[main_bss_state.transition.selection * 2 + 2] + 8;
+    arg0->ext.misc_32.animation = main_bss_state.transition.selection;
     arg0->unk16 = 0x10;
     arg0->state++;
-    arg0->ext.misc_32.animation = main_bss_state.transition.selection;
     set_animation(arg0, 0);
     is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_32_option_sprite", func_800CE114);
-#endif
 
 // option_sprite_animate
 void func_800CE1D4(struct MiscObj* self)

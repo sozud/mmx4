@@ -63,23 +63,20 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA5E0);
 #endif
 
 // double_mine_arm
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA68C);
+#else
 void func_800AA68C(struct ShotObj* self)
 {
-    s32 target = self->unk8C.halves[1] * 0x10000;
-
     if (self->timer == 0) {
+        self->y_pos.val = self->unk8C.halves[1] << 16;
         self->unk5++;
-        self->y_pos.val = target;
     } else {
-        s32 distance = (s32)((u32)self->y_pos.val - (u32)target);
-        self->y_pos.val = (s32)((u32)self->y_pos.val - (u32)(distance / self->timer));
+        self->y_pos.val -= (self->y_pos.val - (self->unk8C.halves[1] << 16)) / self->timer;
         self->timer--;
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA68C);
 #endif
 
 void double_mine_dash_start(struct ShotObj* self)

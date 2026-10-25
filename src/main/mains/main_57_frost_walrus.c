@@ -164,20 +164,23 @@ void frost_walrus_start_warning(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern struct Unk_unk68 frost_walrus_terrain_box;
+extern void* frost_walrus_animations[39];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800722A0(struct MainObj* arg0);
 void func_80072418(struct MainObj* arg0);
 void func_80073E80(struct MainObj* arg0);
-extern struct Unk_unk68 frost_walrus_terrain_box;
-extern void* frost_walrus_animations[39];
 extern void (*frost_walrus_step_funcs[12])();
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_800722A0);
+#else
 void func_800722A0(struct MainObj* arg0)
 {
     if (((struct BaseObj*)arg0->ext.main_57.effect)->active != 0)
         return;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->contact_damage = 6;
     arg0->terrain_box = &frost_walrus_terrain_box;
@@ -193,15 +196,14 @@ void func_800722A0(struct MainObj* arg0)
     arg0->hp = 0;
     arg0->invincibility_timer = 0;
     arg0->animation_table = (const u8* const*)frost_walrus_animations;
-    arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     if (engine_obj.stage != 0xC) {
         arg0->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
     } else {
         arg0->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0x160);
-        arg0->unk42 = OBJECT_CLUT(0x7888);
         arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
+        arg0->unk42 = OBJECT_CLUT(0x7888);
     }
     engine_obj.unk25 = 1;
     engine_obj.boss_ptr = arg0;
@@ -214,8 +216,6 @@ void func_800722A0(struct MainObj* arg0)
     arg0->unk5 = 2;
     arg0->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_800722A0);
 #endif
 
 // frost_walrus_main
@@ -993,11 +993,13 @@ void frost_walrus_stagger(struct MainObj* self)
 }
 
 // frost_walrus_stagger_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80073E80);
+#else
 void func_80073E80(struct MainObj* arg0)
 {
     struct VisualObj* visual;
-    u32 i;
+    u8 i;
 
     arg0->ext.main_57.staggered = 1;
     for (i = 0; i < 4; i++) {
@@ -1007,23 +1009,24 @@ void func_80073E80(struct MainObj* arg0)
         visual->active = 0x41;
         visual->id = 0x18;
         visual->unk2 = i + 0x40;
-        visual->unk50 = (struct PlayerObj*)arg0;
         visual->unk15 = arg0->unk15;
+        visual->unk50 = (struct PlayerObj*)arg0;
     }
     set_animation(arg0, 0x12);
     func_8001540C(2, SATURN_SOUND(0x99, 0x69), arg0);
-    arg0->x_speed = arg0->x_pos.i.hi < g_Player.x_pos.i.hi ? -0x20000 : 0x20000;
+    if (arg0->x_pos.i.hi < g_Player.x_pos.i.hi)
+        arg0->x_speed = -0x20000;
+    else
+        arg0->x_speed = 0x20000;
     arg0->y_speed = 0x38000;
+    arg0->air_state = 1;
     arg0->gravity = 0x4200;
     arg0->ext.main_57.flash_timer = 0xC8;
-    arg0->air_state = 1;
     arg0->ext.main_57.flashing = 1;
     arg0->x_accel = 0;
     arg0->collision_data = D_801060F0;
     arg0->unk6++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80073E80);
 #endif
 
 void frost_walrus_stagger_fall(struct MainObj* self)

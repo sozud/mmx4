@@ -362,10 +362,14 @@ void aiming_laser_charged_init(struct WeaponObj* arg0)
 }
 
 // aiming_laser_charged_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_80096B54);
+#else
 void func_80096B54(struct WeaponObj* self)
 {
     struct Weapon6Ext* ext = &self->ext.weapon_6;
+    struct PlayerObj* player = &g_Player;
+
     if (ext->lifetime == 0) {
         self->state = 3;
         return;
@@ -385,9 +389,9 @@ void func_80096B54(struct WeaponObj* self)
             self->unk5++;
             break;
         }
-        if (ext->direction != 0 && (g_Player.input.buttons.held & PLAYER_INPUT_UP))
+        if (ext->direction != 0 && (player->input.buttons.held & PLAYER_INPUT_UP))
             ext->direction--;
-        if (ext->direction != 0x10 && (g_Player.input.buttons.held & PLAYER_INPUT_DOWN))
+        if (ext->direction != 0x10 && (player->input.buttons.held & PLAYER_INPUT_DOWN))
             ext->direction++;
         if (ext->timer == 0) {
             ext->timer = 6;
@@ -396,11 +400,11 @@ void func_80096B54(struct WeaponObj* self)
             ext->timer--;
         }
         break;
+    case 2:
+        break;
     }
-    aiming_laser_charged_aim(self, &g_Player);
+    aiming_laser_charged_aim(self, player);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_80096B54);
 #endif
 
 void aiming_laser_charged_aim(struct WeaponObj* self, struct PlayerObj* player)

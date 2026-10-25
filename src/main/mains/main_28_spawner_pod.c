@@ -117,35 +117,37 @@ void spawner_pod_idle(struct MainObj* self)
 
 // spawner_pod_step_2
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80059E40(struct MainObj* self);
-void func_80059F60(struct MainObj* self);
 extern u8 D_800FD5C8[32];
 extern struct FixedPointPosition D_800FD618[4];
 extern struct FixedPointPosition D_800FD638[4];
-extern u8 D_800FD5C8[32];
 extern struct Unk_unk68* D_800FD5B0[2];
 extern struct Unk_unk68* D_800FD5B8[2];
 extern struct Unk_unk68* D_800FD5C0[2];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void func_80059E40(struct MainObj* self);
+void func_80059F60(struct MainObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", func_80059E40);
+#else
 void func_80059E40(struct MainObj* self)
 {
-    struct Main28Ext* ext = &self->ext.main_28;
+    struct MainObj* context = self->ext.main_28.context;
+
     if (self->animation_step.fields.relative_step == 0) {
         u8 index = (u8)self->unk2 * 2;
         self->unk5 = 3;
-        ext->context->unk7C = 0;
-        set_animation(self, ext->unk84 + 1);
+        context->unk7C = 0;
+        set_animation(self, self->ext.main_28.unk84 + 1);
         self->x_speed = 0;
         self->y_speed = 0;
         if (get_random() & 7) {
-            self->x_accel = D_800FD618[index / 2].x;
-            self->gravity = D_800FD618[index / 2].y;
+            self->x_accel = ((s32*)D_800FD618)[index];
+            self->gravity = ((s32*)D_800FD618)[index + 1];
         } else {
-            self->x_accel = D_800FD638[index / 2].x;
-            self->gravity = D_800FD638[index / 2].y;
+            self->x_accel = ((s32*)D_800FD638)[index];
+            self->gravity = ((s32*)D_800FD638)[index + 1];
         }
         self->unk7C = 0;
         self->unk7E = D_800FD5C8[get_random() & 0x1F];
@@ -155,8 +157,6 @@ void func_80059E40(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", func_80059E40);
 #endif
 
 // spawner_pod_step_3

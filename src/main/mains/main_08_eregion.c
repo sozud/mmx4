@@ -94,31 +94,33 @@ void eregion_update(struct MainObj* self)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern union AnimationStep* D_800FAD68[];
+extern u32 D_800FA724;
+extern u32 D_800FA728;
+extern struct Unk_unk68 D_801066F0[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80047E58(struct MainObj* arg0);
 void func_8004932C(struct MainObj* arg0);
 void func_800480D0(struct MainObj* arg0);
 void func_80048B04(struct MainObj* arg0);
 void func_80047D04(struct MainObj* arg0);
-extern union AnimationStep* D_800FAD68[];
-extern u32 D_800FA724;
-extern u32 D_800FA728;
 extern u32 D_800FA738;
 extern u32 D_800FA73C;
 extern u32 D_800FA740;
 extern u32 D_800FA744;
-extern struct Unk_unk68 D_801066F0[];
 extern void (*eregion_step_funcs[])(struct MainObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80047D04);
+#else
 void func_80047D04(struct MainObj* arg0)
 {
     struct VisualObj* visual;
 
-    arg0->ext.main_8.queued_sound = 0xFF;
     arg0->ext.main_8.unk8B = 0;
     arg0->ext.main_8.unk8C = 0;
+    arg0->ext.main_8.queued_sound = 0xFF;
     arg0->on_screen = 1;
     arg0->unk15 = 0;
     arg0->bg_offset = 0;
@@ -126,21 +128,21 @@ void func_80047D04(struct MainObj* arg0)
     arg0->hp = 0;
     arg0->contact_damage = 3;
     arg0->invincibility_timer = 0;
-    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->animation_table = (const u8* const*)D_800FAD68;
     arg0->terrain_box = (struct Unk_unk68*)&D_800FA724;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
+    arg0->unk40 = (u16)((OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0));
     arg0->collision_data = (const u16*)D_801066F0;
     arg0->hurt_box = (const u8*)&D_800FA728;
     arg0->attack_box = (const u8*)&D_800FA72C;
-    arg0->ext.main_8.unk84 = &D_800FA72C;
     arg0->ext.main_8.unk88 = 1;
     arg0->ext.main_8.unk80 = 0;
-    arg0->unk40 = (u16)((OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0));
+    arg0->ext.main_8.unk84 = &D_800FA72C;
     engine_obj.unk25 = 2;
     engine_obj.boss_ptr = arg0;
     set_animation(arg0, 0);
-    arg0->unk5 = 9;
     arg0->state++;
+    arg0->unk5 = 9;
 
     visual = find_free_visual_obj();
     if (visual != NULL) {
@@ -159,8 +161,6 @@ void func_80047D04(struct MainObj* arg0)
     arg0->x_pos.val = FIXED(0xF60);
     arg0->y_pos.val = FIXED(0x170);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80047D04);
 #endif
 
 // eregion_run
@@ -521,17 +521,12 @@ void eregion_wing_slash_start(struct MainObj* self)
 }
 
 // eregion_wing_slash_swing
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80048B04(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
 
     if (arg0->animation_step.fields.frame_index != 0xC) {
-        if (arg0->unk15 != 0) {
-            arg0->x_pos.u.hi = arg0->x_speed - 8;
-        } else {
-            arg0->x_pos.u.hi = arg0->x_speed + 8;
-        }
+        arg0->x_pos.u.hi = (s16)arg0->x_speed + (arg0->unk15 ? -8 : 8);
     }
 
     if (arg0->animation_step.fields.event == 2) {
@@ -544,9 +539,6 @@ void func_80048B04(struct MainObj* arg0)
         arg0->x_pos.u.hi = arg0->x_speed;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80048B04);
-#endif
 
 void eregion_wing_slash(struct MainObj* self)
 {
@@ -788,16 +780,15 @@ void eregion_recoil_start(struct MainObj* self)
 }
 
 // eregion_recoil_wait
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_8004932C);
+#else
 void func_8004932C(struct MainObj* arg0)
 {
-    s32 x_pos = arg0->x_speed;
-    u8 frame = arg0->animation_step.fields.frame_index;
-
-    if (frame >= 0x1C && frame <= 0x1D) {
-        x_pos += arg0->unk15 != 0 ? -0x16 : 0x16;
-    }
-    arg0->x_pos.i.hi = (s16)x_pos;
+    if ((u8)(arg0->animation_step.fields.frame_index - 0x1C) < 2)
+        arg0->x_pos.i.hi = (s16)arg0->x_speed + (arg0->unk15 != 0 ? -0x16 : 0x16);
+    else
+        arg0->x_pos.i.hi = arg0->x_speed;
     arg0->unk42 &= 0x7FFF;
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event != 0) {
@@ -813,8 +804,6 @@ void func_8004932C(struct MainObj* arg0)
         arg0->x_pos.i.hi = (s16)arg0->x_speed;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_8004932C);
 #endif
 
 void eregion_recoil(struct MainObj* self)

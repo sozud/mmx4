@@ -1810,7 +1810,29 @@ void func_80018EEC(void)
     D_801395E4 = D_801395E8;
 }
 
-INCLUDE_ASM("main/nonmatchings/55C4", func_80018F18);
+void func_80018F18(u_long* data, s16 x, s16 y, u32 w, s32 h, s32 wide)
+{
+    RECT rect;
+    s32 width;
+    u32 words;
+    u32 i;
+
+    width = 0x10;
+    if (wide != 0) {
+        width = 0x18;
+    }
+    rect.x = x;
+    rect.y = y;
+    rect.w = width;
+    rect.h = h;
+    words = (u32)(width * h) >> 1;
+    for (i = 0; i < (w >> 4); i++) {
+        LoadImage(&rect, data);
+        DrawSync(0);
+        rect.x += width;
+        data += words;
+    }
+}
 void func_80018FD0(u32 arg0)
 {
     D_800F1D8C = arg0;

@@ -129,11 +129,11 @@ void cyberspace_guide_start_timer(struct MiscObj* self)
 
 // cyberspace_guide_follow
 
+extern u8 cyberspace_guide_offsets[12];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 static void misc_34_track_axis(f32* position, s32 target, s16 target_hi);
 void func_800CEBC0(struct MiscObj* arg0);
 void func_800CEFC0(struct MiscObj* arg0);
-extern u8 cyberspace_guide_offsets[12];
 static void misc_34_track_axis(f32* position, s32 target, s16 target_hi)
 {
     s32 delta = target - position->val;
@@ -232,32 +232,35 @@ void cyberspace_guide_leave_finish(struct MiscObj* self)
 }
 
 // cyberspace_guide_update_position
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_34_cyberspace_guide", func_800CEFC0);
+#else
 void func_800CEFC0(struct MiscObj* arg0)
 {
-    struct Misc34Ext* ext = &arg0->ext.misc_34;
+
     u8 limit;
     u8 counter;
 
-    if (ext->enabled == 0 || ext->variant == 2)
+    if (arg0->ext.misc_34.enabled == 0 || arg0->ext.misc_34.variant == 2)
         return;
-    limit = cyberspace_guide_offsets[engine_obj.checkpoint * 2 + ext->variant];
-    counter = ext->unk58;
-    ext->unk58 = counter + 1;
+    limit = cyberspace_guide_offsets[engine_obj.checkpoint * 2 + arg0->ext.misc_34.variant];
+    counter = arg0->ext.misc_34.unk58;
+    arg0->ext.misc_34.unk58 = counter + 1;
     if (counter >= 0x3C) {
-        if (++ext->unk57 == limit - 3 && arg0->unk17 != 3) {
+        if (++arg0->ext.misc_34.unk57 == limit - 3 && arg0->unk17 != 3) {
             set_animation(arg0, 2);
-            ext->unk5A = 0xB4;
+            arg0->ext.misc_34.unk5A = 0xB4;
         }
-        ext->unk58 = 0;
+        arg0->ext.misc_34.unk58 = 0;
     }
-    if (ext->unk57 >= limit) {
-        ext->variant = ext->variant == 0 ? 1 : 2;
-        ext->unk57 = 0;
+    if (arg0->ext.misc_34.unk57 >= limit) {
+        if (arg0->ext.misc_34.variant == 0)
+            arg0->ext.misc_34.variant = 1;
+        else
+            arg0->ext.misc_34.variant = 2;
+        arg0->ext.misc_34.unk57 = 0;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_34_cyberspace_guide", func_800CEFC0);
 #endif
 
 void cyberspace_guide_update_blink(struct MiscObj* self)

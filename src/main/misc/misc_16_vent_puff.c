@@ -55,9 +55,13 @@ void vent_puff_init(struct MiscObj* self)
 void func_800CACF0(struct MiscObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_16_vent_puff", func_800CACF0);
+#else
 void func_800CACF0(struct MiscObj* arg0)
 {
+    s16 limit;
+
     if (arg0->unk5 == 0) {
         animate_object(ANIMATED_OBJECT(arg0));
         move_with_gravity(ANIMATED_OBJECT(arg0));
@@ -65,7 +69,8 @@ void func_800CACF0(struct MiscObj* arg0)
             arg0->animation_step.fields.event = 0;
             arg0->x_vel.val = -arg0->x_vel.val;
         }
-        if (arg0->y_pos.i.hi >= (engine_obj.stage == 0xC ? 0x6D0 : 0x5D0)) {
+        limit = engine_obj.stage != 0xC ? 0x5D0 : 0x6D0;
+        if (arg0->y_pos.i.hi >= limit) {
             arg0->unk5 = 1;
             arg0->y_vel.val = 0;
             arg0->unk2C = 0;
@@ -82,8 +87,6 @@ void func_800CACF0(struct MiscObj* arg0)
     if (arg0->ext.misc_16.timer & 1)
         is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_16_vent_puff", func_800CACF0);
 #endif
 
 void vent_puff_despawn(struct MiscObj* self)

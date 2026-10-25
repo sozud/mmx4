@@ -28,20 +28,16 @@ void func_80092684(struct WeaponObj* arg0);
 extern struct Unk_unk68 D_80108708[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80092684(struct WeaponObj* arg0)
 {
-    s32 velocity;
-
     arg0->on_screen = 1;
     if (arg0->id == 9) {
-        velocity = FIXED(8);
         arg0->unk2 = 0;
+        arg0->x_vel.val = FIXED(8);
     } else {
-        velocity = FIXED(10);
         arg0->unk2 = 1;
+        arg0->x_vel.val = FIXED(10);
     }
-    arg0->x_vel.val = velocity;
     arg0->unk50 = (const u8*)&D_80108708[arg0->unk2];
     if (arg0->unk15 == 0) {
         arg0->x_vel.val = -arg0->x_vel.val;
@@ -53,9 +49,6 @@ void func_80092684(struct WeaponObj* arg0)
     arg0->state = (u8)arg0->state + 1;
     update_on_screen(BASE_OBJECT(arg0), 0x20, 0x14);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_09_charge_shot", func_80092684);
-#endif
 
 void charge_shot_main(struct WeaponObj* arg0)
 {

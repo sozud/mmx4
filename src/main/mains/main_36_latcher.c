@@ -35,14 +35,16 @@ void latcher_update(struct MainObj* self)
 
 // latcher_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_8005F558(struct MainObj* arg0);
 extern struct Unk_unk68 latcher_hurt_box;
 extern struct Unk_unk68 D_801073F4[];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void func_8005F558(struct MainObj* arg0);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_36_latcher", func_8005F558);
+#else
 void func_8005F558(struct MainObj* arg0)
 {
     struct MainObj* current;
@@ -53,8 +55,8 @@ void func_8005F558(struct MainObj* arg0)
     arg0->unk42 = OBJECT_STAGE_CLUT(0x24);
     resource = func_8002938C(0x24);
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->attack_box = &latcher_hurt_box;
-    arg0->hurt_box = &latcher_hurt_box;
     arg0->animation_table = (const u8* const*)latcher_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk62 = 3;
@@ -67,13 +69,13 @@ void func_8005F558(struct MainObj* arg0)
     arg0->air_state = 0;
     arg0->unk15 = 0;
     arg0->contact_damage = 0;
+    arg0->hurt_box = &latcher_hurt_box;
     arg0->terrain_box = NULL;
     arg0->invincibility_timer = 0;
-    arg0->bg_offset = g_Player.bg_offset;
     switch (arg0->unk2) {
     case 0:
         set_animation(arg0, 0);
-        memset(SP_CUR_MAIN_OBJ->ext.main_36.unk80, 0, sizeof(SP_CUR_MAIN_OBJ->ext.main_36.unk80));
+        *(u32*)SP_CUR_MAIN_OBJ->ext.main_36.unk80 = 0;
         break;
     case 1:
         set_animation(arg0, 1);
@@ -92,8 +94,6 @@ void func_8005F558(struct MainObj* arg0)
     arg0->state = 1;
     arg0->unk5 = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_36_latcher", func_8005F558);
 #endif
 
 extern void (*latcher_step_funcs[])(struct MainObj*);

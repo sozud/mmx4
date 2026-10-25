@@ -20,34 +20,30 @@ void debris_update(struct MiscObj* self)
 
 // debris_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern s32 debris_x_speeds[8];
 extern s32 debris_y_speeds[8];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_03_debris", func_800C8610);
+#else
 void func_800C8610(struct MiscObj* arg0)
 {
-    struct MainObj* owner = arg0->ext.misc_2.owner;
-
     arg0->on_screen = 1;
     if (arg0->unk2 == 0) {
-        arg0->unk3C = (void*)owner->sprite_frames;
-        arg0->animation_table = (u32**)owner->animation_table;
-        arg0->unk40 = owner->unk40;
-        arg0->unk42 = owner->unk42 & 0x7FFF;
+        arg0->unk3C = (void*)arg0->ext.misc_2.owner->sprite_frames;
+        arg0->animation_table = (u32**)arg0->ext.misc_2.owner->animation_table;
+        arg0->unk40 = arg0->ext.misc_2.owner->unk40;
+        arg0->unk42 = arg0->ext.misc_2.owner->unk42 & 0x7FFF;
     }
     arg0->unk16 = 1;
-    arg0->unk2C = 0x5000;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->x_vel.val = debris_x_speeds[get_random() & 7] + owner->x_speed / 2;
+    arg0->unk2C = 0x5000;
+    arg0->x_vel.val = debris_x_speeds[get_random() & 7] + arg0->ext.misc_2.owner->x_speed / 2;
     arg0->y_vel.val = debris_y_speeds[get_random() & 7];
     set_animation(arg0, arg0->ext.misc_2.unk58);
     arg0->state = (u8)arg0->state + 1;
     is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_03_debris", func_800C8610);
 #endif
 
 void debris_fall(struct MiscObj* self)

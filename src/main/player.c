@@ -1000,31 +1000,26 @@ void player_capsule(struct PlayerObj* self)
 void func_80032FA4(struct PlayerObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80032FA4(struct PlayerObj* arg0)
 {
     if (arg0->capsule_state == 0) {
         if (arg0->unk88.unsigned_bytes.collision_flags & 8) {
             player_enter_stand(arg0);
-            arg0->dash_momentum = 0;
         } else {
             player_set_animation(arg0, 0xB);
-            arg0->unk2C = 0x4200;
             arg0->x_vel.val = 0;
             arg0->unk28 = 0;
             arg0->y_vel.val = 0;
+            arg0->unk2C = 0x4200;
             arg0->air_state = -1;
             arg0->unk6++;
-            arg0->dash_momentum = 0;
         }
+        arg0->dash_momentum = 0;
         arg0->air_action = 0;
     } else if (arg0->air_state == 0) {
         animate_object(ANIMATED_OBJECT(arg0));
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/player", func_80032FA4);
-#endif
 
 void player_capsule_fall(struct PlayerObj* self)
 {
@@ -1051,25 +1046,28 @@ void player_script_wait(struct PlayerObj* self)
 }
 
 // player_script_walk
-#ifdef MMX4_SATURN
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player", func_80033108);
+#else
 void func_80033108(struct PlayerObj* self)
 {
     if (engine_obj.unkF != 0) {
         player_start_stage_clear(self);
         return;
     }
-    self->x_vel.val = self->animation_step.fields.event != 0 ? 0x20000 : 0x8000;
+    if (self->animation_step.fields.event == 0)
+        self->x_vel.val = 0x8000;
+    else
+        self->x_vel.val = 0x20000;
     if (self->unk15 == 0) {
         self->x_vel.val = -self->x_vel.val;
     }
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
-    if (self->script_facing == 0) {
+    if ((u8)self->script_facing == 0) {
         player_script_walk_to_mark(self);
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/player", func_80033108);
 #endif
 
 void player_script_vanish(struct PlayerObj* self)

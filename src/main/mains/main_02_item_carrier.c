@@ -76,37 +76,39 @@ extern u8 item_carrier_part_debris_counts[4];
 extern void (*item_carrier_action_funcs[])(struct MainObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042950);
+#else
+#define HD_MODE(o) (((u8*)&(o)->ext)[0])
 void func_80042950(struct MainObj* arg0)
 {
-    u8* ext = (u8*)&arg0->ext;
+    struct PlayerObj* player = &g_Player;
     u8 weapon;
-    s32 flags;
+    u8 flags;
 
-    arg0->active = (u8)arg0->active | 4;
-    weapon = (u8)g_Player.weapon;
+    arg0->active |= 4;
+    weapon = player->weapon;
     flags = 0;
-    if (((s8)engine_obj.max_hp / 2) >= g_Player.hp) {
+    if (player->hp <= (s8)engine_obj.max_hp / 2) {
         flags = 1;
-        ext[0] = 1;
+        HD_MODE(arg0) = 1;
     }
-    if (engine_obj.cur_character == 0) {
-        if (weapon != 0 && g_Player.weapon_energy[weapon] < 0x19) {
-            flags |= 2;
-            ext[0] = 3;
+    if (engine_obj.cur_character == 0 && weapon != 0 && player->weapon_energy[weapon] <= 0x18) {
+        flags |= 2;
+        HD_MODE(arg0) = 3;
+    }
+    if (flags != 0) {
+        if (flags == 3) {
+            if (player->hp <= player->weapon_energy[weapon])
+                HD_MODE(arg0) = 1;
+            else
+                HD_MODE(arg0) = 3;
         }
-    }
-    if ((flags & 0xFF) == 0) {
+        arg0->state++;
+    } else {
         despawn_object(OBJECT_HEADER(arg0));
-        return;
     }
-    if ((flags & 0xFF) == 3) {
-        ext[0] = g_Player.weapon_energy[weapon] >= g_Player.hp ? 1 : 3;
-    }
-    arg0->state = (u8)arg0->state + 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042950);
 #endif
 
 // item_carrier_init

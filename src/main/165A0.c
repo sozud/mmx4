@@ -565,5 +565,55 @@ void func_8002728C(void)
 
 INCLUDE_ASM("main/nonmatchings/165A0", func_80027344);
 
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/165A0", func_800275DC);
+#else
+void func_800275DC(s32 layer, s32 x, s32 y)
+{
+    s32 block_x;
+    s32 block_y;
+    s32 tile_x;
+    s32 tile_y;
+    s32 inner_x;
+    s32 inner_y;
+    u32 i;
+    s32 block;
+    s32 end;
+    s32 rem;
+    s32 layer_offset;
+
+    if (y >= 0) {
+        block_x = x / 256;
+        rem = x;
+        block_y = y / 256;
+        if (x < 0)
+            rem = x + 511;
+        tile_x = (x - ((rem >> 9) << 9)) / 16;
+        rem = y % 512;
+        if (rem < 0)
+            rem += 15;
+        tile_y = rem >> 4;
+        inner_x = tile_x & 15;
+        inner_y = tile_y & 15;
+        y = layout_size;
+        layer_offset = layer * y;
+        y = layer_offset;
+        x = layout_width;
+        x *= block_y;
+        block = (SP_BG_TILEMAP + y + x)[block_x];
+        block_y = x;
+        for (i = 0; i < 21; i++) {
+            end = 16;
+            D_801441C8[layer][tile_y][tile_x++] = (inner_y * 16 + (SP_BG_TILE_PIXELS + block * 256))[inner_x];
+            tile_x &= 31;
+            if (++inner_x == end) {
+                inner_x = 0;
+                block_x++;
+                end = (SP_BG_TILEMAP + y + block_y)[block_x];
+                block = end;
+            }
+        }
+    }
+}
+#endif
 #endif

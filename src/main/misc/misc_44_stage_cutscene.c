@@ -166,7 +166,6 @@ void func_800D0C68(struct MiscObj* self)
 
 // stage_cutscene_spawn_part
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D0D68(struct MiscObj* self, u8 kind);
 struct Misc45PositionData {
     s16 x;
@@ -175,9 +174,10 @@ struct Misc45PositionData {
     s16 height;
 };
 extern struct Misc45PositionData scripted_slider_offsets[];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if (defined(VERSION_EU) || defined(VERSION_JP)) && !defined(MMX4_PC) && !defined(MMX4_SATURN)
+INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0D68);
+#else
 void func_800D0D68(struct MiscObj* self, u8 kind)
 {
     struct MiscObj* child;
@@ -194,12 +194,10 @@ void func_800D0D68(struct MiscObj* self, u8 kind)
         child->id = 0x2D;
         child->unk2 = kind;
         child->x_pos.val = self->x_pos.val;
-        child->ext.misc_45.owner = (struct MainObj*)self;
         child->y_pos.val = self->y_pos.val;
+        child->ext.misc_45.owner = (struct MainObj*)self;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0D68);
 #endif
 
 union AnimationStep stage_cutscene_anim_0[6] = {
