@@ -59,14 +59,14 @@ ret_s8 func_8002DD04(struct MainObj* object);
 extern struct Unk_unk68 cyber_peacock_intro_hurt_box;
 extern struct Unk_unk68 D_80107CFC[];
 extern void (*cyber_peacock_step_funcs[6])();
+extern u8 cyber_peacock_attack_animations[];
+extern u8 cyber_peacock_attack_steps[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007C30C(struct MainObj* arg0);
 void func_8007CA68(struct MainObj* arg0);
 void func_8007D5D0(struct MainObj* arg0);
 void func_8007D710(struct MainObj* arg0);
 void func_8007D838(struct MainObj* arg0);
-extern u8 cyber_peacock_attack_animations[];
-extern u8 cyber_peacock_attack_steps[];
 void cyber_peacock_face_player(struct MainObj* arg0);
 u8 cyber_peacock_choose_attack(struct MainObj* arg0);
 void cyber_peacock_start_teleport(struct MainObj* arg0);
@@ -321,70 +321,79 @@ void cyber_peacock_teleport_vanish(struct MainObj* self)
 }
 
 // cyber_peacock_teleport_choose
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007CA68);
+#else
 void func_8007CA68(struct MainObj* arg0)
 {
-    s16 timer = --arg0->unk7C;
-    u8 attack;
+    s16 timer;
+    s32 attack;
     s16 base;
+    s16 y;
 
-    if (timer != 0) {
+    timer = (u16)arg0->unk7C - 1;
+    arg0->unk7C = timer;
+    if (timer == 0) {
+        arg0->unk7 = 0;
+        arg0->unk6++;
+        arg0->x_pos.i.hi = arg0->ext.main_64.target_x;
+        arg0->y_pos.i.hi = arg0->ext.main_64.target_y;
+        cyber_peacock_face_player(arg0);
+        attack = ((s32(*)(struct MainObj*))cyber_peacock_choose_attack)(arg0);
+        arg0->ext.main_64.next_step = cyber_peacock_attack_steps[attack & 0xFF];
+        set_animation(arg0, cyber_peacock_attack_animations[attack & 0xFF]);
+        arg0->unk2 = attack;
+        if ((attack & 0xFF) != 0) {
+            switch ((s8)attack) {
+            case 0:
+                break;
+            case 1:
+                y = arg0->ext.main_64.arena_y + 0xB3;
+                arg0->y_pos.i.hi = y;
+                arg0->ext.main_64.target_y = y;
+                func_8001540C(2, SATURN_SOUND(0xC7, 0x8E), arg0);
+                break;
+            case 2:
+                if (g_Player.x_pos.i.hi - arg0->ext.main_64.arena_x < 0xA0) {
+                    arg0->x_pos.i.hi = arg0->ext.main_64.arena_x + 0x90;
+                    arg0->unk15 = PLAYER_FACING_RIGHT;
+                } else {
+                    arg0->x_pos.i.hi = arg0->ext.main_64.arena_x + 0xE0;
+                    arg0->unk15 = 0;
+                }
+                y = arg0->ext.main_64.arena_y + 0xB3;
+                arg0->ext.main_64.target_x = arg0->x_pos.i.hi;
+                arg0->y_pos.i.hi = y;
+                arg0->ext.main_64.target_y = y;
+                break;
+            case 3:
+                base = arg0->ext.main_64.arena_x;
+                if (g_Player.x_pos.i.hi - base < 0xA0) {
+                    arg0->x_pos.i.hi = base + 0x110;
+                    arg0->unk15 = 0;
+                } else {
+                    arg0->x_pos.i.hi = base + 0x50;
+                    arg0->unk15 = PLAYER_FACING_RIGHT;
+                }
+                y = arg0->ext.main_64.arena_y + 0x70;
+                arg0->ext.main_64.target_x = arg0->x_pos.i.hi;
+                arg0->y_pos.i.hi = y;
+                arg0->ext.main_64.target_y = y;
+                break;
+            }
+        } else {
+            func_8001540C(2, SATURN_SOUND(0xC7, 0x8E), arg0);
+        }
+        if ((attack & 0xFF) != 0)
+            arg0->unk2--;
+    } else {
         if (timer == 0x14) {
             arg0->ext.main_64.target_x = g_Player.x_pos.i.hi;
             arg0->ext.main_64.target_y = g_Player.y_pos.i.hi - 0x18;
         }
         animate_object(ANIMATED_OBJECT(arg0));
-        return;
     }
-    arg0->unk7 = 0;
-    arg0->unk6++;
-    arg0->x_pos.i.hi = arg0->ext.main_64.target_x;
-    arg0->y_pos.i.hi = arg0->ext.main_64.target_y;
-    cyber_peacock_face_player(arg0);
-    attack = cyber_peacock_choose_attack(arg0);
-    arg0->ext.main_64.next_step = cyber_peacock_attack_steps[attack];
-    set_animation(arg0, cyber_peacock_attack_animations[attack]);
-    arg0->unk2 = attack;
-    if (attack == 0) {
-        func_8001540C(2, SATURN_SOUND(0xC7, 0x8E), arg0);
-        return;
-    }
-    base = arg0->ext.main_64.arena_x;
-    switch ((s8)attack) {
-    case 1:
-        arg0->y_pos.i.hi = arg0->ext.main_64.arena_y + 0xB3;
-        arg0->ext.main_64.target_y = arg0->y_pos.i.hi;
-        func_8001540C(2, SATURN_SOUND(0xC7, 0x8E), arg0);
-        break;
-    case 2:
-        if (g_Player.x_pos.i.hi - base < 0xA0) {
-            arg0->x_pos.i.hi = base + 0x90;
-            arg0->unk15 = PLAYER_FACING_RIGHT;
-        } else {
-            arg0->x_pos.i.hi = base + 0xE0;
-            arg0->unk15 = 0;
-        }
-        arg0->ext.main_64.target_x = arg0->x_pos.i.hi;
-        arg0->y_pos.i.hi = arg0->ext.main_64.arena_y + 0xB3;
-        arg0->ext.main_64.target_y = arg0->y_pos.i.hi;
-        break;
-    case 3:
-        if (g_Player.x_pos.i.hi - base < 0xA0) {
-            arg0->x_pos.i.hi = base + 0x110;
-            arg0->unk15 = 0;
-        } else {
-            arg0->x_pos.i.hi = base + 0x50;
-            arg0->unk15 = PLAYER_FACING_RIGHT;
-        }
-        arg0->ext.main_64.target_x = arg0->x_pos.i.hi;
-        arg0->y_pos.i.hi = arg0->ext.main_64.arena_y + 0x70;
-        arg0->ext.main_64.target_y = arg0->y_pos.i.hi;
-        break;
-    }
-    arg0->unk2--;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007CA68);
 #endif
 
 void cyber_peacock_teleport_appear(struct MainObj* self)

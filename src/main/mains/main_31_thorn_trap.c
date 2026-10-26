@@ -101,30 +101,33 @@ void thorn_trap_idle(struct MainObj* self)
 }
 
 // thorn_trap_wait
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005BA2C);
+#else
 void func_8005BA2C(struct MainObj* self)
 {
-    u8* ext = (u8*)&self->ext;
-    s16* distance = (s16*)ext;
     s32 step;
+    s32 x;
+    s32 pos;
 
     if (self->unk7C != 0) {
         self->unk7C--;
         return;
     }
-    if (*distance < 0) {
+    step = self->ext.main_31.distance;
+    if (step < 0) {
         if (self->unk2 < 6) {
-            self->unk5 = 4;
             set_animation(self, 2);
+            self->unk5 = 4;
         } else if (self->unk2 < 0xC) {
-            if (ext[2] != 0) {
+            if (self->ext.main_31.unk82 != 0) {
                 self->unk5 = 7;
                 set_animation(self, 7);
             } else {
                 self->unk5 = 6;
                 set_animation(self, 3);
             }
-        } else if (ext[2] != 0) {
+        } else if (self->ext.main_31.unk82 != 0) {
             self->unk5 = 9;
             set_animation(self, 4);
         } else {
@@ -133,13 +136,20 @@ void func_8005BA2C(struct MainObj* self)
         }
         return;
     }
-    step = *distance < 9 ? *distance : 8;
-    self->x_pos.i.hi += self->unk15 ? -step : step;
-    *distance = (u16)*distance - 8;
+    x = self->x_pos.i.hi;
+    if (self->unk15 != 0) {
+        if (step > 8)
+            step = 8;
+        pos = x - step;
+    } else {
+        if (step > 8)
+            step = 8;
+        pos = x + step;
+    }
+    self->x_pos.i.hi = pos;
+    self->ext.main_31.distance -= 8;
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005BA2C);
 #endif
 
 void thorn_trap_open(struct MainObj* self)

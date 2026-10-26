@@ -31,6 +31,7 @@ struct Effect17SpawnGroup {
     u32 count;
 };
 
+extern u8 freeze_blast_tile_patches[4][6];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B913C(struct EffectObj* self);
 void func_800B9354(struct EffectObj* self);
@@ -38,7 +39,6 @@ void func_800B94B8(struct EffectObj* self);
 void func_800B91E0(struct EffectObj* self);
 void func_800B9354(struct EffectObj*);
 void func_800B94B8(struct EffectObj*);
-extern u8 freeze_blast_tile_patches[4][6];
 struct Effect17SpawnRecordPC {
     u16 x;
     u16 y;
@@ -124,28 +124,35 @@ void freeze_blast_finish(struct EffectObj* self)
 }
 
 // freeze_blast_freeze_tiles
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B9354);
+#else
 void func_800B9354(struct EffectObj* self)
 {
-    const u8* tiles = freeze_blast_tile_patches[(s8)self->unk2];
-    s32 i;
-    for (i = 0; i < 2; i++) {
-        s32 column = tiles[5] + i;
-        D_80141BE8[column] = tiles[0] + i;
-        D_80141BE8[layout_width + column] = tiles[1] + i;
-        D_80141BE8[layout_size + column] = tiles[2] ? tiles[2] + i : 0;
-        D_80141BE8[layout_size + layout_width + column] = tiles[3] + i;
-        D_80141BE8[2 * layout_size + layout_width + column] = tiles[4] + i;
-    }
-    for (i = 0; i < 3; i++)
+    u8* tiles = freeze_blast_tile_patches[self->unk2];
+    s8 i = 0;
+
+    do {
+        D_80141BE8[tiles[5] + i] = tiles[0] + i;
+        D_80141BE8[layout_width + (tiles[5] + i)] = tiles[1] + i;
+        if (tiles[2] != 0) {
+            D_80141BE8[tiles[5] + i + layout_size] = tiles[2] + i;
+        } else {
+            D_80141BE8[tiles[5] + i + layout_size] = tiles[2];
+        }
+        D_80141BE8[layout_width + (tiles[5] + i) + layout_size] = tiles[3] + i;
+        D_80141BE8[layout_size * 2 + (layout_width + (tiles[5] + i))] = tiles[4] + i;
+        i++;
+    } while (i < 2);
 #ifdef MMX4_SATURN
+    for (i = 0; i < 3; i++)
         saturn_background_redraw(i);
 #else
-        background_objects[i].unk4C = 1;
+    background_objects[0].unk4C = 1;
+    background_objects[1].unk4C = 1;
+    background_objects[2].unk4C = 1;
 #endif
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B9354);
 #endif
 
 // freeze_blast_spawn_enemies

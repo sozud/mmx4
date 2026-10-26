@@ -298,30 +298,28 @@ void sigma_head_fire_wall_start(struct ShotObj* self)
 }
 
 // sigma_head_fire_wall_track
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AB170);
+#else
 void func_800AB170(struct ShotObj* self)
 {
-    s16 y;
-    s16 player_y;
-    s32 dy;
+    s32 y;
 
     if (--self->timer == 0) {
         self->timer = 1;
         self->unk6++;
     }
-    y = self->y_pos.i.hi;
-    player_y = g_Player.y_pos.i.hi;
-    dy = y - player_y;
-    if (dy < 0)
-        dy = -dy;
-    if (dy < 4)
-        self->y_pos.i.hi = player_y;
-    else
-        self->y_pos.i.hi = y < player_y ? y + 3 : y - 3;
+    if (ABS(self->y_pos.i.hi, g_Player.y_pos.i.hi) > 3) {
+        y = self->y_pos.i.hi;
+        if (y < g_Player.y_pos.i.hi)
+            self->y_pos.i.hi = y + 3;
+        else
+            self->y_pos.i.hi = y - 3;
+    } else {
+        self->y_pos.i.hi = g_Player.y_pos.i.hi;
+    }
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AB170);
 #endif
 
 void sigma_head_fire_wall_shoot(struct ShotObj* self)

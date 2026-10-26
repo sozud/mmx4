@@ -49,33 +49,30 @@ void blast_update(struct VisualObj* arg0)
 void func_800AFB90(struct VisualObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_04_blast", func_800AFB90);
+#else
 void func_800AFB90(struct VisualObj* arg0)
 {
-    s32 index = arg0->unk2;
-    s32 column = index + 4;
-    s32 row = column < 0 ? index + 0x13 : column;
+    s32 clut = arg0->unk2 + 4;
 
     arg0->on_screen = 1;
     arg0->unk38 = NULL;
+    arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 2);
     arg0->animation_table = (u32**)blast_animations;
     arg0->unk40 = WEAPON_TEXTURE_BASE;
-    arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 2);
-    row >>= 4;
 #ifdef MMX4_SATURN
     arg0->unk42 = (u8)(arg0->unk2 + 4);
 #else
-    arg0->unk42 = (u16)((column - (row << 4)) | ((row + 0x1E0) << 6));
+    arg0->unk42 = (clut % 16) | ((clut / 16 + 0x1E0) << 6);
 #endif
     set_animation(arg0, 0);
     if ((u8)arg0->unk5C.value != 0xFF) {
         func_8001540C(0, (u8)arg0->unk5C.value, arg0);
     }
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
     is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_04_blast", func_800AFB90);
 #endif
 
 void blast_animate(struct VisualObj* arg0)

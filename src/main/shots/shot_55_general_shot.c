@@ -82,7 +82,9 @@ void general_shot_despawn(struct ShotObj*);
 
 extern u8 D_8013B8DC[4];
 
-extern s8 general_shot_boxes[3][4];
+extern s8 general_shot_boxes[4];
+extern s8 general_shot_attack_box[4];
+extern s8 general_shot_guard_box[4];
 
 extern s16 D_8013B8C8;
 
@@ -183,11 +185,12 @@ void func_800AD6DC(struct ShotObj* self);
 extern u8 D_8013B8DC[4];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AC8C4);
+#else
 void func_800AC8C4(struct ShotObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk7C;
-    s32 animation;
 
     self->state++;
     self->unk40 = parent->unk40;
@@ -198,44 +201,45 @@ void func_800AC8C4(struct ShotObj* self)
     self->bg_offset = parent->bg_offset;
     self->unk16 = parent->unk16;
     self->x_pos.val = parent->x_pos.val;
+    self->y_pos.val = parent->y_pos.val;
     self->unk58.data = NULL;
     self->unk50.data = NULL;
     self->unk54 = NULL;
     self->unk68 = NULL;
     self->unk75 = 0;
-    self->y_pos.val = parent->y_pos.val;
     self->unk60 = 3;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    switch ((u8)self->unk2) {
+    switch (self->unk2) {
+    case 1:
+        self->unk16 = VISUAL_SATURN_LAYER(7);
+        set_animation(self, 0x27);
+        break;
     case 0:
         self->unk16 = VISUAL_SATURN_LAYER(7);
         self->unk84.value = 0;
         self->timer = 0;
-        animation = 2;
+        set_animation(self, 2);
         break;
-    case 1:
-        self->unk16 = VISUAL_SATURN_LAYER(7);
-        animation = 0x27;
-        break;
-    case 2:
+    case 2: {
+        s32 x;
+
         self->unk16 = VISUAL_SATURN_LAYER(5);
         self->timer = 0;
         self->unk8A = 0;
-        if (self->unk15 != 0)
-            self->x_pos.i.hi += 0x50;
-        else
-            self->x_pos.i.hi -= 0x50;
+        x = self->x_pos.i.hi;
+        self->x_pos.i.hi = self->unk15 != 0 ? x + 0x50 : x - 0x50;
         self->unk75 = 1;
-        self->unk50.data = (u8*)general_shot_boxes[1];
-        self->unk54 = (u8*)general_shot_boxes[2];
+        self->unk50.data = (u8*)general_shot_attack_box;
+        self->unk54 = (u8*)general_shot_guard_box;
         self->y_pos.i.hi -= 0x28;
         self->unk58.collision_bounds = D_801060F0;
         self->unk84.shot_55.x = self->x_pos.i.hi;
         self->unk84.shot_55.y = self->y_pos.i.hi;
         set_animation(self, 0xD);
         self->unk60 = 6;
-        return;
+        break;
+    }
     case 3:
         self->unk16 = VISUAL_SATURN_LAYER(5);
         self->y_pos.i.hi -= 0x28;
@@ -245,57 +249,82 @@ void func_800AC8C4(struct ShotObj* self)
         self->unk84.shot_55.x = self->x_pos.i.hi;
         self->unk84.shot_55.y = self->y_pos.i.hi;
         set_animation(self, 0x12);
-        self->unk50.data = (u8*)general_shot_boxes[1];
-        self->unk54 = (u8*)general_shot_boxes[2];
+        self->unk50.data = (u8*)general_shot_attack_box;
+        self->unk54 = (u8*)general_shot_guard_box;
         self->unk58.collision_bounds = D_801060F0;
         self->unk60 = 6;
-        return;
+        break;
     case 4:
+        self->unk50.data = (u8*)general_shot_attack_boxes[1];
+        self->timer = 0x20;
+        self->unk8A = 0;
+        self->unk60 = 6;
+        set_animation(self, 0x21);
+        break;
     case 5:
         self->unk50.data = (u8*)general_shot_attack_boxes[1];
         self->timer = 0x20;
         self->unk8A = 0;
         self->unk60 = 6;
-        animation = self->unk2 == 4 ? 0x21 : 0x22;
+        set_animation(self, 0x22);
         break;
     case 6:
         self->unk16 = VISUAL_SATURN_LAYER(5);
         self->unk60 = 9;
-        animation = 0x18;
+        set_animation(self, 0x18);
         break;
     case 7:
         self->unk16 = VISUAL_SATURN_LAYER(7);
-        animation = 0x1B;
+        set_animation(self, 0x1B);
         break;
     case 8:
         self->unk42 &= 0x7FFF;
-        animation = 0x26;
+        set_animation(self, 0x26);
         break;
-    case 9:
+    case 9: {
+        s32 x;
+
         D_8013B8DC[0] = 0;
+        x = self->x_pos.i.hi;
         if (self->unk15 != 0)
-            self->x_pos.i.hi += 0x1B;
+            x += 0x1B;
         else
-            self->x_pos.i.hi -= 0x1B;
+            x -= 0x1B;
+        self->x_pos.i.hi = x;
         self->y_pos.i.hi -= 0x1A;
-        animation = 0x1E;
+        set_animation(self, 0x1E);
         break;
+    }
     case 10:
-    case 11:
-        self->unk8A = self->timer != 0 ? 0xF : 0x1E;
+        if (self->timer != 0) {
+            self->unk8A = 0xF;
+            self->y_vel.val = 0x18000;
+        } else {
+            self->unk8A = 0x1E;
+            self->y_vel.val = 0x40000;
+        }
         self->x_pos.i.hi += self->unk84.shot_55.x;
         self->y_pos.i.hi += self->unk84.shot_55.y;
         self->x_vel.val = self->unk15 != 0 ? 0x10000 : 0xFFFF0000;
-        self->y_vel.val = self->unk2 == 10 ? 0x18000 : 0xFFFE8000;
-        animation = 0x1F;
+        self->y_vel.val = 0x18000;
+        set_animation(self, 0x1F);
         break;
-    default:
-        return;
+    case 11:
+        if (self->timer != 0) {
+            self->unk8A = 0xF;
+            self->y_vel.val = 0xFFFE8000;
+        } else {
+            self->unk8A = 0x1E;
+            self->y_vel.val = 0xFFFC0000;
+        }
+        self->x_pos.i.hi += self->unk84.shot_55.x;
+        self->y_pos.i.hi += self->unk84.shot_55.y;
+        self->x_vel.val = self->unk15 != 0 ? 0x10000 : 0xFFFF0000;
+        self->y_vel.val = 0xFFFE8000;
+        set_animation(self, 0x1F);
+        break;
     }
-    set_animation(self, animation);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AC8C4);
 #endif
 
 void general_shot_intro_prop(struct ShotObj* self)

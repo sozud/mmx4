@@ -80,40 +80,45 @@ void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct
 }
 
 // aiming_laser_beam_place
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_09_aiming_laser_beam", func_800D69A8);
+#else
 void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct PlayerObj* target)
 {
-    const s8* offsets = (const s8*)&D_8011B230 + player->animation_step.fields.frame_index * 2;
     s32 dx = target->x_pos.val - player->x_pos.val;
     s32 dy = target->y_pos.val - player->y_pos.val;
     s16 x;
     s16 y;
+    s16 tx;
+    s16 ty;
     s16 near_x;
     s16 far_x;
     s16 near_y;
     s16 far_y;
 
     if (player->unk15 == 0)
-        x = player->x_pos.i.hi + offsets[0] + 3;
+        x = player->x_pos.i.hi + (s8)((u8*)&D_8011B230)[player->animation_step.fields.frame_index * 2] + 3;
     else
-        x = player->x_pos.i.hi - offsets[0] - 3;
-    near_x = target->x_pos.i.hi - (x + 6);
-    far_x = target->x_pos.i.hi - (x - 6);
+        x = player->x_pos.i.hi - (s8)((u8*)&D_8011B230)[player->animation_step.fields.frame_index * 2] - 3;
+    y = player->y_pos.i.hi + (s8)((u8*)&D_8011B230)[player->animation_step.fields.frame_index * 2 + 1];
+    tx = target->x_pos.i.hi;
+    ty = target->y_pos.i.hi;
+    near_x = tx - (s16)(x + 6);
+    far_x = tx - (s16)(x - 6);
     arg0->x_pos.i.hi = x;
     arg0->vertices[0].x.val = 0;
     arg0->vertices[0].y.val = 0;
-    y = player->y_pos.i.hi + offsets[1];
+    near_y = ty - (s16)(y + 6);
+    far_y = ty - (s16)(y - 6);
     arg0->y_pos.i.hi = y;
-    near_y = target->y_pos.i.hi - (y + 6);
-    far_y = target->y_pos.i.hi - (y - 6);
-    if (dx < 0) {
-        arg0->vertices[1].x.i.hi = far_x;
-        arg0->vertices[2].x.i.hi = near_x;
-        arg0->vertices[3].x.i.hi = near_x;
-    } else {
+    if (dx >= 0) {
         arg0->vertices[1].x.i.hi = near_x;
         arg0->vertices[2].x.i.hi = far_x;
         arg0->vertices[3].x.i.hi = far_x;
+    } else {
+        arg0->vertices[1].x.i.hi = far_x;
+        arg0->vertices[2].x.i.hi = near_x;
+        arg0->vertices[3].x.i.hi = near_x;
     }
     if (dy < 0) {
         arg0->vertices[1].y.i.hi = near_y;
@@ -125,6 +130,4 @@ void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct Player
         arg0->vertices[3].y.i.hi = near_y;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_09_aiming_laser_beam", func_800D69A8);
 #endif

@@ -362,10 +362,14 @@ void ground_hunter_charged_wait_fire(struct WeaponObj* arg0)
 }
 
 // ground_hunter_charged_fire
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", func_80096060);
+#else
 void func_80096060(struct WeaponObj* self)
 {
     struct Weapon14Ext* ext = &self->ext.weapon_14;
+    struct PlayerObj* player = &g_Player;
+
     if (ext->unk8C == 0) {
         struct WeaponObj* shot;
         ext->unk8C = 4;
@@ -380,16 +384,14 @@ void func_80096060(struct WeaponObj* self)
             shot->y_pos.val = self->y_pos.val;
         }
         g_Player.shot_count += 2;
-        g_Player.special_shot_count += 2;
-        if (--ext->unk8D == 0)
+        player->special_shot_count += 2;
+        if (--*(u8*)&ext->unk8D == 0)
             ground_hunter_start_burst(self);
     } else {
         ext->unk8C--;
     }
     update_on_screen(BASE_OBJECT(self), 0x2C, 0x18);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", func_80096060);
 #endif
 
 void ground_hunter_charged_shot_fly(struct WeaponObj* arg0)

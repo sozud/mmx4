@@ -82,34 +82,30 @@ void func_80044458(struct MainObj* self);
 void func_80044508(struct MainObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80044458(struct MainObj* self)
 {
     self->unk5 = 1;
     self->unk7C = 0xB4;
     self->unk2 = 0;
     self->state++;
+    self->bg_offset = g_Player.bg_offset;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    self->x_speed = self->x_accel = self->y_speed = self->gravity = 0;
-    self->bg_offset = g_Player.bg_offset;
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->gravity = 0;
+    self->unk15 = self->x_pos.val - g_Player.x_pos.val <= 0 ? PLAYER_FACING_RIGHT : 0;
     self->animation_table = (const u8* const*)drill_copter_animations;
-    self->collision_data = (const u16*)D_801064F0;
-    self->hurt_box = self->attack_box = &D_800F9EC0;
-#ifdef MMX4_SATURN
-    self->hp = 6;
     self->unk16 = VISUAL_SATURN_LAYER(6);
-#else
-    self->unk16 = self->hp = 6;
-#endif
+    self->collision_data = (const u16*)D_801064F0;
+    self->hp = 6;
     self->terrain_box = NULL;
+    self->hurt_box = &D_800F9EC0;
+    self->attack_box = &D_800F9EC0;
     self->air_state = 0;
     self->contact_damage = 2;
-    self->unk15 = ((s32)((u32)self->x_pos.val - (u32)g_Player.x_pos.val) < 1) << PLAYER_FACING_SHIFT;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", func_80044458);
-#endif
 
 // drill_copter_main
 void func_80044508(struct MainObj* self)

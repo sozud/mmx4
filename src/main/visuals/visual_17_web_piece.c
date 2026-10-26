@@ -105,14 +105,27 @@ void web_piece_main(struct VisualObj* arg0)
 }
 
 // web_piece_attach
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_17_web_piece", func_800B22B4);
+#else
 void func_800B22B4(struct VisualObj* arg0)
 {
-    const s16* target = visual_17_target(arg0);
-    s32 target_x = target[0] << 16;
-    s32 target_y = target[1] << 16;
-    u8 direction = angle_from_delta(arg0->x_pos.val - target_x, arg0->y_pos.val - target_y);
-    struct BaseObj* quad = (struct BaseObj*)arg0->unk5C.owner;
+    s32 i = arg0->unk2 - 1;
+    s32 target_x;
+    s32 target_y;
+    u8 direction;
+    struct BaseObj* quad;
+    s32 unused[4];
+
+    if (engine_obj.stage != 0xC) {
+        target_x = web_piece_positions_a[i][0] << 16;
+        target_y = web_piece_positions_a[i][1] << 16;
+    } else {
+        target_x = web_piece_positions_b[i][0] << 16;
+        target_y = web_piece_positions_b[i][1] << 16;
+    }
+    direction = angle_from_delta(arg0->x_pos.val - target_x, arg0->y_pos.val - target_y);
+    quad = (struct BaseObj*)arg0->unk5C.owner;
 
     if ((arg0->unk54 >> 3) != (direction >> 3)) {
         arg0->unk5 = 1;
@@ -130,8 +143,6 @@ void func_800B22B4(struct VisualObj* arg0)
     quad->x_pos.val = arg0->x_pos.val;
     quad->y_pos.val = arg0->y_pos.val;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_17_web_piece", func_800B22B4);
 #endif
 
 void web_piece_hang(struct VisualObj* arg0)

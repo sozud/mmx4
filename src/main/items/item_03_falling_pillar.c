@@ -53,33 +53,38 @@ void falling_pillar_update(struct ItemObj* arg0)
 void func_800C044C(struct ItemObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_03_falling_pillar", func_800C044C);
+#else
 void func_800C044C(struct ItemObj* arg0)
 {
-    u8 index = (u8)arg0->unk2;
-    const struct Item03StageEntry* entry = &falling_pillar_entries[index];
+    s32* frames;
+    s32 offset;
 
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->x_pos.i.hi = entry->x;
-    arg0->y_pos.i.hi = entry->y;
+    arg0->x_pos.i.hi = falling_pillar_entries[arg0->unk2].x;
+    arg0->y_pos.i.hi = falling_pillar_entries[arg0->unk2].y;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->animation_step.fields.frame_index = entry->object_id;
-    arg0->x_vel.val = index < 10 || index == 20 ? 0x4000 : -0x4000;
+    arg0->animation_step.fields.frame_index = *(u8*)&falling_pillar_entries[arg0->unk2].object_id;
+    if (arg0->unk2 < 10 || arg0->unk2 == 20)
+        arg0->x_vel.val = 0x4000;
+    else
+        arg0->x_vel.val = -0x4000;
+    frames = SP_MENU_FRAMES;
     arg0->unk40 = SATURN_ALT(0x1500, OBJECT_STAGE_TEXTURE(8));
     arg0->unk42 = OBJECT_CLUT(0x79C1);
+    offset = frames[8];
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 8);
+    arg0->sprite_frames = (const u8*)frames + offset;
     arg0->unk61 = 0;
-    arg0->unk68 = index == 4 || index == 14
-        ? (struct Unk_unk68*)falling_pillar_box
-        : NULL;
+    arg0->unk68 = NULL;
+    if (arg0->unk2 == 4 || arg0->unk2 == 14)
+        arg0->unk68 = (struct Unk_unk68*)falling_pillar_box;
     arg0->unk75 = 1;
     arg0->ext.packed = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_03_falling_pillar", func_800C044C);
 #endif
 
 void falling_pillar_wait_player(struct ItemObj* arg0)

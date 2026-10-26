@@ -490,15 +490,16 @@ void pickup_despawn(struct ItemObj* arg0)
 }
 
 // pickup_refill
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800BFBD0);
+#else
 void func_800BFBD0(struct ItemObj* arg0)
 {
     u8 health;
     u8 status;
 
     if (arg0->unk6 == 0) {
-        arg0->ext.item_2.unk81--;
-        if (arg0->ext.item_2.unk81 != 0) {
+        if (--*(u8*)&arg0->ext.item_2.unk81 != 0) {
             return;
         }
 
@@ -507,14 +508,13 @@ void func_800BFBD0(struct ItemObj* arg0)
         status = HP_DAMAGE_FLAG(health);
         if (HP_VALUE(health) >= engine_obj.max_hp) {
             arg0->unk6 = 1;
-            g_Player.hp = (u8)engine_obj.max_hp | status;
+            g_Player.hp = (u8)engine_obj.max_hp | HP_DAMAGE_FLAG(health);
         } else {
-            g_Player.hp = (health + 1) | status;
+            g_Player.hp = (health + 1) | HP_DAMAGE_FLAG(health);
         }
         func_8001540C(0, SATURN_SOUND(0xD, 0x10), NULL);
 
-        arg0->ext.item_2.unk80--;
-        if (arg0->ext.item_2.unk80 == 0) {
+        if (--*(u8*)&arg0->ext.item_2.unk80 == 0) {
             arg0->unk6 = 1;
         }
     } else {
@@ -524,8 +524,6 @@ void func_800BFBD0(struct ItemObj* arg0)
         arg0->active &= 0xF7;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800BFBD0);
 #endif
 
 // pickup_collect_weapon_energy
@@ -664,24 +662,22 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
 }
 #endif
 // pickup_check_collect
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800C00BC);
+#else
 void func_800C00BC(struct ItemObj* arg0)
 {
     struct CollisionObj* player;
     u16 flag;
+    u16 bits;
     s32 shift;
 
-    if (g_Player.ride_state == 0) {
+    if (g_Player.ride_state == 0)
         player = (struct CollisionObj*)&g_Player;
-        if (!HP_VALUE(g_Player.hp)) {
-            return;
-        }
-    } else {
+    else
         player = (struct CollisionObj*)&qux_object;
-        if (!(HP_VALUE(qux_object.hp))) {
-            return;
-        }
-    }
+    if (!HP_VALUE(((struct PlayerObj*)player)->hp))
+        return;
     if (!func_8002C160((struct CollisionObj*)arg0, player)) {
         return;
     }
@@ -694,12 +690,6 @@ void func_800C00BC(struct ItemObj* arg0)
     case 1:
         pickup_collect_health(arg0, 0x10, 2);
         break;
-    case 2:
-    case 3:
-    case 6:
-        func_800BFCC0(arg0, arg0->unk7C.value);
-        arg0->state = 3;
-        break;
     case 4:
         engine_obj.player_lives++;
         if (engine_obj.player_lives >= 10) {
@@ -710,7 +700,13 @@ void func_800C00BC(struct ItemObj* arg0)
         arg0->state = 3;
         break;
     case 5:
-        pickup_collect_health(arg0, engine_obj.max_hp, 4);
+        ((void (*)(struct ItemObj*, s32, s32))pickup_collect_health)(arg0, (u8)engine_obj.max_hp, 4);
+        break;
+    case 2:
+    case 3:
+    case 6:
+        func_800BFCC0(arg0, arg0->unk7C.value);
+        arg0->state = 3;
         break;
     case 7:
         flag = engine_obj.collected_upgrades;
@@ -729,17 +725,20 @@ void func_800C00BC(struct ItemObj* arg0)
         arg0->state = 3;
         break;
     case 8:
-        flag = engine_obj.collected_upgrades;
-        if ((flag & 0x3000) == 0x3000) {
+        bits = engine_obj.collected_upgrades;
+        if ((bits & 0x3000) == 0x3000) {
             break;
         }
-        shift = arg0->unk2 - 15;
-        if (flag & (0x1000 << shift)) {
+        shift = 0x1000 << (arg0->unk2 - 15);
+        if (bits & shift) {
             break;
         }
-        engine_obj.collected_upgrades = flag | (0x1000 << shift);
+        engine_obj.collected_upgrades = bits | shift;
         arg0->state = 3;
-        engine_obj.sub_tanks[arg0->unk2 == 15 ? 0 : 1] = -0x80;
+        if (arg0->unk2 == 15)
+            engine_obj.sub_tanks[0] = -0x80;
+        else
+            engine_obj.sub_tanks[1] = -0x80;
         func_8001540C(0, SATURN_SOUND(0x15, 0x1E), 0);
         break;
     case 9:
@@ -766,8 +765,6 @@ void func_800C00BC(struct ItemObj* arg0)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800C00BC);
 #endif
 
 void set_objects_frozen(s8 arg0)

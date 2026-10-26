@@ -338,37 +338,36 @@ void mushroom_shot_sprout_jump(struct ShotObj* self)
 void func_800A5194(struct ShotObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_39_mushroom_shot", func_800A5194);
+#else
 void func_800A5194(struct ShotObj* arg0)
 {
     s32 dx;
+    s32 player_x;
+    s32 shot_x;
     s32 steps;
     s16 divisor;
-    s32 x = arg0->x_pos.val;
-    s32 y = arg0->y_pos.val;
-    s32 vx;
-    s32 vy;
 
     animate_object(ANIMATED_OBJECT(arg0));
-    if (--arg0->timer != 0)
-        return;
-    dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-    if (dx < 0)
-        dx = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
-    steps = 0x2A - (0xCD - dx) / 6;
-    do {
-        divisor = steps;
-        arg0->x_vel.val = (g_Player.x_pos.val - x) / divisor;
-        steps += 5;
-        arg0->y_vel.val = ((divisor + 1) << 11) + (y - g_Player.y_pos.val) / divisor;
-        vx = arg0->x_vel.val < 0 ? -arg0->x_vel.val : arg0->x_vel.val;
-        vy = arg0->y_vel.val < 0 ? -arg0->y_vel.val : arg0->y_vel.val;
-    } while (vx > 0x60000 || vy > 0x60000);
-    arg0->unk2C = 0x1000;
-    arg0->unk5 = 6;
+    if (--arg0->timer == 0) {
+        player_x = g_Player.x_pos.i.hi;
+        shot_x = arg0->x_pos.i.hi;
+        dx = player_x - shot_x;
+        if (dx >= 0)
+            steps = 0x2A - (0xCD - dx) / 6;
+        else
+            steps = 0x2A - (0xCD - (shot_x - player_x)) / 6;
+        do {
+            divisor = steps;
+            arg0->x_vel.val = (g_Player.x_pos.val - arg0->x_pos.val) / divisor;
+            steps += 5;
+            arg0->y_vel.val = ((divisor + 1) << 11) + (arg0->y_pos.val - g_Player.y_pos.val) / divisor;
+        } while ((arg0->x_vel.val < 0 ? -arg0->x_vel.val : arg0->x_vel.val) > 0x60000 || (arg0->y_vel.val < 0 ? -arg0->y_vel.val : arg0->y_vel.val) > 0x60000);
+        arg0->unk2C = 0x1000;
+        arg0->unk5 = 6;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_39_mushroom_shot", func_800A5194);
 #endif
 
 void mushroom_shot_sprout_fall(struct ShotObj* self)

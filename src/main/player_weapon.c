@@ -496,51 +496,56 @@ void player_enter_rising_fire_charged(struct PlayerObj* arg0, s32 arg1);
 void player_enter_double_cyclone_pose(struct PlayerObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_weapon", func_80036F50);
+#else
 void func_80036F50(struct PlayerObj* player)
 {
-    static const u8 weapon_masks[] = { 0, 1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80 };
     u16 input;
+    u16 pressed;
     s8 weapon;
 
     if (player->input_locked != 0 || player->is_clone != 0 || player->special_shot_count != 0 || player->ride_state != 0 || player->nova_strike_active != 0 || engine_obj.gameplay_locked != 0)
         return;
     input = player->pressed_input;
-    if (((player->input.buttons.held & 0x600) == 0x600) || ((input & 0x600) == 0x600)) {
+    pressed = input & 0x600;
+    if (((player->input.buttons.held & 0x600) == 0x600) || (pressed == 0x600)) {
         if (player->weapon != 0) {
             player->weapon = 0;
             player_reset_charge(player);
             func_8001540C(0, PLAYER_WEAPON_SELECT_SOUND, 0);
         }
-        return;
-    }
-    if (!(input & 0x600))
-        return;
-    weapon = player->weapon;
-    if (input & 0x200) {
-        do {
-            if (++weapon == 9) {
-                weapon = 0;
-                break;
+    } else if (pressed != 0) {
+        weapon = player->weapon;
+        if (input & 0x200) {
+            while (1) {
+                weapon++;
+                if (weapon == 9) {
+                    weapon = 0;
+                    break;
+                }
+                if ((s8)player_weapon_bits[weapon] & (u8)player->boss_flags)
+                    break;
             }
-        } while (!(weapon_masks[(u8)weapon] & player->boss_flags));
-    } else {
-        do {
-            if (--weapon < 0)
-                weapon = 8;
-            if (weapon == 0)
-                break;
-        } while (!(weapon_masks[(u8)weapon] & player->boss_flags));
-    }
-    if (player->weapon != weapon) {
-        player->weapon = weapon;
-        player_reset_charge(player);
-        func_8001540C(0, PLAYER_WEAPON_SELECT_SOUND, 0);
-        player->stock_charge = 0;
+        } else {
+            while (1) {
+                weapon--;
+                if (weapon < 0)
+                    weapon = 8;
+                if (weapon == 0)
+                    break;
+                if ((s8)player_weapon_bits[weapon] & (u8)player->boss_flags)
+                    break;
+            }
+        }
+        if (player->weapon != weapon) {
+            player->weapon = weapon;
+            player_reset_charge(player);
+            func_8001540C(0, PLAYER_WEAPON_SELECT_SOUND, 0);
+            player->stock_charge = 0;
+        }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/player_weapon", func_80036F50);
 #endif
 void player_update_shot_types(struct PlayerObj* self)
 {

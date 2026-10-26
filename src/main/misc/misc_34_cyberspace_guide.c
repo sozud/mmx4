@@ -131,27 +131,16 @@ void cyberspace_guide_start_timer(struct MiscObj* self)
 
 extern u8 cyberspace_guide_offsets[12];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-static void misc_34_track_axis(f32* position, s32 target, s16 target_hi);
 void func_800CEBC0(struct MiscObj* arg0);
 void func_800CEFC0(struct MiscObj* arg0);
-static void misc_34_track_axis(f32* position, s32 target, s16 target_hi)
-{
-    s32 delta = target - position->val;
-
-    if (delta < 0)
-        delta = -delta;
-    if (delta <= 0x1FFFFF)
-        return;
-    position->i.hi = target < position->val ? target_hi + 0x20 : target_hi - 0x20;
-}
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_34_cyberspace_guide", func_800CEBC0);
+#else
 void func_800CEBC0(struct MiscObj* arg0)
 {
     struct EffectObj* related = arg0->ext.misc_34.related;
-    s32 dx;
-    s32 dy;
 
     animate_object(ANIMATED_OBJECT(arg0));
     set_velocity_from_angle(MOVING_OBJECT(arg0),
@@ -160,27 +149,29 @@ void func_800CEBC0(struct MiscObj* arg0)
     arg0->unk2C = 0;
     arg0->x_vel.val *= 4;
     arg0->y_vel.val *= 3;
-    misc_34_track_axis(&arg0->x_pos, g_Player.x_pos.val, g_Player.x_pos.i.hi);
-    misc_34_track_axis(&arg0->y_pos, g_Player.y_pos.val, g_Player.y_pos.i.hi);
-    dx = g_Player.x_pos.val - arg0->x_pos.val;
-    if (dx < 0)
-        dx = -dx;
-    dy = g_Player.y_pos.val - arg0->y_pos.val;
-    if (dy < 0)
-        dy = -dy;
-    if (dx > 0x20000 || dy > 0x20000) {
-        move_with_gravity(ANIMATED_OBJECT(arg0));
-    } else {
+    if (ABS(g_Player.x_pos.val, arg0->x_pos.val) > 0x1FFFFF) {
+        if (arg0->x_pos.val > g_Player.x_pos.val)
+            arg0->x_pos.i.hi = g_Player.x_pos.i.hi + 0x20;
+        else
+            arg0->x_pos.i.hi = g_Player.x_pos.i.hi - 0x20;
+    }
+    if (ABS(g_Player.y_pos.val, arg0->y_pos.val) > 0x1FFFFF) {
+        if (arg0->y_pos.val > g_Player.y_pos.val)
+            arg0->y_pos.i.hi = g_Player.y_pos.i.hi + 0x20;
+        else
+            arg0->y_pos.i.hi = g_Player.y_pos.i.hi - 0x20;
+    }
+    if (ABS(g_Player.x_pos.val, arg0->x_pos.val) <= 0x20000 && ABS(g_Player.y_pos.val, arg0->y_pos.val) <= 0x20000) {
         arg0->x_pos.val = g_Player.x_pos.val;
         arg0->y_pos.val = g_Player.y_pos.val;
+    } else {
+        move_with_gravity(ANIMATED_OBJECT(arg0));
     }
     if (related->state >= 3)
         arg0->ext.misc_34.enabled = 1;
     if (related->state >= 4)
         arg0->unk5 = 3;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_34_cyberspace_guide", func_800CEBC0);
 #endif
 
 void cyberspace_guide_leave(struct MiscObj* self)

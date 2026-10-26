@@ -28,6 +28,10 @@ extern void (*jet_stingray_flyby_step_funcs[])(struct MainObj*);
 
 // jet_stingray_flyby_init
 
+extern struct AnimationTable12 jet_stingray_flyby_animations;
+extern struct Unk_unk68 jet_stingray_flyby_attack_box;
+extern struct Unk_unk68 jet_stingray_flyby_hurt_box;
+extern struct Unk_unk68 D_80107978[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006EB40(struct MainObj* self);
 void func_8006ED44(struct MainObj* self);
@@ -35,15 +39,13 @@ void func_8006EF28(struct MainObj* self);
 void func_8006F0DC(struct MainObj* self);
 void func_8006F5F4(struct MainObj* self);
 void func_8006F86C(struct MainObj* self);
-extern struct AnimationTable12 jet_stingray_flyby_animations;
-extern struct Unk_unk68 jet_stingray_flyby_attack_box;
-extern struct Unk_unk68 jet_stingray_flyby_hurt_box;
-extern struct Unk_unk68 D_80107978[];
 extern s16 jet_stingray_flyby_explosion_offsets[16];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EB40);
+#else
 void func_8006EB40(struct MainObj* self)
 {
     if (engine_obj.palette_flags & 0x10) {
@@ -53,35 +55,33 @@ void func_8006EB40(struct MainObj* self)
     self->on_screen = 1;
     self->state = 1;
     self->unk5 = 2;
+    self->bg_offset = g_Player.bg_offset;
     self->unk16 = VISUAL_SATURN_LAYER(6);
-    self->contact_damage = 6;
     self->unk15 = PLAYER_FACING_RIGHT;
+    self->contact_damage = 6;
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->gravity = 0;
     self->animation_table = (const u8* const*)&jet_stingray_flyby_animations;
     self->hp = 0x20;
+    self->terrain_box = NULL;
     self->attack_box = &jet_stingray_flyby_attack_box;
     self->hurt_box = &jet_stingray_flyby_hurt_box;
-    self->x_speed = 0;
-    self->y_speed = 0;
-    self->x_accel = 0;
-    self->gravity = 0;
-    self->terrain_box = NULL;
     self->collision_data = D_80107978;
-    self->bg_offset = g_Player.bg_offset;
     self->y_pos = g_Player.y_pos;
     if (self->unk2 != 0) {
         self->y_pos = g_Player.y_pos;
+        self->x_pos.val = background_objects[self->bg_offset].x_pos.val - 0x400000;
         self->x_speed = 0x90000;
-        self->x_pos.val = background_objects[(u8)self->bg_offset].x_pos.val - 0x400000;
     } else {
-        self->y_pos.val = background_objects[(u8)self->bg_offset].y_pos.val + 0x400000;
+        self->y_pos.val = background_objects[self->bg_offset].y_pos.val + 0x400000;
+        self->x_pos.val = background_objects[self->bg_offset].x_pos.val + 0x1B00000;
         self->x_speed = 0x40000;
         self->ext.main_55.unk84 = 0;
-        self->x_pos.val = background_objects[(u8)self->bg_offset].x_pos.val + 0x1B00000;
     }
     set_animation(self, 0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EB40);
 #endif
 
 void jet_stingray_flyby_wait_on_screen(struct MainObj* self)

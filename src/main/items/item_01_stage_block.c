@@ -40,54 +40,60 @@ struct Item01DebrisPosition {
     s16 y;
 };
 
+extern struct Unk_unk68 D_80108504[];
+extern u8 stage_block_boxes[60];
+extern u8 drop_item_table[24][6];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BEBFC(struct ItemObj* arg0);
 void func_800BEFCC(struct ItemObj* arg0);
 void func_800BF1FC(struct ItemObj* arg0);
 void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
-extern u8 drop_item_table[24][6];
-extern struct Unk_unk68 D_80108504[];
-extern u8 stage_block_boxes[60];
 extern struct Item01DebrisPosition stage_block_spawn_positions[6];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BEBFC);
+#else
 void func_800BEBFC(struct ItemObj* arg0)
 {
-    u8 index = (u8)arg0->unk2;
-    const struct Item01StageEntry* entry = &stage_block_entries[index];
-
     arg0->active = 1;
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->x_pos.i.hi = entry->x;
-    arg0->y_pos.i.hi = entry->y;
-    arg0->animation_step.fields.frame_index = entry->flags_and_palette & 0x3F;
-    arg0->y_vel.val = index == 9 ? 0x40000 : 0;
-    arg0->unk2C = entry->velocity;
-    arg0->unk40 = SATURN_ALT(0x1500, OBJECT_STAGE_TEXTURE(8));
-    if (index == 8 || index == 9)
-        arg0->unk42 = OBJECT_CLUT(0x7941);
-    else if (index == 13)
-        arg0->unk42 = OBJECT_CLUT(0x79C4);
+    arg0->x_pos.i.hi = stage_block_entries[arg0->unk2].x;
+    arg0->y_pos.i.hi = stage_block_entries[arg0->unk2].y;
+    arg0->animation_step.fields.frame_index = stage_block_entries[arg0->unk2].flags_and_palette & 0x3F;
+    if (arg0->unk2 != 9)
+        arg0->y_vel.val = 0;
     else
+        arg0->y_vel.val = 0x40000;
+    arg0->unk2C = stage_block_entries[arg0->unk2].velocity;
+    arg0->unk40 = SATURN_ALT(0x1500, OBJECT_STAGE_TEXTURE(8));
+    switch (arg0->unk2) {
+    case 8:
+    case 9:
+        arg0->unk42 = OBJECT_CLUT(0x7941);
+        break;
+    case 13:
+        arg0->unk42 = OBJECT_CLUT(0x79C4);
+        break;
+    default:
         arg0->unk42 = OBJECT_CLUT(0x7983);
+        break;
+    }
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 8);
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->unk68 = (struct Unk_unk68*)&stage_block_bounds[index];
     arg0->unk5C = 0x10;
     arg0->unk61 = 0;
+    arg0->unk68 = (struct Unk_unk68*)&stage_block_bounds[arg0->unk2];
+    arg0->unk54 = &stage_block_boxes[arg0->unk2 * 4];
     arg0->unk75 = 1;
-    arg0->unk54 = &stage_block_boxes[index * 4];
-    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 8);
-    if (index == 1)
+    if (arg0->unk2 == 1)
         arg0->unk66 = 1;
-    arg0->unk58 = (const u8*)D_80108504;
     arg0->tail_ext.unk1.unk84.previous_value = 0;
     arg0->tail_ext.unk1.unk88 = 0;
+    arg0->unk58 = (const u8*)D_80108504;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BEBFC);
 #endif
 
 void stage_block_main(struct ItemObj* arg0)
@@ -291,52 +297,41 @@ void drop_item(struct BaseObj* arg0, s8 arg1)
 }
 
 // drop_item_at
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BF638);
+#else
 void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3)
 {
-    const u8* weights = &drop_item_table[0][0];
-    s32 offset = (s8)arg1 * 6;
-#ifdef MMX4_SATURN
+    u8 offset;
     s32 roll;
-#else
-    s32 roll = get_random() & 0xFF;
-#endif
+    u8 i;
     struct ItemObj* item;
-    s32 index;
-    s32 counter;
+    struct BaseObj* owner;
 
-    if (engine_obj.stage == 5) {
-        return;
+    if (engine_obj.stage != 5) {
+        offset = arg1 * 6;
+        owner = arg0;
+        roll = get_random() & 0xFF;
+        i = 0xFF;
+        do {
+            i++;
+            roll = (roll & 0xFF) - drop_item_table[0][i + offset];
+        } while ((u32)(roll & 0xFFFF) < 0x100);
+        if (i != 0) {
+            item = find_free_item_obj();
+            if (item != NULL) {
+                item->active = 0x21;
+                item->id = 2;
+                item->unk2 = i - 1;
+                item->x_pos.i.hi = arg2;
+                item->y_pos.i.hi = arg3;
+                item->bg_offset = owner->bg_offset;
+                item->backref = NULL;
+                item->unk7C.value = 0;
+            }
+        }
     }
-#ifdef MMX4_SATURN
-    roll = get_random() & 0xFF;
-#endif
-
-    counter = 0xFF;
-    do {
-        counter++;
-        index = counter & 0xFF;
-        roll = (roll & 0xFF) - weights[index + (offset & 0xFF)];
-    } while ((u32)(roll & 0xFFFF) < 0x100);
-
-    if (index == 0) {
-        return;
-    }
-    item = find_free_item_obj();
-    if (item == NULL) {
-        return;
-    }
-    item->active = 0x21;
-    item->id = 2;
-    item->unk2 = counter - 1;
-    item->x_pos.i.hi = arg2;
-    item->y_pos.i.hi = arg3;
-    item->backref = NULL;
-    item->unk7C.value = 0;
-    item->bg_offset = arg0->bg_offset;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BF638);
 #endif
 
 struct Item01StageEntry stage_block_entries[15] = {

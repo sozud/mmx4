@@ -241,45 +241,58 @@ void eregion_pick_start(struct MainObj* self)
 }
 
 // eregion_pick_attack
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_800480D0);
+#else
 void func_800480D0(struct MainObj* arg0)
 {
-    s32 distance;
     u16 timer;
-    u8 choice;
 
     animate_object(ANIMATED_OBJECT(arg0));
-    timer = (u16)arg0->unk7C;
-    arg0->unk7C = (s16)(timer - 1);
+    timer = arg0->unk7C;
+    arg0->unk7C = timer - 1;
     if (timer != 0)
         return;
 
     arg0->unk7C = 0;
     if (arg0->ext.main_8.unk8A++ >= 2) {
         arg0->ext.main_8.unk8A = 0;
-        arg0->unk5 = arg0->hp < 0x19 ? 6 : 4;
+        if (arg0->hp <= 0x18)
+            arg0->unk5 = 6;
+        else
+            arg0->unk5 = 4;
         return;
     }
 
-    distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
-    if (distance < 0)
-        distance = -distance;
-    if (arg0->hp >= 0x19) {
-        if (distance < 0x90) {
+    if (arg0->hp > 0x18) {
+        if (ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi) < 0x90) {
             if (arg0->unk15 != 0) {
-                choice = 0x12B0 - arg0->x_pos.i.hi < 0xD0 ? 4 : 5;
-            } else {
-                choice = arg0->x_pos.i.hi - 0x11A0 < 0xD0 ? 4 : 5;
+                if (0x12B0 - arg0->x_pos.i.hi < 0xD0) {
+                    arg0->unk5 = 4;
+                    return;
+                }
+            } else if (arg0->x_pos.i.hi - 0x11A0 < 0xD0) {
+                arg0->unk5 = 4;
+                return;
             }
+            arg0->unk5 = 5;
         } else {
-            choice = get_random_nonzero() % 8 < 3 ? 3 : 8;
+            if (get_random_nonzero() % 8 < 3)
+                arg0->unk5 = 3;
+            else
+                arg0->unk5 = 8;
         }
-    } else if (distance < 0x90) {
-        choice = get_random_nonzero() % 8 < 6 ? 7 : 5;
+    } else if (ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi) < 0x90) {
+        if (get_random_nonzero() % 8 < 6)
+            arg0->unk5 = 7;
+        else
+            arg0->unk5 = 5;
     } else {
-        choice = get_random_nonzero() % 8 < 7 ? 7 : 6;
+        if (get_random_nonzero() % 8 < 7)
+            arg0->unk5 = 7;
+        else
+            arg0->unk5 = 6;
     }
-    arg0->unk5 = choice;
 
     if (arg0->unk15 != 0) {
         if (g_Player.x_pos.val < arg0->x_pos.val)
@@ -288,8 +301,6 @@ void func_800480D0(struct MainObj* arg0)
         arg0->unk5 = 4;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_800480D0);
 #endif
 
 void eregion_roar_start(struct MainObj* self)

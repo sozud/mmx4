@@ -211,44 +211,48 @@ void func_8006B2A4(struct MainObj* arg0)
 #endif
 
 // wave_rider_bob
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B398);
+#else
 void func_8006B398(struct MainObj* arg0)
 {
-    struct Main53Ext* ext = &arg0->ext.main_53;
-    u8 tile;
-    s16 x;
-    s16 y;
+    s32 tile;
+    s32 timer;
 
     animate_object(ANIMATED_OBJECT(arg0));
-    tile = func_8006B1C4(arg0, 0);
-    ext->unk81 = tile;
+    tile = ((s32(*)(struct MainObj*, s32))func_8006B1C4)(arg0, 0);
+    arg0->ext.main_53.unk81 = tile;
     if (arg0->unk7E != 0) {
         arg0->unk7E--;
         return;
     }
-    if (tile == 0)
+    if ((u8)tile == 0)
         return;
-    if (ext->unk84 != 0)
-        arg0->x_speed = arg0->x_pos.val < background_objects[arg0->bg_offset].x_pos.val + 0x400000
-            ? 0x80000
-            : 0x50000;
-    else
-        arg0->x_speed = arg0->unk2 == 4 ? 0x10000 : 0x60000;
-    arg0->x_accel = 0;
+    if (arg0->ext.main_53.unk84 != 0) {
+        if (arg0->x_pos.val < background_objects[arg0->bg_offset].x_pos.val + 0x400000) {
+            arg0->x_speed = 0x80000;
+            arg0->x_accel = 0;
+        } else {
+            arg0->x_speed = 0x50000;
+            arg0->x_accel = 0;
+        }
+    } else if (arg0->unk2 == 4) {
+        arg0->x_speed = 0x10000;
+        arg0->x_accel = 0;
+    } else {
+        arg0->x_speed = 0x60000;
+        arg0->x_accel = 0;
+    }
     arg0->air_state = 0;
     arg0->unk6 = 0;
     set_animation(arg0, 0);
-    if (ext->unk81 == 0x24)
+    if (arg0->ext.main_53.unk81 == 0x24)
         return;
-    x = arg0->x_pos.i.hi;
-    y = arg0->y_pos.i.hi;
     if (arg0->unk15 != 0)
-        func_800B10E4(2, (s16)(x - 0x18), (s16)(y + 9), (s16)(x + 0xA), (s16)(y + 0x19), 0x10);
+        func_800B10E4(2, (s16)(arg0->x_pos.i.hi - 0x18), (s16)(arg0->y_pos.i.hi + 9), (s16)(arg0->x_pos.i.hi + 0xA), (s16)(arg0->y_pos.i.hi + 0x19), 0x10);
     else
-        func_800B10E4(2, (s16)(x + 0x18), (s16)(y + 9), (s16)(x - 0xA), (s16)(y + 0x19), 0x10);
+        func_800B10E4(2, (s16)(arg0->x_pos.i.hi + 0x18), (s16)(arg0->y_pos.i.hi + 9), (s16)(arg0->x_pos.i.hi - 0xA), (s16)(arg0->y_pos.i.hi + 0x19), 0x10);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B398);
 #endif
 
 void wave_rider_move(struct MainObj* self)

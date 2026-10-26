@@ -53,35 +53,37 @@ void sigma_sequencer_fx_wait_player(struct EffectObj* self)
 void func_800BE364(struct EffectObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", func_800BE364);
+#else
 void func_800BE364(struct EffectObj* self)
 {
-    struct Main73PartsExt* owner = &self->ext.effect_42.owner.main->ext.main_73_parts;
-    u32 ready = 0;
-    u32 matched = 0;
+    struct MainObj* owner;
+    s32 count;
     u32 i;
 
+    count = 0;
     for (i = 0; i < 3; i++) {
-        if (owner->parts[i]->unk5 == 3)
-            ready++;
+        if (self->ext.effect_42.owner.main->ext.main_73_parts.parts[i]->unk5 == 3)
+            count++;
     }
-    if (ready != 3)
-        return;
-    for (i = 0; i < 3; i++) {
-        if (owner->parts[i]->unk2 == owner->object_id)
-            matched = 1;
-    }
-    if (matched) {
-        owner->effect_state = 2;
-        self->unk5++;
-    } else {
-        owner->effect_state = 3;
-        self->ext.effect_42.timer = 0xC8;
-        self->unk5 += 2;
+    if (count == 3) {
+        count = 0;
+        owner = self->ext.effect_42.owner.main;
+        for (i = 0; i < 3; i++) {
+            if (owner->ext.main_73_parts.parts[i]->unk2 == owner->ext.main_73_parts.object_id)
+                count = 1;
+        }
+        if (count != 0) {
+            self->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 2;
+            self->unk5++;
+        } else {
+            self->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 3;
+            self->ext.effect_42.timer = 0xC8;
+            self->unk5 += 2;
+        }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", func_800BE364);
 #endif
 
 #ifdef VERSION_EU

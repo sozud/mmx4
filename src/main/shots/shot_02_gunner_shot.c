@@ -77,31 +77,29 @@ void func_8009A448(struct ShotObj* arg0);
 void func_80099D54(struct ShotObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_80099D54);
+#else
 void func_80099D54(struct ShotObj* arg0)
 {
-    u8 kind = (u8)arg0->unk2;
-
-    arg0->unk58.animation_steps = D_80105FF0;
     arg0->state = 1;
     arg0->on_screen = 1;
+    arg0->unk58.animation_steps = D_80105FF0;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
     arg0->unk42 &= 0x7FFF;
-    arg0->x_pos.i.hi += gunner_shot_spawn_offsets[kind][0];
+    arg0->x_pos.i.hi += gunner_shot_spawn_offsets[arg0->unk2][0];
+    arg0->y_pos.i.hi += gunner_shot_spawn_offsets[arg0->unk2][1];
     arg0->x_vel.val *= 3;
     arg0->y_vel.val *= 3;
-    arg0->unk54 = gunner_shot_hit_box;
-    arg0->unk50.data = gunner_shot_hit_box;
-    arg0->unk60 = 2;
     arg0->unk16 = 0;
     arg0->unk68 = NULL;
     arg0->unk5C = 1;
-    arg0->y_pos.i.hi += gunner_shot_spawn_offsets[kind][1];
+    arg0->unk54 = gunner_shot_hit_box;
+    arg0->unk50.data = gunner_shot_hit_box;
+    arg0->unk60 = 2;
     set_animation(arg0, 8);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_80099D54);
 #endif
 
 void gunner_shot_fly(struct ShotObj* self)

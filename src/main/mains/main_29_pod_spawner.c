@@ -28,15 +28,15 @@ void pod_spawner_wait(struct MainObj* arg0);
 extern void (*pod_spawner_state_funcs[])(struct MainObj*);
 extern void (*pod_spawner_copy_state_funcs[])(struct MainObj*);
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+extern s16 D_800FD86C[12];
+extern s16 D_800FD884[12];
+u8 pod_spawner_player_quadrant(struct MainObj*);
+void func_8005ABC0(struct WeaponObj*, s8);
 extern union AnimationStep* pod_spawner_animations[16];
 extern struct Unk_unk68 D_800FD830[1];
 extern struct Unk_unk68 D_800FD834[1];
-extern s16 D_800FD86C[12];
-extern s16 D_800FD884[12];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern u8 D_800FD89C[16];
-u8 pod_spawner_player_quadrant(struct MainObj*);
-void func_8005ABC0(struct WeaponObj*, s8);
 #endif
 
 void pod_spawner_update(struct MainObj* self)
@@ -61,25 +61,26 @@ void func_8005B2C8(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005A538);
+#else
 void func_8005A538(struct MainObj* self)
 {
-    struct MainObj* controller = SP_CUR_MAIN_OBJ;
     struct MainObj* child;
-    u8* context = (u8*)&controller->ext;
+    u32 i;
 
     self->unk5 = 2;
     self->hp = 8;
-    self->contact_damage = 3;
     self->state = 1;
+    self->contact_damage = 3;
     self->unk6 = 0;
     self->unk7C = 0;
     self->on_screen = 1;
     self->invincibility_timer = 0;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
-    *(u16*)(context + 2) = self->x_pos.u.hi;
-    *(u16*)(context + 4) = self->y_pos.u.hi;
+    SP_CUR_MAIN_OBJ->ext.main_29_controller.x = self->x_pos.u.hi;
+    SP_CUR_MAIN_OBJ->ext.main_29_controller.y = self->y_pos.u.hi;
     self->animation_table = (const u8* const*)pod_spawner_animations;
     self->hurt_box = D_800FD834;
     self->attack_box = D_800FD830;
@@ -91,24 +92,26 @@ void func_8005A538(struct MainObj* self)
     self->x_accel = 0;
     self->gravity = 0;
     self->unk16 = VISUAL_SATURN_LAYER(7);
-    context[0] = 0;
-    context[1] = self->unk2 == 3;
-    controller->ext.main_29.slots.controller.target = NULL;
-    controller->ext.main_29.slots.controller.record = NULL;
-
+    SP_CUR_MAIN_OBJ->ext.main_29_controller.unk80 = 0;
+    if (self->unk2 == 3) {
+        SP_CUR_MAIN_OBJ->ext.main_29_controller.unk81 = 1;
+    } else {
+        SP_CUR_MAIN_OBJ->ext.main_29_controller.unk81 = 0;
+    }
+    SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.target = NULL;
+    SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.record = NULL;
     child = find_free_main_obj();
     if (child != NULL) {
         child->active = self->active;
         child->id = self->id;
         child->unk2 = -0x80;
-        controller->ext.main_29.slots.controller.target = (struct Main29Record*)child;
+        SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.target = (struct Main29Record*)child;
         child->ext.main_29.source = self;
-        __builtin_memset(child->ext.main_29.slots.children, 0, sizeof(child->ext.main_29.slots.children));
+        for (i = 0; i < 4; i++)
+            child->ext.main_29.slots.children[i] = NULL;
     }
     set_animation(self, 0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005A538);
 #endif
 
 void pod_spawner_main(struct MainObj* self)
@@ -129,57 +132,73 @@ void pod_spawner_idle(struct MainObj* self)
 }
 
 // pod_spawner_spawn
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005A758);
+#else
 void func_8005A758(struct MainObj* self)
 {
-    u8* context = (u8*)&SP_CUR_MAIN_OBJ->ext;
     u8 direction;
-    u8 result;
-    s32 dx;
-    s32 dy;
+    u8 angle;
+    s8 state;
 
     if ((WEAPON_FRAME_COUNTER & 3) == 0) {
-        context[0]++;
-        if (context[0] >= 12)
-            context[0] = 0;
-        *(s16*)(context + 6) = D_800FD86C[context[0]];
-        *(s16*)(context + 8) = D_800FD884[context[0]];
-        self->x_pos.u.hi = *(u16*)(context + 2) + *(u16*)(context + 6);
-        self->y_pos.u.hi = *(u16*)(context + 4) + *(u16*)(context + 8);
+        SP_CUR_MAIN_OBJ->ext.main_29_controller.unk80++;
+        if (SP_CUR_MAIN_OBJ->ext.main_29_controller.unk80 >= 12)
+            SP_CUR_MAIN_OBJ->ext.main_29_controller.unk80 = 0;
+        SP_CUR_MAIN_OBJ->ext.main_29_controller.offset_x = D_800FD86C[SP_CUR_MAIN_OBJ->ext.main_29_controller.unk80];
+        SP_CUR_MAIN_OBJ->ext.main_29_controller.offset_y = D_800FD884[SP_CUR_MAIN_OBJ->ext.main_29_controller.unk80];
+        self->x_pos.i.hi = SP_CUR_MAIN_OBJ->ext.main_29_controller.x + SP_CUR_MAIN_OBJ->ext.main_29_controller.offset_x;
+        self->y_pos.i.hi = SP_CUR_MAIN_OBJ->ext.main_29_controller.y + SP_CUR_MAIN_OBJ->ext.main_29_controller.offset_y;
     }
 
-    if (context[1] == 0) {
-        dx = g_Player.x_pos.i.hi - self->x_pos.i.hi;
-        dy = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-        if (dx > -0x81 && dx < 0x81 && dy > -0x41 && dy < 0x41) {
-            direction = pod_spawner_player_quadrant(self);
-            if (self->unk2 == 0) {
-                func_8005ABC0(self, direction);
-            } else if (self->unk2 == 1) {
-                if (direction < 2) {
-                    result = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
-                    if ((direction == 0 && result < 0x10) || (direction == 1 && result < 5))
-                        direction = 2;
-                    else
-                        direction = 3;
-                }
-                func_8005ABC0(self, direction);
-            } else if (self->unk2 == 2) {
+    if (SP_CUR_MAIN_OBJ->ext.main_29_controller.unk81 == 0
+        && ABS(g_Player.x_pos.i.hi, self->x_pos.i.hi) < 0x81
+        && ABS(g_Player.y_pos.i.hi, self->y_pos.i.hi) < 0x41) {
+        state = self->unk2;
+        if (state == 0) {
+            ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, pod_spawner_player_quadrant(self));
+        } else {
+            if (state == 1) {
+                direction = pod_spawner_player_quadrant(self);
                 if (direction >= 2) {
-                    result = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
-                    if ((direction == 2 && result < 8) || (direction != 2 && result >= 0x18))
-                        direction = 1;
-                    else
-                        direction = 0;
+                    ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, direction);
+                } else {
+                    angle = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+                    if (direction == 0) {
+                        if (angle < 0x10)
+                            ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, 2);
+                        else
+                            ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, 3);
+                    } else if (angle < 5) {
+                        ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, 2);
+                    } else {
+                        ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, 3);
+                    }
                 }
-                func_8005ABC0(self, direction);
+            }
+            state = self->unk2;
+            if (state == 2) {
+                direction = pod_spawner_player_quadrant(self);
+                if (direction < 2) {
+                    ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, direction);
+                } else {
+                    angle = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+                    if (direction == state) {
+                        if (angle >= 8)
+                            ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, 0);
+                        else
+                            ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, 1);
+                    } else if (angle >= 0x18) {
+                        ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, 1);
+                    } else {
+                        ((void (*)(struct MainObj*, s32))func_8005ABC0)(self, 0);
+                    }
+                }
             }
         }
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005A758);
 #endif
 
 void pod_spawner_wait(struct MainObj* self)

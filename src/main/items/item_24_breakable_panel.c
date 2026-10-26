@@ -54,38 +54,46 @@ void breakable_panel_update(struct ItemObj* arg0)
 
 // breakable_panel_init
 
+extern struct Unk_unk68 D_80108504[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C609C(struct ItemObj* self);
-extern struct Unk_unk68 D_80108504[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C609C(struct ItemObj* self)
 {
-    s32 index;
+    struct ItemObj* item;
+    u32 index;
+    s32 value;
+    s32* frames;
+    s32 offset;
+    s8 bg_offset;
+
     self->state = 1;
     self->unk5 = 0;
     self->on_screen = 1;
     index = func_8002938C(0x9E);
-    self->unk40 = OBJECT_STAGE_TEXTURE(index);
-    self->unk42 = OBJECT_CLUT(((((index * 4 + 0x18) & 0xF)) | ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF)));
-    self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
-    self->animation_table = (const u8* const*)breakable_panel_animations;
-    self->unk5C = 0x20;
-    self->unk58 = (const u8*)D_80108504;
-    self->unk15 = 0;
-    self->unk61 = 0;
-    self->unk75 = 1;
-    self->unk16 = VISUAL_SATURN_LAYER(5);
-    self->unk54 = (const u8*)breakable_panel_hit_box;
-    self->unk68 = (struct Unk_unk68*)breakable_panel_terrain_box;
-    self->bg_offset = g_Player.bg_offset;
-    set_animation(self, 0);
+    item = self;
+    value = index * 4;
+    item->unk40 = OBJECT_STAGE_TEXTURE(index);
+    frames = SP_MENU_FRAMES;
+    offset = frames[index];
+    value = ((value + 0x18) & 0xF) | (((index + 6) / 4 + 0x1E0) << 6);
+    item->unk42 = OBJECT_CLUT(value);
+    item->animation_table = (const u8* const*)breakable_panel_animations;
+    item->unk5C = 0x20;
+    item->unk58 = (const u8*)D_80108504;
+    item->unk15 = 0;
+    item->unk61 = 0;
+    item->unk75 = 1;
+    item->sprite_frames = (const u8*)frames + offset;
+    bg_offset = g_Player.bg_offset;
+    item->unk16 = VISUAL_SATURN_LAYER(5);
+    item->unk54 = (const u8*)breakable_panel_hit_box;
+    item->unk68 = (struct Unk_unk68*)breakable_panel_terrain_box;
+    item->bg_offset = bg_offset;
+    set_animation(item, 0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_24_breakable_panel", func_800C609C);
-#endif
 
 void breakable_panel_main(struct ItemObj* arg0)
 {

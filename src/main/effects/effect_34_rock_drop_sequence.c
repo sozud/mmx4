@@ -98,7 +98,9 @@ void palette_pulse_init(struct EffectObj* self)
 void func_800BD080(struct EffectObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_34_rock_drop_sequence", func_800BD080);
+#else
 void func_800BD080(struct EffectObj* arg0)
 {
     struct MainObj* main;
@@ -119,16 +121,14 @@ void func_800BD080(struct EffectObj* arg0)
         main->unk2 = 0;
         main->x_pos.i.hi = x + (get_random() & 0xF);
         main->y_pos.i.hi = y + (get_random() & 0x1F);
+        main->unk7C = (u8)get_random() & 0xF;
         y += 0x20;
-        main->unk7C = get_random() & 0xF;
     }
     arg0->ext.unk_effect.unk14 = 7;
     arg0->ext.unk_effect.unk15 ^= 1;
     if ((s16)arg0->ext.effect_4.unk16 < 0x70)
         arg0->ext.effect_4.unk16 += 3;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_34_rock_drop_sequence", func_800BD080);
 #endif
 
 s16 rock_drop_sequence_delays[10] = { 2, 2, 2, 0x46, 0x64, 0x46, 0x46, 0x46, 0x46, 0 };

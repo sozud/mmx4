@@ -217,41 +217,30 @@ void gunship_choose(struct MainObj* self)
 }
 
 // gunship_choose_attack
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_800828B4);
+#else
 void func_800828B4(struct MainObj* arg0)
 {
-    s32 dx;
-    s32 dy;
-
     animate_object(ANIMATED_OBJECT(arg0));
-    dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-    if (dx < 0)
-        dx = -dx;
     if (--arg0->unk7C == 0) {
-        if (dx < 0xC1) {
-            dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
-            if (dy < 0)
-                dy = -dy;
-            arg0->unk5 = dy < 0x31 ? 3 : 4;
+        if (ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 0xC1) {
+            if (ABS(g_Player.y_pos.i.hi, arg0->y_pos.i.hi) < 0x31)
+                arg0->unk5 = 3;
+            else
+                arg0->unk5 = 4;
         } else {
             arg0->unk5 = 4;
         }
         arg0->unk6 = 0;
         arg0->ext.main_67.unk8D = 0;
     }
-    if (arg0->unk72 == 8 && arg0->ext.main_67.unk8D != 0) {
-        dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-        if (dx < 0)
-            dx = -dx;
-        if (dx < 0xC1) {
-            arg0->unk5 = 4;
-            arg0->unk6 = 0;
-            arg0->ext.main_67.unk8D = 1;
-        }
+    if ((u8)arg0->unk72 == 8 && arg0->ext.main_67.unk8D != 0 && ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 0xC1) {
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        arg0->ext.main_67.unk8D = 1;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_800828B4);
 #endif
 
 void gunship_gun(struct MainObj* self)

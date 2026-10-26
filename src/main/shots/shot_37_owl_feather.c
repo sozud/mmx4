@@ -123,13 +123,15 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_37_owl_feather", func_800A3CB4);
 #endif
 
 // owl_feather_fly
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_37_owl_feather", func_800A3FEC);
+#else
 void func_800A3FEC(struct ShotObj* arg0)
 {
+    s32 unused[4];
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
-    s32 target_x;
-    s32 target_y;
-    s32 d;
+    s16 bg_x;
+    s16 bg_y;
 
     animate_object(ANIMATED_OBJECT(arg0));
     move_object(MOVING_OBJECT(arg0));
@@ -137,17 +139,17 @@ void func_800A3FEC(struct ShotObj* arg0)
     func_8002DD04((struct MainObj*)arg0);
     if (arg0->unk2 != 0 && arg0->unk2 < 5) {
         if (owner->ext.main_60.feathers_holding == 0) {
-            target_x = background_objects[0].x_pos.i.hi + owl_feather_velocities[arg0->unk84.value][0];
-            target_y = background_objects[0].y_pos.i.hi + owl_feather_velocities[arg0->unk84.value][1];
+            bg_x = background_objects[0].x_pos.i.hi;
+            bg_y = background_objects[0].y_pos.i.hi;
             set_velocity_from_angle(MOVING_OBJECT(arg0),
-                angle_to_point(OBJECT_HEADER(arg0), target_x << 16, target_y << 16) & 0xFF);
+                angle_to_point(OBJECT_HEADER(arg0), (bg_x + owl_feather_velocities[arg0->unk84.value][0]) << 16,
+                    (bg_y + owl_feather_velocities[arg0->unk84.value][1]) << 16)
+                    & 0xFF);
             arg0->x_vel.val *= 2;
             arg0->y_vel.val *= 2;
-            d = arg0->x_pos.i.hi - target_x;
-            if ((d < 0 ? -d : d) < 8)
+            if (ABS(arg0->x_pos.i.hi, bg_x + owl_feather_velocities[arg0->unk84.value][0]) < 8)
                 arg0->x_vel.val = 0;
-            d = arg0->y_pos.i.hi - target_y;
-            if ((d < 0 ? -d : d) < 8)
+            if (ABS(arg0->y_pos.i.hi, bg_y + owl_feather_velocities[arg0->unk84.value][1]) < 8)
                 arg0->y_vel.val = 0;
         } else if (arg0->unk8C.word == 0) {
             set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)) & 0xFF);
@@ -156,14 +158,12 @@ void func_800A3FEC(struct ShotObj* arg0)
             arg0->y_vel.val *= 5;
         }
     }
-    if (owner->state == 2 || owner->active == 0 || func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) != 0) {
-        arg0->state++;
+    if (owner->state != 2 && owner->active != 0 && func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+        update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
         return;
     }
-    update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
+    arg0->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_37_owl_feather", func_800A3FEC);
 #endif
 
 void owl_feather_despawn(struct ShotObj* self)

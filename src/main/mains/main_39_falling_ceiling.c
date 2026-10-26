@@ -131,40 +131,48 @@ void falling_ceiling_despawn(struct MainObj* self)
 }
 
 // falling_ceiling_wait
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061918);
+#else
 void func_80061918(struct MainObj* self)
 {
-    struct Main39Ext* ext = &self->ext.main_39;
-    s32 target_x;
-
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
-    if (self->y_speed == 0x10000 || self->y_speed == -0x10000)
+    if ((self->y_speed < 0 ? -self->y_speed : self->y_speed) == 0x10000) {
         self->gravity = -self->gravity;
-    if (ext->unk88 == 0) {
-        if (ext->unk84.h.unk84 < g_Player.x_pos.i.hi) {
+    }
+    if (self->ext.main_39.unk88 == 0) {
+        if (g_Player.x_pos.i.hi > self->ext.main_39.unk84.h.unk84) {
             self->gravity = 0x2000;
             set_animation(self, 1);
             self->unk5 = 1;
         }
-        return;
-    }
-    ext->unk8C += ext->unk90;
-    ext->unk90 += 0x1000;
-    if (ext->unk90 > 0x10000)
-        ext->unk90 = 0x10000;
-    if (ext->unk8C > 0x3000000)
-        ext->unk8C = 0x3000000;
-    if (g_Player.y_pos.val >= ext->unk8C || self->y_pos.val >= g_Player.y_pos.val)
-        return;
-    target_x = g_Player.x_pos.i.hi + (self->unk2 & 1 ? 0x10 : -0x10);
-    if (target_x - self->x_pos.i.hi >= -0x10 && target_x - self->x_pos.i.hi <= 0x10) {
-        self->gravity = 0x8000;
-        self->unk5 = 2;
+    } else {
+        self->ext.main_39.unk8C += self->ext.main_39.unk90;
+        self->ext.main_39.unk90 += 0x1000;
+        if (self->ext.main_39.unk90 > 0x10000) {
+            self->ext.main_39.unk90 = 0x10000;
+        }
+        if (self->ext.main_39.unk8C > 0x3000000) {
+            self->ext.main_39.unk8C = 0x3000000;
+        }
+        if (self->ext.main_39.unk8C > g_Player.y_pos.val && g_Player.y_pos.val > self->y_pos.val) {
+            if (!(self->unk2 & 1)) {
+                s32 target_x = g_Player.x_pos.i.hi - 0x10;
+                if (ABS(target_x, self->x_pos.i.hi) <= 0x10) {
+                    self->gravity = 0x8000;
+                    self->unk5 = 2;
+                }
+            } else {
+                s32 target_x = g_Player.x_pos.i.hi + 0x10;
+                if (ABS(target_x, self->x_pos.i.hi) <= 0x10) {
+                    self->gravity = 0x8000;
+                    self->unk5 = 2;
+                }
+            }
+        }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061918);
 #endif
 
 void falling_ceiling_drop(struct MainObj* self)

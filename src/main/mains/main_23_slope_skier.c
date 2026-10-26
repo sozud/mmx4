@@ -42,10 +42,10 @@ extern union AnimationStep* slope_skier_animations[31];
 extern struct Unk_unk68 slope_skier_hurt_box[];
 extern struct Unk_unk68 slope_skier_terrain_box;
 extern struct Unk_unk68 D_80106DF4[];
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern struct VisualSpawnOffset D_800FCE90[5];
 extern struct Unk_unk68 D_800FCE9C[];
 extern union AnimationStep jet_drone_anim_3[];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 
 static struct VisualObj* main_23_spawn_visual(struct MainObj* arg0, u8 facing);
 #endif
@@ -242,47 +242,62 @@ void slope_skier_jump(struct MainObj* self)
 }
 
 // slope_skier_step_5
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_80056054);
+#else
 void func_80056054(struct MainObj* arg0)
 {
     struct VisualObj* visual;
     u8 i;
+    s32 x;
+    s32 new_x;
+    struct VisualSpawnOffset* offsets;
 
-    if (arg0->unk6 == 0) {
+    switch (arg0->unk6) {
+    case 0:
         arg0->unk6++;
         set_animation(arg0, arg0->ext.main_23.unk80 + 0xA);
-        return;
-    }
-    if (arg0->unk6 != 1)
-        return;
-    animate_object(ANIMATED_OBJECT(arg0));
-    move_object(MOVING_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 1) {
-        if (arg0->ext.main_23.unk82 & 1) {
-            arg0->unk5 = 1;
-            arg0->unk6 = 0;
-            arg0->ext.main_23.unk82 &= 0xFE;
-            arg0->unk15 ^= PLAYER_FACING_RIGHT;
+        break;
+    case 1:
+        animate_object(ANIMATED_OBJECT(arg0));
+        move_object(MOVING_OBJECT(arg0));
+        if (arg0->animation_step.fields.event == 1) {
+            if (arg0->ext.main_23.unk82 & 1) {
+                arg0->unk5 = 1;
+                arg0->unk6 = 0;
+                arg0->ext.main_23.unk82 &= 0xFE;
+                arg0->unk15 ^= PLAYER_FACING_RIGHT;
+            }
+        } else if (arg0->animation_step.fields.event == 2) {
+            offsets = D_800FCE90;
+            for (i = 0; i < 5; i++) {
+                visual = find_free_visual_obj();
+                if (visual != NULL) {
+                    visual->active = 0x41;
+                    visual->id = 3;
+                    visual->unk2 = 5;
+                    visual->bg_offset = arg0->bg_offset;
+                    visual->unk15 = arg0->unk15 ^ 0x40;
+                    visual->unk40 = arg0->unk40;
+                    visual->unk3C = (void*)arg0->sprite_frames;
+                    visual->animation_table = (u32**)arg0->animation_table;
+                    visual->unk42 = arg0->unk42;
+                    x = (s16)arg0->x_pos.i.hi;
+                    if (arg0->unk15 != 0) {
+                        new_x = x - offsets[i].x;
+                    } else {
+                        new_x = x + offsets[i].x;
+                    }
+                    visual->x_pos.i.hi = new_x;
+                    visual->y_pos.i.hi = (u16)arg0->y_pos.i.hi + D_800FCE90[i].y;
+                    visual->unk16 = arg0->unk16;
+                    arg0->animation_step.fields.event = 0;
+                }
+            }
         }
-        return;
-    }
-    if (arg0->animation_step.fields.event != 2)
-        return;
-    for (i = 0; i < 5; i++) {
-        visual = main_23_spawn_visual(arg0, arg0->unk15 ^ 0x40);
-        if (visual == NULL)
-            continue;
-        if (arg0->unk15 != 0)
-            visual->x_pos.i.hi = arg0->x_pos.i.hi - D_800FCE90[i].x;
-        else
-            visual->x_pos.i.hi = arg0->x_pos.i.hi + D_800FCE90[i].x;
-        visual->y_pos.i.hi = (u16)arg0->y_pos.i.hi + D_800FCE90[i].y;
-        visual->unk16 = arg0->unk16;
-        arg0->animation_step.fields.event = 0;
+        break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_80056054);
 #endif
 
 void slope_skier_slide_start(struct MainObj* self)
@@ -295,43 +310,63 @@ void slope_skier_slide_start(struct MainObj* self)
 }
 
 // slope_skier_slide_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_800562AC);
+#else
 void func_800562AC(struct MainObj* arg0)
 {
-    struct Main23Ext* ext = &arg0->ext.main_23;
     struct VisualObj* visual;
+    u8 hit = 0;
     u8 wall;
+    s32 x;
 
     move_object(MOVING_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
     slope_skier_read_slope(arg0);
-    if (ext->unk81 != ext->unk80) {
-        if (ext->unk80 == 3 || (ext->unk80 & 0x80)) {
+    if (arg0->ext.main_23.unk81 != arg0->ext.main_23.unk80) {
+        if (arg0->ext.main_23.unk80 == 3 || (arg0->ext.main_23.unk80 & 0x80)) {
             arg0->unk5 = 4;
             arg0->unk6 = 0;
-            set_animation(arg0, ext->unk81 + 0xD);
+            set_animation(arg0, arg0->ext.main_23.unk81 + 0xD);
         } else {
-            set_animation(arg0, (ext->unk80 & 0x7F) + 4);
+            set_animation(arg0, (arg0->ext.main_23.unk80 & 0x7F) + 4);
         }
     }
-    wall = arg0->unk15 != 0 ? arg0->collision_flags & 1 : arg0->collision_flags & 2;
-    if (wall) {
+    if (arg0->unk15 != 0)
+        wall = arg0->collision_flags & 1;
+    else
+        wall = arg0->collision_flags & 2;
+    if (wall)
+        hit = 1;
+    if (hit) {
         arg0->unk5 = 5;
         arg0->unk6 = 0;
-        ext->unk82 |= 1;
+        arg0->ext.main_23.unk82 |= 1;
     }
-    if (--arg0->unk7C != 0)
-        return;
-    visual = main_23_spawn_visual(arg0, arg0->unk15);
-    if (visual == NULL)
-        return;
-    visual->x_pos.i.hi = arg0->unk15 != 0 ? arg0->x_pos.i.hi - 0x28 : arg0->x_pos.i.hi + 0x28;
-    visual->y_pos.i.hi = (u16)arg0->y_pos.i.hi + (s8)(ext->unk80 < 0x80 ? ((u8*)D_800FCE9C)[ext->unk80] : ((u8*)jet_drone_anim_3)[ext->unk80 - 0x80]);
-    visual->unk16 = arg0->unk16;
-    arg0->unk7C = 5;
-}
+    if (--arg0->unk7C == 0) {
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 3;
+            visual->unk2 = 5;
+            visual->bg_offset = arg0->bg_offset;
+            visual->unk15 = arg0->unk15;
+            visual->unk40 = arg0->unk40;
+            visual->unk3C = (void*)arg0->sprite_frames;
+            visual->animation_table = (u32**)arg0->animation_table;
+            visual->unk42 = arg0->unk42;
+            x = (s16)arg0->x_pos.i.hi;
+            visual->x_pos.i.hi = arg0->unk15 != 0 ? x - 0x28 : x + 0x28;
+#ifdef MMX4_PC
+            visual->y_pos.i.hi = (u16)arg0->y_pos.i.hi + (s8)(arg0->ext.main_23.unk80 < 0x80 ? ((u8*)D_800FCE9C)[arg0->ext.main_23.unk80] : ((u8*)jet_drone_anim_3)[arg0->ext.main_23.unk80 - 0x80]);
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_800562AC);
+            visual->y_pos.i.hi = arg0->y_pos.i.hi + ((s8*)D_800FCE9C)[arg0->ext.main_23.unk80];
+#endif
+            visual->unk16 = arg0->unk16;
+            arg0->unk7C = 5;
+        }
+    }
+}
 #endif
 
 void slope_skier_slide_idle(void)

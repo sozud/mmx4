@@ -35,21 +35,9 @@ void airship_bob_update(struct LayerObj* arg0)
 
 // airship_bob_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-static s32 layer_05_scroll(struct LayerObj* arg0);
-void func_800DA2D4(struct LayerObj* arg0);
-void func_800DA358(struct LayerObj* arg0);
 void airship_bob_update_section(struct LayerObj*);
 void airship_bob_sway(struct LayerObj*);
 extern void (*airship_bob_section_funcs[])(struct LayerObj*);
-static s32 layer_05_scroll(struct LayerObj* arg0)
-{
-    s32 value;
-
-    memcpy(&value, &arg0->bg_offset, sizeof(value));
-    return value;
-}
-#endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800DA2D4(struct LayerObj* arg0)
@@ -76,26 +64,26 @@ INCLUDE_ASM("main/nonmatchings/layers/layer_05_airship_bob", func_800DA2D4);
 #endif
 
 // airship_bob_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/layers/layer_05_airship_bob", func_800DA358);
+#else
 void func_800DA358(struct LayerObj* arg0)
 {
     s32 half = (background_objects[0].unk14.val - background_objects[0].x_pos.val) / 2;
 
-    background_objects[1].x_pos.val += layer_05_scroll(arg0) - half;
-    background_objects[2].x_pos.val -= layer_05_scroll(arg0) / 2 + half / 2;
+    background_objects[1].x_pos.val += *(s32*)&arg0->bg_offset - half;
+    background_objects[2].x_pos.val -= *(s32*)&arg0->bg_offset / 2 + half / 2;
     arg0->unk25 = arg0->unk24;
-    if (engine_obj.substage != 0)
-        return;
-    airship_bob_update_section(arg0);
-    airship_bob_section_funcs[arg0->unk5](arg0);
-    if (engine_obj.substage != 0)
-        return;
-    airship_bob_sway(arg0);
-    if (g_Player.x_pos.i.hi >= 0x18D0)
-        engine_obj.unkF = 1;
+    if (engine_obj.substage == 0) {
+        airship_bob_update_section(arg0);
+        airship_bob_section_funcs[arg0->unk5](arg0);
+        if (engine_obj.substage == 0) {
+            airship_bob_sway(arg0);
+            if (g_Player.x_pos.i.hi >= 0x18D0)
+                engine_obj.unkF = 1;
+        }
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/layers/layer_05_airship_bob", func_800DA358);
 #endif
 
 void airship_bob_despawn(struct LayerObj* arg0)

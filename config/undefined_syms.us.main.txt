@@ -22,3 +22,4 @@ player_dash_effect_offsets = 0x800F8BCC;
 sigma_bolt_offsets = 0x80109B0C;
 D_800F1A0C = 0x800F1A0C;
 D_800F474C = 0x800F474C;
+D_800FCAB4 = 0x800FCAB4;

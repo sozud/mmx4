@@ -13,6 +13,14 @@ extern void (*bee_hive_state_funcs[])(struct MainObj*);
 extern void (*bee_hive_open_funcs[])(struct MainObj*);
 extern void (*bee_hive_wait_funcs[])(struct MainObj*);
 extern void (*bee_hive_release_funcs[])(struct MainObj*);
+
+struct BeeHivePart {
+    s16 x;
+    s16 y;
+    u8 subtype;
+    u8 pad;
+};
+extern struct BeeHivePart D_800FCAB0[10];
 extern void (*bee_hive_shake_funcs[])(struct MainObj*);
 extern void (*bee_hive_explode_funcs[])(struct MainObj*);
 
@@ -136,74 +144,53 @@ void func_800559BC(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_80055358);
+#else
 void func_80055358(struct MainObj* self)
 {
-    struct Main22Ext* ext;
+    struct MainObj* child;
     u8 i;
-    static const struct {
-        s16 x;
-        s16 y;
-        u8 subtype;
-    } parts[10] = {
-        { -48, 10, 3 },
-        { 48, 10, 3 },
-        { -22, 69, 4 },
-        { 22, 69, 4 },
-        { -40, -16, 3 },
-        { 40, -16, 3 },
-        { -40, 36, 4 },
-        { 40, 36, 4 },
-        { -26, -28, 3 },
-        { 26, -28, 3 },
-    };
-    ext = &self->ext.main_22;
+    u32 resource;
 
     animate_object(ANIMATED_OBJECT(self));
-    if (--ext->unk84 != 0)
-        return;
-    for (i = 0; i < 2; i++) {
-        struct MainObj* child = find_free_main_obj();
-        s32 part = ext->unk90;
-        s32 resource;
-        s32 column;
-        if (child != NULL) {
-            child->active = 0x41;
-            child->id = 5;
-            child->unk2 = parts[part].subtype;
-            child->on_screen = 0;
-            child->state = 0;
-            memset(&child->ext.main_5, 0, 12);
-            child->ext.main_5.part_index = part;
-            child->ext.main_5.target_x = self->y_pos.i.hi + parts[part].y;
-            child->ext.main_5.target_y = self->x_pos.i.hi + parts[part].x;
-            child->ext.main_5.owner = self;
-            child->x_pos.i.hi = self->x_pos.i.hi + ((part & 1) ? 0x10 : -0x10);
-            child->y_pos.i.hi = self->y_pos.i.hi + 9;
-            resource = func_8002938C(5);
-            child->unk40 = OBJECT_STAGE_TEXTURE(resource);
-            resource = func_8002938C(5);
-            column = resource * 4 + 0x18;
-#ifdef MMX4_SATURN
-            child->unk42 = column;
-#else
-            child->unk42 = (column % 16) | (((resource + 6) / 4 + 0x1E0) << 6);
-#endif
-            resource = func_8002938C(5);
-            child->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-            ext->unk90++;
-            ext->parts_mask |= 1u << part;
-            if (ext->unk90 >= 10) {
-                set_animation(self, 2);
-                ext->unk84 = 0x12;
-                self->unk6++;
+    if (--self->ext.main_22.unk84 == 0) {
+        for (i = 0; i < 2; i++) {
+            child = find_free_main_obj();
+            if (child != NULL) {
+                child->active = 0x41;
+                child->id = 5;
+                child->unk2 = D_800FCAB0[self->ext.main_22.unk90].subtype;
+                child->on_screen = 0;
+                child->state = 0;
+                ((u32*)&child->ext)[0] = 0;
+                ((u32*)&child->ext)[1] = 0;
+                ((u32*)&child->ext)[2] = 0;
+                child->ext.main_5.part_index = self->ext.main_22.unk90;
+                child->ext.main_5.target_y = self->x_pos.i.hi + D_800FCAB0[self->ext.main_22.unk90].x;
+                child->ext.main_5.target_x = self->y_pos.i.hi + D_800FCAB0[self->ext.main_22.unk90].y;
+                child->ext.main_5.owner = self;
+                child->x_pos.i.hi = self->x_pos.i.hi;
+                if (child->ext.main_5.part_index & 1)
+                    child->x_pos.i.hi += 0x10;
+                else
+                    child->x_pos.i.hi -= 0x10;
+                child->y_pos.i.hi = self->y_pos.i.hi + 9;
+                child->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(5));
+                child->unk42 = OBJECT_STAGE_CLUT(5);
+                resource = func_8002938C(5);
+                child->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+                self->ext.main_22.parts_mask |= 1 << child->ext.main_5.part_index;
+                if ((s32)++self->ext.main_22.unk90 >= 10) {
+                    set_animation(self, 2);
+                    self->ext.main_22.unk84 = 0x12;
+                    self->unk6++;
+                }
             }
         }
+        self->ext.main_22.unk84 = 8;
     }
-    ext->unk84 = 8;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_80055358);
 #endif
 
 void bee_hive_open_end(struct MainObj* self)
@@ -470,15 +457,18 @@ union AnimationStep* bee_hive_animations[8] = {
 
 u8 bee_hive_debris[8] = { 4, 5, 6, 7, 4, 5, 6, 7 };
 
-#ifdef MMX4_WIN32
-s16 D_800FCAB0[] = { -48, 10, 3, 48, 10, 3, -22, 69, 4, 22, 69, 4, -40, -16, 3, 40, -16, 3, -40, 36, 4, 40, 36, 4, -26, -28, 3, 26, -28, 3 };
-#else
-s16 D_800FCAB0 = (s16)0xFFD0;
-
-s16 D_800FCAB2 = (s16)0x000A;
-
-u8 D_800FCAB4[56] = { 0x03, 0x00, 0x30, 0x00, 0x0A, 0x00, 0x03, 0x00, 0xEA, 0xFF, 0x45, 0x00, 0x04, 0x00, 0x16, 0x00, 0x45, 0x00, 0x04, 0x00, 0xD8, 0xFF, 0xF0, 0xFF, 0x03, 0x00, 0x28, 0x00, 0xF0, 0xFF, 0x03, 0x00, 0xD8, 0xFF, 0x24, 0x00, 0x04, 0x00, 0x28, 0x00, 0x24, 0x00, 0x04, 0x00, 0xE6, 0xFF, 0xE4, 0xFF, 0x03, 0x00, 0x1A, 0x00, 0xE4, 0xFF, 0x03, 0x00 };
-#endif
+struct BeeHivePart D_800FCAB0[10] = {
+    { -48, 10, 3 },
+    { 48, 10, 3 },
+    { -22, 69, 4 },
+    { 22, 69, 4 },
+    { -40, -16, 3 },
+    { 40, -16, 3 },
+    { -40, 36, 4 },
+    { 40, 36, 4 },
+    { -26, -28, 3 },
+    { 26, -28, 3 },
+};
 
 void (*bee_hive_state_funcs[])(struct MainObj*) = {
     func_80055024,

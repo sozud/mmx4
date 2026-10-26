@@ -80,6 +80,8 @@ extern u8 D_800F9108[4];
 extern u8 D_800F910C[4];
 extern u8 D_800F9110[4];
 extern u8 D_800F9114[4];
+#define RIDE_S8(object, offset) (*(s8*)&RIDE_U8(object, offset))
+extern u8 D_800F905C[12];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003B470(struct RideArmorObj* arg0);
 void func_8003B7B4(struct RideArmorObj* arg0);
@@ -90,8 +92,6 @@ void func_8003C6EC(struct RideArmorObj* arg0, u8 kind);
 void func_8003CA44(struct RideArmorObj* arg0);
 u8 func_8003CF24(struct RideArmorObj* arg0);
 void func_8003D01C(struct RideArmorObj* arg0);
-#define RIDE_S8(object, offset) (*(s8*)&RIDE_U8(object, offset))
-extern u8 D_800F905C[12];
 extern void (*D_800F90E8[])(struct RideArmorObj*);
 void func_8003D164(struct VisualObj*, s32);
 void func_8003CF6C(struct RideArmorObj*);
@@ -199,7 +199,9 @@ void func_8003B694(struct RideArmorObj* self)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/bike", func_8003B7B4);
+#else
 void func_8003B7B4(struct RideArmorObj* arg0)
 {
     s8 health = arg0->hp;
@@ -217,7 +219,7 @@ void func_8003B7B4(struct RideArmorObj* arg0)
         arg0->unk85 = 1;
         g_Player.hp = HP_VALUE(arg0->hp);
     }
-    if (background_objects[0].unk51 != 0) {
+    if ((u8)background_objects[0].unk51 != 0) {
         RIDE_U8(arg0, 0x9B) = 0;
         arg0->state = 2;
         arg0->unk5 = 0;
@@ -245,8 +247,6 @@ void func_8003B7B4(struct RideArmorObj* arg0)
     func_8003B98C((struct PlayerObj*)arg0);
     is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/bike", func_8003B7B4);
 #endif
 
 void func_8003B98C(struct PlayerObj* arg0)
@@ -1065,19 +1065,23 @@ void func_8003CD38(struct RideArmorObj* arg0)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/bike", func_8003CF24);
+#else
 u8 func_8003CF24(struct RideArmorObj* arg0)
 {
     u8 tile = arg0->unk80.bytes.unk81;
 
-    if (tile != 0 && tile < 9)
-        return tile < 5 ? 0 : 1;
+    if (tile != 0 && tile < 9) {
+        if (tile < 5)
+            return 0;
+        if (tile < 9)
+            return 1;
+    }
     if (tile != 0x10)
         return 2;
     return arg0->unk80.bytes.unk83;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/bike", func_8003CF24);
 #endif
 
 void func_8003CF6C(struct RideArmorObj* ride_armor)

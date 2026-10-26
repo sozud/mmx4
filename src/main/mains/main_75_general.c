@@ -148,6 +148,8 @@ extern struct Unk_unk68 D_80108384[];
 extern struct Unk_unk68 D_801059C0;
 extern void (*general_step_funcs[7])();
 extern union AnimationStep* final_cutscene_animations[1];
+extern struct Unk_unk68 D_801059BC;
+extern void* general_animations[46];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008FBCC(struct MainObj* self);
 void func_80091218(struct MainObj* self);
@@ -155,66 +157,76 @@ void func_8009027C(struct MainObj* self);
 void func_800905D4(struct MainObj* self);
 void func_800915C4(struct MainObj* self);
 void func_800917AC(struct MainObj* self);
-extern struct Unk_unk68 D_801059BC;
-extern void* general_animations[46];
 // src/main/mains/main_75_general.c
 
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_8008FBCC);
+#else
 void func_8008FBCC(struct MainObj* self)
 {
-    struct Main75Ext* ext = &self->ext.main_75;
     struct ShotObj* shot;
+    u8 bg_offset;
 
-    if (ext->object.shot != NULL && ext->object.shot->active != 0)
-        return;
-    self->hp = 0;
-    self->contact_damage = 5;
-    self->invincibility_timer = 0;
-    self->x_pos.i.hi = 0xE98;
-    self->unk5++;
-    self->y_pos.i.hi = 0x27B;
-    self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
-    self->unk18.val = self->x_pos.val;
-    self->unk16 = VISUAL_SATURN_LAYER(5);
-    self->x_speed = 0;
-    self->y_speed = 0;
-    self->x_accel = 0;
-    self->gravity = 0;
-    self->air_state = 0;
-    self->terrain_box = NULL;
-    self->unk1C.val = self->y_pos.val;
-    self->collision_data = D_80107B78;
-    self->contact_damage = 9;
-    self->animation_table = (const u8* const*)general_animations;
-    self->hurt_box = D_801059C4;
-    self->attack_box = &D_801059BC;
-    self->bg_offset = g_Player.bg_offset;
-    self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << PLAYER_FACING_SHIFT;
-    set_animation(self, 0);
-    memset(ext, 0, sizeof(*ext));
-    shot = find_free_shot_obj();
-    if (shot != NULL) {
-        shot->active = 0x41;
-        shot->id = 0x37;
-        shot->unk2 = 1;
-        shot->unk7C = (struct WeaponObj*)self;
-        ext->object.shot = shot;
-    }
-    shot = find_free_shot_obj();
-    if (shot != NULL) {
-        shot->active = 0x41;
-        shot->id = 0x37;
-        shot->unk2 = 0;
-        shot->unk7C = (struct WeaponObj*)self;
-        ext->thruster = shot;
-    }
-    player_end_script_action();
-}
+    if (self->ext.main_75.object.shot == NULL || self->ext.main_75.object.shot->active == 0) {
+        self->hp = 0;
+        self->contact_damage = 5;
+        self->invincibility_timer = 0;
+        self->x_pos.i.hi = 0xE98;
+        self->unk5++;
+        self->y_pos.i.hi = 0x27B;
+        self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
+        bg_offset = g_Player.bg_offset;
+        self->unk18.val = self->x_pos.val;
+        self->unk1C.val = self->y_pos.val;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->x_accel = 0;
+        self->gravity = 0;
+        self->air_state = 0;
+        self->terrain_box = NULL;
+        self->collision_data = D_80107B78;
+        self->contact_damage = 9;
+        self->animation_table = (const u8* const*)general_animations;
+        self->hurt_box = D_801059C4;
+        self->attack_box = &D_801059BC;
+        self->bg_offset = bg_offset;
+        self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << PLAYER_FACING_SHIFT;
+        self->ext.main_75.script = NULL;
+        self->ext.main_75.hit_active = 0;
+        set_animation(self, 0);
+#ifdef MMX4_PC
+        memset(&self->ext.main_75, 0, sizeof(self->ext.main_75));
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_8008FBCC);
+        self->ext.raw[0] = 0;
+        self->ext.raw[1] = 0;
+        self->ext.raw[2] = 0;
+        self->ext.raw[3] = 0;
+        self->ext.raw[4] = 0;
+        self->ext.raw[5] = 0;
+#endif
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x37;
+            shot->unk2 = 1;
+            shot->unk7C = (struct WeaponObj*)self;
+            self->ext.main_75.object.shot = shot;
+        }
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x37;
+            shot->unk2 = 0;
+            shot->unk7C = (struct WeaponObj*)self;
+            self->ext.main_75.thruster = shot;
+        }
+        player_end_script_action();
+    }
+}
 #endif
 
 void general_intro_lock_camera(struct MainObj* self)

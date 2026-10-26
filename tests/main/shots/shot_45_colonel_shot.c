@@ -2,7 +2,7 @@
 #include "main/shots/shot_45_colonel_shot.h"
 #include "main/55C4.h"
 extern void* D_80104770[25];
-extern s8 colonel_shot_boxes[14][4];
+extern s8 colonel_shot_box_10[4];
 
 static u32 bolt_case(u32 observation)
 {
@@ -39,7 +39,7 @@ static u32 bolt_case(u32 observation)
     before.y_vel.val = 8 * 65536;
     before.unk28 = before.unk2C = 0;
     before.unk58.data = before.unk54 = NULL;
-    before.unk50.data = (const u8*)colonel_shot_boxes[10];
+    before.unk50.data = (const u8*)colonel_shot_box_10;
     before.unk6 = 0x28;
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);

@@ -60,89 +60,75 @@ void train_soldier_update(struct MainObj* self)
 
 extern u8 train_soldier_guard_hurt_box[];
 extern u32 D_801076F8[];
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80068548(struct MainObj* arg0);
-void func_80068B80(struct MainObj* arg0);
 extern union AnimationStep* highway_trooper_animations[27];
 extern u8 D_800FFB5C[4];
-extern u32 D_801076F8[];
 extern ret_u8 func_8002938C(s32);
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_49_train_soldier", func_80068548);
+#else
+#ifdef MMX4_SATURN
+#define TRAIN_SOLDIER_CLUT(off) (func_8002938C(0x22) * 4 + (off))
+#else
+#define TRAIN_SOLDIER_CLUT(off) (((func_8002938C(0x22) * 4 + (off)) % 16) | (((func_8002938C(0x22) + 6) / 4 + 0x1E0) << 6))
+#endif
 void func_80068548(struct MainObj* arg0)
 {
-    u8* shared = (u8*)&SP_CUR_MAIN_OBJ->ext;
-    s32 column;
-    s32 wrapped;
-    s32 index;
-    s32 row;
     s32 sub;
-    s32 spawned_late;
 
-    spawned_late = arg0->unk2 >= 6;
-    if (!spawned_late) {
-        shared[6] = 0;
-        shared[5] = (s8)arg0->unk2 / 2;
-        sub = (u8)arg0->unk2 & 1;
-        arg0->unk2 = sub;
-        index = func_8002938C(0x22);
-        row = func_8002938C(0x22);
-        if (shared[5] == 0 || (shared[5] == 2 && sub == 0)) {
-            column = index * 4 + 0x18;
-            wrapped = column < 0 ? index * 4 + 0x27 : column;
+    if (arg0->unk2 < 6) {
+        SP_CUR_MAIN_OBJ->ext.main_49.unk86 = 0;
+        SP_CUR_MAIN_OBJ->ext.main_49.unk85 = (s8)arg0->unk2 / 2;
+        arg0->unk2 &= 1;
+        if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 == 0
+            || (SP_CUR_MAIN_OBJ->ext.main_49.unk85 == 2 && arg0->unk2 == 0)) {
+            arg0->unk42 = TRAIN_SOLDIER_CLUT(0x18);
         } else {
-            column = index * 4 + 0x1A;
-            wrapped = column < 0 ? index * 4 + 0x29 : column;
+            arg0->unk42 = TRAIN_SOLDIER_CLUT(0x1A);
         }
     } else {
-        shared[6] = 1;
+        SP_CUR_MAIN_OBJ->ext.main_49.unk86 = 1;
         if (arg0->unk2 != 9) {
             arg0->unk7A = 1;
         }
-        index = func_8002938C(0x22);
-        row = func_8002938C(0x22);
-        column = index * 4 + 0x18;
-        wrapped = column < 0 ? index * 4 + 0x27 : column;
-    }
-
-    row = row + 6 < 0 ? row + 9 : row + 6;
-#ifdef MMX4_SATURN
-    arg0->unk42 = column;
-#else
-    arg0->unk42 = (u16)((column - ((wrapped >> 4) << 4))
-        | (((row >> 2) + 0x1E0) << 6));
-#endif
-    if (spawned_late) {
-        shared[5] = (u8)arg0->unk2;
+        arg0->unk42 = TRAIN_SOLDIER_CLUT(0x18);
+        SP_CUR_MAIN_OBJ->ext.main_49.unk85 = arg0->unk2;
     }
 
     arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(func_8002938C(0x22)));
     arg0->sprite_frames
         = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x22));
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
+    arg0->animation_table = (const u8* const*)highway_trooper_animations;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->air_state = 0;
     arg0->unk15 = 0;
-    arg0->invincibility_timer = 0;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    arg0->animation_table = (const u8* const*)highway_trooper_animations;
     arg0->terrain_box = (struct Unk_unk68*)D_800FFB5C;
     arg0->attack_box = train_soldier_guard_attack_box;
     arg0->hurt_box = train_soldier_guard_hurt_box;
     arg0->collision_data = (const u16*)D_801076F8;
-    arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk16 = VISUAL_SATURN_LAYER(6);
+    arg0->invincibility_timer = 0;
     arg0->hp = 6;
     arg0->contact_damage = 3;
     set_animation(arg0, 1);
     arg0->state = 1;
-    arg0->unk5 = shared[5] == 2 ? 7 : 2;
-    if (shared[6] != 0) {
-        arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
+    if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 != 2) {
+        arg0->unk5 = 2;
+    } else {
+        arg0->unk5 = 7;
+    }
+    if (SP_CUR_MAIN_OBJ->ext.main_49.unk86 != 0) {
+        if (g_Player.x_pos.val < arg0->x_pos.val) {
+            arg0->unk15 = 0;
+        } else {
+            arg0->unk15 = PLAYER_FACING_RIGHT;
+        }
         if (arg0->unk2 != 9) {
             arg0->state = 3;
             arg0->unk5 = 0;
@@ -152,11 +138,9 @@ void func_80068548(struct MainObj* arg0)
         }
     }
     arg0->unk6 = 0;
-    shared[1] = 0;
-    shared[3] = 0;
+    SP_CUR_MAIN_OBJ->ext.main_49.index = 0;
+    SP_CUR_MAIN_OBJ->ext.main_49.unk83 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_49_train_soldier", func_80068548);
 #endif
 
 void train_soldier_main(struct MainObj* self)
@@ -289,9 +273,6 @@ void train_soldier_guard(struct MainObj* self)
 {
     train_soldier_guard_funcs[self->unk6](self);
 }
-
-extern u32 D_801076F8[];
-extern u8 train_soldier_guard_hurt_box[];
 
 void train_soldier_guard_start(struct MainObj* self)
 {
@@ -605,8 +586,6 @@ void train_soldier_shoot_end(struct MainObj* self)
         }
     }
 }
-
-extern u8 train_soldier_guard_hurt_box[];
 
 u8 train_soldier_guard_attack_box[] = { 0xF3, 0xEF, 0x1A, 0x22 };
 

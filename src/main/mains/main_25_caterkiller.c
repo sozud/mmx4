@@ -30,19 +30,19 @@ extern void (*caterkiller_lunge_funcs[])(struct MainObj*);
 extern void (*caterkiller_fall_funcs[])(struct MainObj*);
 extern void (*caterkiller_climb_funcs[])(struct MainObj*);
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void caterkiller_check_fall(struct MainObj*);
-extern void (*caterkiller_step_funcs[])(struct MainObj*);
 extern union AnimationStep* caterkiller_animations[10];
 extern struct Unk_unk68 D_800FCFD4[];
 extern struct Unk_unk68 D_800FCFE4[];
 extern struct Unk_unk68 D_800FCFF4[];
 extern struct Unk_unk68 D_800FD004[];
 extern struct Unk_unk68 D_800FD014[];
+extern struct Unk_unk68 D_80106EF4[];
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void caterkiller_check_fall(struct MainObj*);
+extern void (*caterkiller_step_funcs[])(struct MainObj*);
 extern struct Unk_unk68* D_800FD018[12];
 extern struct Unk_unk68* D_800FD048[];
 extern struct Unk_unk68* D_800FD04C[];
-extern struct Unk_unk68 D_80106EF4[];
 extern u8 caterkiller_debris[4];
 #endif
 
@@ -67,54 +67,62 @@ void func_80057874(struct MainObj* self);
 void func_80057C00(struct MainObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057160);
+#else
 void func_80057160(struct MainObj* self)
 {
     self->hp = 3;
     self->contact_damage = 3;
-    self->collision_data = D_80106EF4;
-    self->animation_table = (const u8* const*)caterkiller_animations;
     self->invincibility_timer = 0;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
-    self->terrain_box = D_800FD014;
+    self->collision_data = D_80106EF4;
     self->bg_offset = g_Player.bg_offset;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
+    self->animation_table = (const u8* const*)caterkiller_animations;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->terrain_box = D_800FD014;
     caterkiller_face_player(self);
 
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
-    if (self->unk2 == 0) {
+    switch (self->unk2) {
+    case 0:
         set_animation(self, 0);
         self->unk5 = 2;
         self->ext.main_25.unk80 = 0x40;
-        self->hurt_box = D_800FCFD4;
-        self->attack_box = D_800FCFF4;
         self->gravity = 0;
         self->air_state = 0;
         self->ext.main_25.unk84 = 0;
-    } else if (self->unk2 == 1 || self->unk2 == 2) {
+        self->hurt_box = D_800FCFD4;
+        self->attack_box = D_800FCFF4;
+        break;
+    case 1:
         set_animation(self, 4);
+        self->unk5 = 4;
+        self->unk6 = 1;
         self->gravity = 0x4200;
+        self->air_state = 1;
+        self->ext.main_25.unk84 = 2;
         self->hurt_box = D_800FCFE4;
         self->attack_box = D_800FD004;
+        break;
+    case 2:
+        set_animation(self, 4);
+        self->unk5 = 6;
         self->unk6 = 1;
+        self->gravity = 0x4200;
         self->air_state = 1;
-        if (self->unk2 == 1) {
-            self->unk5 = 4;
-            self->ext.main_25.unk84 = 2;
-        } else {
-            self->unk5 = 6;
-            self->ext.main_25.unk84 = 2;
-        }
+        self->ext.main_25.unk84 = 2;
+        self->hurt_box = D_800FCFE4;
+        self->attack_box = D_800FD004;
+        break;
     }
     self->ext.main_25.unk88 = 0;
     self->state = 1;
     self->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057160);
 #endif
 
 // caterkiller_main
@@ -196,50 +204,42 @@ void caterkiller_crawl_start(struct MainObj* self)
 }
 
 // caterkiller_crawl_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_8005754C);
+#else
 void func_8005754C(struct MainObj* self)
 {
-    s32 dy;
-    s32 dx;
-
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2)
         self->ext.main_25.unk84 = 1;
     if (self->animation_step.fields.event == 1)
         self->ext.main_25.unk84 = 0;
 
-    self->ext.main_25.unk80--;
-    if (self->ext.main_25.unk80 == 0 || (self->unk15 == 0 && (self->collision_flags & 2)) || (self->unk15 != 0 && (self->collision_flags & 1))) {
+    if (--self->ext.main_25.unk80 == 0 || (self->unk15 == 0 && (self->collision_flags & 2)) || (self->unk15 != 0 && (self->collision_flags & 1))) {
         self->unk6 = 2;
         self->x_accel = -0x1000;
         self->ext.main_25.unk80 = 0x80;
     }
 
-    dy = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-    if (dy > -0x1A && dy < 0x1A) {
+    if (ABS(g_Player.y_pos.i.hi, self->y_pos.i.hi) <= 0x19) {
         set_animation(self, 1);
         self->unk5 = 3;
         self->unk6 = 0;
         self->ext.main_25.unk84 = 0;
     }
 
-    if (dy >= 0x49) {
-        dx = g_Player.x_pos.i.hi - self->x_pos.i.hi;
-        if (dx > -0x31 && dx < 0x31) {
-            self->air_state = 1;
-            self->x_speed = 0;
-            self->x_accel = 0;
-            set_animation(self, 2);
-            self->ext.main_25.unk88 = 1;
-            self->unk5 = 5;
-            self->unk6 = 0;
-            self->ext.main_25.unk84 = 5;
-        }
+    if (g_Player.y_pos.i.hi - self->y_pos.i.hi > 0x48 && ABS(g_Player.x_pos.i.hi, self->x_pos.i.hi) <= 0x30) {
+        self->air_state = 1;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        set_animation(self, 2);
+        self->ext.main_25.unk88 = 1;
+        self->unk5 = 5;
+        self->unk6 = 0;
+        self->ext.main_25.unk84 = 5;
     }
     move_object(MOVING_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_8005754C);
 #endif
 
 void caterkiller_crawl_end(struct MainObj* self)

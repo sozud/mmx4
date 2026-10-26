@@ -576,7 +576,7 @@ extern s16 magma_dragoon_arena_floor;
 extern s16 magma_dragoon_arena_ceiling;
 extern s8 D_8013B810;
 extern u8 D_8013B814;
-extern u8 D_8013B8A0[];
+extern u8 D_8013B8A0;
 extern struct EffectObj* sigma_sequencer;
 extern struct AbcObj abc_object;
 extern struct BarObj bar_object;

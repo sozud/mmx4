@@ -31,9 +31,9 @@ void hover_sentry_alert(struct MainObj* arg0);
 
 extern void (*hover_sentry_state_funcs[])(struct MainObj*);
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern struct Unk_unk68 D_800FB684, D_800FB688, D_800FB68C;
 extern struct Unk_unk68 D_800FB694, D_800FB698;
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void hover_sentry_face_player(struct MainObj* self);
 #endif
 
@@ -47,6 +47,9 @@ void hover_sentry_update(struct MainObj* self)
 s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
 #endif
 
+extern struct Unk_unk68 D_800FB690;
+extern union AnimationStep* hover_sentry_animations[];
+extern struct Unk_unk68 D_80106870[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004B8FC(struct MainObj* arg0);
 void func_8004BCFC(struct MainObj* arg0);
@@ -54,15 +57,15 @@ void func_8004BF5C(struct MainObj* arg0);
 void func_8004C210(struct MainObj* self);
 void func_8004C394(struct MainObj* self);
 void func_8004C56C(struct MainObj* self);
-extern union AnimationStep* hover_sentry_animations[];
-extern struct Unk_unk68 D_800FB690;
 extern struct Unk_unk68 D_800FB69C;
 extern struct Unk_unk68 D_800FB6A0;
 extern struct Unk_unk68 D_800FB6A4;
-extern struct Unk_unk68 D_80106870[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004B8FC);
+#else
+extern struct Unk_unk68 D_800FB684, D_800FB688, D_800FB68C;
 void func_8004B8FC(struct MainObj* arg0)
 {
     arg0->state = 1;
@@ -73,10 +76,14 @@ void func_8004B8FC(struct MainObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->animation_table = (const u8* const*)hover_sentry_animations;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
-    arg0->ext.main_12.unk88 = 0;
+    if (arg0->x_pos.val > g_Player.x_pos.val) {
+        arg0->unk15 = 0;
+    } else {
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+    }
+    SP_CUR_MAIN_OBJ->ext.main_12.unk88 = 0;
     arg0->air_state = 0;
-    arg0->ext.main_12.unk81 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_12.unk81 = 0;
     arg0->collision_data = D_80106870;
 
     switch (arg0->unk2) {
@@ -89,16 +96,16 @@ void func_8004B8FC(struct MainObj* arg0)
         arg0->unk16 = VISUAL_SATURN_LAYER(6);
         arg0->terrain_box = &D_800FB684;
         arg0->hurt_box = &D_800FB68C;
-        arg0->attack_box = &D_800FB688;
         arg0->x_speed = 0;
         arg0->x_accel = 0;
+        arg0->attack_box = &D_800FB688;
         set_animation(ANIMATED_OBJECT(arg0), 0);
         break;
     case 1:
         arg0->hp = 3;
         arg0->contact_damage = 3;
         arg0->unk5 = 6;
-        arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.u.hi;
         arg0->y_speed = 0x4000;
         arg0->x_speed = 0;
         arg0->x_accel = 0;
@@ -107,7 +114,7 @@ void func_8004B8FC(struct MainObj* arg0)
         arg0->terrain_box = &D_800FB690;
         arg0->hurt_box = NULL;
         arg0->attack_box = NULL;
-        arg0->ext.main_12.unk8A = 0;
+        SP_CUR_MAIN_OBJ->ext.main_12.unk8A = 0;
         set_animation(ANIMATED_OBJECT(arg0), 3);
         break;
     case 2:
@@ -116,18 +123,16 @@ void func_8004B8FC(struct MainObj* arg0)
         arg0->unk7E = 0;
         arg0->unk5 = 4;
         arg0->unk6 = 0;
-        arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.u.hi;
         arg0->unk16 = VISUAL_SATURN_LAYER(6);
         arg0->terrain_box = NULL;
         arg0->hurt_box = NULL;
         arg0->attack_box = NULL;
-        arg0->ext.main_12.unk8A = 0;
+        SP_CUR_MAIN_OBJ->ext.main_12.unk8A = 0;
         set_animation(ANIMATED_OBJECT(arg0), 2);
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004B8FC);
 #endif
 
 void hover_sentry_main(struct MainObj* self)
@@ -192,11 +197,11 @@ void hover_sentry_alert(struct MainObj* self)
 }
 
 // hover_sentry_attack_0
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BCFC);
+#else
 void func_8004BCFC(struct MainObj* arg0)
 {
-    s32 transition = 0;
-
     switch (arg0->unk6) {
     case 0:
         if (arg0->unk7E-- != 0)
@@ -204,22 +209,24 @@ void func_8004BCFC(struct MainObj* arg0)
         arg0->unk6 = 1;
         arg0->unk7 = 0;
         arg0->air_state = 1;
-        arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.u.hi;
         arg0->y_speed = 0x80000;
         arg0->x_speed = 0;
         arg0->x_accel = 0;
         if (arg0->unk2 == 2) {
             if ((get_random() & 3) == 0) {
-                arg0->ext.main_12.unk80 = 0x10;
-                arg0->ext.main_12.unk81 = 1;
+                SP_CUR_MAIN_OBJ->ext.main_12.unk80 = 0x10;
+                SP_CUR_MAIN_OBJ->ext.main_12.unk81 = 1;
+                arg0->gravity = 0;
             } else {
-                arg0->ext.main_12.unk80 = 0xF;
-                arg0->ext.main_12.unk81 = 0;
+                SP_CUR_MAIN_OBJ->ext.main_12.unk80 = 0xF;
+                SP_CUR_MAIN_OBJ->ext.main_12.unk81 = 0;
+                arg0->gravity = 0;
             }
         } else {
-            arg0->ext.main_12.unk80 = get_random() & 0xF;
+            SP_CUR_MAIN_OBJ->ext.main_12.unk80 = get_random() & 0xF;
+            arg0->gravity = 0;
         }
-        arg0->gravity = 0;
         arg0->terrain_box = &D_800FB690;
         arg0->hurt_box = &D_800FB698;
         arg0->attack_box = &D_800FB694;
@@ -235,7 +242,7 @@ void func_8004BCFC(struct MainObj* arg0)
         bounds = arg0->terrain_box;
         x = arg0->x_pos.i.hi + bounds->unk0;
         y = arg0->y_pos.i.hi + bounds->unk1 + bounds->unk3 + 4;
-        if (func_8002D724(PLAYER_OBJECT(arg0), x, y) != 0x24) {
+        if (((s32(*)(struct PlayerObj*, s32, s32))func_8002D724)(PLAYER_OBJECT(arg0), x, y) != 0x24) {
             arg0->unk6 = 2;
             set_animation(ANIMATED_OBJECT(arg0), 9);
         } else if (arg0->unk7 == 0) {
@@ -243,27 +250,28 @@ void func_8004BCFC(struct MainObj* arg0)
             arg0->unk7 = 1;
             func_8001540C(2, SATURN_SOUND(0x25, 0x1F), arg0);
         }
-        transition = (u8)arg0->collision_flags & 4;
+        if (arg0->collision_flags & 4)
+            goto land;
         break;
     }
 
     case 2:
         move_with_gravity(ANIMATED_OBJECT(arg0));
-        transition = arg0->y_pos.i.hi < g_Player.y_pos.i.hi;
+        if (arg0->y_pos.i.hi < g_Player.y_pos.i.hi)
+            goto land;
         break;
     }
 
-    if (transition) {
-        hover_sentry_face_player(arg0);
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
-        arg0->unk7 = 0;
-        set_animation(ANIMATED_OBJECT(arg0), 0xA);
-    }
+    animate_object(ANIMATED_OBJECT(arg0));
+    return;
+land:
+    hover_sentry_face_player(arg0);
+    arg0->unk5 = 5;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+    set_animation(ANIMATED_OBJECT(arg0), 0xA);
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BCFC);
 #endif
 
 // hover_sentry_attack_1
@@ -348,18 +356,23 @@ INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BF5C);
 #endif
 
 // hover_sentry_attack_2
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C210);
+#else
+extern struct Unk_unk68 D_800FB694, D_800FB698;
 void func_8004C210(struct MainObj* self)
 {
+    struct MainObj* owner;
+
     switch (self->unk6) {
     case 0:
         move_with_gravity(ANIMATED_OBJECT(self));
         if ((s16)SP_CUR_MAIN_OBJ->ext.main_12.unk86 - self->y_pos.i.hi >= 16) {
             self->unk6 = 1;
             self->y_speed = FIXED(4);
-
+            owner = SP_CUR_MAIN_OBJ;
             get_random();
-            SP_CUR_MAIN_OBJ->ext.main_12.unk8A = 1;
+            owner->ext.main_12.unk8A = 1;
             self->unk7C = 5;
             self->hurt_box = &D_800FB698;
             self->attack_box = &D_800FB694;
@@ -390,32 +403,51 @@ void func_8004C210(struct MainObj* self)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C210);
 #endif
 
 // hover_sentry_attack_3
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C394);
+#else
 void func_8004C394(struct MainObj* self)
 {
+    s16 turn;
+    s16 distance;
+    u8 facing;
+    s32 hit;
+
     if (self->unk6 == 0) {
         self->unk6 = 1;
-        self->x_speed = (self->unk15 & PLAYER_FACING_RIGHT) ? FIXED(4) : FIXED(-4);
+        if (self->unk15 & PLAYER_FACING_RIGHT) {
+            self->x_speed = FIXED(4);
+        } else {
+            self->x_speed = FIXED(-4);
+        }
         self->x_accel = -0x2000;
+        self->y_speed = 0;
+        self->gravity = 0;
         self->unk7C = 0x90;
         self->terrain_box = &D_800FB684;
         self->hurt_box = &D_800FB68C;
         self->attack_box = &D_800FB688;
-        self->y_speed = 0;
-        self->gravity = 0;
         set_animation(self, 1);
     } else {
-        if ((self->unk15 & PLAYER_FACING_RIGHT) ? self->x_speed < 0 : self->x_speed >= 0) {
-            s32 distance = self->y_pos.i.hi - g_Player.y_pos.i.hi;
-            if (distance < 0) {
-                distance = -distance;
+        turn = 0;
+        if (self->unk15 & PLAYER_FACING_RIGHT) {
+            if (self->x_speed < 0) {
+                turn = 1;
             }
-            self->unk15 = (self->x_pos.val < g_Player.x_pos.val && (s16)distance < 32) ? PLAYER_FACING_RIGHT : 0;
+        } else if (self->x_speed >= 0) {
+            turn = 1;
+        }
+        hit = turn;
+        if (hit) {
+            distance = ABS(self->y_pos.i.hi, g_Player.y_pos.i.hi);
+            if (self->x_pos.val < g_Player.x_pos.val && distance < 32) {
+                self->unk15 = PLAYER_FACING_RIGHT;
+            } else {
+                self->unk15 = 0;
+            }
             self->unk6 = 0;
             if ((get_random() & 3) == 0) {
                 self->unk5 = 4;
@@ -427,15 +459,19 @@ void func_8004C394(struct MainObj* self)
                 }
             }
         }
-        if (self->collision_flags & ((self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 2)) {
-            self->unk15 ^= PLAYER_FACING_RIGHT;
+        facing = self->unk15;
+        if (facing & PLAYER_FACING_RIGHT) {
+            hit = self->collision_flags & 1;
+        } else {
+            hit = self->collision_flags & 2;
+        }
+        if (hit) {
+            self->unk15 = facing ^ PLAYER_FACING_RIGHT;
         }
     }
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C394);
 #endif
 
 // hover_sentry_attack_4

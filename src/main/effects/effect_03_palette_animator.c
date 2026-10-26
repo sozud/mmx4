@@ -34,70 +34,34 @@ void palette_animator_update(struct EffectObj* self)
 
 // palette_animator_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800B5D04(struct EffectObj* arg0);
 extern struct PaletteAnimatorTarget* palette_animator_stage_timings[27];
 extern s8** palette_animator_stage_scripts[27];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-#ifdef MMX4_SATURN
-void func_800B5D04(struct EffectObj* arg0)
-{
-    u32 stage_index;
-    const s8* animation;
-    struct PaletteAnimatorTarget* target;
-
-    arg0->active = 1;
-    stage_index = engine_obj.stage * 2 + engine_obj.substage;
-    animation = palette_animator_stage_scripts[stage_index][(u8)arg0->unk2];
-    arg0->ext.palette_animation.cursor = (s8*)animation;
-    if (animation == NULL) {
-        despawn_object_permanently(OBJECT_HEADER(arg0));
-        return;
-    }
-    target = &palette_animator_stage_timings[stage_index][(u8)arg0->unk2];
-    arg0->ext.palette_animation.destination = (s32*)SP_PALETTE + target->palette * 8;
-    arg0->ext.palette_animation.source = PALETTE_ANIMATION_SOURCE + (u8)animation[0] * 8;
-    arg0->ext.palette_animation.timer = animation[1];
-    arg0->ext.palette_animation.palette_count = target->count;
-    copy_animated_palette(arg0);
-    arg0->state++;
-}
-#else
-void func_800B5D04(struct EffectObj* arg0)
-{
-    u32 stage_index;
-    s8** animations;
-    struct PaletteAnimatorTarget* destinations;
-    const s8* animation;
-    struct PaletteAnimatorTarget* target;
-
-    arg0->active = 1;
-    stage_index = (u8)engine_obj.stage * 2 + (u8)engine_obj.substage;
-    if (stage_index >= COUNT(palette_animator_stage_timings))
-        abort();
-    animations = palette_animator_stage_scripts[stage_index];
-    destinations = palette_animator_stage_timings[stage_index];
-    if (animations == NULL || destinations == NULL)
-        abort();
-    animation = animations[(u8)arg0->unk2];
-    arg0->ext.palette_animation.cursor = (s8*)animation;
-    if (animation == NULL) {
-        despawn_object_permanently(OBJECT_HEADER(arg0));
-        return;
-    }
-    target = &destinations[(u8)arg0->unk2];
-    arg0->ext.palette_animation.destination = (s32*)SP_PALETTE + target->palette * 8;
-    arg0->ext.palette_animation.source = SP_ARC_30 + (u8)animation[0] * 8;
-    arg0->ext.palette_animation.timer = animation[1];
-    arg0->ext.palette_animation.palette_count = target->count;
-    copy_animated_palette(arg0);
-    arg0->state++;
-}
-#endif
-#else
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/effects/effect_03_palette_animator", func_800B5D04);
+#else
+void func_800B5D04(struct EffectObj* arg0)
+{
+    struct PaletteAnimatorTarget* target;
+    u8 i;
+
+    i = arg0->unk2;
+    arg0->active = 1;
+    arg0->ext.palette_animation.cursor = palette_animator_stage_scripts[engine_obj.stage * 2 + engine_obj.substage][i];
+    if (arg0->ext.palette_animation.cursor == NULL) {
+        despawn_object_permanently(OBJECT_HEADER(arg0));
+        return;
+    }
+    target = palette_animator_stage_timings[engine_obj.stage * 2 + engine_obj.substage];
+    while (i--)
+        target++;
+    arg0->ext.palette_animation.destination = (s32*)SP_PALETTE + target->palette * 8;
+    arg0->ext.palette_animation.source = PALETTE_ANIMATION_SOURCE + (u8)arg0->ext.palette_animation.cursor[0] * 8;
+    arg0->ext.palette_animation.timer = arg0->ext.palette_animation.cursor[1];
+    arg0->ext.palette_animation.palette_count = target->count;
+    copy_animated_palette(arg0);
+    arg0->state++;
+}
 #endif
 
 void palette_animator_step(struct EffectObj* self)

@@ -168,6 +168,7 @@ void web_spider_intro_setup(struct MainObj* self)
 
 extern void (*web_spider_step_funcs[7])();
 extern RECT* web_spider_swing_paths[6];
+extern u8 D_800FF724[16];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 static u8 main43_column(s16 index);
 void func_8006346C(struct MainObj* arg0);
@@ -177,7 +178,6 @@ void func_80065168(struct MainObj* arg0, s16 x, s16 y);
 void func_80064154(struct MainObj* arg0);
 void func_800646EC(struct MainObj* arg0);
 void func_80065574(struct MainObj* arg0);
-extern u8 D_800FF724[16];
 void web_spider_check_big_web(struct MainObj* arg0);
 extern u16 web_spider_arena_y;
 u8 angle_from_delta(s32 arg0, s32 arg1);
@@ -197,20 +197,28 @@ static u8 main43_column(s16 index)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006346C);
+#else
 void func_8006346C(struct MainObj* arg0)
 {
-    u8 column;
+    u8 value;
+    u16 arena_x;
 
     switch (arg0->unk6) {
     case 0:
-        column = main43_column(arg0->unk7C);
-        arg0->unk7C++;
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+        value = main43_column(arg0->unk7C);
+#else
+        value = D_800FF724[arg0->unk7C];
+#endif
+        arg0->unk7C = *(volatile u16*)&arg0->unk7C + 1;
         arg0->unk7E = 0x10;
+        arena_x = web_spider_arena_x;
         arg0->unk6 = 1;
-        arg0->x_pos.i.hi = web_spider_arena_x + 0x30 + (column << 5);
+        arg0->x_pos.i.hi = arena_x + 0x30 + (value << 5);
         vent_spawn_puffs((struct MiscObj*)arg0, 2);
-        break;
+        return;
     case 1:
         if (--arg0->unk7E == 0) {
             if (arg0->unk7C >= 0x11) {
@@ -222,14 +230,14 @@ void func_8006346C(struct MainObj* arg0)
                 arg0->unk6 = 0;
             }
         }
-        break;
+        return;
     case 2:
         arg0->unk7E = 0x14;
+        arg0->x_pos.i.hi = web_spider_arena_x + 0x30 + (arg0->unk7C * 32);
         arg0->unk6 = 3;
-        arg0->x_pos.i.hi = web_spider_arena_x + 0x30 + (arg0->unk7C << 5);
         arg0->unk7C++;
         vent_spawn_puffs((struct MiscObj*)arg0, 2);
-        break;
+        return;
     case 3:
         if (--arg0->unk7E == 0) {
             if (arg0->unk7C >= 7) {
@@ -240,11 +248,11 @@ void func_8006346C(struct MainObj* arg0)
                 arg0->unk6 = 2;
             }
         }
-        break;
+        return;
+    default:
+        return;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006346C);
 #endif
 
 void web_spider_intro_spawn_thread(struct MainObj* self)

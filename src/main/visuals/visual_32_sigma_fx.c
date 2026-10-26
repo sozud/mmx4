@@ -63,10 +63,14 @@ s32 sigma_fx_cloak_piece_y_vels[8] = {
 void func_800B4E34(struct VisualObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_32_sigma_fx", func_800B4E34);
+#else
 void func_800B4E34(struct VisualObj* self)
 {
     struct PlayerObj* parent = self->unk50;
+    u8 offset;
+    struct QuadObj* quad;
 
     self->state = 1;
     self->unk40 = parent->unk40;
@@ -77,6 +81,7 @@ void func_800B4E34(struct VisualObj* self)
     self->bg_offset = parent->bg_offset;
     self->x_pos.val = parent->x_pos.val;
     self->y_pos.val = parent->y_pos.val;
+    self->y_pos.val = parent->y_pos.val;
     self->unk16 = parent->unk16;
 
     switch (self->unk2) {
@@ -85,7 +90,8 @@ void func_800B4E34(struct VisualObj* self)
         set_animation(self, 2);
         break;
     case 1:
-        self->x_pos.i.hi += (parent->unk15 ? -1 : 1) * (s8)sigma_fx_x_offsets[get_random() & 3];
+        offset = sigma_fx_x_offsets[get_random() & 3];
+        self->x_pos.i.hi += parent->unk15 ? -(s8)offset : (s8)offset;
         self->y_pos.i.hi += (s8)sigma_fx_y_offsets[get_random() & 3];
         self->y_vel.val = sigma_fx_cloak_piece_y_vels[get_random() & 7];
         self->x_vel.val = sigma_fx_cloak_piece_x_vels[get_random() & 7];
@@ -95,7 +101,8 @@ void func_800B4E34(struct VisualObj* self)
     case 2:
     case 5:
         self->unk16 = VISUAL_SATURN_LAYER(5);
-        self->x_pos.i.hi += (parent->unk15 ? -1 : 1) * (s8)sigma_fx_x_offsets[get_random() & 3];
+        offset = sigma_fx_x_offsets[get_random() & 3];
+        self->x_pos.i.hi += parent->unk15 ? -(s8)offset : (s8)offset;
         self->y_pos.i.hi += (s8)sigma_fx_y_offsets[get_random() & 3];
         set_animation(self, 0xA);
         break;
@@ -114,10 +121,22 @@ void func_800B4E34(struct VisualObj* self)
         set_animation(self, 0x2A);
         self->unk42 &= 0x7FFF;
         break;
+    case 7:
+        quad = (struct QuadObj*)self->unk50;
+        parent = (struct PlayerObj*)quad->unk5C;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
+        self->unk40 = parent->unk40;
+        self->animation_table = parent->animation_table;
+        self->unk3C = parent->unk3C;
+        self->unk42 = parent->unk42;
+        self->unk15 = parent->unk15;
+        self->bg_offset = parent->bg_offset;
+        self->x_pos.i.hi = quad->x_pos.i.hi + quad->vertices[2].x.i.hi + 4;
+        self->y_pos.i.hi = quad->y_pos.i.hi + quad->vertices[2].y.i.hi - 8;
+        set_animation(self, 0x26);
+        break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_32_sigma_fx", func_800B4E34);
 #endif
 
 void sigma_fx_glow(struct VisualObj* self)

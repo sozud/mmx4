@@ -205,7 +205,8 @@ struct Main37Ext {
 };
 
 struct Main31Ext {
-    u8 pad80[3];
+    s16 distance;
+    u8 unk82;
     u8 unk83;
     u8 unk84;
 };
@@ -327,7 +328,8 @@ struct Main13Ext {
 
 struct Main11Ext {
     u8 unk80;
-    u8 pad81[3];
+    u8 pad81;
+    s16 timer;
     u8 angle;
     u8 unk85;
     s8 unk86;
@@ -842,6 +844,10 @@ struct Main29Record {
 struct Main29ControllerExt {
     u8 unk80;
     u8 unk81;
+    u16 x;
+    u16 y;
+    s16 offset_x;
+    s16 offset_y;
 };
 
 struct Main29Ext {

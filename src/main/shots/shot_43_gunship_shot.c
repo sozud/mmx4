@@ -41,7 +41,9 @@ extern u8 gunship_shot_missile_hit_box[4];
 extern s32 gunship_shot_missile_speeds[2];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_43_gunship_shot", func_800A699C);
+#else
 void func_800A699C(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
@@ -55,52 +57,63 @@ void func_800A699C(struct ShotObj* arg0)
     arg0->unk2C = 0;
     arg0->unk42 &= 0x7FFF;
     if (arg0->unk2 < 2) {
-        arg0->x_pos.i.hi = owner->x_pos.i.hi + (arg0->unk15 != 0 ? 0x45 : -0x45);
-        arg0->y_pos.i.hi = owner->y_pos.i.hi + (arg0->unk2 == 0 ? -0x1A : -9);
+        if (arg0->unk2 == 0) {
+            if (arg0->unk15 == 0) {
+                arg0->x_pos.i.hi = owner->x_pos.i.hi - 0x45;
+            } else {
+                arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x45;
+            }
+            arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x1A;
+        } else {
+            if (arg0->unk15 == 0) {
+                arg0->x_pos.i.hi = owner->x_pos.i.hi - 0x45;
+            } else {
+                arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x45;
+            }
+            arg0->y_pos.i.hi = owner->y_pos.i.hi - 9;
+        }
+        arg0->x_vel.val = gunship_shot_missile_speeds[arg0->unk15 != 0 ? 1 : 0];
         arg0->unk50.data = gunship_shot_bullet_hit_box;
         arg0->unk58.collision_data = D_80106070;
         arg0->unk68 = NULL;
         arg0->unk54 = gunship_shot_bullet_hit_box;
-        arg0->x_vel.val = gunship_shot_missile_speeds[arg0->unk15 != 0 ? 1 : 0];
         set_animation(arg0, 2);
         arg0->state = 1;
         arg0->unk60 = 4;
-        return;
+    } else {
+        arg0->unk50.data = gunship_shot_missile_hit_box;
+        arg0->unk58.animation_steps = D_80105FF0;
+        arg0->unk68 = NULL;
+        arg0->unk54 = gunship_shot_missile_hit_box;
+        arg0->x_vel.val = -0x28000;
+        arg0->y_vel.val = 0x28000;
+        switch (arg0->unk2) {
+        case 2:
+            arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x14;
+            arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x27;
+            break;
+        case 3:
+            arg0->x_pos.i.hi = owner->x_pos.i.hi + 8;
+            arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x19;
+            break;
+        case 4:
+            arg0->x_pos.i.hi = owner->x_pos.i.hi + 8;
+            arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x33;
+            break;
+        case 5:
+            arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x14;
+            arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x40;
+            break;
+        }
+        arg0->unk90.bytes[1] = 0x14;
+        arg0->unk90.bytes[0] = 0xC;
+        arg0->unk8C.word = 0x5A;
+        set_animation(arg0, 5);
+        arg0->unk7 = 2;
+        arg0->state = 2;
+        arg0->unk60 = 6;
     }
-    arg0->unk50.data = gunship_shot_missile_hit_box;
-    arg0->unk54 = gunship_shot_missile_hit_box;
-    arg0->unk58.animation_steps = D_80105FF0;
-    arg0->unk68 = NULL;
-    arg0->x_vel.val = -0x28000;
-    arg0->y_vel.val = 0x28000;
-    switch (arg0->unk2) {
-    case 2:
-        arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x14;
-        arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x27;
-        break;
-    case 3:
-        arg0->x_pos.i.hi = owner->x_pos.i.hi + 8;
-        arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x19;
-        break;
-    case 4:
-        arg0->x_pos.i.hi = owner->x_pos.i.hi + 8;
-        arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x33;
-        break;
-    case 5:
-        arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x14;
-        arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x40;
-        break;
-    }
-    arg0->unk90.bytes[1] = 0x14;
-    arg0->unk90.bytes[0] = 0xC;
-    arg0->unk8C.word = 0x5A;
-    set_animation(arg0, 5);
-    arg0->unk7 = 2;
-    arg0->state = 2;
-    arg0->unk60 = 6;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_43_gunship_shot", func_800A699C);
 #endif
 
 void gunship_shot_bullet_fall(struct ShotObj* self)

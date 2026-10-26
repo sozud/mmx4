@@ -53,33 +53,32 @@ void func_800BABA8(struct EffectObj* arg0)
 #endif
 
 // boss_warning_spawn_tiles
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BAC58);
+#else
 void func_800BAC58(struct EffectObj* arg0)
 {
     struct QuadObj* quad;
 
-    if (arg0->ext.effect_24.timer != 0) {
+    if (arg0->ext.effect_24.timer == 0) {
+        quad = find_free_quad_obj();
+        if (quad != NULL) {
+            quad->active = -0x7D;
+            quad->id = 3;
+            quad->unk2 = arg0->ext.effect_24.unk1B;
+            boss_warning_tiles[arg0->ext.effect_24.unk1B] = (struct EffectObj*)quad;
+            arg0->ext.effect_24.unk1B++;
+            arg0->ext.effect_24.timer = 2;
+            if (arg0->ext.effect_24.unk1B == 0x16) {
+                arg0->ext.effect_24.unk1B = 0;
+                arg0->ext.effect_24.timer = 0xB4;
+                arg0->unk5++;
+            }
+        }
+    } else {
         arg0->ext.effect_24.timer--;
-        return;
-    }
-
-    quad = find_free_quad_obj();
-    if (quad == NULL)
-        return;
-    quad->active = -0x7D;
-    quad->id = 3;
-    quad->unk2 = arg0->ext.effect_24.unk1B;
-    boss_warning_tiles[arg0->ext.effect_24.unk1B] = (struct EffectObj*)quad;
-    arg0->ext.effect_24.timer = 2;
-    arg0->ext.effect_24.unk1B++;
-    if (arg0->ext.effect_24.unk1B == 0x16) {
-        arg0->ext.effect_24.unk1B = 0;
-        arg0->ext.effect_24.timer = 0xB4;
-        arg0->unk5++;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BAC58);
 #endif
 
 void boss_warning_wait(struct EffectObj* self)

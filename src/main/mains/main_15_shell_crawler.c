@@ -163,49 +163,40 @@ void func_8004DB10(struct MainObj* self)
 }
 
 // shell_crawler_check_shoot
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004DCB0);
+#else
 void func_8004DCB0(struct MainObj* arg0)
 {
-    struct Main0Ext* ext = &arg0->ext.main_0;
     struct WeaponObj* weapon;
-    s32 dy;
 
-    if (arg0->air_state != 0 || (ext->background_relative & 1))
-        return;
-    if (ext->flags[0] != 0) {
-        ext->flags[0]--;
-        return;
-    }
-    for (weapon = weapon_objects; weapon < weapon_objects + COUNT(weapon_objects); weapon++) {
-        if (!weapon->active || weapon->id != 0)
-            continue;
-        if (arg0->unk15 != 0) {
-            if (g_Player.unk15 == 0 && arg0->x_pos.val < g_Player.x_pos.val) {
-                dy = weapon->y_pos.i.hi - arg0->y_pos.i.hi;
-                if (dy < 0)
-                    dy = -dy;
-                if (dy < 0x18 && weapon->x_pos.i.hi < arg0->x_pos.i.hi + 0x80)
-                    ext->background_relative |= 1;
-            }
-        } else {
-            if (g_Player.unk15 != 0 && g_Player.x_pos.val < arg0->x_pos.val) {
-                dy = weapon->y_pos.i.hi - arg0->y_pos.i.hi;
-                if (dy < 0)
-                    dy = -dy;
-                if (dy < 0x18 && arg0->x_pos.i.hi - 0x80 < weapon->x_pos.i.hi)
-                    ext->background_relative |= 1;
-            }
-        }
-        if (ext->background_relative & 1) {
-            arg0->unk5 = 3;
-            arg0->unk6 = 0;
-            set_animation(arg0, 5);
+    if (arg0->air_state == 0 && !(arg0->ext.main_0.background_relative & 1)) {
+        if (arg0->ext.main_0.flags[0] != 0) {
+            arg0->ext.main_0.flags[0]--;
             return;
+        }
+        for (weapon = weapon_objects; weapon < weapon_objects + COUNT(weapon_objects); weapon++) {
+            if (weapon->active && weapon->id == 0) {
+                if (arg0->unk15 != 0) {
+                    if (g_Player.unk15 == 0 && arg0->x_pos.val < g_Player.x_pos.val
+                        && ABS(weapon->y_pos.i.hi, arg0->y_pos.i.hi) < 0x18
+                        && weapon->x_pos.i.hi < arg0->x_pos.i.hi + 0x80)
+                        arg0->ext.main_0.background_relative |= 1;
+                } else if (g_Player.unk15 != 0 && arg0->x_pos.val > g_Player.x_pos.val
+                    && ABS(weapon->y_pos.i.hi, arg0->y_pos.i.hi) < 0x18
+                    && arg0->x_pos.i.hi - 0x80 < weapon->x_pos.i.hi) {
+                    arg0->ext.main_0.background_relative |= 1;
+                }
+                if (arg0->ext.main_0.background_relative & 1) {
+                    arg0->unk5 = 3;
+                    arg0->unk6 = 0;
+                    set_animation(arg0, 5);
+                    return;
+                }
+            }
         }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004DCB0);
 #endif
 
 void shell_crawler_hop(struct MainObj* self)

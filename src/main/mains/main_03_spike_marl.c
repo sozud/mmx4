@@ -344,15 +344,12 @@ void spike_marl_roll_update(struct MainObj* self)
 }
 
 // spike_marl_roll_slow
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043C0C);
+#else
 void func_80043C0C(struct MainObj* arg0)
 {
-    s32 magnitude = arg0->x_speed;
-
-    if (magnitude < 0) {
-        magnitude = -magnitude;
-    }
-    if (magnitude <= 0xFFFF
+    if ((arg0->x_speed < 0 ? -arg0->x_speed : arg0->x_speed) < 0x10000
         || ((arg0->collision_flags & 2) && arg0->unk15 == 0)
         || ((arg0->collision_flags & 1) && arg0->unk15 != 0)) {
         arg0->contact_damage = 3;
@@ -364,8 +361,6 @@ void func_80043C0C(struct MainObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043C0C);
 #endif
 
 void spike_marl_fall(struct MainObj* self)

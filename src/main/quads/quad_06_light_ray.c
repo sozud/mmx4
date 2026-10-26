@@ -17,10 +17,6 @@ void light_ray_despawn(struct QuadObj*);
 
 // light_ray_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800D5934(struct QuadObj* arg0);
-extern s32 D_800F459C[];
-extern s32 D_800F45C0[];
 #define QUAD6_ANGLE(obj) ((obj)->ext.ready_line.x_vel.bytes[0])
 #define QUAD6_DELAY(obj) ((obj)->ext.ready_line.x_vel.bytes[1])
 #define QUAD6_AGE(obj) ((obj)->ext.ready_line.x_vel.bytes[2])
@@ -34,9 +30,10 @@ extern s32 D_800F45C0[];
 #define QUAD6_Y_ACCEL2(obj) ((obj)->link.y_accel)
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_06_light_ray", func_800D5934);
+#else
 void func_800D5934(struct QuadObj* arg0)
 {
     u8 angle;
@@ -44,12 +41,12 @@ void func_800D5934(struct QuadObj* arg0)
     s16 x_sign;
     s16 y_sign;
 
+    arg0->active |= 0x82;
     arg0->unk36 = 0;
     arg0->unk34 = 1;
     arg0->bg_offset = 0;
-    arg0->active |= 0x82;
-    angle = get_random() & 0x1F;
-    QUAD6_ANGLE(arg0) = angle;
+    QUAD6_ANGLE(arg0) = get_random() & 0x1F;
+    angle = QUAD6_ANGLE(arg0);
     if (angle < 0x10) {
         x_sign = -1;
         if (angle < 8) {
@@ -69,8 +66,19 @@ void func_800D5934(struct QuadObj* arg0)
             y_sign = 1;
         }
     }
+#ifdef MMX4_PC
     QUAD6_X_SPEED(arg0) = (s32)((u32)(D_800F459C[index] * y_sign) << 4) >> 4;
     QUAD6_Y_SPEED(arg0) = (s32)((u32)(D_800F45C0[index] * x_sign) << 4) >> 4;
+#else
+    QUAD6_X_SPEED(arg0) = (D_800F459C[index] * y_sign * 16) >> 4;
+    QUAD6_Y_SPEED(arg0) = (D_800F45C0[index] * x_sign * 16) >> 4;
+#endif
+    QUAD6_X_SPEED2(arg0) = QUAD6_X_SPEED(arg0);
+    QUAD6_X_ACCEL(arg0) = QUAD6_X_SPEED(arg0);
+    QUAD6_Y_SPEED2(arg0) = QUAD6_Y_SPEED(arg0);
+    QUAD6_Y_ACCEL(arg0) = QUAD6_Y_SPEED(arg0);
+    QUAD6_X_ACCEL2(arg0) = QUAD6_X_SPEED2(arg0) / 2;
+    QUAD6_Y_ACCEL2(arg0) = QUAD6_Y_SPEED2(arg0) / 2;
     arg0->vertices[0].x.val = 0;
     arg0->vertices[0].y.val = 0;
     arg0->vertices[1].x.val = 0;
@@ -79,18 +87,10 @@ void func_800D5934(struct QuadObj* arg0)
     arg0->vertices[2].y.val = 0;
     arg0->vertices[3].x.val = 0;
     arg0->vertices[3].y.val = 0;
+    QUAD6_DELAY(arg0) = 4;
     QUAD6_AGE(arg0) = 0;
     arg0->state++;
-    QUAD6_X_ACCEL(arg0) = QUAD6_X_SPEED(arg0);
-    QUAD6_X_SPEED2(arg0) = QUAD6_X_SPEED(arg0);
-    QUAD6_Y_SPEED2(arg0) = QUAD6_Y_SPEED(arg0);
-    QUAD6_Y_ACCEL(arg0) = QUAD6_Y_SPEED(arg0);
-    QUAD6_DELAY(arg0) = 4;
-    QUAD6_X_ACCEL2(arg0) = QUAD6_X_SPEED2(arg0) / 2;
-    QUAD6_Y_ACCEL2(arg0) = QUAD6_Y_SPEED2(arg0) / 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_06_light_ray", func_800D5934);
 #endif
 
 void light_ray_main(struct QuadObj* arg0)

@@ -38,45 +38,51 @@ extern u8 cannon_shot_boxes[4][4];
 extern s32 cannon_shot_speeds[4];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FB9C);
+#else
 void func_8009FB9C(struct ShotObj* arg0)
 {
-    struct MainObj* owner = (struct MainObj*)arg0->unk7C;
-    s32 dx;
-    s32 dy;
+    struct WeaponObj* owner;
 
     arg0->on_screen = 1;
     arg0->unk5C = 1;
     arg0->unk60 = 6;
-    arg0->unk58.collision_bounds = D_80106170;
     arg0->unk50.data = (const u8*)cannon_shot_boxes;
+    arg0->unk58.collision_bounds = D_80106170;
     arg0->unk54 = (const u8*)cannon_shot_boxes;
     arg0->unk68 = NULL;
     arg0->x_vel.val = 0;
     arg0->unk28 = 0;
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
-    arg0->unk42 &= 0x7FFF;
+    owner = arg0->unk7C;
     arg0->state++;
+    arg0->unk42 &= 0x7FFF;
     if (arg0->unk2 == 0) {
-        dx = 0x20;
-        dy = -8;
+        if (arg0->unk15 == 0)
+            arg0->x_pos.i.hi = owner->x_pos.i.hi - 0x20;
+        else
+            arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x20;
+        arg0->y_pos.i.hi = owner->y_pos.i.hi - 8;
     } else if (arg0->unk2 == 1) {
-        dx = 0x1D;
-        dy = 0xE;
+        if (arg0->unk15 == 0)
+            arg0->x_pos.i.hi = owner->x_pos.i.hi - 0x1D;
+        else
+            arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x1D;
+        arg0->y_pos.i.hi = owner->y_pos.i.hi + 0xE;
     } else {
-        dx = 0xC;
-        dy = 0x12;
+        if (arg0->unk15 == 0)
+            arg0->x_pos.i.hi = owner->x_pos.i.hi - 0xC;
+        else
+            arg0->x_pos.i.hi = owner->x_pos.i.hi + 0xC;
+        arg0->y_pos.i.hi = owner->y_pos.i.hi + 0x12;
     }
-    arg0->x_pos.i.hi = owner->x_pos.i.hi + (arg0->unk15 != 0 ? dx : -dx);
-    arg0->y_pos.i.hi = owner->y_pos.i.hi + dy;
     set_animation(arg0, 3);
     cannon_shot_spawn_flash(arg0);
     arg0->unk84.value = 0x10;
     arg0->unk8C.word = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FB9C);
 #endif
 
 // cannon_shot_fly

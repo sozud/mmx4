@@ -14,7 +14,7 @@ void charge_muzzle_flash_update(struct VisualObj*);
 void charge_shot_update(struct WeaponObj*);
 extern void* sigma_final_animations[];
 extern void* D_8013B8B4;
-extern u8 D_8013B898[4], D_8013B89C[4], D_8013B8A4[4];
+extern u8 D_8013B898, D_8013B89C, D_8013B8A4;
 static struct MainObj owner, owner_before;
 static struct ShotObj shots[32];
 static struct MiscObj misc[64];
@@ -56,8 +56,7 @@ static u32 lethal_cleanup(u32 row)
         D_8013E198[i] = -1;
     cur_random = 0x1234;
     D_8013B8B8 = 0;
-    for (i = 0; i < 4; i++)
-        D_8013B898[i] = D_8013B89C[i] = D_8013B8A4[i] = 0;
+    D_8013B898 = D_8013B89C = D_8013B8A4 = 0;
     background_objects[0].x_pos.i.hi = 1200;
     background_objects[0].y_pos.i.hi = 512;
     engine_obj.stage = 12;
@@ -136,9 +135,9 @@ static u32 lethal_cleanup(u32 row)
     main_before = main_bss_state;
     input = controller_input;
     c_test_copy_words((u32*)cameras, (u32*)background_objects, sizeof(cameras) / 4);
-    memcpy(collision_before, D_8013B898, 4);
-    memcpy(collision_before + 4, D_8013B89C, 4);
-    memcpy(collision_before + 8, D_8013B8A4, 4);
+    collision_before[0] = D_8013B898;
+    collision_before[1] = D_8013B89C;
+    collision_before[2] = D_8013B8A4;
     body = D_8013B8B0;
     guard = D_8013B8B4;
     rng = cur_random;
@@ -149,8 +148,7 @@ static u32 lethal_cleanup(u32 row)
     assert(c_test_word_difference((u32*)weapon_objects, (u32*)weapons, sizeof(weapons) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, sizeof(visuals) / 4) == 0);
     assert(c_test_word_difference((u32*)&owner, (u32*)&owner_before, sizeof(owner) / 4) == 0 && c_test_word_difference((u32*)&g_Player, (u32*)&player, sizeof(player) / 4) == 0 && c_test_word_difference((u32*)&g_Entity, (u32*)&entity, sizeof(entity) / 4) == 0 && c_test_word_difference((u32*)&engine_obj, (u32*)&engine, sizeof(engine) / 4) == 0 && c_test_word_difference((u32*)&main_bss_state, (u32*)&main_before, sizeof(main_before) / 4) == 0 && c_test_word_difference((u32*)background_objects, (u32*)cameras, sizeof(cameras) / 4) == 0);
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed && cur_random == rng && need_palette_load == dirty && D_8013B8B8 == 0 && D_8013B8B0 == body && D_8013B8B4 == guard && SP_CUR_MAIN_OBJ == &owner);
-    for (i = 0; i < 4; i++)
-        assert(D_8013B898[i] == collision_before[i] && D_8013B89C[i] == collision_before[4 + i] && D_8013B8A4[i] == collision_before[8 + i]);
+    assert(D_8013B898 == collision_before[0] && D_8013B89C == collision_before[1] && D_8013B8A4 == collision_before[2]);
     for (i = 0; i < COUNT(frames); i++)
         assert(frames[i] == (i < 8 ? 64u : 0) && gfx[i] == (i < 8 ? 64u : 0));
     for (i = 0; i < COUNT(commands); i++)

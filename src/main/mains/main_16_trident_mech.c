@@ -74,12 +74,11 @@ void trident_mech_update(struct MainObj* self)
 extern union AnimationStep* trident_mech_animations[];
 extern struct Unk_unk68 D_800FBBC8;
 extern struct Unk_unk68 D_80106A74[];
+extern void* common_effect_animations[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004E8E0(struct MainObj* arg0);
-void func_8004FD38(struct MainObj* arg0, s32 animation);
 void func_8004ED60(struct MainObj* arg0);
 void func_8004FAE4(struct MainObj* self);
-extern void* common_effect_animations[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
@@ -248,7 +247,65 @@ void trident_mech_idle_start(struct MainObj* self)
 
 // trident_mech_idle_think
 #ifdef VERSION_EU
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004ED60);
+#else
+#define TRIDENT_STATE6(arg0)                                    \
+    do {                                                        \
+        (arg0)->ext.main_16.unk8C = 1;                          \
+        (arg0)->invincibility_timer = engine_obj.cur_character; \
+        trident_mech_fire_tracked_shot(arg0);                   \
+        (arg0)->unk5 = 6;                                       \
+        (arg0)->unk6 = 0;                                       \
+    } while (0)
+#define TRIDENT_STATE4(arg0)                        \
+    do {                                            \
+        set_animation(ANIMATED_OBJECT(arg0), 0x10); \
+        (arg0)->ext.main_16.unk80 = 1;              \
+        (arg0)->ext.main_16.unk90 = 1;              \
+        (arg0)->unk5 = 4;                           \
+        (arg0)->unk6 = 0;                           \
+    } while (0)
+void func_8004ED60(struct MainObj* arg0)
+{
+    s8 random;
+
+    trident_mech_face_player(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C != 0)
+        return;
+    arg0->ext.main_16.unk8C = 0;
+    if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi < 0 ? arg0->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - arg0->x_pos.i.hi) <= 0x60) {
+        if (weapon_objects[0].active == 0 && (get_random() & 7) >= 5)
+            TRIDENT_STATE4(arg0);
+        else
+            TRIDENT_STATE6(arg0);
+        return;
+    }
+    random = get_random() & 0xF;
+    if (weapon_objects[0].active != 0) {
+        if (random < 0xC) {
+            set_animation(ANIMATED_OBJECT(arg0), 0x10);
+            arg0->ext.main_16.unk80 = 0;
+            arg0->ext.main_16.unk90 = 1;
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+        } else if (random >= 0xE) {
+            TRIDENT_STATE6(arg0);
+        } else {
+            TRIDENT_STATE4(arg0);
+        }
+    } else if (random < 0xC) {
+        set_animation(ANIMATED_OBJECT(arg0), 0x11);
+        arg0->unk5 = 8;
+        arg0->unk6 = 0;
+    } else if (random < 0xE) {
+        TRIDENT_STATE4(arg0);
+    } else {
+        TRIDENT_STATE6(arg0);
+    }
+}
+#endif
 #else
 #define TRIDENT_STATE6(arg0)                                    \
     do {                                                        \
@@ -775,8 +832,10 @@ void trident_mech_fire_tracked_shot(struct MainObj* obj)
 }
 
 // trident_mech_set_part
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_8004FD38(struct MainObj* arg0, s32 animation)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FD38);
+#else
+void func_8004FD38(struct MainObj* arg0, s8 animation)
 {
     struct MiscObj* misc;
     struct Unk_unk68* bounds;
@@ -798,25 +857,25 @@ void func_8004FD38(struct MainObj* arg0, s32 animation)
         misc->active = 0x41;
         misc->id = 5;
         misc->animation_table = (u32**)common_effect_animations;
-        misc->unk42 = OBJECT_CLUT(0x7888);
         misc->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(4));
+        misc->unk42 = OBJECT_CLUT(0x7888);
         misc->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 4);
         misc->bg_offset = arg0->bg_offset;
         misc->y_pos.val = arg0->y_pos.val + FIXED(6);
         misc->unk15 = arg0->unk15;
-        if ((s8)animation == 2) {
+        if (animation == 2) {
             misc->unk2 = 1;
-            misc->ext.misc_5.owner = arg0;
             misc->x_pos.val = arg0->x_pos.val - FIXED(13);
+            misc->ext.misc_5.owner = arg0;
         } else {
             misc->unk2 = 0;
             misc->x_pos.val = arg0->x_pos.val;
         }
-        misc->ext.misc_5.animation = (s8)animation;
+        misc->ext.misc_5.animation = animation;
         misc->state = 3;
     }
 
-    if ((s8)animation != 2)
+    if (animation != 2)
         return;
 
     misc = find_free_misc_obj();
@@ -826,21 +885,17 @@ void func_8004FD38(struct MainObj* arg0, s32 animation)
     misc->id = 5;
     misc->unk2 = 1;
     misc->animation_table = (u32**)common_effect_animations;
-    resource = func_8002938C(0x84);
-    misc->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(resource));
-    resource = func_8002938C(0x84);
-    misc->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
+    misc->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(func_8002938C(0x84)));
+    misc->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x84));
     misc->unk42 = OBJECT_CLUT(0x7888);
     misc->bg_offset = arg0->bg_offset;
     misc->y_pos.val = arg0->y_pos.val + FIXED(6);
     misc->unk15 = arg0->unk15;
-    misc->state = 3;
-    misc->ext.misc_5.animation = (s8)animation;
-    misc->ext.misc_5.owner = arg0;
     misc->x_pos.val = arg0->x_pos.val + FIXED(13);
+    misc->state = 3;
+    misc->ext.misc_5.animation = animation;
+    misc->ext.misc_5.owner = arg0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FD38);
 #endif
 
 struct Unk_unk68 trident_mech_stunned_hurt_box = { -14, -28, 30, 59 };

@@ -105,23 +105,24 @@ void gravity_switch_flip_objects(void);
 void func_800C5210(struct ItemObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C4F40(struct ItemObj* self)
 {
-    u32 i;
-#ifndef MMX4_SATURN
-    for (i = 0; i < 3; i++)
-        background_objects[i].unk4C = 1;
-#endif
+    s32 bg_y;
 
+    bg_y = background_objects[0].y_pos.val;
+#ifndef MMX4_SATURN
+    background_objects[0].unk4C = 1;
+    background_objects[1].unk4C = 1;
+    background_objects[2].unk4C = 1;
+#endif
     g_Player.y_pos.val = 0x8000000 - g_Player.y_pos.val;
     g_Player.unk1C.val = 0x8000000 - g_Player.unk1C.val;
-    background_objects[0].y_pos.val = 0x7000000 - background_objects[0].y_pos.val;
+    background_objects[0].y_pos.val = 0x7000000 - bg_y;
     background_objects[0].unk18.val = 0x7000000 - background_objects[0].unk18.val;
-    for (i = 1; i < 3; i++) {
-        background_objects[i].y_pos.val = 0x9000000 - background_objects[i].y_pos.val;
-        background_objects[i].unk18.val = 0x9000000 - background_objects[i].unk18.val;
-    }
+    background_objects[1].y_pos.val = 0x9000000 - background_objects[1].y_pos.val;
+    background_objects[1].unk18.val = 0x9000000 - background_objects[1].unk18.val;
+    background_objects[2].y_pos.val = 0x9000000 - background_objects[2].y_pos.val;
+    background_objects[2].unk18.val = 0x9000000 - background_objects[2].unk18.val;
 #ifdef MMX4_SATURN
     saturn_background_refresh();
 #endif
@@ -130,9 +131,6 @@ void func_800C4F40(struct ItemObj* self)
     func_800C5210(self);
     self->unk5 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_20_gravity_switch", func_800C4F40);
-#endif
 
 void gravity_switch_despawn(struct ItemObj* arg0)
 {
@@ -186,21 +184,25 @@ void gravity_switch_flip_objects(void)
 }
 
 // gravity_switch_flip_camera
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_20_gravity_switch", func_800C5210);
+#else
 void func_800C5210(struct ItemObj* self)
 {
     u32 index = (u8)self->unk2 >> 4;
-    s32 offset = engine_obj.character_state.bytes[0] ? 1 : -1;
 
     background_objects[0].unk22 = gravity_switch_camera_bounds[index].first;
     background_objects[0].unk2A = gravity_switch_camera_bounds[index].first;
     background_objects[0].unk20 = gravity_switch_camera_bounds[index].second;
     background_objects[0].unk28 = gravity_switch_camera_bounds[index].second;
-    background_objects[1].unk42 += 0x80 * offset;
-    background_objects[2].unk42 += 0xC0 * offset;
+    if (engine_obj.character_state.bytes[0] != 0) {
+        background_objects[1].unk42 += 0x80;
+        background_objects[2].unk42 += 0xC0;
+    } else {
+        background_objects[1].unk42 -= 0x80;
+        background_objects[2].unk42 -= 0xC0;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_20_gravity_switch", func_800C5210);
 #endif
 
 void (*gravity_switch_state_funcs[])(struct ItemObj*) = {

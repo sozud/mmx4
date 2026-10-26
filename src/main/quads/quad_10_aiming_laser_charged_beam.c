@@ -51,34 +51,41 @@ void aiming_laser_charged_beam_update(struct QuadObj* arg0)
 
 // aiming_laser_charged_beam_init
 
+extern u8 aiming_laser_charged_beam_delays[4];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D6B9C(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner);
 void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner);
 // src/main/quads/quad_10_aiming_laser_charged_beam.c
 
-extern u8 aiming_laser_charged_beam_delays[4];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6B9C);
+#else
 void func_800D6B9C(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner)
 {
-    struct Quad10Ext* ext = &self->ext.quad_10;
-    const struct WeaponObj* weapon = (const struct WeaponObj*)owner;
-    s32 i;
-    self->active = self->unk2 == 3 ? 0x83 : 0x93;
+    struct Quad10Ext* ext;
+    struct Weapon6Ext* weapon;
+    u32 i;
+
+    ext = &self->ext.quad_10;
+    weapon = &((struct WeaponObj*)owner)->ext.weapon_6;
+    if (self->unk2 == 3)
+        self->active = 0x83;
+    else
+        self->active = 0x93;
     self->on_screen = 1;
     self->bg_offset = player->bg_offset;
     self->unk34 = 0xD;
     self->unk36 = 1;
     ext->counter = 0xF0;
     ext->progress = 1;
-    for (i = 0; i < 16; i++)
-        ext->history[i] = (weapon->ext.weapon_6.adjusted_direction - 8) & 0x1F;
+    ext->history[0] = (weapon->adjusted_direction - 8) & 0x1F;
+    for (i = 1; i < 16; i++)
+        ext->history[i] = ext->history[0];
     self->state++;
     func_800D6DC4(self, player, owner);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6B9C);
 #endif
 
 void aiming_laser_charged_beam_extend(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
@@ -155,17 +162,26 @@ void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* a
 }
 
 // aiming_laser_charged_beam_place
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6DC4);
+#else
 void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner)
 {
     struct Quad10Ext* ext = &self->ext.quad_10;
-    const s8* offsets = D_8011B230.components;
-    s32 direction = ext->history[aiming_laser_charged_beam_delays[(u8)self->unk2]];
-    s32 x_offset = offsets[player->animation_step.fields.frame_index * 2];
-    (void)owner;
-    self->x_pos.u.hi = player->x_pos.u.hi + (player->unk15 ? -x_offset - 2 : x_offset + 2);
-    self->y_pos.u.hi = player->y_pos.u.hi + offsets[player->animation_step.fields.frame_index * 2 + 1];
-    self->vertices[0].x.val = self->vertices[0].y.val = 0;
+    s16 x;
+    s16 y;
+    s32 direction;
+
+    if (player->unk15 == 0)
+        x = player->x_pos.i.hi + (s8)((u8*)&D_8011B230)[player->animation_step.fields.frame_index * 2] + 2;
+    else
+        x = player->x_pos.i.hi - (s8)((u8*)&D_8011B230)[player->animation_step.fields.frame_index * 2] - 2;
+    y = player->y_pos.i.hi + (s8)((u8*)&D_8011B230)[player->animation_step.fields.frame_index * 2 + 1];
+    direction = ext->history[aiming_laser_charged_beam_delays[self->unk2]];
+    self->x_pos.i.hi = x;
+    self->y_pos.i.hi = y;
+    self->vertices[0].x.val = 0;
+    self->vertices[0].y.val = 0;
     func_8002B9F0(&ext->x_step, &ext->y_step, (direction - 1) & 0x1F);
     self->vertices[1].x.val = ext->x_step * ext->progress;
     self->vertices[1].y.val = ext->y_step * ext->progress;
@@ -181,8 +197,6 @@ void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct Player
     }
 #endif
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6DC4);
 #endif
 
 void (*aiming_laser_charged_beam_state_funcs[])(struct QuadObj*, struct PlayerObj*, struct PlayerObj*) = {

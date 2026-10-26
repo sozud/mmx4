@@ -200,25 +200,29 @@ void data_hopper_land(struct MainObj* self)
 }
 
 // data_hopper_hop
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062778);
+#else
 void func_80062778(struct MainObj* self)
 {
-    struct Main41Ext* ext = &self->ext.main_41;
-    u8 flags;
+    s32 flags;
     u8 direction;
 
     if (self->unk6 == 0) {
         self->unk6 = 1;
-        ext->unk84 = 1;
-        ext->unk83 = 0;
+        self->ext.main_41.unk84 = 1;
+        self->ext.main_41.unk83 = 0;
         self->x_speed = 0;
         self->y_speed = 0;
         self->gravity = 0;
         self->x_accel = 0x2000;
-        self->unk15 = (ext->unk80 & 1) ? PLAYER_FACING_RIGHT : 0;
+        if (self->ext.main_41.unk80 & 1)
+            self->unk15 = PLAYER_FACING_RIGHT;
+        else
+            self->unk15 = 0;
         set_animation(self, 0);
         data_hopper_spawn_item(self);
-        ext->unk81 = ext->unk80;
+        self->ext.main_41.unk81 = self->ext.main_41.unk80;
     }
     func_80062650(self);
     flags = self->collision_flags;
@@ -227,26 +231,30 @@ void func_80062778(struct MainObj* self)
         self->unk6 = 0;
         return;
     }
-    direction = self->unk15 ? 1 : 2;
-    if (((flags & 3) && (flags & direction)) || ext->unk80 == (self->unk15 ? 2 : 1)) {
-        self->unk5 = 2;
-        self->unk6 = 0;
-        ext->unk82 = self->animation_step.fields.event;
-        return;
+    if (flags & 3) {
+        direction = self->unk15 != 0 ? 1 : 2;
+        if (direction & flags) {
+        selected:
+            self->unk5 = 2;
+            self->unk6 = 0;
+            self->ext.main_41.unk82 = self->animation_step.fields.event;
+            return;
+        }
     }
+    direction = self->unk15 != 0 ? 2 : 1;
+    if (self->ext.main_41.unk80 == direction)
+        goto selected;
     animate_object(ANIMATED_OBJECT(self));
-    if (self->x_speed > 0x41FFF || self->x_speed < -0x41FFF) {
-        if (ext->unk80 == 1)
+    if ((self->x_speed >= 0 ? self->x_speed : -self->x_speed) >= 0x42000) {
+        if (self->ext.main_41.unk80 == 1)
             self->x_speed = 0x42000;
-        else if (ext->unk80 == 2)
+        if (self->ext.main_41.unk80 == 2)
             self->x_speed = -0x42000;
         self->x_accel = 0;
     }
     move_with_gravity(ANIMATED_OBJECT(self));
-    ext->unk81 = ext->unk80;
+    self->ext.main_41.unk81 = self->ext.main_41.unk80;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062778);
 #endif
 
 void data_hopper_blink(struct MainObj* self)

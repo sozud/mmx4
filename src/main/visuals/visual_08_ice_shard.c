@@ -38,45 +38,75 @@ void func_800B08CC(struct VisualObj* self);
 void func_800B0B48(struct VisualObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B08CC);
+#else
 void func_800B08CC(struct VisualObj* self)
 {
-    s32 kind = self->unk2 % 4;
+    s32 kind = self->unk2;
 
     self->on_screen = 1;
-    self->state++;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
     self->unk28 = 0;
     self->unk2C = 0;
-    if (kind >= 0 && kind < 4) {
-        self->x_pos.u.hi += ice_shard_offsets[kind][0] + get_random_nonzero() % 32;
-        self->y_pos.u.hi += ice_shard_offsets[kind][1] + get_random_nonzero() % 32;
+    self->state++;
+    switch ((s8)(kind % 4)) {
+    case 0:
+        self->x_pos.i.hi += ice_shard_offsets[0][0] + get_random_nonzero() % 32;
+        self->y_pos.i.hi += ice_shard_offsets[0][1] + get_random_nonzero() % 32;
+        break;
+    case 1:
+        self->x_pos.i.hi += ice_shard_offsets[1][0] + get_random_nonzero() % 32;
+        self->y_pos.i.hi += ice_shard_offsets[1][1] + get_random_nonzero() % 32;
+        break;
+    case 2:
+        self->x_pos.i.hi += ice_shard_offsets[2][0] + get_random_nonzero() % 32;
+        self->y_pos.i.hi += ice_shard_offsets[2][1] + get_random_nonzero() % 32;
+        break;
+    case 3:
+        self->x_pos.i.hi += ice_shard_offsets[3][0] + get_random_nonzero() % 32;
+        self->y_pos.i.hi += ice_shard_offsets[3][1] + get_random_nonzero() % 32;
+        break;
     }
-    set_animation(self, 0xE + get_random_nonzero() % 3);
+    set_animation(self, get_random_nonzero() % 3 + 0xE);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B08CC);
 #endif
 
 // ice_shard_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0B48);
+#else
 void func_800B0B48(struct VisualObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk50;
     s32 direction;
-    s32 old_x_vel;
-    s32 old_y_vel;
 
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
     direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(parent));
     set_velocity_from_angle(MOVING_OBJECT(self), direction);
-    if ((u32)(direction / 8) < 4) {
-        old_x_vel = self->x_vel.val;
-        old_y_vel = self->y_vel.val;
-        self->x_vel.val = (s32)(0u - (u32)old_y_vel * 24u);
-        self->y_vel.val = (s32)((u32)old_x_vel * 24u);
+    switch (direction / 8) {
+    case 0:
+        direction = self->x_vel.val;
+        self->x_vel.val = -(self->y_vel.val * 24);
+        self->y_vel.val = direction * 24;
+        break;
+    case 1:
+        direction = self->x_vel.val;
+        self->x_vel.val = -(self->y_vel.val * 24);
+        self->y_vel.val = direction * 24;
+        break;
+    case 2:
+        direction = self->x_vel.val;
+        self->x_vel.val = -(self->y_vel.val * 24);
+        self->y_vel.val = direction * 24;
+        break;
+    case 3:
+        direction = self->x_vel.val;
+        self->x_vel.val = -(self->y_vel.val * 24);
+        self->y_vel.val = direction * 24;
+        break;
     }
     if (parent->ext.main_14.unk8C != 0)
         self->state++;
@@ -85,8 +115,6 @@ void func_800B0B48(struct VisualObj* self)
     else
         self->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0B48);
 #endif
 
 void ice_shard_despawn(struct VisualObj* arg0)

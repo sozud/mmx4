@@ -68,7 +68,9 @@ u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y,
 }
 
 // stage_select_panel_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D4334);
+#else
 void func_800D4334(struct QuadObj* self)
 {
     self->unk36 = 0x13;
@@ -77,8 +79,8 @@ void func_800D4334(struct QuadObj* self)
     self->vertices[3].y.val = 0x900000;
     self->vertices[0].y.val = 0x900000;
     self->vertices[1].y.val = 0x900000;
-    self->ext.quad_1.steps = 0x1E;
     self->vertices[2].x.val = 0xA00000;
+    self->ext.quad_1.steps = 0x1E;
     self->vertices[3].x.val = 0xA00000;
     self->vertices[0].x.val = 0xA00000;
     self->vertices[1].x.val = 0xA00000;
@@ -91,17 +93,15 @@ void func_800D4334(struct QuadObj* self)
     self->ext.quad_1.settled[3] = 0;
     self->ext.quad_1.unk42 = 1;
     self->active |= 0x92;
-    if (self->unk2 & 0x10) {
+    if (!(self->unk2 & 0x10)) {
+        self->ext.quad_1.delay = self->unk2 << 3;
+    } else {
         self->unk2 &= 0xF;
         self->ext.quad_1.delay = 1;
-    } else {
-        self->ext.quad_1.delay = self->unk2 << 3;
     }
     self->state++;
     quad_is_on_screen(self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D4334);
 #endif
 
 // stage_select_panel_main

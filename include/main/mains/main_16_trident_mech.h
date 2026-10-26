@@ -10,7 +10,7 @@ void func_8004FAE4(struct MainObj* arg0);
 
 void trident_mech_throw_pod(struct MainObj* arg0);
 
-void func_8004FD38(struct MainObj*, s32);
+void func_8004FD38(struct MainObj*, s8);
 
 void func_8004ED60(struct MainObj*);
 

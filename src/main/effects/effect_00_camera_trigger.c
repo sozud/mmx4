@@ -34,39 +34,36 @@ void camera_trigger_init(struct EffectObj* self)
 
 // camera_trigger_main
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800B5798(struct EffectObj* arg0);
 extern struct Effect00BackgroundUpdate camera_trigger_bound_values[74];
 extern u16* camera_trigger_bound_fields[4];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_00_camera_trigger", func_800B5798);
+#else
 void func_800B5798(struct EffectObj* arg0)
 {
-    const u16* trigger = arg0->ext.unk_effect.unk18;
-    u32 i;
+    u8 i;
+    u16 index;
 
-    if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        if (g_Player.x_pos.i.hi <= ((u16*)arg0->ext.unk_effect.unk18)[0]
+            && g_Player.x_pos.i.hi >= ((u16*)arg0->ext.unk_effect.unk18)[1]
+            && g_Player.y_pos.i.hi <= ((u16*)arg0->ext.unk_effect.unk18)[2]
+            && g_Player.y_pos.i.hi >= ((u16*)arg0->ext.unk_effect.unk18)[3]) {
+            background_objects[0].unk47 = 2;
+            i = 4;
+            while (1) {
+                index = ((u16*)arg0->ext.unk_effect.unk18)[i];
+                if (index == 0)
+                    return;
+                *camera_trigger_bound_fields[camera_trigger_bound_values[index - 1].object_index] = camera_trigger_bound_values[index - 1].value;
+                i++;
+            }
+        }
+    } else {
         despawn_object(OBJECT_HEADER(arg0));
-        return;
-    }
-
-    if (trigger[0] < g_Player.x_pos.i.hi
-        || g_Player.x_pos.i.hi < trigger[1]
-        || trigger[2] < g_Player.y_pos.i.hi
-        || g_Player.y_pos.i.hi < trigger[3]) {
-        return;
-    }
-
-    background_objects[0].unk47 = 2;
-    for (i = 4; trigger[i] != 0; i++) {
-        const struct Effect00BackgroundUpdate* update
-            = &camera_trigger_bound_values[trigger[i] - 1];
-        *camera_trigger_bound_fields[update->object_index] = update->value;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_00_camera_trigger", func_800B5798);
 #endif
 
 void (*camera_trigger_state_funcs[])(struct EffectObj*) = {

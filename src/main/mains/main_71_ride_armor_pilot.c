@@ -435,7 +435,42 @@ void func_8008A3B0(struct MainObj* self)
 
 // ride_armor_pilot_land
 #ifdef VERSION_EU
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A4D8);
+#else
+void func_8008A4D8(struct MainObj* self)
+{
+    struct Main71Ext* ext = &self->ext.main_71;
+
+    if (self->unk6 == 0) {
+        self->unk6++;
+        ext->unk84 = 0x160;
+        self->air_state = 0;
+        set_animation(self, 4);
+        self->hurt_box = ride_armor_pilot_hurt_box;
+        self->attack_box = ride_armor_pilot_attack_box;
+        ext->unk86 = 0;
+        self->contact_damage = 5;
+        self->collision_flags |= 8;
+        func_8001540C(2, SATURN_SOUND(0x3D, 0x140), self);
+    }
+    if (self->animation_step.fields.relative_step == 0) {
+        ride_armor_pilot_return_to_idle(self);
+        return;
+    }
+    if (!(ext->unk8D & 2)) {
+        if (!(self->collision_flags & 8))
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 4);
+        else if (ext->unk87)
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 9);
+        else if (ride_armor_pilot_update_facing(self)) {
+            ride_armor_pilot_set_walk_speed(self);
+            ride_armor_pilot_apply_x_speed(self);
+        }
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#endif
 #else
 void func_8008A4D8(struct MainObj* self)
 {
