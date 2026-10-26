@@ -6,6 +6,7 @@
 #include "main/1A5BC.h"
 #include "main/14A60.h"
 #include "main/2824.h"
+#include "main/55C4.h"
 #include "main/E47C.h"
 #include "main/object_update.h"
 #include "main/objects.h"
@@ -118,7 +119,67 @@ void func_80029E1C(struct GameInfo* arg0)
     D_8013B7D0++;
 }
 
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002A098);
+#else
+void func_8002A098(struct GameInfo* info)
+{
+    u8 index;
+    u8 other;
+    u8 binding;
+    u16 old;
+    u16 pressed;
+
+    if (main_bss_state.transition.active != 0)
+        return;
+    if ((controller_input.pressed & PADstart) || ((controller_input.pressed & PAD_CONFIRM) && main_bss_state.transition.selection == 7)) {
+        func_8001540C(0, 0x22, NULL);
+        func_800129F0(8);
+        D_8013B7D0++;
+        return;
+    }
+    if (controller_input.pressed & PADLup) {
+        func_8001540C(0, 0xC, NULL);
+        if (main_bss_state.transition.selection == 0)
+            main_bss_state.transition.selection = 7;
+        else
+            main_bss_state.transition.selection--;
+        if (main_bss_state.character_mode == 0 && engine_obj.cur_character != 0 && main_bss_state.transition.selection == 6)
+            main_bss_state.transition.selection = 4;
+    }
+    if (controller_input.pressed & PADLdown) {
+        func_8001540C(0, 0xC, NULL);
+        if (main_bss_state.transition.selection == 7)
+            main_bss_state.transition.selection = 0;
+        else
+            main_bss_state.transition.selection++;
+        if (main_bss_state.character_mode == 0 && engine_obj.cur_character != 0 && main_bss_state.transition.selection == 5)
+            main_bss_state.transition.selection = 7;
+    }
+    binding = 0xFF;
+    for (index = 4; index < 16; index++) {
+        if ((1 << index) == D_800F44E8[main_bss_state.transition.selection]) {
+            binding = index;
+            break;
+        }
+    }
+    if (binding == 0xFF)
+        return;
+    pressed = controller_input.pressed;
+    for (index = 0; index < 8; index++) {
+        if (pressed == D_800F44F8[index]) {
+            func_8001540C(0, 0x22, NULL);
+            old = D_800EE430[binding];
+            D_800EE430[binding] = D_800F44F8[index];
+            for (other = 0; D_800EE430[other] != 0; other++) {
+                if (other != binding && D_800EE430[other] == D_800F44F8[index])
+                    D_800EE430[other] = old;
+            }
+            return;
+        }
+    }
+}
+#endif
 
 void func_8002A394(struct GameInfo* arg0)
 {

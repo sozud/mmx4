@@ -5,6 +5,7 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/mains/main_23_slope_skier.h"
 
 void double_cyclone_charged_fly(struct WeaponObj*);
 
@@ -31,10 +32,10 @@ void double_cyclone_charged_offscreen(struct WeaponObj*);
 
 void double_cyclone_charged_despawn(struct WeaponObj*);
 
-extern u8 double_cyclone_spawn_offsets[4];
+extern struct VisualSpawnOffset double_cyclone_spawn_offsets[2];
 extern struct Unk_unk68 double_cyclone_hit_box[];
 extern union AnimationStep* D_8011C0F0[5];
-extern u8 double_cyclone_charged_spawn_offsets[4];
+extern struct VisualSpawnOffset double_cyclone_charged_spawn_offsets[2];
 extern struct Unk_unk68 double_cyclone_charged_hit_box[];
 
 #include "weapon_resources.h"
@@ -67,64 +68,58 @@ void double_cyclone_update(struct WeaponObj* arg0)
 
 // double_cyclone_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80096EA4(struct WeaponObj* arg0);
-void func_80097430(struct WeaponObj* arg0);
-void func_80097670(struct WeaponObj* arg0);
-extern struct Unk_unk68 double_cyclone_hit_box[];
-extern u8 double_cyclone_spawn_offsets[4];
-extern u8 double_cyclone_charged_spawn_offsets[4];
-extern struct Unk_unk68 double_cyclone_charged_hit_box[];
-void double_cyclone_charged_draw(struct WeaponObj* arg0);
-#endif
-
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80096EA4);
+#else
 void func_80096EA4(struct WeaponObj* arg0)
 {
-    s32* player_gfx = SP_PLAYER_GFX;
-    s32* sprite_frames = SP_SPRITE_FRAMES;
-    s8 dx = double_cyclone_spawn_offsets[arg0->unk2 * 2];
-    s8 dy = double_cyclone_spawn_offsets[arg0->unk2 * 2 + 1];
+    struct Weapon7Ext* ext = &arg0->ext.weapon_7;
+    struct PlayerObj* player = &g_Player;
+    s16 dx;
+    s16 dy;
 
     arg0->on_screen = 1;
     arg0->unk64 = 1;
     arg0->unk50 = double_cyclone_hit_box;
-    arg0->unk38 = (u8*)player_gfx + player_gfx[8];
+    arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[8];
+    arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x10];
     arg0->unk16 = 1;
     arg0->animation_table = D_8011C0F0;
     arg0->unk42 = WEAPON_PALETTE_1;
-    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x10];
+    dx = double_cyclone_spawn_offsets[arg0->unk2].x;
+    dy = double_cyclone_spawn_offsets[arg0->unk2].y;
     if (arg0->unk2 == 0) {
         arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
         arg0->x_vel.val = -0x26000;
         arg0->unk15 = 0;
     } else {
-        arg0->x_vel.val = 0x26000;
         arg0->unk40 = WEAPON_TEXTURE_SPECIAL_1;
+        arg0->x_vel.val = 0x26000;
         arg0->unk15 = PLAYER_FACING_RIGHT;
     }
-    if (g_Player.unk15 == 0) {
-        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + dx;
+    if (player->unk15 == 0) {
+        arg0->x_pos.i.hi = player->x_pos.i.hi + dx;
     } else {
-        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - dx;
-        arg0->unk15 ^= PLAYER_FACING_RIGHT;
+        arg0->x_pos.i.hi = player->x_pos.i.hi - dx;
         arg0->x_vel.val = -arg0->x_vel.val;
+        arg0->unk15 ^= PLAYER_FACING_RIGHT;
     }
-    arg0->unk28.val = 0;
-    arg0->y_vel.val = 0;
-    arg0->unk2C = 0;
-    arg0->y_pos.i.hi = g_Player.y_pos.i.hi + dy;
+    {
+        s16 y = player->y_pos.i.hi + dy;
+        arg0->unk28.val = 0;
+        arg0->y_vel.val = 0;
+        arg0->unk2C = 0;
+        arg0->y_pos.i.hi = y;
+    }
     arg0->unk49 = arg0->unk2;
-    arg0->ext.weapon_7.timer = 0x23;
-    arg0->ext.weapon_7.unk90 = 8;
-    arg0->ext.weapon_7.unk91 = 4;
+    ext->timer = 0x23;
+    ext->unk90 = 8;
+    ext->unk91 = 4;
     set_animation(arg0, 0);
     func_8001540C(0, WEAPON_SOUND_CYCLONE, arg0);
     arg0->state++;
     double_cyclone_draw(arg0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80096EA4);
 #endif
 
 void double_cyclone_main(struct WeaponObj* arg0)
@@ -266,21 +261,23 @@ void double_cyclone_charged_update(struct WeaponObj* arg0)
 }
 
 // double_cyclone_charged_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097430);
+#else
 void func_80097430(struct WeaponObj* arg0)
 {
-    s32* player_gfx = SP_PLAYER_GFX;
-    s32* sprite_frames = SP_SPRITE_FRAMES;
+    struct Weapon16Ext* ext = &arg0->ext.weapon_16;
+    struct PlayerObj* player = &g_Player;
     s32 side;
-    s8 dx;
-    s8 dy;
+    s16 dx;
+    s16 dy;
 
-    arg0->unk38 = (u8*)player_gfx + player_gfx[8];
+    arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[8];
+    arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x10];
     arg0->animation_table = D_8011C0F0;
     arg0->unk40 = WEAPON_TEXTURE_SPECIAL_1;
     arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0;
-    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x10];
     if (arg0->unk2 < 0) {
         side = 1;
         arg0->x_vel.val = 0x60000;
@@ -290,22 +287,25 @@ void func_80097430(struct WeaponObj* arg0)
         arg0->x_vel.val = -0x60000;
         arg0->unk15 = 0;
     }
-    dx = double_cyclone_charged_spawn_offsets[side * 2];
-    dy = double_cyclone_charged_spawn_offsets[side * 2 + 1];
-    if (g_Player.unk15 == 0) {
-        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + dx;
+    dx = double_cyclone_charged_spawn_offsets[side].x;
+    dy = double_cyclone_charged_spawn_offsets[side].y;
+    if (player->unk15 == 0) {
+        arg0->x_pos.i.hi = player->x_pos.i.hi + dx;
     } else {
-        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - dx;
-        arg0->unk15 ^= PLAYER_FACING_RIGHT;
+        arg0->x_pos.i.hi = player->x_pos.i.hi - dx;
         arg0->x_vel.val = -arg0->x_vel.val;
+        arg0->unk15 ^= PLAYER_FACING_RIGHT;
     }
-    arg0->unk28.val = 0;
-    arg0->y_vel.val = 0;
-    arg0->unk2C = 0;
-    arg0->y_pos.i.hi = g_Player.y_pos.i.hi + dy;
-    arg0->ext.weapon_16.timer = 0x32;
-    arg0->ext.weapon_16.unk91 = 4;
-    arg0->ext.weapon_16.delay = (arg0->unk2 & 0x7F) << 2;
+    {
+        s16 y = player->y_pos.i.hi + dy;
+        arg0->unk28.val = 0;
+        arg0->y_vel.val = 0;
+        arg0->unk2C = 0;
+        arg0->y_pos.i.hi = y;
+    }
+    ext->timer = 0x32;
+    ext->delay = (arg0->unk2 & 0x7F) << 2;
+    ext->unk91 = 4;
     arg0->unk49 = 1;
     set_animation(arg0, 4);
     func_8001540C(0, WEAPON_SOUND_CYCLONE, arg0);
@@ -315,8 +315,6 @@ void func_80097430(struct WeaponObj* arg0)
     double_cyclone_charged_draw(arg0);
     update_on_screen(BASE_OBJECT(arg0), 0x18, 0x30);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097430);
 #endif
 
 void double_cyclone_charged_main(struct WeaponObj* arg0)
@@ -420,11 +418,9 @@ void (*double_cyclone_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))double_cyclone_despawn,
 };
 
-u8 double_cyclone_spawn_offsets[4] = {
-    0xEF,
-    0xF9,
-    0x1A,
-    0xF9,
+struct VisualSpawnOffset double_cyclone_spawn_offsets[2] = {
+    { -0x11, -0x7 },
+    { 0x1A, -0x7 },
 };
 
 void (*double_cyclone_step_funcs[])(struct WeaponObj*) = {
@@ -441,9 +437,7 @@ void (*double_cyclone_charged_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))double_cyclone_charged_despawn,
 };
 
-u8 double_cyclone_charged_spawn_offsets[4] = {
-    0xF0,
-    0xF9,
-    0x1F,
-    0xF9,
+struct VisualSpawnOffset double_cyclone_charged_spawn_offsets[2] = {
+    { -0x10, -7 },
+    { 0x1F, -7 },
 };

@@ -338,7 +338,3 @@ extern struct MiscObj* D_801397C4;
 extern u8 D_801397D8;
 
 extern s16 D_801397E0;
-
-extern s32* D_8013BD50[][8];
-
-extern s32 D_8013E2F0[][8];

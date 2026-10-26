@@ -8,6 +8,11 @@ struct MemcardPath {
 
 extern const struct MemcardPath D_800100C0;
 
+struct MemcardSaveName {
+    char name[18];
+};
+extern const struct MemcardSaveName D_80010094;
+
 #ifdef MMX4_PC
 extern s32 func_8001CEDC(void);
 extern s32 func_8001CFF4(s32 arg0);
@@ -65,7 +70,43 @@ void func_8001C8AC(void)
 
 INCLUDE_ASM("main/nonmatchings/memcard", func_8001C8F4);
 
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/memcard", func_8001CB24);
+#else
+s32 func_8001CB24(u8* buffer, s32 device_num, s32 size)
+{
+#ifdef MMX4_PC
+    return mmx4_pc_card_read(device_num, buffer, 0x800);
+#elif defined(MMX4_WIN32)
+    return 0;
+#else
+    char path[20];
+    s32 fd;
+
+    *(struct MemcardSaveName*)path = D_80010094;
+    memset(path + 18, 0, 2);
+    do {
+        path[2] += device_num;
+    } while (0);
+    device_num = 30;
+    while ((fd = open(path, 1)) == -1) {
+        VSync(2);
+        if (--device_num == 0)
+            return 1;
+    }
+    device_num = 30;
+    do {
+        if (read(fd, buffer, 0x800) == 0x800) {
+            close(fd);
+            return 0;
+        }
+        VSync(2);
+        device_num--;
+    } while (device_num != 0);
+    return 2;
+#endif
+}
+#endif
 
 void func_8001CC5C(s32 device_num, struct MemcardFileList* list, const char* pattern)
 {

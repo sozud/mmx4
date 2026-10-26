@@ -1098,30 +1098,33 @@ void func_8003CF6C(struct RideArmorObj* ride_armor)
         ride_armor->unk68->unk3 + (ride_armor->y_pos.i.hi + (s8)ride_armor->unk68->unk1) + 1);
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/bike", func_8003D01C);
+#else
 void func_8003D01C(struct RideArmorObj* arg0)
 {
-    const struct Unk_unk68* bounds = arg0->unk68;
-    s32 offset = (u16)arg0->x_pos.i.hi - (u16)background_objects[arg0->bg_offset].x_pos.i.hi;
+    s16 offset;
     s16 edge;
+    s16 over;
 
-    if (arg0->unk15 != 0)
-        offset -= bounds->unk0;
+    offset = (u16)arg0->x_pos.i.hi - (u16)background_objects[arg0->bg_offset].x_pos.i.hi;
+    if (arg0->unk15 == 0)
+        offset = arg0->unk68->unk0 + offset;
     else
-        offset += bounds->unk0;
-    edge = offset - bounds->unk2;
+        offset = offset - arg0->unk68->unk0;
+    edge = offset - arg0->unk68->unk2;
     if (edge <= 0 && !(arg0->unk70 & 1)) {
-        arg0->x_pos.i.hi -= edge;
+        arg0->x_pos.i.hi += (edge < 0 ? -edge : edge);
     } else if (edge < -8) {
         g_Player.hp = -0x80;
         arg0->hp = -0x80;
     }
-    edge = offset + bounds->unk2;
-    if (edge >= 0x100)
-        arg0->x_pos.i.hi -= (s16)(edge - 0x100);
+    edge = offset + arg0->unk68->unk2;
+    if (edge >= 0x100) {
+        over = edge - 0x100;
+        arg0->x_pos.i.hi -= (over < 0 ? -over : over);
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/bike", func_8003D01C);
 #endif
 
 void func_8003D164(struct VisualObj* arg0, s32 arg1)

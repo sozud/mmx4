@@ -1187,7 +1187,37 @@ void func_8001B718(s16 arg0, u8 arg1, u8 arg2)
     }
 }
 
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001B7C0);
+#else
+void func_8001B7C0(s16 x, s16 y, u8 arg2)
+{
+    struct MiscObj* icon;
+    s16 left;
+
+    icon = find_free_misc_obj();
+
+    if (icon != NULL) {
+        icon->active = 0x41;
+        icon->id = 0x2A;
+        icon->animation_step.fields.frame_index = 0x2A;
+        icon->unk2 = 1;
+        if (arg2 == 0) {
+            icon->ext.misc_42.unk54 = main_bss_state.transition.selection;
+            icon->ext.misc_42.unk55 = 3;
+        } else {
+            icon->ext.misc_42.unk54 = engine_obj.unk1;
+            icon->ext.misc_42.unk55 = 1;
+        }
+        icon->x_pos.i.hi = x;
+        icon->y_pos.i.hi = y;
+    }
+    left = x - 0x40;
+    func_8001BCAC(left, y, arg2);
+    func_8001BE10(left, y, arg2);
+    func_8001B8B0(x, y, arg2);
+}
+#endif
 
 INCLUDE_ASM("main/nonmatchings/menu", func_8001B8B0);
 

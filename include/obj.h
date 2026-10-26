@@ -1140,8 +1140,8 @@ struct BackgroundObj {
     s8 unk47;
     s8 unk48;
     s8 unk49;
-    u8 unk4A;
-    u8 unk4B;
+    s8 unk4A;
+    s8 unk4B;
     u8 unk4C;
     u8 unk4D;
     u8 unk4E;

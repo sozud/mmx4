@@ -352,72 +352,70 @@ void func_80020060(struct EngineObj* arg0)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800200D4(struct EngineObj* arg0);
-#endif
-
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/102FC", func_800200D4);
+#else
 void func_800200D4(struct EngineObj* arg0)
 {
-    s32 i;
+    u32 i;
+    u8* dst;
+    u8* src;
 
-    if (arg0->unkF > 0) {
-        arg0->unk1E = 0;
-        if (arg0->stage > 0 && arg0->stage < 9) {
-            if (arg0->substage != 0) {
-                arg0->state
-                    = (((u8)arg0->palette_flags >> (arg0->stage - 1)) & 1)
-                    ? 9
-                    : 7;
+    if (arg0->unkF != 0) {
+        if (arg0->unkF > 0) {
+            arg0->unk1E = 0;
+            if (arg0->stage != 0 && arg0->stage < 9) {
+                if (arg0->substage != 0) {
+                    if (((u8)arg0->palette_flags >> (arg0->stage - 1)) & 1)
+                        arg0->state = 9;
+                    else
+                        arg0->state = 7;
+                } else {
+                    arg0->substage++;
+                    arg0->state = 4;
+                }
+            } else if (arg0->substage == 0
+                && (arg0->stage >= 0xB || arg0->stage == 0)) {
+                if (arg0->stage == 0) {
+                    arg0->substage = 1;
+                    arg0->state = 4;
+                } else {
+                    arg0->state = 0xA;
+                }
+            } else if (arg0->stage == 0xC && arg0->substage == 1) {
+                arg0->state = 0xB;
             } else {
-                arg0->substage++;
-                arg0->state = 4;
+                arg0->state = 9;
+                if (arg0->stage == 0)
+                    arg0->unk5F = 2;
+                if (arg0->stage == 9)
+                    arg0->unk5F = 4;
+                if (arg0->stage == 0xA)
+                    arg0->unk5F = 7;
+                if (arg0->stage == 0xB)
+                    arg0->unk5F = 0xA;
             }
-        } else if (arg0->substage == 0
-            && (arg0->stage >= 0xB || arg0->stage == 0)) {
-            if (arg0->stage != 0) {
-                arg0->state = 0xA;
-            } else {
-                arg0->substage = 1;
-                arg0->state = 4;
-            }
-        } else if (arg0->stage == 0xC && arg0->substage == 1) {
-            arg0->state = 0xB;
         } else {
-            arg0->state = 9;
-            switch (arg0->stage) {
-            case 0:
-                arg0->unk5F = 2;
-                break;
-            case 9:
-                arg0->unk5F = 4;
-                break;
-            case 0xA:
-                arg0->unk5F = 7;
-                break;
-            case 0xB:
-                arg0->unk5F = 0xA;
-                break;
+            arg0->unk1E = -1;
+            func_8002B560(2, 0xE);
+            arg0->checkpoint_hp = g_Player.hp;
+            dst = arg0->player_initial_data;
+            src = g_Player.weapon_energy;
+            for (i = 0; i < 0x10; i++) {
+                *dst++ = *src++;
             }
+            arg0->unk60 = g_Player.weapon;
+            if (engine_obj.stage != 0xC)
+                arg0->unk42 = 1;
+            if (engine_obj.stage == 0xC && engine_obj.substage == 0 && engine_obj.checkpoint == 0xA)
+                arg0->unk42 = 1;
+            arg0->state = 5;
         }
-    } else if (arg0->unkF < 0) {
-        arg0->unk1E = -1;
-        func_8002B560(2, 0xE);
-        arg0->checkpoint_hp = g_Player.hp;
-        for (i = 0; i < 0x10; i++) {
-            arg0->player_initial_data[i] = g_Player.weapon_energy[i];
-        }
-        arg0->unk60 = g_Player.weapon;
-        if (arg0->stage != 0xC
-            || (arg0->stage == 0xC && arg0->substage == 0 && arg0->checkpoint == 0xA)) {
-            arg0->unk42 = 1;
-        }
-        arg0->state = 5;
     } else {
         arg0->player_lives--;
         if (arg0->player_lives < 0) {
             arg0->state = 8;
-            if (arg0->stage == 0xC && arg0->substage == 0) {
+            if (engine_obj.stage == 0xC && engine_obj.substage == 0) {
                 for (i = 0; i < 0x10; i++) {
                     arg0->character_state.bytes[i] = 0;
                 }
@@ -438,8 +436,6 @@ void func_800200D4(struct EngineObj* arg0)
     arg0->unk1 = 0;
     arg0->unkF = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/102FC", func_800200D4);
 #endif
 // D_800F241C state 2
 void func_80020368(struct EngineObj* arg0)
