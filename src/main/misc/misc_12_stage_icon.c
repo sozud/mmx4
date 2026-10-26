@@ -92,16 +92,18 @@ void stage_icon_highlight(struct MiscObj* self)
 }
 
 // stage_icon_follow_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_12_stage_icon", func_800CA40C);
+#else
 void func_800CA40C(struct MiscObj* self)
 {
-    s32 index = self->unk2 & 0x7F;
-
-    self->unk42 = OBJECT_CLUT((index & 0xF) | (((index >> 4) | 0x1E0) << 6));
+    if (engine_obj.unk3 == (self->unk2 | 0x80)) {
+        self->unk42 = OBJECT_CLUT((s8)((self->unk2 & 0x7F) % 16) | ((((self->unk2 & 0x7F) / 16) | 0x1E0) << 6));
+    } else {
+        self->unk42 = OBJECT_CLUT((s8)((self->unk2 & 0x7F) % 16) | ((((self->unk2 & 0x7F) / 16) | 0x1E0) << 6));
+    }
     is_on_screen(BASE_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_12_stage_icon", func_800CA40C);
 #endif
 
 void stage_icon_follow(struct MiscObj* self)

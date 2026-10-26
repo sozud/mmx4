@@ -42,34 +42,43 @@ static u16 misc_31_palette(struct MiscObj* arg0)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", func_800CDE44);
+#else
 void func_800CDE44(struct MiscObj* arg0)
 {
+
 #ifdef MMX4_SATURN
     arg0->unk40 = SATURN_OPTION_WINDOW_TEXTURE;
     arg0->unk3C = SATURN_OPTION_WINDOW_FRAMES;
     arg0->bg_offset = -1;
 #else
     arg0->unk40 = 0x1F00;
-    arg0->bg_offset = -1;
     arg0->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[0];
+    arg0->bg_offset = -1;
 #endif
     arg0->unk15 = 0;
-    arg0->unk42 = arg0->y_pos.i.hi == 0x10 ? OPTION_TOGGLE_TITLE_PALETTE : misc_31_palette(arg0);
+    if (arg0->y_pos.i.hi == 0x10)
+        arg0->unk42 = OPTION_TOGGLE_TITLE_PALETTE;
+    else if (arg0->unk2 == 3 && D_800F1D90.save.character == 0xFF)
+        arg0->unk42 = OPTION_TOGGLE_LOCKED_PALETTE;
+    else
+        arg0->unk42 = OPTION_TOGGLE_PALETTE;
     arg0->x_pos.i.hi = 0xA0;
     arg0->unk16 = 0x10;
     if ((u8)(arg0->unk2 - 0x56) < 2) {
         arg0->state += 2;
         arg0->ext.misc_31.animation = OPTION_TOGGLE_VALUE;
-        arg0->animation_step.fields.frame_index = OPTION_TOGGLE_VALUE != 0 ? OPTION_TOGGLE_FRAME_SET : OPTION_TOGGLE_FRAME_CLEAR;
+        if (OPTION_TOGGLE_VALUE != 0)
+            arg0->animation_step.fields.frame_index = OPTION_TOGGLE_FRAME_SET;
+        else
+            arg0->animation_step.fields.frame_index = OPTION_TOGGLE_FRAME_CLEAR;
     } else {
         arg0->state++;
         arg0->animation_step.fields.frame_index = arg0->unk2;
     }
     is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", func_800CDE44);
 #endif
 
 // option_toggle_appear

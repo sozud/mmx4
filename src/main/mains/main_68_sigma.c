@@ -164,6 +164,7 @@ extern struct Unk_unk68 D_80103EEC;
 extern struct Unk_unk68 D_80103EF8;
 extern void (*sigma_cloak_step_funcs[5])();
 extern struct Unk_unk68 D_80107F84[];
+extern void* sigma_animations[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008329C(struct MainObj* self);
 void func_80084EE4(struct MainObj* self);
@@ -173,7 +174,6 @@ void func_80083C2C(struct MainObj* self);
 void func_80085A44(struct MainObj* self);
 void func_80084B14(struct MainObj* self);
 void func_80085460(struct MainObj* self);
-extern void* sigma_animations[];
 void colonel_spawn_afterimages(struct MainObj*);
 extern void (*sigma_cloak_step_funcs[5])();
 extern struct Unk_unk68 D_80107F84[];
@@ -184,7 +184,9 @@ extern struct Unk_unk68 D_80103F0C;
 extern s16 D_8010442C[16];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_8008329C);
+#else
 void func_8008329C(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -192,22 +194,24 @@ void func_8008329C(struct MainObj* self)
     self->on_screen = 0;
     if (self->ext.main_68.effect->active != 0)
         return;
-    self->contact_damage = 4;
+    self->contact_damage = 6;
     self->hurt_box = NULL;
     self->attack_box = NULL;
     self->terrain_box = NULL;
     self->collision_data = D_80107F84;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->bg_offset = g_Player.bg_offset;
     self->animation_table = (const u8* const*)sigma_animations;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->hp = 0;
+    self->contact_damage = 4;
+    self->unk62 = 0;
     self->unk63 = 2;
     self->x_pos.val = 0x5200000;
     self->y_pos.val = 0x16B0000;
+    self->contact_damage = 4;
     self->unk7C = 1;
-    self->hp = 0;
-    self->unk62 = 0;
     self->unk7E = 0x3C;
     self->ext.main_68.next_attack = 0;
-    self->bg_offset = g_Player.bg_offset;
 
     shot = find_free_shot_obj();
     if (shot != NULL) {
@@ -227,8 +231,6 @@ void func_8008329C(struct MainObj* self)
     play_boss_voice(0xC);
     colonel_spawn_afterimages(self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_8008329C);
 #endif
 
 void sigma_intro_fill_health(struct MainObj* self)
@@ -1412,15 +1414,16 @@ void sigma_reveal_fall(struct MainObj* self)
 }
 
 // sigma_reveal_burn_cloak
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_80085A44);
+#else
 void func_80085A44(struct MainObj* self)
 {
-    struct Main68Ext* ext = &self->ext.main_68;
     struct VisualObj* visual;
     struct ShotObj* shot;
     u8 i;
 
-    if (WEAPON_FRAME_COUNTER == (WEAPON_FRAME_COUNTER / 3) * 3) {
+    if (WEAPON_FRAME_COUNTER % 3 == 0) {
         visual = find_free_visual_obj();
         if (visual != NULL) {
             visual->active = 0x41;
@@ -1431,7 +1434,7 @@ void func_80085A44(struct MainObj* self)
     }
     if (--self->unk7C == 0) {
         self->unk5++;
-        ext->scythe->state++;
+        self->ext.main_68.scythe->state++;
         for (i = 0; i < 0x14; i++) {
             visual = find_free_visual_obj();
             if (visual == NULL)
@@ -1439,18 +1442,18 @@ void func_80085A44(struct MainObj* self)
             visual->active = 0x41;
             visual->id = 0x20;
             visual->unk2 = 1;
-            visual->unk54 = get_random() & 3;
+            visual->unk54 = (u8)get_random() & 3;
             visual->unk50 = PLAYER_OBJECT(self);
-            ext->count++;
+            self->ext.main_68.count++;
         }
         set_animation(self, 0xE);
-        self->unk15 = (self->x_pos.i.hi < g_Player.x_pos.i.hi) << PLAYER_FACING_SHIFT;
+        self->unk15 = g_Player.x_pos.i.hi <= self->x_pos.i.hi ? 0 : PLAYER_FACING_RIGHT;
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
             shot->id = 0x2E;
             shot->unk2 = 9;
-            ext->scythe = (struct MainObj*)shot;
+            self->ext.main_68.scythe = (struct MainObj*)shot;
             shot->unk7C = (struct WeaponObj*)self;
         }
     }
@@ -1458,8 +1461,6 @@ void func_80085A44(struct MainObj* self)
     if (self->unk7C & 1)
         is_on_screen(BASE_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_80085A44);
 #endif
 
 void sigma_reveal_wait_cloak(struct MainObj* self)

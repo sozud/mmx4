@@ -273,44 +273,37 @@ extern union AnimationStep* D_800FADD0[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_06_eregion_part", func_800B0320);
+#else
 void func_800B0320(struct VisualObj* arg0)
 {
-    struct PlayerObj* owner = arg0->unk50;
     s32 animation;
 
-    if (arg0->unk2 == 3 || arg0->unk2 == 4) {
-        s32 column;
-        s32 row;
-        s32 resource;
-
+    if (arg0->unk2 != 3 && arg0->unk2 != 4) {
+        arg0->unk3C = ((struct PlayerObj*)arg0->unk50)->unk3C;
+        arg0->unk40 = ((struct PlayerObj*)arg0->unk50)->unk40;
+        arg0->animation_table = ((struct PlayerObj*)arg0->unk50)->animation_table;
+        arg0->unk42 = ((struct PlayerObj*)arg0->unk50)->unk42 & 0x7FFF;
+    } else {
         arg0->animation_table = (u32**)D_800FADD0;
 #ifdef MMX4_SATURN
         arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(9));
         arg0->unk40 = (u16)((((saturn_stage_graphics_offsets_pointer[1] >> 7) + 0xB0) * 128u + 0x25C24000u) >> 3);
 #else
-        column = (func_8002938C(9) << 2) + 0x18;
-        row = func_8002938C(9);
-        arg0->unk42 = (u16)((column - ((column >> 4) << 4))
-            | ((((row + 6) >> 2) + 0x1E0) << 6));
+        arg0->unk42 = OBJECT_STAGE_CLUT(9);
         arg0->unk40 = (u16)((D_801406A8[1] >> 7) + 0xB0);
 #endif
-        resource = func_8002938C(9);
-        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
-    } else {
-        arg0->unk3C = owner->unk3C;
-        arg0->unk40 = owner->unk40;
-        arg0->animation_table = owner->animation_table;
-        arg0->unk42 = owner->unk42 & 0x7FFF;
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(9));
     }
 
+    arg0->unk15 = ((struct PlayerObj*)arg0->unk50)->unk15;
     arg0->bg_offset = 0;
-    arg0->unk15 = owner->unk15;
     switch (arg0->unk2) {
     case 0:
         arg0->unk16 = VISUAL_SATURN_LAYER(7);
+        animation = ((struct PlayerObj*)arg0->unk50)->unk17 + 1;
         arg0->state++;
-        animation = owner->unk17 + 1;
         break;
     case 1:
         arg0->unk16 = VISUAL_SATURN_LAYER(7);
@@ -321,30 +314,26 @@ void func_800B0320(struct VisualObj* arg0)
         animation = 0x16;
         break;
     case 3:
-        animation = owner->unk17;
+        animation = ((struct PlayerObj*)arg0->unk50)->unk17;
         arg0->unk16 = VISUAL_SATURN_LAYER(7);
-        arg0->unk54 = 0;
         arg0->state += 2;
+        arg0->unk54 = 0;
         break;
     case 4:
+        animation = ((struct PlayerObj*)arg0->unk50)->unk17 + 1;
         arg0->state += 2;
-        animation = owner->unk17 + 1;
         break;
     case 5:
         animation = 0x17;
         arg0->unk16 = VISUAL_SATURN_LAYER(4);
         arg0->state += 3;
         break;
-    default:
-        return;
     }
 
     set_animation(ANIMATED_OBJECT(arg0), animation);
     arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_06_eregion_part", func_800B0320);
 #endif
 
 void eregion_part_slash(struct VisualObj* arg0)

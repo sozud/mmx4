@@ -581,11 +581,11 @@ void spike_sled_bomb_rise(struct MainObj* self)
 }
 
 // spike_sled_bomb_drop
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E298);
+#else
 void func_8005E298(struct MainObj* arg0)
 {
-    struct Main33Ext* ext = &arg0->ext.main_33;
-    u8 slot;
     s32 x;
     s32 y;
 
@@ -594,26 +594,23 @@ void func_8005E298(struct MainObj* arg0)
         return;
     func_8001540C(2, SATURN_SOUND(0x55, 0x46), arg0);
     start_screen_shake_y(0x10, 8, 2);
-    slot = ext->variant;
-    apply_tile_effect(0, MAIN_33_SLOT_X(slot), MAIN_33_SLOT_Y(slot));
+    apply_tile_effect(0, MAIN_33_SLOT_X(arg0->ext.main_33.variant), MAIN_33_SLOT_Y(arg0->ext.main_33.variant));
     x = arg0->x_pos.val;
     y = arg0->y_pos.val;
-    arg0->x_pos.i.hi = MAIN_33_SLOT_X(slot) + 0x20;
+    arg0->x_pos.i.hi = MAIN_33_SLOT_X(arg0->ext.main_33.variant) + 0x20;
+    arg0->y_pos.i.hi = MAIN_33_SLOT_Y(arg0->ext.main_33.variant) + 0x20;
     arg0->unk42 = OBJECT_CLUT(0x798F);
-    arg0->y_pos.i.hi = MAIN_33_SLOT_Y(slot) + 0x20;
     spawn_debris(6, D_800FDF4C, arg0);
     arg0->x_pos.val = x;
     arg0->y_pos.val = y;
-    arg0->unk42 = ext->unk8E;
-    ext->flash_timer = 0x20;
-    ext->unk91 = 6;
-    ext->variant = 0xFF;
-    ext->unk87 = slot;
+    arg0->unk42 = arg0->ext.main_33.unk8E;
+    arg0->ext.main_33.unk80 ^= D_800FDD90[arg0->ext.main_33.variant];
+    arg0->ext.main_33.flash_timer = 0x20;
+    arg0->ext.main_33.unk91 = 6;
+    arg0->ext.main_33.unk87 = arg0->ext.main_33.variant;
+    arg0->ext.main_33.variant = 0xFF;
     arg0->unk6 = 1;
-    ext->unk80 ^= D_800FDD90[slot];
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E298);
 #endif
 
 void spike_sled_intro(struct MainObj* self)

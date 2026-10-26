@@ -145,8 +145,6 @@ void train_boss_defeated(struct MainObj* self)
 // train_boss_leave
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-static void train_boss_move_player_past_exit(struct MainObj* self);
-static void train_boss_exit_player_script(struct MainObj* self);
 void func_80065EA4(struct MainObj* self);
 void func_800661AC(struct MainObj* self);
 void func_8006630C(struct MainObj* self);
@@ -155,17 +153,62 @@ void func_800665BC(struct MainObj* self);
 void func_80066970(struct MainObj* self);
 void collide_with_players(struct PlayerObj*);
 extern u8 D_800FF8B0[8];
-static void train_boss_move_player_past_exit(struct MainObj* self)
+#endif
+
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80065EA4);
+#else
+void func_80065EA4(struct MainObj* self)
 {
     if (self->x_pos.i.hi + 0x69 < g_Player.x_pos.i.hi && (u8)(get_layout_screen(1, 0xA0, 0x80) - 0x23) < 2) {
-        g_Player.x_pos.u.hi = background_objects[0].x_pos.u.hi + 0x12C;
-        g_Player.y_pos.u.hi = background_objects[0].y_pos.u.hi + 0x64;
+        g_Player.x_pos.i.hi = background_objects[0].x_pos.i.hi + 0x12C;
+        g_Player.y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x64;
         g_Player.unk18 = g_Player.x_pos;
         g_Player.unk1C = g_Player.y_pos;
     }
-}
-static void train_boss_exit_player_script(struct MainObj* self)
-{
+    func_80066970(self);
+    switch ((s16)(get_layout_screen(1, -0x20, 0x80) - 0x20)) {
+    case 9:
+        if (self->unk5 == 0) {
+            (SP_BG_TILEMAP + layout_size)[2] = 0x20;
+            self->unk5 = 1;
+        }
+        break;
+    case 10:
+        if (self->unk5 == 1) {
+            (SP_BG_TILEMAP + layout_size)[3] = 0x21;
+            self->unk5 = 2;
+        }
+        break;
+    case 0:
+        if (self->unk5 == 2) {
+            (SP_BG_TILEMAP + layout_size)[4] = 0x22;
+            self->unk5 = 3;
+        }
+        break;
+    case 1:
+        if (self->unk5 == 3) {
+            (SP_BG_TILEMAP + layout_size)[5] = 0x23;
+            self->unk5 = 4;
+        }
+        break;
+    case 2:
+        if (self->unk5 == 4) {
+            (SP_BG_TILEMAP + layout_size)[6] = 0x24;
+            self->unk5 = 5;
+        }
+        break;
+    case 3:
+        if (self->unk5 == 5) {
+            (SP_BG_TILEMAP + layout_size)[2] = 0x1D;
+            (SP_BG_TILEMAP + layout_size)[3] = 0x1D;
+            (SP_BG_TILEMAP + layout_size)[4] = 0x1D;
+            (SP_BG_TILEMAP + layout_size)[7] = 0x1D;
+            self->unk7C = 0xC;
+            self->state = 4;
+        }
+        break;
+    }
     if (self->unk6 == 0 && (g_Player.x_pos.i.hi <= self->x_pos.i.hi + 0x69 || g_Player.x_pos.i.hi >= 0x1B36)) {
         player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         self->unk6 = 1;
@@ -175,65 +218,23 @@ static void train_boss_exit_player_script(struct MainObj* self)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80065EA4(struct MainObj* self)
-{
-    train_boss_move_player_past_exit(self);
-    func_80066970(self);
-    switch ((s16)(get_layout_screen(1, -0x20, 0x80) - 0x20)) {
-    case 9:
-        if (self->unk5 == 0) {
-            SP_BG_TILEMAP[layout_size + 2] = 0x20;
-            self->unk5 = 1;
-        }
-        break;
-    case 10:
-        if (self->unk5 == 1) {
-            SP_BG_TILEMAP[layout_size + 3] = 0x21;
-            self->unk5 = 2;
-        }
-        break;
-    case 0:
-        if (self->unk5 == 2) {
-            SP_BG_TILEMAP[layout_size + 4] = 0x22;
-            self->unk5 = 3;
-        }
-        break;
-    case 1:
-        if (self->unk5 == 3) {
-            SP_BG_TILEMAP[layout_size + 5] = 0x23;
-            self->unk5 = 4;
-        }
-        break;
-    case 2:
-        if (self->unk5 == 4) {
-            SP_BG_TILEMAP[layout_size + 6] = 0x24;
-            self->unk5 = 5;
-        }
-        break;
-    case 3:
-        if (self->unk5 == 5) {
-            SP_BG_TILEMAP[layout_size + 2] = 0x1D;
-            SP_BG_TILEMAP[layout_size + 3] = 0x1D;
-            SP_BG_TILEMAP[layout_size + 4] = 0x1D;
-            SP_BG_TILEMAP[layout_size + 7] = 0x1D;
-            self->unk7C = 0xC;
-            self->state = 4;
-        }
-        break;
-    }
-    train_boss_exit_player_script(self);
-}
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80065EA4);
-#endif
-
 // train_boss_despawn
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800661AC);
+#else
 void func_800661AC(struct MainObj* self)
 {
-    if ((u8)g_Player.hp != 0x80)
-        train_boss_move_player_past_exit(self);
+#ifdef VERSION_JP
+    if (self->x_pos.i.hi + 0x69 < g_Player.x_pos.i.hi && (u8)(get_layout_screen(1, 0xA0, 0x80) - 0x23) < 2) {
+#else
+    if ((u8)g_Player.hp != 0x80 && self->x_pos.i.hi + 0x69 < g_Player.x_pos.i.hi
+        && (u8)(get_layout_screen(1, 0xA0, 0x80) - 0x23) < 2) {
+#endif
+        g_Player.x_pos.i.hi = background_objects[0].x_pos.i.hi + 0x12C;
+        g_Player.y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x64;
+        g_Player.unk18 = g_Player.x_pos;
+        g_Player.unk1C = g_Player.y_pos;
+    }
     func_80066970(self);
     self->unk7C = (u16)self->unk7C - 1;
     if (self->unk7C == 0) {
@@ -241,50 +242,58 @@ void func_800661AC(struct MainObj* self)
             engine_obj.unkF = 0x40;
         ZeroObjectState(OBJECT_HEADER(self));
     }
-
-    train_boss_exit_player_script(self);
+    if (self->unk6 == 0 && (g_Player.x_pos.i.hi <= self->x_pos.i.hi + 0x69 || g_Player.x_pos.i.hi >= 0x1B36)) {
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
+        self->unk6 = 1;
+    }
+    collide_with_players(PLAYER_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800661AC);
 #endif
 
 // train_boss_update_parts
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_8006630C);
+#else
+extern u8 D_800FF8B0[8];
 void func_8006630C(struct MainObj* self)
 {
-    struct Main45Ext* parts = &self->ext.main_45;
-    u8 flags = parts->attack_flags;
-    u8 command = parts->projectile_command;
+    u8 flags = self->ext.main_45.attack_flags;
+    u8 command;
+    struct ShotObj* shot;
+    s32 finished;
 
-    if ((flags & 7) == 7 || command == 0x80)
+    if ((flags & 7) == 7)
+        return;
+    command = self->ext.main_45.projectile_command;
+    if (command == 0x80)
         return;
     if (command == 0xFF) {
-        parts->projectile_command = parts->unk86;
+        self->ext.main_45.projectile_command = self->ext.main_45.unk86;
         do {
-            parts->unk89++;
-            if (train_boss_attack_timers[parts->unk89] == 0xFF)
-                parts->unk89 = 0;
-            parts->unk86 = train_boss_attack_timers[parts->unk89];
-        } while (D_800FF8B0[parts->unk86] & parts->attack_flags);
+            self->ext.main_45.unk89++;
+            if (train_boss_attack_timers[self->ext.main_45.unk89] == 0xFF)
+                self->ext.main_45.unk89 = 0;
+            self->ext.main_45.unk86 = train_boss_attack_timers[self->ext.main_45.unk89];
+        } while (self->ext.main_45.attack_flags & D_800FF8B0[self->ext.main_45.unk86]);
         return;
     }
-    if (command == 5) {
-        unsigned slot, finished = 0;
-        for (slot = 0; slot < 3; slot++) {
-            if ((s8)shot_objects[slot].state < 3 || shot_objects[slot].unk28 == 0)
-                finished++;
+    if (command == 4 || command == 5) {
+        if (command == 5) {
+            finished = 0;
+            for (shot = shot_objects; shot < &shot_objects[3]; shot++) {
+                if (shot->state < 3 || shot->unk28 == 0)
+                    finished++;
+            }
+            if (finished == 3)
+                self->ext.main_45.projectile_command = 0xFF;
+        } else if ((flags & 0x70) == 0x70) {
+            self->ext.main_45.projectile_command = 0xFF;
         }
-        if (finished == 3)
-            parts->projectile_command = 0xFF;
-    } else if (command == 4) {
-        if ((flags & 0x70) == 0x70)
-            parts->projectile_command = 0xFF;
-    } else if (D_800FF8B0[command] & flags) {
-        parts->projectile_command = 0xFF;
+    } else if (flags & D_800FF8B0[command]) {
+        self->ext.main_45.projectile_command = 0xFF;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_8006630C);
 #endif
 
 // train_boss_update_projectiles

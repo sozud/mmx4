@@ -132,28 +132,41 @@ void enemy_ride_armor_shot_update(struct ShotObj* arg0)
 }
 
 // ride_armor_missile_find_target
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098DA0);
+#else
 void func_80098DA0(struct WeaponObj* arg0)
 {
     struct MainObj* main;
     struct MainObj* target;
     s32 found = 0;
+    s32 dx;
+    s32 dy;
+    s32 tx;
+    s32 ty;
 
     for (main = main_objects; main < main_objects + COUNT(main_objects); main++) {
         if (main->active == 0 || main->on_screen == 0 || main->unk7A != 0)
             continue;
         target = arg0->ext.target;
-        if (target == NULL
-            || weapon_59_distance(arg0->x_pos.val, arg0->y_pos.val, main->x_pos.val, main->y_pos.val)
-                < weapon_59_distance(arg0->x_pos.val, arg0->y_pos.val, target->x_pos.val, target->y_pos.val))
+        if (target != NULL) {
+            dx = ABS(arg0->x_pos.val, main->x_pos.val);
+            dy = ABS(arg0->y_pos.val, main->y_pos.val);
+            tx = ABS(arg0->x_pos.val, target->x_pos.val);
+            ty = ABS(arg0->y_pos.val, target->y_pos.val);
+            dx += dy;
+            tx += ty;
+            if (dx < tx) {
+                arg0->ext.target = main;
+            }
+        } else {
             arg0->ext.target = main;
+        }
         found = 1;
     }
     if (!found)
         arg0->ext.target = NULL;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098DA0);
 #endif
 
 // ride_armor_missile_spawn_smoke

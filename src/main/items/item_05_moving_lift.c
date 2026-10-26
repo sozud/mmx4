@@ -145,65 +145,66 @@ void moving_lift_spawn_all(void);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_05_moving_lift", func_800C0EBC);
+#else
 void func_800C0EBC(struct ItemObj* arg0)
 {
-    s8 index;
 
     arg0->active = 0x41;
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)moving_lift_animations;
-    arg0->unk42 = OBJECT_CLUT(0x788C);
     arg0->unk40 = OBJECT_STAGE_TEXTURE(5);
+    arg0->unk42 = OBJECT_CLUT(0x788C);
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[5];
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk5C = 0xF;
     arg0->unk61 = 0;
     arg0->unk54 = NULL;
-    index = arg0->unk2;
-    arg0->unk68 = (struct Unk_unk68*)moving_lift_boxes[index];
-    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[5];
-    arg0->x_pos.i.hi = moving_lift_placements[index].x;
-    arg0->y_pos.i.hi = moving_lift_placements[index].y;
-    arg0->y_vel.val = moving_lift_motion[index].velocity;
-    arg0->unk2C = (u16)moving_lift_motion[index].acceleration;
+    arg0->unk68 = (struct Unk_unk68*)moving_lift_boxes[arg0->unk2];
+    arg0->x_pos.i.hi = moving_lift_placements[arg0->unk2].x;
+    arg0->y_pos.i.hi = moving_lift_placements[arg0->unk2].y;
+    arg0->y_vel.val = moving_lift_motion[arg0->unk2].velocity;
+    arg0->unk2C = (u16)moving_lift_motion[arg0->unk2].acceleration;
     arg0->unk75 = 1;
     arg0->unk76 = 0;
-    set_animation(arg0, (u8)moving_lift_motion[index].collision_mode != 0 ? 2 : 0);
+    if ((u8)moving_lift_motion[arg0->unk2].collision_mode != 0)
+        set_animation(arg0, 2);
+    else
+        set_animation(arg0, 0);
     moving_lift_spawn_effect(arg0);
     if (arg0->unk2 == 0)
-        moving_lift_spawn_all();
+        ((void (*)(struct ItemObj*))moving_lift_spawn_all)(arg0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_05_moving_lift", func_800C0EBC);
 #endif
 
 // moving_lift_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_05_moving_lift", func_800C1050);
+#else
 void func_800C1050(struct ItemObj* arg0)
 {
-    const struct Item05MotionConfig* config;
     s32 offset;
     s32 y;
+    s32 velocity;
     u8 old_flags;
-    u8 flags;
 
     update_on_screen(BASE_OBJECT(arg0), moving_lift_boxes[arg0->unk2][2], moving_lift_boxes[arg0->unk2][3]);
-    config = &moving_lift_motion[arg0->unk2];
     if (arg0->unk76 == 0) {
         animate_object(ANIMATED_OBJECT(arg0));
-        arg0->y_vel.val = config->velocity;
-    } else if ((u8)config->collision_mode != 0) {
+        arg0->y_vel.val = moving_lift_motion[arg0->unk2].velocity;
+    } else if ((u8)moving_lift_motion[arg0->unk2].collision_mode != 0) {
         arg0->y_vel.val = -0x1A000;
     }
 
-    offset = arg0->y_pos.val - g_Player.y_pos.val;
     old_flags = g_Player.unk71;
+    offset = arg0->y_pos.val - g_Player.y_pos.val;
     move_object((struct MovingObj*)arg0);
     collide_with_players(PLAYER_OBJECT(arg0));
-    flags = g_Player.unk71;
-    if (flags != old_flags && (flags & 3)) {
+    if ((u8)g_Player.unk71 != old_flags && ((u8)g_Player.unk71 & 3)) {
         y = arg0->y_pos.val - offset - arg0->y_vel.val / 4;
+        old_flags = g_Player.unk71;
         g_Player.y_pos.val = y;
         g_Player.unk71 = 0;
         collide_with_players(PLAYER_OBJECT(arg0));
@@ -212,16 +213,15 @@ void func_800C1050(struct ItemObj* arg0)
             g_Player.y_pos.val = y + g_Player.y_vel.val;
         else
             g_Player.y_pos.val = y - arg0->y_vel.val * 3;
-        g_Player.unk71 = flags;
+        g_Player.unk71 = old_flags;
     }
 
     if (arg0->y_pos.i.hi >= 0x621) {
+        velocity = moving_lift_motion[arg0->unk2].velocity;
         arg0->y_pos.i.hi = 0x4E0;
-        arg0->y_vel.val = config->velocity;
+        arg0->y_vel.val = velocity;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_05_moving_lift", func_800C1050);
 #endif
 
 void moving_lift_despawn(struct ItemObj* arg0)

@@ -276,6 +276,7 @@ ret_s8 func_8002DD04(struct MainObj* object);
 extern struct Unk_unk68 D_80107D7C[];
 extern void (*magma_dragoon_step_funcs[14])(struct MainObj*);
 extern struct Unk_unk68 magma_dragoon_dive_kick_attack_box;
+extern void* magma_dragoon_animations[38];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007DD98(struct MainObj* arg0);
 void func_8007F174(struct MainObj* arg0);
@@ -286,7 +287,6 @@ void func_8007E95C(struct MainObj* arg0);
 void func_8007F780(struct MainObj* arg0);
 void func_8007FAA4(struct MainObj* arg0);
 void func_8007FFFC(struct MainObj* arg0);
-extern void* magma_dragoon_animations[38];
 void magma_dragoon_face_player(struct MainObj* arg0);
 static struct ShotObj* main_65_spawn_shot(struct MainObj* arg0, s8 subtype)
 {
@@ -317,43 +317,47 @@ static void main_65_throw(struct MainObj* arg0, s16 y_offset)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD98);
+#else
 void func_8007DD98(struct MainObj* arg0)
 {
-    if (engine_obj.stage == 0xC) {
-        magma_dragoon_arena_right = 0x2B0;
-        magma_dragoon_arena_center = 0x200;
-        magma_dragoon_arena_left = 0x150;
-        magma_dragoon_arena_floor = 0x690;
-        magma_dragoon_arena_ceiling = 0x670;
-    } else {
+    if (engine_obj.stage != 0xC) {
         magma_dragoon_arena_right = 0x1590;
         magma_dragoon_arena_center = 0x14E0;
         magma_dragoon_arena_left = 0x1430;
         magma_dragoon_arena_floor = 0x280;
         magma_dragoon_arena_ceiling = 0x260;
+    } else {
+        magma_dragoon_arena_right = 0x2B0;
+        magma_dragoon_arena_center = 0x200;
+        magma_dragoon_arena_left = 0x150;
+        magma_dragoon_arena_floor = 0x690;
+        magma_dragoon_arena_ceiling = 0x670;
     }
 
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)magma_dragoon_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->attack_box = &magma_dragoon_attack_box;
     arg0->invincibility_timer = 0;
     arg0->ext.main_65.flash_timer = 0;
     arg0->unk62 = 0;
-    arg0->bg_offset = g_Player.bg_offset;
     arg0->terrain_box = NULL;
     arg0->collision_data = D_80107D7C;
     arg0->hurt_box = NULL;
     arg0->unk40 = (u16)((OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0x160));
 
     if (engine_obj.stage == 0xC) {
-        arg0->unk42 = OBJECT_CLUT(0x7888);
         arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
-        arg0->x_pos.i.hi = 0x2CE;
-        arg0->y_pos.i.hi = 0x69F;
-    } else {
+        arg0->unk42 = OBJECT_CLUT(0x7888);
+    }
+    if (engine_obj.stage != 0xC) {
         arg0->x_pos.i.hi = 0x15A5;
         arg0->y_pos.i.hi = 0x28F;
+    } else {
+        arg0->x_pos.i.hi = 0x2CE;
+        arg0->y_pos.i.hi = 0x69F;
     }
 
     arg0->x_speed = 0;
@@ -370,8 +374,6 @@ void func_8007DD98(struct MainObj* arg0)
     if (engine_obj.stage == 4)
         engine_obj.checkpoint = 3;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD98);
 #endif
 
 void magma_dragoon_intro_warning(struct MainObj* self)
@@ -1103,33 +1105,37 @@ void magma_dragoon_rising_punch_start(struct MainObj* self)
 }
 
 // magma_dragoon_rising_punch_charge
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007F780);
+#else
 void func_8007F780(struct MainObj* arg0)
 {
     s16 distance;
 
     animate_object(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 1)
-        return;
-    arg0->air_state = 1;
-    arg0->y_speed = 0x40000;
-    arg0->gravity = 0x1C00;
-    arg0->animation_step.fields.event = 0;
-    arg0->unk6++;
-    arg0->unk15 = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? 0 : PLAYER_FACING_RIGHT;
-    distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
-    if (distance < 0)
-        distance = -distance;
-    arg0->x_speed = arg0->unk15 != 0 ? 0x60000 : -0x60000;
-    if (distance < 0x30)
-        arg0->x_accel = -0x8000;
-    else if (distance < 0x60)
-        arg0->x_accel = -0x4000;
-    else
-        arg0->x_accel = -0x2000;
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->air_state = 1;
+        arg0->y_speed = 0x40000;
+        arg0->animation_step.fields.event = 0;
+        arg0->gravity = 0x1C00;
+        arg0->unk6++;
+        if (arg0->x_pos.i.hi > g_Player.x_pos.i.hi) {
+            arg0->unk15 = 0;
+            arg0->x_speed = -0x60000;
+        } else {
+            arg0->unk15 = PLAYER_FACING_RIGHT;
+            arg0->x_speed = 0x60000;
+        }
+        distance = ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi);
+        arg0->x_speed = arg0->unk15 != 0 ? 0x60000 : -0x60000;
+        if (distance < 0x30)
+            arg0->x_accel = -0x8000;
+        else if (distance < 0x60)
+            arg0->x_accel = -0x4000;
+        else
+            arg0->x_accel = -0x2000;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007F780);
 #endif
 
 void magma_dragoon_rising_punch_rise(struct MainObj* self)
@@ -1364,84 +1370,83 @@ void func_8007FF00(struct MainObj* arg0)
 }
 
 // magma_dragoon_death_begin_explosion
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FFFC);
+#else
 void func_8007FFFC(struct MainObj* arg0)
 {
     struct BaseObj* effect = (struct BaseObj*)arg0->ext.main_65.object;
     struct MiscObj* misc;
     u16 flash;
-    s16 scroll;
     s16 y;
 
-    if (effect->active == 0) {
+    if (effect->active != 0) {
+        if (effect->unk7 == 0) {
+            flash = arg0->unk7E;
+            arg0->unk7E = flash - 1;
+            if (flash == 0) {
+                arg0->unk7E = 5;
+                arg0->unk42 ^= 0x8000;
+            }
+            update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
+        } else {
+            if (engine_obj.stage == 4) {
+                arg0->unk5++;
+                set_animation(arg0, 0x14);
+                if (g_Player.x_pos.i.hi > magma_dragoon_arena_center) {
+                    arg0->unk15 = 0;
+                    arg0->x_pos.i.hi = magma_dragoon_arena_right - 0x30;
+                    if (g_Player.ride_state < 0)
+                        qux_object.unk15 = PLAYER_FACING_RIGHT;
+                    player_start_script_action(0x14, PLAYER_FACING_RIGHT);
+                    background_objects[0].unk26 = 0x1490;
+                    background_objects[0].unk24 = 0x1490;
+                } else {
+                    arg0->unk15 = PLAYER_FACING_RIGHT;
+                    arg0->x_pos.i.hi = magma_dragoon_arena_left + 0x30;
+                    if (g_Player.ride_state < 0)
+                        qux_object.unk15 = 0;
+                    player_start_script_action(0x14, 0);
+                    background_objects[0].unk26 = 0x13F0;
+                    background_objects[0].unk24 = 0x13F0;
+                }
+                y = magma_dragoon_arena_floor;
+                arg0->y_pos.i.hi = y;
+                if (g_Player.ride_state < 0) {
+                    qux_object.y_pos.i.hi = y;
+                    qux_object.x_pos.i.hi = magma_dragoon_arena_center;
+                } else {
+                    g_Player.y_pos.i.hi = y;
+                    g_Player.x_pos.i.hi = magma_dragoon_arena_center;
+                }
+                background_objects[0].unk2A = 0x1EB;
+                background_objects[0].unk28 = 0x1EB;
+                misc = find_free_misc_obj();
+                if (misc != NULL) {
+                    misc->active = 0x41;
+                    misc->id = 0x26;
+                    misc->unk2 = 5;
+                    misc->ext.misc_7.position = arg0;
+                    arg0->ext.main_65.smoke = (struct MainObj*)misc;
+                }
+                engine_obj.enable_boss = 0;
+                engine_obj.boss_ptr = NULL;
+                update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
+            }
+        }
+    } else {
         engine_obj.enable_boss = 0;
         engine_obj.boss_ptr = NULL;
-        if (engine_obj.stage == 0xC) {
+        if (engine_obj.stage != 0xC) {
+            engine_obj.unkF = 0x10;
+        } else {
             engine_obj.unkF = -0x80;
             engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
             engine_obj.checkpoint += 9;
-        } else {
-            engine_obj.unkF = 0x10;
         }
         ZeroObjectState(OBJECT_HEADER(arg0));
-        return;
     }
-    if (effect->unk7 == 0) {
-        flash = arg0->unk7E;
-        arg0->unk7E = flash - 1;
-        if (flash == 0) {
-            arg0->unk7E = 5;
-            arg0->unk42 ^= 0x8000;
-        }
-        update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
-        return;
-    }
-    if (engine_obj.stage != 4)
-        return;
-    arg0->unk5++;
-    set_animation(arg0, 0x14);
-    if (magma_dragoon_arena_center < g_Player.x_pos.i.hi) {
-        arg0->unk15 = 0;
-        arg0->x_pos.i.hi = magma_dragoon_arena_right - 0x30;
-        if (g_Player.ride_state < 0)
-            qux_object.unk15 = PLAYER_FACING_RIGHT;
-        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
-        scroll = 0x1490;
-    } else {
-        arg0->unk15 = PLAYER_FACING_RIGHT;
-        arg0->x_pos.i.hi = magma_dragoon_arena_left + 0x30;
-        if (g_Player.ride_state < 0)
-            qux_object.unk15 = 0;
-        player_start_script_action(0x14, 0);
-        scroll = 0x13F0;
-    }
-    background_objects[0].unk26 = scroll;
-    background_objects[0].unk24 = scroll;
-    y = magma_dragoon_arena_floor;
-    arg0->y_pos.i.hi = y;
-    if (g_Player.ride_state < 0) {
-        qux_object.y_pos.i.hi = y;
-        qux_object.x_pos.i.hi = magma_dragoon_arena_center;
-    } else {
-        g_Player.y_pos.i.hi = y;
-        g_Player.x_pos.i.hi = magma_dragoon_arena_center;
-    }
-    background_objects[0].unk2A = 0x1EB;
-    background_objects[0].unk28 = 0x1EB;
-    misc = find_free_misc_obj();
-    if (misc != NULL) {
-        misc->active = 0x41;
-        misc->id = 0x26;
-        misc->unk2 = 5;
-        misc->ext.misc_7.position = arg0;
-        arg0->ext.main_65.smoke = (struct MainObj*)misc;
-    }
-    engine_obj.enable_boss = 0;
-    engine_obj.boss_ptr = NULL;
-    update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FFFC);
 #endif
 
 void magma_dragoon_death_wait_explosion(struct MainObj* self, s32 arg1, s32 arg2)

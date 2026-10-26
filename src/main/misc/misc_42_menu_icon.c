@@ -123,55 +123,77 @@ void func_800CFEE0(struct MiscObj* self)
 #endif
 
 // menu_icon_animate
-#ifdef MMX4_PC
+#if defined(VERSION_EU) || (defined(VERSION_JP) && !defined(MMX4_PC) && !defined(MMX4_SATURN))
+INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800D0118);
+#else
 void func_800D0118(struct MiscObj* self)
 {
     is_on_screen(BASE_OBJECT(self));
-    if ((s8)self->unk2 == 0) {
-        switch (self->animation_step.fields.frame_index) {
-        case 0x32:
-        case 8:
-        case 0x3E:
-        case 0x3C:
-        case 0x3A:
-            break;
-        default:
-            self->unk42 = self->ext.misc_42.unk56 == main_bss_state.transition.selection ? 0x7803 : 0x7800;
-            break;
+    switch ((s8)self->unk2) {
+    case 0:
+        if (self->animation_step.fields.frame_index != 0x32 && self->animation_step.fields.frame_index != 8
+            && self->animation_step.fields.frame_index != 0x3E && self->animation_step.fields.frame_index != 0x3C
+            && self->animation_step.fields.frame_index != 0x3A) {
+            if (self->ext.misc_42.unk56 == main_bss_state.transition.selection)
+                self->unk42 = 0x7803;
+            else
+                self->unk42 = 0x7800;
         }
-    } else if ((s8)self->unk2 == 4) {
+        break;
+    case 4:
         if (self->ext.misc_42.unk57 != main_bss_state.transition.selection) {
-            u8 selection = main_bss_state.transition.selection;
             switch (self->ext.misc_42.unk56) {
             case 0:
             case 1:
-                self->y_pos.i.hi = selection == 0 ? 0x78 : 0x98;
+                if (main_bss_state.transition.selection != 0)
+                    self->y_pos.i.hi = 0x98;
+                else
+                    self->y_pos.i.hi = 0x78;
                 break;
             case 2:
-                if (selection == 0)
+                switch (main_bss_state.transition.selection) {
+                case 0:
                     self->y_pos.i.hi = 0x78;
-                else if (selection == 1)
+                    break;
+                case 1:
                     self->y_pos.i.hi = 0x98;
-                else if (selection == 2)
+                    break;
+                case 2:
                     self->y_pos.i.hi = 0xB8;
+                    break;
+                }
                 break;
             case 3:
-                if (selection == 0)
+                switch (main_bss_state.transition.selection) {
+                case 0:
                     self->y_pos.i.hi = 0x78;
-                else if (selection == 1)
+                    break;
+                case 1:
                     self->y_pos.i.hi = 0x88;
-                else if (selection == 2)
+                    break;
+                case 2:
                     self->y_pos.i.hi = 0x98;
-                else if (selection == 3)
+                    break;
+                case 3:
                     self->y_pos.i.hi = 0xB8;
+                    break;
+                }
                 break;
             case 4:
-                self->y_pos.i.hi = selection == 0 ? 0xA8 : 0xB8;
+                if (main_bss_state.transition.selection != 0)
+                    self->y_pos.i.hi = 0xB8;
+                else
+#ifdef VERSION_JP
+                    self->y_pos.i.hi = 0x98;
+#else
+                    self->y_pos.i.hi = 0xA8;
+#endif
                 break;
             }
             self->ext.misc_42.unk57 = main_bss_state.transition.selection;
         }
         animate_object(ANIMATED_OBJECT(self));
+        break;
     }
 
     switch (self->ext.misc_42.unk55) {
@@ -189,8 +211,6 @@ void func_800D0118(struct MiscObj* self)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800D0118);
 #endif
 
 #ifndef MMX4_SATURN

@@ -368,42 +368,37 @@ void wall_crawler_turn(struct MainObj* self)
 }
 
 // wall_crawler_step_4
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B0A0);
+#else
 void func_8004B0A0(struct MainObj* self)
 {
-    u8* context = (u8*)&SP_CUR_MAIN_OBJ->ext;
-    u16* timer = (u16*)(context + 2);
-
     if (self->unk2 == 0) {
-        s32 dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
-        s32 dy = self->y_pos.i.hi - g_Player.y_pos.i.hi;
-        if (dx > -0x90 && dx < 0x90 && dy > -0x90 && dy < 0x90) {
+        if (ABS(self->x_pos.i.hi, g_Player.x_pos.i.hi) < 0x90 && ABS(self->y_pos.i.hi, g_Player.y_pos.i.hi) < 0x90) {
             self->unk5 = 5;
-            *timer = 0x78;
+            SP_CUR_MAIN_OBJ->ext.main_11.timer = 0x78;
         } else {
+            SP_CUR_MAIN_OBJ->ext.main_11.timer = 0x3C;
             self->unk5 = 2;
-            *timer = 0x3C;
         }
         return;
     }
 
-    if (self->x_pos.i.hi < g_Player.x_pos.i.hi - 0x10 || self->x_pos.i.hi > g_Player.x_pos.i.hi + 0x10) {
-        if (--*timer != 0) {
-            s16 old_y = g_Player.y_pos.i.hi;
-            g_Player.y_pos.i.hi = old_y - 0x30;
-            context[4] = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
-            g_Player.y_pos.i.hi = old_y;
-            set_velocity_from_angle(MOVING_OBJECT(self), context[4]);
-            move_object(MOVING_OBJECT(self));
-            return;
-        }
+    if (self->x_pos.i.hi >= g_Player.x_pos.i.hi - 0x10 && self->x_pos.i.hi <= g_Player.x_pos.i.hi + 0x10) {
+        SP_CUR_MAIN_OBJ->ext.main_11.angle = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+    } else if (--SP_CUR_MAIN_OBJ->ext.main_11.timer != 0) {
+        g_Player.y_pos.i.hi -= 0x30;
+        SP_CUR_MAIN_OBJ->ext.main_11.angle = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+        g_Player.y_pos.i.hi += 0x30;
+        set_velocity_from_angle(MOVING_OBJECT(self), SP_CUR_MAIN_OBJ->ext.main_11.angle);
+        move_object(MOVING_OBJECT(self));
+        return;
+    } else {
+        SP_CUR_MAIN_OBJ->ext.main_11.angle = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
     }
-    context[4] = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
     self->unk5 = 5;
     self->unk6 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B0A0);
 #endif
 
 void wall_crawler_corner(struct MainObj* self)
@@ -459,23 +454,26 @@ void func_8004B2BC(struct MainObj* self)
 }
 
 // wall_crawler_corner_1
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B418);
+#else
 void func_8004B418(struct MainObj* self)
 {
-    u8* context = (u8*)&SP_CUR_MAIN_OBJ->ext;
-    u8 angle = context[4] & 0xFE;
-    u8 animation = 0x11;
-    switch (angle) {
+    switch (SP_CUR_MAIN_OBJ->ext.main_11.angle & 0xFE) {
     case 2:
     case 4:
     case 6:
     case 10:
     case 12:
     case 14:
-        animation = 0x12;
+        if (self->animation_step.fields.event != 1)
+            return;
+        set_animation(self, 0x12);
         break;
     case 8:
-        animation = 0x13;
+        if (self->animation_step.fields.event != 1)
+            return;
+        set_animation(self, 0x13);
         break;
     case 18:
     case 20:
@@ -483,20 +481,22 @@ void func_8004B418(struct MainObj* self)
     case 26:
     case 28:
     case 30:
-        animation = 0x14;
+        if (self->animation_step.fields.event != 1)
+            return;
+        set_animation(self, 0x14);
         break;
     case 24:
-        animation = 0x15;
+        if (self->animation_step.fields.event != 1)
+            return;
+        set_animation(self, 0x15);
+        break;
+    default:
+        set_animation(self, 0x11);
         break;
     }
-    if (animation != 0x11 && self->animation_step.fields.event != 1)
-        return;
-    set_animation(self, animation);
-    context[5]++;
+    SP_CUR_MAIN_OBJ->ext.main_11.unk85++;
     self->unk6++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B418);
 #endif
 
 // wall_crawler_corner_2

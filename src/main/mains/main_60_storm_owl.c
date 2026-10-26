@@ -771,35 +771,32 @@ void func_80076364(struct MainObj* arg0)
 #endif
 
 // storm_owl_grab_rise
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_8007651C);
+#else
 void func_8007651C(struct MainObj* arg0)
 {
-    s16 x;
-    s16 background_x;
-    s16 distance;
-    s32 stop = 0;
+    s16 bg_x;
+    s32 x;
+    s32 left;
 
     animate_object(ANIMATED_OBJECT(arg0));
     move_object(MOVING_OBJECT(arg0));
-    distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-    if ((distance < 0 ? -distance : distance) >= 8)
-        return;
-    x = arg0->x_pos.i.hi;
-    background_x = background_objects[0].x_pos.i.hi;
-    if (x < background_x + 0x40 && arg0->x_speed < 0)
-        stop = 1;
-    else if (background_x + 0x100 < x && arg0->x_speed > 0)
-        stop = 1;
-    else if (arg0->unk15 == 0 ? arg0->x_speed > 0 : arg0->x_speed < 0)
-        stop = 1;
-    if (stop)
-        arg0->x_speed = 0;
-    arg0->y_speed = 0x10000;
-    arg0->unk7C = 0x3C;
-    arg0->unk6++;
+    bg_x = background_objects[0].x_pos.i.hi;
+    if (ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 8) {
+        x = arg0->x_pos.i.hi;
+        left = bg_x;
+        if (x < left + 0x40 && arg0->x_speed < 0)
+            arg0->x_speed = 0;
+        else if (x > left + 0x100 && arg0->x_speed > 0)
+            arg0->x_speed = 0;
+        else if ((arg0->unk15 == 0 && arg0->x_speed > 0) || (arg0->unk15 != 0 && arg0->x_speed < 0))
+            arg0->x_speed = 0;
+        arg0->y_speed = 0x10000;
+        arg0->unk7C = 0x3C;
+        arg0->unk6++;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_8007651C);
 #endif
 
 #ifdef VERSION_EU
@@ -1628,46 +1625,83 @@ void storm_owl_spawn_hit_flash(struct PlayerObj* self)
 }
 
 // storm_owl_spawn_ground_cyclone
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80078314);
+#else
 void func_80078314(struct MainObj* arg0)
 {
     struct VisualObj* visual;
     struct ShotObj* shot;
-    u32 i;
-    static const s16 x_offsets[3] = { 0, -0x30, 0x30 };
-    static const s16 shot_timers[3] = { 0x20, 0x28, 0x28 };
+    u8 i;
+    s16 base_y;
+    u16 x;
+    s16 side_x;
 
     for (i = 0; i < 3; i++) {
         visual = find_free_visual_obj();
-        if (visual == NULL)
-            continue;
-        visual->active = 0x41;
-        visual->id = 0x1C;
-        visual->unk2 = 1;
-        visual->unk50 = (struct PlayerObj*)arg0;
-        visual->animation_table = (u32**)storm_owl_animations;
-        visual->unk42 = arg0->unk42;
-        visual->unk3C = (void*)arg0->sprite_frames;
-        visual->unk40 = arg0->unk40;
-        visual->unk16 = 2;
-        visual->bg_offset = arg0->bg_offset;
-        visual->unk15 = arg0->unk15;
-        visual->x_pos.i.hi = g_Player.x_pos.i.hi + x_offsets[i];
-        visual->unk5C.fields.mode = i;
-        visual->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x60;
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0x1C;
+            visual->unk2 = 1;
+            visual->unk50 = (struct PlayerObj*)arg0;
+            visual->unk42 = arg0->unk42;
+            visual->animation_table = (u32**)storm_owl_animations;
+            visual->unk3C = (void*)arg0->sprite_frames;
+            visual->unk40 = arg0->unk40;
+            visual->bg_offset = arg0->bg_offset;
+            visual->unk16 = 2;
+            visual->unk15 = arg0->unk15;
+            switch (i) {
+            case 0:
+                visual->x_pos.i.hi = g_Player.x_pos.i.hi;
+                break;
+            case 1:
+                visual->x_pos.i.hi = g_Player.x_pos.i.hi - 0x30;
+                break;
+            case 2:
+                visual->x_pos.i.hi = g_Player.x_pos.i.hi + 0x30;
+                break;
+            }
+            base_y = background_objects[0].y_pos.i.hi;
+            visual->unk5C.fields.mode = i;
+            visual->y_pos.i.hi = base_y + 0x60;
+        }
     }
     for (i = 0; i < 3; i++) {
         shot = find_free_shot_obj();
-        if (shot == NULL)
-            continue;
-        main_60_shot_setup(shot, arg0, 0x26, 5, 2);
-        shot->timer = shot_timers[i];
-        shot->x_pos.i.hi = g_Player.x_pos.i.hi + x_offsets[i];
-        shot->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x150;
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x26;
+            shot->unk2 = 5;
+            shot->unk7C = (struct WeaponObj*)arg0;
+            shot->unk42 = arg0->unk42;
+            shot->animation_table = (u32**)storm_owl_animations;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->unk40 = arg0->unk40;
+            shot->bg_offset = arg0->bg_offset;
+            shot->unk16 = 2;
+            shot->unk15 = arg0->unk15;
+            switch (i) {
+            case 0:
+                x = g_Player.x_pos.i.hi;
+                shot->timer = 0x20;
+                shot->x_pos.i.hi = x;
+                break;
+            case 1:
+                side_x = g_Player.x_pos.i.hi - 0x30;
+                shot->timer = 0x28;
+                shot->x_pos.i.hi = side_x;
+                break;
+            case 2:
+                side_x = g_Player.x_pos.i.hi + 0x30;
+                shot->timer = 0x28;
+                shot->x_pos.i.hi = side_x;
+                break;
+            }
+            shot->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x150;
+        }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80078314);
 #endif
 
 void storm_owl_choose_corner(struct MainObj* self)

@@ -134,6 +134,17 @@ extern struct Unk_unk68 D_801078F8[];
 #define M54_84(o) ((o)->ext.main_54.grab)
 #define M54_85(o) ((o)->ext.main_54.active)
 extern char D_801005B4[];
+extern union AnimationStep D_80100230[];
+extern union AnimationStep D_80100234[];
+extern union AnimationStep D_80100238[];
+extern struct Unk_unk68 D_80100240;
+extern struct Unk_unk68 D_80100228;
+extern struct Unk_unk68 D_8010022C;
+extern struct Unk_unk68 D_80100244;
+extern struct Unk_unk68 D_80100248;
+extern struct Unk_unk68 D_80100218;
+extern struct Unk_unk68 D_8010021C;
+extern struct Unk_unk68 D_8010023C;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006E920(struct MainObj* arg0, s32 value);
 void func_8006BB70(struct MainObj* arg0);
@@ -153,17 +164,6 @@ void func_8006E450(struct MainObj* arg0);
 extern u16 D_801005B8[];
 extern u16 D_801005C8[];
 extern struct Unk_unk68 D_8010020C;
-extern struct Unk_unk68 D_80100218;
-extern struct Unk_unk68 D_8010021C;
-extern struct Unk_unk68 D_8010023C;
-extern struct Unk_unk68 D_80100228;
-extern struct Unk_unk68 D_8010022C;
-extern union AnimationStep D_80100230[];
-extern union AnimationStep D_80100234[];
-extern union AnimationStep D_80100238[];
-extern struct Unk_unk68 D_80100240;
-extern struct Unk_unk68 D_80100244;
-extern struct Unk_unk68 D_80100248;
 extern u8 slash_beast_pattern_steps[9][4];
 static void main54_spawn_shot(struct MainObj* arg0, s8 subtype)
 {
@@ -248,7 +248,9 @@ void func_8006BB70(struct MainObj* arg0)
 #endif
 
 // slash_beast_run
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006BD1C);
+#else
 void func_8006BD1C(struct MainObj* arg0)
 {
     s32 hit;
@@ -267,8 +269,8 @@ void func_8006BD1C(struct MainObj* arg0)
     if (M54_85(arg0) == 0)
         return;
     hit = func_8002DD04(arg0);
-    flash = (s8)M54_FLASH(arg0);
     M54_82(arg0) = 0;
+    flash = (s8)M54_FLASH(arg0);
     if (flash == 0) {
         if (hit < 0) {
             func_8006E920(arg0, TILE_ATTR_VALUE(0x38));
@@ -281,11 +283,16 @@ void func_8006BD1C(struct MainObj* arg0)
             M54_82(arg0) = 1;
             arg0->collision_data = D_801060F0;
             arg0->unk42 |= 0x8000;
-            M54_FLASH(arg0) = (u32)(hit - 0x19) < 2 ? 4 : 0x40;
-            if ((hit == 6 || hit == 0xF) && M54_84(arg0) == 0 && arg0->ext.main_54.claw_hitbox == 0) {
-                arg0->contact_damage = 6;
-                arg0->unk5 = 0xA;
-                arg0->unk6 = 0;
+            if (hit == 0x19 || hit == 0x1A)
+                M54_FLASH(arg0) = 4;
+            else
+                M54_FLASH(arg0) = 0x40;
+            if ((hit == 6 || hit == 0xF) && M54_84(arg0) == 0) {
+                if (arg0->ext.main_54.claw_hitbox == 0) {
+                    arg0->contact_damage = 6;
+                    arg0->unk5 = 0xA;
+                    arg0->unk6 = 0;
+                }
             }
         }
     } else {
@@ -293,15 +300,15 @@ void func_8006BD1C(struct MainObj* arg0)
         if (flash == 0) {
             arg0->collision_data = D_801078F8;
             arg0->unk42 &= 0x7FFF;
-        } else if (flash & 1) {
-            arg0->unk42 &= 0x7FFF;
-        } else {
+        } else if (!(flash & 1)) {
             arg0->unk42 |= 0x8000;
+        } else {
+            arg0->unk42 &= 0x7FFF;
         }
     }
-    if (arg0->hp < 0x11)
+    if (arg0->hp <= 0x10)
         arg0->ext.main_54.pattern_set = 2;
-    else if (arg0->hp < 0x21)
+    else if (arg0->hp <= 0x20)
         arg0->ext.main_54.pattern_set = 1;
     if (M54_84(arg0) & 0x80)
         arg0->attack_box = &D_80100218;
@@ -320,8 +327,6 @@ void func_8006BD1C(struct MainObj* arg0)
     }
     update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006BD1C);
 #endif
 
 void slash_beast_death(struct MainObj* self)
@@ -435,7 +440,9 @@ void slash_beast_crescent_jump(struct MainObj* self)
 }
 
 // slash_beast_crescent_slash
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006C378);
+#else
 void func_8006C378(struct MainObj* arg0)
 {
     move_with_gravity(ANIMATED_OBJECT(arg0));
@@ -454,14 +461,49 @@ void func_8006C378(struct MainObj* arg0)
         arg0->attack_box = D_80100230;
         arg0->hurt_box = D_80100234;
         func_8001540C(2, SATURN_SOUND(0x84, 0x55), arg0);
-        main54_spawn_shot(arg0, 0);
+        {
+            struct ShotObj* shot = find_free_shot_obj();
+
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x1F;
+                shot->unk2 = 0;
+                shot->unk40 = arg0->unk40;
+                shot->unk42 = arg0->unk42;
+                shot->animation_table = (void*)arg0->animation_table;
+                shot->unk3C = (void*)arg0->sprite_frames;
+                shot->bg_offset = arg0->bg_offset;
+                shot->x_pos.val = arg0->x_pos.val;
+                shot->y_pos.val = arg0->y_pos.val;
+                shot->unk15 = arg0->unk15;
+                shot->unk7C = (struct WeaponObj*)arg0;
+                shot->state = 0;
+            }
+        }
         break;
     case 3:
         arg0->attack_box = D_80100238;
         arg0->hurt_box = &D_80100240;
         func_8001540C(2, SATURN_SOUND(0x84, 0x55), arg0);
-        if (M54_81(arg0) != 0)
-            main54_spawn_shot(arg0, 1);
+        if (M54_81(arg0) != 0) {
+            struct ShotObj* shot = find_free_shot_obj();
+
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x1F;
+                shot->unk2 = 1;
+                shot->unk40 = arg0->unk40;
+                shot->unk42 = arg0->unk42;
+                shot->animation_table = (void*)arg0->animation_table;
+                shot->unk3C = (void*)arg0->sprite_frames;
+                shot->bg_offset = arg0->bg_offset;
+                shot->x_pos.val = arg0->x_pos.val;
+                shot->y_pos.val = arg0->y_pos.val;
+                shot->unk15 = arg0->unk15;
+                shot->unk7C = (struct WeaponObj*)arg0;
+                shot->state = 0;
+            }
+        }
         break;
     case 4:
         arg0->attack_box = &D_80100228;
@@ -480,8 +522,6 @@ void func_8006C378(struct MainObj* arg0)
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006C378);
 #endif
 
 void slash_beast_crescent_land(struct MainObj* self)
@@ -728,18 +768,20 @@ void slash_beast_jump_recover(struct MainObj* self)
 }
 
 // slash_beast_guard
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CDD4);
+#else
 void func_8006CDD4(struct MainObj* arg0)
 {
-    s32 behind;
-
     animate_object(ANIMATED_OBJECT(arg0));
     if (M54_82(arg0) != 0) {
-        if (arg0->unk15 == 0)
-            behind = g_Player.x_pos.i.hi < arg0->x_pos.i.hi;
-        else
-            behind = arg0->x_pos.i.hi < g_Player.x_pos.i.hi;
-        if (behind) {
+        if (arg0->unk15 == 0) {
+            if (g_Player.x_pos.i.hi < arg0->x_pos.i.hi) {
+                arg0->unk5 = 2;
+                arg0->unk6 = 0;
+                return;
+            }
+        } else if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi) {
             arg0->unk5 = 2;
             arg0->unk6 = 0;
             return;
@@ -753,8 +795,6 @@ void func_8006CDD4(struct MainObj* arg0)
         arg0->unk6 = 1;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CDD4);
 #endif
 
 void slash_beast_dash(struct MainObj* self)

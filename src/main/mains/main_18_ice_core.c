@@ -322,17 +322,31 @@ void ice_core_drift_start(struct MainObj* self)
 }
 
 // ice_core_drift_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_80050D14);
+#else
 void func_80050D14(struct MainObj* arg0)
 {
-    if (arg0->unk15 == 0 ? (arg0->collision_flags & 2) : (arg0->collision_flags & 1)) {
+    if (arg0->unk15 == 0) {
+        if (arg0->collision_flags & 2) {
+            if (arg0->ext.main_18.state.runtime.unk84 != 0) {
+                ice_core_face_player(ANIMATED_OBJECT(arg0));
+                set_animation(arg0, 6);
+                arg0->unk5 = 3;
+                arg0->unk6 = 2;
+            } else {
+                arg0->unk15 = PLAYER_FACING_RIGHT;
+                func_800527F0(arg0);
+            }
+        }
+    } else if (arg0->collision_flags & 1) {
         if (arg0->ext.main_18.state.runtime.unk84 != 0) {
             ice_core_face_player(ANIMATED_OBJECT(arg0));
             set_animation(arg0, 6);
             arg0->unk5 = 3;
             arg0->unk6 = 2;
         } else {
-            arg0->unk15 = arg0->unk15 == 0 ? PLAYER_FACING_RIGHT : 0;
+            arg0->unk15 = 0;
             func_800527F0(arg0);
         }
     }
@@ -343,8 +357,6 @@ void func_80050D14(struct MainObj* arg0)
         arg0->gravity = -0x2000;
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_80050D14);
 #endif
 
 void ice_core_bob(struct MainObj* self)

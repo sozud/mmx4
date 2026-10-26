@@ -994,35 +994,36 @@ void colonel_dash_start(struct MainObj* self)
 }
 
 // colonel_dash_run
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80087A00);
+#else
 void func_80087A00(struct MainObj* arg0)
 {
-    s32 speed;
-
     move_with_gravity(ANIMATED_OBJECT(arg0));
     if (arg0->unk15 != 0) {
-        if (arg0->x_speed <= 0x41FFF)
+        if (arg0->x_speed < 0x42000)
             arg0->x_speed = 0x42000;
     } else if (arg0->x_speed > -0x42000) {
         arg0->x_speed = -0x42000;
     }
     if (arg0->unk15 != 0) {
-        if (arg0->x_pos.i.hi < (s16)background_objects[0].unk1E + 0x110)
+        if ((s16)background_objects[0].unk1E + 0x110 > arg0->x_pos.i.hi)
             return;
-        speed = 0x42000;
+        arg0->x_speed = 0x42000;
+        arg0->x_accel = -0x3000;
+        arg0->unk4B = -1;
+        set_animation(arg0, 2);
+        arg0->unk6++;
     } else {
         if ((s16)background_objects[0].unk1E + 0x50 < arg0->x_pos.i.hi)
             return;
-        speed = -0x42000;
+        arg0->x_speed = -0x42000;
+        arg0->x_accel = -0x3000;
+        arg0->unk4B = -1;
+        set_animation(arg0, 2);
+        arg0->unk6++;
     }
-    arg0->x_speed = speed;
-    arg0->x_accel = -0x3000;
-    arg0->unk4B = -1;
-    set_animation(arg0, 2);
-    arg0->unk6++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80087A00);
 #endif
 
 void colonel_dash_brake(struct MainObj* self)

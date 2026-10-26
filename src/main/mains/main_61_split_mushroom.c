@@ -171,6 +171,7 @@ ret_s8 func_8002DD04(struct MainObj* object);
 
 extern s16 split_mushroom_hop_speeds[];
 extern void (*split_mushroom_step_funcs[8])();
+extern struct Unk_unk68 split_mushroom_wall_terrain_box;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800788E4(struct MainObj* arg0);
 void func_800793AC(struct MainObj* arg0);
@@ -186,7 +187,6 @@ void func_8007B1BC(struct MainObj* arg0);
 void func_8007B418(struct MainObj* arg0);
 void func_8007B6BC(struct AnimatedObj* obj);
 extern struct Unk_unk68 D_80107BF8[];
-extern struct Unk_unk68 split_mushroom_wall_terrain_box;
 static void main61_wall_hit(struct MainObj* arg0)
 {
     func_8001540C(2, 0xA8, arg0);
@@ -1208,33 +1208,44 @@ void split_mushroom_combo(struct MainObj* self)
 }
 
 // split_mushroom_combo_jump
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007A96C);
+#else
 void func_8007A96C(struct MainObj* arg0)
 {
-    s32 offset;
-    s32 target;
-
     animate_object(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C != 0)
-        return;
-    offset = arg0->unk15 != 0 ? (s32)0xFEE80000 : (s32)0xFFD40000;
-    target = background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset);
-    if (arg0->ext.main_61.combo_count == 0) {
-        arg0->x_speed = target / 48;
-        arg0->y_speed = 0x55C00;
-        func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
-    } else {
-        arg0->x_speed = target / 36;
-        func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
-        arg0->y_speed = 0x5D31C;
+    if (--arg0->unk7C == 0) {
+        if ((s8)arg0->ext.main_61.combo_count == 0) {
+            if (arg0->unk15 == 0) {
+                s32 offset = 0xFFD40000;
+
+                arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset)) / 48;
+            } else {
+                s32 offset = 0xFEE80000;
+
+                arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset)) / 48;
+            }
+            arg0->y_speed = 0x55C00;
+            func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
+        } else {
+            if (arg0->unk15 == 0) {
+                s32 offset = 0xFFD40000;
+
+                arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset)) / 36;
+            } else {
+                s32 offset = 0xFEE80000;
+
+                arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset)) / 36;
+            }
+            func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
+            arg0->y_speed = 0x5D31C;
+        }
+        arg0->gravity = 0x3800;
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        arg0->unk6 = 1;
+        arg0->unk7 = 0;
     }
-    arg0->gravity = 0x3800;
-    move_with_gravity(ANIMATED_OBJECT(arg0));
-    arg0->unk6 = 1;
-    arg0->unk7 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007A96C);
 #endif
 
 // split_mushroom_combo_dash
@@ -1420,12 +1431,11 @@ void split_mushroom_wall_jump(struct MainObj* self)
 }
 
 // split_mushroom_wall_jump_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007B1BC);
+#else
 void func_8007B1BC(struct MainObj* arg0)
 {
-    s32 offset;
-    s32 target;
-
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event == 0)
         return;
@@ -1434,9 +1444,15 @@ void func_8007B1BC(struct MainObj* arg0)
         arg0->unk15 = PLAYER_FACING_RIGHT;
     else
         arg0->unk15 = 0;
-    offset = arg0->unk15 != 0 ? (s32)0xFEE80000 : (s32)0xFFD40000;
-    target = background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset);
-    arg0->x_speed = target / 48;
+    if (arg0->unk15 == 0) {
+        s32 target = (s32)0xFFD40000;
+
+        arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + target)) / 48;
+    } else {
+        s32 target = (s32)0xFEE80000;
+
+        arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + target)) / 48;
+    }
     arg0->y_speed = 0x706AA;
     func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
     arg0->gravity = 0x3800;
@@ -1444,8 +1460,6 @@ void func_8007B1BC(struct MainObj* arg0)
     arg0->unk6 = 1;
     arg0->unk7 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007B1BC);
 #endif
 
 void split_mushroom_wall_jump_air(struct MainObj* self)

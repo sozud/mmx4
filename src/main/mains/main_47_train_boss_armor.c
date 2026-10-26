@@ -22,9 +22,9 @@ extern void (*train_boss_armor_state_funcs[])(struct MainObj*);
 extern u16 train_boss_armor_smoke_offsets[3][2];
 
 extern s8 train_boss_armor_hurt_boxes[3][16];
+extern void (*train_boss_armor_step_funcs[3])(struct MainObj*);
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern u8 D_800FF9FC[4], D_800FFA00[4], D_800FFA04[8];
-extern void (*train_boss_armor_step_funcs[3])(struct MainObj*);
 #endif
 
 void train_boss_armor_update(struct MainObj* self)
@@ -83,64 +83,71 @@ void func_80066DE8(struct MainObj* self)
 }
 
 // train_boss_armor_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066F1C);
+#else
+extern u8 D_800FF9FC[4], D_800FFA00[4], D_800FFA04[8];
 void func_80066F1C(struct MainObj* self)
 {
-    struct Main45Ext* owner = self->ext.main_47.train_boss;
-    u8* reflected = (u8*)&self->ext.main_47.unk88;
-    s32 subtype = self->unk2;
+    s32 collision;
+    u16* x_offsets;
+    u16* y_offsets;
+    s32 unused[2];
 
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     train_boss_armor_step_funcs[self->unk5](self);
     if (self->invincibility_timer == 0) {
-        s32 collision;
-        if (!(owner->unk87 & D_800FF9FC[subtype]) && !(owner->attack_flags & D_800FFA00[subtype])) {
-            update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
-            return;
-        }
-        collision = func_8002DD04(self);
-        if (collision < 0) {
-            self->x_pos.i.hi = (u16)self->x_pos.i.hi + train_boss_armor_smoke_offsets[subtype][0];
-            self->y_pos.i.hi = (u16)self->y_pos.i.hi + train_boss_armor_smoke_offsets[subtype][1];
-            spawn_debris(6, D_800FFA04, self);
-            spawn_explosion(BASE_OBJECT(self));
-            self->x_pos.i.hi = (u16)self->x_pos.i.hi - train_boss_armor_smoke_offsets[subtype][0];
-            self->y_pos.i.hi = (u16)self->y_pos.i.hi - train_boss_armor_smoke_offsets[subtype][1];
-            *self->ext.main_47.boss_hp = (u8)*self->ext.main_47.boss_hp - ((u8)self->unk5D - (u8)self->hp);
-            owner->attack_flags |= D_800FF9FC[subtype];
-            owner->attack_flags |= D_800FFA00[subtype];
-            if ((owner->attack_flags & 7) == 7) {
-                g_Player.spike_immune = 1;
-                self->state = 3;
-            } else {
-                self->unk7C = 0xB4;
-                self->unk7E = 1;
-                self->state = 2;
+#ifdef VERSION_JP
+        if (self->ext.main_47.train_boss->unk8A - 8 < g_Player.x_pos.i.hi
+            && ((self->ext.main_47.train_boss->unk87 & D_800FF9FC[self->unk2]) || (self->ext.main_47.train_boss->attack_flags & D_800FFA00[self->unk2]))) {
+#else
+        if ((self->ext.main_47.train_boss->unk87 & D_800FF9FC[self->unk2]) || (self->ext.main_47.train_boss->attack_flags & D_800FFA00[self->unk2])) {
+#endif
+            collision = func_8002DD04(self);
+            if (collision < 0) {
+                self->x_pos.i.hi += train_boss_armor_smoke_offsets[self->unk2][0];
+                x_offsets = train_boss_armor_smoke_offsets[0];
+                y_offsets = x_offsets + 1;
+                self->y_pos.i.hi += y_offsets[self->unk2 * 2];
+                spawn_debris(6, D_800FFA04, self);
+                spawn_explosion(BASE_OBJECT(self));
+                self->x_pos.i.hi -= x_offsets[self->unk2 * 2];
+                self->y_pos.i.hi -= y_offsets[self->unk2 * 2];
+                *self->ext.main_47.boss_hp -= (u8)self->unk5D - (u8)self->hp;
+                self->ext.main_47.train_boss->attack_flags |= D_800FF9FC[self->unk2];
+                self->ext.main_47.train_boss->attack_flags |= D_800FFA00[self->unk2];
+                if ((self->ext.main_47.train_boss->attack_flags & 7) == 7) {
+                    g_Player.spike_immune = 1;
+                    self->on_screen = 0;
+                    self->state = 3;
+                } else {
+                    self->unk7C = 0xB4;
+                    self->unk7E = 1;
+                    self->on_screen = 0;
+                    self->state = 2;
+                }
+                return;
             }
-            self->on_screen = 0;
-            return;
+            if (collision != 0)
+                self->invincibility_timer = 2;
+            if (collision == 0x7F) {
+                *(u8*)&self->ext.main_47.unk88 = 1;
+            } else {
+                *(u8*)&self->ext.main_47.unk88 = 0;
+                if (self->unk42 & 0x8000)
+                    self->ext.main_47.train_boss->layer_signals->unk16 = 1;
+            }
+            *self->ext.main_47.boss_hp -= (u8)self->unk5D - (u8)self->hp;
+            self->unk5D = self->hp;
         }
-        if (collision != 0)
-            self->invincibility_timer = 2;
-        if (collision == 0x7F) {
-            *reflected = 1;
-        } else {
-            *reflected = 0;
-            if (self->unk42 & 0x8000)
-                owner->layer_signals->unk16 = 1;
-        }
-        *self->ext.main_47.boss_hp = (u8)*self->ext.main_47.boss_hp - ((u8)self->unk5D - (u8)self->hp);
-        self->unk5D = self->hp;
     } else {
-        self->invincibility_timer = (u8)self->invincibility_timer - 1;
-        if (*reflected == 0)
-            owner->layer_signals->unk16 = 1;
+        self->invincibility_timer--;
+        if (*(u8*)&self->ext.main_47.unk88 == 0)
+            self->ext.main_47.train_boss->layer_signals->unk16 = 1;
     }
     update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066F1C);
 #endif
 
 #ifdef VERSION_EU

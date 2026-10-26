@@ -62,22 +62,20 @@ s16 colonel_wave_offsets[2][2] = {
     { 0x45, 0x10 },
 };
 
-s8 colonel_shot_boxes[14][4] = {
-    { -1, -18, 15, 35 },
-    { -4, -25, 19, 49 },
-    { -1, 11, 10, 20 },
-    { -1, 4, 10, 27 },
-    { -4, -20, 15, 51 },
-    { -1, -18, 15, 35 },
-    { -11, -45, 28, 76 },
-    { -11, -54, 28, 85 },
-    { -15, -64, 33, 95 },
-    { -18, -6, 41, 9 },
-    { -6, -13, 12, 43 },
-    { -11, -13, 23, 24 },
-    { -64, -24, 35, 54 },
-    { -62, -32, 30, 61 },
-};
+s8 colonel_shot_box_0[4] = { -1, -18, 15, 35 };
+s8 colonel_shot_box_1[4] = { -4, -25, 19, 49 };
+s8 colonel_shot_box_2[4] = { -1, 11, 10, 20 };
+s8 colonel_shot_box_3[4] = { -1, 4, 10, 27 };
+s8 colonel_shot_box_4[4] = { -4, -20, 15, 51 };
+s8 colonel_shot_box_5[4] = { -1, -18, 15, 35 };
+s8 colonel_shot_box_6[4] = { -11, -45, 28, 76 };
+s8 colonel_shot_box_7[4] = { -11, -54, 28, 85 };
+s8 colonel_shot_box_8[4] = { -15, -64, 33, 95 };
+s8 colonel_shot_box_9[4] = { -18, -6, 41, 9 };
+s8 colonel_shot_box_10[4] = { -6, -13, 12, 43 };
+s8 colonel_shot_box_11[4] = { -11, -13, 23, 24 };
+s8 colonel_shot_box_12[4] = { -64, -24, 35, 54 };
+s8 colonel_shot_box_13[4] = { -62, -32, 30, 61 };
 
 void colonel_shot_update(struct ShotObj* self)
 {
@@ -147,36 +145,30 @@ void func_800A83C4(struct ShotObj* arg0);
 void func_800A858C(struct ShotObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A7CE8);
+#else
 void func_800A7CE8(struct ShotObj* arg0)
 {
-    s32 speed;
-
     set_animation(arg0, 0xE);
     arg0->unk5C = 5;
     if (engine_obj.stage == 0xA) {
         arg0->unk60 = 7;
-        speed = arg0->unk15 != 0 ? 0x60000 : -0x60000;
+        arg0->x_vel.val = arg0->unk15 != 0 ? 0x60000 : -0x60000;
     } else {
         arg0->unk60 = 6;
-        speed = arg0->unk15 != 0 ? 0x50000 : -0x50000;
+        arg0->x_vel.val = arg0->unk15 != 0 ? 0x50000 : -0x50000;
     }
-    arg0->x_vel.val = speed;
     arg0->y_vel.val = 0;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
-    if (arg0->unk15 != 0)
-        arg0->x_pos.i.hi += colonel_wave_offsets[arg0->unk2][0];
-    else
-        arg0->x_pos.i.hi -= colonel_wave_offsets[arg0->unk2][0];
-    arg0->unk58.collision_bounds = D_801060F0;
-    arg0->unk54 = (const u8*)colonel_shot_boxes[1];
-    arg0->unk50.data = (const u8*)colonel_shot_boxes[0];
-    arg0->unk6++;
+    arg0->x_pos.i.hi += arg0->unk15 != 0 ? colonel_wave_offsets[arg0->unk2][0] : -colonel_wave_offsets[arg0->unk2][0];
     arg0->y_pos.i.hi += colonel_wave_offsets[arg0->unk2][1];
+    arg0->unk58.collision_bounds = D_801060F0;
+    arg0->unk54 = (const u8*)colonel_shot_box_1;
+    arg0->unk50.data = (const u8*)colonel_shot_box_0;
+    arg0->unk6++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A7CE8);
 #endif
 
 void colonel_wave_fly(struct ShotObj* self)
@@ -206,7 +198,7 @@ void colonel_streak_start(struct ShotObj* arg)
         self->x_vel.val = FIXED(-6);
         self->unk15 = 0;
     }
-    self->unk50.data = (u8*)&colonel_shot_boxes[9];
+    self->unk50.data = (u8*)colonel_shot_box_9;
     self->timer = 5;
     self->unk8A = 0x32;
     self->y_vel.val = 0;
@@ -265,7 +257,7 @@ void colonel_marker_start(struct ShotObj* self)
     self->timer = 0;
     self->unk58.data = NULL;
     self->unk54 = NULL;
-    self->unk50.data = (const u8*)colonel_shot_boxes[11];
+    self->unk50.data = (const u8*)colonel_shot_box_11;
     self->unk6++;
 }
 
@@ -315,7 +307,7 @@ void colonel_bolt_start(struct ShotObj* self)
     self->unk2C = 0;
     self->unk58.data = NULL;
     self->unk54 = NULL;
-    self->unk50.data = (const u8*)colonel_shot_boxes[10];
+    self->unk50.data = (const u8*)colonel_shot_box_10;
     if (self->unk2 == 0) {
         func_8001540C(2, SATURN_SOUND(0xD7, 0x99), self);
     }
@@ -341,9 +333,9 @@ void colonel_slash_start(struct ShotObj* self)
     self->unk58.data = NULL;
     self->unk54 = NULL;
     if (self->unk2 == 0) {
-        self->unk50.data = (const u8*)colonel_shot_boxes[12];
+        self->unk50.data = (const u8*)colonel_shot_box_12;
     } else {
-        self->unk50.data = (const u8*)colonel_shot_boxes[13];
+        self->unk50.data = (const u8*)colonel_shot_box_13;
     }
     self->timer = 5;
     self->unk6++;
@@ -371,7 +363,7 @@ void func_800A83C4(struct ShotObj* arg0)
     u8 kind;
 
     arg0->unk60 = 9;
-    arg0->unk50.data = (const u8*)colonel_shot_boxes[0];
+    arg0->unk50.data = (const u8*)colonel_shot_box_0;
     arg0->unk5C = 0;
     arg0->unk58.data = NULL;
     arg0->unk54 = NULL;
@@ -421,19 +413,35 @@ void colonel_shockwave_spread(struct ShotObj* self)
 }
 
 // colonel_shockwave_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A858C);
+#else
 void func_800A858C(struct ShotObj* arg0)
 {
-    static const u8 bounds[6] = { 2, 3, 4, 6, 7, 8 };
-    u32 index = arg0->animation_step.fields.frame_index - 0x37;
-
-    if (index < 6)
-        arg0->unk50.data = (const u8*)colonel_shot_boxes[bounds[index]];
-    else
+    switch (arg0->animation_step.fields.frame_index) {
+    case 0x37:
+        arg0->unk50.data = (const u8*)colonel_shot_box_2;
+        break;
+    case 0x38:
+        arg0->unk50.data = (const u8*)colonel_shot_box_3;
+        break;
+    case 0x39:
+        arg0->unk50.data = (const u8*)colonel_shot_box_4;
+        break;
+    case 0x3A:
+        arg0->unk50.data = (const u8*)colonel_shot_box_6;
+        break;
+    case 0x3B:
+        arg0->unk50.data = (const u8*)colonel_shot_box_7;
+        break;
+    case 0x3C:
+        arg0->unk50.data = (const u8*)colonel_shot_box_8;
+        break;
+    default:
         arg0->unk50.data = NULL;
+        break;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A858C);
 #endif
 
 void (*colonel_shot_state_funcs[])(struct ShotObj*) = {

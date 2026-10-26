@@ -59,49 +59,48 @@ void func_800C229C(struct ItemObj* self);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_09_moving_block", func_800C229C);
+#else
 void func_800C229C(struct ItemObj* self)
 {
-    u8* wait_timer = (u8*)&self->ext;
-    s32 old_velocity;
-    s32 center;
-    s32 position;
-    struct MovingBlockMotion* motion = &moving_block_motion[self->unk2];
-    u16 range = motion->range;
+    s32 velocity;
 
-    if (*wait_timer != 0)
-        --*wait_timer;
-    else
+    if ((u8)self->ext.item_2.unk80 == 0)
         move_object(MOVING_OBJECT(self));
-    if (motion->vertical == 0) {
-        old_velocity = self->x_vel.val;
-        center = (s16)self->unk7C.timer16;
-        position = self->x_pos.i.hi;
-        if ((old_velocity > 0 && position >= center + range) || (old_velocity <= 0 && position <= center - range))
-            self->x_vel.val = -old_velocity;
-        if (func_8002B1E8(BASE_OBJECT(self), range + 0xA0, 0x30) == 0)
+    else
+        self->ext.item_2.unk80--;
+    if (moving_block_motion[self->unk2].vertical == 0) {
+        velocity = self->x_vel.val;
+        if (velocity > 0) {
+            if (self->x_pos.i.hi >= (s16)self->unk7C.saved_pos.x + moving_block_motion[self->unk2].range)
+                self->x_vel.val = -velocity;
+        } else if (self->x_pos.i.hi <= (s16)self->unk7C.saved_pos.x - moving_block_motion[self->unk2].range) {
+            self->x_vel.val = -velocity;
+        }
+        if (func_8002B1E8(BASE_OBJECT(self), moving_block_motion[self->unk2].range + 0xA0, 0x30) == 0)
             update_on_screen(BASE_OBJECT(self), 0x30, 0x20);
         else
             self->state++;
-        if (self->x_vel.val != old_velocity)
-            *wait_timer = 0xA;
+        if (self->x_vel.val != velocity)
+            self->ext.item_2.unk80 = 0xA;
     } else {
-        old_velocity = self->y_vel.val;
-        center = ((s16*)&self->unk7C)[1];
-        position = self->y_pos.i.hi;
-        if ((old_velocity > 0 && position <= center - range) || (old_velocity <= 0 && position >= center + range))
-            self->y_vel.val = -old_velocity;
+        velocity = self->y_vel.val;
+        if (velocity > 0) {
+            if (self->y_pos.i.hi <= (s16)self->unk7C.saved_pos.y - moving_block_motion[self->unk2].range)
+                self->y_vel.val = -velocity;
+        } else if (self->y_pos.i.hi >= (s16)self->unk7C.saved_pos.y + moving_block_motion[self->unk2].range) {
+            self->y_vel.val = -velocity;
+        }
         if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x30) == 0)
-            update_on_screen(BASE_OBJECT(self), 0x30, range + 0x78);
+            update_on_screen(BASE_OBJECT(self), 0x30, moving_block_motion[self->unk2].range + 0x78);
         else
             self->state++;
-        if (self->y_vel.val != old_velocity)
-            *wait_timer = 0xA;
+        if (self->y_vel.val != velocity)
+            self->ext.item_2.unk80 = 0xA;
     }
     collide_with_players(PLAYER_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_09_moving_block", func_800C229C);
 #endif
 
 void moving_block_despawn(struct ItemObj* arg0)

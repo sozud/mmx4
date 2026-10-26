@@ -4,7 +4,9 @@
 #include "main/collision_bounds.h"
 extern void* general_animations[46];
 extern s8 general_shot_attack_boxes[][4];
-extern s8 general_shot_boxes[3][4];
+extern s8 general_shot_boxes[4];
+extern s8 general_shot_attack_box[4];
+extern s8 general_shot_guard_box[4];
 extern u8 D_8013B8DC[4];
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
@@ -205,8 +207,8 @@ static u32 thruster_case(u32 mode, u32 observation)
     before.unk17 = animation;
     before.previous_animation_index = 0xFF;
     before.animation_cursor = general_animations[animation];
-    before.unk50.data = mode == 0 ? (u8*)general_shot_boxes[1] : NULL;
-    before.unk54 = mode == 0 ? (u8*)general_shot_boxes[2] : NULL;
+    before.unk50.data = mode == 0 ? (u8*)general_shot_attack_box : NULL;
+    before.unk54 = mode == 0 ? (u8*)general_shot_guard_box : NULL;
     before.unk58.collision_bounds = mode == 0 ? D_801060F0 : NULL;
     before.unk68 = NULL;
     if (mode == 1)

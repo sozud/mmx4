@@ -27,31 +27,33 @@ void boss_death_shard_init(struct QuadObj* arg0)
 
 // boss_death_shard_launch
 
+extern s16 boss_death_shard_shapes[4][16][2];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D52F4(struct QuadObj* arg0);
-extern s16 boss_death_shard_shapes[64][2];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_04_boss_death_shard", func_800D52F4);
+#else
 void func_800D52F4(struct QuadObj* arg0)
 {
-    u8 angle = arg0->ext.quad_4.unk38;
-    const s16* outer = boss_death_shard_shapes[(arg0->ext.quad_4.unk39 + 1) * 16 + (angle & 0xF)];
-    const s16* inner = boss_death_shard_shapes[arg0->ext.quad_4.unk39 * 16 + (angle & 0xF)];
-    s32 sign = (angle & 0x1F) >= 0x10 ? -1 : 1;
+    s32 random;
 
-    arg0->vertices[1].x.val = sign * (outer[0] << 16);
-    arg0->vertices[1].y.val = sign * (outer[1] << 16);
-    arg0->vertices[2].x.val = sign * (inner[0] << 16);
-    arg0->vertices[2].y.val = sign * (inner[1] << 16);
+    arg0->vertices[1].x.val = boss_death_shard_shapes[arg0->ext.quad_4.unk39 + 1][arg0->ext.quad_4.unk38 & 0xF][0] << 16;
+    arg0->vertices[1].y.val = boss_death_shard_shapes[arg0->ext.quad_4.unk39 + 1][arg0->ext.quad_4.unk38 & 0xF][1] << 16;
+    arg0->vertices[2].x.val = boss_death_shard_shapes[arg0->ext.quad_4.unk39][arg0->ext.quad_4.unk38 & 0xF][0] << 16;
+    arg0->vertices[2].y.val = boss_death_shard_shapes[arg0->ext.quad_4.unk39][arg0->ext.quad_4.unk38 & 0xF][1] << 16;
+    arg0->vertices[1].x.val = (arg0->ext.quad_4.unk38 & 0x1F) >= 0x10 ? -arg0->vertices[1].x.val : arg0->vertices[1].x.val;
+    arg0->vertices[1].y.val = (arg0->ext.quad_4.unk38 & 0x1F) >= 0x10 ? -arg0->vertices[1].y.val : arg0->vertices[1].y.val;
+    arg0->vertices[2].x.val = (arg0->ext.quad_4.unk38 & 0x1F) >= 0x10 ? -arg0->vertices[2].x.val : arg0->vertices[2].x.val;
+    arg0->vertices[2].y.val = (arg0->ext.quad_4.unk38 & 0x1F) >= 0x10 ? -arg0->vertices[2].y.val : arg0->vertices[2].y.val;
     arg0->vertices[3].x.val = 0;
     arg0->vertices[3].y.val = 0;
+    random = get_random_nonzero();
     arg0->state++;
-    arg0->ext.quad_4.timer = get_random_nonzero() % 7;
+    arg0->ext.quad_4.timer = random % 7;
     quad_is_on_screen(arg0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_04_boss_death_shard", func_800D52F4);
 #endif
 
 void boss_death_shard_fly(struct QuadObj* arg0)
@@ -72,71 +74,79 @@ void boss_death_shard_update(struct QuadObj* arg0)
     boss_death_shard_state_funcs[arg0->state](arg0);
 }
 
-s16 boss_death_shard_shapes[64][2] = {
-    { 0x0, 0x7F },
-    { 0x19, 0x7A },
-    { 0x31, 0x71 },
-    { 0x47, 0x63 },
-    { 0x5B, 0x51 },
-    { 0x6A, 0x3C },
-    { 0x76, 0x25 },
-    { 0x7E, 0xD },
-    { 0x7F, 0x0 },
-    { 0x7A, -0x19 },
-    { 0x71, -0x31 },
-    { 0x63, -0x47 },
-    { 0x51, -0x5B },
-    { 0x3C, -0x6A },
-    { 0x25, -0x76 },
-    { 0xD, -0x7E },
-    { 0x10, 0x9D },
-    { 0x2E, 0x94 },
-    { 0x4B, 0x85 },
-    { 0x66, 0x71 },
-    { 0x7C, 0x59 },
-    { 0x8D, 0x3D },
-    { 0x99, 0x1F },
-    { 0x9F, 0x0 },
-    { 0x9D, -0x10 },
-    { 0x94, -0x2E },
-    { 0x85, -0x4B },
-    { 0x71, -0x66 },
-    { 0x59, -0x7C },
-    { 0x3D, -0x8D },
-    { 0x1F, -0x99 },
-    { 0x1, -0x9F },
-    { 0x0, 0xBF },
-    { 0x25, 0xB8 },
-    { 0x49, 0xA9 },
-    { 0x6B, 0x94 },
-    { 0x88, 0x7A },
-    { 0xA0, 0x5B },
-    { 0xB1, 0x38 },
-    { 0xBC, 0x13 },
-    { 0xBF, 0x0 },
-    { 0xB8, -0x25 },
-    { 0xA9, -0x49 },
-    { 0x94, -0x6B },
-    { 0x7A, -0x88 },
-    { 0x5B, -0xA0 },
-    { 0x38, -0xB1 },
-    { 0x13, -0xBC },
-    { 0x19, 0xFB },
-    { 0x4A, 0xED },
-    { 0x79, 0xD5 },
-    { 0xA2, 0xB5 },
-    { 0xC6, 0x8E },
-    { 0xE2, 0x62 },
-    { 0xF5, 0x32 },
-    { 0xFF, 0x0 },
-    { 0xFB, -0x19 },
-    { 0xED, -0x4A },
-    { 0xD5, -0x79 },
-    { 0xB5, -0xA2 },
-    { 0x8E, -0xC6 },
-    { 0x62, -0xE2 },
-    { 0x32, -0xF5 },
-    { 0x1, -0xFF },
+s16 boss_death_shard_shapes[4][16][2] = {
+    {
+        { 0x0, 0x7F },
+        { 0x19, 0x7A },
+        { 0x31, 0x71 },
+        { 0x47, 0x63 },
+        { 0x5B, 0x51 },
+        { 0x6A, 0x3C },
+        { 0x76, 0x25 },
+        { 0x7E, 0xD },
+        { 0x7F, 0x0 },
+        { 0x7A, -0x19 },
+        { 0x71, -0x31 },
+        { 0x63, -0x47 },
+        { 0x51, -0x5B },
+        { 0x3C, -0x6A },
+        { 0x25, -0x76 },
+        { 0xD, -0x7E },
+    },
+    {
+        { 0x10, 0x9D },
+        { 0x2E, 0x94 },
+        { 0x4B, 0x85 },
+        { 0x66, 0x71 },
+        { 0x7C, 0x59 },
+        { 0x8D, 0x3D },
+        { 0x99, 0x1F },
+        { 0x9F, 0x0 },
+        { 0x9D, -0x10 },
+        { 0x94, -0x2E },
+        { 0x85, -0x4B },
+        { 0x71, -0x66 },
+        { 0x59, -0x7C },
+        { 0x3D, -0x8D },
+        { 0x1F, -0x99 },
+        { 0x1, -0x9F },
+    },
+    {
+        { 0x0, 0xBF },
+        { 0x25, 0xB8 },
+        { 0x49, 0xA9 },
+        { 0x6B, 0x94 },
+        { 0x88, 0x7A },
+        { 0xA0, 0x5B },
+        { 0xB1, 0x38 },
+        { 0xBC, 0x13 },
+        { 0xBF, 0x0 },
+        { 0xB8, -0x25 },
+        { 0xA9, -0x49 },
+        { 0x94, -0x6B },
+        { 0x7A, -0x88 },
+        { 0x5B, -0xA0 },
+        { 0x38, -0xB1 },
+        { 0x13, -0xBC },
+    },
+    {
+        { 0x19, 0xFB },
+        { 0x4A, 0xED },
+        { 0x79, 0xD5 },
+        { 0xA2, 0xB5 },
+        { 0xC6, 0x8E },
+        { 0xE2, 0x62 },
+        { 0xF5, 0x32 },
+        { 0xFF, 0x0 },
+        { 0xFB, -0x19 },
+        { 0xED, -0x4A },
+        { 0xD5, -0x79 },
+        { 0xB5, -0xA2 },
+        { 0x8E, -0xC6 },
+        { 0x62, -0xE2 },
+        { 0x32, -0xF5 },
+        { 0x1, -0xFF },
+    },
 };
 
 void (*boss_death_shard_state_funcs[])(struct QuadObj*) = {

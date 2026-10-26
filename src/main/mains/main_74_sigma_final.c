@@ -322,6 +322,14 @@ void sigma_emit_explosions(struct MainObj*);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
+extern struct Unk_unk68 D_801062F0[32];
+extern void* D_8013B8B4;
+extern u8 D_8013B898;
+extern u8 D_8013B89C;
+extern u8 D_8013B8A4;
+extern void (*sigma_final_step_funcs[14])();
+extern struct Unk_unk68 D_80108284[];
+extern struct Unk_unk68 D_80108304[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008D5C8(struct MainObj* arg0);
 void func_8008F1A8(struct MainObj* self);
@@ -330,65 +338,71 @@ void func_8008EC48(struct MainObj* self);
 void func_8008E748(struct MainObj* self);
 void func_8008F3F4(struct MainObj* self);
 void func_8008F578(struct MainObj* self);
-extern struct Unk_unk68 D_801062F0[32];
-extern u8 D_8013B898[4];
-extern u8 D_8013B89C[4];
-extern u8 D_8013B8A4[4];
-extern void* D_8013B8B4;
-extern void (*sigma_final_step_funcs[14])();
-extern struct Unk_unk68 D_80108284[];
-extern struct Unk_unk68 D_80108304[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008D5C8);
+#else
+extern void* sigma_final_animations[39];
 void func_8008D5C8(struct MainObj* arg0)
 {
-    s32 i;
-    extern void* sigma_final_animations[39];
-    extern void* D_8013B8B4;
+    struct ShotObj* shot;
 
-    for (i = 0; i < 3; i++) {
-        struct ShotObj* shot = find_free_shot_obj();
-
-        if (shot == NULL)
-            continue;
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
         shot->active = 0x41;
         shot->id = 0x35;
-        shot->unk2 = i;
+        shot->unk2 = 0;
         shot->x_pos = arg0->x_pos;
         shot->y_pos = arg0->y_pos;
         shot->unk7C = (struct WeaponObj*)arg0;
-        arg0->ext.main_74.children[i] = (struct MainObj*)shot;
+        arg0->ext.main_74.children[0] = (struct MainObj*)shot;
     }
-
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 0x35;
+        shot->unk2 = 1;
+        shot->x_pos = arg0->x_pos;
+        shot->y_pos = arg0->y_pos;
+        shot->unk7C = (struct WeaponObj*)arg0;
+        arg0->ext.main_74.children[1] = (struct MainObj*)shot;
+    }
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 0x35;
+        shot->unk2 = 2;
+        shot->x_pos = arg0->x_pos;
+        shot->y_pos = arg0->y_pos;
+        shot->unk7C = (struct WeaponObj*)arg0;
+        arg0->ext.main_74.children[2] = (struct MainObj*)shot;
+    }
     arg0->unk15 = 0;
     arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk40 = (u16)((OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0));
     arg0->animation_table = (const u8* const*)sigma_final_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->collision_data = D_801062F0;
-    arg0->contact_damage = 9;
+    arg0->terrain_box = NULL;
     arg0->invincibility_timer = 0;
     arg0->unk62 = 0;
+    arg0->collision_data = D_801062F0;
     D_8013B8B0 = NULL;
     D_8013B8B4 = NULL;
-    arg0->terrain_box = NULL;
     arg0->hp = 0;
-    arg0->unk40 = (u16)((OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0));
+    arg0->contact_damage = 9;
     engine_obj.boss_ptr = arg0;
     engine_obj.unk25 = 0;
     arg0->unk5 = 3;
+    arg0->state++;
     arg0->unk6 = 0;
     arg0->unk7 = 0;
     arg0->ext.main_74.target = 0;
     arg0->ext.main_74.upper_health = 0;
     arg0->ext.main_74.lower_health = 0x30;
-    arg0->state++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008D5C8);
 #endif
 
-extern void* D_8013B8B4;
 #define MAIN_74_COLLISION_BOUNDS D_8013B8B4
 
 void sigma_final_set_target(struct MainObj* self, s32 arg1)
@@ -478,7 +492,7 @@ void sigma_final_appear_fill_health(struct MainObj* self)
         set_animation(self, 0);
         self->unk5 = 2;
         self->unk6 = 0;
-        *D_8013B8A0 = 0xA;
+        D_8013B8A0 = 0xA;
         D_8013B8B0 = &D_80105368;
         MAIN_74_COLLISION_BOUNDS = &D_8010536C;
         player_end_script_action();
@@ -492,65 +506,142 @@ void sigma_final_appear(struct MainObj* self)
 }
 
 // sigma_final_pick_attack
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008DAE8);
+#else
 void func_8008DAE8(struct MainObj* self)
 {
-    struct Main74Ext* ext = &self->ext.main_74;
-
-    if (D_8013B8A0[0] != 0) {
-        D_8013B8A0[0]--;
-        if (ext->target != 0)
-            goto animate;
+    if (D_8013B8A0 != 0) {
+        D_8013B8A0--;
+        if (self->ext.main_74.target != 0) {
+            animate_object(ANIMATED_OBJECT(self));
+            update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
+            return;
+        }
     }
-    switch (ext->pattern_index) {
+    switch (self->ext.main_74.pattern_index) {
     case 0:
         self->unk5 = 5;
-        ext->pattern_index++;
+        self->ext.main_74.pattern_index++;
         break;
     case 1:
-    case 5:
         self->unk5 = 8;
-        ext->pattern_index++;
+        self->ext.main_74.pattern_index++;
         break;
     case 2:
         if (D_8013B8B8 == 2) {
-            ext->pattern_index = 6;
+            self->ext.main_74.pattern_index = 6;
             self->unk5 = 4;
         } else {
             self->unk5 = 6;
         }
-        ext->pattern_index++;
+        self->ext.main_74.pattern_index++;
         break;
     case 3:
-        self->unk5 = (get_random() & 1) ? 0xC : 0xD;
-        ext->pattern_index++;
+        if (get_random() & 1)
+            self->unk5 = 0xC;
+        else
+            self->unk5 = 0xD;
+        self->ext.main_74.pattern_index++;
         break;
     case 4:
         self->unk5 = 7;
-        ext->pattern_index++;
+        self->ext.main_74.pattern_index++;
+        break;
+    case 5:
+        self->unk5 = 8;
+        self->ext.main_74.pattern_index++;
         break;
     case 6:
         if (D_8013B8B8 == 1) {
-            ext->pattern_index = 2;
+            self->ext.main_74.pattern_index = 2;
             self->unk5 = 6;
         } else {
             self->unk5 = 4;
         }
-        ext->pattern_index++;
+        self->ext.main_74.pattern_index++;
         break;
     case 7:
-        self->unk5 = (get_random() & 1) ? 9 : 0xA;
-        ext->pattern_index = 0;
+        if (get_random() & 1)
+            self->unk5 = 9;
+        else
+            self->unk5 = 0xA;
+        self->ext.main_74.pattern_index = 0;
         break;
     }
-    if (ext->target == 0)
-        return;
-animate:
-    animate_object(ANIMATED_OBJECT(self));
-    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
+    if (self->ext.main_74.target != 0) {
+        animate_object(ANIMATED_OBJECT(self));
+        update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
+    }
 }
+#endif
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008DAE8);
+void func_8008DAE8(struct MainObj* self)
+{
+    if (D_8013B8A0 != 0) {
+        D_8013B8A0--;
+        if (self->ext.main_74.target != 0) {
+            animate_object(ANIMATED_OBJECT(self));
+            update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
+            return;
+        }
+    }
+    switch (self->ext.main_74.pattern_index) {
+    case 0:
+        self->unk5 = 5;
+        self->ext.main_74.pattern_index++;
+        break;
+    case 1:
+        self->unk5 = 8;
+        self->ext.main_74.pattern_index++;
+        break;
+    case 2:
+        if (D_8013B8B8 == 2) {
+            self->ext.main_74.pattern_index = 6;
+            self->unk5 = 4;
+        } else {
+            self->unk5 = 6;
+        }
+        self->ext.main_74.pattern_index++;
+        break;
+    case 3:
+        if (get_random() & 1)
+            self->unk5 = 0xC;
+        else
+            self->unk5 = 0xD;
+        self->ext.main_74.pattern_index++;
+        break;
+    case 4:
+        self->unk5 = 7;
+        self->ext.main_74.pattern_index++;
+        break;
+    case 5:
+        self->unk5 = 8;
+        self->ext.main_74.pattern_index++;
+        break;
+    case 6:
+        if (D_8013B8B8 == 1) {
+            self->ext.main_74.pattern_index = 2;
+            self->unk5 = 6;
+        } else {
+            self->unk5 = 4;
+        }
+        self->ext.main_74.pattern_index++;
+        break;
+    case 7:
+        if (get_random() & 1)
+            self->unk5 = 9;
+        else
+            self->unk5 = 0xA;
+        self->ext.main_74.pattern_index = 0;
+        break;
+    }
+    if (self->ext.main_74.target != 0) {
+        animate_object(ANIMATED_OBJECT(self));
+        update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
+    }
+}
 #endif
 
 void sigma_final_laser_start(struct MainObj* self)
@@ -745,7 +836,7 @@ void sigma_final_hide_upper_wait(struct MainObj* self)
         self->unk5 = 2;
         self->unk6 = 0;
         sigma_final_set_target(self, 0);
-        D_8013B8A0[0] = 0x1E;
+        D_8013B8A0 = 0x1E;
         return;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -779,7 +870,7 @@ void sigma_final_show_upper_wait(struct MainObj* self)
     if (self->animation_step.fields.relative_step < 0) {
         self->unk5 = 2;
         self->unk6 = 0;
-        D_8013B8A0[0] = 0x1E;
+        D_8013B8A0 = 0x1E;
     }
 
     animate_object(ANIMATED_OBJECT(self));
@@ -816,7 +907,7 @@ void sigma_final_hide_lower_wait(struct MainObj* self)
         self->unk5 = 2;
         self->unk6 = 0;
         sigma_final_set_target(self, 0);
-        D_8013B8A0[0] = 0x1E;
+        D_8013B8A0 = 0x1E;
         return;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -850,7 +941,7 @@ void sigma_final_show_lower_wait(struct MainObj* self)
     if (self->animation_step.fields.relative_step < 0) {
         self->unk5 = 2;
         self->unk6 = 0;
-        D_8013B8A0[0] = 0xA;
+        D_8013B8A0 = 0xA;
     }
     animate_object(ANIMATED_OBJECT(self));
 }
@@ -1159,7 +1250,7 @@ void sigma_final_summon_wait(struct MainObj* self)
     if (sigma_sequencer->active == 0) {
         self->unk5 = 2;
         self->unk6 = 0;
-        D_8013B8A0[0] = 0x1E;
+        D_8013B8A0 = 0x1E;
     }
 }
 
@@ -1169,90 +1260,98 @@ void sigma_final_summon(struct MainObj* self)
 }
 
 // sigma_final_fight
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F1A8);
+#else
 void func_8008F1A8(struct MainObj* self)
 {
-    struct Main74Ext* ext = &self->ext.main_74;
     s32 hit;
-    u8 flash;
 
     sigma_final_step_funcs[self->unk5](self);
-    if (ext->target == 0)
-        goto done;
-    self->unk65 = D_8013B89C[0];
-    self->collision_data = D_801060F0;
-    self->hurt_box = D_8013B8B4;
-    func_8002DD04(self);
-    D_8013B89C[0] = self->unk65;
-    if (D_8013B8A4[0] == 0)
-        self->collision_data = ext->target == 1 ? D_80108284 : D_80108304;
-    self->unk65 = D_8013B898[0];
-    self->hurt_box = D_8013B8B0;
-    hit = func_8002DD04(self);
-    D_8013B898[0] = self->unk65;
-    if (hit < 0) {
-        STOP_SOUND(2, 1, 0x5);
-        self->unk5 = 0;
-        self->unk6 = 0;
-        self->unk62 = 0;
-        self->state++;
-        self->unk42 &= 0x7FFF;
-        if (D_8013B8B8 != 0) {
-            ext->death_kind = 2;
-            player_start_script_action(0x14, g_Player.unk15);
-            g_Player.spike_immune = 1;
-            engine_obj.gameplay_locked = 1;
-        } else {
-            ext->death_kind = 1;
-        }
-        return;
-    }
-    if (hit > 0 && hit != 0x7F) {
-        D_8013B8A4[0] = (u32)(hit - 0x19) < 2 ? 2 : 0x1E;
+    if (self->ext.main_74.target != 0) {
+        self->unk65 = D_8013B89C;
         self->collision_data = D_801060F0;
-    }
-    flash = D_8013B8A4[0];
-    if (flash != 0) {
-        D_8013B8A4[0] = flash - 1;
-        if (flash & 2)
-            self->unk42 |= 0x8000;
-        else
+        self->hurt_box = D_8013B8B4;
+        func_8002DD04(self);
+        D_8013B89C = self->unk65;
+        if (D_8013B8A4 == 0)
+            if (self->ext.main_74.target == 1)
+                self->collision_data = D_80108284;
+            else
+                self->collision_data = D_80108304;
+        self->unk65 = D_8013B898;
+        self->hurt_box = D_8013B8B0;
+        hit = func_8002DD04(self);
+        D_8013B898 = self->unk65;
+        if (hit < 0) {
+            STOP_SOUND(2, 1, 0x5);
+            self->unk5 = 0;
+            self->unk6 = 0;
+            self->unk62 = 0;
+            self->state++;
             self->unk42 &= 0x7FFF;
-        if (D_8013B8A4[0] == 0) {
-            self->unk42 &= 0x7FFF;
-            self->collision_data = ext->target == 1 ? D_80108284 : D_80108304;
+            if (D_8013B8B8 != 0) {
+                self->ext.main_74.death_kind = 2;
+                player_start_script_action(0x14, g_Player.unk15);
+                g_Player.spike_immune = 1;
+                engine_obj.gameplay_locked = 1;
+                return;
+            }
+            self->ext.main_74.death_kind = 1;
+            return;
+        }
+        if (hit > 0 && hit != 0x7F) {
+            if (hit == 0x19 || hit == 0x1A)
+                D_8013B8A4 = 2;
+            else
+                D_8013B8A4 = 0x1E;
+            self->collision_data = D_801060F0;
+        }
+        if (D_8013B8A4 != 0) {
+            if (D_8013B8A4-- & 2)
+                self->unk42 |= 0x8000;
+            else
+                self->unk42 &= 0x7FFF;
+            if (D_8013B8A4 == 0) {
+                self->unk42 &= 0x7FFF;
+                if (self->ext.main_74.target == 1)
+                    self->collision_data = D_80108284;
+                else
+                    self->collision_data = D_80108304;
+            }
         }
     }
-done:
     func_8002D9BC(self);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F1A8);
 #endif
 
 // sigma_final_death_start
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F3F4);
+#else
 void func_8008F3F4(struct MainObj* self)
 {
-    if (self->ext.main_74.target == 2 || D_8013B8B8 == 0) {
-        set_animation(self, self->ext.main_74.target == 2 ? 1 : 0);
-        self->unk7C = 0x7F;
-        self->unk7E = 0x19;
-        self->invincibility_timer = 0x19;
-        self->unk5 = 1;
-    } else {
+    if (self->ext.main_74.target == 2) {
+        set_animation(self, 1);
+    } else if (D_8013B8B8 != 0) {
         set_animation(self, 0x18);
         func_8001540C(2, SATURN_SOUND(9, 0xED), self);
         background_objects[0].unk26 = 0x450;
         background_objects[0].unk24 = 0x450;
         player_start_script_action(0x15, 0);
         self->unk5 = 3;
+        goto done;
+    } else {
+        set_animation(self, 0);
     }
+    self->unk7C = 0x7F;
+    self->unk7E = 0x19;
+    self->invincibility_timer = 0x19;
+    self->unk5 = 1;
+done:
     self->ext.main_74.death_kind = 0;
     update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F3F4);
 #endif
 
 void sigma_final_death_blink(struct MainObj* self)
@@ -1302,7 +1401,7 @@ void func_8008F578(struct MainObj* self)
         sigma_final_set_target(self, 0);
         self->state = 1;
         self->unk5 = 2;
-        D_8013B8A0[0] = 0x3C;
+        D_8013B8A0 = 0x3C;
         self->ext.main_74.pattern_index = 2;
         self->invincibility_timer = 0;
     } else {

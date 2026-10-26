@@ -65,32 +65,30 @@ u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y, s32 x_speed, s32 y_
 void func_800D4B30(struct QuadObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_02_stage_select_flyout", func_800D4B30);
+#else
 void func_800D4B30(struct QuadObj* arg0)
 {
-    u8 old_direction;
     u8 direction;
-    s16 target_x = stage_select_flyout_targets[(u8)arg0->unk2][0];
-    s16 target_y = stage_select_flyout_targets[(u8)arg0->unk2][1];
+    s16* target;
 
     arg0->ext.quad_2.x_scale.value += 0xC;
-    old_direction = arg0->ext.quad_2.direction[0];
-    arg0->ext.quad_2.direction[1] = old_direction;
+    arg0->ext.quad_2.direction[1] = arg0->ext.quad_2.direction[0];
     arg0->ext.quad_2.y_scale.value += 0xC;
     direction = func_800D41EC(&arg0->x_pos.val, &arg0->y_pos.val,
-        (s32)target_x << 16, (s32)target_y << 16, 0x28, 0x28);
+        stage_select_flyout_targets[arg0->unk2][0] << 16, stage_select_flyout_targets[arg0->unk2][1] << 16, 0x28, 0x28);
     arg0->ext.quad_2.direction[1] = direction;
-    if (((direction ^ old_direction) & 0x10) != 0) {
-        arg0->x_pos.i.hi = target_x;
-        arg0->y_pos.i.hi = target_y;
+    if ((direction ^ arg0->ext.quad_2.direction[0]) & 0x10) {
+        target = stage_select_flyout_targets[arg0->unk2];
+        arg0->x_pos.i.hi = target[0];
+        arg0->y_pos.i.hi = target[1];
         arg0->state = 2;
         arg0->unk7 = 0x3C;
     }
     stage_select_flyout_scale(arg0);
     quad_is_on_screen(arg0);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/quads/quad_02_stage_select_flyout", func_800D4B30);
 #endif
 
 void stage_select_flyout_wait(struct QuadObj* arg0)

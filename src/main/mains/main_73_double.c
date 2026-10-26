@@ -58,6 +58,8 @@ extern struct Unk_unk68 D_80108204[];
 extern void (*double_step_funcs[6])(struct MainObj*);
 extern u8* double_script_table_0[2];
 extern void* double_script_table_1[2];
+extern void* double_animations[31];
+extern struct Unk_unk68 double_terrain_box;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008CD80(struct MainObj* self);
 void func_8008C10C(struct MainObj* self);
@@ -65,52 +67,54 @@ void func_8008BA38(struct MainObj* self);
 void func_8008BB6C(struct MainObj* self);
 void func_8008C664(struct MainObj* self);
 void double_spawn_afterimage(struct MainObj*, s8);
-extern void* double_animations[31];
-extern struct Unk_unk68 double_terrain_box;
-extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BA38);
+#else
 void func_8008BA38(struct MainObj* self)
 {
-    struct Main73Ext* ext = &self->ext.main_73;
     s32 index;
 
     if (engine_obj.cur_character != 0) {
         despawn_object_permanently(OBJECT_HEADER(self));
         return;
     }
+    self->state = 0;
     self->unk5 = 1;
+    self->unk6 = 0;
+    self->unk7 = 0;
     self->unk7C = 0x80;
+    self->on_screen = 0;
+    self->hp = 0;
     self->contact_damage = 6;
+    self->invincibility_timer = 0;
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    self->animation_table = (const u8* const*)double_animations;
     self->hurt_box = &double_hurt_box;
     self->attack_box = &double_attack_box;
     self->terrain_box = &double_terrain_box;
     self->collision_data = D_80108204;
-    self->state = 0;
-    self->unk6 = 0;
-    self->unk7 = 0;
-    self->on_screen = 0;
-    self->hp = 0;
-    self->invincibility_timer = 0;
-    self->animation_table = (const u8* const*)double_animations;
     self->air_state = 0;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->unk16 = VISUAL_SATURN_LAYER(4);
-    ext->blink_delay = 0;
-    ext->unk8A = 0;
-    self->unk18 = self->x_pos;
-    self->unk1C = self->y_pos;
+    self->ext.main_73.blink_delay = 0;
+    self->ext.main_73.unk8A = 0;
     self->bg_offset = g_Player.bg_offset;
     index = func_8002938C(0x49);
-    self->unk40 = OBJECT_STAGE_TEXTURE(index);
-    set_animation(self, 0);
+    {
+        struct MainObj* o = self;
+        u32 tex = OBJECT_STAGE_TEXTURE(index);
+        o->animation_table = (const u8* const*)double_animations;
+        o->unk16 = VISUAL_SATURN_LAYER(4);
+        o->unk40 = tex;
+        set_animation(o, 0);
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BA38);
 #endif
 
 // double_intro_warning

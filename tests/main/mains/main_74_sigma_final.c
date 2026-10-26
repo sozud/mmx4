@@ -12,7 +12,7 @@ void sigma_final_idle(struct MainObj* arg0);
 void sigma_final_laser(struct MainObj* arg0);
 extern void* sigma_final_animations[39];
 extern void* D_8013B8B4;
-extern u8 D_8013B8A0[4];
+extern u8 D_8013B8A0;
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 
@@ -367,8 +367,7 @@ static u32 hide_case(u32 mode, u32 observation)
     }
     D_8013B8B0 = &box;
     D_8013B8B4 = &box;
-    for (i = 0; i < 4; i++)
-        D_8013B8A0[i] = 0x27 + i;
+    D_8013B8A0 = 0x27;
     before = obj;
     player_before = g_Player;
     memcpy(children_before, children, sizeof(children));
@@ -389,8 +388,7 @@ static u32 hide_case(u32 mode, u32 observation)
             before.on_screen = 1;
         assert(D_8013B8B0 == &box && D_8013B8B4 == &box);
     }
-    assert(D_8013B8A0[0] == (mode == 0 ? 0x1E : 0x27));
-    assert(D_8013B8A0[1] == 0x28 && D_8013B8A0[2] == 0x29 && D_8013B8A0[3] == 0x2A);
+    assert(D_8013B8A0 == (mode == 0 ? 0x1E : 0x27));
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     for (i = 0; i < sizeof(children) / 4; i++)
@@ -400,7 +398,7 @@ static u32 hide_case(u32 mode, u32 observation)
     for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
         assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
     assert(box.unk0 == 1 && box.unk1 == 2 && box.unk2 == 3 && box.unk3 == 4);
-    return observation == 0 ? (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)D_8013B8A0[0] << 16) : obj.animation_step.packed;
+    return observation == 0 ? (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)D_8013B8A0 << 16) : obj.animation_step.packed;
 }
 static const u32 sigma_lower_hide_children_cases_expected[] = { 0x1E0002u, 0x4F000002u, 0x270107u, 0x4F000001u, 0x270107u, 0x4F010001u };
 static u32 sigma_lower_hide_children_cases_row(u32 row)
@@ -419,10 +417,7 @@ static u32 pattern_case(u32 observation)
     obj.state = 1;
     obj.unk5 = 0x27;
     obj.ext.main_74.pattern_index = 7;
-    D_8013B8A0[0] = 0;
-    D_8013B8A0[1] = 0x27;
-    D_8013B8A0[2] = 0x28;
-    D_8013B8A0[3] = 0x29;
+    D_8013B8A0 = 0;
     D_8013B8B8 = 0;
     cur_random = 1;
     before = obj;
@@ -434,8 +429,7 @@ static u32 pattern_case(u32 observation)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     for (i = 0; i < sizeof(g_Player) / 4; i++)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    assert(D_8013B8A0[0] == 0 && D_8013B8A0[1] == 0x27
-        && D_8013B8A0[2] == 0x28 && D_8013B8A0[3] == 0x29 && D_8013B8B8 == 0);
+    assert(D_8013B8A0 == 0 && D_8013B8B8 == 0);
     if (observation == 0)
         return (u8)obj.unk5 | ((u32)obj.ext.main_74.pattern_index << 8);
     return cur_random;
@@ -479,7 +473,7 @@ static u32 test_func_8008DAE8(u32 row)
     obj.ext.main_74.pattern_index = c->pattern_index;
     D_8013B8B8 = c->D_8013B8B8;
     func_8008DAE8(&obj);
-    observed_values[0] = (u32)D_8013B8A0[0];
+    observed_values[0] = (u32)D_8013B8A0;
     observed_values[1] = (u32)obj.ext.main_74.pattern_index;
     observed_values[2] = (u32)obj.unk5;
     return c_test_observe(0, row, observed_values, c->expected, 3);
@@ -1123,7 +1117,7 @@ static u32 full(u32 row)
 extern struct Unk_unk68 D_80105374;
 extern void* sigma_final_animations[39];
 extern void* D_8013B8B4;
-extern u8 D_8013B898[4], D_8013B89C[4], D_8013B8A4[4];
+extern u8 D_8013B898, D_8013B89C, D_8013B8A4;
 extern struct Unk_unk68 D_80105370, D_80108284[], D_80108304[];
 void sigma_final_set_target(struct MainObj*, s32);
 static const s16 weapons[] = { -1, 0, 24, 25, 35, -2 };
@@ -1184,9 +1178,9 @@ static u32 weapon_regions(u32 row)
     D_8013B8B0 = vulnerable;
     D_8013B8B8 = prior ? 3 - target : 0;
     counters[2][0] = flash;
-    memcpy(D_8013B898, counters[0], 4);
-    memcpy(D_8013B89C, counters[1], 4);
-    memcpy(D_8013B8A4, counters[2], 4);
+    D_8013B898 = counters[0][0];
+    D_8013B89C = counters[1][0];
+    D_8013B8A4 = counters[2][0];
     if (weapon >= 0) {
         weapon_objects[0].active = 0x21;
         weapon_objects[0].id = weapon;
@@ -1253,8 +1247,7 @@ static u32 weapon_regions(u32 row)
     SAME(background_objects, backgrounds_before);
     SAME(weapon_objects, weapons_expected);
     SAME(visual_objects, visuals_before);
-    for (i = 0; i < 4; i++)
-        assert(D_8013B898[i] == counters[0][i] && D_8013B89C[i] == counters[1][i] && D_8013B8A4[i] == counters[2][i]);
+    assert(D_8013B898 == counters[0][0] && D_8013B89C == counters[1][0] && D_8013B8A4 == counters[2][0]);
     assert(D_8013B8B0 == vulnerable && D_8013B8B4 == (target == 1 ? &D_8010536C : &D_80105370) && D_8013B8B8 == (prior ? 3 - target : 0));
     assert(stop_commands[0] == 0 && stop_commands[1] == 0 && D_80141F50[2] == (u8*)stop_commands && cur_random == 0x1234);
     return 1;

@@ -74,36 +74,37 @@ extern u8 sigma_final_shot_terrain_box_1[4];
 extern s16 sigma_final_shot_offsets[4];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_54_sigma_final_shot", func_800ABE08);
+#else
 void func_800ABE08(struct ShotObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk7C;
-    u8 odd;
 
     self->unk40 = parent->unk40;
     self->animation_table = (u32**)parent->animation_table;
+    self->unk3C = (void*)parent->sprite_frames;
     self->unk58.collision_data = D_80106070;
     self->unk54 = NULL;
-    self->unk3C = (void*)parent->sprite_frames;
-    switch ((u8)self->unk2) {
+    switch (self->unk2) {
     case 0:
         self->unk42 = (parent->unk42 + 7) & 0x7FFF;
         set_animation(self, 0xD);
         self->unk5 = 2;
         self->x_vel.val = 0x40000;
+        self->y_vel.val = sigma_final_shot_offsets[self->unk7] << 16;
         self->timer = 0x19;
         self->unk50.data = sigma_final_shot_box_0;
         self->unk15 = PLAYER_FACING_RIGHT;
         self->unk68 = NULL;
-        self->y_pos.i.hi += 0x10;
         self->x_pos.i.hi += 0x18;
+        self->y_pos.i.hi += 0x10;
         self->unk5C = 1;
         self->unk60 = 6;
-        self->y_vel.val = sigma_final_shot_offsets[self->unk7] << 16;
         break;
     case 1:
-        self->timer = 0x14;
         self->unk42 = (parent->unk42 + 2) & 0x7FFF;
+        self->timer = 0x14;
         set_animation(self, 0xE);
         self->unk5 = 3;
         self->unk50.data = sigma_final_shot_box_1;
@@ -114,6 +115,7 @@ void func_800ABE08(struct ShotObj* self)
         break;
     case 2:
         set_animation(self, 0x10);
+        self->unk42 = (parent->unk42 + 3) & 0x7FFF;
         self->unk5 = 4;
         self->x_vel.val = 0xFFFD0000;
         self->y_vel.val = 0x10000;
@@ -124,50 +126,45 @@ void func_800ABE08(struct ShotObj* self)
         self->unk60 = 9;
         self->unk28 = 0;
         self->unk70 = 0;
-        self->unk42 = (parent->unk42 + 3) & 0x7FFF;
         self->x_pos.i.hi -= 0x18;
         self->y_pos.i.hi += 0x10;
         break;
     case 3:
     case 4:
+        set_animation(self, 0x13);
+        self->x_vel.val = (self->unk2 & 1) ? 0x40000 : 0xFFFC0000;
+        self->y_vel.val = 0;
+        self->unk50.data = sigma_final_shot_wide_box;
+        goto facing;
     case 5:
     case 6:
-        odd = self->unk2 & 1;
-        if (self->unk2 <= 4) {
-            set_animation(self, 0x13);
-            self->x_vel.val = odd ? 0x40000 : 0xFFFC0000;
-            self->y_vel.val = 0;
-            self->unk50.data = sigma_final_shot_wide_box;
-        } else {
-            set_animation(self, 0x12);
-            self->x_vel.val = 0;
-            self->y_vel.val = odd ? 0x40000 : 0xFFFC0000;
-            self->unk50.data = sigma_final_shot_tall_box;
-        }
-        self->unk15 = (odd == 0) << PLAYER_FACING_SHIFT;
+        set_animation(self, 0x12);
+        self->x_vel.val = 0;
+        self->y_vel.val = (self->unk2 & 1) ? 0x40000 : 0xFFFC0000;
+        self->unk50.data = sigma_final_shot_tall_box;
+    facing:
+        self->unk15 = ((self->unk2 & 1) == 0) << PLAYER_FACING_SHIFT;
+        self->unk42 = (parent->unk42 + 2) & 0x7FFF;
         self->unk5 = 6;
         self->unk5C = 1;
         self->unk60 = 6;
-        self->unk42 = (parent->unk42 + 2) & 0x7FFF;
         break;
     case 7:
         set_animation(self, 0x14);
+        self->unk42 = (parent->unk42 + 4) & 0x7FFF;
         self->unk15 = PLAYER_FACING_RIGHT;
         self->unk5 = 5;
         self->unk5C = 1;
         self->unk60 = 0x18;
         self->unk50.data = NULL;
         self->timer = 0x3C;
-        self->unk42 = (parent->unk42 + 4) & 0x7FFF;
         break;
     }
     self->state = 1;
-    self->unk16 = 0;
     self->bg_offset = parent->bg_offset;
+    self->unk16 = 0;
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_54_sigma_final_shot", func_800ABE08);
 #endif
 
 void sigma_final_shot_fireball(struct ShotObj* self)

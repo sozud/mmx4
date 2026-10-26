@@ -37,17 +37,17 @@ void flame_jet_extinguished(struct BarObj* arg0);
 
 // flame_jet_init
 
+extern u8 flame_jet_intervals[8];
+extern struct Unk_unk68 flame_jet_debris[2];
+extern union AnimationStep* flame_jet_animations[9];
+extern struct Unk_unk68 D_80107C78[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 static struct VisualObj* main_62_spawn_arm(struct MainObj* arg0, s8 side);
 void func_8007B90C(struct MainObj* arg0);
 u8 func_8007BABC(struct MainObj* arg0);
 void func_8007BE40(struct MainObj* arg0);
 s32 func_8002BD58(struct MainObj*, struct MainObj*, s16*, s16*);
-extern u8 flame_jet_intervals[8];
-extern struct Unk_unk68 flame_jet_debris[2];
 extern struct Unk_unk68 flame_jet_extinguish_debris[2];
-extern union AnimationStep* flame_jet_animations[9];
-extern struct Unk_unk68 D_80107C78[];
 extern s16 flame_jet_smoke_offsets[20];
 static struct VisualObj* main_62_spawn_arm(struct MainObj* arg0, s8 side)
 {
@@ -65,36 +65,59 @@ static struct VisualObj* main_62_spawn_arm(struct MainObj* arg0, s8 side)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007B90C);
+#else
 void func_8007B90C(struct MainObj* arg0)
 {
-    struct VisualObj* visual = NULL;
+    struct VisualObj* visual;
 
+#ifdef MMX4_PC
+    visual = NULL;
+#endif
     arg0->active |= 4;
-    arg0->unk15 = (arg0->unk2 & 1) ? PLAYER_FACING_RIGHT : 0;
+    if (!(arg0->unk2 & 1)) {
+        arg0->unk15 = 0;
+    } else {
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+    }
     arg0->unk7C = flame_jet_intervals[arg0->unk2];
     if (arg0->unk2 < 4) {
-        main_62_spawn_arm(arg0, 1);
-        visual = main_62_spawn_arm(arg0, 0);
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0x19;
+            visual->unk2 = 1;
+            visual->x_pos.val = arg0->x_pos.val - (arg0->unk15 != 0 ? 0x690000 : -0x690000);
+            visual->y_pos.val = arg0->y_pos.val - 0x80000;
+            visual->unk50 = (struct PlayerObj*)arg0;
+        }
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0x19;
+            visual->unk2 = 0;
+            visual->x_pos.val = arg0->x_pos.val + (arg0->unk15 != 0 ? -0x690000 : 0x690000);
+            visual->y_pos.val = arg0->y_pos.val - 0x80000;
+            visual->unk50 = (struct PlayerObj*)arg0;
+        }
         spawn_debris_offset(6, (u8*)flame_jet_debris, (struct MiscObj*)arg0,
             arg0->unk15 != 0 ? -0x690000 : 0x690000, 0);
     }
     arg0->ext.main_62.unk80 = visual;
     arg0->ext.main_62.unk86 = 0;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)flame_jet_animations;
     arg0->unk16 = 2;
-    arg0->collision_data = D_80107C78;
-    arg0->hp = 0x7F;
     arg0->terrain_box = NULL;
     arg0->invincibility_timer = 0;
     arg0->unk62 = 0;
+    arg0->collision_data = D_80107C78;
+    arg0->hp = 0x7F;
     arg0->contact_damage = 4;
     arg0->air_state = 0;
-    arg0->bg_offset = g_Player.bg_offset;
     arg0->unk5++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007B90C);
 #endif
 
 // flame_jet_is_vent_blocked
@@ -194,33 +217,28 @@ void flame_jet_main(struct MainObj* self)
 }
 
 // flame_jet_extinguish
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007BE40);
+#else
+extern struct Unk_unk68 flame_jet_extinguish_debris[2];
+extern s16 flame_jet_smoke_offsets[20];
 void func_8007BE40(struct MainObj* arg0)
 {
-    s32 index;
-    s32 x_offset;
-
-    if (--arg0->unk7E != 0) {
-        update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
-        arg0->ext.main_62.unk86 = arg0->on_screen;
+    if (--arg0->unk7E == 0) {
+        arg0->unk5++;
+        spawn_debris_offset(8, (u8*)flame_jet_extinguish_debris, (struct MiscObj*)arg0, (arg0->unk15 != 0 ? -*(s16*)((u8*)flame_jet_smoke_offsets + ((arg0->animation_step.fields.frame_index - 3) << 2)) : *(s16*)((u8*)flame_jet_smoke_offsets + ((arg0->animation_step.fields.frame_index - 3) << 2))) << 16,
+            *(s16*)((u8*)flame_jet_smoke_offsets + 2 + ((arg0->animation_step.fields.frame_index - 3) << 2)) << 16);
+        arg0->state = 1;
+        arg0->unk5 = 3;
+        arg0->unk7E = 0xC8;
+        arg0->hp = 0x7F;
+        arg0->unk42 -= 2;
+        set_animation(arg0, 2);
         return;
     }
-    arg0->unk5++;
-    index = arg0->animation_step.fields.frame_index - 3;
-    x_offset = flame_jet_smoke_offsets[index * 2];
-    if (arg0->unk15 != 0)
-        x_offset = -x_offset;
-    spawn_debris_offset(8, (u8*)flame_jet_extinguish_debris, (struct MiscObj*)arg0, (s32)((u32)x_offset << 16),
-        (s32)((u32)flame_jet_smoke_offsets[index * 2 + 1] << 16));
-    arg0->state = 1;
-    arg0->unk5 = 3;
-    arg0->unk7E = 0xC8;
-    arg0->hp = 0x7F;
-    arg0->unk42 -= 2;
-    set_animation(arg0, 2);
+    update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
+    arg0->ext.main_62.unk86 = arg0->on_screen;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007BE40);
 #endif
 
 void flame_jet_extinguished_idle(void)

@@ -138,11 +138,12 @@ void peacock_missile_explode_start(struct ShotObj* self)
 }
 
 // peacock_missile_spawn_explosion
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A666C);
+#else
 void func_800A666C(struct ShotObj* arg0, s32 x_range, s32 y_range)
 {
     struct MiscObj* misc = find_free_misc_obj();
-    u8 amount;
 
     if (misc == NULL)
         return;
@@ -151,26 +152,24 @@ void func_800A666C(struct ShotObj* arg0, s32 x_range, s32 y_range)
     misc->unk2 = 4;
     misc->x_pos.val = arg0->x_pos.val;
     misc->y_pos.val = arg0->y_pos.val;
-    amount = x_range & get_random();
+    x_range &= get_random();
     if (get_random() & 1)
-        misc->x_pos.i.hi += amount;
+        misc->x_pos.i.hi += (u8)x_range;
     else
-        misc->x_pos.i.hi -= amount;
-    amount = y_range & get_random();
+        misc->x_pos.i.hi -= (u8)x_range;
+    y_range &= get_random();
     if (get_random() & 1)
-        misc->y_pos.i.hi += amount;
+        misc->y_pos.i.hi += (u8)y_range;
     else
-        misc->y_pos.i.hi -= amount;
+        misc->y_pos.i.hi -= (u8)y_range;
     misc->animation_table = arg0->animation_table;
     misc->unk40 = arg0->unk40;
     misc->unk3C = arg0->unk3C;
     misc->unk42 = arg0->unk42 & 0x7FFF;
+    misc->unk16 = arg0->unk16;
     misc->ext.misc_49.owner = arg0;
     misc->unk15 = 0;
-    misc->unk16 = arg0->unk16;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A666C);
 #endif
 
 void peacock_missile_explode(struct ShotObj* self)

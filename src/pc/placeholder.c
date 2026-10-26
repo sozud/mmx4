@@ -106,38 +106,6 @@ s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source, u8 pan)
     return 0;
 }
 
-s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source)
-{
-    u8 packed1 = ((u8*)D_80137E08)[1];
-    u8 packed2 = ((u8*)D_80137E08)[2];
-    u8 packed3 = ((u8*)D_80137E08)[3];
-    u8 fixed_pan = packed1 >> 7;
-    u8 access = packed1 & 0x7F;
-    u8 priority = packed2 & 0xF;
-    u8 slot = packed2 >> 4;
-    u8 current = D_8013924C[slot];
-    u8 sequence = packed3 & 0x1F;
-
-    (void)unused;
-    (void)source;
-    if (current != 0xFF && SsIsEos(access, current & 0x1F)) {
-        if (priority < (current >> 5))
-            return -1;
-        if ((current & 0x1F) == 0x1F)
-            SsSeqStop(access);
-        else
-            SsSepStop(access, current & 0xF);
-    }
-    if (type == 2) {
-        SsSepPlay(access, sequence, SSPLAY_PLAY, D_800F1650[fixed_pan]);
-        D_8013924C[slot] = sequence | (priority << 5);
-    } else {
-        SsSeqPlay(access, SSPLAY_PLAY, D_800F1650[fixed_pan]);
-        D_8013924C[slot] = 0x1F | (priority << 5);
-    }
-    return 0;
-}
-
 struct ControllerButtons {
     u16 current;
     u16 previous;

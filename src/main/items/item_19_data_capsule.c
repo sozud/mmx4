@@ -131,10 +131,11 @@ INCLUDE_ASM("main/nonmatchings/items/item_19_data_capsule", func_800C4778);
 #endif
 
 // data_capsule_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_19_data_capsule", func_800C49BC);
+#else
 void func_800C49BC(struct ItemObj* self)
 {
-    u16* second_timer = (u16*)&self->unk7C;
     struct MainObj* spawned;
     s32 index;
     s16 right_edge;
@@ -145,46 +146,49 @@ void func_800C49BC(struct ItemObj* self)
         self->unk7C.timer16 = 0x1E;
 
     if (self->unk2 == 0) {
-        if (self->unk7C.timer16 != 0) {
-            self->unk7C.timer16--;
-        } else if (self->animation_step.fields.relative_step != 0) {
-            animate_object(ANIMATED_OBJECT(self));
-        } else {
-            right_edge = (s16)(background_objects[(u8)self->bg_offset].y_pos.u.hi + 0xF0);
-            if (self->y_pos.i.hi < right_edge) {
-                self->unk7C.timer16 = 0x1E;
-                spawned = find_free_main_obj();
-                if (spawned != NULL) {
-                    spawned->active = 0x41;
-                    spawned->id = 0x29;
-                    spawned->unk2 = 1;
-                    index = (u8)func_8002938C(0x29);
-                    spawned->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
-                    spawned->unk40 = OBJECT_STAGE_TEXTURE(index);
-                    spawned->unk42 = OBJECT_CLUT(((index * 4 + 0x18) & 0xF) | (((index + 6) / 4 + 0x1E0) << 6));
-                    spawned->x_pos = self->x_pos;
-                    spawned->y_pos.val = self->y_pos.val + 0x280000;
-                    spawned->unk15 = 0;
-                    set_animation(self, self->unk2 + 0xF);
-                    if (self->on_screen)
-                        func_8001540C(2, 0xEA, spawned);
+        if (self->unk7C.timer16 == 0) {
+            if (self->animation_step.fields.relative_step != 0) {
+                animate_object(ANIMATED_OBJECT(self));
+            } else {
+                right_edge = (s16)(background_objects[self->bg_offset].y_pos.u.hi + 0xF0);
+                if (right_edge > self->y_pos.i.hi) {
+                    self->unk7C.timer16 = 0x1E;
+                    spawned = find_free_main_obj();
+                    if (spawned != NULL) {
+                        spawned->active = 0x41;
+                        spawned->id = 0x29;
+                        spawned->unk2 = 1;
+                        index = (u8)func_8002938C(0x29);
+                        spawned->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
+                        spawned->unk40 = OBJECT_STAGE_TEXTURE(index);
+                        spawned->unk42 = OBJECT_CLUT(((index * 4 + 0x18) % 16) | (((index * 4 + 0x18) / 16 + 0x1E0) << 6));
+                        spawned->x_pos = self->x_pos;
+                        spawned->y_pos.val = self->y_pos.val + 0x280000;
+                        spawned->unk15 = 0;
+                        set_animation(self, self->unk2 < 2 ? self->unk2 + 0xF : self->unk2 + 0xF);
+                        if (self->on_screen)
+                            func_8001540C(2, 0xEA, spawned);
+                    }
                 }
             }
-        }
-    } else if (second_timer[1] != 0) {
-        if (self->animation_step.fields.relative_step != 0) {
-            animate_object(ANIMATED_OBJECT(self));
         } else {
-            second_timer[1] = 0;
-            set_animation(self, self->unk2 + 0xF);
+            self->unk7C.timer16--;
+        }
+    } else if (self->unk7C.saved_pos.y != 0) {
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk7C.saved_pos.y = 0;
+            if (self->unk2 < 2)
+                set_animation(self, self->unk2 + 0xF);
+            else
+                set_animation(self, self->unk2 + 0xF);
+        } else {
+            animate_object(ANIMATED_OBJECT(self));
         }
     }
     self->unk7 = engine_obj.character_state.fields.active;
     collide_with_players(self);
     is_on_screen(BASE_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_19_data_capsule", func_800C49BC);
 #endif
 
 void data_capsule_idle(struct ItemObj* arg0)

@@ -39,27 +39,22 @@ void func_800AA5E0(struct ShotObj* self);
 void func_800AA68C(struct ShotObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA5E0);
+#else
 void func_800AA5E0(struct ShotObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
-        s32 height;
-        s16 target;
-        s32 distance;
+        s32 offset;
 
         self->unk5++;
-        height = (get_random() & 1) ? 0x40 : 0x70;
-        target = (u16)background_objects[0].y_pos.u.hi - (height - 0xC0);
-        distance = target - self->y_pos.i.hi;
-        self->unk8C.halves[1] = target;
-        if (distance < 0)
-            distance = -distance;
-        self->timer = distance / 4 + 1;
+        self->unk8C.halves[1] = (get_random() & 1) ? 0x40 : 0x70;
+        offset = self->unk8C.halves[1] - 0xC0;
+        self->unk8C.halves[1] = background_objects[0].y_pos.u.hi - offset;
+        self->timer = ABS((s16)self->unk8C.halves[1], self->y_pos.i.hi) / 4 + 1;
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA5E0);
 #endif
 
 // double_mine_arm

@@ -552,7 +552,44 @@ INCLUDE_ASM("main/nonmatchings/55C4", func_8001540C);
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_800154E8);
 
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/55C4", func_800157AC);
+#else
+extern u32* D_80137E08;
+s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source)
+{
+    s32 access;
+    u8 slot;
+    u8 priority;
+    u8 fixed_pan;
+    s32 sequence;
+
+    fixed_pan = ((u8*)D_80137E08)[1] >> 7;
+    priority = ((u8*)D_80137E08)[2] & 0xF;
+    slot = ((u8*)D_80137E08)[2] >> 4;
+    access = ((u8*)D_80137E08)[1] & 0x7F;
+
+    if (D_8013924C[slot] != 0xFF && SsIsEos(access, D_8013924C[slot] & 0x1F) != 0) {
+        if (priority < (D_8013924C[slot] >> 5)) {
+            return -1;
+        }
+        if ((D_8013924C[slot] & 0x1F) == 0x1F) {
+            SsSeqStop(access);
+        } else {
+            SsSepStop(access, D_8013924C[slot] & 0xF);
+        }
+    }
+    if (type == 2) {
+        sequence = ((u8*)D_80137E08)[3] & 0x1F;
+        SsSepPlay(access, sequence, SSPLAY_PLAY, D_800F1650[fixed_pan]);
+        D_8013924C[slot] = sequence | (priority << 5);
+    } else {
+        SsSeqPlay(access, SSPLAY_PLAY, D_800F1650[fixed_pan]);
+        D_8013924C[slot] = (priority << 5) | 0x1F;
+    }
+    return 0;
+}
+#endif
 void stop_sound(u8 arg0, u8 arg1)
 {
     u8* entry;

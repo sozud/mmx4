@@ -339,21 +339,21 @@ void double_cyclone_charged_main(struct WeaponObj* arg0)
 }
 
 // double_cyclone_charged_gather
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097670);
+#else
 void func_80097670(struct WeaponObj* arg0)
 {
-    if (arg0->ext.weapon_16.delay != 0) {
+    if (arg0->ext.weapon_16.delay == 0) {
+        arg0->on_screen = 1;
+        arg0->unk50 = double_cyclone_charged_hit_box;
+        arg0->unk64 = 1;
+        arg0->unk5++;
+        update_on_screen(BASE_OBJECT(arg0), 0x18, 0x30);
+    } else {
         arg0->ext.weapon_16.delay--;
-        return;
     }
-    arg0->on_screen = 1;
-    arg0->unk64 = 1;
-    arg0->unk50 = double_cyclone_charged_hit_box;
-    arg0->unk5++;
-    update_on_screen(BASE_OBJECT(arg0), 0x18, 0x30);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097670);
 #endif
 
 void double_cyclone_charged_fly(struct WeaponObj* arg0)

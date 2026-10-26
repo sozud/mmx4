@@ -53,6 +53,7 @@ ret_s8 func_8002DD04(struct MainObj* object);
 
 extern union AnimationStep* D_800F9934[16];
 extern struct Unk_unk68 D_801062F0[32];
+extern s16 D_800F98EC[36];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80040644(struct MainObj* arg0);
 void func_80040838(struct MainObj* arg0);
@@ -63,7 +64,6 @@ void func_80041060(struct MainObj* arg0);
 void func_800415B0(struct MainObj* arg0);
 void background_dragon_spawn_trail(struct PlayerObj*, s8);
 extern void (*background_dragon_step_funcs[13])(struct MainObj*);
-extern s16 D_800F98EC[36];
 extern u8 background_dragon_attack_map[128];
 extern u16 D_800F99BC[4];
 #endif
@@ -145,30 +145,31 @@ void background_dragon_reset(struct MainObj* self)
 }
 
 // background_dragon_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040838);
+#else
+#ifdef MMX4_SATURN
+#define FRAME_COUNTER_U8 ((u8)WEAPON_FRAME_COUNTER)
+#else
+#define FRAME_COUNTER_U8 (*(u8*)&WEAPON_FRAME_COUNTER)
+#endif
 void func_80040838(struct MainObj* arg0)
 {
-    u8* ext = (u8*)&arg0->ext;
     s32 result;
     u8 saved_step;
     u8 saved_substep;
-    s8 flash;
     s32 spawn;
-    s32 blocked;
+    s32 x;
     u8 timer;
-    u8 next;
-    s16 x;
-    s16 y;
-    u8 offset_index;
 
     if (engine_obj.character_state.bytes[0] != 0) {
-        ext[5] = 1;
+        ((u8*)&arg0->ext)[5] = 1;
     }
-    saved_step = (u8)arg0->unk5;
-    saved_substep = (u8)arg0->unk6;
+    saved_step = arg0->unk5;
+    saved_substep = arg0->unk6;
     result = func_8002DD04(arg0);
     if (result < 0) {
-        ext[5] = 2;
+        ((u8*)&arg0->ext)[5] = 2;
         arg0->unk5 = saved_step;
         arg0->unk6 = saved_substep;
         arg0->invincibility_timer = 0x1E;
@@ -182,11 +183,8 @@ void func_80040838(struct MainObj* arg0)
         func_8001540C(2, 0xC, arg0);
         arg0->invincibility_timer = 0x1E;
     }
-
-    flash = arg0->invincibility_timer;
-    if (flash != 0) {
-        arg0->invincibility_timer = flash - 1;
-        if (flash & 2) {
+    if (arg0->invincibility_timer != 0) {
+        if (arg0->invincibility_timer-- & 2) {
             arg0->unk42 |= 0x8000;
         } else {
             arg0->unk42 &= ~0x8000;
@@ -195,49 +193,32 @@ void func_80040838(struct MainObj* arg0)
             arg0->unk42 &= 0x7FFF;
         }
     }
-
     background_dragon_step_funcs[arg0->unk5](arg0);
-
-    blocked = get_random_nonzero() & 1;
-    if (!blocked && ext[5] == 2) {
-        spawn = ((u8)WEAPON_FRAME_COUNTER ^ 1) & 1;
-        x = arg0->x_pos.i.hi;
-        offset_index = (get_random() & 0x1F) % (COUNT(D_800F98EC) / 2);
-        if (arg0->unk15 != 0) {
-            x -= D_800F98EC[offset_index * 2];
-        } else {
-            x += D_800F98EC[offset_index * 2];
+    if (!(get_random_nonzero() & 1)) {
+        if (((u8*)&arg0->ext)[5] == 2) {
+            spawn = (FRAME_COUNTER_U8 ^ 1) & 1;
+            x = (s16)(arg0->x_pos.i.hi + (arg0->unk15 != 0 ? -D_800F98EC[(get_random() & 0x1F) * 2] : D_800F98EC[(get_random() & 0x1F) * 2]));
+            spawn_explosion_at(0, x, arg0->y_pos.i.hi + D_800F98EC[(get_random() & 0x1F) * 2 + 1], spawn)->unk16 = 0x21;
         }
-        offset_index = (get_random() & 0x1F) % (COUNT(D_800F98EC) / 2);
-        y = (s16)(arg0->y_pos.u.hi
-            + (u16)D_800F98EC[offset_index * 2 + 1]);
-        spawn_explosion_at(0, x, y, (u8)spawn)->unk16 = 0x21;
-        blocked = 1;
     }
-
-    if (blocked && ext[5] == 2) {
-        timer = ext[6];
-        ext[6] = timer - 1;
-        if (timer != 0) {
-            return;
+    if (((u8*)&arg0->ext)[5] == 2) {
+        timer = ((u8*)&arg0->ext)[6];
+        ((u8*)&arg0->ext)[6] += 0xFF;
+        if (timer == 0) {
+            ((u8*)&arg0->ext)[6] = 4;
+            arg0->unk42 ^= 0x8000;
         }
-        next = 4;
-    } else {
-        if (arg0->hp >= 0x18) {
-            return;
-        }
-        timer = ext[6];
-        ext[6] = timer - 1;
-        if (timer != 0) {
-            return;
-        }
-        next = 0x1E;
+        return;
     }
-    ext[6] = next;
-    arg0->unk42 ^= 0x8000;
+    if (arg0->hp < 0x18) {
+        timer = ((u8*)&arg0->ext)[6];
+        ((u8*)&arg0->ext)[6] += 0xFF;
+        if (timer == 0) {
+            ((u8*)&arg0->ext)[6] = 0x1E;
+            arg0->unk42 ^= 0x8000;
+        }
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040838);
 #endif
 
 // background_dragon_pick_step
