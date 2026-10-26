@@ -5,16 +5,12 @@
 #include "memcard.h"
 #include "pc_replay.h"
 
-extern u16 D_800F44E8[8], D_800F44F8[8];
-extern const char D_80010058[], D_8001005C[];
 extern u8 D_800F1FBC[4];
 
 void func_80012D88(const u32* src, u32* dst, u32 count);
 void func_80012DC0(const u32* src, u32* dst, u32 count);
 
-extern u16 D_800F1868[18];
 extern u8 D_800F164C[4];
-extern s16 D_800F1650[2];
 extern union MainPaletteData D_800F1660;
 extern const u32* D_800F2FD4[];
 extern struct StageObjectMarginData D_800F4334;
@@ -23,7 +19,6 @@ extern struct PlayerGaugePosition D_800F3124[2];
 extern u32* D_80137E08;
 
 s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source, u8 pan);
-void func_800DADA0(struct TileEffectRecord*, u16, u16, u8, u8);
 s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
 
 s32 func_8001540C(s32 arg0, s32 arg1, void* arg2)
@@ -144,53 +139,6 @@ void func_80012328(void)
 }
 
 #ifndef MMX4_SATURN
-void func_80016124(void)
-{
-    SPRT* sprites = D_80139268[SP_DRAW_BUFFER];
-    DR_MODE* draw_mode = &D_80139250[SP_DRAW_BUFFER];
-    s16 x = 0;
-    s16 y = 0;
-    s32 i;
-
-    for (i = 0; i < 17; i++) {
-        SPRT* sprite = &sprites[i];
-        s16 width;
-
-        setSprt(sprite);
-        switch (D_800F1868[i]) {
-        case 0:
-            setUV0(sprite, 0x00, 0xD0);
-            width = 0x70;
-            break;
-        case 1:
-            setUV0(sprite, 0x70, 0xD0);
-            width = 0x60;
-            break;
-        case 2:
-            setUV0(sprite, 0x00, 0xD0);
-            width = 0x10;
-            break;
-        default:
-            abort();
-        }
-
-        sprite->clut = 0x784C;
-        setWH(sprite, width, 0x30);
-        setXY0(sprite, x, y);
-        setShadeTex(sprite, 1);
-        setSemiTrans(sprite, 0);
-        addPrim(&cur_draw_info->ordering_table.ui, sprite);
-
-        x += width;
-        if ((u16)x >= 0x140) {
-            x = 0;
-            y += 0x30;
-        }
-    }
-
-    SetDrawMode(draw_mode, 0, 0, GetTPage(0, 0, 0x380, 0x100), 0);
-    addPrim(&cur_draw_info->ordering_table.ui, draw_mode);
-}
 #endif
 
 #ifndef MMX4_SATURN
@@ -1194,13 +1142,12 @@ static int misc_32_cancelled(s8 mode)
     return (controller_input.pressed & PAD_SELECTION_ALT) || ((controller_input.pressed & 0x800) && game_info.unk0 == mode);
 }
 
-static const u16* pause_screen_tiles;
-static SPRT_16* pause_screen_sprites;
-static DR_TPAGE pause_screen_page[2];
+extern u16* D_80139578;
+extern SPRT_16* D_8013957C;
 
 void func_80017268(s16 x_start)
 {
-    SPRT_16* sprite = pause_screen_sprites;
+    SPRT_16* sprite = D_8013957C;
     u32 row;
     u32 column;
     s16 x;
@@ -1210,7 +1157,7 @@ void func_80017268(s16 x_start)
     for (row = 0; row < 16; row++, y += 16) {
         x = x_start;
         for (column = 0; column < 16; column++, x += 16) {
-            tile = *pause_screen_tiles++;
+            tile = *D_80139578++;
             if (x >= 0x140)
                 continue;
             sprite->clut = (tile >> 12) | 0x7900;
@@ -1223,22 +1170,7 @@ void func_80017268(s16 x_start)
             sprite++;
         }
     }
-    pause_screen_sprites = sprite;
-}
-
-void func_80017100(void)
-{
-    DR_TPAGE* page = &pause_screen_page[SP_DRAW_BUFFER];
-
-    pause_screen_tiles = (const u16*)SP_ARC_34;
-    pause_screen_sprites = D_8015D9D0[SP_DRAW_BUFFER].sprites;
-    setlen(page, 1);
-    page->code[0] = (GetGraphType() == 1 || GetGraphType() == 2) ? 0xE100002D : 0xE100001D;
-    setaddr(page, pause_screen_sprites);
-    func_80017268(0);
-    func_80017268(0x100);
-    setaddr(pause_screen_sprites - 1, getaddr(&cur_draw_info->ordering_table.ui));
-    setaddr(&cur_draw_info->ordering_table.ui, page);
+    D_8013957C = sprite;
 }
 
 extern struct HudLayoutData {
@@ -1508,94 +1440,7 @@ static void main68_start_hit_flicker(struct MainObj* self)
     }
 }
 
-#include "memcard.h"
-extern u8 D_800F1DEC[], D_800F1DFC[], D_800F1E14[], D_800F1E24[], D_800F1E34[];
-extern u8 D_800F1E78[], D_800F1E88[];
-void func_8001B8B0(s16, s16, u8);
-void func_8001C5A8(u8**);
-void func_8001C07C(void);
-void func_8001BCAC(s16, s16, u8);
-void func_8001BE10(s16, s16, u8);
-
-static void save_icon_lifetime(struct MiscObj* obj, u8 mode)
-{
-    obj->ext.misc_42.unk55 = mode ? 1 : 3;
-    obj->ext.misc_42.unk54 = mode ? engine_obj.unk1 : main_bss_state.transition.selection;
-}
-
 #include <string.h>
-
-// src/main/1263C.c
-
-void func_80021C14(void);
-void func_80021D84(void);
-void func_80021CC8(void);
-void player_update(void);
-void update_weapon_objects(void);
-void update_main_objects(void);
-void update_shot_objects(void);
-void update_visual_objects(void);
-void update_item_objects(void);
-void update_layer_objects(void);
-
-// src/main/1A5BC.c
-
-void func_8002A098(struct GameInfo* info)
-{
-    u8 index;
-    u8 binding = 0xFF;
-    u16 old;
-    u16 pressed;
-
-    (void)info;
-    if (main_bss_state.transition.active != 0)
-        return;
-    pressed = controller_input.pressed;
-    if ((pressed & PADstart) || ((pressed & PAD_CONFIRM) && main_bss_state.transition.selection == 7)) {
-        func_8001540C(0, 0x22, NULL);
-        func_800129F0(8);
-        D_8013B7D0++;
-        return;
-    }
-    if (pressed & PADLup) {
-        func_8001540C(0, 0xC, NULL);
-        if (main_bss_state.transition.selection == 0)
-            main_bss_state.transition.selection = 7;
-        else
-            main_bss_state.transition.selection--;
-        if (main_bss_state.character_mode == 0 && engine_obj.cur_character != 0 && main_bss_state.transition.selection == 6)
-            main_bss_state.transition.selection = 4;
-    }
-    if (pressed & PADLdown) {
-        func_8001540C(0, 0xC, NULL);
-        if (main_bss_state.transition.selection == 7)
-            main_bss_state.transition.selection = 0;
-        else
-            main_bss_state.transition.selection++;
-        if (main_bss_state.character_mode == 0 && engine_obj.cur_character != 0 && main_bss_state.transition.selection == 5)
-            main_bss_state.transition.selection = 7;
-    }
-    for (index = 4; index < 16; index++) {
-        if (D_800F44E8[main_bss_state.transition.selection] == (1U << index)) {
-            binding = index;
-            break;
-        }
-    }
-    if (binding == 0xFF)
-        return;
-    for (index = 0; index < 8; index++) {
-        if (controller_input.pressed == D_800F44F8[index]) {
-            func_8001540C(0, 0x22, NULL);
-            old = D_800EE430[binding];
-            D_800EE430[binding] = D_800F44F8[index];
-            for (index = 0; D_800EE430[index] != 0; index++) {
-                if (index != binding && D_800EE430[index] == D_800EE430[binding])
-                    D_800EE430[index] = old;
-            }
-            return;
-        }
-    }
-}
 
 // src/main/323C.c
 
@@ -1645,24 +1490,6 @@ void func_80012DC0(const u32* src, u32* dst, u32 count)
 
 // src/main/CB184.c
 
-void func_800DADA0(struct TileEffectRecord* arg0, u16 arg1, u16 arg2, u8 arg3,
-    u8 arg4)
-{
-    u32 x = arg1;
-    u32 y = arg2;
-    u16 tile = arg0->tiles[arg3];
-    u8 block;
-
-    block = (SP_BG_TILEMAP + arg0->layer * layout_size
-        + layout_width * (y >> 4))[x >> 4];
-    *(u16*)((u8*)SP_BG_TILE_PIXELS + (block << 9) + ((y & 0xF) << 5)
-        + ((x & 0xF) * 2))
-        = tile;
-
-    if (arg4 != 0) {
-        D_801441C8[arg0->layer][arg2 & 0x1F][arg1 & 0x1F] = tile;
-    }
-}
 extern ret_u8 func_8002938C(s32);
 
 // src/main/memcard.c
@@ -1685,35 +1512,12 @@ s32 func_8001C8F4(u8* buffer, s32 device_num, s32 size)
     return mmx4_pc_card_read(device_num, verification, sizeof(verification)) == 0 ? 0 : 2;
 }
 
-s32 func_8001CB24(u8* buffer, s32 device_num, s32 size)
-{
-    (void)size;
-    return mmx4_pc_card_read(device_num, buffer, 0x800);
-}
-
 // src/main/menu.c
 
 static void menu_icon_set_lifetime(struct MiscObj* obj, u8 persistent)
 {
     obj->ext.misc_42.unk55 = persistent ? 1 : 3;
     obj->ext.misc_42.unk54 = persistent ? engine_obj.unk1 : main_bss_state.transition.selection;
-}
-
-void func_8001B7C0(s16 x, s16 y, u8 persistent)
-{
-    struct MiscObj* obj = find_free_misc_obj();
-    if (obj != NULL) {
-        obj->active = 0x41;
-        obj->id = 0x2A;
-        obj->animation_step.fields.frame_index = 0x2A;
-        obj->unk2 = 1;
-        menu_icon_set_lifetime(obj, persistent);
-        obj->x_pos.i.hi = x;
-        obj->y_pos.i.hi = y;
-    }
-    func_8001BCAC((s16)(x - 0x40), y, persistent);
-    func_8001BE10((s16)(x - 0x40), y, persistent);
-    func_8001B8B0(x, y, persistent);
 }
 
 void func_8001B8B0(s16 x, s16 y, u8 persistent)

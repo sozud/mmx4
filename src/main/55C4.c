@@ -921,7 +921,52 @@ void func_800160F4(void)
 
 #ifndef MMX4_SATURN
 
+extern DR_MODE D_80139250[2];
+extern SPRT D_80139268[2][17];
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", func_80016124);
+#else
+void func_80016124(void)
+{
+    SPRT* sprite = D_80139268[SP_DRAW_BUFFER];
+    DR_MODE* draw_mode = &D_80139250[SP_DRAW_BUFFER];
+    u16 x = 0;
+    s16 y = 0;
+    u8 i;
+
+    for (i = 0; i < 17; sprite++, i++) {
+        setSprt(sprite);
+        switch ((s16)D_800F1868[i]) {
+        case 0:
+            setUV0(sprite, 0x00, 0xD0);
+            sprite->w = 0x70;
+            break;
+        case 1:
+            setUV0(sprite, 0x70, 0xD0);
+            sprite->w = 0x60;
+            break;
+        case 2:
+            setUV0(sprite, 0x00, 0xD0);
+            sprite->w = 0x10;
+            break;
+        }
+        sprite->clut = 0x784C;
+        sprite->h = 0x30;
+        setXY0(sprite, x, y);
+        setShadeTex(sprite, 1);
+        setSemiTrans(sprite, 0);
+        x += sprite->w;
+        if (x >= 0x140) {
+            y += 0x30;
+            x = 0;
+        }
+        addPrim(&cur_draw_info->ordering_table.ui, sprite);
+    }
+
+    SetDrawMode(draw_mode, 0, 0, GetTPage(0, 0, 0x380, 0x100), 0);
+    addPrim(&cur_draw_info->ordering_table.ui, draw_mode);
+}
+#endif
 
 void func_80016334(void)
 {
@@ -1564,7 +1609,31 @@ void func_800170E0(void)
     need_palette_load |= 1;
 }
 
+extern u16* D_80139578;
+extern SPRT_16* D_8013957C;
+extern DR_TPAGE D_80139580[2];
+void func_80017268(s16 x_start);
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", func_80017100);
+#else
+void func_80017100(void)
+{
+    DR_TPAGE* page;
+
+    D_80139578 = (u16*)SP_ARC_34;
+    D_8013957C = D_8015D9D0[SP_DRAW_BUFFER].sprites;
+    page = &D_80139580[SP_DRAW_BUFFER];
+    setlen(page, 1);
+    page->code[0] = (GetGraphType() == 1 || GetGraphType() == 2)
+        ? ((GetGraphType() == 1 || GetGraphType() == 2) ? 0xE100002D : 0xE100001D)
+        : ((GetGraphType() == 1 || GetGraphType() == 2) ? 0xE100002D : 0xE100001D);
+    setaddr(page, D_8013957C);
+    func_80017268(0);
+    func_80017268(0x100);
+    setaddr(D_8013957C - 1, getaddr(&cur_draw_info->ordering_table.ui));
+    setaddr(&cur_draw_info->ordering_table.ui, page);
+}
+#endif
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80017268);
 #if defined(VERSION_EU) && !defined(MMX4_PC)

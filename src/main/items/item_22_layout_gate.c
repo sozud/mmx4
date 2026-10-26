@@ -204,23 +204,28 @@ void layout_gate_apply_layout(struct ItemObj* arg0)
 
 // layout_gate_restore_layout
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800C5994(struct ItemObj* self, u8 collision);
-#endif
-
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/items/item_22_layout_gate", func_800C5994);
+#else
 void func_800C5994(struct ItemObj* self, u8 collision)
 {
-    s16 original_x = self->x_pos.i.hi;
-    s16 original_y = self->y_pos.i.hi;
-    s32 x = original_x;
-    s32 y = original_y;
-    s32 side = get_random_nonzero() % 4;
+    s16 x = self->x_pos.i.hi;
+    s16 y = self->y_pos.i.hi;
+    s16 original_x = x;
+    s16 original_y = y;
 
-    if (side == 1 || side == 3)
-        x -= 0x10;
-    if (side == 2 || side == 3)
-        y -= 0x20;
+    switch ((u8)(get_random_nonzero() % 4)) {
+    case 0:
+        break;
+    case 1:
+        x = original_x - 0x10;
+        break;
+    case 3:
+        x = original_x - 0x10;
+    case 2:
+        y = original_y - 0x20;
+        break;
+    }
     x += get_random_nonzero() % 208;
     x += get_random_nonzero() % 208;
     y += get_random_nonzero() % 80;
@@ -231,11 +236,9 @@ void func_800C5994(struct ItemObj* self, u8 collision)
         self->x_pos.i.hi = original_x;
         self->y_pos.i.hi = original_y;
     } else {
-        spawn_explosion_at(0, (s16)x, (s16)y, 0xFF);
+        spawn_explosion_at(0, x, y, 0xFF);
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_22_layout_gate", func_800C5994);
 #endif
 
 void layout_gate_check_layout(struct ItemObj* arg0)

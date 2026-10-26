@@ -432,9 +432,9 @@ void func_80026720(void)
         }
     }
 }
-extern s32* D_8013BD50[][8];
+extern s32* D_8013BD50[][6][8];
 
-extern s32 D_8013E2F0[][8];
+extern s32 D_8013E2F0[][6][8];
 
 #if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/165A0", func_800267D4);
@@ -445,19 +445,44 @@ void func_800267D4(s32 input)
     s32 input3;
 
     for (i = 0, input3 = input + 3; i < 8; i++) {
-        D_8013E2F0[input][i] = 0;
-        D_8013E2F0[input + 6][i] = 0;
-        D_8013BD50[input][i] = &D_8013E2F0[input][i];
-        D_8013BD50[input + 6][i] = &D_8013E2F0[input + 6][i];
-        D_8013E2F0[input3][i] = 0;
-        D_8013E2F0[input3 + 6][i] = 0;
-        D_8013BD50[input3][i] = &D_8013E2F0[input3][i];
-        D_8013BD50[input3 + 6][i] = &D_8013E2F0[input3 + 6][i];
+        D_8013E2F0[0][input][i] = 0;
+        D_8013E2F0[1][input][i] = 0;
+        D_8013BD50[0][input][i] = &D_8013E2F0[0][input][i];
+        D_8013BD50[1][input][i] = &D_8013E2F0[1][input][i];
+        D_8013E2F0[0][input3][i] = 0;
+        D_8013E2F0[1][input3][i] = 0;
+        D_8013BD50[0][input3][i] = &D_8013E2F0[0][input3][i];
+        D_8013BD50[1][input3][i] = &D_8013E2F0[1][input3][i];
     }
 }
 #endif
 
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/165A0", func_80026894);
+#else
+void func_80026894(s32 layer)
+{
+    s32 buffer = SP_DRAW_BUFFER;
+    s32 back_layer = layer + 3;
+    u32 i;
+    s32 head;
+
+    for (i = 0; i < 8; i++) {
+        head = D_8013E2F0[buffer][layer][i];
+        if (head != 0) {
+            setaddr(&D_80171EB0[buffer][layer][i], head);
+            addPrims(&cur_draw_info->ordering_table.start + background_objects[layer].unk4A,
+                &D_80171EB0[buffer][layer][i], D_8013BD50[buffer][layer][i]);
+        }
+        head = D_8013E2F0[buffer][back_layer][i];
+        if (head != 0) {
+            setaddr(&D_80171EB0[buffer][back_layer][i], head);
+            addPrims(&cur_draw_info->ordering_table.start + background_objects[layer].unk4B,
+                &D_80171EB0[buffer][back_layer][i], D_8013BD50[buffer][back_layer][i]);
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("main/nonmatchings/165A0", func_80026AA0);
 
