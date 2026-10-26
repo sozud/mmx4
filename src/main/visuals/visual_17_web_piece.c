@@ -105,7 +105,7 @@ void web_piece_main(struct VisualObj* arg0)
 }
 
 // web_piece_attach
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_17_web_piece", func_800B22B4);
 #else
 void func_800B22B4(struct VisualObj* arg0)

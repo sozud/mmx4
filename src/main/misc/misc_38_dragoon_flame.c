@@ -21,7 +21,7 @@ void func_800CF4B8(struct MiscObj* arg0);
 void func_800CF660(struct MiscObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_38_dragoon_flame", func_800CF4B8);
 #else
 void func_800CF4B8(struct MiscObj* arg0)

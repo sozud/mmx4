@@ -69,7 +69,7 @@ void func_8008C664(struct MainObj* self);
 void double_spawn_afterimage(struct MainObj*, s8);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BA38);
 #else
 void func_8008BA38(struct MainObj* self)
@@ -118,7 +118,7 @@ void func_8008BA38(struct MainObj* self)
 #endif
 
 // double_intro_warning
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BB6C);
 #else
 void func_8008BB6C(struct MainObj* self)
@@ -303,7 +303,7 @@ void double_wait_start(struct MainObj* self)
 }
 
 // double_pick_attack
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C10C);
 #else
 void func_8008C10C(struct MainObj* self)
@@ -451,7 +451,7 @@ void double_dive_aim(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", double_dive_fall);
 #else
 void double_dive_fall(struct MainObj* self)
@@ -485,7 +485,7 @@ void double_dive_fall(struct MainObj* self)
 #endif
 
 // double_dive_slide
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C664);
 #else
 void func_8008C664(struct MainObj* self)
@@ -711,7 +711,7 @@ void double_aerial_shot(struct MainObj* self)
 }
 
 // double_run
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008CD80);
 #else
 void func_8008CD80(struct MainObj* self)

@@ -184,7 +184,7 @@ void func_80012454(void)
 
 extern void (*D_800EE45C[9])();
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 #ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/2824", func_80012560);
 #endif
@@ -280,7 +280,7 @@ void func_80012600(void)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 #ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/2824", func_80012740);
 #endif
@@ -306,7 +306,7 @@ void func_80012740(s32 arg0, void* arg1)
 #endif
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 #ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/2824", func_800127C8);
 #endif
@@ -341,7 +341,7 @@ void func_800127FC()
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 #ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/2824", func_80012854);
 #endif

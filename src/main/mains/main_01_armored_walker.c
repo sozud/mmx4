@@ -48,7 +48,7 @@ void armored_walker_update(struct MainObj* self)
     CollisionRelated(PLAYER_OBJECT(self));
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_01_armored_walker", armored_walker_init);
 #else
 void armored_walker_init(struct MainObj* self)

@@ -197,7 +197,7 @@ void drill_copter_sway_start(struct MainObj* self)
     set_animation(self, 3);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", drill_copter_sway_move);
 #else
 void drill_copter_sway_move(struct MainObj* self)
@@ -393,7 +393,7 @@ void drill_copter_fire_reload(struct MainObj* self)
 }
 
 // drill_copter_spawn_clone
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", func_80044DE4);
 #else
 void func_80044DE4(struct MainObj* self)

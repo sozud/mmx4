@@ -44,7 +44,7 @@ void snowman_bomb_update(struct MainObj* self)
     CollisionRelated((struct PlayerObj*)self);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_17_snowman_bomb", snowman_bomb_init);
 #else
 void snowman_bomb_init(struct MainObj* self)
@@ -128,7 +128,7 @@ void snowman_bomb_resume_step(struct MainObj* self)
 void func_80050278(struct MainObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_17_snowman_bomb", func_80050278);
 #else
 void func_80050278(struct MainObj* arg0)

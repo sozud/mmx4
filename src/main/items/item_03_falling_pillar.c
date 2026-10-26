@@ -53,7 +53,7 @@ void falling_pillar_update(struct ItemObj* arg0)
 void func_800C044C(struct ItemObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_03_falling_pillar", func_800C044C);
 #else
 void func_800C044C(struct ItemObj* arg0)
@@ -103,7 +103,7 @@ void falling_pillar_wait_player(struct ItemObj* arg0)
 }
 
 // falling_pillar_fall
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_03_falling_pillar", func_800C05FC);
 #else
 void func_800C05FC(struct ItemObj* pillar)

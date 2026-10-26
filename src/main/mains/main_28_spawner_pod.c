@@ -36,7 +36,7 @@ void spawner_pod_update(struct MainObj* self)
     spawner_pod_state_funcs[self->state](self);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", spawner_pod_init);
 #else
 void spawner_pod_init(struct MainObj* arg0)
@@ -128,7 +128,7 @@ void func_80059E40(struct MainObj* self);
 void func_80059F60(struct MainObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", func_80059E40);
 #else
 void func_80059E40(struct MainObj* self)

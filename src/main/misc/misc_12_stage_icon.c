@@ -31,7 +31,7 @@ void func_800CA228(struct MiscObj* self);
 void func_800CA40C(struct MiscObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_12_stage_icon", func_800CA228);
 #else
 void func_800CA228(struct MiscObj* self)
@@ -92,7 +92,7 @@ void stage_icon_highlight(struct MiscObj* self)
 }
 
 // stage_icon_follow_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_12_stage_icon", func_800CA40C);
 #else
 void func_800CA40C(struct MiscObj* self)

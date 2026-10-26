@@ -61,7 +61,7 @@ void func_8005B2C8(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005A538);
 #else
 void func_8005A538(struct MainObj* self)
@@ -132,7 +132,7 @@ void pod_spawner_idle(struct MainObj* self)
 }
 
 // pod_spawner_spawn
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005A758);
 #else
 void func_8005A758(struct MainObj* self)
@@ -491,7 +491,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005AF5C);
 #endif
 
 // pod_spawner_copy_state_2
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B24C);
 #else
 void func_8005B24C(struct MainObj* self)
@@ -512,7 +512,7 @@ void func_8005B24C(struct MainObj* self)
 #endif
 
 // pod_spawner_copy_state_3
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B2C8);
 #else
 void func_8005B2C8(struct MainObj* self)

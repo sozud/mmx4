@@ -41,7 +41,7 @@ void drill_copter_shot_update(struct ShotObj* self)
 void func_80099B6C(struct ShotObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_01_drill_copter_shot", func_80099B6C);
 #else
 void func_80099B6C(struct ShotObj* self)

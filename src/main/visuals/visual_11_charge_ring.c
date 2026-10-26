@@ -32,7 +32,7 @@ void charge_ring_init(struct VisualObj* arg0)
 void func_800B1864(struct VisualObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_11_charge_ring", func_800B1864);
 #else
 void func_800B1864(struct VisualObj* self)

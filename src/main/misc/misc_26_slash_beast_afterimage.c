@@ -20,7 +20,7 @@ void slash_beast_afterimage_update(struct MiscObj* self)
 void func_800CC7F8(struct MiscObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_26_slash_beast_afterimage", func_800CC7F8);
 #else
 void func_800CC7F8(struct MiscObj* arg0)

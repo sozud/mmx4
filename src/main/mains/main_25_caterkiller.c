@@ -67,7 +67,7 @@ void func_80057874(struct MainObj* self);
 void func_80057C00(struct MainObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057160);
 #else
 void func_80057160(struct MainObj* self)
@@ -204,7 +204,7 @@ void caterkiller_crawl_start(struct MainObj* self)
 }
 
 // caterkiller_crawl_move
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_8005754C);
 #else
 void func_8005754C(struct MainObj* self)
@@ -291,7 +291,7 @@ void caterkiller_lunge_start(struct MainObj* self)
 }
 
 // caterkiller_lunge_move
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057874);
 #else
 void func_80057874(struct MainObj* self)
@@ -389,7 +389,7 @@ void caterkiller_fall_drop(struct MainObj* self)
 }
 
 // caterkiller_fall_land
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057C00);
 #else
 void func_80057C00(struct MainObj* self)

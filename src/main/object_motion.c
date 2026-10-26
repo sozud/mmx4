@@ -128,7 +128,7 @@ void move_object(struct MovingObj* arg0)
     arg0->y_pos.val -= arg0->y_vel.val;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/object_motion", get_random);
 #else
 u8 get_random()

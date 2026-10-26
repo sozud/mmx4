@@ -98,7 +98,7 @@ void palette_pulse_init(struct EffectObj* self)
 void func_800BD080(struct EffectObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_34_rock_drop_sequence", func_800BD080);
 #else
 void func_800BD080(struct EffectObj* arg0)

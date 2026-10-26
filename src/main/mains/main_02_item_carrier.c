@@ -76,7 +76,7 @@ extern u8 item_carrier_part_debris_counts[4];
 extern void (*item_carrier_action_funcs[])(struct MainObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042950);
 #else
 #define HD_MODE(o) (((u8*)&(o)->ext)[0])

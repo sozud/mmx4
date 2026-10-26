@@ -67,7 +67,7 @@ void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", func_800C7F1C);
 #else
 void func_800C7F1C(struct MiscObj* arg0)
@@ -188,7 +188,7 @@ void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", spawn_debris_offset);
 #else
 void spawn_debris_offset(u8 count, u8* variants, struct MainObj* owner, s32 x_offset, s32 y_offset)

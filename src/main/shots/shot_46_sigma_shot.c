@@ -277,7 +277,7 @@ void func_800A8628(struct ShotObj* self)
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A8628);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_shot_at_position);
 #else
 s32 sigma_shot_at_position(struct ShotObj* self, s32 arg1, s32 arg2)
@@ -403,7 +403,7 @@ void sigma_shot_bolt(struct ShotObj* self)
 }
 
 // sigma_planted_scythe_fly
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A8E50);
 #else
 void func_800A8E50(struct ShotObj* self)
@@ -556,7 +556,7 @@ void sigma_dart_strike(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_dart_aim);
 #else
 void sigma_dart_aim(struct ShotObj* self)
@@ -590,7 +590,7 @@ void sigma_shot_dart(struct ShotObj* self)
 }
 
 // sigma_shot_spin_scythe
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A9544);
 #else
 #define SD_ANGLE(o) (*(u8*)&(o)->unk94)

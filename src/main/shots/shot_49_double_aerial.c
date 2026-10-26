@@ -37,7 +37,7 @@ void (*double_aerial_funcs[])(struct ShotObj*) = {
 void func_800A9DF4(struct ShotObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_49_double_aerial", func_800A9DF4);
 #else
 void func_800A9DF4(struct ShotObj* self)

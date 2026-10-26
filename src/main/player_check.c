@@ -451,7 +451,7 @@ s32 player_check_wall_jump(struct PlayerObj* self)
     return 0;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_check", player_is_pushing_wall);
 #else
 s32 player_is_pushing_wall(struct PlayerObj* self)
@@ -606,7 +606,7 @@ void player_enter_ladder_step_off_bottom(struct PlayerObj* self);
 void player_enter_ladder_climb_off_top(struct PlayerObj* self);
 
 // player_check_ladder_end
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_check", func_80033FF0);
 #else
 s32 func_80033FF0(struct PlayerObj* arg0)

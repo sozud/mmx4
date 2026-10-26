@@ -251,7 +251,7 @@ void magma_dragoon_spawn_flames(struct AnimatedObj* self, u32 arg1)
 }
 
 // cyber_peacock_is_player_near_random
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD0C);
 #else
 #define DRAGOON_NEAR_X 64
@@ -317,7 +317,7 @@ static void main_65_throw(struct MainObj* arg0, s16 y_offset)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD98);
 #else
 void func_8007DD98(struct MainObj* arg0)
@@ -612,7 +612,7 @@ void magma_dragoon_dive_kick_rise(struct MainObj* self)
 }
 
 // magma_dragoon_dive_kick_dive
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E6F8);
 #else
 void func_8007E6F8(struct MainObj* arg0)
@@ -654,7 +654,7 @@ void func_8007E6F8(struct MainObj* arg0)
 #endif
 
 // magma_dragoon_dive_kick_land
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E848);
 #else
 void func_8007E848(struct MainObj* self)
@@ -1105,7 +1105,7 @@ void magma_dragoon_rising_punch_start(struct MainObj* self)
 }
 
 // magma_dragoon_rising_punch_charge
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007F780);
 #else
 void func_8007F780(struct MainObj* arg0)
@@ -1282,7 +1282,7 @@ void magma_dragoon_hold(struct MainObj* self)
 }
 
 // magma_dragoon_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FD24);
 #else
 void func_8007FD24(struct MainObj* arg0)
@@ -1370,7 +1370,7 @@ void func_8007FF00(struct MainObj* arg0)
 }
 
 // magma_dragoon_death_begin_explosion
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FFFC);
 #else
 void func_8007FFFC(struct MainObj* arg0)

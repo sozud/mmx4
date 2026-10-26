@@ -54,7 +54,7 @@ void func_8005BDE4(struct MainObj* self);
 void func_8005BFC0(struct MainObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005B8D0);
 #else
 void func_8005B8D0(struct MainObj* self)
@@ -101,7 +101,7 @@ void thorn_trap_idle(struct MainObj* self)
 }
 
 // thorn_trap_wait
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005BA2C);
 #else
 void func_8005BA2C(struct MainObj* self)
@@ -234,7 +234,7 @@ void thorn_trap_extend(struct MainObj* self)
 }
 
 // thorn_trap_extended
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005BDE4);
 #else
 void func_8005BDE4(struct MainObj* self)

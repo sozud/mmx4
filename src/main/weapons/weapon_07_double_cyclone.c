@@ -339,7 +339,7 @@ void double_cyclone_charged_main(struct WeaponObj* arg0)
 }
 
 // double_cyclone_charged_gather
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097670);
 #else
 void func_80097670(struct WeaponObj* arg0)

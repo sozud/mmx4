@@ -73,7 +73,7 @@ extern u8 ryuenjin_flame_animations[];
 extern u16 ryuenjin_flame_offsets[8];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80097FC4);
 #else
 void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
@@ -115,7 +115,7 @@ void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", zero_saber_follow);
 #else
 void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
@@ -145,7 +145,7 @@ void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
 // WeaponObj, weapon_object_update_funcs[36]
 
 // rakuhouha_orb_update
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_800981CC);
 #else
 void func_800981CC(struct WeaponObj* self)
@@ -222,7 +222,7 @@ void func_80098338(struct VisualObj* self)
 }
 
 // ryuenjin_flame_update
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80098474);
 #else
 void func_80098474(struct MiscObj* self)

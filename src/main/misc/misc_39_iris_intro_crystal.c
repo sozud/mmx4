@@ -79,7 +79,7 @@ s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
 void func_800CF950(struct MiscObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_39_iris_intro_crystal", func_800CF950);
 #else
 void func_800CF950(struct MiscObj* self)

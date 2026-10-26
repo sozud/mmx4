@@ -33,7 +33,7 @@ extern union AnimationStep* falling_rock_d_animations[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_00_breakable_wall", func_800BE9E8);
 #else
 void func_800BE9E8(struct ItemObj* self)

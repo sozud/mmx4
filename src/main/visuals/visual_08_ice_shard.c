@@ -38,7 +38,7 @@ void func_800B08CC(struct VisualObj* self);
 void func_800B0B48(struct VisualObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B08CC);
 #else
 void func_800B08CC(struct VisualObj* self)
@@ -74,7 +74,7 @@ void func_800B08CC(struct VisualObj* self)
 #endif
 
 // ice_shard_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0B48);
 #else
 void func_800B0B48(struct VisualObj* self)
@@ -230,7 +230,7 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0CA0);
         (high) <<= 8,                  \
         ((low)&0xFF) + (high) + 1)
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B10E4);
 #else
 void func_800B10E4(u8 kind, s32 left, s32 top, s32 right, s32 bottom, s32 count_arg)

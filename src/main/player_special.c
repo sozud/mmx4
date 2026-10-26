@@ -804,7 +804,7 @@ void player_hover_back_stop(struct PlayerObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_special", player_hover_check_end);
 #else
 s32 player_hover_check_end(struct PlayerObj* self)
@@ -1211,7 +1211,7 @@ void player_rising_fire_charged_fall(struct PlayerObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_special", player_zero_check_ground_technique);
 #else
 s32 player_zero_check_ground_technique(struct PlayerObj* self)

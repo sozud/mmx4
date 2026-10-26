@@ -164,7 +164,7 @@ void func_800AB050(struct ShotObj* self);
 void func_800AB170(struct ShotObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AAC98);
 #else
 void func_800AAC98(struct ShotObj* self)
@@ -252,7 +252,7 @@ void sigma_head_move_to_formation(struct ShotObj* self)
 }
 
 // sigma_head_wait
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AB050);
 #else
 void func_800AB050(struct ShotObj* self)
@@ -298,7 +298,7 @@ void sigma_head_fire_wall_start(struct ShotObj* self)
 }
 
 // sigma_head_fire_wall_track
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AB170);
 #else
 void func_800AB170(struct ShotObj* self)

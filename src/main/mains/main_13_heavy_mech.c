@@ -43,7 +43,7 @@ void heavy_mech_update(struct MainObj* self)
     CollisionRelated((struct PlayerObj*)self);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_13_heavy_mech", heavy_mech_init);
 #else
 void heavy_mech_init(struct MainObj* self)
@@ -146,7 +146,7 @@ void heavy_mech_idle_start(struct MainObj* self)
 void func_8004CA94(struct MainObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_13_heavy_mech", func_8004CA94);
 #else
 void func_8004CA94(struct MainObj* arg0)

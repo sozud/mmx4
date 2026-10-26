@@ -349,7 +349,7 @@ u8 train_tunnel_player_at_lock(struct LayerObj* arg0)
 void func_800D9B48(struct LayerObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/layers/layer_02_train_tunnel", func_800D9B48);
 #else
 void func_800D9B48(struct LayerObj* self)

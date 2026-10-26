@@ -77,7 +77,7 @@ void func_8005FE1C(struct MainObj* arg0);
 void rocket_spiker_face_player(struct AnimatedObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_37_rocket_spiker", func_8005FE1C);
 #else
 void func_8005FE1C(struct MainObj* arg0)

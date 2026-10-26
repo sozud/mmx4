@@ -170,7 +170,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_8005077C);
 #endif
 
 // ice_core_run
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_80050874);
 #else
 void func_80050874(struct MainObj* arg0)
@@ -322,7 +322,7 @@ void ice_core_drift_start(struct MainObj* self)
 }
 
 // ice_core_drift_move
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_80050D14);
 #else
 void func_80050D14(struct MainObj* arg0)
@@ -669,7 +669,7 @@ void ice_core_build_open(struct MainObj* self)
 }
 
 // ice_core_build_gather
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_800517D0);
 #else
 void func_800517D0(struct MainObj* arg0)
@@ -1162,7 +1162,7 @@ void ice_core_face_player(struct AnimatedObj* self)
 }
 
 // ice_core_end_attack
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_800527F0);
 #else
 void func_800527F0(struct MainObj* arg0)

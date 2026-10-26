@@ -552,7 +552,7 @@ INCLUDE_ASM("main/nonmatchings/55C4", func_8001540C);
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_800154E8);
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", func_800157AC);
 #else
 extern u32* D_80137E08;
@@ -633,7 +633,7 @@ s32 is_sound_finished(s32 arg0, struct MainObj* owner)
 #endif
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", func_80015A50);
 #else
 s32 func_80015A50(u8 slot)
@@ -697,7 +697,7 @@ extern u8 D_800F1654[];
 
 extern union SepBundle D_801459C8;
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", func_80015C10);
 #else
 void func_80015C10(void)
@@ -999,7 +999,7 @@ void func_80016448(u8 arg0)
 #endif
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", func_800164D8);
 #else
 void func_800164D8(void)
@@ -1499,7 +1499,7 @@ void func_80016FB4(s32 arg0)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", decompress_gfx);
 #else
 void decompress_gfx(u16* src, u16* dest)
@@ -1567,7 +1567,7 @@ void func_800170E0(void)
 INCLUDE_ASM("main/nonmatchings/55C4", func_80017100);
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80017268);
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", func_80017340);
 #else
 void func_80017340(void)
@@ -1748,7 +1748,11 @@ void func_80018000(arg_u8 temp)
 #ifndef SKIP_MDEC
 INCLUDE_ASM("main/nonmatchings/55C4", func_800182E8);
 #else
+#ifdef VERSION_EU
+void func_800182E8(s32 arg0)
+#else
 void func_800182E8(void)
+#endif
 {
     asm(".rept 194 ; nop ; .endr");
 }

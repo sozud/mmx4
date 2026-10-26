@@ -62,7 +62,7 @@ extern struct Unk_unk68 D_800FB6A0;
 extern struct Unk_unk68 D_800FB6A4;
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004B8FC);
 #else
 extern struct Unk_unk68 D_800FB684, D_800FB688, D_800FB68C;
@@ -197,7 +197,7 @@ void hover_sentry_alert(struct MainObj* self)
 }
 
 // hover_sentry_attack_0
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BCFC);
 #else
 void func_8004BCFC(struct MainObj* arg0)
@@ -356,7 +356,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BF5C);
 #endif
 
 // hover_sentry_attack_2
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C210);
 #else
 extern struct Unk_unk68 D_800FB694, D_800FB698;
@@ -406,7 +406,7 @@ void func_8004C210(struct MainObj* self)
 #endif
 
 // hover_sentry_attack_3
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C394);
 #else
 void func_8004C394(struct MainObj* self)

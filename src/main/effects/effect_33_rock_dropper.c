@@ -38,7 +38,7 @@ static void effect_33_spawn_dropper(struct EffectObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_33_rock_dropper", func_800BC784);
 #else
 void func_800BC784(struct EffectObj* arg0)

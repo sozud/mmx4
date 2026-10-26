@@ -612,7 +612,7 @@ void func_80023A54(struct EngineObj* arg0)
     func_80023D68();
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/13A8C", func_80023AA8);
 #else
 #define SPARKLE_STATIC 2

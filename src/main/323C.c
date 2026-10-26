@@ -54,7 +54,7 @@ struct MoviePlaybackData {
 // uncomment to skip movies
 // #define SKIP_MDEC
 #ifndef MMX4_SATURN
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/323C", func_80012A3C);
 #else
 void func_80012A3C(void)

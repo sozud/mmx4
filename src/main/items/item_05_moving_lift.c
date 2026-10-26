@@ -145,7 +145,7 @@ void moving_lift_spawn_all(void);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_05_moving_lift", func_800C0EBC);
 #else
 void func_800C0EBC(struct ItemObj* arg0)
@@ -180,7 +180,7 @@ void func_800C0EBC(struct ItemObj* arg0)
 #endif
 
 // moving_lift_move
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_05_moving_lift", func_800C1050);
 #else
 void func_800C1050(struct ItemObj* arg0)

@@ -350,7 +350,7 @@ void func_80027D40(void)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_80027DC0);
 #else
 void func_80027DC0(struct BackgroundObj* arg0)
@@ -396,7 +396,7 @@ void func_80027E68(struct BackgroundObj* arg0)
     arg0->y_pos.i.hi = value;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_80027E90);
 #else
 void func_80027E90(struct BackgroundObj* arg0)
@@ -411,7 +411,7 @@ void func_80027E90(struct BackgroundObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_80027EBC);
 #else
 void func_80027EBC(struct BackgroundObj* arg0)
@@ -452,7 +452,7 @@ void func_80027F28(struct BackgroundObj* arg0)
     arg0->x_pos.u.hi = value;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_80027F50);
 #else
 void func_80027F50(struct BackgroundObj* arg0)
@@ -467,7 +467,7 @@ void func_80027F50(struct BackgroundObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_80027F7C);
 #else
 void func_80027F7C(struct BackgroundObj* arg0)
@@ -544,7 +544,7 @@ void func_800281E8(void)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_80028268);
 #else
 void func_80028268(struct BackgroundObj* arg0)
@@ -589,7 +589,7 @@ void func_80028310(struct BackgroundObj* arg0)
     arg0->y_pos.i.hi = value;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_80028338);
 #else
 void func_80028338(struct BackgroundObj* arg0)
@@ -604,7 +604,7 @@ void func_80028338(struct BackgroundObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_80028364);
 #else
 void func_80028364(struct BackgroundObj* arg0)
@@ -644,7 +644,7 @@ void func_800283D0(struct BackgroundObj* arg0)
     arg0->x_pos.i.hi = value;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_800283F8);
 #else
 void func_800283F8(struct BackgroundObj* arg0)
@@ -659,7 +659,7 @@ void func_800283F8(struct BackgroundObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/background", func_80028424);
 #else
 void func_80028424(struct BackgroundObj* arg0)

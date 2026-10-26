@@ -192,7 +192,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80058740);
 #endif
 
 // dash_gunner_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80058AC8);
 #else
 void func_80058AC8(struct MainObj* arg0)
@@ -531,7 +531,7 @@ void func_80059590(struct MainObj* self)
 }
 
 // dash_gunner_hop
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80059640);
 #else
 void func_80059640(struct MainObj* arg0)

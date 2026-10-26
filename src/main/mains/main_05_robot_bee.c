@@ -127,7 +127,7 @@ static void robot_bee_arc_position(struct MainObj* self, int index,
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80044F88);
 #else
 void func_80044F88(struct MainObj* arg0)
@@ -357,7 +357,7 @@ void robot_bee_sting(struct MainObj* self)
     robot_bee_sting_funcs[self->unk6](self);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_sting_start);
 #else
 void robot_bee_sting_start(struct MainObj* self)
@@ -396,7 +396,7 @@ void robot_bee_sting_approach(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_sting_brake);
 #else
 void robot_bee_sting_brake(struct MainObj* self)
@@ -432,7 +432,7 @@ void robot_bee_sting_lunge(struct MainObj* self)
 }
 
 // robot_bee_sting_strike
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80045940);
 #else
 extern s32 D_800FA128[], D_800FA348[], D_800FA368[];
@@ -588,7 +588,7 @@ void func_8004619C(struct MainObj* self)
 }
 
 // robot_bee_circle_orbit
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046220);
 #else
 void func_80046220(struct MainObj* self)
@@ -641,7 +641,7 @@ void robot_bee_drop(struct MainObj* self)
 }
 
 // robot_bee_drop_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046400);
 #else
 void func_80046400(struct MainObj* self)

@@ -504,7 +504,7 @@ void func_800681C4(struct MainObj* arg0);
 void func_80068340(struct MainObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_800681C4);
 #else
 void func_800681C4(struct MainObj* arg0)
@@ -557,7 +557,7 @@ void func_800681C4(struct MainObj* arg0)
 #endif
 
 // sentry_drone_rotate_aim
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_80068340);
 #else
 void func_80068340(struct MainObj* arg0)

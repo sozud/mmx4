@@ -1168,7 +1168,7 @@ INCLUDE_ASM("main/nonmatchings/14A60", func_80025188);
 #ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/14A60", func_800253F0);
 #endif
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 #ifndef MMX4_SATURN
 INCLUDE_ASM("main/nonmatchings/14A60", func_80025588);
 #endif

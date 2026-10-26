@@ -64,7 +64,7 @@ INCLUDE_ASM("main/nonmatchings/layers/layer_05_airship_bob", func_800DA2D4);
 #endif
 
 // airship_bob_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/layers/layer_05_airship_bob", func_800DA358);
 #else
 void func_800DA358(struct LayerObj* arg0)

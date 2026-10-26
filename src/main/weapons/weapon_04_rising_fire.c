@@ -62,7 +62,7 @@ extern struct Unk_unk68 rising_fire_hit_box[];
 extern u8 rising_fire_charged_offsets[4];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095254);
 #else
 void func_80095254(struct WeaponObj* arg0)
@@ -148,7 +148,7 @@ void rising_fire_charged_update(struct WeaponObj* arg0)
 }
 
 // rising_fire_charged_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095538);
 #else
 void func_80095538(struct WeaponObj* arg0)

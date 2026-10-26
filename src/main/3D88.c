@@ -255,7 +255,7 @@ void func_80013890(u32 arg0, u8* arg1)
     func_80013968();
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/3D88", func_80013968);
 #else
 void func_80013968(void)
@@ -311,7 +311,7 @@ extern u8* D_80137DC4;
 
 extern u8* D_80137DCC;
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/3D88", func_80013AD8);
 #else
 void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
@@ -418,7 +418,7 @@ extern s32 D_80137CEC;
 
 extern CdlLOC D_80137CF8;
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/3D88", func_80013DA8);
 #else
 void func_80013DA8(void)
@@ -474,7 +474,7 @@ extern CdlLOC D_80137DE8;
 
 extern union TitleScratch D_80169498;
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/3D88", func_80013E68);
 #else
 void func_80013E68(u8 status, u8* result)
@@ -590,7 +590,7 @@ extern u16 D_8012F4AC;
 
 extern u16 D_8012F4B0;
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/3D88", func_800142BC);
 #else
 void func_800142BC(void)
@@ -664,7 +664,7 @@ void func_800142BC(void)
 
 extern u32 D_80137CE0;
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/3D88", func_80014514);
 #else
 void func_80014514(void)
@@ -1022,7 +1022,7 @@ void func_800148E4(void)
 {
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/3D88", func_800148EC);
 #else
 void func_800148EC()

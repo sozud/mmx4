@@ -36,7 +36,7 @@ extern u8 grenade_terrain_box[4];
 extern s8 grenade_spawn_offsets[8];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_25_grenade", func_8009EBA8);
 #else
 void func_8009EBA8(struct ShotObj* self)

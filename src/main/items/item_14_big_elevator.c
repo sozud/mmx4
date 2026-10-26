@@ -126,7 +126,7 @@ void big_elevator_arrive(struct ItemObj* arg0)
 void func_800C3BA4(struct ItemObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_14_big_elevator", func_800C3BA4);
 #else
 void func_800C3BA4(struct ItemObj* self)

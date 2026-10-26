@@ -42,7 +42,7 @@ extern struct Unk_unk68 D_80108504[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_80069748);
 #else
 void func_80069748(struct MainObj* arg0)
@@ -84,7 +84,7 @@ void func_80069748(struct MainObj* arg0)
 #endif
 
 // train_crate_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_800698D8);
 #else
 void func_800698D8(struct MainObj* arg0)

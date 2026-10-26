@@ -340,7 +340,7 @@ void func_8008F3F4(struct MainObj* self);
 void func_8008F578(struct MainObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008D5C8);
 #else
 extern void* sigma_final_animations[39];
@@ -507,7 +507,7 @@ void sigma_final_appear(struct MainObj* self)
 
 // sigma_final_pick_attack
 #ifdef VERSION_EU
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008DAE8);
 #else
 void func_8008DAE8(struct MainObj* self)
@@ -818,7 +818,7 @@ void sigma_final_hide_upper_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", sigma_final_hide_upper_wait);
 #else
 void sigma_final_hide_upper_wait(struct MainObj* self)
@@ -891,7 +891,7 @@ void sigma_final_hide_lower_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", sigma_final_hide_lower_wait);
 #else
 void sigma_final_hide_lower_wait(struct MainObj* self)
@@ -1120,7 +1120,7 @@ void sigma_final_spit(struct MainObj* self)
 }
 
 // sigma_final_wind_spikes
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008EC48);
 #else
 void func_8008EC48(struct MainObj* self)
@@ -1260,7 +1260,7 @@ void sigma_final_summon(struct MainObj* self)
 }
 
 // sigma_final_fight
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F1A8);
 #else
 void func_8008F1A8(struct MainObj* self)
@@ -1326,7 +1326,7 @@ void func_8008F1A8(struct MainObj* self)
 #endif
 
 // sigma_final_death_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F3F4);
 #else
 void func_8008F3F4(struct MainObj* self)
@@ -1373,7 +1373,7 @@ void sigma_final_death_blink(struct MainObj* self)
 }
 
 // sigma_final_death_explode
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F578);
 #else
 void func_8008F578(struct MainObj* self)

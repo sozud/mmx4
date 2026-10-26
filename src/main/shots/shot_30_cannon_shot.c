@@ -38,7 +38,7 @@ extern u8 cannon_shot_boxes[4][4];
 extern s32 cannon_shot_speeds[4];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FB9C);
 #else
 void func_8009FB9C(struct ShotObj* arg0)
@@ -86,7 +86,7 @@ void func_8009FB9C(struct ShotObj* arg0)
 #endif
 
 // cannon_shot_fly
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FD00);
 #else
 void func_8009FD00(struct ShotObj* arg0)

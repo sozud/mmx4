@@ -117,7 +117,7 @@ void func_800ADF30(struct ShotObj* self)
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_56_sigma_spit", sigma_spit_return);
 #else
 void sigma_spit_return(struct ShotObj* self)

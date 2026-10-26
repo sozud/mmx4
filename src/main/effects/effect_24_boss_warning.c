@@ -27,7 +27,7 @@ void func_800BABA8(struct EffectObj* arg0);
 void func_800BAC58(struct EffectObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BABA8);
 #else
 void func_800BABA8(struct EffectObj* arg0)
@@ -53,7 +53,7 @@ void func_800BABA8(struct EffectObj* arg0)
 #endif
 
 // boss_warning_spawn_tiles
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BAC58);
 #else
 void func_800BAC58(struct EffectObj* arg0)

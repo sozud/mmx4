@@ -138,7 +138,7 @@ void boss_door_init(struct ItemObj* arg0)
     set_animation(ANIMATED_OBJECT(arg0), 0);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", boss_door_main);
 #else
 void boss_door_main(struct ItemObj* arg0)
@@ -180,7 +180,7 @@ s8 func_800C1E7C(struct ItemObj* arg0);
 void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", func_800C1C88);
 #else
 void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,

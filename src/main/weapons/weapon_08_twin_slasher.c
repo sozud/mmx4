@@ -58,7 +58,7 @@ extern struct Unk_unk68 twin_slasher_charged_hit_boxes[];
 extern u8 twin_slasher_charged_angles[];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_800978DC);
 #else
 void func_800978DC(struct WeaponObj* arg0)
@@ -149,7 +149,7 @@ void twin_slasher_charged_update(struct WeaponObj* arg0)
 }
 
 // twin_slasher_charged_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_80097BA4);
 #else
 void func_80097BA4(struct WeaponObj* arg0)

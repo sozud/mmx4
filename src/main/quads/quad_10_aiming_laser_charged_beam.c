@@ -59,7 +59,7 @@ void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct Player
 
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6B9C);
 #else
 void func_800D6B9C(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner)
@@ -162,7 +162,7 @@ void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* a
 }
 
 // aiming_laser_charged_beam_place
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6DC4);
 #else
 void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner)

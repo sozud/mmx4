@@ -77,7 +77,7 @@ void func_8009A448(struct ShotObj* arg0);
 void func_80099D54(struct ShotObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_80099D54);
 #else
 void func_80099D54(struct ShotObj* arg0)
@@ -320,7 +320,7 @@ void mech_boulder_update(struct ShotObj* self)
 }
 
 // mech_boulder_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_8009A5F4);
 #else
 void func_8009A5F4(struct ShotObj* arg0)

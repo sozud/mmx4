@@ -496,7 +496,7 @@ void player_enter_rising_fire_charged(struct PlayerObj* arg0, s32 arg1);
 void player_enter_double_cyclone_pose(struct PlayerObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_weapon", func_80036F50);
 #else
 void func_80036F50(struct PlayerObj* player)
@@ -917,7 +917,7 @@ void player_fire_charged_buster(struct PlayerObj* self)
 }
 
 // player_fire_twin_slasher
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_weapon", func_80037C28);
 #else
 void func_80037C28(struct PlayerObj* arg0)

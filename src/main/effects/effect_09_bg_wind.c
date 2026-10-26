@@ -133,7 +133,7 @@ void func_800B76A4(struct EffectObj* arg0)
     ext->velocity = 0x10000;
     arg0->unk5++;
 }
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B76A4);
 #else
 void func_800B76A4(struct EffectObj* arg0)
@@ -185,7 +185,7 @@ void bg_wind_gust_slow(struct EffectObj* effect)
     }
     bg_wind_advance(effect, FIXED(1.5), 1);
 }
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_slow);
 #else
 void bg_wind_gust_slow(struct EffectObj* effect)
@@ -340,7 +340,7 @@ void bg_wind_gust_medium(struct EffectObj* self)
     }
     bg_wind_advance(self, FIXED(3.5), 1);
 }
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_medium);
 #else
 void bg_wind_gust_medium(struct EffectObj* self)
@@ -415,7 +415,7 @@ void func_800B7CFC(struct EffectObj* effect)
     }
     bg_wind_advance(effect, FIXED(4.5), 0);
 }
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B7CFC);
 #else
 void func_800B7CFC(struct EffectObj* effect)

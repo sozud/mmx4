@@ -91,7 +91,7 @@ static void apply_direct_progress(u8 stage, u8 character, u8 loadout, u8 story)
 #endif
 
 #ifdef MMX4_SATURN
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/game_info", func_8001D064);
 #else
 void func_8001D064(void)

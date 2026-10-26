@@ -59,7 +59,7 @@ void func_800545EC(struct MainObj* arg0);
 void func_800548B8(struct MainObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800545EC);
 #else
 void func_800545EC(struct MainObj* arg0)
@@ -143,7 +143,7 @@ void ice_block_main(struct MainObj* self)
 }
 
 // ice_block_break_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800548B8);
 #else
 void func_800548B8(struct MainObj* arg0)

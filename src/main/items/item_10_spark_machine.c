@@ -203,7 +203,7 @@ void func_800C2638(struct ItemObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_10_spark_machine", func_800C2528);
 #else
 void func_800C2528(struct ItemObj* self)
@@ -234,7 +234,7 @@ void func_800C2528(struct ItemObj* self)
 #endif
 
 // spark_machine_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_10_spark_machine", func_800C2638);
 #else
 void func_800C2638(struct ItemObj* self)

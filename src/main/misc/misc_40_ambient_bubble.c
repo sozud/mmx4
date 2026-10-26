@@ -51,7 +51,7 @@ void func_800CFB70(struct MiscObj* arg0)
 }
 
 // ambient_bubble_wait
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_40_ambient_bubble", func_800CFC6C);
 #else
 void func_800CFC6C(struct MiscObj* arg0)

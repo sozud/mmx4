@@ -36,7 +36,7 @@ void func_800CFEE0(struct MiscObj* self);
 void func_800D0118(struct MiscObj* self);
 #endif
 
-#if defined(VERSION_EU) || defined(MMX4_SATURN)
+#if (defined(VERSION_EU) && !defined(MMX4_PC)) || defined(MMX4_SATURN)
 INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800CFEE0);
 #else
 void func_800CFEE0(struct MiscObj* self)
@@ -123,7 +123,7 @@ void func_800CFEE0(struct MiscObj* self)
 #endif
 
 // menu_icon_animate
-#if defined(VERSION_EU) || (defined(VERSION_JP) && !defined(MMX4_PC) && !defined(MMX4_SATURN))
+#if (defined(VERSION_EU) || defined(VERSION_JP)) && !defined(MMX4_PC) && !defined(MMX4_SATURN)
 INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800D0118);
 #else
 void func_800D0118(struct MiscObj* self)

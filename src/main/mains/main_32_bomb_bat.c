@@ -163,7 +163,7 @@ void func_8005CB90(struct MainObj* arg0);
 void func_8005CF9C(struct MainObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", func_8005CB90);
 #else
 void func_8005CB90(struct MainObj* arg0)
@@ -220,7 +220,7 @@ void bomb_bat_drop_end(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_fly_off);
 #else
 void bomb_bat_fly_off(struct MainObj* self)
@@ -229,7 +229,7 @@ void bomb_bat_fly_off(struct MainObj* self)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_fly_off_start);
 #else
 void bomb_bat_fly_off_start(struct MainObj* self)
@@ -257,7 +257,7 @@ void bomb_bat_fly_off_move(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_flee);
 #else
 void bomb_bat_flee(struct MainObj* self)
@@ -266,7 +266,7 @@ void bomb_bat_flee(struct MainObj* self)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_flee_start);
 #else
 void bomb_bat_flee_start(struct MainObj* self)
@@ -300,7 +300,7 @@ void bomb_bat_dive(struct MainObj* self)
 }
 
 // bomb_bat_dive_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", func_8005CF9C);
 #else
 void func_8005CF9C(struct MainObj* arg0)

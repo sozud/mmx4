@@ -72,7 +72,7 @@ u8 cyber_peacock_choose_attack(struct MainObj* arg0);
 void cyber_peacock_start_teleport(struct MainObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007C30C);
 #else
 void func_8007C30C(struct MainObj* arg0)
@@ -321,7 +321,7 @@ void cyber_peacock_teleport_vanish(struct MainObj* self)
 }
 
 // cyber_peacock_teleport_choose
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007CA68);
 #else
 void func_8007CA68(struct MainObj* arg0)
@@ -754,7 +754,7 @@ void func_8007D710(struct MainObj* arg0)
 }
 
 // cyber_peacock_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D838);
 #else
 void func_8007D838(struct MainObj* arg0)

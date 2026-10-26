@@ -39,7 +39,7 @@ void func_8009F89C(struct ShotObj* arg0);
 extern void (*cannon_missile_step_funcs[])(struct ShotObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F674);
 #else
 void func_8009F674(struct ShotObj* arg0)
@@ -86,7 +86,7 @@ void func_8009F674(struct ShotObj* arg0)
 #endif
 
 // cannon_missile_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F7C0);
 #else
 void func_8009F7C0(struct ShotObj* arg0)
@@ -111,7 +111,7 @@ void func_8009F7C0(struct ShotObj* arg0)
 #endif
 
 // cannon_missile_launch
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F89C);
 #else
 void func_8009F89C(struct ShotObj* arg0)

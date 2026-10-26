@@ -490,7 +490,7 @@ void pickup_despawn(struct ItemObj* arg0)
 }
 
 // pickup_refill
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800BFBD0);
 #else
 void func_800BFBD0(struct ItemObj* arg0)
@@ -612,7 +612,7 @@ void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
 INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800BFCC0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", pickup_collect_health);
 #else
 void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
@@ -662,7 +662,7 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
 }
 #endif
 // pickup_check_collect
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800C00BC);
 #else
 void func_800C00BC(struct ItemObj* arg0)

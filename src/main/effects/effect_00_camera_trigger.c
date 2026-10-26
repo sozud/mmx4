@@ -37,7 +37,7 @@ void camera_trigger_init(struct EffectObj* self)
 extern struct Effect00BackgroundUpdate camera_trigger_bound_values[74];
 extern u16* camera_trigger_bound_fields[4];
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_00_camera_trigger", func_800B5798);
 #else
 void func_800B5798(struct EffectObj* arg0)

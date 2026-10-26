@@ -196,7 +196,7 @@ static void main61_wall_hit(struct MainObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_800788E4);
 #else
 void func_800788E4(struct MainObj* arg0)
@@ -357,7 +357,7 @@ void split_mushroom_death_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", split_mushroom_death_explode);
 #else
 void split_mushroom_death_explode(struct MainObj* self)
@@ -506,7 +506,7 @@ void split_mushroom_intro_land(struct MainObj* self)
 }
 
 // split_mushroom_intro_talk
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_800793AC);
 #else
 void func_800793AC(struct MainObj* arg0)
@@ -659,7 +659,7 @@ void split_mushroom_stun_merge(struct MainObj* self)
 }
 
 // split_mushroom_stun_rejoin
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_80079824);
 #else
 void func_80079824(struct MainObj* arg0)
@@ -724,7 +724,7 @@ void split_mushroom_spore_rain(struct MainObj* self)
 }
 
 // split_mushroom_spore_rain_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_80079A8C);
 #else
 void func_80079A8C(struct MainObj* arg0)
@@ -994,7 +994,7 @@ done:;
 }
 
 // split_mushroom_walk_jump
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007A2B4);
 #else
 void func_8007A2B4(struct MainObj* arg0)
@@ -1053,7 +1053,7 @@ void split_mushroom_dash(struct MainObj* self)
 }
 
 // split_mushroom_dash_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007A4EC);
 #else
 void func_8007A4EC(struct MainObj* arg0)
@@ -1208,7 +1208,7 @@ void split_mushroom_combo(struct MainObj* self)
 }
 
 // split_mushroom_combo_jump
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007A96C);
 #else
 void func_8007A96C(struct MainObj* arg0)
@@ -1431,7 +1431,7 @@ void split_mushroom_wall_jump(struct MainObj* self)
 }
 
 // split_mushroom_wall_jump_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007B1BC);
 #else
 void func_8007B1BC(struct MainObj* arg0)
@@ -1497,7 +1497,7 @@ void split_mushroom_wall_jump_cling(struct MainObj* self)
 }
 
 // split_mushroom_wall_jump_shoot
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007B418);
 #else
 void func_8007B418(struct MainObj* arg0)
@@ -1589,7 +1589,7 @@ void split_mushroom_face_player(struct AnimatedObj* self)
 }
 
 // split_mushroom_turn_around
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007B6BC);
 #else
 void func_8007B6BC(struct AnimatedObj* obj)

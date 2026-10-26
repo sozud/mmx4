@@ -198,7 +198,7 @@ static void main54_face_anim(struct MainObj* arg0, s32 anim)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006BB70);
 #else
 void func_8006BB70(struct MainObj* arg0)
@@ -248,7 +248,7 @@ void func_8006BB70(struct MainObj* arg0)
 #endif
 
 // slash_beast_run
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006BD1C);
 #else
 void func_8006BD1C(struct MainObj* arg0)
@@ -440,7 +440,7 @@ void slash_beast_crescent_jump(struct MainObj* self)
 }
 
 // slash_beast_crescent_slash
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006C378);
 #else
 void func_8006C378(struct MainObj* arg0)
@@ -682,7 +682,7 @@ void slash_beast_jump(struct MainObj* self)
 }
 
 // slash_beast_jump_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CB50);
 #else
 void func_8006CB50(struct MainObj* arg0)
@@ -768,7 +768,7 @@ void slash_beast_jump_recover(struct MainObj* self)
 }
 
 // slash_beast_guard
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CDD4);
 #else
 void func_8006CDD4(struct MainObj* arg0)
@@ -1226,7 +1226,7 @@ void slash_beast_intro_wait_warning(struct MainObj* self)
 }
 
 // slash_beast_intro_appear
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006DD44);
 #else
 void func_8006DD44(struct MainObj* arg0)
@@ -1418,7 +1418,7 @@ void slash_beast_stagger(struct MainObj* self)
 }
 
 // slash_beast_stagger_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006E450);
 #else
 void func_8006E450(struct MainObj* arg0)
@@ -1612,7 +1612,7 @@ void slash_beast_face_player(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", slash_beast_pick_pattern);
 #else
 void slash_beast_pick_pattern(struct MainObj* self)

@@ -199,7 +199,7 @@ struct VisualObj* jet_stingray_spawn_splash(struct MainObj* self)
     return 0;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_check_surface);
 #else
 u8 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
@@ -396,7 +396,7 @@ void jet_stingray_intro(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_at_target);
 #else
 s32 jet_stingray_at_target(struct MainObj* self, s32 arg1, s32 arg2)
@@ -410,7 +410,7 @@ s32 jet_stingray_at_target(struct MainObj* self, s32 arg1, s32 arg2)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_choose_pattern);
 #else
 void jet_stingray_choose_pattern(struct MainObj* self)
@@ -470,7 +470,7 @@ void func_80071740(struct MainObj* arg0);
 extern s16 jet_stingray_vortex_debris_offsets[24];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80070514);
 #else
 void func_80070514(struct MainObj* arg0)
@@ -777,7 +777,7 @@ void jet_stingray_ambush_return(struct MainObj* self)
 }
 
 // jet_stingray_ambush
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_800710D4);
 #else
 void func_800710D4(struct MainObj* arg0)
@@ -960,7 +960,7 @@ void jet_stingray_leap(struct MainObj* self)
 }
 
 // jet_stingray_missiles_fire
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80071740);
 #else
 void func_80071740(struct MainObj* arg0)

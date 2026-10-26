@@ -19,7 +19,7 @@ void gunship_exhaust_update(struct VisualObj* arg0)
     gunship_exhaust_state_funcs[arg0->state](arg0);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_31_gunship_exhaust", gunship_exhaust_init);
 #else
 void gunship_exhaust_init(struct VisualObj* self)

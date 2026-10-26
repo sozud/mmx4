@@ -184,7 +184,7 @@ void gravity_switch_flip_objects(void)
 }
 
 // gravity_switch_flip_camera
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_20_gravity_switch", func_800C5210);
 #else
 void func_800C5210(struct ItemObj* self)

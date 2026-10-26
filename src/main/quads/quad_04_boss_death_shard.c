@@ -32,7 +32,7 @@ extern s16 boss_death_shard_shapes[4][16][2];
 void func_800D52F4(struct QuadObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_04_boss_death_shard", func_800D52F4);
 #else
 void func_800D52F4(struct QuadObj* arg0)

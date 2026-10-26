@@ -155,7 +155,7 @@ void collide_with_players(struct PlayerObj*);
 extern u8 D_800FF8B0[8];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80065EA4);
 #else
 void func_80065EA4(struct MainObj* self)
@@ -219,7 +219,7 @@ void func_80065EA4(struct MainObj* self)
 #endif
 
 // train_boss_despawn
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800661AC);
 #else
 void func_800661AC(struct MainObj* self)
@@ -252,7 +252,7 @@ void func_800661AC(struct MainObj* self)
 #endif
 
 // train_boss_update_parts
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_8006630C);
 #else
 extern u8 D_800FF8B0[8];
@@ -297,7 +297,7 @@ void func_8006630C(struct MainObj* self)
 #endif
 
 // train_boss_update_projectiles
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80066478);
 #else
 void func_80066478(struct MainObj* self)
@@ -338,7 +338,7 @@ void train_boss_arrive(struct MainObj* self)
 }
 
 // train_boss_arrive_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800665BC);
 #else
 void func_800665BC(struct MainObj* self)

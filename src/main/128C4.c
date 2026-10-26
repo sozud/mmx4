@@ -266,7 +266,7 @@ void func_8002328C(struct AbcObj*);
 
 #define CONFIG D_801397DC
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/128C4", func_80022730);
 #else
 void func_80022730(struct AbcObj* arg0)

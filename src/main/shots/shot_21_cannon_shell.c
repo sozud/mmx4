@@ -46,7 +46,7 @@ static s32 shot_21_abs(s32 value)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_21_cannon_shell", func_8009D23C);
 #else
 void func_8009D23C(struct ShotObj* arg0)

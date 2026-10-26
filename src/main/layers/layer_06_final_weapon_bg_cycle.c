@@ -21,7 +21,7 @@ void final_weapon_bg_cycle_init(struct LayerObj* arg0)
     arg0->state++;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/layers/layer_06_final_weapon_bg_cycle", final_weapon_bg_cycle_main);
 #else
 void final_weapon_bg_cycle_main(struct LayerObj* arg0)

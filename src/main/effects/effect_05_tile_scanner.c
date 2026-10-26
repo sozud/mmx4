@@ -142,7 +142,7 @@ void tile_scanner_init(struct EffectObj* self)
 }
 
 // tile_scanner_scan
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_05_tile_scanner", func_800B64BC);
 #else
 void func_800B64BC(struct EffectObj* arg0)

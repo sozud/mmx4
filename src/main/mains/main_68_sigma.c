@@ -184,7 +184,7 @@ extern struct Unk_unk68 D_80103F0C;
 extern s16 D_8010442C[16];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_8008329C);
 #else
 void func_8008329C(struct MainObj* self)
@@ -335,7 +335,7 @@ void sigma_cloak_teleport_fade_in(struct MainObj* self)
 }
 
 // sigma_cloak_teleport_windup
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_80083710);
 #else
 void func_80083710(struct MainObj* self)
@@ -1414,7 +1414,7 @@ void sigma_reveal_fall(struct MainObj* self)
 }
 
 // sigma_reveal_burn_cloak
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_80085A44);
 #else
 void func_80085A44(struct MainObj* self)

@@ -63,7 +63,7 @@ s32 sigma_fx_cloak_piece_y_vels[8] = {
 void func_800B4E34(struct VisualObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_32_sigma_fx", func_800B4E34);
 #else
 void func_800B4E34(struct VisualObj* self)

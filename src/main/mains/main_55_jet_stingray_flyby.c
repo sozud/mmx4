@@ -43,7 +43,7 @@ extern s16 jet_stingray_flyby_explosion_offsets[16];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EB40);
 #else
 void func_8006EB40(struct MainObj* self)
@@ -96,7 +96,7 @@ void jet_stingray_flyby_wait_on_screen(struct MainObj* self)
 }
 
 // jet_stingray_flyby_enter_straight
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006ED44);
 #else
 void func_8006ED44(struct MainObj* self)
@@ -158,7 +158,7 @@ void func_8006ED44(struct MainObj* self)
 #endif
 
 // jet_stingray_flyby_enter_aimed
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EF28);
 #else
 void func_8006EF28(struct MainObj* self)

@@ -83,7 +83,7 @@ extern struct Item26AnimationStep* light_capsule_animations[14];
 void collide_with_players(struct PlayerObj*);
 extern ret_u8 func_8002938C(s32);
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_26_light_capsule", func_800C63BC);
 #else
 void func_800C63BC(struct ItemObj* arg0)
@@ -421,7 +421,7 @@ void capsule_visual_init(struct VisualObj* arg0, struct PlayerObj* arg1)
 }
 
 // capsule_part_update
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_26_light_capsule", func_800C6EDC);
 #else
 void func_800C6EDC(struct VisualObj* arg0)

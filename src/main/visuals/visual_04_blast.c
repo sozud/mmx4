@@ -49,7 +49,7 @@ void blast_update(struct VisualObj* arg0)
 void func_800AFB90(struct VisualObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_04_blast", func_800AFB90);
 #else
 void func_800AFB90(struct VisualObj* arg0)

@@ -80,7 +80,7 @@ void func_80040248(struct RideArmorObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mech", func_8003D4C8);
 #else
 void func_8003D4C8(struct RideArmorObj* arg0)
@@ -189,7 +189,7 @@ void func_8003D7A0(void)
 }
 
 // The unused integer return type preserves the original delay-slot scheduling.
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mech", func_8003D7E4);
 #else
 s32 func_8003D7E4(struct RideArmorObj* arg0, u8 kind, s32 variant)
@@ -245,7 +245,7 @@ s32 func_8003D8A8(struct RideArmorObj* owner, s32 shot_kind, s32 shot_variant)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mech", func_8003D9E0);
 #else
 void func_8003D9E0(struct RideArmorObj* arg0)
@@ -574,7 +574,7 @@ void func_8003E0D0(struct RideArmorObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mech", func_8003E274);
 #else
 void func_8003E274(struct RideArmorObj* arg0)
@@ -1114,7 +1114,7 @@ void func_8003F31C(struct RideArmorObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mech", func_8003F44C);
 #else
 void func_8003F44C(struct RideArmorObj* self)
@@ -1527,7 +1527,7 @@ void func_800401F8(struct PlayerObj* arg0)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mech", func_80040248);
 #else
 void func_80040248(struct RideArmorObj* arg0)
@@ -1568,7 +1568,7 @@ void func_800402C4(struct PlayerObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mech", func_800403DC);
 #else
 void func_800403DC(struct RideArmorObj* arg0)

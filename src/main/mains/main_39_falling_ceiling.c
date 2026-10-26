@@ -131,7 +131,7 @@ void falling_ceiling_despawn(struct MainObj* self)
 }
 
 // falling_ceiling_wait
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061918);
 #else
 void func_80061918(struct MainObj* self)
@@ -196,7 +196,7 @@ void falling_ceiling_drop_start(struct MainObj* self)
 }
 
 // falling_ceiling_drop_fall
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061B58);
 #else
 void func_80061B58(struct MainObj* self)

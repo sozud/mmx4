@@ -33,7 +33,7 @@ extern void* ride_armor_pilot_animations[31];
 extern struct Unk_unk68 ride_armor_pilot_terrain_box;
 
 // ride_armor_pilot_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_80089AA4);
 #else
 void func_80089AA4(struct MainObj* self)
@@ -395,7 +395,7 @@ void ride_armor_pilot_punch(struct MainObj* self)
 }
 
 // ride_armor_pilot_jump
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A3B0);
 #else
 void func_8008A3B0(struct MainObj* self)
@@ -435,7 +435,7 @@ void func_8008A3B0(struct MainObj* self)
 
 // ride_armor_pilot_land
 #ifdef VERSION_EU
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A4D8);
 #else
 void func_8008A4D8(struct MainObj* self)
@@ -635,7 +635,7 @@ void func_8008A8E4(struct MainObj* self)
 }
 
 // ride_armor_pilot_guard
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A9F4);
 #else
 void func_8008A9F4(struct MainObj* self)
@@ -671,7 +671,7 @@ void func_8008A9F4(struct MainObj* self)
 #endif
 
 // ride_armor_pilot_fall
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008AAF4);
 #else
 void func_8008AAF4(struct MainObj* self)

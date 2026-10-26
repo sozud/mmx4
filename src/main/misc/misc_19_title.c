@@ -51,7 +51,7 @@ void title_init(struct MiscObj* self)
 }
 
 // g_TitleUpdateFuncs state 1
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_19_title", title_draw);
 #else
 void title_draw(struct MiscObj* self)

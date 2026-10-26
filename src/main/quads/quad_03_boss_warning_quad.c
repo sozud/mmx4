@@ -63,7 +63,7 @@ struct QuadMotionData boss_warning_quad_motions[22] = {
 void func_800D4C50(struct QuadObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_03_boss_warning_quad", func_800D4C50);
 #else
 void func_800D4C50(struct QuadObj* arg0)

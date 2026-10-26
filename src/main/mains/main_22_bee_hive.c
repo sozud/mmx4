@@ -144,7 +144,7 @@ void func_800559BC(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_80055358);
 #else
 void func_80055358(struct MainObj* self)

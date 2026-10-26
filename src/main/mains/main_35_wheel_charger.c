@@ -54,7 +54,7 @@ void func_8005ECA8(struct MainObj* arg0);
 void func_8005EFB0(struct MainObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", func_8005ECA8);
 #else
 void func_8005ECA8(struct MainObj* arg0)
@@ -160,7 +160,7 @@ void wheel_charger_drop(struct MainObj* self)
 }
 
 // wheel_charger_fall
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", func_8005EFB0);
 #else
 void func_8005EFB0(struct MainObj* arg0)

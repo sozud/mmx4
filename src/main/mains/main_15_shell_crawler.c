@@ -76,7 +76,7 @@ static void main_15_spawn_spark(struct MainObj* arg0, u8 index)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004D9CC);
 #else
 void func_8004D9CC(struct MainObj* arg0)
@@ -163,7 +163,7 @@ void func_8004DB10(struct MainObj* self)
 }
 
 // shell_crawler_check_shoot
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004DCB0);
 #else
 void func_8004DCB0(struct MainObj* arg0)
@@ -338,7 +338,7 @@ void shell_crawler_walk(struct MainObj* self)
 }
 
 // shell_crawler_frozen
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E300);
 #else
 void func_8004E300(struct MainObj* arg0)
@@ -392,7 +392,7 @@ void func_8004E300(struct MainObj* arg0)
 #endif
 
 // shell_crawler_thaw
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E490);
 #else
 void func_8004E490(struct MainObj* arg0)
@@ -421,7 +421,7 @@ void func_8004E490(struct MainObj* arg0)
 #endif
 
 // shell_crawler_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E55C);
 #else
 void func_8004E55C(struct MainObj* arg0)

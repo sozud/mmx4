@@ -95,7 +95,7 @@ void frost_tower_charged_spawn_part(s8 arg0);
 void frost_tower_hide(struct WeaponObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_80093D78);
 #else
 void func_80093D78(struct WeaponObj* arg0)
@@ -270,7 +270,7 @@ void frost_tower_charged_update(struct WeaponObj* arg0)
 }
 
 // frost_tower_charged_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_80094280);
 #else
 void func_80094280(struct WeaponObj* arg0)
@@ -288,7 +288,7 @@ void func_80094280(struct WeaponObj* arg0)
 #endif
 
 // frost_tower_charged_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_800942E8);
 #else
 void func_800942E8(struct WeaponObj* arg0)
@@ -346,7 +346,7 @@ void frost_tower_charged_spawn_part(s8 arg0)
 }
 
 // frost_tower_charged_part_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_800944B8);
 #else
 void func_800944B8(struct WeaponObj* arg0)
