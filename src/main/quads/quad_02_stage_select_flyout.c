@@ -65,7 +65,7 @@ u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y, s32 x_speed, s32 y_
 void func_800D4B30(struct QuadObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_02_stage_select_flyout", func_800D4B30);
 #else
 void func_800D4B30(struct QuadObj* arg0)

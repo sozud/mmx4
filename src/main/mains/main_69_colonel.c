@@ -193,7 +193,7 @@ void colonel_spawn_afterimages(struct MainObj*);
 void colonel_face_player(struct MainObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086008);
 #else
 void func_80086008(struct MainObj* arg0)
@@ -239,7 +239,7 @@ void func_80086008(struct MainObj* arg0)
 #endif
 
 // colonel_run
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086124);
 #else
 void func_80086124(struct MainObj* arg0)
@@ -994,7 +994,7 @@ void colonel_dash_start(struct MainObj* self)
 }
 
 // colonel_dash_run
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80087A00);
 #else
 void func_80087A00(struct MainObj* arg0)
@@ -1457,7 +1457,7 @@ void colonel_jump_slam_recover(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", colonel_shot_incoming);
 #else
 ret_u8 colonel_shot_incoming(struct MainObj* self)

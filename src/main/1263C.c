@@ -13,7 +13,7 @@
 #endif
 void func_80016F0C();
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/1263C", func_80021E3C);
 #else
 void func_80021E3C(void)

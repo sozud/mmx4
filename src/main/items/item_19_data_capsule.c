@@ -131,7 +131,7 @@ INCLUDE_ASM("main/nonmatchings/items/item_19_data_capsule", func_800C4778);
 #endif
 
 // data_capsule_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_19_data_capsule", func_800C49BC);
 #else
 void func_800C49BC(struct ItemObj* self)

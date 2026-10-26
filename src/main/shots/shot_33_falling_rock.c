@@ -233,7 +233,7 @@ void falling_rock_a_despawn(struct ShotObj* self)
 }
 
 // falling_rock_b_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0A38);
 #else
 void func_800A0A38(struct ShotObj* arg0)
@@ -288,7 +288,7 @@ void func_800A0A38(struct ShotObj* arg0)
 #endif
 
 // falling_rock_b_fall
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0C4C);
 #else
 void func_800A0C4C(struct ShotObj* arg0)
@@ -363,7 +363,7 @@ void falling_rock_b_despawn(struct ShotObj* self)
 }
 
 // falling_rock_c_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0FE8);
 #else
 void func_800A0FE8(struct ShotObj* arg0)

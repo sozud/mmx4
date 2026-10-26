@@ -42,7 +42,7 @@ void func_8005F558(struct MainObj* arg0);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_36_latcher", func_8005F558);
 #else
 void func_8005F558(struct MainObj* arg0)
@@ -190,7 +190,7 @@ void latcher_grab_clamp(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_36_latcher", latcher_grab_drain);
 #else
 void latcher_grab_drain(struct MainObj* self)

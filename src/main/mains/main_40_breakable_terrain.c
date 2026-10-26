@@ -43,7 +43,7 @@ extern u8 D_800FEA1C[8];
 u8 func_80062338(struct MainObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80061DFC);
 #else
 void func_80061DFC(struct MainObj* arg0)
@@ -129,7 +129,7 @@ check:
 INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80061F2C);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", breakable_terrain_crumble);
 #else
 void breakable_terrain_crumble(struct MainObj* self)
@@ -155,7 +155,7 @@ void breakable_terrain_crumble(struct MainObj* self)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", breakable_terrain_remove);
 #else
 void breakable_terrain_remove(struct MainObj* self)
@@ -177,7 +177,7 @@ void breakable_terrain_remove(struct MainObj* self)
 extern u8 breakable_terrain_rubble_sizes[];
 extern u8 breakable_terrain_rubble_variants[];
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", breakable_terrain_spawn_rubble);
 #else
 void breakable_terrain_spawn_rubble(struct MainObj* self)
@@ -207,7 +207,7 @@ void breakable_terrain_spawn_rubble(struct MainObj* self)
 #endif
 
 // breakable_terrain_check_hit
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80062338);
 #else
 #ifdef MMX4_PC

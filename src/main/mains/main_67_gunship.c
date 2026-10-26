@@ -115,7 +115,7 @@ void gunship_bob(struct MainObj*);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_80082574);
 #else
 void func_80082574(struct MainObj* arg0)
@@ -217,7 +217,7 @@ void gunship_choose(struct MainObj* self)
 }
 
 // gunship_choose_attack
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_800828B4);
 #else
 void func_800828B4(struct MainObj* arg0)
@@ -467,7 +467,7 @@ void gunship_spawn_exhaust(struct MainObj* self)
     } while ((var_s1 & 0xFF) < 4U);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", gunship_is_within);
 #else
 s32 gunship_is_within(struct MainObj* self, s32 arg1, s32 arg2)

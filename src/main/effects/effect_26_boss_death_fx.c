@@ -240,7 +240,7 @@ void boss_death_fx_rays(struct EffectObj* self)
 }
 
 // boss_death_fx_whiteout
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", func_800BB750);
 #else
 void func_800BB750(struct EffectObj* arg0)
@@ -277,7 +277,7 @@ void boss_death_fx_wait(struct EffectObj* self)
 }
 
 // boss_death_fx_fade_in
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", func_800BB888);
 #else
 void func_800BB888(struct EffectObj* arg0)

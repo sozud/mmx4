@@ -27,7 +27,7 @@ void func_800C52CC(struct ItemObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_21_hopper_switch", func_800C52CC);
 #else
 void func_800C52CC(struct ItemObj* self)

@@ -241,7 +241,7 @@ void saturn_tile_effect_write(struct SaturnTileEffect* effect, u16 column, u16 r
     }
     tile_stage(effect, tile, 0);
 }
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/CB184", refresh_visible_tile_effect);
 #else
 void refresh_visible_tile_effect(s32 effect_id, s32 x_offset, s32 y_offset)
@@ -333,7 +333,7 @@ void saturn_tile_effect_set(struct SaturnTileEffect* effect, u16 column, u16 row
         saturn_tile_source += 16;
     }
 }
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/CB184", apply_tile_effect);
 #else
 void apply_tile_effect(u8 effect_id, s32 x_offset, s32 y_offset)

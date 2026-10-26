@@ -44,7 +44,7 @@ void enemy_charge_glow_init(struct VisualObj* arg0)
 void func_800B1F78(struct VisualObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_16_enemy_charge_glow", func_800B1F78);
 #else
 void func_800B1F78(struct VisualObj* arg0)

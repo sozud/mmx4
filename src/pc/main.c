@@ -142,6 +142,8 @@ int main(int argc, char** argv)
     if (disc == NULL)
 #ifdef VERSION_JP
         disc = "disks/mmx4.jp.cue";
+#elif defined(VERSION_EU)
+        disc = "disks/mmx4.eu.cue";
 #else
         disc = "disks/mmx4.us.cue";
 #endif

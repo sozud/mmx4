@@ -104,7 +104,7 @@ void func_8003C9A4(struct RideArmorObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/bike", func_8003B470);
 #else
 void func_8003B470(struct RideArmorObj* arg0)
@@ -199,7 +199,7 @@ void func_8003B694(struct RideArmorObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/bike", func_8003B7B4);
 #else
 void func_8003B7B4(struct RideArmorObj* arg0)
@@ -311,7 +311,7 @@ void func_8003BAE8(struct RideArmorObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/bike", func_8003BB20);
 #else
 void func_8003BB20(struct RideArmorObj* arg0)
@@ -451,7 +451,7 @@ void func_8003BE28(struct RideArmorObj* self)
     func_8003CBCC(self);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/bike", func_8003BF1C);
 #else
 void func_8003BF1C(struct RideArmorObj* arg0)
@@ -500,7 +500,7 @@ void func_8003BF1C(struct RideArmorObj* arg0)
 #endif
 
 #ifdef VERSION_EU
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/bike", func_8003C08C);
 #else
 void func_8003C08C(struct RideArmorObj* arg0)
@@ -819,7 +819,7 @@ void func_8003C624(struct RideArmorObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/bike", func_8003C6EC);
 #else
 void func_8003C6EC(struct RideArmorObj* arg0, u8 kind)
@@ -1065,7 +1065,7 @@ void func_8003CD38(struct RideArmorObj* arg0)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/bike", func_8003CF24);
 #else
 u8 func_8003CF24(struct RideArmorObj* arg0)

@@ -185,7 +185,7 @@ void func_800AD6DC(struct ShotObj* self);
 extern u8 D_8013B8DC[4];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AC8C4);
 #else
 void func_800AC8C4(struct ShotObj* self)
@@ -642,7 +642,7 @@ void general_shot_fist(struct ShotObj* self)
 }
 
 // general_ring_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AD6DC);
 #else
 void func_800AD6DC(struct ShotObj* self)

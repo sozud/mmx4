@@ -173,7 +173,7 @@ void func_80073E80(struct MainObj* arg0);
 extern void (*frost_walrus_step_funcs[12])();
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_800722A0);
 #else
 void func_800722A0(struct MainObj* arg0)
@@ -993,7 +993,7 @@ void frost_walrus_stagger(struct MainObj* self)
 }
 
 // frost_walrus_stagger_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80073E80);
 #else
 void func_80073E80(struct MainObj* arg0)

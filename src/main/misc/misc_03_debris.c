@@ -23,7 +23,7 @@ void debris_update(struct MiscObj* self)
 extern s32 debris_x_speeds[8];
 extern s32 debris_y_speeds[8];
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_03_debris", func_800C8610);
 #else
 void func_800C8610(struct MiscObj* arg0)

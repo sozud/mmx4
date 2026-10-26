@@ -53,7 +53,7 @@ void sigma_sequencer_fx_wait_player(struct EffectObj* self)
 void func_800BE364(struct EffectObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", func_800BE364);
 #else
 void func_800BE364(struct EffectObj* self)
@@ -86,7 +86,7 @@ void func_800BE364(struct EffectObj* self)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", sigma_sequencer_fx_wait_parts);
 #else
 void sigma_sequencer_fx_wait_parts(struct EffectObj* self)

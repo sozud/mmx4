@@ -33,7 +33,7 @@ void stage_cutscene_update(struct MiscObj* self)
 }
 
 // stage_cutscene_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0828);
 #else
 void func_800D0828(struct MiscObj* self)

@@ -54,7 +54,7 @@ void wave_rider_move(struct MainObj*);
 s32 wave_rider_check_camera(struct MainObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006AF70);
 #else
 void func_8006AF70(struct MainObj* arg0)
@@ -170,7 +170,7 @@ scan:
 }
 
 // wave_rider_float
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B2A4);
 #else
 void func_8006B2A4(struct MainObj* arg0)
@@ -211,7 +211,7 @@ void func_8006B2A4(struct MainObj* arg0)
 #endif
 
 // wave_rider_bob
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B398);
 #else
 void func_8006B398(struct MainObj* arg0)
@@ -311,7 +311,7 @@ void func_8006B5F8(struct MainObj* arg0)
 }
 
 // wave_rider_ride_back
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B6B0);
 #else
 void func_8006B6B0(struct MainObj* arg0)

@@ -37,7 +37,7 @@ void palette_animator_update(struct EffectObj* self)
 extern struct PaletteAnimatorTarget* palette_animator_stage_timings[27];
 extern s8** palette_animator_stage_scripts[27];
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_03_palette_animator", func_800B5D04);
 #else
 void func_800B5D04(struct EffectObj* arg0)

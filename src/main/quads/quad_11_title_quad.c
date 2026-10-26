@@ -244,7 +244,7 @@ void title_quad_morph(struct QuadObj* quad)
     quad_is_on_screen(quad);
 }
 #else
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", title_quad_morph);
 #else
 void title_quad_morph(struct QuadObj* arg0)
@@ -327,7 +327,7 @@ void title_quad_morph(struct QuadObj* arg0)
 
 // TitleUpdate2 state 6
 // title_quad_flash
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", func_800D7468);
 #else
 void func_800D7468(struct QuadObj* quad)

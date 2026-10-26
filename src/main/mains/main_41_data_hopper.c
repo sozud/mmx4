@@ -34,7 +34,7 @@ void data_hopper_update(struct MainObj* self)
     data_hopper_state_funcs[self->state](self);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", data_hopper_init);
 #else
 void data_hopper_init(struct MainObj* self)
@@ -146,7 +146,7 @@ void func_80062AEC(struct MainObj*);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062650);
 #else
 void func_80062650(struct MainObj* self)
@@ -200,7 +200,7 @@ void data_hopper_land(struct MainObj* self)
 }
 
 // data_hopper_hop
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062778);
 #else
 void func_80062778(struct MainObj* self)

@@ -135,7 +135,7 @@ void func_800CEBC0(struct MiscObj* arg0);
 void func_800CEFC0(struct MiscObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_34_cyberspace_guide", func_800CEBC0);
 #else
 void func_800CEBC0(struct MiscObj* arg0)
@@ -223,7 +223,7 @@ void cyberspace_guide_leave_finish(struct MiscObj* self)
 }
 
 // cyberspace_guide_update_position
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_34_cyberspace_guide", func_800CEFC0);
 #else
 void func_800CEFC0(struct MiscObj* arg0)

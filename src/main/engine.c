@@ -122,7 +122,7 @@ void func_8001F198(struct EngineObj* arg0)
     need_palette_load |= 1;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/engine", func_8001F2BC);
 #else
 void func_8001F2BC(struct EngineObj* arg0)
@@ -191,7 +191,7 @@ void func_8001F3D4(struct MainObj* obj)
     g_FilterAmountB = 0;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/engine", func_8001F488);
 #else
 void func_8001F488(struct EngineObj* arg0)
@@ -256,7 +256,7 @@ void func_8001F634(struct EngineObj* arg0)
     need_palette_load |= 1;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/engine", func_8001F6E8);
 #else
 void func_8001F6E8(struct EngineObj* arg0)
@@ -277,7 +277,7 @@ void func_8001F6E8(struct EngineObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/engine", func_8001F798);
 #else
 void func_8001F798(struct EngineObj* arg0)
@@ -392,7 +392,7 @@ void func_8001F9DC(struct EngineObj* arg0)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/engine", func_8001FA24);
 #else
 void func_8001FA24(struct EngineObj* arg0)

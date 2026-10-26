@@ -35,7 +35,7 @@ void slash_beast_crescent_update(struct ShotObj* self)
 void func_8009FF4C(struct ShotObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_31_slash_beast_crescent", func_8009FF4C);
 #else
 void func_8009FF4C(struct ShotObj* self)

@@ -83,7 +83,7 @@ void func_80091B1C(struct MainObj* arg0);
 void func_80091EC4(struct MainObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", func_80091B1C);
 #else
 void func_80091B1C(struct MainObj* arg0)

@@ -41,7 +41,7 @@ extern u8 gunship_shot_missile_hit_box[4];
 extern s32 gunship_shot_missile_speeds[2];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_43_gunship_shot", func_800A699C);
 #else
 void func_800A699C(struct ShotObj* arg0)

@@ -80,7 +80,7 @@ void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct
 }
 
 // aiming_laser_beam_place
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_09_aiming_laser_beam", func_800D69A8);
 #else
 void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct PlayerObj* target)

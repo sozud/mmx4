@@ -51,7 +51,7 @@ extern u8 peacock_missile_turn_steps_ccw[8];
 extern u8 peacock_missile_turn_steps_cw[8];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A63B0);
 #else
 void func_800A63B0(struct ShotObj* arg0)
@@ -138,7 +138,7 @@ void peacock_missile_explode_start(struct ShotObj* self)
 }
 
 // peacock_missile_spawn_explosion
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A666C);
 #else
 void func_800A666C(struct ShotObj* arg0, s32 x_range, s32 y_range)

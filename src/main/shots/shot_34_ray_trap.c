@@ -179,7 +179,7 @@ void ray_trap_fall(struct ShotObj* arg0)
 }
 
 // ray_trap_ride_move
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A19A8);
 #else
 void func_800A19A8(struct ShotObj* arg0)
@@ -227,7 +227,7 @@ void func_800A19A8(struct ShotObj* arg0)
 #endif
 
 // ray_trap_ride_wait
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1B1C);
 #else
 void func_800A1B1C(struct ShotObj* arg0)
@@ -251,7 +251,7 @@ void func_800A1B1C(struct ShotObj* arg0)
 #endif
 
 // ray_trap_ride_return
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1BEC);
 #else
 void func_800A1BEC(struct ShotObj* arg0)
@@ -277,7 +277,7 @@ void ray_trap_ride(struct ShotObj* self)
 }
 
 // ray_trap_crawl_wall
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1CCC);
 #else
 void func_800A1CCC(struct ShotObj* arg0)
@@ -324,7 +324,7 @@ void func_800A1CCC(struct ShotObj* arg0)
 #endif
 
 // ray_trap_crawl_floor
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1E3C);
 #else
 void func_800A1E3C(struct ShotObj* arg0)
@@ -395,7 +395,7 @@ void ray_trap_chase(struct ShotObj* self)
 }
 
 // ray_trap_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A2098);
 #else
 void func_800A2098(struct ShotObj* arg0)

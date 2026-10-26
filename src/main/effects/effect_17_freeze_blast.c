@@ -79,7 +79,7 @@ void func_800B913C(struct EffectObj* self)
 }
 
 // freeze_blast_flash
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B91E0);
 #else
 void func_800B91E0(struct EffectObj* self)
@@ -124,7 +124,7 @@ void freeze_blast_finish(struct EffectObj* self)
 }
 
 // freeze_blast_freeze_tiles
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B9354);
 #else
 void func_800B9354(struct EffectObj* self)

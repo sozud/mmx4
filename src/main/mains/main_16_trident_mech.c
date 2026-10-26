@@ -82,7 +82,7 @@ void func_8004FAE4(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004E8E0);
 #else
 void func_8004E8E0(struct MainObj* arg0)
@@ -247,7 +247,7 @@ void trident_mech_idle_start(struct MainObj* self)
 
 // trident_mech_idle_think
 #ifdef VERSION_EU
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004ED60);
 #else
 #define TRIDENT_STATE6(arg0)                                    \
@@ -743,7 +743,7 @@ void trident_mech_wait_behind(struct MainObj* self)
 }
 
 // trident_mech_stunned
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FAE4);
 #else
 void func_8004FAE4(struct MainObj* self)
@@ -832,7 +832,7 @@ void trident_mech_fire_tracked_shot(struct MainObj* obj)
 }
 
 // trident_mech_set_part
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FD38);
 #else
 void func_8004FD38(struct MainObj* arg0, s8 animation)

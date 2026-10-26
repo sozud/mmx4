@@ -153,7 +153,7 @@ void func_800194C8(struct EngineObj* engine)
     func_8001B644(D_800F1DFC);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001961C);
 #else
 void func_8001961C(struct EngineObj* engine)
@@ -242,7 +242,7 @@ void func_8001961C(struct EngineObj* engine)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001989C);
 #else
 void func_8001989C(struct EngineObj* arg0)
@@ -369,7 +369,7 @@ void func_80019BF4(struct EngineObj* arg0)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_80019D04);
 #else
 void func_80019D04(struct EngineObj* arg0)
@@ -569,7 +569,7 @@ void func_8001A308(struct EngineObj* arg0)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001A498);
 #else
 void func_8001A498(struct EngineObj* arg0)
@@ -646,7 +646,7 @@ void func_8001A498(struct EngineObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001A710);
 #else
 void func_8001A710(struct EngineObj* arg0)
@@ -761,7 +761,7 @@ void func_8001A9EC(struct EngineObj* arg0)
     init_objects();
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001AA98);
 #else
 void func_8001AA98(struct EngineObj* arg0)
@@ -800,7 +800,7 @@ void func_8001AA98(struct EngineObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001ABDC);
 #else
 void func_8001ABDC(struct EngineObj* engine)
@@ -890,7 +890,7 @@ void func_8001ABDC(struct EngineObj* engine)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001AE8C);
 #else
 void func_8001AE8C(struct EngineObj* arg0)
@@ -979,7 +979,7 @@ void func_8001AE8C(struct EngineObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001B10C);
 #else
 void func_8001B10C(struct EngineObj* arg0)
@@ -1201,7 +1201,7 @@ extern const struct MemcardSignature D_80010090;
 INCLUDE_RODATA("main/nonmatchings/menu", D_80010090);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001BCAC);
 #else
 void func_8001BCAC(s16 x, s16 y, u8 arg2)
@@ -1364,7 +1364,7 @@ void func_8001C3E8(void)
     save->unk28 = D_80171EA9;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/menu", func_8001C4B4);
 #else
 void func_8001C4B4(struct MemcardMenuState* menu)

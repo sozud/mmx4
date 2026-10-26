@@ -145,7 +145,7 @@ void func_800A83C4(struct ShotObj* arg0);
 void func_800A858C(struct ShotObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A7CE8);
 #else
 void func_800A7CE8(struct ShotObj* arg0)
@@ -413,7 +413,7 @@ void colonel_shockwave_spread(struct ShotObj* self)
 }
 
 // colonel_shockwave_move
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A858C);
 #else
 void func_800A858C(struct ShotObj* arg0)

@@ -36,7 +36,7 @@ void falling_icicle_update(struct MainObj* self)
     animate_object(self);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_21_falling_icicle", falling_icicle_init);
 #else
 void falling_icicle_init(struct MainObj* arg0)

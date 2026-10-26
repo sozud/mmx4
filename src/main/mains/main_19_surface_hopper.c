@@ -90,7 +90,7 @@ u8 surface_hopper_aim_at_player(struct MainObj*);
 
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_800528BC);
 #else
 void func_800528BC(struct MainObj* arg0)
@@ -221,7 +221,7 @@ void surface_hopper_fly(struct MainObj* self)
 }
 
 // surface_hopper_crawl_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80052CB8);
 #else
 extern u8 D_800FC7D4[];
@@ -265,7 +265,7 @@ void func_80052CB8(struct MainObj* arg0)
 #endif
 
 // surface_hopper_crawl_move
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80052E94);
 #else
 void func_80052E94(struct MainObj* arg0)
@@ -394,7 +394,7 @@ void surface_hopper_crawl_attach(struct MainObj* self)
 }
 
 // surface_hopper_crawl_wall
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053338);
 #else
 void func_80053338(struct MainObj* arg0)
@@ -484,7 +484,7 @@ void surface_hopper_leap_start(struct MainObj* self)
 }
 
 // surface_hopper_leap_fly
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_8005368C);
 #else
 void func_8005368C(struct MainObj* arg0)
@@ -523,7 +523,7 @@ void func_8005368C(struct MainObj* arg0)
 #endif
 
 // surface_hopper_pick_surface
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_800537E0);
 #else
 u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical)
@@ -676,7 +676,7 @@ void surface_hopper_despawn(struct MainObj* self)
 }
 
 // surface_hopper_launched_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053D24);
 #else
 void func_80053D24(struct MainObj* self)
@@ -785,7 +785,7 @@ void func_80053EB8(struct MainObj* self)
 }
 
 // surface_hopper_launched_crawl
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_8005402C);
 #else
 void func_8005402C(struct MainObj* self)

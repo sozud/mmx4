@@ -47,7 +47,7 @@ void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1);
 extern struct Unk_unk68 aiming_laser_charged_box[];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800961B0);
 #else
 void func_800961B0(struct WeaponObj* arg0)
@@ -117,7 +117,7 @@ void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
 }
 
 // aiming_laser_reticle_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800963E8);
 #else
 void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
@@ -364,7 +364,7 @@ void aiming_laser_charged_init(struct WeaponObj* arg0)
 }
 
 // aiming_laser_charged_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_80096B54);
 #else
 void func_80096B54(struct WeaponObj* self)

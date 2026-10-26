@@ -106,7 +106,7 @@ void iris_face_player(struct MainObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080700);
 #else
 void func_80080700(struct MainObj* self)
@@ -150,7 +150,7 @@ void func_80080700(struct MainObj* self)
 #endif
 
 // iris_run
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080834);
 #else
 void func_80080834(struct MainObj* self)
@@ -584,7 +584,7 @@ void iris_robot_hover(struct MainObj* self)
 }
 
 // iris_robot_hover_chase
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081718);
 #else
 void func_80081718(struct MainObj* self)
@@ -720,7 +720,7 @@ void iris_robot_release_crystal(struct MainObj* self)
 }
 
 // iris_robot_release_crystal_spawn
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081BA0);
 #else
 void func_80081BA0(struct MainObj* self)
@@ -819,7 +819,7 @@ void iris_robot_release_crystal_finish(struct MainObj* self)
 }
 
 // iris_crystal_follow
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081E44);
 #else
 void func_80081E44(struct MainObj* self)

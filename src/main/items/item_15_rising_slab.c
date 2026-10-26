@@ -54,7 +54,7 @@ void rising_slab_init(struct ItemObj* arg0)
     arg0->state = 1;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_15_rising_slab", rising_slab_rise);
 #else
 void rising_slab_rise(struct ItemObj* arg0)

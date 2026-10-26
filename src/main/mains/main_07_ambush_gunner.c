@@ -160,7 +160,7 @@ void ambush_gunner_emerge(struct MainObj* self)
 }
 
 // ambush_gunner_emerge_wait
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_07_ambush_gunner", func_80047818);
 #else
 void func_80047818(struct MainObj* arg0)

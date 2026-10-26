@@ -111,7 +111,7 @@ extern u32 D_800FA744;
 extern void (*eregion_step_funcs[])(struct MainObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80047D04);
 #else
 void func_80047D04(struct MainObj* arg0)
@@ -241,7 +241,7 @@ void eregion_pick_start(struct MainObj* self)
 }
 
 // eregion_pick_attack
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_800480D0);
 #else
 void func_800480D0(struct MainObj* arg0)
@@ -791,7 +791,7 @@ void eregion_recoil_start(struct MainObj* self)
 }
 
 // eregion_recoil_wait
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_8004932C);
 #else
 void func_8004932C(struct MainObj* arg0)

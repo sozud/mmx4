@@ -52,7 +52,7 @@ extern struct Item01DebrisPosition stage_block_spawn_positions[6];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BEBFC);
 #else
 void func_800BEBFC(struct ItemObj* arg0)
@@ -152,7 +152,7 @@ void stage_block_wait_trigger(struct ItemObj* self)
 }
 
 // stage_block_fall
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BEFCC);
 #else
 void func_800BEFCC(struct ItemObj* arg0)
@@ -297,7 +297,7 @@ void drop_item(struct BaseObj* arg0, s8 arg1)
 }
 
 // drop_item_at
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_01_stage_block", func_800BF638);
 #else
 void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3)

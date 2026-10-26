@@ -140,7 +140,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A78C);
 #endif
 
 // wall_crawler_attach
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A9F4);
 #else
 void func_8004A9F4(struct MainObj* self)
@@ -237,7 +237,7 @@ void wall_crawler_despawn(struct MainObj* self)
 }
 
 // wall_crawler_step_7
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004AD18);
 #else
 void func_8004AD18(struct MainObj* self)
@@ -368,7 +368,7 @@ void wall_crawler_turn(struct MainObj* self)
 }
 
 // wall_crawler_step_4
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B0A0);
 #else
 void func_8004B0A0(struct MainObj* self)
@@ -454,7 +454,7 @@ void func_8004B2BC(struct MainObj* self)
 }
 
 // wall_crawler_corner_1
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B418);
 #else
 void func_8004B418(struct MainObj* self)
@@ -535,7 +535,7 @@ void func_8004B514(struct MainObj* self)
 }
 
 // wall_crawler_corner_3
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B668);
 #else
 void func_8004B668(struct MainObj* self)

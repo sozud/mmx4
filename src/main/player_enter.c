@@ -394,7 +394,7 @@ void player_enter_wall_cling(struct PlayerObj* self)
 void func_800349F4(struct PlayerObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_enter", func_800349F4);
 #else
 void func_800349F4(struct PlayerObj* arg0)
@@ -544,7 +544,7 @@ void player_enter_ladder_down(struct PlayerObj* self)
 }
 
 // player_start_script
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_enter", func_80034E2C);
 #else
 #ifdef MMX4_PC

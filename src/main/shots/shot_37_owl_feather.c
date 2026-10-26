@@ -123,7 +123,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_37_owl_feather", func_800A3CB4);
 #endif
 
 // owl_feather_fly
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_37_owl_feather", func_800A3FEC);
 #else
 void func_800A3FEC(struct ShotObj* arg0)

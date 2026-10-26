@@ -85,7 +85,7 @@ void func_8009E8E0(struct ShotObj* self);
 extern u8 train_boss_arm_active_bits[4];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", func_8009E188);
 #else
 void func_8009E188(struct ShotObj* self)
@@ -148,7 +148,7 @@ void train_boss_bullet_despawn(struct ShotObj* self)
     self->unk84.shot_24.timer--;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", train_boss_arm_init);
 #else
 void train_boss_arm_init(struct ShotObj* self)
@@ -381,7 +381,7 @@ void train_boss_arm_wait_sync(struct ShotObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", train_boss_arm_destroyed);
 #else
 void train_boss_arm_destroyed(struct ShotObj* self)

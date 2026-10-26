@@ -50,7 +50,7 @@ void cyberspace_trial_init(struct EffectObj* self)
     self->ext.effect_38.timer = 0;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_38_cyberspace_trial", cyberspace_trial_wait_start);
 #else
 void cyberspace_trial_wait_start(struct EffectObj* self)

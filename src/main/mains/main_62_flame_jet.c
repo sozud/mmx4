@@ -65,7 +65,7 @@ static struct VisualObj* main_62_spawn_arm(struct MainObj* arg0, s8 side)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007B90C);
 #else
 void func_8007B90C(struct MainObj* arg0)
@@ -217,7 +217,7 @@ void flame_jet_main(struct MainObj* self)
 }
 
 // flame_jet_extinguish
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007BE40);
 #else
 extern struct Unk_unk68 flame_jet_extinguish_debris[2];

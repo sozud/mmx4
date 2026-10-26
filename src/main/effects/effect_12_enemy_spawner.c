@@ -152,7 +152,7 @@ void enemy_spawner_despawn(struct EffectObj* self)
 }
 
 // enemy_spawner_count_children
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_12_enemy_spawner", func_800B8490);
 #else
 s32 func_800B8490(struct EffectObj* arg0)

@@ -306,7 +306,7 @@ ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
 extern u16 D_80106070[64];
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DD04);
 #else
 ret_s8 func_8002DD04(struct MainObj* object)
@@ -340,7 +340,7 @@ ret_s8 func_8002DD04(struct MainObj* object)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DE30);
 #else
 s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)

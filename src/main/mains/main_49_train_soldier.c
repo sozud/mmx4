@@ -64,7 +64,7 @@ extern union AnimationStep* highway_trooper_animations[27];
 extern u8 D_800FFB5C[4];
 extern ret_u8 func_8002938C(s32);
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_49_train_soldier", func_80068548);
 #else
 #ifdef MMX4_SATURN

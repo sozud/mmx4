@@ -191,7 +191,7 @@ void mushroom_shot_sprout_despawn(struct ShotObj* self)
 }
 
 // mushroom_shot_spray_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_39_mushroom_shot", func_800A4D20);
 #else
 void func_800A4D20(struct ShotObj* self)
@@ -338,7 +338,7 @@ void mushroom_shot_sprout_jump(struct ShotObj* self)
 void func_800A5194(struct ShotObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_39_mushroom_shot", func_800A5194);
 #else
 void func_800A5194(struct ShotObj* arg0)

@@ -109,7 +109,7 @@ struct Prim D_800EE504[9] = {
     { 0x78, 0xD0, 0x89, 0x03, 0x01, 0x00 },
 };
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/3A6C", func_8001326C);
 #else
 void func_8001326C(u8 arg0)
@@ -143,7 +143,7 @@ void func_8001326C(u8 arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/3A6C", func_80013404);
 #else
 void func_80013404(u8 arg0)

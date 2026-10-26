@@ -55,7 +55,7 @@ void spike_sled_update(struct MainObj* self)
     spike_sled_state_funcs[self->state](self);
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", spike_sled_init);
 #else
 void spike_sled_init(struct MainObj* self)
@@ -164,7 +164,7 @@ void func_8005E298(struct MainObj* arg0);
 extern u8 D_800FDD98[8];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005D4E0);
 #else
 void func_8005D4E0(struct MainObj* arg0)
@@ -511,7 +511,7 @@ void spike_sled_bomb(struct MainObj* self)
 }
 
 // spike_sled_bomb_jump
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E108);
 #else
 void func_8005E108(struct MainObj* arg0)
@@ -581,7 +581,7 @@ void spike_sled_bomb_rise(struct MainObj* self)
 }
 
 // spike_sled_bomb_drop
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E298);
 #else
 void func_8005E298(struct MainObj* arg0)

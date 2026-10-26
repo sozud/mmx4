@@ -197,7 +197,7 @@ static u8 main43_column(s16 index)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006346C);
 #else
 void func_8006346C(struct MainObj* arg0)
@@ -370,7 +370,7 @@ void web_spider_intro_climb(struct MainObj* self)
 }
 
 // web_spider_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006398C);
 #else
 void func_8006398C(struct MainObj* arg0)
@@ -416,7 +416,7 @@ void web_spider_drop(struct MainObj* self)
 }
 
 // web_spider_drop_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80063B20);
 #else
 void func_80063B20(struct MainObj* arg0)
@@ -588,7 +588,7 @@ void web_spider_swing_start(struct MainObj* self)
 }
 
 // web_spider_swing_move
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80064154);
 #else
 void func_80064154(struct MainObj* arg0)
@@ -752,7 +752,7 @@ void web_spider_big_web(struct MainObj* self)
 }
 
 // web_spider_big_web_start
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_800646EC);
 #else
 void func_800646EC(struct MainObj* arg0)
@@ -1245,7 +1245,7 @@ void func_80065574(struct MainObj* arg0)
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80065574);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", spiderling_run);
 #else
 void spiderling_run(struct MainObj* self)

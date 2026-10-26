@@ -31,7 +31,7 @@ void wave_rider_jet_init(struct VisualObj* arg0)
     arg0->state++;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_21_wave_rider_jet", wave_rider_jet_main);
 #else
 void wave_rider_jet_main(struct VisualObj* arg0)

@@ -538,7 +538,7 @@ void player_spawn(void)
     background_objects[2].unk44 = 0;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_common", player_init_clone);
 #else
 void player_init_clone(void)
@@ -741,7 +741,7 @@ void player_death_wait(struct PlayerObj* self)
 void func_80035C20(struct PlayerObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_common", func_80035C20);
 #else
 void func_80035C20(struct PlayerObj* arg0)
@@ -851,7 +851,7 @@ void player_set_collision_bounds(struct PlayerObj* self)
     self->unk68 = &player_zero_collision_bounds;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_common", player_read_input);
 #else
 void player_read_input(void)
@@ -871,7 +871,7 @@ void player_read_input(void)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_common", player_map_buttons);
 #else
 u16 player_map_buttons(s32 pad)
@@ -1317,7 +1317,7 @@ void player_check_splash(struct PlayerObj* self)
 }
 
 // player_spawn_splash
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_common", func_80036BF4);
 #else
 void func_80036BF4(struct PlayerObj* self, s16 ground_y)

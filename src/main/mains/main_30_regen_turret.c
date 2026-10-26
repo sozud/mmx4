@@ -38,7 +38,7 @@ extern struct Unk_unk68 D_80107174[];
 void func_8005B438(struct MainObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_30_regen_turret", func_8005B438);
 #else
 void func_8005B438(struct MainObj* arg0)

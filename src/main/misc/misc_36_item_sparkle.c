@@ -26,7 +26,7 @@ void item_sparkle_update(struct MiscObj* self)
 void func_800CF300(struct MiscObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_36_item_sparkle", func_800CF300);
 #else
 void func_800CF300(struct MiscObj* self)

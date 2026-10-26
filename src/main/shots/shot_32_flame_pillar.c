@@ -26,7 +26,7 @@ extern union AnimationStep* ice_block_animations[9];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_32_flame_pillar", func_800A0170);
 #else
 void func_800A0170(struct ShotObj* arg0)

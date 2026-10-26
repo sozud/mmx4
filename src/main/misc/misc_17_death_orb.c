@@ -30,7 +30,7 @@ extern s8 death_orb_frames[4];
 void func_800CAE38(struct MiscObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_17_death_orb", func_800CAE38);
 #else
 void func_800CAE38(struct MiscObj* arg0)

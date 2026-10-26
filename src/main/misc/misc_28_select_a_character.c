@@ -61,7 +61,7 @@ enum SubTypes {
 };
 
 // SelectACharacterUpdate state 0
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_28_select_a_character", select_char_init);
 #else
 void select_char_init(struct MiscObj* self)
@@ -347,7 +347,7 @@ void select_char_character_idle(struct MiscObj* self)
 }
 
 // select_char_character_funcs state 1
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/misc/misc_28_select_a_character", select_char_character_shoot);
 #else
 void select_char_character_shoot(struct MiscObj* self)

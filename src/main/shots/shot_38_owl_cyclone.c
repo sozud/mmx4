@@ -34,7 +34,7 @@ void owl_cyclone_update(struct ShotObj* self)
 void func_800A42C8(struct ShotObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_38_owl_cyclone", func_800A42C8);
 #else
 void func_800A42C8(struct ShotObj* arg0)

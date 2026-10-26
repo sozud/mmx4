@@ -92,7 +92,7 @@ u8 general_at_position(struct ObjectHeader* self, s16 arg1, s16 arg2)
     return 0;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", general_pick_script);
 #else
 void general_pick_script(struct MainObj* self)
@@ -162,7 +162,7 @@ void func_800917AC(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_8008FBCC);
 #else
 void func_8008FBCC(struct MainObj* self)
@@ -461,7 +461,7 @@ void general_fly_start(struct MainObj* self)
 }
 
 // general_fly_cross
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800905D4);
 #else
 void func_800905D4(struct MainObj* self)
@@ -835,7 +835,7 @@ void general_slam(struct MainObj* self)
 }
 
 // general_fight
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_80091218);
 #else
 void func_80091218(struct MainObj* self)
@@ -961,7 +961,7 @@ void general_death_blink(struct MainObj* self)
 }
 
 // general_death_explode
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800915C4);
 #else
 void func_800915C4(struct MainObj* self)

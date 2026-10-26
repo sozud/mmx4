@@ -59,7 +59,7 @@ void func_800C229C(struct ItemObj* self);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/items/item_09_moving_block", func_800C229C);
 #else
 void func_800C229C(struct ItemObj* self)

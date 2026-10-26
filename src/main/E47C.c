@@ -1495,7 +1495,7 @@ void func_8001EF48(struct GameInfo* arg0)
     arg0->mode++;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/E47C", func_8001EFF0);
 #else
 void func_8001EFF0(struct GameInfo* arg0)

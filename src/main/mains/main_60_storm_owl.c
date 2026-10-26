@@ -550,7 +550,7 @@ void storm_owl_intro_fill_health(struct MainObj* self)
 }
 
 // storm_owl_intro_takeoff
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075C6C);
 #else
 void func_80075C6C(struct MainObj* arg0)
@@ -598,7 +598,7 @@ void storm_owl_patrol_start(struct MainObj* self)
 }
 
 // storm_owl_patrol_fly
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075E78);
 #else
 void func_80075E78(struct MainObj* arg0)
@@ -645,7 +645,7 @@ void storm_owl_patrol_wait(struct MainObj* self)
 }
 
 // storm_owl_patrol_fall
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_800760C4);
 #else
 void func_800760C4(struct MainObj* arg0)
@@ -719,7 +719,7 @@ void storm_owl_grab_dive(struct MainObj* self)
 }
 
 // storm_owl_grab_swoop
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076364);
 #else
 void func_80076364(struct MainObj* arg0)
@@ -771,7 +771,7 @@ void func_80076364(struct MainObj* arg0)
 #endif
 
 // storm_owl_grab_rise
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_8007651C);
 #else
 void func_8007651C(struct MainObj* arg0)
@@ -799,7 +799,7 @@ void func_8007651C(struct MainObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_grab_carry);
 #else
 void storm_owl_grab_carry(struct MainObj* self)
@@ -1520,7 +1520,7 @@ void storm_owl_spawn_volley_feather(struct MainObj* self, s8 arg1)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_spawn_cyclones);
 #else
 void storm_owl_spawn_cyclones(struct MainObj* arg0)
@@ -1625,7 +1625,7 @@ void storm_owl_spawn_hit_flash(struct PlayerObj* self)
 }
 
 // storm_owl_spawn_ground_cyclone
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80078314);
 #else
 void func_80078314(struct MainObj* arg0)
@@ -1723,7 +1723,7 @@ void storm_owl_choose_corner(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_choose_pattern);
 #else
 void storm_owl_choose_pattern(struct MainObj* self)

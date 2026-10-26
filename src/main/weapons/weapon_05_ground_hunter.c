@@ -192,7 +192,7 @@ void ground_hunter_despawn(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", ground_hunter_check_wall);
 #else
 s32 ground_hunter_check_wall(struct WeaponObj* arg0)
@@ -292,7 +292,7 @@ extern struct Unk_unk68 ground_hunter_charged_hit_box[];
 extern struct Unk_unk68 ground_hunter_charged_shot_box[];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", func_80095E3C);
 #else
 void func_80095E3C(struct WeaponObj* self)
@@ -362,7 +362,7 @@ void ground_hunter_charged_wait_fire(struct WeaponObj* arg0)
 }
 
 // ground_hunter_charged_fire
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", func_80096060);
 #else
 void func_80096060(struct WeaponObj* self)

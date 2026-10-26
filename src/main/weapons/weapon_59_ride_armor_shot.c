@@ -132,7 +132,7 @@ void enemy_ride_armor_shot_update(struct ShotObj* arg0)
 }
 
 // ride_armor_missile_find_target
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098DA0);
 #else
 void func_80098DA0(struct WeaponObj* arg0)

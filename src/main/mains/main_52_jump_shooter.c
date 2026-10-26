@@ -230,7 +230,7 @@ void func_8006AAB4(struct MainObj* arg0);
 void func_8006AE80(struct MainObj* arg0);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", func_8006AAB4);
 #else
 void func_8006AAB4(struct MainObj* arg0)

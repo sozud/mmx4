@@ -111,7 +111,7 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800B9F
 #endif
 
 // crumble_sequencer_triggered
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800BA178);
 #else
 void func_800BA178(struct EffectObj* arg0)

@@ -656,5 +656,9 @@ u8* pc_archive_slots[22];
 struct MainPrimitiveBuffer temp1[2];
 u8 window_archive_data[0x3000];
 u8 replay_data[0x2000];
+#ifdef VERSION_EU
+u8 D_80166D68;
+s8 D_801307F8;
+#endif
 
 #endif

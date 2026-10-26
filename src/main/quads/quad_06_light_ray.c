@@ -31,7 +31,7 @@ void light_ray_despawn(struct QuadObj*);
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_06_light_ray", func_800D5934);
 #else
 void func_800D5934(struct QuadObj* arg0)

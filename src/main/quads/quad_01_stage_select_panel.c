@@ -68,7 +68,7 @@ u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y,
 }
 
 // stage_select_panel_init
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D4334);
 #else
 void func_800D4334(struct QuadObj* self)
@@ -105,7 +105,7 @@ void func_800D4334(struct QuadObj* self)
 #endif
 
 // stage_select_panel_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D43F4);
 #else
 void func_800D43F4(struct QuadObj* self)

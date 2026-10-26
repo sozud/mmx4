@@ -31,7 +31,7 @@ void (*double_bouncer_step_funcs[])(struct ShotObj*) = {
 void func_800AA2FC(struct ShotObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_50_double_bouncer", func_800AA2FC);
 #else
 void func_800AA2FC(struct ShotObj* self)

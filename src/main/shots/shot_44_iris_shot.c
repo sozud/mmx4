@@ -268,7 +268,7 @@ void iris_drone_hover(struct ShotObj* self)
 }
 
 // iris_drone_chase
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A766C);
 #else
 void func_800A766C(struct ShotObj* self)

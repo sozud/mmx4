@@ -77,7 +77,7 @@ void web_shot_fly(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_22_web_shot", web_shot_home);
 #else
 void web_shot_home(struct ShotObj* self)

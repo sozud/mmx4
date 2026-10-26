@@ -83,7 +83,7 @@ void func_80066DE8(struct MainObj* self)
 }
 
 // train_boss_armor_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066F1C);
 #else
 extern u8 D_800FF9FC[4], D_800FFA00[4], D_800FFA04[8];
@@ -150,7 +150,7 @@ void func_80066F1C(struct MainObj* self)
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", train_boss_armor_smoke);
 #else
 void train_boss_armor_smoke(struct MainObj* self)

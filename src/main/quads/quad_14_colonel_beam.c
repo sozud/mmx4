@@ -58,7 +58,7 @@ void colonel_beam_drop(struct QuadObj* arg0)
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_14_colonel_beam", colonel_beam_widen);
 #else
 void colonel_beam_widen(struct QuadObj* arg0)

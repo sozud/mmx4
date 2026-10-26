@@ -57,7 +57,7 @@ extern union AnimationStep* D_800FA4E8[16];
 extern u8 bulldozer_debris[16];
 extern void (*bulldozer_step_funcs[])(struct MainObj*);
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_06_bulldozer", func_80046B80);
 #else
 void func_80046B80(struct MainObj* arg0)
@@ -97,7 +97,7 @@ void func_80046B80(struct MainObj* arg0)
 #endif
 
 // bulldozer_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_06_bulldozer", func_80046C8C);
 #else
 void func_80046C8C(struct MainObj* arg0)

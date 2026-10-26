@@ -84,7 +84,7 @@ void func_80043C0C(struct MainObj* arg0);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043390);
 #else
 void func_80043390(struct MainObj* arg0)
@@ -344,7 +344,7 @@ void spike_marl_roll_update(struct MainObj* self)
 }
 
 // spike_marl_roll_slow
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043C0C);
 #else
 void func_80043C0C(struct MainObj* arg0)

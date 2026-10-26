@@ -68,7 +68,7 @@ extern u8 background_dragon_attack_map[128];
 extern u16 D_800F99BC[4];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040644);
 #else
 void func_80040644(struct MainObj* arg0)
@@ -145,7 +145,7 @@ void background_dragon_reset(struct MainObj* self)
 }
 
 // background_dragon_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040838);
 #else
 #ifdef MMX4_SATURN
@@ -308,7 +308,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040ABC);
 #endif
 
 // background_dragon_hover
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040CCC);
 #else
 void func_80040CCC(struct MainObj* arg0)
@@ -613,7 +613,7 @@ void background_dragon_sequence_begin(struct MainObj* self)
 }
 
 // background_dragon_swoop
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_800415B0);
 #else
 void func_800415B0(struct MainObj* arg0)

@@ -436,7 +436,7 @@ extern s32* D_8013BD50[][8];
 
 extern s32 D_8013E2F0[][8];
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/165A0", func_800267D4);
 #else
 void func_800267D4(s32 input)
@@ -565,7 +565,7 @@ void func_8002728C(void)
 
 INCLUDE_ASM("main/nonmatchings/165A0", func_80027344);
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/165A0", func_800275DC);
 #else
 void func_800275DC(s32 layer, s32 x, s32 y)

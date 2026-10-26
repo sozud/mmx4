@@ -345,7 +345,7 @@ void ready_line_sweep(struct QuadObj* arg0)
 }
 
 // ready_line_type_funcs state 1
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_07_ready_line", ready_line_shutter);
 #else
 void ready_line_shutter(struct QuadObj* arg0)
@@ -534,7 +534,7 @@ void ready_line_move(struct QuadObj* arg0)
     arg0->ext.ready_line.y_vel.val += arg0->ext.ready_line.y_accel.val;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/quads/quad_07_ready_line", ready_line_converge_vertex);
 #else
 void ready_line_converge_vertex(struct QuadObj* arg0, arg_u8 arg1, s32 arg2, const s16 target[2])

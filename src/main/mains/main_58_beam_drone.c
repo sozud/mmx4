@@ -65,7 +65,7 @@ void func_800745E8(struct MainObj* self);
 void func_80074438(struct MainObj* self);
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_58_beam_drone", func_80074438);
 #else
 void func_80074438(struct MainObj* self)
@@ -120,7 +120,7 @@ void func_80074438(struct MainObj* self)
 #endif
 
 // beam_drone_main
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_58_beam_drone", func_800745E8);
 #else
 void func_800745E8(struct MainObj* self)

@@ -32,7 +32,7 @@ void func_800A9964(struct ShotObj* self);
 extern u8 double_ball_boxes[2][4];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_48_double_ball", func_800A9964);
 #else
 void func_800A9964(struct ShotObj* self)

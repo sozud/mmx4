@@ -39,7 +39,7 @@ extern struct Unk_unk68 D_8010871C[];
 extern struct Unk_unk68 D_80108720[];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", func_800929DC);
 #else
 void func_800929DC(struct WeaponObj* self)
@@ -91,7 +91,7 @@ void plasma_shot_main(struct WeaponObj* arg0)
 }
 
 // plasma_shot_move
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", func_80092B5C);
 #else
 void func_80092B5C(struct WeaponObj* self)

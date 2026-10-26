@@ -74,7 +74,7 @@ extern u8 sigma_final_shot_terrain_box_1[4];
 extern s16 sigma_final_shot_offsets[4];
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/shots/shot_54_sigma_final_shot", func_800ABE08);
 #else
 void func_800ABE08(struct ShotObj* self)
