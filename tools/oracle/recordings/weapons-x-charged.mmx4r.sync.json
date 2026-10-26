@@ -1,10 +1,10 @@
 {
   "format": "MMX4SYNC1",
-  "replay_sha256": "aea5112511989c97d83f2ea6b862a5de97a74f28c8e51e9f5c3576913fee6562",
+  "replay_sha256": "dade18e3f11f4b501d372ab451198e5142dcfa4580adcfb9b92537fae33a69cb",
   "clock": "pad-read",
-  "samples": 55,
+  "samples": 7110,
   "scene": {
-    "stage": 2,
+    "stage": 1,
     "substage": 0,
     "checkpoint": 0,
     "character": 0
@@ -14,6 +14,10 @@
       "sample": 0,
       "mode": 6,
       "kind": "start"
+    },
+    {
+      "sample": 49,
+      "kind": "xa-start"
     }
   ]
 }

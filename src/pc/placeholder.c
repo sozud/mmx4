@@ -13,6 +13,7 @@ void func_80012DC0(const u32* src, u32* dst, u32 count);
 extern u8 D_800F164C[4];
 extern union MainPaletteData D_800F1660;
 extern const u32* D_800F2FD4[];
+extern u32 D_800F2F08[12];
 extern struct StageObjectMarginData D_800F4334;
 extern struct HudSpriteOrigin D_800F30F4[8];
 extern struct PlayerGaugePosition D_800F3124[2];
@@ -233,6 +234,19 @@ void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
         window->unk3C = window_archive + window_frame_offset;
         window->unk15 = 0;
         set_animation(window, 0);
+    }
+    {
+        const u8* tracks = (const u8*)D_800F2F08;
+        u8 track;
+
+        if (engine_obj.cur_character == 0 ? message >= 0x1E : message >= 0x19)
+            track = engine_obj.cur_character == 0 ? tracks[message - 0x1E] : tracks[0x18 + message - 0x19];
+        else
+            track = message == 0xC ? 0x19 : 0xFE;
+        if (track == 0xFF)
+            func_80016F0C();
+        else if (track != 0xFE)
+            func_8001663C(track, 0x7F);
     }
 }
 #endif
