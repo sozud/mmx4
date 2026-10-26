@@ -202,7 +202,7 @@ static u32 test_final_spark(u32 row)
             misc_expected[slot].active = 0x41;
             misc_expected[slot].id = 0x38;
             misc_expected[slot].unk2 = 2;
-            misc_expected[slot].ext.title_logo.palette_shift_speed = 0;
+            misc_expected[slot].ext.misc_11.active = 0;
         }
     }
     func_80023870(&obj);
@@ -523,7 +523,7 @@ static u32 test_setup(u32 row)
         expected->active = 0x41;
         expected->id = 0x38;
         expected->unk2 = next_random() % 2;
-        expected->ext.title_logo.palette_shift_speed = next_random();
+        expected->ext.misc_11.active = next_random();
     }
     main_expected.transition.active = 1;
     main_expected.transition.fade_amount = 8;

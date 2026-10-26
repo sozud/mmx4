@@ -35,6 +35,7 @@ static FILE* replay_file;
 static u8 replay_stage;
 static u8 replay_substage;
 static unsigned long replay_length;
+static long replay_sample_size;
 static unsigned long replay_consumed;
 static int replay_started;
 static int replay_complete;
@@ -167,25 +168,38 @@ static void open_replay(void)
     rewind(replay_file);
     if (fread(header, sizeof(header), 1, replay_file) != 1)
         replay_fail("unable to read header");
-    if (memcmp(header, "MMX4RPL2", 8) != 0) {
+    if (memcmp(header, "MMX4RPL2", 8) != 0 && memcmp(header, "MMX4RPL3", 8) != 0) {
         if (memcmp(header, "MMX4RPL1", 8) == 0)
             replay_fail("legacy video-clock replay; normalize it to MMX4RPL2 first");
         replay_fail("invalid magic");
     }
+    replay_sample_size = memcmp(header, "MMX4RPL3", 8) == 0 ? 4 : 2;
+    if ((size - 16) % replay_sample_size != 0)
+        replay_fail("truncated input stream");
     if (header[12] > 2 || header[13] > 10 || header[14] != 0 || header[15] != 0)
         replay_fail("invalid replay header values");
     replay_stage = header[8];
     replay_substage = header[9];
-    replay_length = (unsigned long)((size - 16) / 2);
+    replay_length = (unsigned long)((size - 16) / replay_sample_size);
     replay_exit_requested = getenv("MMX4_REPLAY_EXIT") != NULL;
     open_replay_sync();
     fprintf(stderr, "MMX4 PC: replay %s: %lu pad-read samples, stage %u-%u\n",
         mmx4_pc_replay_path, replay_length, replay_stage, replay_substage);
 }
 
+static int replay_boss_hp_one(void)
+{
+    struct MainObj* boss = engine_obj.boss_ptr;
+
+    if (engine_obj.state != 6 || !engine_obj.enable_boss || boss == NULL || !boss->active)
+        return 0;
+    boss->hp = 1;
+    return 1;
+}
+
 static u16 replay_input(void)
 {
-    unsigned char input[2];
+    unsigned char input[4] = { 0 };
 
     if (replay_file == NULL)
         return 0;
@@ -199,8 +213,12 @@ static u16 replay_input(void)
     }
     if (replay_complete)
         return 0;
-    if (fread(input, sizeof(input), 1, replay_file) != 1)
+    if (fread(input, (size_t)replay_sample_size, 1, replay_file) != 1)
         replay_fail("input stream ended unexpectedly");
+    if (input[2] & 1) {
+        fprintf(stderr, "MMX4 PC: replay event boss-hp-1 at sample %lu: %s\n",
+            replay_consumed, replay_boss_hp_one() ? "applied" : "ignored, no active boss");
+    }
     mmx4_pc_complete_scheduled_cd_load(1);
     replay_consumed++;
     if (replay_consumed == replay_length) {

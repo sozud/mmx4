@@ -493,7 +493,7 @@ void func_80023698(struct EngineObj* arg0)
             obj->active = 0x41;
             obj->id = 0x38;
             obj->unk2 = get_random() & 1;
-            obj->ext.title_logo.palette_shift_speed = get_random();
+            obj->ext.misc_11.active = get_random();
         }
     }
 
@@ -546,7 +546,7 @@ void func_80023870(struct EngineObj* arg0)
             obj->active = 0x41;
             obj->id = 0x38;
             obj->unk2 = 2;
-            obj->ext.title_logo.palette_shift_speed = 0;
+            obj->ext.misc_11.active = 0;
         }
 #ifdef VERSION_JP
         arg0->unk4 = 0x12C;

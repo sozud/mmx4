@@ -36,23 +36,29 @@ def validate_replay(path):
     data = path.read_bytes()
     if len(data) < 18 or (len(data) - 16) % 2:
         raise SystemExit(f"{path}: empty, odd-length, or truncated replay")
-    if data[:8] not in (b"MMX4RPL1", b"MMX4RPL2"):
+    if data[:8] not in (b"MMX4RPL1", b"MMX4RPL2", b"MMX4RPL3"):
         raise SystemExit(f"{path}: invalid replay magic")
     if data[12] > 2 or data[13] > 10 or any(data[14:16]):
         raise SystemExit(f"{path}: invalid replay header values")
+    sample_size = 4 if data[:8] == b"MMX4RPL3" else 2
+    if (len(data) - 16) % sample_size:
+        raise SystemExit(f"{path}: truncated replay")
+    frames = (len(data) - 16) // sample_size
     return {
         "path": str(path),
         "sha256": sha256(path),
-        "frames": (len(data) - 16) // 2,
-        "clock": "pad-read" if data[:8] == b"MMX4RPL2" else "video-frame",
+        "frames": frames,
+        "clock": "video-frame" if data[:8] == b"MMX4RPL1" else "pad-read",
         "stage": data[8],
         "substage": data[9],
         "checkpoint": data[10],
         "character": data[11],
         "loadout": data[12],
         "story": data[13],
-        "distinct_masks": len({data[16 + 2 * i : 18 + 2 * i]
-                               for i in range((len(data) - 16) // 2)}),
+        "distinct_masks": len({data[16 + sample_size * i : 18 + sample_size * i]
+                               for i in range(frames)}),
+        "events": sum(1 for i in range(frames)
+                      if sample_size == 4 and any(data[18 + 4 * i : 20 + 4 * i])),
     }
 
 
@@ -271,6 +277,7 @@ def main():
     sync_path = args.sync or Path(str(args.replay) + ".sync.json")
     sync = load_sync(sync_path, metadata)
     sync_points = {point["sample"] for point in sync["sync_points"]} if sync else {0}
+    xa_start_synced = bool(sync) and any(point["kind"] == "xa-start" for point in sync["sync_points"])
 
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     args.output.mkdir(parents=True, exist_ok=True)
@@ -404,6 +411,14 @@ def main():
             print(f"   {name}: comparing the {width} columns both logs share")
             rows_a = {frame: [fields[:width] for fields in rows] for frame, rows in rows_a.items()}
             rows_b = {frame: [fields[:width] for fields in rows] for frame, rows in rows_b.items()}
+        if name == "frames.tsv" and not xa_start_synced:
+            header = header_a if len(header_a) <= len(header_b) else header_b
+            keep = [index for index, column in enumerate(header)
+                    if column not in ("xa_starts", "xa_start_sample")]
+            rows_a = {frame: [[fields[i] for i in keep if i < len(fields)] for fields in rows]
+                      for frame, rows in rows_a.items()}
+            rows_b = {frame: [[fields[i] for i in keep if i < len(fields)] for fields in rows]
+                      for frame, rows in rows_b.items()}
         if name == "extensions.tsv" and args.main19_semantic_extensions:
             raw_differing = sum(
                 rows_a[frame] != rows_b[frame]

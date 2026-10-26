@@ -600,8 +600,8 @@ void sigma_head_despawn(struct ShotObj* self)
 
 void sigma_head_update(struct ShotObj* self)
 {
-    struct WeaponObj* temp_s1 = self->unk7C;
-    if (temp_s1->unk94 == 2) {
+    struct MainObj* owner = MAIN_OBJECT(self->unk7C);
+    if (owner->ext.main_74.death_kind == 2) {
         self->state = 2;
         self->unk5 = 0;
         spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 20, 0);
@@ -611,14 +611,14 @@ void sigma_head_update(struct ShotObj* self)
         spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi - 20, -1);
         spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi - 20, -1);
     }
-    if (temp_s1->unk94 == 1) {
+    if (owner->ext.main_74.death_kind == 1) {
         self->unk8C.byte = 0;
         self->state = 1;
         self->unk5 = 3;
         self->unk6 = 0;
         self->unk7 = 1;
         self->unk50.data = NULL;
-        temp_s1->ext.weapon_6.direction = 0;
+        owner->ext.main_74.unk8C = 0;
         spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 20, 0);
         spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 20, 1);
         spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 0, -1);

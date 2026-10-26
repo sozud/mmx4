@@ -347,9 +347,9 @@ static u32 test_sigma_head_states(u32 row)
     return object_run(sigma_head_states_cases[row], row, &sigma_head_states_expected[row * 10]);
 }
 
-static struct WeaponObj signal_owner;
+static struct MainObj signal_owner;
 #define ss state_room.shot
-#define SIGNAL_HEAD(signal, st) (state_reset(0, 0, 0), memset(&signal_owner, 0, sizeof(signal_owner)), signal_owner.unk94 = signal, signal_owner.ext.weapon_6.direction = 3, ss.active = 1, ss.state = st, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.unk7C = &signal_owner, sigma_head_update(&ss), state_extra = ss.unk5C | signal_owner.ext.weapon_6.direction << 8)
+#define SIGNAL_HEAD(signal, st) (state_reset(0, 0, 0), memset(&signal_owner, 0, sizeof(signal_owner)), signal_owner.ext.main_74.death_kind = signal, signal_owner.ext.main_74.unk8C = 3, ss.active = 1, ss.state = st, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.unk7C = &signal_owner, sigma_head_update(&ss), state_extra = ss.unk5C | signal_owner.ext.main_74.unk8C << 8)
 static void sh_destroyed(void)
 {
     SIGNAL_HEAD(2, 1);
