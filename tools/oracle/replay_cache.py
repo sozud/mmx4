@@ -72,7 +72,9 @@ def entries(args):
             continue
         replay = Path(line.split()[0])
         replay_sha = oracle_cache.digest(replay)
-        frames = (replay.stat().st_size - 16) // 2
+        with replay.open("rb") as handle:
+            sample_size = 4 if handle.read(8) == b"MMX4RPL3" else 2
+        frames = (replay.stat().st_size - 16) // sample_size
         stamp = oracle_cache.inputs(replay_sha, args.mednafen, args.cue, args.bios,
                                     args.psx_frames)
         yield replay, args.cache / replay_sha, stamp, frames

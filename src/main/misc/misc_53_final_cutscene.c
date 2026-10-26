@@ -197,7 +197,7 @@ union AnimationStep final_cutscene_anim_0[3] = {
 };
 union AnimationStep* final_cutscene_animations[1] = { final_cutscene_anim_0 };
 
-void (*final_cutscene_step_funcs[8])(struct MiscObj*) = {
+void (*final_cutscene_step_funcs[])(struct MiscObj*) = {
     final_cutscene_wait_player,
     final_cutscene_approach,
     func_800D2CA4,
@@ -206,6 +206,9 @@ void (*final_cutscene_step_funcs[8])(struct MiscObj*) = {
     final_cutscene_start_effect,
     final_cutscene_wait_effect,
     final_cutscene_wait_fade,
+#ifdef MMX4_PC
+    func_800D2A74,
+#endif
 };
 void (*final_cutscene_state_funcs[3])(struct MiscObj*) = {
     func_800D2A74,
