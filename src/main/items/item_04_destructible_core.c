@@ -155,20 +155,16 @@ void destructible_core_update(struct ItemObj* arg0)
 
 // destructible_core_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800C0864(struct ItemObj* arg0);
 extern u32* dragon_rubble_animations[14];
 extern struct Unk_unk68 D_80108504[];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/items/item_04_destructible_core", func_800C0864);
+#else
 void func_800C0864(struct ItemObj* arg0)
 {
-    const u16* layout = (const u16*)&destructible_core_data;
-    s32 slot = arg0->unk2;
-
-    if (engine_obj.checkpoint >= 2 && slot == 0) {
-        apply_tile_effect(destructible_core_data.object_ids[slot * 0x10], 0, 0);
+    if (engine_obj.checkpoint >= 2 && arg0->unk2 == 0) {
+        apply_tile_effect(destructible_core_data.object_ids[0], 0, 0);
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
@@ -176,28 +172,30 @@ void func_800C0864(struct ItemObj* arg0)
     arg0->state = 0;
     arg0->unk5 = 1;
     arg0->active = 1;
-    arg0->state = (u8)arg0->state + 1;
-    arg0->animation_table = (const u8* const*)dragon_rubble_animations;
+    arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
+    arg0->animation_table = (const u8* const*)dragon_rubble_animations;
     arg0->unk42 = OBJECT_CLUT(0x78C0);
     arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(6));
     arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 6);
-    arg0->x_pos.i.hi = layout[slot * 8];
+    arg0->x_pos.i.hi = ((u16*)((u8*)&destructible_core_data + (arg0->unk2 << 4)))[0];
+    arg0->y_pos.i.hi = ((u16*)((u8*)&destructible_core_data + (arg0->unk2 << 4)))[1];
     arg0->unk58 = (const u8*)D_80108504;
-    arg0->y_pos.i.hi = layout[slot * 8 + 1];
-    arg0->unk5C = slot != 0 ? 0x20 : 0x50;
-    arg0->unk75 = 1;
-    arg0->ext.packed = 5;
+    if (arg0->unk2 != 0) {
+        arg0->unk5C = 0x20;
+    } else {
+        arg0->unk5C = 0x50;
+    }
     arg0->unk61 = 0;
     arg0->unk68 = NULL;
+    arg0->unk54 = (const u8*)destructible_core_boxes[arg0->unk2];
     arg0->on_screen = 0;
+    arg0->unk75 = 1;
     arg0->unk7C.timer = 0;
-    arg0->tail_ext.unk1.unk88 = 0;
-    arg0->unk54 = (const u8*)destructible_core_boxes[slot];
+    arg0->ext.packed = 5;
     arg0->tail_ext.unk1.unk84.previous_value = arg0->unk5C;
+    arg0->tail_ext.unk1.unk88 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_04_destructible_core", func_800C0864);
 #endif
 
 void destructible_core_main(struct ItemObj* arg0)

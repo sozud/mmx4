@@ -39,12 +39,12 @@ extern struct Unk_unk68 D_800FD014[];
 extern struct Unk_unk68 D_80106EF4[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void caterkiller_check_fall(struct MainObj*);
+#endif
 extern void (*caterkiller_step_funcs[])(struct MainObj*);
 extern struct Unk_unk68* D_800FD018[12];
 extern struct Unk_unk68* D_800FD048[];
 extern struct Unk_unk68* D_800FD04C[];
 extern u8 caterkiller_debris[4];
-#endif
 
 void caterkiller_update(struct MainObj* self)
 {
@@ -168,8 +168,48 @@ void func_80057308(struct MainObj* self)
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     }
 }
-#else
+#elif defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057308);
+#else
+void func_80057308(struct MainObj* self)
+{
+    s8 step;
+    s32 result;
+
+    caterkiller_check_fall(self);
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    caterkiller_step_funcs[self->unk5](self);
+    if (self->y_speed < -0x50000)
+        self->y_speed = -0x50000;
+    step = self->unk5;
+    if (step != 6) {
+        self->ext.main_25.saved_unk5 = step;
+        self->attack_box = D_800FD048[self->ext.main_25.unk84 * 2];
+        func_8002D9BC(self);
+        self->attack_box = D_800FD048[self->ext.main_25.unk84 * 2 + 1];
+        func_8002D9BC(self);
+        self->hurt_box = D_800FD018[self->ext.main_25.unk84 * 2];
+        result = func_8002DD04(self);
+        if (result < 0) {
+        die:
+            spawn_explosion(BASE_OBJECT(self));
+            spawn_debris(4, caterkiller_debris, self);
+            drop_item(BASE_OBJECT(self), 0xC);
+            goto done;
+        }
+        self->hurt_box = D_800FD018[self->ext.main_25.unk84 * 2 + 1];
+        result = func_8002DD04(self);
+        if (result < 0)
+            goto die;
+        if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x28) == 0) {
+            update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
+            return;
+        }
+    done:
+        self->state = 2;
+    }
+}
 #endif
 
 void caterkiller_despawn(struct MainObj* self)

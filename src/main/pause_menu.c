@@ -70,7 +70,7 @@ void saturn_debug_putchar(u8 character);
 #define PAUSE_DRAW() func_80023D90()
 #define PAUSE_ENTER() func_800170B0()
 #define PAUSE_LEAVE() func_800170E0()
-#define PAUSE_SAVED_WEAPON D_8013B818[0]
+#define PAUSE_SAVED_WEAPON D_8013B818
 #endif
 
 // D_800F48D4
@@ -98,7 +98,7 @@ void func_80031130(struct BarObj*);
 
 void func_800170E0(void);
 void func_800170B0(void);
-extern u8 D_8013B818[0x10];
+extern s8 D_8013B818;
 void func_80021104(struct EngineObj* arg0);
 void func_80023D90(void);
 void func_80021158(void);
@@ -881,19 +881,22 @@ void func_80031014(struct BarObj* arg0)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80031064(struct BarObj* arg0)
 {
+    struct PlayerObj* player = &g_Player;
+    struct PlayerObj* self;
+
     if (arg0->unk30 == 0) {
         if (g_Player.unk2 == 0) {
             player_cancel_released_charge();
-            if ((s8)PAUSE_SAVED_WEAPON != g_Player.weapon) {
-                player_reset_charge(&g_Player);
+            self = &g_Player;
+            if ((s8)PAUSE_SAVED_WEAPON != self->weapon) {
+                player_reset_charge(player);
                 g_Player.stock_charge = 0;
             }
-            player_update_shot_types(&g_Player);
+            player_update_shot_types(player);
             if ((s8)PAUSE_SAVED_WEAPON != g_Player.weapon)
-                player_equip_weapon(&g_Player);
+                player_equip_weapon(player);
         }
 #ifdef MMX4_SATURN
         saturn_sprite_reset_queues();
@@ -906,9 +909,6 @@ void func_80031064(struct BarObj* arg0)
     }
     arg0->unk5 = 3;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/pause_menu", func_80031064);
-#endif
 
 void func_80031130(struct BarObj* arg0)
 {

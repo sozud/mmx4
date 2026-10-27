@@ -9,6 +9,6 @@ void spawn_debris_offset(u8 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
 
 void spawn_rubble(arg_u8, u8*, void*, s32);
 
-void func_800C842C(s32, u8*, void*, s32, void*);
+void func_800C842C(u8, u8*, void*, s32, void*);
 
 #endif

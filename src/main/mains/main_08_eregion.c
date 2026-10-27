@@ -104,12 +104,12 @@ void func_8004932C(struct MainObj* arg0);
 void func_800480D0(struct MainObj* arg0);
 void func_80048B04(struct MainObj* arg0);
 void func_80047D04(struct MainObj* arg0);
+#endif
 extern u32 D_800FA738;
 extern u32 D_800FA73C;
 extern u32 D_800FA740;
 extern u32 D_800FA744;
 extern void (*eregion_step_funcs[])(struct MainObj*);
-#endif
 
 #if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80047D04);
@@ -164,27 +164,34 @@ void func_80047D04(struct MainObj* arg0)
 #endif
 
 // eregion_run
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80047E58(struct MainObj* arg0)
 {
     s32 collision;
-    u8 frame;
+    s8 timer;
+    s32 frame;
 
-    arg0->hurt_box = engine_obj.cur_character == 0
-        ? (const void*)&D_800FA740
-        : (const void*)&D_800FA744;
+    if (engine_obj.cur_character == 0)
+        arg0->hurt_box = (const void*)&D_800FA740;
+    else
+        arg0->hurt_box = (const void*)&D_800FA744;
     arg0->collision_data = (const u16*)D_801060F0;
     arg0->unk65 = arg0->ext.main_8.unk8B;
     func_8002DD04(arg0);
 
     arg0->collision_data = (const u16*)D_801066F0;
     frame = arg0->animation_step.fields.frame_index;
-    if (frame >= 0x16 && frame < 0x18)
+    switch (frame) {
+    case 0x16:
+    case 0x17:
         arg0->hurt_box = (const void*)&D_800FA73C;
-    else if (frame >= 0x1F && frame < 0x21)
+        break;
+    case 0x1F:
+    case 0x20:
         arg0->hurt_box = (const void*)&D_800FA738;
-    else
+        break;
+    default:
         arg0->hurt_box = (const void*)&D_800FA728;
+    }
 
     arg0->ext.main_8.unk8B = arg0->unk65;
     arg0->unk65 = arg0->ext.main_8.unk8C;
@@ -199,21 +206,28 @@ void func_80047E58(struct MainObj* arg0)
     }
     if (collision > 0) {
         func_8001540C(2, SATURN_SOUND(0x21, 0x0C), arg0);
-        arg0->invincibility_timer = 0x1E;
         if (arg0->unk7C != 0) {
+            arg0->unk42 |= 0x8000;
+            arg0->invincibility_timer = 0x1E;
             arg0->state = 3;
             arg0->unk5 = 0;
             arg0->unk6 = 0;
-            arg0->unk42 |= 0x8000;
+        } else {
+            arg0->invincibility_timer = 0x1E;
         }
     }
 
     arg0->ext.main_8.unk8C = arg0->unk65;
     eregion_step_funcs[arg0->unk5](arg0);
 
-    if (arg0->invincibility_timer != 0) {
-        s8 timer = arg0->invincibility_timer--;
+    timer = arg0->invincibility_timer;
+    if (timer != 0) {
+        arg0->invincibility_timer = timer - 1;
+#ifdef MMX4_WIN32
+        if (main_bss_state.frame_counter & 2)
+#else
         if (timer & 2)
+#endif
             arg0->unk42 |= 0x8000;
         else
             arg0->unk42 &= 0x7FFF;
@@ -229,9 +243,6 @@ void func_80047E58(struct MainObj* arg0)
     }
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80047E58);
-#endif
 
 void eregion_pick_start(struct MainObj* self)
 {

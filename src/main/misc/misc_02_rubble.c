@@ -63,7 +63,6 @@ extern s32 rubble_x_speeds[8];
 extern s32 rubble_y_speeds[8];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C7F1C(struct MiscObj* arg0);
-void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation_table);
 extern ret_u8 func_8002938C(s32);
 #endif
 
@@ -218,15 +217,16 @@ void spawn_debris_offset(u8 count, u8* variants, struct MainObj* owner, s32 x_of
 #endif
 
 // spawn_animated_debris
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation_table)
+void func_800C842C(u8 count, u8* variants, void* owner, s32 id, void* animation_table)
 {
+    struct MainObj* parent = owner;
     struct MiscObj* obj;
     s32 clut_x;
     s32 clut_y;
     s32 resource;
+    u8 variant;
 
-    for (; count & 0xFF; count--) {
+    for (; count != 0; count--) {
         obj = find_free_misc_obj();
         if (obj == NULL)
             continue;
@@ -237,11 +237,12 @@ void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation
         obj->state = 0;
         obj->unk5 = 0;
         obj->unk6 = 0;
-        obj->x_pos.val = ((struct MainObj*)owner)->x_pos.val + ((get_random() & 3) << 16);
-        obj->y_pos.val = ((struct MainObj*)owner)->y_pos.val + ((get_random() & 3) << 16);
-        obj->ext.misc_2.owner = owner;
+        obj->x_pos.val = parent->x_pos.val + ((get_random() & 3) << 16);
+        obj->y_pos.val = parent->y_pos.val + ((get_random() & 3) << 16);
+        variant = *variants++;
+        obj->ext.misc_2.owner = parent;
         obj->animation_table = animation_table;
-        obj->ext.misc_2.unk58 = *variants++;
+        obj->ext.misc_2.unk58 = variant;
         clut_x = func_8002938C(id);
         clut_y = func_8002938C(id);
         obj->unk42 = OBJECT_CLUT(((clut_x * 4 + 0x18) % 16) | (((clut_y + 6) / 4 + 0x1E0) << 6));
@@ -251,9 +252,6 @@ void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation
         obj->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", func_800C842C);
-#endif
 
 s32 rubble_x_speeds[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
 s32 rubble_y_speeds[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };

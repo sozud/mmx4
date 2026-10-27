@@ -19,10 +19,10 @@ extern void func_80018EEC(void);
 extern void func_80018FD0(u32 arg0);
 extern void func_80019058(s8 arg0);
 extern void func_800190F0(s32 arg0);
+#endif
 extern void func_80019100(void);
 extern void func_80019208(void);
 extern void func_80019228(void);
-#endif
 
 void decompress_gfx(u16* src, u16* dest);
 #ifdef MMX4_WIN32
@@ -1218,7 +1218,9 @@ void func_8001663C(u8 selection, u8 volume)
     D_80139530 = 7;
 }
 
+#ifdef VERSION_EU
 INCLUDE_RODATA("main/nonmatchings/55C4", D_80010050);
+#endif
 void func_80016F0C();
 
 extern s32 D_80139530;
@@ -1708,7 +1710,209 @@ void func_80017340(void)
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_800175AC);
 
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+static const s16* pause_bar_geometry(u32 index)
+{
+    return index < 13 ? &D_800F1C18[index].x0 : (const s16*)D_800F1D04;
+}
+
+void func_800179BC(void)
+{
+    const s16* row;
+    POLY_F4* poly;
+    DR_TPAGE* page;
+    u32 buffer;
+    u32 i;
+    u8 flag;
+    s8 amount;
+
+    for (i = 0; i < 0xE; i++) {
+        poly = SP_PRIM_CURSOR;
+        page = SP_DRAW_MODE_CURSOR;
+        setPolyF4(poly);
+        flag = ((u8*)&bar_object)[0x16 + i];
+        if (flag != 0 ? (i != 0 && engine_obj.cur_character != CHARACTER_X && i < 9) : i < 0xD)
+            continue;
+        row = pause_bar_geometry(i);
+        poly->x0 = row[0];
+        poly->y0 = row[1];
+        poly->x1 = row[2];
+        poly->y1 = row[3];
+        poly->x2 = row[4] - 1;
+        poly->y2 = row[5];
+        poly->x3 = row[6];
+        poly->y3 = row[7];
+        if (i < 10) {
+            if (i >= 2 || (i == 0) != (engine_obj.cur_character == CHARACTER_X)) {
+                amount = g_Player.weapon_energy[i < 2 ? 0 : i - 1];
+                if (amount != 0) {
+                    poly->x1 = row[0] + amount * 2 - 1;
+                    poly->x3 = row[4] + amount * 2 - 1;
+                } else {
+                    poly->x1 = poly->x0;
+                    poly->x3 = poly->x2;
+                }
+            }
+        } else if (i == 0xD) {
+            if (g_Player.hp > 0) {
+                poly->x0 = 0x6E;
+                poly->y0 = 0xD2;
+                poly->x2 = 0x67;
+                poly->y2 = 0xD9;
+                poly->y1 = 0xD2;
+                poly->x1 = poly->x0 + (s8)g_Player.hp * 2;
+                poly->y3 = 0xD9;
+                poly->x3 = poly->x2 + (s8)g_Player.hp * 2;
+            }
+        } else if (i == 0xC) {
+            poly->x1 = poly->x0 + (s8)engine_obj.sub_tanks[2];
+            poly->x3 = poly->x2 + (s8)engine_obj.sub_tanks[2];
+        } else {
+            amount = TANK_VALUE(engine_obj.sub_tanks[i - 10]);
+            poly->x1 = poly->x0 + amount;
+            poly->x3 = poly->x2 + amount;
+        }
+        setRGB0(poly, 0x29, 0xC6, 0x29);
+        setlen(page, 1);
+        page->code[0] = 0xE1000000;
+        buffer = SP_DRAW_BUFFER;
+        setaddr(D_8013BC40[buffer][0][5], page);
+        setaddr(page, poly);
+        D_8013BC40[buffer][0][5] = (P_TAG*)poly;
+        SP_DRAW_MODE_CURSOR = page + 1;
+        SP_PRIM_CURSOR = (POLY_FT4*)poly + 1;
+    }
+}
+#elif defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/55C4", func_800179BC);
+#else
+void func_800179BC(void)
+{
+    s32 amount;
+    u8 i;
+    P_TAG*(*ot)[8];
+    s8* energy;
+    s8* hp;
+    volatile u8* tank;
+    POLY_F4* poly;
+    struct MovieHudQuad* row;
+    DR_TPAGE* page;
+
+    page = SP_DRAW_MODE_CURSOR;
+    poly = SP_PRIM_CURSOR;
+    row = D_800F1C18;
+    i = 0;
+    energy = &g_Player.weapon_energy[0];
+    hp = &g_Player.hp;
+
+    for (; i < 0xE; i++) {
+        setPolyF4(poly);
+
+        if (((u8*)&bar_object)[0x16 + i] == 0) {
+            if (i < 13) {
+                row++;
+                continue;
+            }
+        } else if (i != 0 && engine_obj.cur_character != CHARACTER_X && i < 9) {
+            row++;
+            continue;
+        }
+        poly->x0 = row->x0;
+        poly->y0 = row->y0;
+        poly->x1 = row->x1;
+        poly->y1 = row->y1;
+        poly->x2 = row->x2 - 1;
+        poly->y2 = row->y2;
+        poly->x3 = row->x3;
+        poly->y3 = row->y3;
+
+        if (i < 10) {
+            if (i < 2) {
+                if (engine_obj.cur_character == CHARACTER_X) {
+                    if (i == 0) {
+                        poly->x1 = row->x1;
+                        poly->x3 = row->x3;
+                    } else if (*energy != 0) {
+                        poly->x1 = row->x0 + *energy * 2 - 1;
+                        poly->x3 = row->x2 + *energy * 2 - 1;
+                    } else {
+                        poly->x1 = poly->x0;
+                        poly->x3 = poly->x2;
+                    }
+                } else if (i == 0) {
+                    if (*energy != 0) {
+                        poly->x1 = row->x0 + *energy * 2 - 1;
+                        poly->x3 = row->x2 + *energy * 2 - 1;
+                    } else {
+                        poly->x1 = poly->x0;
+                        poly->x3 = poly->x2;
+                    }
+                }
+            } else if (g_Player.weapon_energy[i - 1] != 0) {
+                poly->x1 = row->x0 + g_Player.weapon_energy[i - 1] * 2 - 1;
+                poly->x3 = row->x2 + g_Player.weapon_energy[i - 1] * 2 - 1;
+            } else {
+                poly->x1 = poly->x0;
+                poly->x3 = poly->x2;
+            }
+        } else if (i == 13) {
+            if (*hp > 0) {
+                poly->x0 = 110;
+                poly->y0 = 210;
+                poly->x2 = 103;
+                poly->y2 = 217;
+                poly->x1 = poly->x0 + ((s8)*hp << 1);
+                poly->y1 = 210;
+                poly->x3 = poly->x2 + ((s8)*hp << 1);
+                poly->y3 = 217;
+            }
+        } else {
+            switch (i) {
+            case 10:
+                tank = &engine_obj.sub_tanks[0];
+                amount = *tank & 0x7F;
+                if (amount != 0) {
+                    poly->x1 = poly->x0 + amount;
+                    poly->x3 = poly->x2 + (*tank & 0x7F);
+                } else {
+                    poly->x1 = poly->x0;
+                    poly->x3 = poly->x2;
+                }
+                break;
+            case 11:
+                tank = &engine_obj.sub_tanks[1];
+                amount = *tank & 0x7F;
+                if (amount != 0) {
+                    poly->x1 = poly->x0 + amount;
+                    poly->x3 = poly->x2 + (*tank & 0x7F);
+                } else {
+                    poly->x1 = poly->x0;
+                    poly->x3 = poly->x2;
+                }
+                break;
+            case 12:
+                tank = &engine_obj.sub_tanks[2];
+                poly->x1 = poly->x0 + (s8)*tank;
+                poly->x3 = poly->x2 + (s8)*tank;
+                break;
+            }
+        }
+
+        setRGB0(poly, 0x29, 0xC6, 0x29);
+        setlen(page, 1);
+        page->code[0] = (GetGraphType() == 1 || GetGraphType() == 2) ? 0xE1000000 : 0xE1000000;
+        ot = D_8013BC40[SP_DRAW_BUFFER];
+        setaddr(ot[0][5], page);
+        setaddr(page, poly);
+        ot[0][5] = (P_TAG*)poly;
+        SP_PRIM_CURSOR = (POLY_FT4*)SP_PRIM_CURSOR + 1;
+        SP_DRAW_MODE_CURSOR = (DR_TPAGE*)SP_DRAW_MODE_CURSOR + 1;
+        page = SP_DRAW_MODE_CURSOR;
+        poly = SP_PRIM_CURSOR;
+        row++;
+    }
+}
+#endif
 
 void func_80017E84(void)
 {
@@ -1815,7 +2019,68 @@ void func_80018000(arg_u8 temp)
 
 // capcom logo playing code
 #ifndef SKIP_MDEC
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", func_800182E8);
+#else
+#ifdef VERSION_JP
+#define CAPCOM_LOGO_FILE 0x89
+#else
+#define CAPCOM_LOGO_FILE 0x8A
+#endif
+extern s32 D_80139594;
+void func_800182E8(void)
+{
+    RECT rect = { 0, 0, 0x1E0, 0xF0 };
+    s32 status;
+    s32 display_y;
+    s32 finished;
+    s32 movie;
+
+    D_80139598 = 0x80178000;
+    D_8013959C = 0x8017C000;
+    D_801395A0 = 0x80187000;
+    D_801395A4 = 0x80192000;
+    Set24BitDisp(0x140, 0xF0);
+    func_80018FD0(0x80);
+    func_80019058(1);
+    ((u8*)D_80175EE8)[1] = 1;
+    status = func_80018AD0(CAPCOM_LOGO_FILE, 1, D_800F1D04[0].arg2,
+        D_801395A4, D_800F1D04[0].arg8, D_8013959C, D_801395A0,
+        D_80139598, 1, 1);
+    D_80139594 = 0;
+    if (status == 0) {
+        movie = 0;
+        do {
+            display_y = -(D_80139594 != 1);
+            D_80139594 ^= 1;
+            finished = func_80018B88(0, display_y & 0xF0);
+            func_80018EEC();
+            VSync(0);
+            func_80012328();
+            if (controller_input.pressed & D_800F1D04[movie].skip_button)
+                finished = 1;
+            PutDispEnv(&draw_infos[D_80139594].dispenv);
+        } while (finished == 0);
+    }
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = 0x1E0;
+    rect.h = 0x1E0;
+    ClearImage(&rect, 0U, 0U, 0U);
+    DrawSync(0);
+    func_80018E50();
+    SetDispMask(0);
+    draw_infos[0].dispenv = old_dispenv[0];
+    draw_infos[1].dispenv = old_dispenv[1];
+    controller_input.pressed = 0;
+    controller_input.held = 0;
+    D_80139594 ^= 1;
+    PutDispEnv(&draw_infos[D_80139594].dispenv);
+    DrawSync(0);
+    VSync(0);
+    DrawSync(0);
+}
+#endif
 #else
 #ifdef VERSION_EU
 void func_800182E8(s32 arg0)
@@ -1860,10 +2125,96 @@ void Set24BitDisp(s32 w, s32 h)
 #endif
 }
 
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/55C4", func_80018788);
-extern s32 func_80013614(s32, s32*);
+#else
+extern u32* D_801395D4[];
+extern s32 D_801395D8;
+extern s32 D_801395DC;
+extern s32 D_801395E0;
+extern s32 D_801395EC;
+extern StHEADER D_801395F0;
+extern s32 D_80139610;
+extern u8 D_80139648;
+extern CdlLOC D_8013964D;
+extern s32 D_80139650;
+extern CdlLOC D_80139654;
+extern s32 D_801441C0;
 
-extern s32 func_80018788(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+s32 func_80018788(s32 pos, u32 channel, s32 arg2, u32* ring, u32 ring_size, u32* dest, s32 arg6, s32 arg7, s32 arg8,
+    s32 rgb24)
+{
+    u32* addr;
+    StHEADER* header;
+    s32 mode;
+    u32 i;
+    s32 complete;
+
+    D_801395E0 = arg2;
+    D_801395EC = 0;
+    D_80139634 = 0;
+    D_801441C0 = 0;
+    D_80139610 = 0;
+    D_801395D4[0] = dest;
+    D_801395D8 = arg6;
+    D_801395DC = arg7;
+    D_801395E4 = rgb24;
+    D_801395E8 = rgb24;
+    D_800F1D88 = arg8;
+    func_800190F0(0);
+    DecDCTReset(0);
+    DecDCToutCallback(func_80019100);
+    StSetRing(ring, ring_size);
+    StSetStream(D_801395E4, channel, 0x0FFFFFFF, func_80019208, 0);
+    mode = 0x148;
+    func_800192F8();
+    ((u8*)D_80175EE8)[0] = 1;
+    func_80018FD0(0x7F);
+    CdIntToPos(pos, &D_80139654);
+    D_80139650 = pos;
+    if (D_800F1D88 != 0)
+        mode = 0x1C8;
+    complete = CdlComplete;
+
+    while (1) {
+        if (CdSync(0, 0) != complete) {
+            while (CdReset(0) == 0) {
+            }
+            VSync(3);
+            continue;
+        }
+        if (CdControl(CdlSetfilter, (u8*)D_80175EE8, 0) == 0)
+            continue;
+        VSync(3);
+        if (CdControlB(CdlSeekL, &D_80139654.minute, 0) == 0)
+            continue;
+        if (CdRead2(mode) != 0)
+            break;
+    }
+
+    VSync(3);
+    while (CdControl(CdlGetlocP, 0, &D_80139648) == 0) {
+    }
+    pos = CdPosToInt(&D_8013964D);
+    if ((u32)pos < (u32)(D_80139650 - 0x14) || (u32)(D_80139650 + 5) < (u32)pos)
+        return 1;
+
+    i = 0;
+    func_80019228();
+    while (StGetNext(&addr, &header) != 0) {
+        VSync(0);
+        if (++i >= 0x259)
+            return 1;
+    }
+    D_80139610--;
+    D_801395F0 = *header;
+    D_801395F0.width = (D_801395F0.width + 8) / 16 * 16;
+    D_801395F0.height = (D_801395F0.height + 8) / 16 * 16;
+    DecDCTvlc(addr, D_801395D4[D_801395EC]);
+    StFreeRing(addr);
+    return 0;
+}
+#endif
 
 s32 func_80018AD0(
     s32 arg0,

@@ -96,31 +96,43 @@ void func_800A63B0(struct ShotObj* arg0)
 #endif
 
 // peacock_missile_home
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A6510);
+#else
 void func_800A6510(struct ShotObj* arg0)
 {
+    s16 timer;
     s32 target;
     s32 direction;
+    s32 next;
+    struct ObjectHeader* object;
 
-    if (arg0->timer != 0) {
-        arg0->timer--;
-    } else if ((WEAPON_FRAME_COUNTER & 1) == 0) {
-        target = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(arg0->unk7C));
-        direction = arg0->unk84.value;
-        if (((direction - (target & 0xFF)) & 0x1F) >= 2) {
-            direction = ((u32)((target - direction) & 0x1F) < 0x10) ? direction + 1 : direction - 1;
-            arg0->unk84.value = direction & 0x1F;
-            set_velocity_from_angle(MOVING_OBJECT(arg0), direction & 0x1E);
-            arg0->x_vel.val *= 4;
-            arg0->y_vel.val *= 4;
-            set_animation(arg0, (arg0->unk84.value >> 1) + 0xD);
+    timer = arg0->timer;
+    object = OBJECT_HEADER(arg0->unk7C);
+    if (timer == 0) {
+        if (!(WEAPON_FRAME_COUNTER & 1)) {
+            target = angle_to_object(OBJECT_HEADER(arg0), object);
+            direction = arg0->unk84.value;
+            if (((direction - (target & 0xFF)) & 0x1F) >= 2) {
+                if ((u32)((target - direction) & 0x1F) < 0x10)
+                    arg0->unk84.value = direction + 1;
+                else
+                    arg0->unk84.value = direction - 1;
+                next = arg0->unk84.value;
+                arg0->unk84.value = next & 0x1F;
+                set_velocity_from_angle(MOVING_OBJECT(arg0), next & 0x1E);
+                arg0->x_vel.val *= 4;
+                arg0->y_vel.val *= 4;
+                target = (arg0->unk84.value >> 1) + 0xD;
+                set_animation(arg0, target);
+            }
         }
+    } else {
+        arg0->timer = timer - 1;
     }
     move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A6510);
 #endif
 
 void peacock_missile_explode_start(struct ShotObj* self)

@@ -50,11 +50,14 @@ static s32 weapon_59_distance(s32 x0, s32 y0, s32 x1, s32 y1)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098AF8);
+#else
 void func_80098AF8(struct WeaponObj* arg0)
 {
-    s32 dx;
+    s16(*offsets)[2];
     s32 direction;
+    u16 dx;
 
     arg0->state = 1;
     arg0->on_screen = 1;
@@ -62,15 +65,16 @@ void func_80098AF8(struct WeaponObj* arg0)
     arg0->unk68 = NULL;
     arg0->unk54 = NULL;
     arg0->unk50 = ride_armor_shot_hit_box;
-    dx = (u16)ride_armor_shot_offsets[arg0->unk2][0];
+    dx = *ride_armor_shot_offsets[arg0->unk2];
+    offsets = ride_armor_shot_offsets;
     if (arg0->unk15 != 0)
         dx = -dx;
     arg0->x_pos.i.hi += dx;
-    arg0->y_pos.i.hi += ride_armor_shot_offsets[arg0->unk2][1];
+    arg0->y_pos.i.hi += ((s16*)((u8*)offsets - -(arg0->unk2 * 4)))[1];
     if (arg0->unk2 == 0)
         direction = arg0->unk15 == 0 ? 0x10 : 0;
     else
-        direction = arg0->unk15 != 0 ? 0x1C : 0x14;
+        direction = arg0->unk15 == 0 ? 0x14 : 0x1C;
     set_velocity_from_angle(MOVING_OBJECT(arg0), direction);
     arg0->unk5C = 1;
     arg0->unk60 = 3;
@@ -78,8 +82,6 @@ void func_80098AF8(struct WeaponObj* arg0)
     arg0->y_vel.val *= 8;
     set_animation(arg0, arg0->unk2 + 0x1F);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098AF8);
 #endif
 
 void ride_armor_shot_main(struct WeaponObj* arg0)

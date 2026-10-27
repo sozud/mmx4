@@ -181,7 +181,6 @@ extern struct Unk_unk68 D_80103F00;
 extern struct Unk_unk68 D_80103F04;
 extern struct Unk_unk68 D_80103F08;
 extern struct Unk_unk68 D_80103F0C;
-extern s16 D_8010442C[16];
 #endif
 
 #if defined(VERSION_EU) && !defined(MMX4_PC)
@@ -1254,31 +1253,34 @@ void sigma_death_wait_explosion(struct MainObj* self)
 }
 
 // sigma_death_explode
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_WIN32) || defined(MMX4_PC) || defined(MMX4_SATURN)
+#define SIGMA_FRAME_COUNTER_U8 ((u8)WEAPON_FRAME_COUNTER)
+#define SIGMA_SPAWN_EXPLOSION spawn_explosion_at
+#else
+#define SIGMA_FRAME_COUNTER_U8 (*(u8*)&WEAPON_FRAME_COUNTER)
+#define SIGMA_SPAWN_EXPLOSION ((void (*)())spawn_explosion_at)
+#endif
+u8 get_random();
+extern s16 D_8010442C[8][2];
 void func_80085460(struct MainObj* self)
 {
     u8 kind;
-    s16 x;
-    s16 y;
+    s32 x;
 
     engine_obj.gameplay_locked = 0;
     self->on_screen = 0;
-    if (self->unk7C == 0) {
+    if (self->unk7C != 0) {
+        if (get_random() % 7 == 0) {
+            kind = (SIGMA_FRAME_COUNTER_U8 ^ 1) & 1;
+            x = D_8010442C[get_random() & 7][0] + 0x470;
+            SIGMA_SPAWN_EXPLOSION(0, x, D_8010442C[get_random() & 7][1] + 0x1E0, kind);
+        }
+        self->unk7C--;
+    } else {
         apply_tile_effect(6, 0x430, 0x1C0);
         self->unk5++;
-        return;
     }
-    if ((u8)get_random() % 7 == 0) {
-        kind = ((u8)WEAPON_FRAME_COUNTER ^ 1) & 1;
-        x = D_8010442C[(get_random() & 7) * 2] + 0x470;
-        y = D_8010442C[(get_random() & 7) * 2 + 1] + 0x1E0;
-        spawn_explosion_at(0, x, y, kind);
-    }
-    self->unk7C--;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_80085460);
-#endif
 
 void sigma_death_finish(struct MainObj* self)
 {
@@ -2046,7 +2048,7 @@ void (*sigma_fight_funcs[2])() = {
     func_8008502C,
 };
 
-s16 D_8010442C[16] = {
+s16 D_8010442C[8][2] = {
     (s16)0x000F,
     (s16)0xFFF2,
     (s16)0x0007,
