@@ -38,10 +38,10 @@ void sigma_laser_cancel(struct QuadObj*);
 void func_800D802C(struct QuadObj* self);
 void func_800D845C(struct QuadObj* self);
 // src/main/quads/quad_16_sigma_laser.c
+#endif
 
 extern s16 sigma_laser_origin_offsets[2][2];
 extern s16 sigma_laser_start_offsets[8][2];
-#endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D802C(struct QuadObj* self)
@@ -78,7 +78,40 @@ void func_800D802C(struct QuadObj* self)
     quad_is_on_screen(self);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/quads/quad_16_sigma_laser", func_800D802C);
+void func_800D802C(struct QuadObj* self)
+{
+    s16* offsets;
+    u8 kind;
+
+    self->active |= 0x92;
+    self->unk36 = 0;
+    self->bg_offset = 0;
+    self->x_pos.val = 0;
+    self->y_pos.val = 0;
+    kind = self->unk2;
+    if (!(kind & 0x10)) {
+        offsets = sigma_laser_origin_offsets[(s8)kind * 4];
+        self->ext.unk38 = 20;
+        self->state = 1;
+        self->unk34 = 0x12;
+    } else {
+        kind &= 1;
+        self->ext.unk38 = 15;
+        self->unk2 = kind;
+        self->state = 3;
+        offsets = sigma_laser_start_offsets[(s8)kind * 4];
+        self->unk34 = 0x13;
+    }
+    self->vertices[0].x.val = *offsets++ << 16;
+    self->vertices[0].y.val = *offsets++ << 16;
+    self->vertices[1].x.val = *offsets++ << 16;
+    self->vertices[1].y.val = *offsets++ << 16;
+    self->vertices[2].x.val = *offsets++ << 16;
+    self->vertices[2].y.val = *offsets++ << 16;
+    self->vertices[3].x.val = *offsets << 16;
+    self->vertices[3].y.val = offsets[1] << 16;
+    quad_is_on_screen(self);
+}
 #endif
 
 void sigma_laser_wait(struct QuadObj* arg0)

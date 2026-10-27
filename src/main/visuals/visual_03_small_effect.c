@@ -103,36 +103,29 @@ void spawn_explosion_variant(struct BaseObj* arg0, s8 arg1)
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range, s32 divisor);
-void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3)
+void func_800AF878(void* arg0, s8 arg1, s32 arg2, s32 arg3)
 {
-    s32 x = arg2 & get_random();
+    struct BaseObj* obj = arg0;
+    s16 x;
     s16 y;
     u8 toggle;
 
-    if (get_random() & 1) {
-        x = arg0->x_pos.u.hi + (x & 0xFF);
-    } else {
-        x = arg0->x_pos.u.hi - (x & 0xFF);
-    }
-
-    y = arg3 & get_random();
-    if (get_random() & 1) {
-        y = arg0->y_pos.u.hi + (y & 0xFF);
-    } else {
-        y = arg0->y_pos.u.hi - (y & 0xFF);
-    }
-
+    arg2 &= get_random();
+    if (get_random() & 1)
+        x = obj->x_pos.u.hi + (arg2 & 0xFF);
+    else
+        x = obj->x_pos.u.hi - (arg2 & 0xFF);
+    arg3 &= get_random();
+    if (get_random() & 1)
+        y = obj->y_pos.u.hi + (arg3 & 0xFF);
+    else
+        y = obj->y_pos.u.hi - (arg3 & 0xFF);
     toggle = D_8013B8E0 + 1;
     D_8013B8E0 = toggle;
-    spawn_explosion_at((s8)arg1, (s16)x, y, (toggle & 1) ^ 1);
+    spawn_explosion_at(arg1, x, y, (toggle & 1) ^ 1);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_03_small_effect", func_800AF878);
-#endif
 
 // spawn_explosion_in_box
 #if defined(MMX4_PC) || defined(MMX4_SATURN)

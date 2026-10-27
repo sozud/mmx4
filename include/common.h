@@ -751,7 +751,7 @@ s32 func_8002D490(struct PlayerObj*);
 void func_8002E294(struct PlayerObj*, struct PlayerObj*);
 void func_8002E380(struct MovingObj*, struct MovingObj*, u8);
 #endif
-void func_800AF878(struct BaseObj*, s32, s32, s32);
+void func_800AF878(void*, s8, s32, s32);
 void play_boss_voice(s32);
 
 extern s32 loaded_vab_address;

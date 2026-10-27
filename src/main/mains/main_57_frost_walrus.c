@@ -170,8 +170,8 @@ extern void* frost_walrus_animations[39];
 void func_800722A0(struct MainObj* arg0);
 void func_80072418(struct MainObj* arg0);
 void func_80073E80(struct MainObj* arg0);
-extern void (*frost_walrus_step_funcs[12])();
 #endif
+extern void (*frost_walrus_step_funcs[12])();
 
 #if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_800722A0);
@@ -219,53 +219,70 @@ void func_800722A0(struct MainObj* arg0)
 #endif
 
 // frost_walrus_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80072418);
+#else
 void func_80072418(struct MainObj* arg0)
 {
     s32 hit;
-    s32 flash = 0;
 
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    ((void (*)(struct MainObj*))frost_walrus_step_funcs[arg0->unk5])(arg0);
+    frost_walrus_step_funcs[arg0->unk5](arg0);
     hit = func_8002DD04(arg0);
     if (arg0->ext.main_57.flash_timer != 0) {
-        if (arg0->ext.main_57.flash_timer & 1)
-            arg0->unk42 &= 0x7FFF;
-        else
+        if (!(arg0->ext.main_57.flash_timer & 1))
             arg0->unk42 |= 0x8000;
+        else
+            arg0->unk42 &= 0x7FFF;
         if (--arg0->ext.main_57.flash_timer == 0) {
             arg0->collision_data = D_80107A78;
             arg0->ext.main_57.flashing = 0;
         }
-    } else if (hit < 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
-        arg0->unk42 &= 0x7FFF;
-        g_Player.spike_immune = 1;
-        update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
-        return;
-    } else if (hit != 0) {
-        s32 weakness = engine_obj.cur_character == CHARACTER_X ? (hit == 5 || hit == 0xE) : hit == 0x24;
-
-        if (weakness && arg0->ext.main_57.staggered == 0) {
-            arg0->unk5 = 0xA;
+    } else {
+        if (hit < 0) {
+            arg0->state = 2;
+            arg0->unk5 = 0;
             arg0->unk6 = 0;
+            arg0->unk42 &= 0x7FFF;
+            g_Player.spike_immune = 1;
+            update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
             return;
         }
-        flash = engine_obj.cur_character == CHARACTER_X || hit != 0x7F;
+        if (hit != 0) {
+            if (engine_obj.cur_character == CHARACTER_X) {
+                if ((hit == 5 || hit == 0xE) && arg0->ext.main_57.staggered == 0)
+                    goto stagger;
+                goto flash;
+            }
+            if (hit == 0x23 || hit < 0x24)
+                goto flash;
+            if (hit == 0x24)
+                goto check_staggered;
+            if (hit == 0x7F)
+                goto update;
+            goto flash;
+        }
     }
-    if (flash) {
-        arg0->collision_data = D_801060F0;
-        arg0->ext.main_57.flash_timer = 0x40;
-        arg0->ext.main_57.flashing = 1;
-    }
+    goto update;
+
+check_staggered:
+    if (arg0->ext.main_57.staggered != 0)
+        goto flash;
+stagger:
+    arg0->unk5 = 0xA;
+    arg0->unk6 = 0;
+    return;
+
+flash:
+    arg0->collision_data = D_801060F0;
+    arg0->ext.main_57.flash_timer = 0x40;
+    arg0->ext.main_57.flashing = 1;
+
+update:
     func_8002D9BC(arg0);
     update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80072418);
 #endif
 
 void frost_walrus_reset(struct MainObj* self)

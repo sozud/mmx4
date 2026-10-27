@@ -340,61 +340,66 @@ void jet_stingray_flyby_charge_windup(struct MainObj* self)
 }
 
 // jet_stingray_flyby_charge_fire
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006F5F4(struct MainObj* self)
 {
+    struct ShotObj* shot;
+    s32 clut_x;
+    s32 clut_y;
+    u8 index;
+    s32 bit;
+    u8 count;
+    u8 next;
+    u8 mask;
+
     if (self->unk7 == 0) {
-        struct ShotObj* shot;
-        if (self->unk7C != 0) {
-            self->unk7C = (u16)self->unk7C - 1;
+        if (self->unk7C == 0) {
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x22;
+                shot->unk40 = self->unk40;
+                clut_x = func_8002938C(0x37);
+                clut_y = func_8002938C(0x37);
+#ifdef MMX4_SATURN
+                shot->unk42 = clut_x * 4 + 0x19;
+#else
+                shot->unk42 = ((clut_x * 4 + 0x19) % 16) | (((clut_y + 6) / 4 + 0x1E0) << 6);
+#endif
+                shot->unk3C = ANIMATED_OBJECT(self)->unk3C;
+                shot->bg_offset = self->bg_offset;
+                shot->x_pos.val = self->x_pos.val;
+                shot->y_pos.val = self->y_pos.val;
+                shot->animation_table = ANIMATED_OBJECT(self)->animation_table;
+                shot->unk7C = WEAPON_OBJECT(self);
+                shot->unk15 = self->unk15;
+                shot->unk2 = 1;
+                index = self->ext.main_55.unk86;
+                bit = 1;
+                shot->unk8A = index;
+                count = self->ext.main_55.unk85 + 1;
+                next = self->ext.main_55.unk86 + 1;
+                mask = self->ext.main_55.unk88 | (bit << *(volatile u8*)&self->ext.main_55.unk86);
+                self->ext.main_55.unk88 = mask;
+                self->ext.main_55.unk85 = count;
+                self->ext.main_55.unk86 = next;
+            }
+            if (self->ext.main_55.unk86 == 8) {
+                self->unk7++;
+                set_animation(self, 5);
+            }
+            self->unk7C = 7;
             return;
         }
-        shot = find_free_shot_obj();
-        if (shot != NULL) {
-            s32 first;
-            s32 second;
-            s32 column;
-            s32 row;
-            shot->active = 0x41;
-            shot->id = 0x22;
-            shot->unk40 = self->unk40;
-            first = func_8002938C(0x37);
-            second = func_8002938C(0x37);
-            column = (s32)((u32)first * 4 + 0x19);
-            row = (s32)((u32)second + 6) / 4 + 0x1E0;
-#ifdef MMX4_SATURN
-            shot->unk42 = column;
-#else
-            shot->unk42 = ((u32)row << 6) | (u32)(column % 16);
-#endif
-            shot->unk3C = ANIMATED_OBJECT(self)->unk3C;
-            shot->bg_offset = self->bg_offset;
-            shot->x_pos.val = self->x_pos.val;
-            shot->y_pos.val = self->y_pos.val;
-            shot->animation_table = ANIMATED_OBJECT(self)->animation_table;
-            shot->unk7C = WEAPON_OBJECT(self);
-            shot->unk2 = 1;
-            shot->unk15 = self->unk15;
-            shot->unk8A = self->ext.main_55.unk86;
-            self->ext.main_55.unk85++;
-            self->ext.main_55.unk88 |= 1U << (self->ext.main_55.unk86 & 31);
-            self->ext.main_55.unk86++;
-        }
-        if (self->ext.main_55.unk86 == 8) {
-            self->unk7++;
-            set_animation(self, 5);
-        }
-        self->unk7C = 7;
-    } else if (self->animation_step.fields.relative_step == 0) {
+        self->unk7C--;
+        return;
+    }
+    if (self->animation_step.fields.relative_step == 0) {
         self->unk5 = 1;
         self->unk6 = 0;
         self->unk7 = 0;
         set_animation(self, 0);
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006F5F4);
-#endif
 
 void jet_stingray_flyby_charge(struct MainObj* self)
 {
