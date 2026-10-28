@@ -655,7 +655,22 @@ void func_8007E6F8(struct MainObj* arg0)
 
 // magma_dragoon_dive_kick_land
 #if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E848);
+void func_8007E848(struct MainObj* self)
+{
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk6 = 0;
+        if (self->ext.main_65.attack == 0) {
+            self->unk5 = 0xA;
+        } else if (self->ext.main_65.attack == 1) {
+            self->unk5 = 0xB;
+        } else if (++self->ext.main_65.attack_repeat == 1) {
+            self->unk5 = 0xB;
+        } else {
+            self->unk5 = 0xC;
+        }
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
 #else
 void func_8007E848(struct MainObj* self)
 {

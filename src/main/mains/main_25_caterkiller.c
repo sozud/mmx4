@@ -168,8 +168,6 @@ void func_80057308(struct MainObj* self)
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     }
 }
-#elif defined(VERSION_EU)
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057308);
 #else
 void func_80057308(struct MainObj* self)
 {

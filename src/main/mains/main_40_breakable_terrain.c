@@ -208,7 +208,16 @@ void breakable_terrain_spawn_rubble(struct MainObj* self)
 
 // breakable_terrain_check_hit
 #if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80062338);
+u8 func_80062338(struct MainObj* self)
+{
+    struct MainObj* object = self;
+    struct PlayerObj* player = &g_Player;
+    s16 edge = object->x_pos.u.hi + object->terrain_box->unk0;
+    s16 player_edge = player->x_pos.u.hi + player->unk68->unk0;
+    s16 distance = ABS(edge, player_edge);
+
+    return distance <= object->terrain_box->unk2 + player->unk68->unk2;
+}
 #else
 #ifdef MMX4_PC
 static const struct Unk_unk68* relative_bounds_or_zero(const struct Unk_unk68* bounds)
@@ -227,7 +236,7 @@ u8 func_80062338(struct MainObj* self)
     struct PlayerObj* player = &g_Player;
     s16 edge = self->x_pos.u.hi + (s8)BOUNDS(self->terrain_box)->unk0;
     s16 player_edge = player->x_pos.u.hi + (s8)BOUNDS(player->unk68)->unk0;
-    s16 distance = edge - player_edge >= 0 ? (s16)(edge - player_edge) : (s16)(player_edge - edge);
+    s16 distance = ABS(edge, player_edge);
 
     return distance <= BOUNDS(self->terrain_box)->unk2 + BOUNDS(player->unk68)->unk2;
 }
