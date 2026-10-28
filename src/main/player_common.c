@@ -1318,7 +1318,45 @@ void player_check_splash(struct PlayerObj* self)
 
 // player_spawn_splash
 #if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_common", func_80036BF4);
+void func_80036BF4(struct PlayerObj* self, s16 ground_y)
+{
+    struct VisualObj* visual;
+
+    if (func_8002D724(self, self->x_pos.i.hi, ground_y) != 0x24 || self->unkDF != 0) {
+        return;
+    }
+
+    self->unkDF = 1;
+    visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = 0x41;
+        visual->id = 3;
+        visual->unk2 = 9;
+        visual->bg_offset = self->bg_offset;
+        visual->unk16 = 1;
+        visual->animation_table = D_8011BF40;
+        visual->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x84) & 0xFF);
+        visual->unk40 = PLAYER_STAGE_TEXTURE(func_8002938C(0x84) & 0xFF);
+        visual->unk42 = PLAYER_STAGE_PALETTE();
+        visual->unk15 = self->unk15;
+        visual->x_pos.i.hi = self->x_pos.i.hi;
+        visual->y_pos.i.hi = ground_y - 8;
+    }
+
+    if (engine_obj.stage == 1) {
+#ifdef MMX4_SATURN
+        func_8001540C(5, (get_random() & 1) + 0x13, self);
+#else
+        func_8001540C(5, (get_random() & 1) + 3, self);
+#endif
+    } else {
+#ifdef MMX4_SATURN
+        func_8001540C(2, 0x19, self);
+#else
+        func_8001540C(2, 0xAE, self);
+#endif
+    }
+}
 #else
 void func_80036BF4(struct PlayerObj* self, s16 ground_y)
 {
