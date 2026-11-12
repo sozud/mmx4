@@ -21,3 +21,6 @@
 [submodule "tools/saturn/sdk"]
 	path = tools/saturn/sdk
 	url = https://github.com/sozud/mmx4-saturn-sdk.git
+[submodule "tools/psy-q-decomp"]
+	path = tools/psy-q-decomp
+	url = https://github.com/sozud/psy-q-decomp.git

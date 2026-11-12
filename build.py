@@ -26,6 +26,21 @@ EXTRA_CPP_DEFS = f" -DVERSION_{VERSION.upper()}=1"
 if os.environ.get("MMX4_PROGRESS_REPORT") == "1":
     EXTRA_CPP_DEFS += " -DSKIP_ASM=1"
 
+PSYQ_DIR = "tools/psy-q-decomp"
+PSYQ_CC1 = "./bin/cc1"
+
+
+def load_psyq_objects():
+    objects = {}
+    path = f"config/psyq.{VERSION}.txt"
+    if os.path.exists(path):
+        with open(path) as f:
+            for line in f:
+                fields = line.split("#")[0].split()
+                if fields:
+                    objects[fields[0]] = fields[1:]
+    return objects
+
 
 def anchor_noload_bss(linker_script_path):
     with open(linker_script_path) as linker_script:
@@ -107,6 +122,33 @@ def add_lib_263(srcs, output_dir, linker_inputs):
         #     'check',
         #     inputs=[obj_name]) # ,variables={'LIBRARY': lib_name}
 
+def add_psyq(objects, output_dir, linker_script_text, linker_inputs):
+    for segment, fields in objects.items():
+        obj_name = f"{output_dir}/src/main/{segment}.c.o"
+        if obj_name not in linker_script_text:
+            continue
+        src = f"{PSYQ_DIR}/{fields[0]}"
+        opts = dict(opt.split("=", 1) for opt in fields[1:])
+        defines = "".join(f" -D{d}" for d in opts.get("D", "").split(",") if d)
+        if src.endswith(".s"):
+            ninja.build(obj_name, 'as_psyq_s', inputs=[src])
+        else:
+            base = f"{output_dir}/psyq/{segment}"
+            cpp_flags = (
+                f"-undef -D__GNUC__=2 -DVERSION={opts['VERSION']}{defines} -D__OPTIMIZE__"
+                f" -I{PSYQ_DIR}/src/snd -I{PSYQ_DIR}/include -lang-c -Dmips"
+                " -D__mips__ -D__mips -Dpsx -D__psx__ -D__psx -D__EXTENSIONS__"
+                " -D_MIPSEL -D__CHAR_UNSIGNED__ -D_LANGUAGE_C -DLANGUAGE_C"
+            )
+            ninja.build(f"{base}.cpp", 'cpp_263', inputs=[src],
+                        variables={'CPP_FLAGS': cpp_flags})
+            ninja.build(f"{base}.s", 'cc1_psyq', inputs=[f"{base}.cpp"],
+                        variables={'OPT': f"-O{opts.get('O', '2')}"})
+            ninja.build(f"{base}.s_", 'aspsx_psyq', inputs=[f"{base}.s"])
+            ninja.build(obj_name, 'as_psyq', inputs=[f"{base}.s_"])
+        linker_inputs.append(obj_name)
+
+
 def add_asm(srcs, output_dir, linker_inputs):
     flags = ""
     folder = ""
@@ -163,6 +205,23 @@ ninja.rule('aspsx_263',
            command=f'python3 tools/maspsx/maspsx.py --aspsx-version={ASPSX_VERSION} --expand-div < $in > $out',
            description='Running aspsx on $out from $in')
 
+ninja.rule('cc1_psyq',
+           command=f'{PSYQ_CC1} -w -quiet -msoft-float $OPT -g0 -G0 -funsigned-char $in -o $out',
+           description='Running cc1 on $out from $in')
+
+ninja.rule('aspsx_psyq',
+           command=f'(python3 tools/maspsx/maspsx.py --aspsx-version={ASPSX_VERSION} --expand-div --use-comm-section --use-comm-for-lcomm < $in'
+           " && printf '\\t.section .rodata\\n\\t.align 2\\n\\t.section .data\\n\\t.align 2\\n') > $out",
+           description='Running aspsx on $out from $in')
+
+ninja.rule('as_psyq',
+           'mipsel-linux-gnu-as -no-pad-sections -G0 $in -o $out')
+
+ninja.rule('as_psyq_s',
+           "(cat $in; printf '\\t.text\\n\\t.align 4\\n\\t.data\\n\\t.align 4\\n')"
+           f" | mipsel-linux-gnu-as -I{PSYQ_DIR}/include -march=r3000 -mtune=r3000"
+           " -no-pad-sections -O1 -G0 -o $out")
+
 ninja.rule('as',
            'mipsel-linux-gnu-as -no-pad-sections -I./src/main $in -o $out')
 
@@ -202,8 +261,15 @@ def build_35():
         if f"{output_dir}/{os.path.splitext(src)[0]}.c.o" in linker_script_text
     ]
 
+    psyq_objects = load_psyq_objects()
+    srcs = [
+        src for src in srcs
+        if os.path.splitext(os.path.relpath(src, "src/main"))[0] not in psyq_objects
+    ]
+
     linker_inputs = []
     add_lib_263(srcs, output_dir, linker_inputs)
+    add_psyq(psyq_objects, output_dir, linker_script_text, linker_inputs)
 
     asms = []
     for root, dirs, files in os.walk(ASM_ROOT):

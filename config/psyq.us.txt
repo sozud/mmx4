@@ -1,0 +1,164 @@
+psxsdk/libspu/s_crwa         src/spu/s_crwa.c                 VERSION=40 O=3
+psxsdk/libspu/spu            src/spu/spu.c                    VERSION=37 O=3
+psxsdk/libspu/s_ini          src/spu/s_ini.c                  VERSION=37 O=3
+psxsdk/libspu/s_dcb          src/spu/s_dcb.c                  VERSION=40 O=3
+psxsdk/libspu/s_m_util       src/spu/s_m_util.c               VERSION=40 O=3
+psxsdk/libspu/s_gks          src/spu/s_gks.c                  VERSION=40 O=3
+psxsdk/libspu/s_stm          src/spu/s_stm.c                  VERSION=40 O=3
+psxsdk/libsnd/cc_7           src/snd/cc_7.c                   VERSION=37 O=3
+psxsdk/libsnd/cc_100         src/snd/cc_100.c                 VERSION=37 O=3
+psxsdk/libsnd/midicc         src/snd/midicc.c                 VERSION=37 O=3
+psxsdk/libsnd/midinote       src/snd/midinote.c               VERSION=37 O=3
+psxsdk/libsnd/midiprog       src/snd/midiprog.c               VERSION=37 O=3
+psxsdk/libsnd/miditime       src/snd/miditime.c               VERSION=37 O=3
+psxsdk/libsnd/ssclose        src/snd/ssclose.c                VERSION=37 O=3
+psxsdk/libsnd/ssend          src/snd/ssend.c                  VERSION=40 O=3
+psxsdk/libsnd/ssinit         src/snd/ssinit.c                 VERSION=37 O=3 D=LIBSND_37_RELEASE
+psxsdk/libsnd/ssinit_c       src/snd/ssinit_c.c               VERSION=40 O=3
+psxsdk/libspu/s_i            src/spu/s_i.c                    VERSION=40 O=3
+psxsdk/libsnd/ssloop         src/snd/ssloop.c                 VERSION=37 O=3
+psxsdk/libsnd/ssopenpj       src/snd/ssopenpj.c               VERSION=40 O=3
+psxsdk/libsnd/ssplay         src/snd/ssplay.c                 VERSION=40 O=3
+psxsdk/libsnd/ssquit         src/snd/ssquit.c                 VERSION=40 O=3
+psxsdk/libspu/s_q            src/spu/s_q.c                    VERSION=40 O=3
+psxsdk/libsnd/playmode       src/snd/playmode.c               VERSION=37 O=3
+psxsdk/libsnd/sssattr        src/snd/sssattr.c                VERSION=40 O=3
+psxsdk/libspu/s_sca          src/spu/s_sca.c                  VERSION=40 O=3
+psxsdk/libsnd/sssmv          src/snd/sssmv.c                  VERSION=40 O=3
+psxsdk/libsnd/ssstart        src/snd/ssstart.c                VERSION=40 O=3
+psxsdk/libsnd/sscall         src/snd/sscall.c                 VERSION=37 O=3
+psxsdk/libsnd/cres           src/snd/cres.c                   VERSION=37 O=3
+psxsdk/libsnd/decres         src/snd/decres.c                 VERSION=37 O=3
+psxsdk/libsnd/pause          src/snd/pause.c                  VERSION=37 O=3
+psxsdk/libsnd/play           src/snd/play.c                   VERSION=40 O=3
+psxsdk/libsnd/midiread       src/snd/midiread.c               VERSION=37 O=3
+psxsdk/libsnd/next           src/snd/next.c                   VERSION=37 O=3
+psxsdk/libsnd/replay         src/snd/replay.c                 VERSION=37 O=3
+psxsdk/libsnd/ssstop         src/snd/ssstop.c                 VERSION=37 O=3
+psxsdk/libsnd/sssv           src/snd/sssv.c                   VERSION=40 O=3
+psxsdk/libsnd/sstable        src/snd/sstable.c                VERSION=37 O=3
+psxsdk/libsnd/sstick         src/snd/sstick.c                 VERSION=40 O=3
+psxsdk/libsnd/ssvol          src/snd/ssvol.c                  VERSION=37 O=3
+psxsdk/libsnd/tempo          src/snd/tempo.c                  VERSION=37 O=3
+psxsdk/libsnd/dmyprint       src/snd/dmyprint.c               VERSION=37 O=3
+psxsdk/libsnd/ut_gva         src/snd/ut_gva.c                 VERSION=40 O=3
+psxsdk/libsnd/ut_keyv        src/snd/ut_keyv.c                VERSION=40 O=3
+psxsdk/libsnd/ut_rdep        src/snd/ut_rdep.c                VERSION=40 O=3
+psxsdk/libspu/s_srmp         src/spu/s_srmp.c                 VERSION=40 O=3
+psxsdk/libspu/s_sra          src/spu/s_sra.c                  VERSION=40 O=3
+psxsdk/libsnd/ut_rev         src/snd/ut_rev.c                 VERSION=40 O=3
+psxsdk/libspu/s_sr           src/spu/s_sr.c                   VERSION=40 O=3
+psxsdk/libsnd/ut_roff        src/snd/ut_roff.c                VERSION=40 O=3
+psxsdk/libsnd/ut_ron         src/snd/ut_ron.c                 VERSION=40 O=3
+psxsdk/libsnd/ut_vvol        src/snd/ut_vvol.c                VERSION=37 O=3
+psxsdk/libsnd/vm_aloc2       src/snd/vm_aloc2.c               VERSION=40 O=3
+psxsdk/libsnd/vm_f           src/snd/vm_f.c                   VERSION=40 O=3
+psxsdk/libspu/s_snv          src/spu/s_snv.c                  VERSION=40 O=3
+psxsdk/libspu/s_sav          src/spu/s_sav.c                  VERSION=40 O=3
+psxsdk/libsnd/vm_init        src/snd/vm_init.c                VERSION=40 O=3
+psxsdk/libspu/s_m_init       src/spu/s_m_init.c               VERSION=40 O=3
+psxsdk/libspu/s_it           src/spu/s_it.c                   VERSION=40 O=3
+psxsdk/libsnd/vm_key         src/snd/vm_key.c                 VERSION=37 O=3
+psxsdk/libsnd/vm_aloc1       src/snd/vm_aloc1.c               VERSION=37 O=3
+psxsdk/libsnd/vm_n2p         src/snd/vm_n2p.c                 VERSION=40 O=3
+psxsdk/libsnd/vm_no1         src/snd/vm_no1.c                 VERSION=37 O=3
+psxsdk/libsnd/vm_noff        src/snd/vm_noff.c                VERSION=40 O=3
+psxsdk/libsnd/vm_nowof       src/snd/vm_nowof.c               VERSION=40 O=3
+psxsdk/libsnd/vm_nowon       src/snd/vm_nowon.c               VERSION=37 O=3
+psxsdk/libsnd/vm_seq         src/snd/vm_seq.c                 VERSION=37 O=3
+psxsdk/libsnd/vm_stav        src/snd/vm_stav.c                VERSION=40 O=3
+psxsdk/libsnd/vm_vol         src/snd/vm_vol.c                 VERSION=37 O=3
+psxsdk/libsnd/vm_vsu         src/snd/vm_vsu.c                 VERSION=40 O=3
+psxsdk/libsnd/vs_mono        src/snd/vs_mono.c                VERSION=40 O=3
+psxsdk/libsnd/vs_vab         src/snd/vs_vab.c                 VERSION=40 O=3
+psxsdk/libspu/s_m_f          src/spu/s_m_f.c                  VERSION=40 O=3
+psxsdk/libspu/s_m_int        src/spu/s_m_int.c                VERSION=40 O=3
+psxsdk/libsnd/vs_vh          src/snd/vs_vh.c                  VERSION=40 O=3
+psxsdk/libspu/s_m_m          src/spu/s_m_m.c                  VERSION=40 O=3
+psxsdk/libsnd/vs_vtbp        src/snd/vs_vtbp.c                VERSION=40 O=3
+psxsdk/libspu/s_stsa         src/spu/s_stsa.c                 VERSION=40 O=3
+psxsdk/libspu/s_wp           src/spu/s_wp.c                   VERSION=37 O=3
+psxsdk/libsnd/vs_vtc         src/snd/vs_vtc.c                 VERSION=40 O=3
+psxsdk/libspu/s_itc          src/spu/s_itc.c                  VERSION=40 O=3
+psxsdk/libetc/vsync          src/etc/vsync.c                  VERSION=37 O=2
+psxsdk/libetc/intr           src/etc/intr.c                   VERSION=37 O=2
+psxsdk/libetc/intr_vb        src/etc/intr_vb.c                VERSION=40 O=2
+psxsdk/libetc/intr_dma       src/etc/intr_dma.c               VERSION=40 O=2
+psxsdk/libetc/vmode          src/etc/vmode.c                  VERSION=40 O=2
+psxsdk/libcd/cdrom           src/cd/cdrom.c                   VERSION=37 O=2
+psxsdk/libcd/event           src/cd/event.c                   VERSION=37 O=2
+psxsdk/libcd/sys             src/cd/sys.c                     VERSION=37 O=2
+psxsdk/libcd/bios            src/cd/bios.c                    VERSION=37 O=2
+psxsdk/libcd/cdread          src/cd/cdread.c                  VERSION=37 O=2
+psxsdk/libcd/cdread2         src/cd/cdread2.c                 VERSION=37 O=2
+psxsdk/libcd/c_002           src/cd/c_002.c                   VERSION=37 O=2
+psxsdk/libcd/c_003           src/cd/c_003.c                   VERSION=37 O=2
+psxsdk/libcd/c_004           src/cd/c_004.c                   VERSION=37 O=2
+psxsdk/libcd/c_005           src/cd/c_005.c                   VERSION=37 O=2
+psxsdk/libcd/c_007           src/cd/c_007.c                   VERSION=37 O=2
+psxsdk/libcd/c_008           src/cd/c_008.c                   VERSION=37 O=2
+psxsdk/libcd/c_009           src/cd/c_009.c                   VERSION=37 O=2
+psxsdk/libcd/c_010           src/cd/c_010.c                   VERSION=37 O=2
+psxsdk/libcd/c_011           src/cd/c_011.c                   VERSION=37 O=2
+psxsdk/libgte/msc00          src/gte/mips/msc00.v37.s         VERSION=37
+psxsdk/libgte/reg12          src/gte/mips/reg12.s             VERSION=37
+psxsdk/libgte/reg13          src/gte/mips/reg13.s             VERSION=37
+psxsdk/libgpu/ext            src/gpu/ext.c                    VERSION=37 O=3
+psxsdk/libgpu/prim           src/gpu/prim.c                   VERSION=37 O=3
+psxsdk/libgpu/sys            src/gpu/sys.c                    VERSION=37 O=3
+psxsdk/libpress/libpress     src/press/libpress.c             VERSION=37 O=3
+psxsdk/libcard/c112          src/card/mips/c112.s             VERSION=37
+psxsdk/libcard/c171          src/card/mips/c171.s             VERSION=37
+psxsdk/libcard/c172          src/card/mips/c172.s             VERSION=37
+psxsdk/libcard/card          src/card/card.c                  VERSION=40 O=3
+psxsdk/libcard/a78           src/card/mips/a78.s              VERSION=37
+psxsdk/libcard/a80           src/card/mips/a80.s              VERSION=37
+psxsdk/libcard/init          src/card/init.c                  VERSION=37 O=3
+psxsdk/libcard/a74           src/card/mips/a74.v36.s          VERSION=37
+psxsdk/libcard/a75           src/card/mips/a75.v36.s          VERSION=37
+psxsdk/libcard/a76           src/card/mips/a76.v36.s          VERSION=37
+psxsdk/libc/a63              src/c/mips/a63.v37.s             VERSION=37
+psxsdk/libc/c19              src/c/mips/c19.s                 VERSION=37
+psxsdk/libc/c25              src/c/mips/c25.s                 VERSION=37
+psxsdk/libc/c42              src/c/mips/c42.s                 VERSION=37
+psxsdk/libc/c43              src/c/mips/c43.s                 VERSION=37
+psxsdk/libc/c63              src/c/mips/c63.s                 VERSION=37
+psxsdk/libapi/c57            src/api/mips/c57.s               VERSION=37
+psxsdk/libapi/c68            src/api/mips/c68.s               VERSION=37
+psxsdk/libapi/c73            src/api/mips/c73.s               VERSION=37
+psxsdk/libapi/c114           src/api/mips/c114.v37.s          VERSION=37
+psxsdk/libapi/a07            src/api/mips/a07.s               VERSION=37
+psxsdk/libapi/a08            src/api/mips/a08.s               VERSION=37
+psxsdk/libapi/a09            src/api/mips/a09.s               VERSION=37
+psxsdk/libapi/a10            src/api/mips/a10.s               VERSION=37
+psxsdk/libapi/a11            src/api/mips/a11.s               VERSION=37
+psxsdk/libapi/a12            src/api/mips/a12.s               VERSION=37
+psxsdk/libapi/a13            src/api/mips/a13.s               VERSION=37
+psxsdk/libapi/a14            src/api/mips/a14.s               VERSION=37
+psxsdk/libapi/a15            src/api/mips/a15.s               VERSION=37
+psxsdk/libapi/a16            src/api/mips/a16.s               VERSION=37
+psxsdk/libapi/a23            src/api/mips/a23.s               VERSION=37
+psxsdk/libapi/a24            src/api/mips/a24.s               VERSION=37
+psxsdk/libapi/a25            src/api/mips/a25.s               VERSION=37
+psxsdk/libapi/a36            src/api/mips/a36.s               VERSION=37
+psxsdk/libapi/a37            src/api/mips/a37.s               VERSION=37
+psxsdk/libapi/a50            src/api/mips/a50.s               VERSION=37
+psxsdk/libapi/a52            src/api/mips/a52.s               VERSION=37
+psxsdk/libapi/a53            src/api/mips/a53.s               VERSION=37
+psxsdk/libapi/a54            src/api/mips/a54.s               VERSION=37
+psxsdk/libapi/a65            src/api/mips/a65.s               VERSION=37
+psxsdk/libapi/a66            src/api/mips/a66.s               VERSION=37
+psxsdk/libapi/a67            src/api/mips/a67.s               VERSION=37
+psxsdk/libapi/a91            src/api/mips/a91.s               VERSION=37
+psxsdk/libapi/l10            src/api/mips/l10.s               VERSION=37
+psxsdk/libapi/counter        src/api/counter.c                VERSION=40 O=3
+psxsdk/libapi/pad            src/api/pad.c                    VERSION=37 O=3
+psxsdk/libapi/a18            src/api/mips/a18.v36.s           VERSION=37
+psxsdk/libapi/a19            src/api/mips/a19.v36.s           VERSION=37
+psxsdk/libapi/a20            src/api/mips/a20.v37.s           VERSION=37
+psxsdk/libapi/a21            src/api/mips/a21.v36.s           VERSION=37
+psxsdk/libapi/l02            src/api/mips/l02.s               VERSION=37
+psxsdk/libapi/l03            src/api/mips/l03.s               VERSION=37
+psxsdk/libspu/s_m            src/spu/s_m.c                    VERSION=37 O=3
+psxsdk/libspu/s_rmp          src/spu/s_rmp.c                  VERSION=37 O=3
+psxsdk/libpress/table        src/press/table.c                VERSION=37 O=3
