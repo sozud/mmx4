@@ -28,3 +28,5 @@ coverage/
 *.profraw
 tools/oracle/__pycache__/
 tools/oracle/recordings/*.mp4
+
+src/main/psxsdk/
