@@ -31,9 +31,6 @@ void spike_crawler_hit_flash(struct MainObj* self)
 }
 
 // spike_crawler_hit_bounce
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/enemy_reaction", func_80091EC4);
-#else
 void func_80091EC4(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -58,7 +55,6 @@ void func_80091EC4(struct MainObj* self)
         self->unk42 &= 0x7FFF;
     }
 }
-#endif
 
 void spike_crawler_hit_knockback(struct MainObj* self)
 {

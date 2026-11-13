@@ -58,9 +58,6 @@ extern struct Unk_unk68 twin_slasher_charged_hit_boxes[];
 extern u8 twin_slasher_charged_angles[];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_800978DC);
-#else
 void func_800978DC(struct WeaponObj* arg0)
 {
     struct PlayerObj* player;
@@ -94,7 +91,6 @@ void func_800978DC(struct WeaponObj* arg0)
     arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
 }
-#endif
 
 void twin_slasher_main(struct WeaponObj* arg0)
 {
@@ -149,12 +145,10 @@ void twin_slasher_charged_update(struct WeaponObj* arg0)
 }
 
 // twin_slasher_charged_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_80097BA4);
-#else
 void func_80097BA4(struct WeaponObj* arg0)
 {
     struct PlayerObj* player;
+    struct Weapon17Ext* ext = &arg0->ext.weapon_17;
     s32 level = arg0->unk2 >> 1;
 
     arg0->on_screen = 1;
@@ -178,12 +172,11 @@ void func_80097BA4(struct WeaponObj* arg0)
         arg0->x_vel.val = -arg0->x_vel.val;
     set_animation(arg0, level + 2);
     move_object(MOVING_OBJECT(arg0));
-    arg0->ext.weapon_17.timer = 3;
+    ext->timer = 3;
     arg0->state++;
     arg0->unk5 = 0;
     update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
 }
-#endif
 
 void twin_slasher_charged_main(struct WeaponObj* arg0)
 {

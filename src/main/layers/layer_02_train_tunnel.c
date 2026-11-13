@@ -349,37 +349,31 @@ u8 train_tunnel_player_at_lock(struct LayerObj* arg0)
 void func_800D9B48(struct LayerObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/layers/layer_02_train_tunnel", func_800D9B48);
-#else
 void func_800D9B48(struct LayerObj* self)
 {
-    u8* private_bytes = (u8*)&self->private_state;
-
     if (engine_obj.character_state.fields.flags == 0)
         return;
-    if (private_bytes[1] == 0)
-        private_bytes[1] = 2;
-    if (private_bytes[1] == 0xFF)
+    if (self->private_state.bytes[1] == 0)
+        self->private_state.bytes[1] = 2;
+    if (self->private_state.bytes[1] == 0xFF)
         return;
-    if (private_bytes[1] == 2) {
+    if (self->private_state.bytes[1] == 2) {
         if (get_layout_screen(1, 0x14F, 0x80) == 0x1D)
             return;
         if (get_layout_screen(1, 0x14F, 0x80) == 0x18)
             return;
-        private_bytes[2] = get_layout_screen(1, 0x14F, 0x80);
-        private_bytes[1]--;
+        self->private_state.bytes[2] = get_layout_screen(1, 0x14F, 0x80);
+        self->private_state.bytes[1]--;
         return;
     }
-    if (private_bytes[2] == (s16)get_layout_screen(1, 0x14F, 0x80))
+    if (self->private_state.bytes[2] == (s16)get_layout_screen(1, 0x14F, 0x80))
         return;
     background_objects[1].unk4E++;
     if (background_objects[1].unk4E == 0x1D)
-        private_bytes[1] = 0xFF;
+        self->private_state.bytes[1] = 0xFF;
     background_objects[1].unk4D++;
-    private_bytes[2] = get_layout_screen(1, 0x14F, 0x80);
+    self->private_state.bytes[2] = get_layout_screen(1, 0x14F, 0x80);
 }
-#endif
 
 void (*train_tunnel_state_funcs[])(struct LayerObj*) = {
     func_800D9268,

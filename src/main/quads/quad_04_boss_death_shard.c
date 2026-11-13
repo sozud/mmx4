@@ -32,9 +32,6 @@ extern s16 boss_death_shard_shapes[4][16][2];
 void func_800D52F4(struct QuadObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_04_boss_death_shard", func_800D52F4);
-#else
 void func_800D52F4(struct QuadObj* arg0)
 {
     s32 random;
@@ -54,7 +51,6 @@ void func_800D52F4(struct QuadObj* arg0)
     arg0->ext.quad_4.timer = random % 7;
     quad_is_on_screen(arg0);
 }
-#endif
 
 void boss_death_shard_fly(struct QuadObj* arg0)
 {

@@ -38,9 +38,6 @@ void func_800B08CC(struct VisualObj* self);
 void func_800B0B48(struct VisualObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B08CC);
-#else
 void func_800B08CC(struct VisualObj* self)
 {
     s32 kind = self->unk2;
@@ -71,12 +68,8 @@ void func_800B08CC(struct VisualObj* self)
     }
     set_animation(self, get_random_nonzero() % 3 + 0xE);
 }
-#endif
 
 // ice_shard_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0B48);
-#else
 void func_800B0B48(struct VisualObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk50;
@@ -115,7 +108,6 @@ void func_800B0B48(struct VisualObj* self)
     else
         self->state++;
 }
-#endif
 
 void ice_shard_despawn(struct VisualObj* arg0)
 {
@@ -218,8 +210,158 @@ void func_800B0CA0(s32 type, s32 mode, struct MainObj* source, s32 radius,
         visual->unk5C.value = (u8)type >> 4;
     }
 }
-#else
+#elif defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0CA0);
+#else
+// clang-format off
+void func_800B0CA0(type, mode, source, radius, count)
+    u8 type;
+    u8 mode;
+    struct MainObj* source;
+    s32 radius;
+    s32 count;
+// clang-format on
+{
+    u8 t;
+    struct Unk_unk68* bounds;
+    u16 left;
+    u16 right;
+    u16 top;
+    u16 bottom;
+    s16 width;
+    s16 height;
+    u16 limit;
+    u16 i;
+    struct VisualObj* visual;
+    s32 r;
+    u8 kind;
+    s32 kind2;
+    s32 rx;
+    s32 ry;
+    s32 m = mode;
+
+    do {
+    } while (0);
+    t = type;
+    bounds = source->terrain_box;
+    left = source->x_pos.i.hi;
+    limit = count;
+    right = left;
+    top = source->y_pos.u.hi + bounds->unk1;
+    bottom = top;
+
+    switch (m) {
+    case 1:
+        if (source->unk15 == 0) {
+            left = left + bounds->unk0 - bounds->unk2;
+            right = left + bounds->unk2 * 2;
+        } else {
+            s32 w = bounds->unk2;
+            right = left - bounds->unk0 + w;
+            left = right - w * 2;
+        }
+        top -= bounds->unk3;
+        bottom = top;
+        break;
+    case 2:
+        if (source->unk15 == 0) {
+            left = left + bounds->unk0 - bounds->unk2;
+            right = left + bounds->unk2 * 2;
+        } else {
+            s32 w = bounds->unk2;
+            right = left - bounds->unk0 + w;
+            left = right - w * 2;
+        }
+        top += bounds->unk3;
+        bottom = top;
+        break;
+    case 3:
+        if (source->unk15 == 0) {
+            left = left + bounds->unk0 - bounds->unk2;
+            right = left;
+        } else {
+            left = bounds->unk2 + (left - bounds->unk0);
+            right = left;
+        }
+        top -= bounds->unk3;
+        bottom += bounds->unk3;
+        break;
+    case 4:
+        if (source->unk15 == 0) {
+            left = bounds->unk2 + (left + bounds->unk0);
+            right = left;
+        } else {
+            left = left - bounds->unk0 - bounds->unk2;
+            right = left;
+        }
+        top -= bounds->unk3;
+        bottom += bounds->unk3;
+        break;
+    }
+    left -= radius;
+    top -= radius;
+    right += radius;
+    bottom += radius;
+    for (i = 0; (s16)i < (s16)limit; i++) {
+        width = right - left;
+        height = bottom - top;
+        kind = t & 3;
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x21;
+            visual->id = 9;
+            visual->unk2 = 0;
+            {
+                s32 r1 = get_random();
+                s32 r2 = get_random();
+                r1 &= 0xFF;
+                r1 <<= 8;
+                rx = (r2 & 0xFF) + r1 + 1;
+            }
+            {
+                s32 r1 = get_random();
+                s32 r2 = get_random();
+                r1 &= 0xFF;
+                r1 <<= 8;
+                ry = (r2 & 0xFF) + r1 + 1;
+            }
+            if (width == 0)
+                visual->x_pos.i.hi = left;
+            else
+                visual->x_pos.i.hi = left + (u16)rx % width;
+            if (height == 0)
+                visual->y_pos.i.hi = top;
+            else
+                visual->y_pos.i.hi = top + (u16)ry % height;
+            visual->x_pos.u.lo = 0;
+            visual->y_pos.u.lo = 0;
+            switch (kind) {
+            case 1:
+                visual->x_vel.val = 0;
+                visual->y_vel.val = 0x10000;
+                break;
+            case 2:
+                if (visual->x_pos.i.hi < source->x_pos.i.hi) {
+                    visual->x_vel.val = -0x18000;
+                    visual->y_vel.val = 0;
+                } else {
+                    visual->x_vel.val = 0x18000;
+                    visual->y_vel.val = 0;
+                }
+                break;
+            default:
+                visual->x_vel.val = 0;
+                visual->y_vel.val = 0;
+                break;
+            }
+            visual->unk15 = 0;
+            visual->unk5C.value = t >> 4;
+            visual->state = 0;
+            visual->unk5 = 0;
+            visual->unk6 = 0;
+        }
+    }
+}
 #endif
 
 // spawn_dust_puffs_in_rect
@@ -230,10 +372,19 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0CA0);
         (high) <<= 8,                  \
         ((low)&0xFF) + (high) + 1)
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B10E4);
-#else
+#ifdef MMX4_PC
 void func_800B10E4(u8 kind, s32 left, s32 top, s32 right, s32 bottom, s32 count_arg)
+#else
+// clang-format off
+void func_800B10E4(kind, left, top, right, bottom, count_arg)
+    u8 kind;
+    s32 left;
+    s32 top;
+    s32 right;
+    s16 bottom;
+    s32 count_arg;
+// clang-format on
+#endif
 {
     s16 x_min = left;
     s16 y_min = top;
@@ -307,7 +458,6 @@ void func_800B10E4(u8 kind, s32 left, s32 top, s32 right, s32 bottom, s32 count_
         visual->unk6 = 0;
     }
 }
-#endif
 
 void (*ice_shard_state_funcs[])(struct VisualObj*) = {
     func_800B08CC,

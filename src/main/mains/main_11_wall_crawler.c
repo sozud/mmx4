@@ -140,9 +140,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A78C);
 #endif
 
 // wall_crawler_attach
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A9F4);
-#else
 void func_8004A9F4(struct MainObj* self)
 {
     self->unk18 = self->x_pos;
@@ -180,7 +177,6 @@ void func_8004A9F4(struct MainObj* self)
         self->state = 4;
     }
 }
-#endif
 
 // wall_crawler_main
 void func_8004AB6C(struct MainObj* self)
@@ -237,9 +233,6 @@ void wall_crawler_despawn(struct MainObj* self)
 }
 
 // wall_crawler_step_7
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004AD18);
-#else
 void func_8004AD18(struct MainObj* self)
 {
     if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi, self->y_pos.i.hi) != 0)
@@ -260,7 +253,6 @@ void func_8004AD18(struct MainObj* self)
     *(u16*)((u8*)&SP_CUR_MAIN_OBJ->ext + 2) = 0x3C;
     self->hurt_box = &wall_crawler_terrain_box;
 }
-#endif
 
 void wall_crawler_resume_step(struct MainObj* self)
 {
@@ -368,9 +360,6 @@ void wall_crawler_turn(struct MainObj* self)
 }
 
 // wall_crawler_step_4
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B0A0);
-#else
 void func_8004B0A0(struct MainObj* self)
 {
     if (self->unk2 == 0) {
@@ -399,7 +388,6 @@ void func_8004B0A0(struct MainObj* self)
     self->unk5 = 5;
     self->unk6 = 0;
 }
-#endif
 
 void wall_crawler_corner(struct MainObj* self)
 {
@@ -454,9 +442,6 @@ void func_8004B2BC(struct MainObj* self)
 }
 
 // wall_crawler_corner_1
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B418);
-#else
 void func_8004B418(struct MainObj* self)
 {
     switch (SP_CUR_MAIN_OBJ->ext.main_11.angle & 0xFE) {
@@ -497,7 +482,6 @@ void func_8004B418(struct MainObj* self)
     SP_CUR_MAIN_OBJ->ext.main_11.unk85++;
     self->unk6++;
 }
-#endif
 
 // wall_crawler_corner_2
 void func_8004B514(struct MainObj* self)
@@ -535,9 +519,6 @@ void func_8004B514(struct MainObj* self)
 }
 
 // wall_crawler_corner_3
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B668);
-#else
 void func_8004B668(struct MainObj* self)
 {
     if (--SP_CUR_MAIN_OBJ->ext.main_11.unk86 != 0)
@@ -569,7 +550,6 @@ void func_8004B668(struct MainObj* self)
     self->unk6++;
     SP_CUR_MAIN_OBJ->ext.main_11.unk85 = 0;
 }
-#endif
 
 void wall_crawler_corner_end(struct MainObj* self)
 {

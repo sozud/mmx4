@@ -39,9 +39,6 @@ void func_8009F89C(struct ShotObj* arg0);
 extern void (*cannon_missile_step_funcs[])(struct ShotObj*);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F674);
-#else
 void func_8009F674(struct ShotObj* arg0)
 {
     struct MainObj* owner;
@@ -83,12 +80,8 @@ void func_8009F674(struct ShotObj* arg0)
     arg0->unk90.bytes[1] = 0;
     arg0->unk8C.bytes[0] = arg0->unk2 * 20 + 0x1E;
 }
-#endif
 
 // cannon_missile_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F7C0);
-#else
 void func_8009F7C0(struct ShotObj* arg0)
 {
     cannon_missile_step_funcs[arg0->unk5](arg0);
@@ -108,16 +101,11 @@ void func_8009F7C0(struct ShotObj* arg0)
         arg0->state++;
     }
 }
-#endif
 
 // cannon_missile_launch
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F89C);
-#else
 void func_8009F89C(struct ShotObj* arg0)
 {
     u8 timer = arg0->unk8C.bytes[3];
-    u8 blink;
 
     if (timer == 0) {
         arg0->x_vel.val = cannon_missile_speeds[(arg0->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
@@ -127,15 +115,13 @@ void func_8009F89C(struct ShotObj* arg0)
         return;
     }
     arg0->unk8C.bytes[3] = timer - 1;
-    blink = arg0->unk90.bytes[0]--;
-    if (blink == 0) {
+    if (((struct Shot29Ext*)&arg0->unk90)->timer-- == 0) {
         arg0->unk90.bytes[0] = 2;
         arg0->unk42 &= 0x7FFF;
     } else {
         arg0->unk42 |= 0x8000;
     }
 }
-#endif
 
 void cannon_missile_slow(struct ShotObj* self)
 {

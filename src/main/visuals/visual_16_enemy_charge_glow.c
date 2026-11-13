@@ -44,9 +44,6 @@ void enemy_charge_glow_init(struct VisualObj* arg0)
 void func_800B1F78(struct VisualObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_16_enemy_charge_glow", func_800B1F78);
-#else
 void func_800B1F78(struct VisualObj* arg0)
 {
     struct MainObj* owner;
@@ -71,7 +68,6 @@ void func_800B1F78(struct VisualObj* arg0)
     arg0->y_pos.i.hi = shot->y_pos.i.hi;
     update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
 }
-#endif
 
 void enemy_charge_glow_despawn(struct VisualObj* arg0)
 {

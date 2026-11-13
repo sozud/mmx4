@@ -144,9 +144,6 @@ void func_800559BC(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_80055358);
-#else
 void func_80055358(struct MainObj* self)
 {
     struct MainObj* child;
@@ -191,7 +188,6 @@ void func_80055358(struct MainObj* self)
         self->ext.main_22.unk84 = 8;
     }
 }
-#endif
 
 void bee_hive_open_end(struct MainObj* self)
 {
@@ -390,7 +386,56 @@ void func_800559BC(struct MainObj* self)
     }
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_800559BC);
+void func_800559BC(struct MainObj* self)
+{
+    struct MainObj* child;
+    u8 part;
+    u8 side;
+    u8 spawned;
+
+    spawned = 0;
+    for (part = 0; part < 10; part++) {
+        if (self->ext.main_22.parts_mask & (1 << part))
+            continue;
+        child = find_free_main_obj();
+        if (child == NULL)
+            continue;
+        child->active = 0x41;
+        child->id = 5;
+        child->unk2 = D_800FCAB0[part].subtype;
+        child->on_screen = 0;
+        child->state = 0;
+        ((u32*)&child->ext)[0] = 0;
+        ((u32*)&child->ext)[1] = 0;
+        ((u32*)&child->ext)[2] = 0;
+        child->ext.main_5.part_index = part;
+        child->ext.main_5.target_y = self->x_pos.i.hi + D_800FCAB0[part].x;
+        child->ext.main_5.target_x = self->y_pos.i.hi + D_800FCAB0[part].y;
+        child->ext.main_5.owner = self;
+        child->x_pos.i.hi = self->x_pos.i.hi;
+        if (part % 2) {
+            if (side != 1) {
+                child->x_pos.i.hi += 0x10;
+                side = 1;
+            }
+        } else if (side != 2) {
+            child->x_pos.i.hi -= 0x10;
+            side = 2;
+        }
+        child->y_pos.i.hi = self->y_pos.i.hi + 9;
+        if (child->x_pos.val > g_Player.x_pos.val && (part & 1))
+            child->ext.main_5.target_y += 8;
+        if (child->x_pos.val < g_Player.x_pos.val && !(part & 1))
+            child->ext.main_5.target_y -= 8;
+        child->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(5));
+        child->unk42 = OBJECT_STAGE_CLUT(5);
+        child->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(5)];
+        self->ext.main_22.parts_mask |= 1 << part;
+        if (++spawned >= 2)
+            break;
+        self->ext.main_22.unk8C = 1;
+    }
+}
 #endif
 
 struct Unk_unk68 bee_hive_hurt_box = { -19, -48, 37, 92 };

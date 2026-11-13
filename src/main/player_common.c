@@ -538,20 +538,17 @@ void player_spawn(void)
     background_objects[2].unk44 = 0;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_common", player_init_clone);
-#else
 void player_init_clone(void)
 {
     struct PlayerObj* entity = &g_Entity;
 
     reset_entity(entity);
+    entity->hp = engine_obj.max_hp;
     entity->is_clone = 1;
     entity->animation_table = D_80119DF0;
     entity->unk50 = 0;
     entity->unk54 = 0;
     entity->unk68 = NULL;
-    entity->hp = engine_obj.max_hp;
     entity->hud_hp = engine_obj.max_hp;
     entity->spawn_hp = engine_obj.max_hp;
     entity->unk38 = (s32*)((u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
@@ -561,7 +558,6 @@ void player_init_clone(void)
     entity->unk42 = PLAYER_PALETTE_BASE;
     entity->unk49 = 1;
 }
-#endif
 
 void player_update_init(struct PlayerObj* self)
 {
@@ -741,9 +737,6 @@ void player_death_wait(struct PlayerObj* self)
 void func_80035C20(struct PlayerObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_common", func_80035C20);
-#else
 void func_80035C20(struct PlayerObj* arg0)
 {
     u32 i;
@@ -769,7 +762,6 @@ void func_80035C20(struct PlayerObj* arg0)
         arg0->unk5++;
     }
 }
-#endif
 void player_death_end(struct PlayerObj* self)
 {
     if (self->death_timer != 0) {
@@ -851,11 +843,24 @@ void player_set_collision_bounds(struct PlayerObj* self)
     self->unk68 = &player_zero_collision_bounds;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_common", player_read_input);
-#else
 void player_read_input(void)
 {
+#ifdef VERSION_EU
+    struct PlayerObj* player;
+
+    if (g_Player.controlling_clone == 0) {
+        player = &g_Player;
+    } else {
+        player = &g_Player;
+        player->input.buttons.held = 0;
+        player->input.buttons.previous = 0;
+        player->pressed_input = 0;
+        player = &g_Entity;
+    }
+    player->input.buttons.held = player_map_buttons(PLAYER_PAD_HELD);
+    player->input.buttons.previous = player_map_buttons(PLAYER_PAD_PREVIOUS);
+    player->pressed_input = player_map_buttons(PLAYER_PAD_PRESSED);
+#else
     if (g_Player.controlling_clone == 0) {
         g_Player.input.buttons.held = player_map_buttons(PLAYER_PAD_HELD);
         g_Player.input.buttons.previous = player_map_buttons(PLAYER_PAD_PREVIOUS);
@@ -868,20 +873,18 @@ void player_read_input(void)
     g_Entity.input.buttons.held = player_map_buttons(PLAYER_PAD_HELD);
     g_Entity.input.buttons.previous = player_map_buttons(PLAYER_PAD_PREVIOUS);
     g_Entity.pressed_input = player_map_buttons(PLAYER_PAD_PRESSED);
-}
 #endif
+}
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_common", player_map_buttons);
-#else
 u16 player_map_buttons(s32 pad)
 {
     u16 result = 0;
+    u16 buttons = pad;
     u32 bit = 1;
     u32 i = 0;
 
     for (i = 0; i < 16; i++) {
-        if (D_800EE430[i] & pad) {
+        if (buttons & D_800EE430[i]) {
             result |= bit;
         }
         bit *= 2;
@@ -897,7 +900,6 @@ u16 player_map_buttons(s32 pad)
 
     return result;
 }
-#endif
 
 void player_clear_dash(struct PlayerObj* self)
 {

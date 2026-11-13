@@ -48,9 +48,9 @@ void ambush_gunner_update(struct MainObj* self)
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80047404(struct MainObj* arg0);
 void func_80047818(struct MainObj* arg0);
+#endif
 extern struct Unk_unk68 ambush_gunner_terrain_box;
 extern union AnimationStep* ambush_gunner_animations[];
-#endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80047404(struct MainObj* arg0)
@@ -101,7 +101,102 @@ void func_80047404(struct MainObj* arg0)
     arg0->unk6 = 0;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_07_ambush_gunner", func_80047404);
+void func_80047404(struct MainObj* arg0)
+{
+    arg0->hp = 6;
+    arg0->contact_damage = 3;
+    arg0->invincibility_timer = 0;
+    arg0->collision_data = D_80106670;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk16 = 6;
+    arg0->animation_table = (const u8* const*)ambush_gunner_animations;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->terrain_box = NULL;
+    arg0->hurt_box = &ambush_gunner_terrain_box;
+    arg0->attack_box = &ambush_gunner_terrain_box;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    switch ((s8)arg0->unk2) {
+    case 1:
+        set_animation(arg0, 1);
+        arg0->unk5 = 3;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->ext.main_7.unk90 = 1;
+        break;
+    case 2:
+        set_animation(arg0, 0);
+        arg0->unk7A = 1;
+        arg0->unk5 = 2;
+        arg0->invincibility_timer = 1;
+        arg0->unk15 = 0;
+        arg0->ext.main_7.unk80 = 0;
+        arg0->ext.main_7.unk84 = 0x64;
+        arg0->ext.main_7.unk90 = 0;
+        break;
+    case 3:
+        set_animation(arg0, 0);
+        arg0->unk7A = 1;
+        arg0->unk5 = 2;
+        arg0->invincibility_timer = 1;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->ext.main_7.unk80 = 0;
+        arg0->ext.main_7.unk84 = 0x64;
+        arg0->ext.main_7.unk90 = 0;
+        break;
+    case 4:
+        set_animation(arg0, 0);
+        arg0->unk7A = 1;
+        arg0->unk5 = 2;
+        arg0->invincibility_timer = 1;
+        arg0->unk15 = 0;
+        arg0->ext.main_7.unk80 = 0;
+        arg0->ext.main_7.unk84 = 0x8C;
+        arg0->ext.main_7.unk90 = 0;
+        break;
+    case 5:
+        set_animation(arg0, 0);
+        arg0->unk7A = 1;
+        arg0->unk5 = 2;
+        arg0->invincibility_timer = 1;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->ext.main_7.unk80 = 0;
+        arg0->ext.main_7.unk84 = 0x8C;
+        arg0->ext.main_7.unk90 = 0;
+        break;
+    case 6:
+        set_animation(arg0, 0);
+        arg0->unk7A = 1;
+        arg0->unk5 = 2;
+        arg0->invincibility_timer = 1;
+        arg0->unk15 = 0;
+        arg0->ext.main_7.unk80 = 1;
+        arg0->ext.main_7.unk84 = 0x28;
+        arg0->ext.main_7.unk90 = 0;
+        break;
+    case 7:
+        set_animation(arg0, 0);
+        arg0->unk7A = 1;
+        arg0->unk5 = 2;
+        arg0->invincibility_timer = 1;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->ext.main_7.unk80 = 1;
+        arg0->ext.main_7.unk84 = 0x28;
+        arg0->ext.main_7.unk90 = 0;
+        break;
+    default:
+        set_animation(arg0, 1);
+        arg0->unk5 = 3;
+        arg0->unk15 = 0;
+        arg0->ext.main_7.unk90 = 1;
+        break;
+    }
+    arg0->state = 1;
+    arg0->unk6 = 0;
+}
 #endif
 
 void ambush_gunner_main(struct MainObj* self)
@@ -160,9 +255,6 @@ void ambush_gunner_emerge(struct MainObj* self)
 }
 
 // ambush_gunner_emerge_wait
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_07_ambush_gunner", func_80047818);
-#else
 void func_80047818(struct MainObj* arg0)
 {
     if ((arg0->unk15 == 0 && arg0->x_pos.val > g_Player.x_pos.val) || (arg0->unk15 != 0 && arg0->x_pos.val < g_Player.x_pos.val)) {
@@ -177,7 +269,6 @@ void func_80047818(struct MainObj* arg0)
         }
     }
 }
-#endif
 
 void ambush_gunner_emerge_burst(struct MainObj* self)
 {

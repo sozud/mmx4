@@ -83,15 +83,12 @@ void func_80091B1C(struct MainObj* arg0);
 void func_80091EC4(struct MainObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", func_80091B1C);
-#else
 void func_80091B1C(struct MainObj* arg0)
 {
     struct Unk_unk68* bounds;
     s16 x;
     s16 y;
-    s32 reverse = 0;
+    s32 reverse;
 
     if (!(arg0->collision_flags & 8)) {
         s32 velocity = arg0->x_speed;
@@ -107,6 +104,7 @@ void func_80091B1C(struct MainObj* arg0)
         return;
     }
 
+    reverse = 0;
     bounds = arg0->terrain_box;
     y = arg0->y_pos.i.hi + bounds->unk1 + (u8)bounds->unk3 + 4;
     if (arg0->x_speed < 0) {
@@ -125,7 +123,6 @@ void func_80091B1C(struct MainObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 void spike_crawler_update_speed(struct MainObj* self)
 {

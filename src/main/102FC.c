@@ -352,9 +352,6 @@ void func_80020060(struct EngineObj* arg0)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/102FC", func_800200D4);
-#else
 void func_800200D4(struct EngineObj* arg0)
 {
     u32 i;
@@ -436,7 +433,6 @@ void func_800200D4(struct EngineObj* arg0)
     arg0->unk1 = 0;
     arg0->unkF = 0;
 }
-#endif
 // D_800F241C state 2
 void func_80020368(struct EngineObj* arg0)
 {

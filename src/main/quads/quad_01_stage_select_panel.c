@@ -68,9 +68,6 @@ u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y,
 }
 
 // stage_select_panel_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D4334);
-#else
 void func_800D4334(struct QuadObj* self)
 {
     self->unk36 = 0x13;
@@ -102,12 +99,8 @@ void func_800D4334(struct QuadObj* self)
     self->state++;
     quad_is_on_screen(self);
 }
-#endif
 
 // stage_select_panel_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D43F4);
-#else
 void func_800D43F4(struct QuadObj* self)
 {
     struct QuadVertex* vertex;
@@ -130,19 +123,19 @@ void func_800D43F4(struct QuadObj* self)
         dx = vertex->x.val - (target[0] << 16);
         dy = vertex->y.val - (target[1] << 16);
         region = angle_from_delta(dx, dy);
-        if ((((self->ext.quad_1.region[i] ^ region) & 0x10) || self->ext.quad_1.settled[i] != 0) && self->ext.quad_1.unk42 == 0) {
+        if ((((((struct Quad1Ext*)&self->ext)->region[i] ^ region) & 0x10) || ((struct Quad1Ext*)&self->ext)->settled[i] != 0) && self->ext.quad_1.unk42 == 0) {
             self->x_pos.i.lo = 0;
             self->y_pos.i.lo = 0;
-            self->ext.quad_1.settled[i] = 1;
+            ((struct Quad1Ext*)&self->ext)->settled[i] = 1;
         } else {
             vertex->x.val -= dx / (s32)self->ext.quad_1.steps;
             vertex->y.val -= dy / (s32)self->ext.quad_1.steps;
-            self->ext.quad_1.settled[i] = 0;
+            ((struct Quad1Ext*)&self->ext)->settled[i] = 0;
             if (i == 3)
                 self->ext.quad_1.unk42 = 0;
         }
         vertex++;
-        self->ext.quad_1.region[i] = region;
+        ((struct Quad1Ext*)&self->ext)->region[i] = region;
     }
     if (--self->ext.quad_1.steps == 0) {
         misc = find_free_misc_obj();
@@ -176,7 +169,6 @@ void func_800D43F4(struct QuadObj* self)
     }
     quad_is_on_screen(self);
 }
-#endif
 
 void stage_select_panel_idle(struct QuadObj* arg0)
 {

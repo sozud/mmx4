@@ -137,9 +137,6 @@ void menu_text_highlight(struct UnkObj* self)
 void func_800D3798(struct UnkObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/unks/unk_00_menu_text", func_800D3798);
-#else
 void func_800D3798(struct UnkObj* self)
 {
     u16 mask;
@@ -169,7 +166,6 @@ void func_800D3798(struct UnkObj* self)
     }
     is_on_screen(self);
 }
-#endif
 
 void menu_text_cursor(struct UnkObj* self)
 {

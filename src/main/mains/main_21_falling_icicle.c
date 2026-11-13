@@ -36,9 +36,6 @@ void falling_icicle_update(struct MainObj* self)
     animate_object(self);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_21_falling_icicle", falling_icicle_init);
-#else
 void falling_icicle_init(struct MainObj* arg0)
 {
     struct MainObj* self;
@@ -47,12 +44,12 @@ void falling_icicle_init(struct MainObj* arg0)
     self->contact_damage = 1;
     self->invincibility_timer = 0;
     self->bg_offset = g_Player.bg_offset;
+    self->x_speed = 0;
     self->animation_table = (const u8* const*)falling_icicle_animations;
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->hurt_box = &falling_icicle_body_box;
     self->attack_box = &falling_icicle_body_box;
     self->terrain_box = &falling_icicle_terrain_box;
-    self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
@@ -68,7 +65,6 @@ void falling_icicle_init(struct MainObj* arg0)
     self->state = 1;
     self->unk5 = 2;
 }
-#endif
 
 // falling_icicle_main
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -79,11 +75,10 @@ s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1);
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80054D8C(struct MainObj* arg0);
+#endif
 extern void (*falling_icicle_step_funcs[])(struct MainObj*);
 extern u8 falling_icicle_debris[];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80054D8C(struct MainObj* arg0)
 {
     s32 collision;
@@ -94,22 +89,33 @@ void func_80054D8C(struct MainObj* arg0)
     arg0->ext.main_21.saved_unk5 = arg0->unk5;
     collision = func_8002DD04(arg0);
     func_8002D9BC(arg0);
-    if (collision < 0 || func_8002BB80(arg0, MAIN_OBJECT(&g_Player)) != 0 || (arg0->collision_flags & 8)) {
+    if (collision < 0) {
         set_animation(arg0, 4);
         spawn_debris(3, falling_icicle_debris, arg0);
         func_8001540C(5, SATURN_SOUND(1, 0x23), NULL);
         arg0->state = 2;
         return;
     }
-    if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
-        arg0->state = 3;
+    if (func_8002BB80(arg0, MAIN_OBJECT(&g_Player)) != 0) {
+        set_animation(arg0, 4);
+        spawn_debris(3, falling_icicle_debris, arg0);
+        func_8001540C(5, SATURN_SOUND(1, 0x23), NULL);
+        arg0->state = 2;
         return;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->collision_flags & 8) {
+        set_animation(arg0, 4);
+        spawn_debris(3, falling_icicle_debris, arg0);
+        func_8001540C(5, SATURN_SOUND(1, 0x23), NULL);
+        arg0->state = 2;
+        return;
+    }
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        is_on_screen(BASE_OBJECT(arg0));
+    } else {
+        arg0->state = 3;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_21_falling_icicle", func_80054D8C);
-#endif
 
 void falling_icicle_shatter(struct MainObj* self)
 {

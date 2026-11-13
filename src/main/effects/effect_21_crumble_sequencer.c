@@ -42,78 +42,78 @@ void func_800B9EC0(struct EffectObj* self)
 
 // crumble_sequencer_timed
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B9F38(struct EffectObj* arg0);
 void func_800BA178(struct EffectObj* arg0);
-extern u8* crumble_sequencer_groups[8];
-#endif
+extern u8* crumble_sequencer_groups[4][2];
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800B9F38);
+#else
 void func_800B9F38(struct EffectObj* arg0)
 {
-    struct Effect21Ext* ext = &arg0->ext.effect_21;
     struct EffectObj* effect;
-    u8* list;
     u32 bit;
+    u8* list;
     u8 id;
 
-    ext->was_inside = ext->inside;
+    arg0->ext.effect_21.was_inside = arg0->ext.effect_21.inside;
     if ((u16)(g_Player.x_pos.i.hi - 0x2A1) < 0x9BF)
-        ext->inside = 1;
-    if (ext->inside == 0)
+        arg0->ext.effect_21.inside = 1;
+    if (arg0->ext.effect_21.inside == 0)
         return;
-    if (ext->inside != ext->was_inside) {
-        ext->phase = 0;
-        ext->timer = 0;
+    if (arg0->ext.effect_21.inside != arg0->ext.effect_21.was_inside) {
+        arg0->ext.effect_21.phase = 0;
+        arg0->ext.effect_21.timer = 0;
     }
-    if (ext->timer != 0) {
-        ext->timer--;
-        return;
+    if (arg0->ext.effect_21.timer == 0) {
+        list = crumble_sequencer_groups[arg0->ext.effect_21.phase][arg0->ext.effect_21.inside - 1];
+        do {
+            id = *list & 0x7F;
+            if ((u8)func_800B9E54(crumble_sequencer_sequences[id]) != 0) {
+                bit = 1 << id;
+                if (!(arg0->ext.effect_21.spawned & bit)) {
+                    effect = find_free_effect_obj();
+                    if (effect != NULL) {
+                        effect->active = 1;
+                        effect->id = 0x15;
+                        effect->unk2 = 1;
+                        effect->ext.effect_21.index = id;
+                        arg0->ext.effect_21.spawned |= bit;
+                    }
+                }
+            }
+            if (*list & 0x80)
+                break;
+            list++;
+        } while (1);
+
+        list = crumble_sequencer_groups[(arg0->ext.effect_21.phase + 2) & 3][arg0->ext.effect_21.inside - 1];
+        do {
+            id = *list & 0x7F;
+            if (arg0->ext.effect_21.spawned & (1 << id)) {
+                effect = find_free_effect_obj();
+                if (effect != NULL) {
+                    effect->active = 1;
+                    effect->id = 0x15;
+                    effect->unk2 = 2;
+                    effect->ext.effect_21.index = id;
+                    arg0->ext.effect_21.spawned &= ~(1 << id);
+                }
+            }
+            if (*list & 0x80)
+                break;
+            list++;
+        } while (1);
+
+        arg0->ext.effect_21.phase = (arg0->ext.effect_21.phase + 1) & 3;
+        arg0->ext.effect_21.timer = arg0->ext.effect_21.inside != 1 ? 0x8C : 0x96;
+    } else {
+        arg0->ext.effect_21.timer--;
     }
-
-    list = crumble_sequencer_groups[ext->phase * 2 + ext->inside - 1];
-    do {
-        id = *list & 0x7F;
-        bit = 1 << id;
-        if ((u8)func_800B9E54(crumble_sequencer_sequences[id]) != 0 && !(ext->spawned & bit)) {
-            effect = find_free_effect_obj();
-            if (effect != NULL) {
-                effect->active = 1;
-                effect->id = 0x15;
-                effect->unk2 = 1;
-                effect->ext.effect_21.index = id;
-                ext->spawned |= bit;
-            }
-        }
-    } while (!(*list++ & 0x80));
-
-    list = crumble_sequencer_groups[((ext->phase + 2) & 3) * 2 + ext->inside - 1];
-    do {
-        id = *list & 0x7F;
-        bit = 1 << id;
-        if (ext->spawned & bit) {
-            effect = find_free_effect_obj();
-            if (effect != NULL) {
-                effect->active = 1;
-                effect->id = 0x15;
-                effect->unk2 = 2;
-                effect->ext.effect_21.index = id;
-                ext->spawned &= ~bit;
-            }
-        }
-    } while (!(*list++ & 0x80));
-
-    ext->phase = (ext->phase + 1) & 3;
-    ext->timer = ext->inside == 1 ? 0x96 : 0x8C;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800B9F38);
 #endif
 
 // crumble_sequencer_triggered
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800BA178);
-#else
 void func_800BA178(struct EffectObj* arg0)
 {
     struct MiscObj* misc;
@@ -168,7 +168,6 @@ void func_800BA178(struct EffectObj* arg0)
         arg0->state++;
     }
 }
-#endif
 
 void crumble_sequencer_chain(struct EffectObj* self)
 {
@@ -573,15 +572,11 @@ u8 crumble_sequencer_group_3[4] = { 0x09, 0x8C, 0x00, 0x00 };
 u8 crumble_sequencer_group_5[4] = { 0x0A, 0x8D, 0x00, 0x00 };
 u8 crumble_sequencer_group_7[4] = { 0x8B, 0x00, 0x00, 0x00 };
 
-u8* crumble_sequencer_groups[8] = {
-    crumble_sequencer_group_0,
-    crumble_sequencer_group_1,
-    crumble_sequencer_group_2,
-    crumble_sequencer_group_3,
-    crumble_sequencer_group_4,
-    crumble_sequencer_group_5,
-    crumble_sequencer_group_6,
-    crumble_sequencer_group_7,
+u8* crumble_sequencer_groups[4][2] = {
+    { crumble_sequencer_group_0, crumble_sequencer_group_1 },
+    { crumble_sequencer_group_2, crumble_sequencer_group_3 },
+    { crumble_sequencer_group_4, crumble_sequencer_group_5 },
+    { crumble_sequencer_group_6, crumble_sequencer_group_7 },
 };
 
 void (*crumble_sequencer_subtype_funcs[6])(struct EffectObj*) = {

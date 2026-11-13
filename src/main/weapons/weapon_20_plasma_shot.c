@@ -39,11 +39,10 @@ extern struct Unk_unk68 D_8010871C[];
 extern struct Unk_unk68 D_80108720[];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", func_800929DC);
-#else
 void func_800929DC(struct WeaponObj* self)
 {
+    struct Weapon20Ext* ext = &self->ext.weapon_20;
+
     self->on_screen = 1;
     self->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 12);
     self->animation_table = D_8011BF40;
@@ -61,10 +60,10 @@ void func_800929DC(struct WeaponObj* self)
     } else {
         self->unk50 = D_80108720;
         self->unk64 = 2;
-        self->ext.weapon_20.lifetime = 0x5A;
+        ext->lifetime = 0x5A;
         self->unk16 = 1;
         self->x_vel.val = 0;
-        self->ext.weapon_20.timer = 4;
+        ext->timer = 4;
         set_animation(self, 0x1E);
     }
     self->unk28.val = 0;
@@ -74,7 +73,6 @@ void func_800929DC(struct WeaponObj* self)
     self->state++;
     update_on_screen(BASE_OBJECT(self), 0x2A, 0x22);
 }
-#endif
 
 void plasma_shot_main(struct WeaponObj* arg0)
 {
@@ -91,18 +89,14 @@ void plasma_shot_main(struct WeaponObj* arg0)
 }
 
 // plasma_shot_move
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", func_80092B5C);
-#else
 void func_80092B5C(struct WeaponObj* self)
 {
     struct WeaponObj* child;
-    struct PlayerObj* player;
+    struct PlayerObj* player = &g_Player;
 
     move_object(MOVING_OBJECT(self));
     if (self->unk98 != 0) {
         self->unk98 = 0;
-        player = &g_Player;
         if (player->shot_count < 4) {
             child = find_free_weapon_obj();
             if (child != NULL) {
@@ -119,7 +113,6 @@ void func_80092B5C(struct WeaponObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x2A, 0x22);
 }
-#endif
 
 void plasma_orb_linger(struct WeaponObj* arg0)
 {

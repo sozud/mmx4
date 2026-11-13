@@ -30,9 +30,6 @@ extern s8 death_orb_frames[4];
 void func_800CAE38(struct MiscObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_17_death_orb", func_800CAE38);
-#else
 void func_800CAE38(struct MiscObj* arg0)
 {
     u8 variant;
@@ -69,7 +66,6 @@ void func_800CAE38(struct MiscObj* arg0)
     arg0->state = (u8)arg0->state + 1;
     update_on_screen(BASE_OBJECT(arg0), 0x80000, 0x80000);
 }
-#endif
 
 void death_orb_fly(struct MiscObj* self)
 {

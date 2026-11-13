@@ -268,9 +268,6 @@ void iris_drone_hover(struct ShotObj* self)
 }
 
 // iris_drone_chase
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A766C);
-#else
 void func_800A766C(struct ShotObj* self)
 {
     if (--self->unk8A == 0) {
@@ -301,7 +298,6 @@ void func_800A766C(struct ShotObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 void iris_drone_burst(struct ShotObj* self)
 {

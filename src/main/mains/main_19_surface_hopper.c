@@ -90,9 +90,6 @@ u8 surface_hopper_aim_at_player(struct MainObj*);
 
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_800528BC);
-#else
 void func_800528BC(struct MainObj* arg0)
 {
     arg0->state = 1;
@@ -144,7 +141,6 @@ void func_800528BC(struct MainObj* arg0)
     else
         arg0->unk5 = 5;
 }
-#endif
 
 // surface_hopper_main
 void func_80052A68(struct MainObj* self)
@@ -221,9 +217,6 @@ void surface_hopper_fly(struct MainObj* self)
 }
 
 // surface_hopper_crawl_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80052CB8);
-#else
 extern u8 D_800FC7D4[];
 extern u8 D_800FC7D8[];
 void func_80052CB8(struct MainObj* arg0)
@@ -262,12 +255,8 @@ void func_80052CB8(struct MainObj* arg0)
     SP_CUR_MAIN_OBJ->ext.main_19.unk86 = arg0->x_pos.u.hi;
     SP_CUR_MAIN_OBJ->ext.main_19.unk88 = arg0->y_pos.u.hi;
 }
-#endif
 
 // surface_hopper_crawl_move
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80052E94);
-#else
 void func_80052E94(struct MainObj* arg0)
 {
     u8 flags;
@@ -344,7 +333,6 @@ void func_80052E94(struct MainObj* arg0)
 update_animation:
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 void surface_hopper_crawl_turn(struct MainObj* self)
 {
@@ -394,9 +382,6 @@ void surface_hopper_crawl_attach(struct MainObj* self)
 }
 
 // surface_hopper_crawl_wall
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053338);
-#else
 void func_80053338(struct MainObj* arg0)
 {
     s16 probe_x;
@@ -459,7 +444,6 @@ void func_80053338(struct MainObj* arg0)
         animate_object(ANIMATED_OBJECT(arg0));
     }
 }
-#endif
 
 void surface_hopper_crawl_finish(struct MainObj* self)
 {
@@ -484,9 +468,6 @@ void surface_hopper_leap_start(struct MainObj* self)
 }
 
 // surface_hopper_leap_fly
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_8005368C);
-#else
 void func_8005368C(struct MainObj* arg0)
 {
     struct ShotObj* shot;
@@ -505,7 +486,8 @@ void func_8005368C(struct MainObj* arg0)
             shot->id = 0xB;
             index = SP_CUR_MAIN_OBJ->ext.main_19.animation_index * 2;
             shot->x_pos.i.hi = arg0->x_pos.i.hi + D_800FC7E8[index];
-            shot->y_pos.i.hi = arg0->y_pos.i.hi + D_800FC7E8[(u8)(index | 1)];
+            index |= 1;
+            shot->y_pos.i.hi = arg0->y_pos.i.hi + D_800FC7E8[index];
             shot->animation_table = (u32**)arg0->animation_table;
             shot->unk40 = arg0->unk40;
             shot->unk3C = (void*)arg0->sprite_frames;
@@ -520,12 +502,8 @@ void func_8005368C(struct MainObj* arg0)
         animate_object(ANIMATED_OBJECT(arg0));
     }
 }
-#endif
 
 // surface_hopper_pick_surface
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_800537E0);
-#else
 u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical)
 {
     s32 first;
@@ -572,7 +550,6 @@ u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical)
     }
     return result;
 }
-#endif
 
 u8 surface_hopper_aim_at_player(struct MainObj* self)
 {
@@ -634,41 +611,41 @@ u8 surface_hopper_probe_tile(struct PlayerObj* self, s16 arg1, s16 arg2)
 }
 
 // surface_hopper_check_surface
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_80053B54(struct MainObj* arg0)
 {
-    s32 dx = (s16)(g_Player.x_pos.i.hi - arg0->x_pos.i.hi);
-    s32 dy = (s16)(g_Player.y_pos.i.hi - arg0->y_pos.i.hi);
-    u8 direction;
-    s32 selected = 0;
+    s16 dx;
+    s16 dy;
+    s32 selected;
+    s32 direction;
 
-    if (dx < 0)
-        dx = -dx;
-    if (dy < 0)
-        dy = -dy;
-    direction = (u8)angle_to_object(
-        OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
-
-    if (arg0->ext.main_19.animation_index < 2) {
-        if (dx < 0x40 && dy >= 0x60)
-            return 0;
-        if (arg0->ext.main_19.animation_index == 0)
-            selected = (u8)(direction - 8) < 0x11;
-        else
-            selected = (u8)(direction - 9) >= 0xF;
+    selected = 0;
+    dx = ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi);
+    dy = ABS(g_Player.y_pos.i.hi, arg0->y_pos.i.hi);
+    direction = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+    if (SP_CUR_MAIN_OBJ->ext.main_19.animation_index < 2) {
+        if ((dx < 0 ? -dx : dx) >= 0x40 || (dy < 0 ? -dy : dy) < 0x60) {
+            if (SP_CUR_MAIN_OBJ->ext.main_19.animation_index == 0) {
+                if ((u8)(direction - 8) < 0x11) {
+                    selected = 1;
+                    SP_CUR_MAIN_OBJ->ext.main_19.unk83 = direction & 0x1E;
+                }
+            } else {
+                if ((u8)(direction - 9) >= 0xF) {
+                    selected = 1;
+                    SP_CUR_MAIN_OBJ->ext.main_19.unk83 = direction & 0x1E;
+                }
+            }
+        }
     } else {
-        if (dx >= 0x80)
-            return 0;
-        selected = (u8)(direction - 0x10) < 0x11;
+        if ((dx < 0 ? -dx : dx) < 0x80) {
+            if ((u8)(direction - 0x10) < 0x11) {
+                selected = 1;
+                SP_CUR_MAIN_OBJ->ext.main_19.unk83 = direction & 0x1E;
+            }
+        }
     }
-
-    if (selected)
-        arg0->ext.main_19.unk83 = direction & 0x1E;
     return selected;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053B54);
-#endif
 
 void surface_hopper_despawn(struct MainObj* self)
 {
@@ -676,9 +653,6 @@ void surface_hopper_despawn(struct MainObj* self)
 }
 
 // surface_hopper_launched_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053D24);
-#else
 void func_80053D24(struct MainObj* self)
 {
     s32 vx;
@@ -735,7 +709,6 @@ void func_80053D24(struct MainObj* self)
     else
         self->unk5 = 5;
 }
-#endif
 
 // surface_hopper_launched_main
 void func_80053EB8(struct MainObj* self)

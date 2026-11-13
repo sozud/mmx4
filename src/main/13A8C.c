@@ -612,9 +612,6 @@ void func_80023A54(struct EngineObj* arg0)
     func_80023D68();
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/13A8C", func_80023AA8);
-#else
 #define SPARKLE_STATIC 2
 #define SPARKLE_X_CENTER 0x100
 #define SPARKLE_Y_CENTER 0x98
@@ -640,7 +637,6 @@ void func_80023AA8(struct MiscObj* arg0)
     arg0->unk15 = 0;
     set_animation(arg0, arg0->unk2);
 }
-#endif
 void func_80023B98(struct MiscObj* arg0)
 {
     s8 timer;

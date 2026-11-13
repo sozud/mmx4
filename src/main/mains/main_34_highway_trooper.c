@@ -41,37 +41,32 @@ void highway_trooper_update(struct MainObj* self)
 
 // highway_trooper_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005E5C0(struct MainObj* arg0);
 void func_8005EB40(struct MainObj* arg0);
-extern u16 D_800FE18C[8];
+extern u16 D_800FE18C[4][2];
 extern ret_u8 func_8002938C(s32);
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005E5C0(struct MainObj* arg0)
 {
     s32 resource;
-    s32 clut_x;
-    s32 clut_y;
 
     resource = func_8002938C(0x22);
     arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
-    clut_x = func_8002938C(0x22);
-    clut_y = func_8002938C(0x22);
 #ifdef MMX4_SATURN
-    arg0->unk42 = clut_x * 4 + 0x1A;
+    arg0->unk42 = func_8002938C(0x22) * 4 + 0x1A;
+    func_8002938C(0x22);
 #else
-    arg0->unk42 = ((clut_x * 4 + 0x1A) % 16) | (((clut_y + 6) / 4 + 0x1E0) << 6);
+    arg0->unk42 = ((func_8002938C(0x22) * 4 + 0x1A) % 16)
+        | (((func_8002938C(0x22) + 6) / 4 + 0x1E0) << 6);
 #endif
     resource = func_8002938C(0x22);
-    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->x_pos.i.hi = D_800FE18C[arg0->unk2 * 2];
-    arg0->y_pos.i.hi = D_800FE18C[arg0->unk2 * 2 + 1];
+    arg0->x_pos.i.hi = D_800FE18C[arg0->unk2][0];
+    arg0->y_pos.i.hi = D_800FE18C[arg0->unk2][1];
+    arg0->x_speed = -0x1C000;
     arg0->animation_table = (const u8* const*)highway_trooper_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->x_speed = -0x1C000;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
@@ -90,9 +85,6 @@ void func_8005E5C0(struct MainObj* arg0)
     arg0->state = 1;
     arg0->unk5 = 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_34_highway_trooper", func_8005E5C0);
-#endif
 
 void highway_trooper_main(struct MainObj* self)
 {
@@ -448,15 +440,11 @@ void (*highway_trooper_step_funcs[6])(struct MainObj*) = {
     highway_trooper_drift,
 };
 
-u16 D_800FE18C[8] = {
-    0x0A48,
-    0x0140,
-    0x0EA8,
-    0x0170,
-    0x1528,
-    0x014A,
-    0x1BC8,
-    0x0170,
+u16 D_800FE18C[4][2] = {
+    { 0x0A48, 0x0140 },
+    { 0x0EA8, 0x0170 },
+    { 0x1528, 0x014A },
+    { 0x1BC8, 0x0170 },
 };
 
 void (*highway_trooper_attack_funcs[5])() = {

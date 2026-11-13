@@ -22,16 +22,15 @@ void data_capsule_idle(struct ItemObj*);
 #include "main/mains/main_41_data_hopper.h"
 #endif
 
-struct Item19SpawnPosition {
-    u16 x;
-    u16 y;
-};
-
-struct Item19SpawnPosition data_capsule_positions[4] = {
-    { 0x07B0, 0x022C },
-    { 0x07B0, 0x03A0 },
-    { 0x07B0, 0x0458 },
-    { 0x07B0, 0x05D8 },
+u16 data_capsule_positions[8] = {
+    0x07B0,
+    0x022C,
+    0x07B0,
+    0x03A0,
+    0x07B0,
+    0x0458,
+    0x07B0,
+    0x05D8,
 };
 
 u8 data_capsule_box_0[4] = { 0, 0xFE, 0x29, 8 };
@@ -64,18 +63,19 @@ void data_capsule_update(struct ItemObj* arg0)
 s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C4778(struct ItemObj* self);
 void func_800C49BC(struct ItemObj* self);
 void collide_with_players(struct PlayerObj*);
 extern ret_u8 func_8002938C(s32);
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C4778(struct ItemObj* self)
 {
+    u32 i;
+    struct ItemObj* child;
+    u8 index;
+    s32 j;
+
     if (self->unk2 < 4) {
-        s32 index;
         self->state = 1;
         self->on_screen = 1;
         self->unk5 = 0;
@@ -84,15 +84,18 @@ void func_800C4778(struct ItemObj* self)
         self->active |= 0x40;
         self->unk18 = self->x_pos;
         self->unk1C = self->y_pos;
-        index = (u8)func_8002938C(0x29);
+        index = func_8002938C(0x29);
         self->animation_table = (const u8* const*)data_hopper_animations;
         self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
         self->unk40 = OBJECT_STAGE_TEXTURE(index);
-        self->unk42 = OBJECT_CLUT(((index * 4 + 0x18) & 0xF) | ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF));
+        self->unk42 = OBJECT_CLUT(CLUT_FROM_XY(index, index));
         self->unk54 = NULL;
         self->unk50 = NULL;
-        self->unk68 = (struct Unk_unk68*)(self->unk2 == 0 ? data_capsule_box_0 : self->unk2 == 1 ? data_capsule_box_1
-                                                                                                 : data_capsule_box_2);
+        if (self->unk2 == 0) {
+            self->unk68 = (struct Unk_unk68*)data_capsule_box_0;
+        } else {
+            self->unk68 = (struct Unk_unk68*)data_capsule_box_1;
+        }
         self->unk76 = -1;
         self->unk75 = 1;
         self->unk16 = VISUAL_SATURN_LAYER(6);
@@ -104,36 +107,34 @@ void func_800C4778(struct ItemObj* self)
         self->unk7C.timer16 = 0xA;
         ((u16*)&self->unk7C)[1] = 0;
         self->unk7 = engine_obj.character_state.fields.active;
-        set_animation(self, self->unk2 + 0xF);
+        if (self->unk2 >= 2) {
+            self->unk68 = (struct Unk_unk68*)data_capsule_box_2;
+            set_animation(self, self->unk2 + 0xF);
+        } else {
+            set_animation(self, self->unk2 + 0xF);
+        }
     } else {
-        s32 i;
         self->state = 2;
         self->unk5 = 0;
         self->unk6 = 0;
         self->unk7 = 0;
         self->on_screen = 0;
         for (i = 0; i < 2; i++) {
-            struct ItemObj* child = find_free_item_obj();
+            child = find_free_item_obj();
             if (child != NULL) {
-                struct Item19SpawnPosition* pos = &data_capsule_positions[(self->unk2 - 4) * 2 + i];
                 child->active = 1;
                 child->id = 0x13;
                 child->unk2 = i;
-                child->x_pos.u.hi = pos->x;
-                child->y_pos.u.hi = pos->y;
+                j = (self->unk2 - 4) * 4 + i * 2;
+                child->x_pos.u.hi = data_capsule_positions[j];
+                child->y_pos.u.hi = data_capsule_positions[j + 1];
             }
         }
         despawn_object_permanently(OBJECT_HEADER(self));
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/items/item_19_data_capsule", func_800C4778);
-#endif
 
 // data_capsule_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_19_data_capsule", func_800C49BC);
-#else
 void func_800C49BC(struct ItemObj* self)
 {
     struct MainObj* spawned;
@@ -189,7 +190,6 @@ void func_800C49BC(struct ItemObj* self)
     collide_with_players(self);
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void data_capsule_idle(struct ItemObj* arg0)
 {

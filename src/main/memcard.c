@@ -13,6 +13,15 @@ struct MemcardSaveName {
 };
 extern const struct MemcardSaveName D_80010094;
 
+struct MemcardSaveTitle {
+#ifdef VERSION_JP
+    u8 title[35];
+#else
+    u8 title[21];
+#endif
+};
+extern const struct MemcardSaveTitle D_800100A8;
+
 #ifdef MMX4_PC
 extern s32 func_8001CEDC(void);
 extern s32 func_8001CFF4(s32 arg0);
@@ -68,11 +77,50 @@ void func_8001C8AC(void)
     TestEvent(D_80139688);
 }
 
-INCLUDE_ASM("main/nonmatchings/memcard", func_8001C8F4);
+#if !defined(MMX4_PC)
+s32 func_8001C8F4(u8* buffer, s32 device_num, s32 size)
+{
+    char path[20];
+    u8 verify[0x200];
+    s32 fd;
+    s32 count;
+    u32 retries;
+    s32 n;
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/memcard", func_8001CB24);
-#else
+    *(struct MemcardSaveName*)path = D_80010094;
+    memset(path + 18, 0, 2);
+    buffer[3] = (u32)size / 0x2000 + (((u32)size % 0x2000) != 0);
+    path[2] += device_num;
+    *(struct MemcardSaveTitle*)(buffer + 4) = D_800100A8;
+    close(open(path, (buffer[3] << 16) | 0x200));
+    retries = 0;
+    do {
+        count = 30;
+        while ((fd = open(path, 2)) == -1) {
+            VSync(2);
+            if (--count == 0)
+                return 1;
+        }
+        count = 30;
+        while (write(fd, buffer, size) != size) {
+            VSync(2);
+            if (--count == 0)
+                return 2;
+        }
+        close(fd);
+        fd = open(path, 1);
+        if (fd == -1)
+            break;
+        n = read(fd, verify, 0x200);
+        close(fd);
+        if (n == 0x200)
+            return 0;
+        retries++;
+    } while (retries < 3);
+    return 2;
+}
+#endif
+
 s32 func_8001CB24(u8* buffer, s32 device_num, s32 size)
 {
 #ifdef MMX4_PC
@@ -106,7 +154,6 @@ s32 func_8001CB24(u8* buffer, s32 device_num, s32 size)
     return 2;
 #endif
 }
-#endif
 
 void func_8001CC5C(s32 device_num, struct MemcardFileList* list, const char* pattern)
 {

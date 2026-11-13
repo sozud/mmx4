@@ -36,16 +36,16 @@ extern struct Unk_unk68 D_80108504[];
 extern s8* D_800FEA24[7];
 extern union AnimationStep** D_800FEA40[7];
 extern struct Unk_unk68 D_800FEAA0;
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+struct BreakableTerrainOffset {
+    s8 x;
+    s8 y;
+};
+
 void func_80061DFC(struct MainObj* arg0);
 void func_80061F2C(struct MainObj* arg0);
 extern u8 D_800FEA1C[8];
 u8 func_80062338(struct MainObj*);
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80061DFC);
-#else
 void func_80061DFC(struct MainObj* arg0)
 {
     s8** boxes = D_800FEA24;
@@ -79,59 +79,62 @@ void func_80061DFC(struct MainObj* arg0)
     arg0->unk15 = 0;
     arg0->state++;
 }
-#endif
 
 // breakable_terrain_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80061F2C(struct MainObj* arg0)
 {
-    struct Main40Ext* ext = &arg0->ext.main_40;
     s32 collision;
-    s32 dy;
+    s32 index;
 
-    arg0->unk1C.val = arg0->y_pos.val;
     arg0->unk18.val = arg0->x_pos.val;
-    if (ext->unk80 == 1) {
+    arg0->unk1C.val = arg0->y_pos.val;
+    switch (arg0->ext.main_40.unk80) {
+    case 1:
         func_8002D9BC(arg0);
         collision = func_8002DD04(arg0);
-        if (collision >= 0) {
-            if (collision > 0)
-                arg0->unk42 |= 0x8000;
-            else
-                arg0->unk42 &= 0x7FFF;
-            if (!func_80062338(arg0))
-                goto check;
+        if (collision < 0) {
+            arg0->ext.main_40.timer = 0x30;
+            arg0->ext.main_40.trigger_time = 0x2F;
+            arg0->on_screen = 0;
+            spawn_debris(7, D_800FEA1C, arg0);
+            arg0->state++;
+            return;
         }
-        ext->timer = 0x30;
-        ext->trigger_time = 0x2F;
-        arg0->on_screen = 0;
-        spawn_debris(7, D_800FEA1C, arg0);
-        arg0->state++;
-        return;
-    }
-    if (ext->unk80 != 0 && ext->unk80 < 7) {
-        dy = (s32)((u32)breakable_terrain_effect_offsets[(ext->unk80 - 2) * 2 + 1] << 16);
-        if (arg0->y_pos.val - dy - background_objects[arg0->bg_offset].y_pos.val > 0xA80000) {
-            ext->timer = 0x10;
-            ext->trigger_time = 8;
+        if (collision > 0)
+            arg0->unk42 |= 0x8000;
+        else
+            arg0->unk42 &= 0x7FFF;
+        if (func_80062338(arg0)) {
+            arg0->ext.main_40.timer = 0x30;
+            arg0->ext.main_40.trigger_time = 0x2F;
+            arg0->on_screen = 0;
+            spawn_debris(7, D_800FEA1C, arg0);
+            arg0->state++;
+            return;
+        }
+        break;
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+        index = arg0->ext.main_40.unk80 - 2;
+        collision = ((struct BreakableTerrainOffset*)breakable_terrain_effect_offsets)[index].y << 16;
+        if (arg0->y_pos.val - collision - background_objects[arg0->bg_offset].y_pos.val > 0xA80000) {
+            arg0->ext.main_40.timer = 0x10;
+            arg0->ext.main_40.trigger_time = 8;
             arg0->state++;
         }
+        break;
     }
-check:
     if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
         despawn_object(OBJECT_HEADER(arg0));
         return;
     }
-    if (ext->unk80 == 1)
+    if (arg0->ext.main_40.unk80 == 1)
         is_on_screen(BASE_OBJECT(arg0));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80061F2C);
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", breakable_terrain_crumble);
-#else
 void breakable_terrain_crumble(struct MainObj* self)
 {
     s32 index;
@@ -144,42 +147,33 @@ void breakable_terrain_crumble(struct MainObj* self)
             }
         }
         if (self->ext.main_40.unk80 >= 2U && self->ext.main_40.timer == self->ext.main_40.trigger_time) {
-            index = (self->ext.main_40.unk80 - 2) * 2;
+            index = self->ext.main_40.unk80 - 2;
             ((void (*)(s32, s32, s32))apply_tile_effect)(self->ext.main_40.unk81 + 6,
-                self->x_pos.i.hi + breakable_terrain_effect_offsets[index],
-                self->y_pos.i.hi + breakable_terrain_effect_offsets[index + 1]);
+                self->x_pos.i.hi + breakable_terrain_effect_offsets[index][0],
+                self->y_pos.i.hi + breakable_terrain_effect_offsets[index][1]);
         }
     } else {
         self->state++;
     }
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", breakable_terrain_remove);
-#else
 void breakable_terrain_remove(struct MainObj* self)
 {
-    u8 state = self->ext.main_40.unk80;
     s32 offset;
 
-    if (state >= 2U) {
-        offset = (state - 2) * 2;
+    if (self->ext.main_40.unk80 >= 2U) {
+        offset = self->ext.main_40.unk80 - 2;
         ((void (*)(s32, s32, s32))apply_tile_effect)(self->ext.main_40.unk81 + 0xB,
-            self->x_pos.i.hi + breakable_terrain_effect_offsets[offset],
-            self->y_pos.i.hi + breakable_terrain_effect_offsets[offset + 1]);
+            self->x_pos.i.hi + breakable_terrain_effect_offsets[offset][0],
+            self->y_pos.i.hi + breakable_terrain_effect_offsets[offset][1]);
         breakable_terrain_spawn_rubble(self);
     }
     despawn_object_permanently(OBJECT_HEADER(self));
 }
-#endif
 
-extern u8 breakable_terrain_rubble_sizes[];
+extern u8 breakable_terrain_rubble_sizes[][3];
 extern u8 breakable_terrain_rubble_variants[];
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", breakable_terrain_spawn_rubble);
-#else
 void breakable_terrain_spawn_rubble(struct MainObj* self)
 {
     s32 temp_v0;
@@ -191,10 +185,10 @@ void breakable_terrain_spawn_rubble(struct MainObj* self)
 
     temp_s1 = (u16)self->x_pos.i.hi;
     temp_s0 = (u16)self->y_pos.i.hi;
-    temp_v0 = self->ext.main_0.index * 3;
-    temp_s5 = breakable_terrain_rubble_sizes[2 + temp_v0];
-    temp_s2 = breakable_terrain_rubble_sizes[temp_v0];
-    temp_s3 = breakable_terrain_rubble_sizes[1 + temp_v0];
+    temp_v0 = self->ext.main_0.index;
+    temp_s5 = breakable_terrain_rubble_sizes[temp_v0][2];
+    temp_s2 = breakable_terrain_rubble_sizes[temp_v0][0];
+    temp_s3 = breakable_terrain_rubble_sizes[temp_v0][1];
     spawn_rubble(temp_s5 * 2, breakable_terrain_rubble_variants, self, 0);
     func_800B10E4(0x21,
         (s16)temp_s1 - (temp_s2 >> 1),
@@ -204,7 +198,6 @@ void breakable_terrain_spawn_rubble(struct MainObj* self)
         temp_s5);
     func_8001540C(0, (get_random() & 1) ^ 1, self);
 }
-#endif
 
 // breakable_terrain_check_hit
 #if defined(VERSION_EU) && !defined(MMX4_PC)
@@ -302,9 +295,9 @@ union AnimationStep** D_800FEA40[7] = {
     NULL,
 };
 
-s8 breakable_terrain_effect_offsets[12] = { -16, -32, -40, -48, -104, -24, -40, -48, -32, -24, 0, 0 };
+s8 breakable_terrain_effect_offsets[6][2] = { { -16, -32 }, { -40, -48 }, { -104, -24 }, { -40, -48 }, { -32, -24 }, { 0, 0 } };
 
-u8 breakable_terrain_rubble_sizes[16] = { 32, 48, 3, 80, 80, 6, 208, 32, 8, 64, 32, 5, 64, 32, 5, 0 };
+u8 breakable_terrain_rubble_sizes[5][3] = { { 32, 48, 3 }, { 80, 80, 6 }, { 208, 32, 8 }, { 64, 32, 5 }, { 64, 32, 5 } };
 
 void (*breakable_terrain_state_funcs[])(struct MainObj*) = {
     func_80061DFC,

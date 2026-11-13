@@ -39,9 +39,6 @@ void func_800AA5E0(struct ShotObj* self);
 void func_800AA68C(struct ShotObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA5E0);
-#else
 void func_800AA5E0(struct ShotObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
@@ -55,12 +52,8 @@ void func_800AA5E0(struct ShotObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 // double_mine_arm
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA68C);
-#else
 void func_800AA68C(struct ShotObj* self)
 {
     if (self->timer == 0) {
@@ -72,7 +65,6 @@ void func_800AA68C(struct ShotObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 void double_mine_dash_start(struct ShotObj* self)
 {

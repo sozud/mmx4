@@ -32,9 +32,6 @@ void charge_ring_init(struct VisualObj* arg0)
 void func_800B1864(struct VisualObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_11_charge_ring", func_800B1864);
-#else
 void func_800B1864(struct VisualObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk50;
@@ -51,8 +48,8 @@ void func_800B1864(struct VisualObj* self)
         return;
     }
     if (variant != self->unk2 && !(variant == 6 && parent->unk5 < 3)) {
-        self->unk2 = variant;
-        set_animation(self, (s8)variant);
+        self->unk2 = parent->ext.main_14.visual_variant;
+        set_animation(self, self->unk2);
     }
     animate_object(ANIMATED_OBJECT(self));
     self->x_pos.u.hi = parent->x_pos.u.hi;
@@ -67,7 +64,6 @@ void func_800B1864(struct VisualObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
-#endif
 
 void charge_ring_despawn(struct VisualObj* arg0)
 {

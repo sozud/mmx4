@@ -90,10 +90,7 @@ static void apply_direct_progress(u8 stage, u8 character, u8 loadout, u8 story)
 }
 #endif
 
-#ifdef MMX4_SATURN
-#elif defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/game_info", func_8001D064);
-#else
+#ifndef MMX4_SATURN
 void func_8001D064(void)
 {
     s32 var_v1;
@@ -101,6 +98,46 @@ void func_8001D064(void)
     s8 fill;
 
     SetDispMask(0);
+#ifdef VERSION_EU
+    {
+        DISPENV disp;
+        RECT rect;
+        s32 i;
+
+        func_80013890(0x41, (u8*)0x80178000);
+        func_80014C70();
+        SetDefDispEnv(&disp, 0, 0, 0x140, 0xF0);
+        rect.x = 0;
+        rect.y = 0;
+        rect.w = 0x140;
+        rect.h = 0xF0;
+        LoadImage(&rect, (u_long*)0x80178018 + (*(u32*)0x80178000 >> 2));
+        DrawSync(0);
+        VSync(0);
+        disp.screen.y = 0x1C;
+        PutDispEnv(&disp);
+        DrawSync(0);
+        i = 0x13;
+        do {
+            VSync(0);
+        } while (i-- != 0);
+        SetDispMask(1);
+        i = 0x95;
+        do {
+            VSync(0);
+        } while (i-- != 0);
+        i = 0xF9;
+        do {
+            func_80012328();
+            if (controller_input.pressed & 0xF9FF)
+                break;
+            VSync(0);
+        } while (i-- != 0);
+        SetDispMask(0);
+        ClearImage(&rect, 0, 0, 0);
+        DrawSync(0);
+    }
+#endif
     func_8001D104();
     func_80012E38();
     func_8001512C();

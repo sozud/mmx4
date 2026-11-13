@@ -25,6 +25,13 @@ void freeze_blast_update(struct EffectObj* self)
     freeze_blast_state_funcs[self->state](self);
 }
 
+struct Effect17SpawnRecord {
+    u16 x;
+    u16 y;
+    u8 count;
+    u8 unused;
+};
+
 // freeze_blast_flash_init
 struct Effect17SpawnGroup {
     struct Effect17SpawnRecord* records;
@@ -49,9 +56,9 @@ struct Effect17SpawnGroupPC {
     struct Effect17SpawnRecordPC* records;
     u32 count;
 };
-extern struct Effect17SpawnGroup freeze_blast_spawn_groups[4];
 extern ret_u8 func_8002938C(s32);
 #endif
+extern struct Effect17SpawnGroup freeze_blast_spawn_groups[4];
 
 void func_800B913C(struct EffectObj* self)
 {
@@ -79,41 +86,35 @@ void func_800B913C(struct EffectObj* self)
 }
 
 // freeze_blast_flash
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B91E0);
-#else
 void func_800B91E0(struct EffectObj* self)
 {
-    struct Effect17Ext* ext = &self->ext.effect_17;
-    u8 phase = ext->phase--;
-    if (phase != 0)
+    if (((struct Effect17Ext*)&self->ext)->phase-- != 0)
         return;
     if ((u16)g_FilterAmountR >= 0x1E) {
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
-        engine_obj.character_state.fields.active = 1;
         need_palette_load |= 1;
+        engine_obj.character_state.fields.active = 1;
         func_800B9354(self);
         engine_obj.unk10 = 0;
         engine_obj.unk12 = 0;
         engine_obj.unk11 = 0;
         engine_obj.unk13 = 0;
         func_800B94B8(self);
-        ext->timer = 2;
+        self->ext.effect_17.timer = 2;
         self->state++;
         return;
     }
-    ext->phase = 1;
-    if (--ext->timer != 0) {
+    self->ext.effect_17.phase = 1;
+    if (--((struct Effect17Ext*)&self->ext)->timer != 0) {
         g_FilterAmountR += 2;
         g_FilterAmountG += 0x40;
         g_FilterAmountB += 0x800;
         return;
     }
-    ext->timer = 2;
+    self->ext.effect_17.timer = 2;
 }
-#endif
 
 void freeze_blast_finish(struct EffectObj* self)
 {
@@ -124,9 +125,6 @@ void freeze_blast_finish(struct EffectObj* self)
 }
 
 // freeze_blast_freeze_tiles
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B9354);
-#else
 void func_800B9354(struct EffectObj* self)
 {
     u8* tiles = freeze_blast_tile_patches[self->unk2];
@@ -141,7 +139,7 @@ void func_800B9354(struct EffectObj* self)
             D_80141BE8[tiles[5] + i + layout_size] = tiles[2];
         }
         D_80141BE8[layout_width + (tiles[5] + i) + layout_size] = tiles[3] + i;
-        D_80141BE8[layout_size * 2 + (layout_width + (tiles[5] + i))] = tiles[4] + i;
+        D_80141BE8[layout_width + (tiles[5] + i) + layout_size * 2] = tiles[4] + i;
         i++;
     } while (i < 2);
 #ifdef MMX4_SATURN
@@ -153,7 +151,6 @@ void func_800B9354(struct EffectObj* self)
     background_objects[2].unk4C = 1;
 #endif
 }
-#endif
 
 // freeze_blast_spawn_enemies
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -189,7 +186,38 @@ void func_800B94B8(struct EffectObj* self)
     }
 }
 #else
-INCLUDE_ASM("main/nonmatchings/effects/effect_17_freeze_blast", func_800B94B8);
+void func_800B94B8(struct EffectObj* self)
+{
+    u8 count = freeze_blast_spawn_groups[self->unk2].count;
+    struct Effect17SpawnRecord* record = freeze_blast_spawn_groups[self->unk2].records;
+    u8 i;
+    u8 j;
+    u8 n;
+    struct MainObj* child;
+    s32 index;
+    s32 column;
+    s32 row;
+
+    for (i = 0; i < count; record++, i++) {
+        n = record->count;
+        for (j = 0; j < n; j++) {
+            child = find_free_main_obj();
+            if (child == NULL)
+                continue;
+            child->active = 0x41;
+            child->id = 0x15;
+            child->unk2 = (get_random_nonzero() % 6) + 6;
+            child->x_pos.i.hi = record->x + j * 0x10;
+            child->y_pos.i.hi = record->y;
+            index = func_8002938C(0x15);
+            child->unk40 = OBJECT_STAGE_TEXTURE(index);
+            column = func_8002938C(0x15);
+            row = func_8002938C(0x15);
+            child->unk42 = ((column * 4 + 0x18) % 16) | (((row + 6) / 4 + 0x1E0) << 6);
+            child->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x15));
+        }
+    }
+}
 #endif
 
 u8 freeze_blast_tile_patches[4][6] = {
@@ -197,13 +225,6 @@ u8 freeze_blast_tile_patches[4][6] = {
     { 0x38, 0x48, 0x00, 0x95, 0x59, 0x10 },
     { 0x36, 0x46, 0x34, 0x44, 0x8C, 0x13 },
     { 0x32, 0x42, 0x30, 0x40, 0x8E, 0x16 },
-};
-
-struct Effect17SpawnRecord {
-    u16 x;
-    u16 y;
-    u8 count;
-    u8 unused;
 };
 
 struct Effect17SpawnRecord freeze_blast_spawns_0[4] = {

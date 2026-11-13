@@ -99,3 +99,5 @@ p0.87 = 0x8013BAB0;
 p1.88 = 0x8013BAD4;
 patch0 = 0x8013BBF8;
 previous_frame_location = 0x8013BAA0;
+D_80166D50 = 0x80166D50;
+D_800F1C10 = 0x800F1C10;

@@ -51,9 +51,6 @@ void title_init(struct MiscObj* self)
 }
 
 // g_TitleUpdateFuncs state 1
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_19_title", title_draw);
-#else
 void title_draw(struct MiscObj* self)
 {
     u8 temp_v1;
@@ -61,17 +58,18 @@ void title_draw(struct MiscObj* self)
     if (self->unk2 == 0xF) {
         self->unk16 = 2;
         self->y_pos.i.hi = (game_info.unk2 % 3) * 16 + 0x80;
-        if (game_info.unk2 != 1) {
-            if (!((game_info.unk2 <= 1) && (game_info.unk2 == 0)))
-                goto use_default_frame;
+        switch (game_info.unk2) {
+        case 0:
             self->animation_step.fields.frame_index = title_object_inits[2].sprite;
-        } else {
+            break;
+        case 1:
             self->animation_step.fields.frame_index = title_object_inits[13].sprite;
+            break;
+        case 2:
+        default:
+            self->animation_step.fields.frame_index = title_object_inits[14].sprite;
+            break;
         }
-        goto frame_selected;
-    use_default_frame:
-        self->animation_step.fields.frame_index = title_object_inits[14].sprite;
-    frame_selected:;
     }
 
     temp_v1 = self->unk2;
@@ -85,7 +83,6 @@ void title_draw(struct MiscObj* self)
     }
     is_on_screen(self);
 }
-#endif
 
 // g_TitleUpdateFuncs state 2
 void title_despawn(struct MiscObj* self)

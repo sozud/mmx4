@@ -240,9 +240,6 @@ void boss_death_fx_rays(struct EffectObj* self)
 }
 
 // boss_death_fx_whiteout
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", func_800BB750);
-#else
 void func_800BB750(struct EffectObj* arg0)
 {
     arg0->ext.effect_26.timer++;
@@ -267,7 +264,6 @@ void func_800BB750(struct EffectObj* arg0)
         }
     } while (0);
 }
-#endif
 
 void boss_death_fx_wait(struct EffectObj* self)
 {
@@ -277,13 +273,11 @@ void boss_death_fx_wait(struct EffectObj* self)
 }
 
 // boss_death_fx_fade_in
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", func_800BB888);
-#else
 void func_800BB888(struct EffectObj* arg0)
 {
     do {
-        if (++arg0->ext.effect_26.timer % 5 == 0) {
+        arg0->ext.effect_26.timer++;
+        if (arg0->ext.effect_26.timer % 5 == 0) {
             g_FilterAmountR -= 1;
             g_FilterAmountG -= 0x20;
             g_FilterAmountB -= 0x400;
@@ -292,7 +286,6 @@ void func_800BB888(struct EffectObj* arg0)
         }
     } while (0);
 }
-#endif
 
 void boss_death_fx_finish(struct EffectObj* self)
 {

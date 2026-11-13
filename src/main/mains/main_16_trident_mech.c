@@ -82,9 +82,6 @@ void func_8004FAE4(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004E8E0);
-#else
 void func_8004E8E0(struct MainObj* arg0)
 {
     arg0->hp = 0x10;
@@ -92,11 +89,11 @@ void func_8004E8E0(struct MainObj* arg0)
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_80106A74;
     arg0->bg_offset = g_Player.bg_offset;
+    arg0->x_speed = 0;
     arg0->animation_table = (const u8* const*)trident_mech_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = &D_800FBBC8;
     arg0->hurt_box = &trident_mech_stunned_hurt_box;
-    arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
@@ -148,7 +145,6 @@ void func_8004E8E0(struct MainObj* arg0)
     arg0->unk6 = 0;
     arg0->unk7 = 0;
 }
-#endif
 
 void trident_mech_main(struct MainObj* self)
 {
@@ -247,9 +243,6 @@ void trident_mech_idle_start(struct MainObj* self)
 
 // trident_mech_idle_think
 #ifdef VERSION_EU
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004ED60);
-#else
 #define TRIDENT_STATE6(arg0)                                    \
     do {                                                        \
         (arg0)->ext.main_16.unk8C = 1;                          \
@@ -305,7 +298,6 @@ void func_8004ED60(struct MainObj* arg0)
         TRIDENT_STATE6(arg0);
     }
 }
-#endif
 #else
 #define TRIDENT_STATE6(arg0)                                    \
     do {                                                        \
@@ -743,9 +735,6 @@ void trident_mech_wait_behind(struct MainObj* self)
 }
 
 // trident_mech_stunned
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FAE4);
-#else
 void func_8004FAE4(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -783,7 +772,6 @@ void func_8004FAE4(struct MainObj* self)
     }
     self->unk6 = 0;
 }
-#endif
 
 void trident_mech_check_fall(struct MainObj* self)
 {
@@ -832,9 +820,6 @@ void trident_mech_fire_tracked_shot(struct MainObj* obj)
 }
 
 // trident_mech_set_part
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004FD38);
-#else
 void func_8004FD38(struct MainObj* arg0, s8 animation)
 {
     struct MiscObj* misc;
@@ -896,7 +881,6 @@ void func_8004FD38(struct MainObj* arg0, s8 animation)
     misc->ext.misc_5.animation = animation;
     misc->ext.misc_5.owner = arg0;
 }
-#endif
 
 struct Unk_unk68 trident_mech_stunned_hurt_box = { -14, -28, 30, 59 };
 

@@ -340,9 +340,6 @@ void func_8008F3F4(struct MainObj* self);
 void func_8008F578(struct MainObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008D5C8);
-#else
 extern void* sigma_final_animations[39];
 void func_8008D5C8(struct MainObj* arg0)
 {
@@ -401,7 +398,6 @@ void func_8008D5C8(struct MainObj* arg0)
     arg0->ext.main_74.upper_health = 0;
     arg0->ext.main_74.lower_health = 0x30;
 }
-#endif
 
 #define MAIN_74_COLLISION_BOUNDS D_8013B8B4
 
@@ -507,9 +503,6 @@ void sigma_final_appear(struct MainObj* self)
 
 // sigma_final_pick_attack
 #ifdef VERSION_EU
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008DAE8);
-#else
 void func_8008DAE8(struct MainObj* self)
 {
     if (D_8013B8A0 != 0) {
@@ -575,7 +568,6 @@ void func_8008DAE8(struct MainObj* self)
         update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
 }
-#endif
 #else
 void func_8008DAE8(struct MainObj* self)
 {
@@ -818,9 +810,6 @@ void sigma_final_hide_upper_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", sigma_final_hide_upper_wait);
-#else
 void sigma_final_hide_upper_wait(struct MainObj* self)
 {
     s32 count;
@@ -828,7 +817,7 @@ void sigma_final_hide_upper_wait(struct MainObj* self)
 
     count = 0;
     for (i = 0; i < COUNT(self->ext.main_74.children); i++) {
-        if (self->ext.main_74.children[i]->unk5 == 3) {
+        if (((struct Main74Ext*)&self->ext)->children[i]->unk5 == 3) {
             count++;
         }
     }
@@ -847,7 +836,6 @@ void sigma_final_hide_upper_wait(struct MainObj* self)
     self->x_pos.i.hi = 0;
     self->y_pos.i.hi = 0;
 }
-#endif
 
 void sigma_final_hide_upper(struct MainObj* self)
 {
@@ -891,15 +879,12 @@ void sigma_final_hide_lower_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", sigma_final_hide_lower_wait);
-#else
 void sigma_final_hide_lower_wait(struct MainObj* self)
 {
     u32 i;
     s32 count = 0;
     for (i = 0; i < COUNT(self->ext.main_74.children); i++) {
-        if (self->ext.main_74.children[i]->unk5 == 3) {
+        if (((struct Main74Ext*)&self->ext)->children[i]->unk5 == 3) {
             count++;
         }
     }
@@ -918,7 +903,6 @@ void sigma_final_hide_lower_wait(struct MainObj* self)
     self->x_pos.i.hi = 0;
     self->y_pos.i.hi = 0;
 }
-#endif
 
 void sigma_final_hide_lower(struct MainObj* self)
 {
@@ -1120,9 +1104,6 @@ void sigma_final_spit(struct MainObj* self)
 }
 
 // sigma_final_wind_spikes
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008EC48);
-#else
 void func_8008EC48(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -1144,7 +1125,6 @@ void func_8008EC48(struct MainObj* self)
     }
     self->unk6++;
 }
-#endif
 
 void sigma_final_wind_start(struct MainObj* self)
 {
@@ -1260,9 +1240,6 @@ void sigma_final_summon(struct MainObj* self)
 }
 
 // sigma_final_fight
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F1A8);
-#else
 void func_8008F1A8(struct MainObj* self)
 {
     s32 hit;
@@ -1323,12 +1300,8 @@ void func_8008F1A8(struct MainObj* self)
     }
     func_8002D9BC(self);
 }
-#endif
 
 // sigma_final_death_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F3F4);
-#else
 void func_8008F3F4(struct MainObj* self)
 {
     if (self->ext.main_74.target == 2) {
@@ -1352,7 +1325,6 @@ done:
     self->ext.main_74.death_kind = 0;
     update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
 }
-#endif
 
 void sigma_final_death_blink(struct MainObj* self)
 {
@@ -1373,18 +1345,12 @@ void sigma_final_death_blink(struct MainObj* self)
 }
 
 // sigma_final_death_explode
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F578);
-#else
 void func_8008F578(struct MainObj* self)
 {
     self->unk7C = (u16)(self->unk7C - 1);
     if (self->unk7C != 0) {
-        u16 old_blink_timer;
         sigma_emit_explosions(self);
-        old_blink_timer = self->unk7E;
-        self->unk7E = old_blink_timer - 1;
-        if (old_blink_timer == 0) {
+        if (self->unk7E-- == 0) {
             self->unk7E = 5;
             self->unk42 ^= 0x8000;
         }
@@ -1417,7 +1383,6 @@ void func_8008F578(struct MainObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
-#endif
 
 void sigma_final_death_collapse(struct MainObj* self)
 {

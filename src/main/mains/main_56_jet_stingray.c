@@ -232,8 +232,8 @@ u8 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
 extern struct Unk_unk68 jet_stingray_ambush_attack_box;
 extern struct Unk_unk68 jet_stingray_ambush_drop_attack_box;
 
-extern void* jet_stingray_patterns[];
-extern u8 jet_stingray_pattern_weights[];
+extern void** jet_stingray_patterns[];
+extern u8 jet_stingray_pattern_weights[][3];
 
 void jet_stingray_intro_setup(struct MainObj* self)
 {
@@ -396,53 +396,36 @@ void jet_stingray_intro(struct MainObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_at_target);
-#else
 s32 jet_stingray_at_target(struct MainObj* self, s32 arg1, s32 arg2)
 {
     s32 v1, v2;
     v1 = arg1 << 0x10;
     v2 = arg2 << 0x10;
-    POS_BOUNDS_CHECK_FAIL_RET0(self->x_pos.val, v1)
-    POS_BOUNDS_CHECK_FAIL_RET0(self->y_pos.val, v2)
-    return 1;
+    if (POS_WITHIN_3(self->x_pos.val, v1)) {
+        if (POS_WITHIN_3(self->y_pos.val, v2)) {
+            return 1;
+        }
+    }
+    return 0;
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_choose_pattern);
-#else
 void jet_stingray_choose_pattern(struct MainObj* self)
 {
-    u32 idx;
-    u8** table;
-    u8* weights;
-    u8* base;
-    u8 i;
+    void** table;
+    u8 idx;
     u8 rnd;
-    u32 gr;
+    u8 i;
 
-    idx = self->hp - 1;
-    if ((s32)idx < 0)
-        idx = self->hp + 0xE;
-    idx >>= 4;
-    idx &= 0xFF;
-    table = ((u8**)jet_stingray_patterns)[idx];
-    gr = get_random();
-    i = 0;
-    base = jet_stingray_pattern_weights;
-    weights = base + idx * 3;
-    rnd = (gr >> 2) & 0xF;
-    while (i < 3) {
-        if (rnd < weights[i]) {
+    idx = (self->hp - 1) / 16;
+    table = jet_stingray_patterns[idx];
+    rnd = ((u32)get_random() >> 2) & 0xF;
+    for (i = 0; i < 3; i++) {
+        if (rnd < jet_stingray_pattern_weights[idx][i]) {
             self->ext.main_56.pattern = table[i];
             return;
         }
-        i++;
     }
 }
-#endif
 
 void jet_stingray_swim_start(struct MainObj* self)
 {
@@ -459,8 +442,7 @@ void jet_stingray_swim_start(struct MainObj* self)
 
 // jet_stingray_swim_move
 
-extern u8 jet_stingray_splash_x_offsets[4];
-extern u8 jet_stingray_splash_y_offsets[4];
+extern u8 jet_stingray_splash_offsets[2][4];
 extern void (*jet_stingray_ambush_funcs[])(struct MainObj*);
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80070514(struct MainObj* arg0);
@@ -470,9 +452,6 @@ void func_80071740(struct MainObj* arg0);
 extern s16 jet_stingray_vortex_debris_offsets[24];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80070514);
-#else
 void func_80070514(struct MainObj* arg0)
 {
     s16 target_x;
@@ -499,7 +478,6 @@ void func_80070514(struct MainObj* arg0)
         arg0->unk7C = 0;
     }
 }
-#endif
 
 void jet_stingray_swim_next(struct MainObj* self)
 {
@@ -777,9 +755,6 @@ void jet_stingray_ambush_return(struct MainObj* self)
 }
 
 // jet_stingray_ambush
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_800710D4);
-#else
 void func_800710D4(struct MainObj* arg0)
 {
     struct MainObj* debris;
@@ -797,14 +772,14 @@ void func_800710D4(struct MainObj* arg0)
     case 2:
         if (!(arg0->ext.main_56.flags & 1)) {
             for (i = 0; i < 4; i++) {
-                debris = func_8006FB20(arg0, ((s8*)jet_stingray_splash_x_offsets)[get_random() & 3], 0);
+                debris = func_8006FB20(arg0, (s8)jet_stingray_splash_offsets[0][get_random() & 3], 0);
 #ifdef MMX4_PC
                 if (debris == NULL) {
                     get_random();
                     continue;
                 }
 #endif
-                debris->y_pos.i.hi = ((s8*)jet_stingray_splash_y_offsets)[get_random() & 3] + 0x13B;
+                debris->y_pos.i.hi = (s8)jet_stingray_splash_offsets[1][get_random() & 3] + 0x13B;
             }
             arg0->ext.main_56.flags |= 1;
         }
@@ -817,7 +792,6 @@ void func_800710D4(struct MainObj* arg0)
         break;
     }
 }
-#endif
 
 void jet_stingray_dash_start(struct MainObj* self)
 {
@@ -960,9 +934,6 @@ void jet_stingray_leap(struct MainObj* self)
 }
 
 // jet_stingray_missiles_fire
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80071740);
-#else
 void func_80071740(struct MainObj* arg0)
 {
     struct ShotObj* shot;
@@ -1014,7 +985,6 @@ void func_80071740(struct MainObj* arg0)
     }
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 void jet_stingray_missiles_repeat(struct MainObj* self)
 {
@@ -1350,13 +1320,18 @@ u8* jet_stingray_pattern_0[3] = {
     jet_stingray_pattern_0_2,
 };
 
-void* jet_stingray_patterns[3] = {
+void** jet_stingray_patterns[3] = {
     jet_stingray_pattern_0,
     jet_stingray_pattern_1,
     jet_stingray_pattern_2,
 };
 
-u8 jet_stingray_pattern_weights[12] = { 0x02, 0x08, 0x10, 0x03, 0x06, 0x10, 0x06, 0x10, 0x10, 0x00, 0x00, 0x00 };
+u8 jet_stingray_pattern_weights[4][3] = {
+    { 0x02, 0x08, 0x10 },
+    { 0x03, 0x06, 0x10 },
+    { 0x06, 0x10, 0x10 },
+    { 0x00, 0x00, 0x00 },
+};
 
 struct Unk_unk68 jet_stingray_anim_0[4] = {
     { 9, 0, 1, 0 },
@@ -1829,9 +1804,10 @@ void (*jet_stingray_vortex_funcs[])(struct MainObj*) = {
 #endif
 };
 
-u8 jet_stingray_splash_x_offsets[4] = { 0x15, 0xEB, 0xF0, 0x23 };
-
-u8 jet_stingray_splash_y_offsets[4] = { 0xED, 0x02, 0xE7, 0x0D };
+u8 jet_stingray_splash_offsets[2][4] = {
+    { 0x15, 0xEB, 0xF0, 0x23 },
+    { 0xED, 0x02, 0xE7, 0x0D },
+};
 
 void (*jet_stingray_ambush_funcs[4])() = {
     jet_stingray_ambush_exit,

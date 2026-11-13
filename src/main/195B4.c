@@ -164,6 +164,31 @@ void func_80028E24(void)
         }
     }
 }
+#elif !defined(MMX4_PC)
+void func_80028E24(void)
+{
+    struct BackgroundObj* bg = background_objects;
+    s16 x = background_objects[0].x_pos.i.hi;
+
+    if (background_objects[0].unk14.i.hi != x) {
+        if (background_objects[0].unk14.i.hi < x) {
+            func_80028FEC(x + 0x150, x + 0x170, background_objects[0].y_pos.i.hi - 0x30,
+                background_objects[0].y_pos.i.hi + 0x120, 1);
+        } else {
+            func_80028FEC(x - 0x30, x - 0x10, background_objects[0].y_pos.i.hi - 0x30,
+                background_objects[0].y_pos.i.hi + 0x120, 2);
+        }
+    }
+    if (bg->unk18.i.hi != bg->y_pos.i.hi) {
+        if (bg->unk18.i.hi < bg->y_pos.i.hi) {
+            func_80028FEC(bg->x_pos.i.hi - 0x30, bg->x_pos.i.hi + 0x170,
+                bg->y_pos.i.hi + 0x100, bg->y_pos.i.hi + 0x120, 3);
+        } else {
+            func_80028FEC(bg->x_pos.i.hi - 0x30, bg->x_pos.i.hi + 0x170,
+                bg->y_pos.i.hi - 0x30, bg->y_pos.i.hi - 0x10, 4);
+        }
+    }
+}
 #else
 INCLUDE_ASM("main/nonmatchings/195B4", func_80028E24);
 #endif
@@ -236,9 +261,71 @@ void func_80028FEC(s16 left, s16 right, s16 top, s16 bottom, u8 direction)
         record++;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/195B4", func_80028FEC);
+#elif !defined(MMX4_PC)
+void func_80028FEC(s16 left, s16 right, s16 top, s16 bottom, u8 direction)
+{
+    struct StageObjectRecord* record = D_800F43C8[engine_obj.stage][engine_obj.substage];
+
+    while (record->object_type != 0xFF) {
+        u8 flags = record->flags;
+        s16 scan_left;
+        s16 scan_right;
+        s16 scan_top;
+        s16 scan_bottom;
+
+        if (!(flags & 0x81)) {
+            scan_left = left;
+            scan_right = right;
+            scan_top = top;
+            scan_bottom = bottom;
+            if (flags & 0x70) {
+                u16 margin = D_800F4334.margins[(flags >> 4) - 1];
+
+                switch (direction) {
+                case 1:
+                    scan_right += margin;
+                    scan_left += margin;
+                    break;
+                case 2:
+                    scan_left -= margin;
+                    scan_right -= margin;
+                    break;
+                case 3:
+                    scan_bottom += margin;
+                    scan_top += margin;
+                    break;
+                case 4:
+                    scan_top -= margin;
+                    scan_bottom -= margin;
+                    break;
+                }
+            }
+            if (record->x > scan_left && record->x < scan_right && scan_top < record->y && record->y < scan_bottom) {
+                struct ObjectHeader* object = MakeObject(record->object_type);
+
+                if (object != NULL) {
+                    object->active = 0x41;
+                    object->id = record->id;
+                    object->unk2 = record->subtype;
+                    object->x_pos.i.hi = record->x;
+                    object->y_pos.i.hi = record->y;
+                    object->backref = record;
+                    if (record->object_type == 0) {
+                        struct MainObj* main = (struct MainObj*)object;
+
+                        main->unk40 = D_801406A8[(u8)func_8002938C(record->id)] >> 7;
+                        main->unk42 = CLUT_FROM_XY((u8)func_8002938C(record->id), (u8)func_8002938C(record->id));
+                        main->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, (u8)func_8002938C(record->id));
+                    }
+                    record->flags |= 1;
+                }
+            }
+        }
+        record++;
+    }
+}
 #endif
+
 void func_800292D0(struct StageObjectRecord* arg0)
 {
     struct StageObjectRecord* var_s1 = arg0;

@@ -77,9 +77,6 @@ void func_8009A448(struct ShotObj* arg0);
 void func_80099D54(struct ShotObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_80099D54);
-#else
 void func_80099D54(struct ShotObj* arg0)
 {
     arg0->state = 1;
@@ -89,7 +86,7 @@ void func_80099D54(struct ShotObj* arg0)
     arg0->unk2C = 0;
     arg0->unk42 &= 0x7FFF;
     arg0->x_pos.i.hi += gunner_shot_spawn_offsets[arg0->unk2][0];
-    arg0->y_pos.i.hi += gunner_shot_spawn_offsets[arg0->unk2][1];
+    arg0->y_pos.i.hi += gunner_shot_spawn_offsets[0][arg0->unk2 * 2 + 1];
     arg0->x_vel.val *= 3;
     arg0->y_vel.val *= 3;
     arg0->unk16 = 0;
@@ -100,7 +97,6 @@ void func_80099D54(struct ShotObj* arg0)
     arg0->unk60 = 2;
     set_animation(arg0, 8);
 }
-#endif
 
 void gunner_shot_fly(struct ShotObj* self)
 {
@@ -133,13 +129,10 @@ void gunner_shot_despawn(struct ShotObj* self)
 }
 
 // eregion_fireball_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80099F48(struct ShotObj* arg0)
 {
     struct WeaponObj* owner = arg0->unk7C;
     s32 target;
-    s32 offset;
-    s32 subtype = arg0->unk2;
     s32 angle;
 
     arg0->unk40 = owner->unk40;
@@ -148,22 +141,29 @@ void func_80099F48(struct ShotObj* arg0)
     arg0->unk3C = owner->unk3C;
     arg0->unk15 = owner->unk15;
     arg0->bg_offset = owner->bg_offset;
-    arg0->x_pos.val = owner->x_pos.val
-        + (owner->unk15 != 0 ? 0x530000 : -0x530000);
+    if (owner->unk15 != 0) {
+        arg0->x_pos.val = owner->x_pos.val + 0x530000;
+    } else {
+        arg0->x_pos.val = owner->x_pos.val - 0x530000;
+    }
     arg0->y_pos.val = owner->y_pos.val;
     arg0->state = 1;
     arg0->on_screen = 1;
 
-    if (subtype == 0) {
-        angle = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
-        set_velocity_from_angle(MOVING_OBJECT(arg0), angle & 0xFF);
+    if (arg0->unk2 == 0) {
+        set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)) & 0xFF);
         arg0->x_vel.val *= 4;
         arg0->y_vel.val *= 4;
     } else {
-        offset = ((subtype - 1) * 11 << 17) - 0x200000;
-        target = arg0->x_pos.val
-            + (owner->unk15 != 0 ? offset : -offset);
-        angle = angle_to_point(OBJECT_HEADER(arg0), target, 0x1E00000);
+        if (owner->unk15 == 0) {
+            s32 offset = FIXED((arg0->unk2 - 1) * 22) - FIXED(32);
+            target = arg0->x_pos.val - offset;
+            angle = angle_to_point(OBJECT_HEADER(arg0), target, FIXED(0x1E0));
+        } else {
+            s32 offset = FIXED((arg0->unk2 - 1) * 22) - FIXED(32);
+            target = arg0->x_pos.val + offset;
+            angle = angle_to_point(OBJECT_HEADER(arg0), target, FIXED(0x1E0));
+        }
         set_velocity_from_angle(MOVING_OBJECT(arg0), angle & 0xFF);
         arg0->x_vel.val *= 8;
         arg0->y_vel.val *= 8;
@@ -172,14 +172,11 @@ void func_80099F48(struct ShotObj* arg0)
     arg0->unk68 = (struct Unk_unk68*)eregion_fireball_terrain_box;
     arg0->unk50.data = eregion_fireball_hit_box;
     arg0->unk5C = 1;
-    arg0->unk60 = 3;
     arg0->unk16 = 0;
     arg0->unk54 = NULL;
+    arg0->unk60 = 3;
     set_animation(ANIMATED_OBJECT(arg0), 0x17);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_80099F48);
-#endif
 
 // eregion_fireball_fly
 void func_8009A10C(struct ShotObj* self)
@@ -320,9 +317,6 @@ void mech_boulder_update(struct ShotObj* self)
 }
 
 // mech_boulder_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_8009A5F4);
-#else
 void func_8009A5F4(struct ShotObj* arg0)
 {
     arg0->unk42 &= 0x7FFF;
@@ -345,7 +339,6 @@ void func_8009A5F4(struct ShotObj* arg0)
     arg0->unk60 = 2;
     set_animation(arg0, 5);
 }
-#endif
 
 void mech_boulder_fall(struct ShotObj* self)
 {

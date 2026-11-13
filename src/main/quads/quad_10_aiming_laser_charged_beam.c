@@ -59,9 +59,6 @@ void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct Player
 
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6B9C);
-#else
 void func_800D6B9C(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner)
 {
     struct Quad10Ext* ext;
@@ -86,7 +83,6 @@ void func_800D6B9C(struct QuadObj* self, struct PlayerObj* player, struct Player
     self->state++;
     func_800D6DC4(self, player, owner);
 }
-#endif
 
 void aiming_laser_charged_beam_extend(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
@@ -162,21 +158,18 @@ void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* a
 }
 
 // aiming_laser_charged_beam_place
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6DC4);
-#else
 void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner)
 {
     struct Quad10Ext* ext = &self->ext.quad_10;
     s16 x;
     s16 y;
-    s32 direction;
+    u8 direction;
 
     if (player->unk15 == 0)
-        x = player->x_pos.i.hi + (s8)((u8*)&D_8011B230)[player->animation_step.fields.frame_index * 2] + 2;
+        x = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2] + 2;
     else
-        x = player->x_pos.i.hi - (s8)((u8*)&D_8011B230)[player->animation_step.fields.frame_index * 2] - 2;
-    y = player->y_pos.i.hi + (s8)((u8*)&D_8011B230)[player->animation_step.fields.frame_index * 2 + 1];
+        x = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2] - 2;
+    y = player->y_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
     direction = ext->history[aiming_laser_charged_beam_delays[self->unk2]];
     self->x_pos.i.hi = x;
     self->y_pos.i.hi = y;
@@ -197,7 +190,6 @@ void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct Player
     }
 #endif
 }
-#endif
 
 void (*aiming_laser_charged_beam_state_funcs[])(struct QuadObj*, struct PlayerObj*, struct PlayerObj*) = {
     func_800D6B9C,

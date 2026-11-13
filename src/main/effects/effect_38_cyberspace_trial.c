@@ -50,16 +50,10 @@ void cyberspace_trial_init(struct EffectObj* self)
     self->ext.effect_38.timer = 0;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_38_cyberspace_trial", cyberspace_trial_wait_start);
-#else
 void cyberspace_trial_wait_start(struct EffectObj* self)
 {
-    s8 subtype;
-
-    subtype = self->unk2;
-    if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype].start_x) {
-        if (!(subtype % 2) && engine_obj.substage == 0) {
+    if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[self->unk2].start_x) {
+        if (!(self->unk2 % 2) && engine_obj.substage == 0) {
             cyberspace_trial_spawn_guide(self);
             engine_obj.unk10 = 1;
             engine_obj.unk12 = 1;
@@ -69,7 +63,6 @@ void cyberspace_trial_wait_start(struct EffectObj* self)
         self->state++;
     }
 }
-#endif
 
 void cyberspace_trial_wait_goal(struct EffectObj* self)
 {

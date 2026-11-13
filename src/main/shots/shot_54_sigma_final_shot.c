@@ -74,9 +74,6 @@ extern u8 sigma_final_shot_terrain_box_1[4];
 extern s16 sigma_final_shot_offsets[4];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_54_sigma_final_shot", func_800ABE08);
-#else
 void func_800ABE08(struct ShotObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk7C;
@@ -165,7 +162,6 @@ void func_800ABE08(struct ShotObj* self)
     self->unk16 = 0;
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
-#endif
 
 void sigma_final_shot_fireball(struct ShotObj* self)
 {

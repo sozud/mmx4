@@ -31,15 +31,14 @@ void wave_rider_jet_init(struct VisualObj* arg0)
     arg0->state++;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_21_wave_rider_jet", wave_rider_jet_main);
-#else
 void wave_rider_jet_main(struct VisualObj* arg0)
 {
     struct PlayerObj* temp_a0;
 
     temp_a0 = arg0->unk50;
-    if (temp_a0->state == 0 || temp_a0->state == 2) {
+    if (temp_a0->state == 0) {
+        arg0->state = 2;
+    } else if (temp_a0->state == 2) {
         arg0->state = 2;
     } else {
         if (arg0->unk2 != wave_rider_jet_animations[temp_a0->animation_step.fields.frame_index]) {
@@ -51,7 +50,6 @@ void wave_rider_jet_main(struct VisualObj* arg0)
         update_on_screen(arg0, 0x90, 0x90);
     }
 }
-#endif
 
 void wave_rider_jet_despawn(struct VisualObj* arg0)
 {

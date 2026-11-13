@@ -41,9 +41,6 @@ extern u8 gunship_shot_missile_hit_box[4];
 extern s32 gunship_shot_missile_speeds[2];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_43_gunship_shot", func_800A699C);
-#else
 void func_800A699C(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
@@ -114,7 +111,6 @@ void func_800A699C(struct ShotObj* arg0)
         arg0->unk60 = 6;
     }
 }
-#endif
 
 void gunship_shot_bullet_fall(struct ShotObj* self)
 {
@@ -230,7 +226,113 @@ void func_800A6DF4(struct ShotObj* arg0)
     set_animation(arg0, animation < 4 ? animation + 0xF : animation - 1);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/shots/shot_43_gunship_shot", func_800A6DF4);
+void func_800A6DF4(struct ShotObj* arg0)
+{
+#ifndef VERSION_EU
+    u8 timer;
+#endif
+    u8 target;
+    u8 next;
+
+#ifdef VERSION_EU
+    if (arg0->unk90.bytes[1]-- != 0)
+        return;
+#else
+    timer = arg0->unk90.bytes[1]--;
+    if (timer != 0)
+        return;
+#endif
+    arg0->unk90.bytes[1] = 1;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
+    target = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+    if (target > arg0->unk90.bytes[0]) {
+        if (target == arg0->unk90.bytes[0] + 1)
+            return;
+        if (target - arg0->unk90.bytes[0] < 0x11)
+            next = (arg0->unk90.bytes[0] + 1) & 0x1F;
+        else
+            next = ((arg0->unk90.bytes[0] | 0x20) - 1) & 0x1F;
+    } else if (target < arg0->unk90.bytes[0]) {
+        if (target == arg0->unk90.bytes[0] - 1)
+            return;
+        if (arg0->unk90.bytes[0] - target >= 0x11)
+            next = (arg0->unk90.bytes[0] + 1) & 0x1F;
+        else
+            next = ((arg0->unk90.bytes[0] | 0x20) - 1) & 0x1F;
+    } else {
+        return;
+    }
+    arg0->unk90.bytes[0] = next;
+    set_velocity_from_angle(MOVING_OBJECT(arg0), next);
+    arg0->x_vel.val *= 4;
+    arg0->y_vel.val *= 4;
+    switch (next) {
+    case 8:
+    case 9:
+        set_animation(arg0, 3);
+        break;
+    case 10:
+    case 11:
+        set_animation(arg0, 4);
+        break;
+    case 12:
+    case 13:
+        set_animation(arg0, 5);
+        break;
+    case 14:
+    case 15:
+        set_animation(arg0, 6);
+        break;
+    case 16:
+    case 17:
+        set_animation(arg0, 7);
+        break;
+    case 18:
+    case 19:
+        set_animation(arg0, 8);
+        break;
+    case 20:
+    case 21:
+        set_animation(arg0, 9);
+        break;
+    case 22:
+    case 23:
+        set_animation(arg0, 10);
+        break;
+    case 24:
+    case 25:
+        set_animation(arg0, 11);
+        break;
+    case 26:
+    case 27:
+        set_animation(arg0, 12);
+        break;
+    case 28:
+    case 29:
+        set_animation(arg0, 13);
+        break;
+    case 30:
+    case 31:
+        set_animation(arg0, 14);
+        break;
+    case 0:
+    case 1:
+        set_animation(arg0, 0xF);
+        break;
+    case 2:
+    case 3:
+        set_animation(arg0, 0x10);
+        break;
+    case 4:
+    case 5:
+        set_animation(arg0, 0x11);
+        break;
+    case 6:
+    case 7:
+        set_animation(arg0, 0x12);
+        break;
+    }
+}
 #endif
 
 u8 gunship_shot_bullet_hit_box[4] = { 0xF7, 0xFB, 0x0C, 0x08 };

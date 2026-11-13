@@ -127,9 +127,6 @@ static void robot_bee_arc_position(struct MainObj* self, int index,
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80044F88);
-#else
 void func_80044F88(struct MainObj* arg0)
 {
     arg0->state = 1;
@@ -140,10 +137,10 @@ void func_80044F88(struct MainObj* arg0)
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->unk15 = (g_Player.x_pos.val >= arg0->x_pos.val) << PLAYER_FACING_SHIFT;
     arg0->animation_table = (const u8* const*)robot_bee_animations;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->hurt_box = (const u8*)&D_800FA100;
     arg0->attack_box = (const u8*)&D_800FA104;
     arg0->collision_data = D_80106570;
-    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->contact_damage = 3;
     arg0->terrain_box = NULL;
     arg0->hp = 2;
@@ -162,7 +159,6 @@ void func_80044F88(struct MainObj* arg0)
         arg0->unk5 = 9;
     set_animation(arg0, 1);
 }
-#endif
 
 void robot_bee_main(struct MainObj* self)
 {
@@ -357,25 +353,15 @@ void robot_bee_sting(struct MainObj* self)
     robot_bee_sting_funcs[self->unk6](self);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_sting_start);
-#else
 void robot_bee_sting_start(struct MainObj* self)
 {
-    s32* velocity;
-
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 1);
     STOP_SOUND(2, 0x13, 0x5);
     func_8001540C(2, SATURN_SOUND(0x13, 0x12), self);
-    velocity = robot_bee_sting_speeds;
-    if (self->unk15 & PLAYER_FACING_RIGHT) {
-        velocity++;
-    }
-    self->x_speed = *velocity;
+    self->x_speed = robot_bee_sting_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
     self->unk6++;
 }
-#endif
 
 void robot_bee_sting_approach(struct MainObj* self)
 {
@@ -396,25 +382,15 @@ void robot_bee_sting_approach(struct MainObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_sting_brake);
-#else
 void robot_bee_sting_brake(struct MainObj* self)
 {
-    s32* velocity;
-
     animate_object(ANIMATED_OBJECT(self));
 
     if (self->unk7C-- <= 4) {
-        velocity = robot_bee_lunge_speeds;
-        if (self->unk15 & PLAYER_FACING_RIGHT) {
-            velocity++;
-        }
-        self->x_speed = *velocity;
+        self->x_speed = robot_bee_lunge_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
         self->unk6++;
     }
 }
-#endif
 
 void robot_bee_sting_lunge(struct MainObj* self)
 {
@@ -432,9 +408,6 @@ void robot_bee_sting_lunge(struct MainObj* self)
 }
 
 // robot_bee_sting_strike
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80045940);
-#else
 extern s32 D_800FA128[], D_800FA348[], D_800FA368[];
 void func_80045940(struct MainObj* self)
 {
@@ -500,7 +473,6 @@ void func_80045940(struct MainObj* self)
         }
     }
 }
-#endif
 
 void robot_bee_sting_recoil(struct MainObj* self)
 {
@@ -552,7 +524,58 @@ void func_80045DD8(struct MainObj* self)
     }
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80045DD8);
+void func_80045DD8(struct MainObj* self)
+{
+    switch (self->ext.main_5.unk80) {
+    case 0:
+        ((s32*)&self->ext)[1] = self->x_pos.val;
+        ((s32*)&self->ext)[2] = self->y_pos.val + 0x350000;
+        self->ext.main_5.unk80++;
+        break;
+
+    case 1:
+        if (self->unk15 != PLAYER_FACING_RIGHT) {
+            self->x_pos.val = ((s32*)&self->ext)[1] - (D_800FA368[self->unk7C] * 53);
+            self->y_pos.val = ((s32*)&self->ext)[2] - (D_800FA348[self->unk7C] * 53);
+        } else {
+            self->x_pos.val = ((s32*)&self->ext)[1] + (D_800FA368[self->unk7C] * 53);
+            self->y_pos.val = ((s32*)&self->ext)[2] - (D_800FA348[self->unk7C] * 53);
+        }
+        break;
+
+    case 2:
+        if (self->unk15 != PLAYER_FACING_RIGHT) {
+            self->x_pos.val = ((s32*)&self->ext)[1] - (D_800FA368[7 - self->unk7C] * 53);
+            self->y_pos.val = ((s32*)&self->ext)[2] + (D_800FA348[7 - self->unk7C] * 53);
+        } else {
+            self->x_pos.val = ((s32*)&self->ext)[1] + (D_800FA368[7 - self->unk7C] * 53);
+            self->y_pos.val = ((s32*)&self->ext)[2] + (D_800FA348[7 - self->unk7C] * 53);
+        }
+        break;
+
+    case 3:
+        if (self->unk15 != PLAYER_FACING_RIGHT) {
+            self->x_pos.val = ((s32*)&self->ext)[1] + (D_800FA368[self->unk7C] * 53);
+            self->y_pos.val = ((s32*)&self->ext)[2] + (D_800FA348[self->unk7C] * 53);
+        } else {
+            self->x_pos.val = ((s32*)&self->ext)[1] - (D_800FA368[self->unk7C] * 53);
+            self->y_pos.val = ((s32*)&self->ext)[2] + (D_800FA348[self->unk7C] * 53);
+        }
+        break;
+    }
+
+    animate_object(ANIMATED_OBJECT(self));
+    if ((self->unk7C--) <= 0) {
+        self->unk7C = 7;
+        if (self->ext.main_5.unk80 < 3) {
+            self->ext.main_5.unk80++;
+        } else {
+            self->x_speed = 0;
+            self->y_speed = 0x50000;
+            self->unk6++;
+        }
+    }
+}
 #endif
 
 void robot_bee_sting_fly_off(struct MainObj* self)
@@ -588,9 +611,6 @@ void func_8004619C(struct MainObj* self)
 }
 
 // robot_bee_circle_orbit
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046220);
-#else
 void func_80046220(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -615,7 +635,6 @@ void func_80046220(struct MainObj* self)
         self->unk6 = 0;
     }
 }
-#endif
 
 void robot_bee_drop(struct MainObj* self)
 {
@@ -641,9 +660,6 @@ void robot_bee_drop(struct MainObj* self)
 }
 
 // robot_bee_drop_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046400);
-#else
 void func_80046400(struct MainObj* self)
 {
     s16 timer;
@@ -708,7 +724,6 @@ void func_80046400(struct MainObj* self)
     self->gravity = (self->y_speed < 0 ? -self->y_speed : self->y_speed) >> 6;
     self->unk6++;
 }
-#endif
 
 void robot_bee_drop_fall(struct MainObj* self)
 {

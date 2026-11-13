@@ -126,9 +126,6 @@ void big_elevator_arrive(struct ItemObj* arg0)
 void func_800C3BA4(struct ItemObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_14_big_elevator", func_800C3BA4);
-#else
 void func_800C3BA4(struct ItemObj* self)
 {
     s8 phase;
@@ -164,7 +161,6 @@ void func_800C3BA4(struct ItemObj* self)
         }
     }
 }
-#endif
 
 void big_elevator_restore_camera(struct ItemObj* arg0)
 {

@@ -10,7 +10,20 @@ extern union AnimationStep* dash_gunner_animations[12];
 extern struct StageObjectRecord stage_object_records_10_0[62];
 extern struct StageObjectRecord stage_object_records_3_1[71];
 extern struct StageObjectRecord stage_object_records_3_0[58];
-extern struct Unk_unk68 dash_gunner_boxes[10];
+extern struct Unk_unk68 dash_gunner_box_0, dash_gunner_box_1, dash_gunner_box_2, dash_gunner_box_3, dash_gunner_box_4,
+    dash_gunner_box_5, dash_gunner_box_6, dash_gunner_box_7, dash_gunner_box_8, dash_gunner_box_9;
+static struct Unk_unk68* const dash_gunner_boxes[10] = {
+    &dash_gunner_box_0,
+    &dash_gunner_box_1,
+    &dash_gunner_box_2,
+    &dash_gunner_box_3,
+    &dash_gunner_box_4,
+    &dash_gunner_box_5,
+    &dash_gunner_box_6,
+    &dash_gunner_box_7,
+    &dash_gunner_box_8,
+    &dash_gunner_box_9,
+};
 extern struct Unk_unk68* D_8013B828;
 extern struct Unk_unk68* D_8013B82C;
 extern struct Unk_unk68* D_8013B830;
@@ -366,10 +379,10 @@ static struct MainObj* dg_spawn(u32 stage, u32 substage, u32 kind, struct StageO
 
 static void dg_check_boxes(u32 first)
 {
-    assert(D_8013B828 == &dash_gunner_boxes[first]);
-    assert(D_8013B82C == &dash_gunner_boxes[first + 1]);
-    assert(D_8013B830 == &dash_gunner_boxes[first + 3]);
-    assert(D_8013B834 == &dash_gunner_boxes[first + 2]);
+    assert(D_8013B828 == dash_gunner_boxes[first]);
+    assert(D_8013B82C == dash_gunner_boxes[first + 1]);
+    assert(D_8013B830 == dash_gunner_boxes[first + 3]);
+    assert(D_8013B834 == dash_gunner_boxes[first + 2]);
 }
 static const u32 dash_gunner_dash_move_expected[] = { 1u };
 static u32 test_dash_gunner_dash_move(u32 row)
@@ -469,7 +482,7 @@ static u32 test_func_80058740_0(u32 row)
     world_expected->ext.main_27.unk91 = 48;
     world_expected->unk5 = 2;
     world_expected->contact_damage = 6;
-    world_expected->terrain_box = &dash_gunner_boxes[4];
+    world_expected->terrain_box = dash_gunner_boxes[4];
     set_animation(world_expected, 1);
     func_80058740(obj);
     dg_check_boxes(0);
@@ -499,7 +512,7 @@ static u32 test_func_80058740_1(u32 row)
     world_expected->unk7A = 1;
     world_expected->unk5 = 3;
     world_expected->contact_damage = 7;
-    world_expected->terrain_box = &dash_gunner_boxes[9];
+    world_expected->terrain_box = dash_gunner_boxes[9];
     set_animation(world_expected, 1);
     func_80058740(obj);
     dg_check_boxes(5);
@@ -556,9 +569,9 @@ static u32 test_func_80058AC8_1(u32 row)
     world_expected->x_pos.i.hi = 1920;
     world_expected->ext.main_27.saved_unk5 = 2;
     world_expected->ext.main_27.unk84 = g_Player.x_pos.val;
-    world_expected->attack_box = (const u8*)&dash_gunner_boxes[2];
+    world_expected->attack_box = (const u8*)dash_gunner_boxes[2];
     world_expected->collision_data = (const u16*)D_801060F0;
-    world_expected->hurt_box = (const u8*)&dash_gunner_boxes[0];
+    world_expected->hurt_box = (const u8*)dash_gunner_boxes[0];
     world_expected->on_screen = 1;
     func_80058AC8(obj);
     world_check();
@@ -715,7 +728,7 @@ static u32 test_dash_gunner_spawn_subtypes(u32 row)
     obj.invincibility_timer = 9;
     obj.air_state = 1;
     obj.collision_flags = 15;
-    obj.hurt_box = obj.attack_box = (const u8*)&dash_gunner_boxes[0];
+    obj.hurt_box = obj.attack_box = (const u8*)dash_gunner_boxes[0];
     obj.x_speed = 123;
     obj.y_speed = -456;
     obj.x_accel = 789;
@@ -747,7 +760,7 @@ static u32 test_dash_gunner_spawn_subtypes(u32 row)
     expected.ext.main_27.unk91 = row >= 8 ? 48 : 0;
     expected.ext.main_27.unk92 = dash_gunner_spawn_cases[row].retries;
     expected.contact_damage = first ? 7 : 6;
-    expected.terrain_box = &dash_gunner_boxes[first + 4];
+    expected.terrain_box = dash_gunner_boxes[first + 4];
     expected_animation(&expected, 1);
     expected.state = 1;
     func_80058740(&obj);

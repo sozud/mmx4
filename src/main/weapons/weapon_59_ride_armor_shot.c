@@ -50,12 +50,8 @@ static s32 weapon_59_distance(s32 x0, s32 y0, s32 x1, s32 y1)
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098AF8);
-#else
 void func_80098AF8(struct WeaponObj* arg0)
 {
-    s16(*offsets)[2];
     s32 direction;
     u16 dx;
 
@@ -65,12 +61,11 @@ void func_80098AF8(struct WeaponObj* arg0)
     arg0->unk68 = NULL;
     arg0->unk54 = NULL;
     arg0->unk50 = ride_armor_shot_hit_box;
-    dx = *ride_armor_shot_offsets[arg0->unk2];
-    offsets = ride_armor_shot_offsets;
+    dx = ride_armor_shot_offsets[0][arg0->unk2 * 2];
     if (arg0->unk15 != 0)
         dx = -dx;
     arg0->x_pos.i.hi += dx;
-    arg0->y_pos.i.hi += ((s16*)((u8*)offsets - -(arg0->unk2 * 4)))[1];
+    arg0->y_pos.i.hi += ride_armor_shot_offsets[0][arg0->unk2 * 2 + 1];
     if (arg0->unk2 == 0)
         direction = arg0->unk15 == 0 ? 0x10 : 0;
     else
@@ -82,7 +77,6 @@ void func_80098AF8(struct WeaponObj* arg0)
     arg0->y_vel.val *= 8;
     set_animation(arg0, arg0->unk2 + 0x1F);
 }
-#endif
 
 void ride_armor_shot_main(struct WeaponObj* arg0)
 {
@@ -134,9 +128,6 @@ void enemy_ride_armor_shot_update(struct ShotObj* arg0)
 }
 
 // ride_armor_missile_find_target
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098DA0);
-#else
 void func_80098DA0(struct WeaponObj* arg0)
 {
     struct MainObj* main;
@@ -169,7 +160,6 @@ void func_80098DA0(struct WeaponObj* arg0)
     if (!found)
         arg0->ext.target = NULL;
 }
-#endif
 
 // ride_armor_missile_spawn_smoke
 void func_80098EA8(struct WeaponObj* shot)

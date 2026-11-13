@@ -160,34 +160,46 @@ void func_80059E40(struct MainObj* self)
 #endif
 
 // spawner_pod_step_3
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80059F60(struct MainObj* self)
 {
-    struct Main28Ext* ext = &self->ext.main_28;
     struct ShotObj* shot;
-    s32 turn = 0;
+    u16 turn = 0;
 
     switch (self->unk2) {
     case 0:
-        turn = (self->x_speed <= -0x500000 && self->unk15 == 0) || (self->x_speed >= -0x10000 && self->unk15 != 0);
+        if (self->x_speed <= -0x500000 && self->unk15 == 0)
+            turn = 1;
+        if (self->x_speed >= -0x10000 && self->unk15 != 0)
+            turn = 1;
         break;
     case 1:
-        turn = (self->x_speed > 0x4FFFFF && self->unk15 != 0) || (self->x_speed <= 0x10000 && self->unk15 == 0);
+        if (self->x_speed > 0x4FFFFF && self->unk15 != 0)
+            turn = 1;
+        if (self->x_speed <= 0x10000 && self->unk15 == 0)
+            turn = 1;
         break;
     case 2:
-        turn = (self->y_speed <= -0x500000 && self->unk15 == 0) || (self->y_speed >= -0x10000 && self->unk15 != 0);
+        if (self->y_speed <= -0x500000 && self->unk15 == 0)
+            turn = 1;
+        if (self->y_speed >= -0x10000 && self->unk15 != 0)
+            turn = 1;
         break;
     case 3:
-        turn = (self->y_speed > 0x4FFFFF && self->unk15 != 0) || (self->y_speed <= 0x10000 && self->unk15 == 0);
+        if (self->y_speed > 0x4FFFFF && self->unk15 != 0)
+            turn = 1;
+        if (self->y_speed <= 0x10000 && self->unk15 == 0)
+            turn = 1;
         break;
     }
     if (self->unk7E != 0)
         self->unk7E--;
 
-    switch ((u8)self->unk6) {
+    switch (self->unk6) {
     case 0:
         if (self->unk7E == 0 || turn) {
-            ext->unk85++;
+            do {
+                self->ext.main_28.unk85++;
+            } while (0);
             self->unk6 = 1;
             self->unk7C = 0x3C;
         } else {
@@ -197,16 +209,16 @@ void func_80059F60(struct MainObj* self)
         }
         break;
     case 1:
-        if (ext->unk85 >= 4) {
-            ext->unk85 = 0;
-            set_animation(self, ext->unk84 + 2);
+        if (self->ext.main_28.unk85 >= 4) {
+            self->ext.main_28.unk85 = 0;
+            set_animation(self, self->ext.main_28.unk84 + 2);
             self->unk6 = 2;
             break;
         }
         self->unk15 ^= PLAYER_FACING_RIGHT;
         if (self->unk2 >= 2) {
-            ext->unk84 ^= 8;
-            set_animation(self, ext->unk84 + 1);
+            self->ext.main_28.unk84 ^= 8;
+            set_animation(self, self->ext.main_28.unk84 + 1);
         }
         self->unk7C = 0x20;
         self->unk6 = 4;
@@ -226,8 +238,8 @@ void func_80059F60(struct MainObj* self)
                 shot->unk40 = self->unk40;
                 shot->unk3C = (void*)self->sprite_frames;
                 shot->unk42 = self->unk42 & 0x7FFF;
-                shot->unk7C = (struct WeaponObj*)self;
                 shot->unk16 = self->unk16;
+                shot->unk7C = (struct WeaponObj*)self;
                 shot->unk15 = self->unk15;
             }
             self->unk7C = 0x10;
@@ -242,30 +254,27 @@ void func_80059F60(struct MainObj* self)
         }
         self->unk15 ^= PLAYER_FACING_RIGHT;
         if (self->unk2 >= 2)
-            ext->unk84 ^= 8;
+            self->ext.main_28.unk84 ^= 8;
         self->x_accel = -self->x_accel;
         self->gravity = -self->gravity;
         self->unk6 = 0;
         self->unk7C = 0;
         self->unk7E = D_800FD5C8[get_random() & 0x1F];
-        set_animation(self, ext->unk84 + 1);
+        set_animation(self, self->ext.main_28.unk84 + 1);
         break;
     case 4:
-        if (self->unk7C != 0) {
-            self->unk7C--;
+        if (self->unk7C == 0) {
+            self->unk7C = 0;
+            self->unk7E = D_800FD5C8[get_random() & 0x1F];
+            self->unk6 = 0;
             break;
         }
-        self->unk7C = 0;
-        self->unk7E = D_800FD5C8[get_random() & 0x1F];
-        self->unk6 = 0;
+        self->unk7C--;
         break;
     }
     self->x_pos.val += self->x_speed;
     self->y_pos.val += self->y_speed;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", func_80059F60);
-#endif
 
 void spawner_pod_step_4(struct MainObj* self)
 {

@@ -2,9 +2,6 @@
 #include "main/102FC.h"
 #include "main/game_info.h"
 void func_80012328(void);
-struct ControllerButtons {
-    u16 current, previous, pressed;
-};
 #ifdef MMX4_PC
 extern struct ControllerButtons D_80166D50;
 #else

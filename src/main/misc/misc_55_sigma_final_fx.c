@@ -68,7 +68,51 @@ void func_800D3084(struct MiscObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 #else
-INCLUDE_ASM("main/nonmatchings/misc/misc_55_sigma_final_fx", func_800D3084);
+void func_800D3084(struct MiscObj* self)
+{
+    struct MainObj* owner = (struct MainObj*)self->ext.misc_55.owner;
+
+    self->x_pos.val = owner->x_pos.val;
+    self->y_pos.val = owner->y_pos.val;
+    self->unk40 = owner->unk40;
+    self->unk42 = owner->unk42 & 0x7FFF;
+    self->animation_table = (u32**)owner->animation_table;
+    self->unk3C = (void*)owner->sprite_frames;
+    self->bg_offset = owner->bg_offset;
+    self->unk15 = 0;
+    switch (self->unk2) {
+    case 0:
+        self->x_pos.i.hi = 0x4FF;
+        self->y_pos.i.hi = 0x279;
+        goto common;
+    case 1:
+        self->x_pos.i.hi = 0x4FD;
+        self->y_pos.i.hi = 0x259;
+    common:
+        self->state = 1;
+        set_animation(self, 0x26);
+        self->unk16 = 0x13;
+        break;
+    case 2:
+        self->x_pos.i.hi = background_objects[0].x_pos.i.hi - 0x20;
+        self->y_pos.i.hi = background_objects[0].y_pos.i.hi + (get_random() & 0xFF);
+        self->x_vel.val = 0x30000;
+        self->unk28 = -0x1000;
+        self->state = 3;
+        self->y_vel.val = 0;
+        self->unk2C = 0;
+        self->unk42 += 3;
+        set_animation(self, 0x16);
+        self->unk16 = 0x13;
+        break;
+    default:
+        self->state = 4;
+        set_animation(self, 0xF);
+        self->unk16 = 0x13;
+        break;
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
 #endif
 
 void sigma_final_fx_charge(struct MiscObj* self)

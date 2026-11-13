@@ -70,15 +70,12 @@ ret_s8 func_8002DD04(struct MainObj* object);
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80042950(struct MainObj* arg0);
 void func_80042AFC(struct MainObj* arg0);
+#endif
 extern struct Unk_unk68* item_carrier_part_hurtboxes[2];
 extern u8* item_carrier_part_debris[2];
 extern u8 item_carrier_part_debris_counts[4];
 extern void (*item_carrier_action_funcs[])(struct MainObj*);
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042950);
-#else
 #define HD_MODE(o) (((u8*)&(o)->ext)[0])
 void func_80042950(struct MainObj* arg0)
 {
@@ -90,7 +87,7 @@ void func_80042950(struct MainObj* arg0)
     weapon = player->weapon;
     flags = 0;
     if (player->hp <= (s8)engine_obj.max_hp / 2) {
-        flags = 1;
+        flags |= 1;
         HD_MODE(arg0) = 1;
     }
     if (engine_obj.cur_character == 0 && weapon != 0 && player->weapon_energy[weapon] <= 0x18) {
@@ -109,7 +106,6 @@ void func_80042950(struct MainObj* arg0)
         despawn_object(OBJECT_HEADER(arg0));
     }
 }
-#endif
 
 // item_carrier_init
 void func_80042A48(struct MainObj* self)
@@ -137,10 +133,23 @@ void func_80042A48(struct MainObj* self)
 }
 
 // item_carrier_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+static inline void item_carrier_spawn_item(struct MainObj* arg0)
+{
+    struct ItemObj* item = find_free_item_obj();
+
+    if (item != NULL) {
+        item->active = 0x21;
+        item->id = 2;
+        item->unk2 = arg0->ext.main_2.item_subtype;
+        item->x_pos.val = arg0->x_pos.val;
+        item->y_pos.val = arg0->y_pos.val;
+        item->bg_offset = arg0->bg_offset;
+        item->backref = NULL;
+    }
+}
+
 void func_80042AFC(struct MainObj* arg0)
 {
-    struct ItemObj* item;
     s32 i;
 
     if (arg0->unk2 == 0) {
@@ -156,23 +165,15 @@ void func_80042AFC(struct MainObj* arg0)
                     arg0->hp = 1;
                     break;
                 }
-                goto spawn_item;
+                item_carrier_spawn_item(arg0);
+                arg0->state = (u8)arg0->state + 1;
+                return;
             }
         }
     } else if (func_8002DD04(arg0) < 0) {
         spawn_explosion(BASE_OBJECT(arg0));
         spawn_debris(3, item_carrier_capsule_debris, arg0);
-    spawn_item:
-        item = find_free_item_obj();
-        if (item != NULL) {
-            item->active = 0x21;
-            item->id = 2;
-            item->unk2 = (u8)arg0->ext.main_10.timer;
-            item->x_pos.val = arg0->x_pos.val;
-            item->y_pos.val = arg0->y_pos.val;
-            item->backref = NULL;
-            item->bg_offset = arg0->bg_offset;
-        }
+        item_carrier_spawn_item(arg0);
         arg0->state = (u8)arg0->state + 1;
         return;
     }
@@ -184,9 +185,6 @@ void func_80042AFC(struct MainObj* arg0)
     }
     arg0->state = (u8)arg0->state + 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042AFC);
-#endif
 
 void item_carrier_hide(struct MainObj* self)
 {

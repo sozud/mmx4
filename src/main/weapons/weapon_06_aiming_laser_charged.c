@@ -47,9 +47,6 @@ void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1);
 extern struct Unk_unk68 aiming_laser_charged_box[];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800961B0);
-#else
 void func_800961B0(struct WeaponObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
@@ -90,7 +87,6 @@ void func_800961B0(struct WeaponObj* arg0)
     arg0->y_pos.val = owner->y_pos.val;
     ((void (*)(struct WeaponObj*, struct PlayerObj*, struct MainObj*))aiming_laser_marker_state_funcs[arg0->state])(arg0, player, owner);
 }
-#endif
 
 void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
@@ -117,9 +113,6 @@ void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
 }
 
 // aiming_laser_reticle_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800963E8);
-#else
 void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
 {
     s32 hidden = player->weapon_energy[6] == 0;
@@ -156,7 +149,6 @@ void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
     }
     arg0->unk50 = NULL;
 }
-#endif
 
 void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
@@ -364,9 +356,6 @@ void aiming_laser_charged_init(struct WeaponObj* arg0)
 }
 
 // aiming_laser_charged_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_80096B54);
-#else
 void func_80096B54(struct WeaponObj* self)
 {
     struct Weapon6Ext* ext = &self->ext.weapon_6;
@@ -407,7 +396,6 @@ void func_80096B54(struct WeaponObj* self)
     }
     aiming_laser_charged_aim(self, player);
 }
-#endif
 
 void aiming_laser_charged_aim(struct WeaponObj* self, struct PlayerObj* player)
 {

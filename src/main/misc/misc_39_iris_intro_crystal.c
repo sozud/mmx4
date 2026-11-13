@@ -79,9 +79,6 @@ s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
 void func_800CF950(struct MiscObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_39_iris_intro_crystal", func_800CF950);
-#else
 void func_800CF950(struct MiscObj* self)
 {
     struct MiscObj* piece;
@@ -135,7 +132,6 @@ void func_800CF950(struct MiscObj* self)
     self->ext.misc_39.timer = 0x88;
     self->unk5 = 4;
 }
-#endif
 
 void iris_intro_crystal_wait(struct MiscObj* self)
 {

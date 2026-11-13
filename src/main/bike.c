@@ -104,9 +104,6 @@ void func_8003C9A4(struct RideArmorObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/bike", func_8003B470);
-#else
 void func_8003B470(struct RideArmorObj* arg0)
 {
     struct EffectObj* effect;
@@ -170,7 +167,6 @@ void func_8003B470(struct RideArmorObj* arg0)
     background_objects[1].unk44 = 1;
     background_objects[2].unk44 = 1;
 }
-#endif
 
 void func_8003B694(struct RideArmorObj* self)
 {
@@ -199,9 +195,6 @@ void func_8003B694(struct RideArmorObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/bike", func_8003B7B4);
-#else
 void func_8003B7B4(struct RideArmorObj* arg0)
 {
     s8 health = arg0->hp;
@@ -247,7 +240,6 @@ void func_8003B7B4(struct RideArmorObj* arg0)
     func_8003B98C((struct PlayerObj*)arg0);
     is_on_screen(BASE_OBJECT(arg0));
 }
-#endif
 
 void func_8003B98C(struct PlayerObj* arg0)
 {
@@ -311,9 +303,6 @@ void func_8003BAE8(struct RideArmorObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/bike", func_8003BB20);
-#else
 void func_8003BB20(struct RideArmorObj* arg0)
 {
     s16 dx = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
@@ -394,7 +383,6 @@ void func_8003BB20(struct RideArmorObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     move_with_gravity(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 void func_8003BDA0(struct RideArmorObj* arg0)
 {
@@ -451,9 +439,6 @@ void func_8003BE28(struct RideArmorObj* self)
     func_8003CBCC(self);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/bike", func_8003BF1C);
-#else
 void func_8003BF1C(struct RideArmorObj* arg0)
 {
     if (arg0->unk6 == 0) {
@@ -497,7 +482,6 @@ void func_8003BF1C(struct RideArmorObj* arg0)
         arg0->unk8E.value = 1;
     func_8003CBCC(arg0);
 }
-#endif
 
 #ifdef VERSION_EU
 #if defined(VERSION_EU) && !defined(MMX4_PC)
@@ -819,9 +803,6 @@ void func_8003C624(struct RideArmorObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/bike", func_8003C6EC);
-#else
 void func_8003C6EC(struct RideArmorObj* arg0, u8 kind)
 {
     struct WeaponObj* weapon;
@@ -866,7 +847,6 @@ void func_8003C6EC(struct RideArmorObj* arg0, u8 kind)
     RIDE_U8(arg0, 0x98) += 1;
     func_8001540C(5, SATURN_SOUND(2, 52), arg0);
 }
-#endif
 
 void func_8003C8F4(struct RideArmorObj* arg0)
 {
@@ -1065,9 +1045,6 @@ void func_8003CD38(struct RideArmorObj* arg0)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/bike", func_8003CF24);
-#else
 u8 func_8003CF24(struct RideArmorObj* arg0)
 {
     u8 tile = arg0->unk80.bytes.unk81;
@@ -1078,11 +1055,10 @@ u8 func_8003CF24(struct RideArmorObj* arg0)
         if (tile < 9)
             return 1;
     }
-    if (tile != 0x10)
-        return 2;
-    return arg0->unk80.bytes.unk83;
+    if (tile == 0x10)
+        return arg0->unk80.bytes.unk83;
+    return 2;
 }
-#endif
 
 void func_8003CF6C(struct RideArmorObj* ride_armor)
 {
@@ -1098,13 +1074,10 @@ void func_8003CF6C(struct RideArmorObj* ride_armor)
         ride_armor->unk68->unk3 + (ride_armor->y_pos.i.hi + (s8)ride_armor->unk68->unk1) + 1);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/bike", func_8003D01C);
-#else
 void func_8003D01C(struct RideArmorObj* arg0)
 {
-    s16 offset;
     s16 edge;
+    s16 offset;
     s16 over;
 
     offset = (u16)arg0->x_pos.i.hi - (u16)background_objects[arg0->bg_offset].x_pos.i.hi;
@@ -1125,7 +1098,6 @@ void func_8003D01C(struct RideArmorObj* arg0)
         arg0->x_pos.i.hi -= (over < 0 ? -over : over);
     }
 }
-#endif
 
 void func_8003D164(struct VisualObj* arg0, s32 arg1)
 {

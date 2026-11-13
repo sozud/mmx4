@@ -310,9 +310,6 @@ void slope_skier_slide_start(struct MainObj* self)
 }
 
 // slope_skier_slide_move
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_800562AC);
-#else
 void func_800562AC(struct MainObj* arg0)
 {
     struct VisualObj* visual;
@@ -367,7 +364,6 @@ void func_800562AC(struct MainObj* arg0)
         }
     }
 }
-#endif
 
 void slope_skier_slide_idle(void)
 {

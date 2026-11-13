@@ -102,5 +102,79 @@ void func_800D9C84(struct LayerObj* self)
     self->bg_offset = self->unk15 = self->unk16 = 0;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/layers/layer_03", func_800D9C84);
+struct Layer03Counters {
+    u8 pad[0x14];
+    s8 counters[12];
+};
+
+void func_800D9C84(struct LayerObj* self)
+{
+    struct MainObj* object;
+    struct ShotObj* shot;
+    struct ItemObj* item;
+
+    if (self->unk2 == 0) {
+        if (g_Player.x_pos.i.hi < 0x1B61) {
+            return;
+        }
+        player_start_script_action(0x14, 0);
+        object = find_free_main_obj();
+        if (object != NULL) {
+            object->active = 0x41;
+            object->id = 0x2D;
+            object->unk2 = 0;
+            object->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x2D));
+            object->unk42 = CLUT_FROM_ID(0x2D);
+            object->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x2D));
+            object->x_pos.val = FIXED(0x1960);
+            object->y_pos.val = FIXED(0x180);
+            object->state = 0;
+        }
+        despawn_object(OBJECT_HEADER(self));
+        return;
+    }
+
+    for (object = &main_objects[0]; object < &main_objects[5]; object++) {
+        if (object->id != 0x2E || (s8)self->unk17 == 0) {
+            if ((s8)self->unk16 != 0) {
+                object->unk42 |= 0x8000;
+            } else {
+                object->unk42 &= 0x7FFF;
+            }
+        } else {
+            object->unk42 |= 0x8000;
+            self->unk17--;
+        }
+        object->x_pos.i.hi += (s8)(u8)self->bg_offset;
+    }
+    for (shot = &shot_objects[0]; shot < &shot_objects[5]; shot++) {
+        if (shot->state < 3 || ((struct Layer03Counters*)self)->counters[shot->unk2 + 4] == 0) {
+            if ((s8)self->unk16 != 0) {
+                shot->unk42 |= 0x8000;
+            } else {
+                shot->unk42 &= 0x7FFF;
+            }
+        } else {
+            shot->unk42 |= 0x8000;
+            ((struct Layer03Counters*)self)->counters[shot->unk2 + 4]--;
+        }
+        shot->x_pos.i.hi += (s8)(u8)self->bg_offset;
+    }
+    for (item = &item_objects[0]; item < &item_objects[2]; item++) {
+        if ((s8)self->unk16 != 0)
+            item->unk42 |= 0x8000;
+        else
+            item->unk42 &= 0x7FFF;
+        item->x_pos.i.hi += (s8)(u8)self->bg_offset;
+    }
+    if ((s8)self->unk15 != 0) {
+        g_Player.x_pos.i.hi += (s8)(u8)self->bg_offset;
+        for (shot = (struct ShotObj*)&weapon_objects[0]; shot < (struct ShotObj*)&weapon_objects[16]; shot++) {
+            shot->x_pos.i.hi += (s8)(u8)self->bg_offset;
+        }
+    }
+    self->bg_offset = 0;
+    self->unk15 = 0;
+    self->unk16 = 0;
+}
 #endif

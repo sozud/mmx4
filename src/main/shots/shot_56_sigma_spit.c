@@ -117,15 +117,13 @@ void func_800ADF30(struct ShotObj* self)
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_56_sigma_spit", sigma_spit_return);
-#else
 void sigma_spit_return(struct ShotObj* self)
 {
     struct WeaponObj* owner;
 
     owner = self->unk7C;
-    set_velocity_from_angle(MOVING_OBJECT(self), (u8)(self->unk8C.byte = angle_to_point(OBJECT_HEADER(self), owner->x_pos.val + FIXED(16), owner->y_pos.val + FIXED(16))));
+    self->unk8C.byte = angle_to_point(OBJECT_HEADER(self), owner->x_pos.val + FIXED(16), owner->y_pos.val + FIXED(16));
+    set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->unk8C.byte);
     self->x_vel.val *= (get_random() & 3) + 2;
     self->y_vel.val *= (get_random() & 3) + 2;
     move_object(MOVING_OBJECT(self));
@@ -136,7 +134,6 @@ void sigma_spit_return(struct ShotObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
-#endif
 
 void sigma_spit_fall(struct ShotObj* self)
 {

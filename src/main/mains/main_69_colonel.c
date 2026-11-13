@@ -179,23 +179,20 @@ ret_s8 func_8002DD04(struct MainObj* object);
 extern struct Unk_unk68 D_801044F8;
 extern void* D_80104770[25];
 extern void (*colonel_step_funcs[9])();
+extern u8 D_801044A0[8];
+extern u8 D_801044A8[8];
+extern void* D_801044EC[2];
+extern u8 D_801044F4[2][2];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80086008(struct MainObj* arg0);
 void func_80086124(struct MainObj* arg0);
 void func_800877A4(struct MainObj* arg0);
 void func_80087A00(struct MainObj* arg0);
 void func_800889DC(struct MainObj* arg0);
-extern u8 D_801044A0[8];
-extern u8 D_801044A8[8];
-extern void* D_801044EC[2];
-extern u8 D_801044F4[4];
 void colonel_spawn_afterimages(struct MainObj*);
 void colonel_face_player(struct MainObj*);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086008);
-#else
 void func_80086008(struct MainObj* arg0)
 {
     if (arg0->ext.main_69.state.bytes.variant == 0) {
@@ -228,20 +225,16 @@ void func_80086008(struct MainObj* arg0)
     colonel_spawn_afterimages(arg0);
     engine_obj.unk25 = 1;
     engine_obj.boss_ptr = arg0;
-    arg0->state = 1;
     arg0->ext.main_69.state.bytes.unk8D = 0;
     arg0->ext.main_69.state.bytes.unk8E = 0;
+    arg0->state = 1;
     arg0->unk5 = 2;
 #ifdef MMX4_SATURN
     saturn_colonel_init_mode = 15;
 #endif
 }
-#endif
 
 // colonel_run
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086124);
-#else
 void func_80086124(struct MainObj* arg0)
 {
     s32 collision;
@@ -275,7 +268,6 @@ void func_80086124(struct MainObj* arg0)
     }
     func_8002D9BC(arg0);
 }
-#endif
 
 void colonel_death(struct MainObj* self)
 {
@@ -994,9 +986,6 @@ void colonel_dash_start(struct MainObj* self)
 }
 
 // colonel_dash_run
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80087A00);
-#else
 void func_80087A00(struct MainObj* arg0)
 {
     move_with_gravity(ANIMATED_OBJECT(arg0));
@@ -1024,7 +1013,6 @@ void func_80087A00(struct MainObj* arg0)
         arg0->unk6++;
     }
 }
-#endif
 
 void colonel_dash_brake(struct MainObj* self)
 {
@@ -1457,17 +1445,14 @@ void colonel_jump_slam_recover(struct MainObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", colonel_shot_incoming);
-#else
 ret_u8 colonel_shot_incoming(struct MainObj* self)
 {
     volatile struct WeaponObj* weapon;
     u8 i;
     s32 x_diff;
 
-    i = 0;
     weapon = weapon_objects;
+    i = 0;
     do {
         if (weapon_objects->active != 0 && weapon->unk50 != 0) {
             x_diff = (u16)weapon->x_pos.i.hi - (u16)self->x_pos.i.hi;
@@ -1484,7 +1469,6 @@ ret_u8 colonel_shot_incoming(struct MainObj* self)
 
     return 0;
 }
-#endif
 
 void colonel_face_player(struct MainObj* self)
 {
@@ -1507,31 +1491,30 @@ void colonel_face_center(struct BaseObj* self)
 }
 
 // colonel_pick_script
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800889DC(struct MainObj* arg0)
 {
-    struct Main69Ext* ext = &arg0->ext.main_69;
     u8 roll = get_random() & 0xF;
     u8 level;
     u8** scripts;
     u8 i;
 
-    if (ext->state.bytes.variant == 1) {
-        ext->script = roll < 10 ? D_801044A0 : D_801044A8;
+    if (arg0->ext.main_69.state.bytes.variant == 1) {
+        if (roll < 10) {
+            arg0->ext.main_69.script = D_801044A0;
+        } else {
+            arg0->ext.main_69.script = D_801044A8;
+        }
         return;
     }
     level = (arg0->hp - 1) / 24;
     scripts = D_801044EC[level];
     for (i = 0; i < 2; i++) {
-        if (roll < D_801044F4[level * 2 + i]) {
-            ext->script = scripts[i];
+        if (roll < D_801044F4[level][i]) {
+            arg0->ext.main_69.script = scripts[i];
             return;
         }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_800889DC);
-#endif
 
 void colonel_spawn_afterimages(struct MainObj* self)
 {
@@ -1595,7 +1578,7 @@ void* D_801044EC[2] = {
     D_801044D8,
 };
 
-u8 D_801044F4[4] = { 0x07, 0x10, 0x09, 0x10 };
+u8 D_801044F4[2][2] = { { 0x07, 0x10 }, { 0x09, 0x10 } };
 
 struct Unk_unk68 D_801044F8 = { -1, -2, 16, 30 };
 

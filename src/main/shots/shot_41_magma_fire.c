@@ -156,9 +156,6 @@ void magma_fire_wave(struct ShotObj* arg0)
 }
 
 // magma_fire_pillar_rise
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A5AA4);
-#else
 void func_800A5AA4(struct ShotObj* arg0)
 {
     struct BaseObj* owner = (struct BaseObj*)arg0->unk7C;
@@ -183,12 +180,8 @@ void func_800A5AA4(struct ShotObj* arg0)
     arg0->unk8A = 4;
     arg0->unk6++;
 }
-#endif
 
 // magma_fire_pillar_erupt
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A5BA8);
-#else
 void func_800A5BA8(struct ShotObj* arg0)
 {
     if (arg0->timer > 1) {
@@ -214,7 +207,6 @@ void func_800A5BA8(struct ShotObj* arg0)
         arg0->unk6++;
     }
 }
-#endif
 
 void magma_fire_pillar_repeat(struct ShotObj* self)
 {
@@ -267,9 +259,6 @@ void magma_fire_breath_drop(struct ShotObj* self)
 }
 
 // magma_fire_breath_burn
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A5E60);
-#else
 void func_800A5E60(struct ShotObj* arg0)
 {
     func_8002D9BC(arg0);
@@ -292,7 +281,6 @@ void func_800A5E60(struct ShotObj* arg0)
         update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
     }
 }
-#endif
 
 void magma_fire_breath_rise(struct ShotObj* self)
 {
@@ -339,9 +327,6 @@ void magma_fire_breath(struct ShotObj* self)
 }
 
 // magma_fire_spread
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A60D0);
-#else
 void func_800A60D0(struct ShotObj* arg0)
 {
     struct ShotObj* child;
@@ -369,7 +354,6 @@ void func_800A60D0(struct ShotObj* arg0)
         arg0->state++;
     }
 }
-#endif
 
 void magma_fire_burst(struct ShotObj* self)
 {

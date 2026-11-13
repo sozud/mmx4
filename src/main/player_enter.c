@@ -394,9 +394,6 @@ void player_enter_wall_cling(struct PlayerObj* self)
 void func_800349F4(struct PlayerObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_enter", func_800349F4);
-#else
 void func_800349F4(struct PlayerObj* arg0)
 {
     player_set_animation_shooting(arg0, 0xE);
@@ -431,7 +428,6 @@ void func_800349F4(struct PlayerObj* arg0)
     arg0->unk5 = 10;
     arg0->unk6 = 0;
 }
-#endif
 void player_enter_wall_slide(struct PlayerObj* self)
 {
     player_set_animation_shooting(self, 0xF);
@@ -544,9 +540,6 @@ void player_enter_ladder_down(struct PlayerObj* self)
 }
 
 // player_start_script
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_enter", func_80034E2C);
-#else
 #ifdef MMX4_PC
 void func_80034E2C(void)
 {
@@ -599,7 +592,6 @@ void func_80034E2C(struct PlayerObj* player)
         break;
     }
 }
-#endif
 void player_start_stage_clear(struct PlayerObj* self)
 {
     u8 flags;

@@ -44,13 +44,13 @@ extern void (*frost_walrus_fx_stagger_funcs[])(struct VisualObj*);
 void frost_walrus_fx_stagger_start(struct VisualObj*);
 void frost_walrus_fx_stagger_follow(struct VisualObj*);
 #include "weapon_resources.h"
-extern s16 frost_walrus_fx_sparkle_offsets[];
+extern s16 frost_walrus_fx_sparkle_offsets[][2];
 
 s32 frost_walrus_fx_blizzard_x_vels[4] = { 0x1C000, 0x2C000, 0x3C000, 0x34000 };
 s32 frost_walrus_fx_blizzard_y_vels[4] = { 0x18000, 0x28000, 0x8000, 0x30000 };
 s32 frost_walrus_fx_breath_x_vels[4] = { 0x1C000, 0x2C000, 0x3C000, 0x34000 };
 s32 frost_walrus_fx_breath_y_vels[4] = { -0x18000, -0x28000, -0x8000, -0x30000 };
-s16 frost_walrus_fx_sparkle_offsets[8] = { -9, 0x13, -0x26, -0x16, 0x2B, -0xA, 0x1C, 0x26 };
+s16 frost_walrus_fx_sparkle_offsets[4][2] = { { -9, 0x13 }, { -0x26, -0x16 }, { 0x2B, -0xA }, { 0x1C, 0x26 } };
 
 void frost_walrus_fx_update(struct VisualObj* arg0)
 {
@@ -207,22 +207,18 @@ void frost_walrus_fx_sparkle_start(struct VisualObj* arg0)
 void func_800B3B94(struct VisualObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B3B94(struct VisualObj* arg0)
 {
     struct PlayerObj* source = arg0->unk50;
 
     animate_object(ANIMATED_OBJECT(arg0));
-    arg0->x_pos.val = source->x_pos.val + (frost_walrus_fx_sparkle_offsets[(s8)arg0->unk2 * 2] << 16);
-    arg0->y_pos.val = source->y_pos.val + (frost_walrus_fx_sparkle_offsets[(s8)arg0->unk2 * 2 + 1] << 16);
+    arg0->x_pos.val = source->x_pos.val + (frost_walrus_fx_sparkle_offsets[arg0->unk2][0] << 16);
+    arg0->y_pos.val = source->y_pos.val + (frost_walrus_fx_sparkle_offsets[arg0->unk2][1] << 16);
     is_on_screen(BASE_OBJECT(arg0));
-    if ((s8)source->unk6 == 2) {
+    if (source->unk6 == 2) {
         ZeroObjectState(OBJECT_HEADER(arg0));
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24_frost_walrus_fx", func_800B3B94);
-#endif
 
 void frost_walrus_fx_stagger(struct VisualObj* arg0)
 {

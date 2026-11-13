@@ -19,14 +19,10 @@ void gunship_exhaust_update(struct VisualObj* arg0)
     gunship_exhaust_state_funcs[arg0->state](arg0);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_31_gunship_exhaust", gunship_exhaust_init);
-#else
 void gunship_exhaust_init(struct VisualObj* self)
 {
     s16 timer;
     s16 flags;
-    s16 x;
     s8 type;
     struct PlayerObj* player = self->unk50;
 
@@ -43,18 +39,19 @@ void gunship_exhaust_init(struct VisualObj* self)
     type = self->unk2;
     switch (type) {
     case 0:
-        x = player->x_pos.u.hi - 0x3C;
-        goto set_position;
+        self->x_pos.i.hi = player->x_pos.u.hi - 0x3C;
+        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        break;
     case 1:
-        x = player->x_pos.u.hi - 0x14;
-        goto set_position;
+        self->x_pos.i.hi = player->x_pos.u.hi - 0x14;
+        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        break;
     case 2:
-        x = player->x_pos.u.hi + 0x14;
-        goto set_position;
+        self->x_pos.i.hi = player->x_pos.u.hi + 0x14;
+        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        break;
     case 3:
-        x = player->x_pos.u.hi + 0x3C;
-    set_position:
-        self->x_pos.i.hi = x;
+        self->x_pos.i.hi = player->x_pos.u.hi + 0x3C;
         self->y_pos.i.hi = player->y_pos.u.hi - 9;
         break;
     }
@@ -63,7 +60,6 @@ void gunship_exhaust_init(struct VisualObj* self)
     self->unk54 = 0x78 - timer;
     self->state++;
 }
-#endif
 
 void gunship_exhaust_delay(struct VisualObj* arg0)
 {

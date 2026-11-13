@@ -45,7 +45,15 @@ void bomb_bat_dive_wait(struct MainObj*);
 void bomb_bat_dive_fall(struct MainObj*);
 void bomb_bat_face_player(struct MainObj*);
 
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+extern void (*bomb_bat_move_funcs[6])(struct MainObj*);
+#define bomb_bat_fly_off_funcs (bomb_bat_move_funcs + 2)
+#define bomb_bat_flee_funcs (bomb_bat_move_funcs + 4)
+#else
 extern void (*bomb_bat_move_funcs[])(struct MainObj*);
+extern void (*bomb_bat_fly_off_funcs[])(struct MainObj*);
+extern void (*bomb_bat_flee_funcs[])(struct MainObj*);
+#endif
 extern void (*bomb_bat_dive_funcs[])(struct MainObj*);
 
 void bomb_bat_update(struct MainObj* self)
@@ -163,9 +171,6 @@ void func_8005CB90(struct MainObj* arg0);
 void func_8005CF9C(struct MainObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", func_8005CB90);
-#else
 void func_8005CB90(struct MainObj* arg0)
 {
     u8 angle;
@@ -182,7 +187,6 @@ void func_8005CB90(struct MainObj* arg0)
         arg0->unk6 = 0;
     }
 }
-#endif
 
 void bomb_bat_drop(struct MainObj* self)
 {
@@ -220,36 +224,21 @@ void bomb_bat_drop_end(struct MainObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_fly_off);
-#else
 void bomb_bat_fly_off(struct MainObj* self)
 {
-    bomb_bat_move_funcs[self->unk6 + 2](self);
+    bomb_bat_fly_off_funcs[self->unk6](self);
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_fly_off_start);
-#else
 void bomb_bat_fly_off_start(struct MainObj* self)
 {
-    s32* velocity;
     s32 selected;
-    u8 step;
 
     set_animation(self, 3);
-    velocity = bomb_bat_fly_speeds;
-    if (self->unk15 & PLAYER_FACING_RIGHT) {
-        velocity++;
-    }
-    selected = *velocity;
-    step = self->unk6;
+    selected = bomb_bat_fly_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
     self->y_speed = FIXED(0.3125);
     self->x_speed = selected;
-    self->unk6 = step + 1;
+    self->unk6++;
 }
-#endif
 
 void bomb_bat_fly_off_move(struct MainObj* self)
 {
@@ -257,36 +246,23 @@ void bomb_bat_fly_off_move(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_flee);
-#else
 void bomb_bat_flee(struct MainObj* self)
 {
-    bomb_bat_move_funcs[self->unk6 + 4](self);
+    bomb_bat_flee_funcs[self->unk6](self);
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_flee_start);
-#else
 void bomb_bat_flee_start(struct MainObj* self)
 {
-    s32* velocity;
     s32 selected;
 
     set_animation(self, 3);
-    velocity = bomb_bat_fly_speeds;
-    if (self->unk15 & PLAYER_FACING_RIGHT) {
-        velocity++;
-    }
-    selected = *velocity;
-    self->attack_box = (const u8*)&bomb_bat_body_box;
+    selected = bomb_bat_fly_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
     self->y_speed = 0;
+    self->attack_box = (const u8*)&bomb_bat_body_box;
     self->ext.main_32.unk88 = 1;
     self->x_speed = selected;
     self->unk6++;
 }
-#endif
 
 void bomb_bat_flee_move(struct MainObj* self)
 {
@@ -300,9 +276,6 @@ void bomb_bat_dive(struct MainObj* self)
 }
 
 // bomb_bat_dive_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", func_8005CF9C);
-#else
 void func_8005CF9C(struct MainObj* arg0)
 {
     u16 spread;
@@ -325,7 +298,6 @@ void func_8005CF9C(struct MainObj* arg0)
         arg0->unk6 += 2;
     }
 }
-#endif
 
 void bomb_bat_dive_wait(struct MainObj* self)
 {
@@ -478,7 +450,8 @@ void (*bomb_bat_hover_funcs[2])() = {
     func_8005CB90,
 };
 
-void (*bomb_bat_move_funcs[6])() = {
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void (*bomb_bat_move_funcs[6])(struct MainObj*) = {
     bomb_bat_drop_start,
     bomb_bat_drop_release,
     bomb_bat_fly_off_start,
@@ -486,6 +459,22 @@ void (*bomb_bat_move_funcs[6])() = {
     bomb_bat_flee_start,
     bomb_bat_flee_move,
 };
+#else
+void (*bomb_bat_move_funcs[2])() = {
+    bomb_bat_drop_start,
+    bomb_bat_drop_release,
+};
+
+void (*bomb_bat_fly_off_funcs[2])() = {
+    bomb_bat_fly_off_start,
+    bomb_bat_fly_off_move,
+};
+
+void (*bomb_bat_flee_funcs[2])() = {
+    bomb_bat_flee_start,
+    bomb_bat_flee_move,
+};
+#endif
 
 void (*bomb_bat_dive_funcs[3])() = {
     func_8005CF9C,

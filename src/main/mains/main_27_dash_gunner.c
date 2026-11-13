@@ -57,10 +57,9 @@ extern struct Unk_unk68* D_8013B834;
 extern void (*dash_gunner_step_funcs[])(struct MainObj*);
 extern struct Unk_unk68 D_80106FF4[];
 extern u8 dash_gunner_debris[4];
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern union AnimationStep* dash_gunner_animations[12];
-extern struct Unk_unk68 dash_gunner_boxes[10];
-#endif
+extern struct Unk_unk68 dash_gunner_box_0, dash_gunner_box_1, dash_gunner_box_2, dash_gunner_box_3, dash_gunner_box_4;
+extern struct Unk_unk68 dash_gunner_box_5, dash_gunner_box_6, dash_gunner_box_7, dash_gunner_box_8, dash_gunner_box_9;
 
 void dash_gunner_update(struct MainObj* self)
 {
@@ -170,31 +169,159 @@ void func_80058740(struct MainObj* arg0)
     subtype = arg0->unk2;
     if (subtype < 4 || (u8)(subtype - 8) < 4) {
         arg0->contact_damage = 6;
-        arg0->terrain_box = &dash_gunner_boxes[4];
-        D_8013B828 = &dash_gunner_boxes[0];
-        D_8013B82C = &dash_gunner_boxes[1];
-        D_8013B830 = &dash_gunner_boxes[3];
-        D_8013B834 = &dash_gunner_boxes[2];
+        arg0->terrain_box = &dash_gunner_box_4;
+        D_8013B828 = &dash_gunner_box_0;
+        D_8013B82C = &dash_gunner_box_1;
+        D_8013B830 = &dash_gunner_box_3;
+        D_8013B834 = &dash_gunner_box_2;
     } else {
         arg0->contact_damage = 7;
-        arg0->terrain_box = &dash_gunner_boxes[9];
-        D_8013B828 = &dash_gunner_boxes[5];
-        D_8013B82C = &dash_gunner_boxes[6];
-        D_8013B830 = &dash_gunner_boxes[8];
-        D_8013B834 = &dash_gunner_boxes[7];
+        arg0->terrain_box = &dash_gunner_box_9;
+        D_8013B828 = &dash_gunner_box_5;
+        D_8013B82C = &dash_gunner_box_6;
+        D_8013B830 = &dash_gunner_box_8;
+        D_8013B834 = &dash_gunner_box_7;
     }
     set_animation(arg0, 1);
     arg0->state = 1;
     arg0->unk6 = 0;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80058740);
+void func_80058740(struct MainObj* arg0)
+{
+    u8 subtype;
+
+    arg0->hp = 6;
+    arg0->invincibility_timer = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->air_state = 0;
+    arg0->animation_table = (const u8* const*)dash_gunner_animations;
+    arg0->unk16 = 6;
+    arg0->hurt_box = NULL;
+    arg0->attack_box = NULL;
+    arg0->collision_flags = 0;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->ext.main_27.unk8B = 0;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+
+    switch (arg0->unk2) {
+    case 0:
+    case 4:
+        arg0->x_speed = -0x18000;
+        arg0->ext.main_27.unk90 = 0;
+        arg0->unk15 = 0;
+        arg0->ext.main_27.unk80 = 0;
+        arg0->ext.main_27.unk8C = 0x1E;
+        func_8001540C(2, 0x51, arg0);
+        arg0->unk5 = 2;
+        break;
+    case 1:
+    case 5:
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->ext.main_27.unk8C = 0x1E;
+        arg0->unk5 = 3;
+        arg0->ext.main_27.unk90 = 0;
+        arg0->x_speed = 0x18000;
+        arg0->ext.main_27.unk80 = 0;
+        arg0->unk7A = 1;
+        break;
+    case 2:
+    case 6:
+        arg0->ext.main_27.unk82 = 0x1E;
+        arg0->ext.main_27.unk80 = 1;
+        arg0->ext.main_27.unk8C = 0x12C;
+        arg0->ext.main_27.unk90 = 0;
+        arg0->unk15 = 0;
+        arg0->ext.main_27.unk88 = 0;
+        arg0->ext.main_27.unk89 = 0x14;
+        arg0->ext.main_27.unk8A = 0;
+        func_8001540C(2, 0x51, arg0);
+        arg0->unk5 = 6;
+        break;
+    case 3:
+    case 7:
+        arg0->ext.main_27.unk90 = 0;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->ext.main_27.unk82 = 0x1E;
+        arg0->ext.main_27.unk80 = 1;
+        arg0->ext.main_27.unk8C = 0x12C;
+        arg0->ext.main_27.unk89 = 0x14;
+        arg0->ext.main_27.unk88 = 1;
+        arg0->ext.main_27.unk8A = 0;
+        arg0->unk7A = 1;
+        arg0->unk5 = 3;
+        break;
+    case 8:
+        arg0->ext.main_27.unk90 = 1;
+        arg0->ext.main_27.unk91 = 0x30;
+        arg0->unk15 = 0;
+        arg0->ext.main_27.unk80 = 0;
+        arg0->ext.main_27.unk8A = 0;
+        func_8001540C(2, 0x51, arg0);
+        arg0->x_speed = -0x18000;
+        arg0->unk5 = 2;
+        break;
+    case 9:
+        arg0->ext.main_27.unk90 = 1;
+        arg0->ext.main_27.unk91 = 0x30;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->ext.main_27.unk80 = 0;
+        arg0->ext.main_27.unk8A = 0;
+        func_8001540C(2, 0x51, arg0);
+        arg0->x_speed = 0x18000;
+        arg0->unk5 = 2;
+        break;
+    case 10:
+        arg0->ext.main_27.unk90 = 2;
+        arg0->ext.main_27.unk91 = 0x30;
+        arg0->ext.main_27.unk92 = 2;
+        arg0->unk15 = 0;
+        arg0->ext.main_27.unk80 = 0;
+        arg0->ext.main_27.unk8A = 0;
+        func_8001540C(2, 0x51, arg0);
+        arg0->x_speed = -0x18000;
+        arg0->unk5 = 2;
+        break;
+    case 11:
+        arg0->ext.main_27.unk90 = 2;
+        arg0->ext.main_27.unk91 = 0x30;
+        arg0->ext.main_27.unk92 = 2;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->ext.main_27.unk80 = 0;
+        arg0->ext.main_27.unk8A = 0;
+        func_8001540C(2, 0x51, arg0);
+        arg0->x_speed = 0x18000;
+        arg0->unk5 = 2;
+        break;
+    }
+
+    subtype = arg0->unk2;
+    if (subtype < 4 || (u8)(subtype - 8) < 4) {
+        arg0->contact_damage = 6;
+        arg0->terrain_box = &dash_gunner_box_4;
+        D_8013B828 = &dash_gunner_box_0;
+        D_8013B82C = &dash_gunner_box_1;
+        D_8013B830 = &dash_gunner_box_3;
+        D_8013B834 = &dash_gunner_box_2;
+    } else {
+        arg0->contact_damage = 7;
+        arg0->terrain_box = &dash_gunner_box_9;
+        D_8013B828 = &dash_gunner_box_5;
+        D_8013B82C = &dash_gunner_box_6;
+        D_8013B830 = &dash_gunner_box_8;
+        D_8013B834 = &dash_gunner_box_7;
+    }
+    set_animation(arg0, 1);
+    arg0->state = 1;
+    arg0->unk6 = 0;
+}
 #endif
 
 // dash_gunner_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80058AC8);
-#else
 void func_80058AC8(struct MainObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
@@ -249,7 +376,6 @@ void func_80058AC8(struct MainObj* arg0)
         arg0->state = 3;
     }
 }
-#endif
 
 void dash_gunner_explode(struct MainObj* self)
 {
@@ -531,9 +657,6 @@ void func_80059590(struct MainObj* self)
 }
 
 // dash_gunner_hop
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80059640);
-#else
 void func_80059640(struct MainObj* arg0)
 {
 
@@ -604,7 +727,6 @@ void func_80059640(struct MainObj* arg0)
     }
     move_object(MOVING_OBJECT(arg0));
 }
-#endif
 
 void dash_gunner_dash(struct MainObj* self)
 {
@@ -693,18 +815,16 @@ void dash_gunner_dash_end(struct MainObj* self)
     }
 }
 
-struct Unk_unk68 dash_gunner_boxes[10] = {
-    { -17, -16, 10, 34 },
-    { -21, -26, 42, 16 },
-    { -8, -2, 33, 6 },
-    { -8, -7, 34, 16 },
-    { 0, 7, 25, 23 },
-    { -24, -27, 17, 54 },
-    { -42, -33, 80, 17 },
-    { -15, -2, 39, 6 },
-    { -15, -7, 40, 16 },
-    { 0, 7, 32, 39 },
-};
+struct Unk_unk68 dash_gunner_box_0 = { -17, -16, 10, 34 };
+struct Unk_unk68 dash_gunner_box_1 = { -21, -26, 42, 16 };
+struct Unk_unk68 dash_gunner_box_2 = { -8, -2, 33, 6 };
+struct Unk_unk68 dash_gunner_box_3 = { -8, -7, 34, 16 };
+struct Unk_unk68 dash_gunner_box_4 = { 0, 7, 25, 23 };
+struct Unk_unk68 dash_gunner_box_5 = { -24, -27, 17, 54 };
+struct Unk_unk68 dash_gunner_box_6 = { -42, -33, 80, 17 };
+struct Unk_unk68 dash_gunner_box_7 = { -15, -2, 39, 6 };
+struct Unk_unk68 dash_gunner_box_8 = { -15, -7, 40, 16 };
+struct Unk_unk68 dash_gunner_box_9 = { 0, 7, 32, 39 };
 
 union AnimationStep dash_gunner_anim_0[] = {
     { 3, 0, 1, 0x00 },

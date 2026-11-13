@@ -562,7 +562,184 @@ done:
         func_8001540C(0, PAUSE_SOUND_MOVE, 0);
 }
 
-static void bar_merge_sub_tanks(void)
+#else
+void func_800304E4(struct BarObj* arg0)
+{
+    u8 original = arg0->unk14;
+    s8 cursor;
+
+    switch (PAUSE_PRESSED) {
+    case PAUSE_PAD_START:
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        break;
+    case PAUSE_PAD_CONFIRM:
+        arg0->unk28 = 0;
+        arg0->unk2C = 0;
+        switch (arg0->unk14) {
+        case 10:
+            arg0->unk5 = 3;
+            if (TANK_VALUE(engine_obj.sub_tanks[0]) == 0x20)
+                arg0->unk28 = 1;
+            break;
+        case 11:
+            arg0->unk5 = 3;
+            if (TANK_VALUE(engine_obj.sub_tanks[1]) == 0x20)
+                arg0->unk28 = 1;
+            break;
+        case 12:
+            arg0->unk5 = 4;
+            if (TANK_VALUE(engine_obj.sub_tanks[2]) == 0x20)
+                arg0->unk2C = 1;
+            break;
+        }
+        break;
+    case PAUSE_PAD_UP:
+        if (g_Player.unk2 != 0 || arg0->unk2 != 0)
+            break;
+        cursor = 9;
+        do {
+            if (cursor == 0 || arg0->options.items[cursor] != 0)
+                break;
+        } while (--cursor != 0);
+        arg0->unk5 = 0;
+        arg0->unk14 = cursor;
+        break;
+    case PAUSE_PAD_DOWN:
+        break;
+    case PAUSE_PAD_RIGHT:
+        cursor = original;
+        for (;;) {
+            cursor++;
+            if (cursor >= 0xD) {
+                if (arg0->options.items[cursor] != 0) {
+                    arg0->unk5 = 2;
+                } else {
+                    cursor++;
+                    arg0->unk5 = 2;
+                }
+                break;
+            }
+            if (arg0->options.items[cursor] != 0)
+                break;
+        }
+        arg0->unk14 = cursor;
+        break;
+    case PAUSE_PAD_LEFT:
+        cursor = original;
+        for (;;) {
+            cursor--;
+            if (cursor < 10) {
+                cursor = original;
+                break;
+            }
+            if (arg0->options.items[cursor] != 0)
+                break;
+        }
+        arg0->unk14 = cursor;
+        break;
+    }
+    if (arg0->unk14 != (s8)original)
+        func_8001540C(0, PAUSE_SOUND_MOVE, 0);
+}
+
+void func_80030728(struct BarObj* arg0)
+{
+    u8 original;
+    s8 cursor;
+    u16 pressed;
+
+    original = arg0->unk14;
+    pressed = PAUSE_PRESSED;
+    if (pressed & PAUSE_PAD_START) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        goto done;
+    }
+    switch (pressed) {
+    case PAUSE_PAD_CONFIRM:
+        if ((s8)original == 0xD) {
+            arg0->state = 2;
+            arg0->unk5 = 0;
+            arg0->unk30 = 1;
+        } else {
+            arg0->unk5 = 5;
+            arg0->unk6 = 0;
+            PAUSE_DRAW();
+        }
+        func_8001540C(0, PAUSE_SOUND_CONFIRM, 0);
+        break;
+    case PAUSE_PAD_UP:
+        cursor = original;
+        if (g_Player.unk2 == 0 && arg0->unk2 == 0) {
+            do {
+                cursor--;
+                if (cursor < 0xD) {
+                    cursor = 9;
+                    do {
+                        if (cursor == 0 || arg0->options.items[cursor] != 0)
+                            break;
+                    } while (--cursor != 0);
+                    arg0->unk5 = 0;
+                    break;
+                }
+            } while (arg0->unk14 != cursor && arg0->options.items[cursor] == 0);
+            arg0->unk14 = cursor;
+        } else {
+            cursor--;
+            if (cursor < 0xD)
+                cursor = 0xD;
+            if (arg0->options.items[cursor] != 0)
+                arg0->unk14 = cursor;
+        }
+        break;
+    case PAUSE_PAD_DOWN:
+        if (pressed & PAUSE_PAD_DOWN) {
+            cursor = original;
+            do {
+                cursor++;
+                if (cursor >= 0xF) {
+                    cursor = 0xE;
+                    break;
+                }
+            } while (arg0->unk14 != cursor && arg0->options.items[cursor] == 0);
+            arg0->unk14 = cursor;
+        }
+        break;
+    case PAUSE_PAD_LEFT:
+        if (g_Player.unk2 == 0 && arg0->unk2 == 0) {
+            cursor = 0xC;
+            do {
+                if (cursor == 0 || arg0->options.items[cursor] != 0)
+                    break;
+            } while (--cursor != 0);
+            arg0->unk14 = cursor;
+            if (cursor < 10) {
+                arg0->unk5 = 0;
+            } else {
+                arg0->unk5 = 1;
+            }
+        } else {
+            original = arg0->unk14;
+            cursor = 0xC;
+            do {
+                if (cursor == 0 || arg0->options.items[cursor] != 0) {
+                    arg0->unk14 = cursor;
+                    arg0->unk5 = 1;
+                    break;
+                }
+                cursor--;
+            } while (cursor >= 10);
+        }
+        break;
+    }
+done:
+    if (arg0->unk14 != (s8)original)
+        func_8001540C(0, PAUSE_SOUND_MOVE, 0);
+}
+#endif
+
+static inline void bar_merge_sub_tanks(void)
 {
     s8 second = engine_obj.sub_tanks[1];
 
@@ -575,10 +752,11 @@ static void bar_merge_sub_tanks(void)
 void func_80030A2C(struct BarObj* arg0)
 {
     s32 frame = main_bss_state.frame_counter;
-    u32 tank;
+    u8 tank;
     u8 energy;
     u8 health;
-    u8 player_health;
+    s8 player_health;
+    s8 damage;
 
     if (frame & 1)
         return;
@@ -588,7 +766,7 @@ void func_80030A2C(struct BarObj* arg0)
         if (energy != 0) {
             engine_obj.sub_tanks[tank] = (energy - 1) | 0x80;
             health = HP_VALUE(g_Player.hp) + 1;
-            if (engine_obj.max_hp < (s8)health)
+            if ((s8)health > engine_obj.max_hp)
                 health = engine_obj.max_hp;
             g_Player.hp = health;
             if ((main_bss_state.frame_counter & 3) == 0)
@@ -597,7 +775,7 @@ void func_80030A2C(struct BarObj* arg0)
         }
         if (g_Player.hp != engine_obj.max_hp) {
             health = HP_VALUE(g_Player.hp) + 1;
-            if (engine_obj.max_hp < (s8)health)
+            if ((s8)health > engine_obj.max_hp)
                 health = engine_obj.max_hp;
             g_Player.hp = health;
             if ((frame & 3) == 0)
@@ -611,22 +789,26 @@ void func_80030A2C(struct BarObj* arg0)
         return;
     }
     energy = TANK_VALUE(engine_obj.sub_tanks[tank]);
-    if (energy == 0) {
+    if (energy != 0) {
+        engine_obj.sub_tanks[tank] = (energy - 1) | 0x80;
+        player_health = g_Player.hp;
+        damage = HP_DAMAGE_FLAG(player_health);
+        health = HP_VALUE(player_health) + 1;
+        if ((s8)health > engine_obj.max_hp)
+            health = engine_obj.max_hp;
+        g_Player.hp = health | damage;
+        if ((main_bss_state.frame_counter & 3) == 0)
+            func_8001540C(0, PAUSE_SOUND_REFILL, 0);
+    } else {
         arg0->unk5 = 1;
-        if (tank == 0)
-            bar_merge_sub_tanks();
-        return;
+        if (tank == 0 && engine_obj.sub_tanks[1] < 0) {
+            engine_obj.sub_tanks[0] = engine_obj.sub_tanks[1];
+            engine_obj.sub_tanks[1] &= 0x80;
+        }
     }
-    engine_obj.sub_tanks[tank] = (energy - 1) | 0x80;
-    player_health = g_Player.hp;
-    health = HP_VALUE(player_health) + 1;
-    if (engine_obj.max_hp < (s8)health)
-        health = engine_obj.max_hp;
-    g_Player.hp = health | HP_DAMAGE_FLAG(player_health);
-    if ((main_bss_state.frame_counter & 3) == 0)
-        func_8001540C(0, PAUSE_SOUND_REFILL, 0);
 }
 
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80030C54(struct BarObj* arg0)
 {
     u32 i;
@@ -678,13 +860,72 @@ void func_80030C54(struct BarObj* arg0)
         func_8001540C(0, PAUSE_SOUND_REFILL, 0);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/pause_menu", func_800304E4);
+void func_80030C54(struct BarObj* arg0)
+{
+    u32 i;
+    s32 refilled;
+    s32 energy;
+    u8 next;
 
-INCLUDE_ASM("main/nonmatchings/pause_menu", func_80030728);
-
-INCLUDE_ASM("main/nonmatchings/pause_menu", func_80030A2C);
-
-INCLUDE_ASM("main/nonmatchings/pause_menu", func_80030C54);
+    if (main_bss_state.frame_counter & 1)
+        return;
+    if (arg0->unk2C != 0) {
+        refilled = 0;
+        for (i = 0; i < 9; i++) {
+            if (g_Player.weapon_energy[i] >= 0x30) {
+                g_Player.weapon_energy[i] = 0x30;
+            } else {
+                g_Player.weapon_energy[i]++;
+                if (g_Player.weapon_energy[i] > 0x30) {
+                    g_Player.weapon_energy[i] = 0x30;
+                } else {
+                    refilled = 1;
+                }
+            }
+        }
+        if (refilled == 0) {
+            energy = TANK_VALUE(engine_obj.sub_tanks[2]);
+            if (energy != 0) {
+                next = energy - 1;
+                engine_obj.sub_tanks[2] = next;
+            } else {
+                arg0->unk5 = 1;
+                arg0->unk2C = 0;
+            }
+            return;
+        }
+        goto refill;
+    }
+    refilled = 0;
+    if (TANK_VALUE(engine_obj.sub_tanks[2]) != 0) {
+        for (i = 0; i < 9; i++) {
+            if (g_Player.weapon_energy[i] >= 0x30) {
+                g_Player.weapon_energy[i] = 0x30;
+            } else {
+                g_Player.weapon_energy[i]++;
+                if (g_Player.weapon_energy[i] >= 0x30) {
+                    g_Player.weapon_energy[i] = 0x30;
+                } else {
+                    refilled = 1;
+                }
+            }
+        }
+        if (refilled != 0) {
+        refill:
+            energy = TANK_VALUE(engine_obj.sub_tanks[2]);
+            next = energy;
+            if (energy != 0)
+                next = energy - 1;
+            engine_obj.sub_tanks[2] = next;
+            if ((main_bss_state.frame_counter & 3) == 0)
+                func_8001540C(0, PAUSE_SOUND_REFILL, 0);
+        } else {
+            arg0->unk5 = 1;
+        }
+    } else {
+        arg0->unk5 = 1;
+    }
+}
 #endif
 
 void func_80030DF8(struct BarObj* arg0)

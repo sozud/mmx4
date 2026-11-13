@@ -38,10 +38,10 @@ void func_8006ED44(struct MainObj* self);
 void func_8006EF28(struct MainObj* self);
 void func_8006F0DC(struct MainObj* self);
 void func_8006F5F4(struct MainObj* self);
-void func_8006F86C(struct MainObj* self);
-extern s16 jet_stingray_flyby_explosion_offsets[16];
 extern ret_u8 func_8002938C(s32);
 #endif
+void func_8006F86C(struct MainObj* self);
+extern s16 jet_stingray_flyby_explosion_offsets[8][2];
 
 #if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EB40);
@@ -96,9 +96,6 @@ void jet_stingray_flyby_wait_on_screen(struct MainObj* self)
 }
 
 // jet_stingray_flyby_enter_straight
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006ED44);
-#else
 void func_8006ED44(struct MainObj* self)
 {
     u8 bit;
@@ -155,12 +152,8 @@ void func_8006ED44(struct MainObj* self)
         self->x_speed = FIXED(8);
     }
 }
-#endif
 
 // jet_stingray_flyby_enter_aimed
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EF28);
-#else
 void func_8006EF28(struct MainObj* self)
 {
     s16 dx;
@@ -193,7 +186,6 @@ void func_8006EF28(struct MainObj* self)
         self->unk6 = 0;
     }
 }
-#endif
 
 void jet_stingray_flyby_enter(struct MainObj* self)
 {
@@ -416,38 +408,40 @@ void jet_stingray_flyby_drift(struct MainObj* self)
 }
 
 // jet_stingray_flyby_destroyed
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_WIN32) || defined(MMX4_PC) || defined(MMX4_SATURN)
+#define JET_STINGRAY_FRAME_COUNTER_U8 ((u8)WEAPON_FRAME_COUNTER)
+#else
+#define JET_STINGRAY_FRAME_COUNTER_U8 (*(u8*)&WEAPON_FRAME_COUNTER)
+#endif
 void func_8006F86C(struct MainObj* self)
 {
-    if (self->unk6 == 0) {
-        self->unk6 = 1;
+    switch (self->unk6) {
+    case 0:
+        self->unk6++;
         self->attack_box = NULL;
         self->hurt_box = NULL;
         self->ext.main_55.unk85 = 60;
         set_animation(self, 0);
-    }
-    if (self->unk6 == 1) {
+    case 1:
         if (self->ext.main_55.unk85 == 0) {
             self->unk6++;
-            self->x_speed = self->unk2 == 0 ? FIXED(8) : FIXED(4);
+            self->x_speed = self->unk2 != 0 ? FIXED(4) : FIXED(8);
         } else {
             self->ext.main_55.unk85--;
-            self->x_speed = (s32)background_objects[self->bg_offset].unk47 * FIXED(1);
+            self->x_speed = background_objects[self->bg_offset].unk47 << 0x10;
         }
+        break;
     }
-    if ((get_random() & 0xFF) % 7 == 0) {
-        u8 kind = ((u8)WEAPON_FRAME_COUNTER ^ 1) & 1;
-        s16 x = (u16)self->x_pos.i.hi + (u16)jet_stingray_flyby_explosion_offsets[(get_random() & 7) * 2];
-        s16 y = (u16)self->y_pos.i.hi + (u16)jet_stingray_flyby_explosion_offsets[(get_random() & 7) * 2 + 1];
-        struct VisualObj* explosion = spawn_explosion_at(0, x, y, kind);
+    if ((u8)((get_random() & 0xFF) % 7U) == 0) {
+        u8 kind = (JET_STINGRAY_FRAME_COUNTER_U8 ^ 1) & 1;
+        s32 x = (s16)(self->x_pos.i.hi + jet_stingray_flyby_explosion_offsets[get_random() & 7][0]);
+        struct VisualObj* explosion = spawn_explosion_at(
+            0, x, self->y_pos.i.hi + jet_stingray_flyby_explosion_offsets[get_random() & 7][1], kind);
         explosion->unk16 = VISUAL_SATURN_LAYER(5);
     }
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006F86C);
-#endif
 
 void jet_stingray_flyby_main(struct MainObj* self)
 {
@@ -472,23 +466,15 @@ struct Unk_unk68 jet_stingray_flyby_attack_box = { -19, -8, 54, 12 };
 
 struct Unk_unk68 jet_stingray_flyby_hurt_box = { -28, -12, 63, 24 };
 
-s16 jet_stingray_flyby_explosion_offsets[16] = {
-    (s16)0x000F,
-    (s16)0xFFF2,
-    (s16)0x0007,
-    (s16)0x000E,
-    (s16)0xFFF2,
-    (s16)0xFFFF,
-    (s16)0xFFD8,
-    (s16)0xFFF5,
-    (s16)0xFFC6,
-    (s16)0x0003,
-    (s16)0xFFC0,
-    (s16)0xFFF0,
-    (s16)0xFFEB,
-    (s16)0xFFF2,
-    (s16)0xFFC8,
-    (s16)0x000F,
+s16 jet_stingray_flyby_explosion_offsets[8][2] = {
+    { 15, -14 },
+    { 7, 14 },
+    { -14, -1 },
+    { -40, -11 },
+    { -58, 3 },
+    { -64, -16 },
+    { -21, -14 },
+    { -56, 15 },
 };
 
 struct Unk_unk68 jet_stingray_flyby_anim_0[16] = {

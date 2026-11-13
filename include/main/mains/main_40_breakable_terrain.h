@@ -7,6 +7,6 @@ void breakable_terrain_update(struct MainObj* arg0);
 void func_80061DFC(struct MainObj*);
 void func_80061F2C(struct MainObj*);
 
-extern s8 breakable_terrain_effect_offsets[];
+extern s8 breakable_terrain_effect_offsets[][2];
 
 #endif

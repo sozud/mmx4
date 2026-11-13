@@ -22,7 +22,7 @@ void rising_fire_charged_main(struct WeaponObj*);
 void rising_fire_despawn(struct WeaponObj*);
 void rising_fire_despawn(struct WeaponObj*);
 
-extern u8 rising_fire_charged_offsets[4];
+extern u8 rising_fire_charged_offsets[2][2];
 extern struct Unk_unk68 rising_fire_hit_box[];
 extern union AnimationStep* D_8011C0B0[];
 
@@ -59,12 +59,9 @@ void rising_fire_update(struct WeaponObj* arg0)
 void func_80095254(struct WeaponObj* arg0);
 void func_80095538(struct WeaponObj* arg0);
 extern struct Unk_unk68 rising_fire_hit_box[];
-extern u8 rising_fire_charged_offsets[4];
+extern u8 rising_fire_charged_offsets[2][2];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095254);
-#else
 void func_80095254(struct WeaponObj* arg0)
 {
     struct PlayerObj* player;
@@ -81,10 +78,10 @@ void func_80095254(struct WeaponObj* arg0)
     arg0->unk15 = 0;
     player = &g_Player;
     if (g_Player.unk15 == 0)
-        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + (s8)rising_fire_charged_offsets[arg0->unk2 * 2];
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + (s8)rising_fire_charged_offsets[arg0->unk2][0];
     else
-        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - (s8)rising_fire_charged_offsets[arg0->unk2 * 2];
-    arg0->y_pos.i.hi = player->y_pos.i.hi + (s8)rising_fire_charged_offsets[arg0->unk2 * 2 + 1];
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - (s8)rising_fire_charged_offsets[arg0->unk2][0];
+    arg0->y_pos.i.hi = player->y_pos.i.hi + (s8)rising_fire_charged_offsets[arg0->unk2][1];
     arg0->x_vel.val = 0;
     arg0->y_vel.val = 0x70000;
     arg0->unk28.val = 0;
@@ -97,7 +94,6 @@ void func_80095254(struct WeaponObj* arg0)
     arg0->state++;
     rising_fire_draw(arg0);
 }
-#endif
 
 void rising_fire_main(struct WeaponObj* arg0)
 {
@@ -148,9 +144,6 @@ void rising_fire_charged_update(struct WeaponObj* arg0)
 }
 
 // rising_fire_charged_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095538);
-#else
 void func_80095538(struct WeaponObj* arg0)
 {
     arg0->on_screen = 1;
@@ -180,7 +173,6 @@ void func_80095538(struct WeaponObj* arg0)
     arg0->state++;
     rising_fire_charged_draw(arg0);
 }
-#endif
 
 void rising_fire_charged_main(struct WeaponObj* self)
 {
@@ -248,11 +240,9 @@ void (*rising_fire_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))rising_fire_despawn,
 };
 
-u8 rising_fire_charged_offsets[4] = {
-    0xF5,
-    0xF6,
-    0x06,
-    0xF4,
+u8 rising_fire_charged_offsets[2][2] = {
+    { 0xF5, 0xF6 },
+    { 0x06, 0xF4 },
 };
 
 void (*rising_fire_charged_state_funcs[])(struct WeaponObj*) = {

@@ -98,9 +98,6 @@ void palette_pulse_init(struct EffectObj* self)
 void func_800BD080(struct EffectObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_34_rock_drop_sequence", func_800BD080);
-#else
 void func_800BD080(struct EffectObj* arg0)
 {
     struct MainObj* main;
@@ -129,7 +126,6 @@ void func_800BD080(struct EffectObj* arg0)
     if ((s16)arg0->ext.effect_4.unk16 < 0x70)
         arg0->ext.effect_4.unk16 += 3;
 }
-#endif
 
 s16 rock_drop_sequence_delays[10] = { 2, 2, 2, 0x46, 0x64, 0x46, 0x46, 0x46, 0x46, 0 };
 

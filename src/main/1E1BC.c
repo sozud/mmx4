@@ -5,9 +5,9 @@
 #include "main/collision.h"
 #include "main/objects.h"
 #include "weapon_resources.h"
+#include "main/sprite_animations.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-#include "main/sprite_animations.h"
 #include "main/collision_bounds.h"
 #include "main/55C4.h"
 #include "main/objects.h"
@@ -306,18 +306,16 @@ ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
 extern u16 D_80106070[64];
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DD04);
-#else
 ret_s8 func_8002DD04(struct MainObj* object)
 {
+    struct PlayerObj* player = &g_Player;
     struct WeaponObj* weapon;
 
     if (object->unk7A != 0) {
         object->unk65 = 0;
         return 0;
     }
-    if (object->collision_data == D_80106070 && (g_Player.unk2 == 0 || !(g_Player.boss_flags & 0x40)))
+    if (object->collision_data == D_80106070 && (player->unk2 == 0 || !(player->boss_flags & 0x40)))
         return 0;
     if (object->unk5 != 0)
         object->unk42 &= 0x7FFF;
@@ -338,11 +336,7 @@ ret_s8 func_8002DD04(struct MainObj* object)
     object->unk65 = 0;
     return 0;
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DE30);
-#else
 s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
 {
     const u8* table;
@@ -402,7 +396,6 @@ s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
     func_8002DF7C(arg1, 0);
     return (s8)(id + 1);
 }
-#endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
@@ -458,7 +451,65 @@ void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
     visual->unk15 = arg0->unk15 ^ PLAYER_FACING_RIGHT;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DF7C);
+void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
+{
+    struct VisualObj* visual;
+    s8 id;
+    s32 visual_id;
+
+    id = arg0->id;
+    if (D_800F460C[id].effect_type == 4) {
+        return;
+    }
+
+    if (arg1 < 0) {
+        if (D_800F460C[id].set_facing != 0) {
+            arg0->unk98 = -1;
+        }
+        func_8001540C(0, 6, arg0);
+        visual_id = 0;
+    } else {
+        if (D_800F460C[id].set_facing != 0 && (arg1 == 0 || D_800F460C[id].keep_facing == 0)) {
+            arg0->unk98 = 1;
+        }
+        switch (D_800F460C[id].effect_type) {
+        case 0:
+            func_8001540C(1, D_800F460C[id].animation_id, arg0);
+            break;
+        case 1:
+            if (arg1 == 0) {
+                func_8001540C(1, 9, arg0);
+            } else {
+                func_8001540C(1, 0xA, arg0);
+            }
+            break;
+        case 2:
+        case 3:
+            func_8001540C(5, D_800F460C[id].animation_id, arg0);
+            break;
+        case 4:
+            break;
+        }
+        visual_id = D_800F460C[id].visual_id;
+    }
+
+    visual = find_free_visual_obj();
+    if (visual == NULL) {
+        return;
+    }
+    visual->active = 0x21;
+    visual->id = 3;
+    visual->unk2 = visual_id;
+    visual->bg_offset = arg0->bg_offset;
+    visual->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
+    visual->animation_table = D_8011BF40;
+    visual->unk40 = WEAPON_HIT_TEXTURE;
+    visual->unk42 = WEAPON_PALETTE_2;
+    visual->unk16 = 0;
+    visual->x_pos.i.hi = (s16)((u16*)&arg0->unk80)[0];
+    visual->y_pos.i.hi = (s16)((u16*)&arg0->unk80)[1];
+    visual->unk15 = arg0->unk15 ^ PLAYER_FACING_RIGHT;
+}
 #endif
 void collide_with_players(struct PlayerObj* arg0)
 {
@@ -503,7 +554,38 @@ void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
         arg1->y_pos.i.hi += arg1->unk6E;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002E294);
+void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
+{
+    s16 x_delta;
+    s16 y_delta;
+    s16 y_overlap;
+    s16 x_overlap;
+    s8 side;
+
+    if (arg1->unk68 == NULL || func_8002C160(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1)) == 0) {
+        return;
+    }
+    func_8002C26C(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1));
+    func_8002C2EC(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1));
+    x_delta = arg1->unk6C;
+    if (x_delta >= 0) {
+        x_overlap = x_delta;
+    } else {
+        x_overlap = -x_delta;
+    }
+    y_delta = arg1->unk6E;
+    if (y_delta >= 0) {
+        y_overlap = y_delta;
+    } else {
+        y_overlap = -y_delta;
+    }
+    side = arg0->unk66;
+    if (side == 0 ? x_overlap < y_overlap : side > 0) {
+        arg1->x_pos.i.hi += (u16)arg1->unk6C;
+    } else {
+        arg1->y_pos.i.hi += (u16)arg1->unk6E;
+    }
+}
 #endif
 void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
 {

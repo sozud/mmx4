@@ -13,7 +13,20 @@ void func_80058740(struct MainObj*);
 void dash_gunner_wait_for_player(struct MainObj*);
 void soul_body_init(struct WeaponObj*);
 void soul_body_main(struct WeaponObj*);
-extern struct Unk_unk68 dash_gunner_boxes[10];
+extern struct Unk_unk68 dash_gunner_box_0, dash_gunner_box_1, dash_gunner_box_2, dash_gunner_box_3, dash_gunner_box_4,
+    dash_gunner_box_5, dash_gunner_box_6, dash_gunner_box_7, dash_gunner_box_8, dash_gunner_box_9;
+static struct Unk_unk68* const dash_gunner_boxes[10] = {
+    &dash_gunner_box_0,
+    &dash_gunner_box_1,
+    &dash_gunner_box_2,
+    &dash_gunner_box_3,
+    &dash_gunner_box_4,
+    &dash_gunner_box_5,
+    &dash_gunner_box_6,
+    &dash_gunner_box_7,
+    &dash_gunner_box_8,
+    &dash_gunner_box_9,
+};
 extern struct Unk_unk68 *D_8013B828, *D_8013B82C, *D_8013B830, *D_8013B834;
 static u32 gfx[64], frames[64], attributes[2];
 static u8 map[3 * 256];
@@ -211,7 +224,7 @@ static u32 gunner_wait(u32 row)
     actor.y_pos.i.hi = 1112;
     func_80058740(&actor);
     assert(actor.state == 1 && actor.unk5 == 3 && actor.ext.main_27.unk80 == 0 && actor.unk7A == 1);
-    assert(D_8013B828 == &dash_gunner_boxes[5] && D_8013B82C == &dash_gunner_boxes[6] && D_8013B830 == &dash_gunner_boxes[8] && D_8013B834 == &dash_gunner_boxes[7]);
+    assert(D_8013B828 == dash_gunner_boxes[5] && D_8013B82C == dash_gunner_boxes[6] && D_8013B830 == dash_gunner_boxes[8] && D_8013B834 == dash_gunner_boxes[7]);
     before = actor;
     before.unk7A = 0;
     before.unk5 = 2;
@@ -220,7 +233,7 @@ static u32 gunner_wait(u32 row)
     dash_gunner_wait_for_player(&actor);
     check();
     assert(c_test_word_difference((u32*)&actor, (u32*)&before, sizeof(actor) / 4) == 0);
-    assert(D_8013B828 == &dash_gunner_boxes[5] && D_8013B82C == &dash_gunner_boxes[6] && D_8013B830 == &dash_gunner_boxes[8] && D_8013B834 == &dash_gunner_boxes[7]);
+    assert(D_8013B828 == dash_gunner_boxes[5] && D_8013B82C == dash_gunner_boxes[6] && D_8013B830 == dash_gunner_boxes[8] && D_8013B834 == dash_gunner_boxes[7]);
     return 1;
 }
 static u32 soul_left(u32 row)

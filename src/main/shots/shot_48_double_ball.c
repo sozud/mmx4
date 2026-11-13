@@ -32,15 +32,13 @@ void func_800A9964(struct ShotObj* self);
 extern u8 double_ball_boxes[2][4];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_48_double_ball", func_800A9964);
-#else
 void func_800A9964(struct ShotObj* self)
 {
     u16 dx;
     u16 dy;
 
     self->state = 1;
+    self->unk16 = 3;
     self->on_screen = 1;
     self->unk5 = 0;
     self->unk54 = double_ball_boxes[0];
@@ -49,7 +47,6 @@ void func_800A9964(struct ShotObj* self)
     self->unk7 = 0;
     self->timer = 0;
     self->bg_offset = 0;
-    self->unk16 = 3;
     self->unk68 = NULL;
     self->unk58.collision_bounds = D_801060F0;
     self->unk5C = 3;
@@ -73,7 +70,6 @@ void func_800A9964(struct ShotObj* self)
     dy = ABS(self->y_pos.i.hi, g_Player.y_pos.i.hi);
     self->unk8A = ((dx + dy) / 4) + 1;
 }
-#endif
 
 void double_ball_travel(struct ShotObj* self)
 {

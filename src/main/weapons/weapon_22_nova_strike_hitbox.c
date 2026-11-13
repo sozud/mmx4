@@ -6,7 +6,7 @@
 #include "main/sprite_animations.h"
 #include "main/weapons/weapon_00_lemon.h"
 
-extern u16 buster_muzzle_offsets[48];
+extern u16 buster_muzzle_offsets[24][2];
 #include "weapon_resources.h"
 
 void nova_strike_hitbox_update(struct WeaponObj* arg0)
@@ -37,11 +37,8 @@ void nova_strike_hitbox_update(struct WeaponObj* arg0)
     arg0->unk15 = player->unk15;
 }
 
-u16 buster_muzzle_offsets[48] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFFEF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFFF2, 0, 0, 0, 0xFFF2 };
+u16 buster_muzzle_offsets[24][2] = { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0xFFEF, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0xFFF2, 0 }, { 0, 0 }, { 0xFFF2, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } };
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_22_nova_strike_hitbox", buster_shot_place_at_muzzle);
-#else
 void buster_shot_place_at_muzzle(struct VisualObj* arg0, struct PlayerObj* arg1, arg_u8 arg2)
 {
     s16 y;
@@ -52,13 +49,12 @@ void buster_shot_place_at_muzzle(struct VisualObj* arg0, struct PlayerObj* arg1,
     weapon_offset = arg2;
     if (arg0->unk15 != 0) {
         arg0->x_pos.i.hi = arg1->x_pos.u.hi - D_8011B230.components[frame_component];
-        arg0->x_pos.i.hi -= buster_muzzle_offsets[weapon_offset * 2];
+        arg0->x_pos.i.hi -= buster_muzzle_offsets[weapon_offset][0];
     } else {
         arg0->x_pos.i.hi = arg1->x_pos.u.hi + D_8011B230.components[frame_component];
-        arg0->x_pos.i.hi += buster_muzzle_offsets[weapon_offset * 2];
+        arg0->x_pos.i.hi += buster_muzzle_offsets[weapon_offset][0];
     }
-    y = arg1->y_pos.u.hi + D_8011B230.components[frame_component + 1];
+    y = arg1->y_pos.u.hi + ((struct PlayerFrameOffset*)&D_8011B230.components[frame_component])->y;
     arg0->y_pos.i.hi = y;
-    arg0->y_pos.i.hi = y + buster_muzzle_offsets[weapon_offset * 2 + 1];
+    arg0->y_pos.i.hi = y + buster_muzzle_offsets[weapon_offset][1];
 }
-#endif

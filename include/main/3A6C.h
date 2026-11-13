@@ -7,7 +7,7 @@ struct Prim {
     s8 uv;
     u8 w;
     u8 h;
-    s8 clut;
+    u8 clut;
 }; // size 0x8
 
 #ifdef MMX4_PC

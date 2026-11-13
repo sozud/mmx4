@@ -26,9 +26,6 @@ void item_sparkle_update(struct MiscObj* self)
 void func_800CF300(struct MiscObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_36_item_sparkle", func_800CF300);
-#else
 void func_800CF300(struct MiscObj* self)
 {
     struct AnimatedObj* owner = ANIMATED_OBJECT(self->ext.pointer.unk50);
@@ -65,7 +62,6 @@ void func_800CF300(struct MiscObj* self)
     self->unk2C = 0;
     self->state = (u8)self->state + 1;
 }
-#endif
 
 void item_sparkle_move(struct MiscObj* self)
 {

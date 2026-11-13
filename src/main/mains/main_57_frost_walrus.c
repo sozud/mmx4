@@ -173,9 +173,6 @@ void func_80073E80(struct MainObj* arg0);
 #endif
 extern void (*frost_walrus_step_funcs[12])();
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_800722A0);
-#else
 void func_800722A0(struct MainObj* arg0)
 {
     if (((struct BaseObj*)arg0->ext.main_57.effect)->active != 0)
@@ -216,12 +213,8 @@ void func_800722A0(struct MainObj* arg0)
     arg0->unk5 = 2;
     arg0->unk6 = 0;
 }
-#endif
 
 // frost_walrus_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80072418);
-#else
 void func_80072418(struct MainObj* arg0)
 {
     s32 hit;
@@ -255,13 +248,15 @@ void func_80072418(struct MainObj* arg0)
                     goto stagger;
                 goto flash;
             }
-            if (hit == 0x23 || hit < 0x24)
+            if (hit == 0x23)
+                goto flash;
+            if (hit < 0x24)
                 goto flash;
             if (hit == 0x24)
                 goto check_staggered;
-            if (hit == 0x7F)
-                goto update;
-            goto flash;
+            if (hit != 0x7F)
+                goto flash;
+            goto update;
         }
     }
     goto update;
@@ -283,7 +278,6 @@ update:
     func_8002D9BC(arg0);
     update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
 }
-#endif
 
 void frost_walrus_reset(struct MainObj* self)
 {
@@ -1010,9 +1004,6 @@ void frost_walrus_stagger(struct MainObj* self)
 }
 
 // frost_walrus_stagger_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80073E80);
-#else
 void func_80073E80(struct MainObj* arg0)
 {
     struct VisualObj* visual;
@@ -1036,15 +1027,14 @@ void func_80073E80(struct MainObj* arg0)
     else
         arg0->x_speed = 0x20000;
     arg0->y_speed = 0x38000;
-    arg0->air_state = 1;
     arg0->gravity = 0x4200;
+    arg0->air_state = 1;
     arg0->ext.main_57.flash_timer = 0xC8;
     arg0->ext.main_57.flashing = 1;
     arg0->x_accel = 0;
     arg0->collision_data = D_801060F0;
     arg0->unk6++;
 }
-#endif
 
 void frost_walrus_stagger_fall(struct MainObj* self)
 {

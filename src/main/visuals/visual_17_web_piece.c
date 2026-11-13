@@ -82,7 +82,45 @@ void func_800B20CC(struct VisualObj* arg0)
     }
 }
 #else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_17_web_piece", func_800B20CC);
+void func_800B20CC(struct VisualObj* arg0)
+{
+    s32 index;
+    s32 target_x;
+    s32 target_y;
+    u8 direction;
+    struct QuadObj* quad;
+
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    if (arg0->unk2 == 0) {
+        arg0->unk16 = 3;
+        set_animation(arg0, 0x18);
+        return;
+    }
+    arg0->unk16 = 5;
+    set_animation(arg0, 0x17);
+    index = (arg0->unk2 - 1) * 2;
+    if (engine_obj.stage != 0xC) {
+        target_x = web_piece_positions_a[0][index] << 16;
+        target_y = web_piece_positions_a[0][index + 1] << 16;
+    } else {
+        target_x = web_piece_positions_b[0][index] << 16;
+        target_y = web_piece_positions_b[0][index + 1] << 16;
+    }
+    direction = angle_from_delta(arg0->x_pos.val - target_x, arg0->y_pos.val - target_y);
+    set_velocity_from_angle(MOVING_OBJECT(arg0), direction);
+    arg0->unk54 = direction;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->x_vel.val *= 2;
+    arg0->y_vel.val *= 2;
+    quad = find_free_quad_obj();
+    if (quad != NULL) {
+        quad->active = -0x7F;
+        quad->id = 5;
+        arg0->unk5C.owner = (struct PlayerObj*)quad;
+    }
+}
 #endif
 
 void web_piece_main(struct VisualObj* arg0)

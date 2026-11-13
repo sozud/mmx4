@@ -109,6 +109,10 @@ struct Main0Ext {
     u8 damage_flash_timer;
 };
 
+struct Main2Ext {
+    u8 item_subtype;
+};
+
 struct Main3Ext {
     u32 alerted;
     s32 roll_timer;
@@ -760,7 +764,7 @@ struct Main75Ext {
         struct ShotObj* shot;
         struct MainObj* child;
     } object;
-    const u8* script;
+    u8* script;
     struct ShotObj* thruster;
     s16 background_unk1E;
     u8 saved_unk5;
@@ -957,6 +961,7 @@ struct Main20Ext {
 union MainObjExt {
     u32 raw[7];
     struct Main0Ext main_0;
+    struct Main2Ext main_2;
     struct Main3Ext main_3;
     struct Main5Ext main_5;
     struct Main8Ext main_8;
@@ -1818,7 +1823,7 @@ union LayerPrivateState {
     f32 value;
     s8 signed_byte;
     u8 misc_20_active;
-    u8 bytes[2];
+    u8 bytes[4];
 };
 
 struct LayerObj {

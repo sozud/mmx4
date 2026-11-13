@@ -92,26 +92,22 @@ u8 general_at_position(struct ObjectHeader* self, s16 arg1, s16 arg2)
     return 0;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", general_pick_script);
-#else
 void general_pick_script(struct MainObj* self)
 {
     s32 low_health = self->hp < 0x19;
-    const u8** scripts = general_scripts[low_health];
-    u8 roll = get_random();
-    u8 i = 0;
-    u8* weights = &general_script_weights[low_health * 2];
+    void** scripts = general_scripts[low_health];
+    u8 roll;
+    u8 i;
+
+    roll = get_random();
     roll = (roll >> 2) & 0xF;
-    while (i < 2) {
-        if (roll < weights[i]) {
+    for (i = 0; i < 2; i++) {
+        if (roll < general_script_weights[low_health][i]) {
             self->ext.main_75.script = scripts[i];
             return;
         }
-        i++;
     }
 }
-#endif
 
 void general_intro_wait_player(struct MainObj* self)
 {
@@ -138,7 +134,7 @@ void general_intro_wait_player(struct MainObj* self)
 // general_intro_init
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 general_at_position(struct ObjectHeader*, s16, s16);
-void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only);
+void func_8002217C(arg_u16 message, arg_u8 portrait, s32 delay_only);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
@@ -162,9 +158,6 @@ void func_800917AC(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_8008FBCC);
-#else
 void func_8008FBCC(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -227,7 +220,6 @@ void func_8008FBCC(struct MainObj* self)
         player_end_script_action();
     }
 }
-#endif
 
 void general_intro_lock_camera(struct MainObj* self)
 {
@@ -370,25 +362,23 @@ void general_rise(struct MainObj* self)
 }
 
 // general_move
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009027C(struct MainObj* self)
 {
-    struct Main75Ext* ext = &self->ext.main_75;
     u8 next;
 
     switch (self->unk6) {
     case 0:
-        self->unk6 = 1;
+        self->unk6++;
         set_animation(self, 8);
         if (self->y_pos.i.hi >= 0x24B) {
-            set_animation(ext->thruster, 5);
+            set_animation(self->ext.main_75.thruster, 5);
             func_8001540C(2, SATURN_SOUND(1, 0xDB), self);
         } else {
-            set_animation(ext->thruster, 6);
+            set_animation(self->ext.main_75.thruster, 6);
             func_8001540C(2, SATURN_SOUND(2, 0xDC), self);
         }
-        ext->thruster->unk84.shot_55.x = self->unk15 != 0 ? -0x18 : 0x18;
-        ext->thruster->unk84.shot_55.y = 4;
+        self->ext.main_75.thruster->unk84.shot_55.x = self->unk15 != 0 ? -0x18 : 0x18;
+        self->ext.main_75.thruster->unk84.shot_55.y = 4;
         break;
     case 1:
         set_velocity_from_angle(MOVING_OBJECT(self),
@@ -401,7 +391,7 @@ void func_8009027C(struct MainObj* self)
             self->x_speed = 0;
             self->y_speed = 0;
             self->unk6++;
-            set_animation(ext->thruster, 7);
+            set_animation(self->ext.main_75.thruster, 7);
             STOP_SOUND(2, 2, 0x6);
         }
         break;
@@ -409,19 +399,16 @@ void func_8009027C(struct MainObj* self)
         animate_object(ANIMATED_OBJECT(self));
         if (--self->unk7C != 0)
             break;
-        if (ext->script == NULL || *ext->script == 0xFF)
+        if (self->ext.main_75.script == NULL || *self->ext.main_75.script == 0xFF)
             general_pick_script(self);
-        next = *ext->script;
+        next = *self->ext.main_75.script;
         self->unk6 = 0;
         self->unk7 = 0;
-        ext->script++;
+        self->ext.main_75.script++;
         self->unk5 = next;
         break;
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_8009027C);
-#endif
 
 void general_fly_descend(struct MainObj* self)
 {
@@ -461,9 +448,6 @@ void general_fly_start(struct MainObj* self)
 }
 
 // general_fly_cross
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800905D4);
-#else
 void func_800905D4(struct MainObj* self)
 {
     u8 turned;
@@ -496,7 +480,6 @@ void func_800905D4(struct MainObj* self)
         }
     }
 }
-#endif
 
 void general_fly(struct MainObj* self)
 {
@@ -835,9 +818,6 @@ void general_slam(struct MainObj* self)
 }
 
 // general_fight
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_80091218);
-#else
 void func_80091218(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -872,6 +852,8 @@ void func_80091218(struct MainObj* self)
     } else if (hit != 0) {
         if (engine_obj.cur_character == 0) {
             switch (hit) {
+            case 0x7F:
+                break;
             case 9:
             case 0x12:
                 shot = find_free_shot_obj();
@@ -886,11 +868,13 @@ void func_80091218(struct MainObj* self)
                 self->ext.main_75.hit_timer = 0x40;
                 self->ext.main_75.hit_active = 1;
                 break;
-            case 0x7F:
-                break;
             }
         } else {
             switch (hit) {
+            case 0x18:
+            case 0x19:
+            case 0x7F:
+                break;
             case 0x1E:
                 shot = find_free_shot_obj();
                 if (shot != NULL) {
@@ -904,10 +888,6 @@ void func_80091218(struct MainObj* self)
                 self->ext.main_75.hit_timer = 0x40;
                 self->ext.main_75.hit_active = 1;
                 break;
-            case 0x18:
-            case 0x19:
-            case 0x7F:
-                break;
             }
         }
     }
@@ -915,7 +895,6 @@ void func_80091218(struct MainObj* self)
     func_8002D9BC(self);
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
-#endif
 
 void general_death_start(struct MainObj* self)
 {
@@ -961,22 +940,15 @@ void general_death_blink(struct MainObj* self)
 }
 
 // general_death_explode
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800915C4);
-#else
 void func_800915C4(struct MainObj* self)
 {
     struct ObjectHeader* effect = OBJECT_HEADER(self->ext.main_75.object.effect);
-    u16 timer;
 
     self->on_screen = 0;
     if (effect->active == 0)
         return;
     if (effect->unk7 == 0) {
-        timer = (u16)self->unk7E;
-        self->unk7E = timer - 1;
-
-        if (timer == 0) {
+        if (self->unk7E-- == 0) {
             self->unk7E = 5;
             self->unk42 ^= 0x8000;
         }
@@ -997,7 +969,6 @@ void func_800915C4(struct MainObj* self)
     self->unk15 = 0;
     set_animation(self, 0);
 }
-#endif
 
 void general_death_wait_explosion(struct MainObj* self)
 {
@@ -1516,12 +1487,12 @@ void* D_80105E84[2] = {
     D_80105E78,
 };
 
-void* general_scripts[2] = {
+void** general_scripts[2] = {
     D_80105E7C,
     D_80105E84,
 };
 
-u8 general_script_weights[4] = { 0x09, 0x10, 0x09, 0x10 };
+u8 general_script_weights[2][2] = { { 0x09, 0x10 }, { 0x09, 0x10 } };
 
 void (*general_intro_funcs[])(struct MainObj*) = {
     general_intro_wait_player,

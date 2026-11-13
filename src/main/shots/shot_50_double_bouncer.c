@@ -31,9 +31,6 @@ void (*double_bouncer_step_funcs[])(struct ShotObj*) = {
 void func_800AA2FC(struct ShotObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_50_double_bouncer", func_800AA2FC);
-#else
 void func_800AA2FC(struct ShotObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
@@ -55,7 +52,6 @@ void func_800AA2FC(struct ShotObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 void double_bouncer_bounce(struct ShotObj* self)
 {

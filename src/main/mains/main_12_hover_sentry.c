@@ -57,14 +57,11 @@ void func_8004BF5C(struct MainObj* arg0);
 void func_8004C210(struct MainObj* self);
 void func_8004C394(struct MainObj* self);
 void func_8004C56C(struct MainObj* self);
+#endif
 extern struct Unk_unk68 D_800FB69C;
 extern struct Unk_unk68 D_800FB6A0;
 extern struct Unk_unk68 D_800FB6A4;
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004B8FC);
-#else
 extern struct Unk_unk68 D_800FB684, D_800FB688, D_800FB68C;
 void func_8004B8FC(struct MainObj* arg0)
 {
@@ -133,7 +130,6 @@ void func_8004B8FC(struct MainObj* arg0)
         break;
     }
 }
-#endif
 
 void hover_sentry_main(struct MainObj* self)
 {
@@ -197,9 +193,6 @@ void hover_sentry_alert(struct MainObj* self)
 }
 
 // hover_sentry_attack_0
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BCFC);
-#else
 void func_8004BCFC(struct MainObj* arg0)
 {
     switch (arg0->unk6) {
@@ -272,7 +265,6 @@ land:
     set_animation(ANIMATED_OBJECT(arg0), 0xA);
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 // hover_sentry_attack_1
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -352,13 +344,85 @@ void func_8004BF5C(struct MainObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BF5C);
+void func_8004BF5C(struct MainObj* arg0)
+{
+    switch (arg0->unk6) {
+    case 0:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->unk6 = 1;
+            set_animation(ANIMATED_OBJECT(arg0), 6);
+        }
+        break;
+    case 1:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->unk6 = 2;
+            set_animation(ANIMATED_OBJECT(arg0), 7);
+            arg0->terrain_box = &D_800FB69C;
+            arg0->hurt_box = &D_800FB6A4;
+            arg0->attack_box = &D_800FB6A0;
+        }
+        break;
+    case 2:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->unk6 = 3;
+            arg0->unk7E = 10;
+        }
+        break;
+    case 3:
+        if (--arg0->unk7E == 0) {
+            s32 direction;
+
+            arg0->unk6 = 4;
+            SP_CUR_MAIN_OBJ->ext.main_12.unk8C = 0;
+            direction = angle_to_object(
+                OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+            if ((u8)(direction - 8) < 0x10) {
+                arg0->unk15 = 0;
+                if ((u8)direction < 0xC)
+                    direction = 0xC;
+                if ((u8)direction >= 0x15)
+                    direction = 0x14;
+            } else {
+                arg0->unk15 = PLAYER_FACING_RIGHT;
+                if ((u8)(direction - 0x18) < 4)
+                    direction = 0x1C;
+                else if ((u8)(direction - 5) < 3)
+                    direction = 4;
+            }
+            set_velocity_from_angle(MOVING_OBJECT(arg0), (u8)direction);
+            arg0->x_accel = 0;
+            arg0->gravity = 0;
+            arg0->x_speed *= 6;
+            arg0->y_speed *= 6;
+            set_animation(ANIMATED_OBJECT(arg0), 8);
+        }
+        break;
+    case 4: {
+        struct Unk_unk68* bounds;
+        s16 x;
+        s16 y;
+
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        bounds = arg0->terrain_box;
+        x = arg0->x_pos.i.hi + bounds->unk0 + bounds->unk2;
+        y = arg0->y_pos.i.hi + bounds->unk1 + bounds->unk3;
+        if (((s32(*)(struct PlayerObj*, s16, s16))func_8002D724)(PLAYER_OBJECT(arg0), x, y) == 0x24) {
+            u16 tile;
+
+            if ((tile = x / 16) != SP_CUR_MAIN_OBJ->ext.main_12.unk8C) {
+                spawn_common_effect(arg0, 1);
+                SP_CUR_MAIN_OBJ->ext.main_12.unk8C = tile;
+                func_8001540C(2, 0x25, arg0);
+            }
+        }
+        break;
+    }
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+}
 #endif
 
 // hover_sentry_attack_2
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C210);
-#else
 extern struct Unk_unk68 D_800FB694, D_800FB698;
 void func_8004C210(struct MainObj* self)
 {
@@ -403,12 +467,8 @@ void func_8004C210(struct MainObj* self)
         break;
     }
 }
-#endif
 
 // hover_sentry_attack_3
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C394);
-#else
 void func_8004C394(struct MainObj* self)
 {
     s16 turn;
@@ -472,7 +532,6 @@ void func_8004C394(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 // hover_sentry_attack_4
 void func_8004C56C(struct MainObj* self)

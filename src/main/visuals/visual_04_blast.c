@@ -49,9 +49,6 @@ void blast_update(struct VisualObj* arg0)
 void func_800AFB90(struct VisualObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_04_blast", func_800AFB90);
-#else
 void func_800AFB90(struct VisualObj* arg0)
 {
     s32 clut = arg0->unk2 + 4;
@@ -73,7 +70,6 @@ void func_800AFB90(struct VisualObj* arg0)
     arg0->state++;
     is_on_screen(BASE_OBJECT(arg0));
 }
-#endif
 
 void blast_animate(struct VisualObj* arg0)
 {

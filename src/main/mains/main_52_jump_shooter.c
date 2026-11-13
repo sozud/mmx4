@@ -230,9 +230,6 @@ void func_8006AAB4(struct MainObj* arg0);
 void func_8006AE80(struct MainObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", func_8006AAB4);
-#else
 void func_8006AAB4(struct MainObj* arg0)
 {
     struct Unk_unk68* bounds;
@@ -292,7 +289,6 @@ countdown:
     arg0->unk5 = 4;
     arg0->unk6 = 0;
 }
-#endif
 
 void jump_shooter_jump(struct MainObj* self)
 {
@@ -417,7 +413,73 @@ void func_8006AE80(struct MainObj* arg0)
     arg0->ext.main_52.unk88 = value;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", func_8006AE80);
+void func_8006AE80(struct MainObj* arg0)
+{
+    arg0->y_pos.i.hi -= 0x10;
+    arg0->ext.main_52.unk84 = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+    arg0->y_pos.i.hi += 0x10;
+    if (arg0->unk15 == 0) {
+        switch (arg0->ext.main_52.unk84) {
+        case 8:
+        case 9:
+            arg0->ext.main_52.unk88 = 0;
+            break;
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+            arg0->ext.main_52.unk88 = 1;
+            break;
+        case 14:
+        case 15:
+        case 16:
+        case 17:
+        case 18:
+            arg0->ext.main_52.unk88 = 2;
+            break;
+        case 19:
+        case 20:
+        case 21:
+        case 22:
+            arg0->ext.main_52.unk88 = 3;
+            break;
+        case 23:
+        case 24:
+            arg0->ext.main_52.unk88 = 4;
+            break;
+        }
+    } else {
+        switch (arg0->ext.main_52.unk84) {
+        case 7:
+        case 8:
+            arg0->ext.main_52.unk88 = 0;
+            break;
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+            arg0->ext.main_52.unk88 = 1;
+            break;
+        case 0:
+        case 1:
+        case 2:
+        case 30:
+        case 31:
+            arg0->ext.main_52.unk88 = 2;
+            break;
+        case 26:
+        case 27:
+        case 28:
+        case 29:
+            arg0->ext.main_52.unk88 = 3;
+            break;
+        case 24:
+        case 25:
+            arg0->ext.main_52.unk88 = 4;
+            break;
+        }
+    }
+}
 #endif
 
 struct Unk_unk68 jump_shooter_hurt_box = { -14, -19, 25, 33 };

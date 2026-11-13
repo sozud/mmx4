@@ -35,9 +35,7 @@ void func_8005ABC0(struct WeaponObj*, s8);
 extern union AnimationStep* pod_spawner_animations[16];
 extern struct Unk_unk68 D_800FD830[1];
 extern struct Unk_unk68 D_800FD834[1];
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern u8 D_800FD89C[16];
-#endif
 
 void pod_spawner_update(struct MainObj* self)
 {
@@ -61,21 +59,18 @@ void func_8005B2C8(struct MainObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005A538);
-#else
 void func_8005A538(struct MainObj* self)
 {
     struct MainObj* child;
     u32 i;
 
+    self->state = 1;
     self->unk5 = 2;
     self->hp = 8;
-    self->state = 1;
-    self->contact_damage = 3;
     self->unk6 = 0;
     self->unk7C = 0;
     self->on_screen = 1;
+    self->contact_damage = 3;
     self->invincibility_timer = 0;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
@@ -84,8 +79,8 @@ void func_8005A538(struct MainObj* self)
     self->animation_table = (const u8* const*)pod_spawner_animations;
     self->hurt_box = D_800FD834;
     self->attack_box = D_800FD830;
-    self->collision_data = D_801060F0;
     self->terrain_box = NULL;
+    self->collision_data = D_801060F0;
     self->air_state = 0;
     self->x_speed = 0;
     self->y_speed = 0;
@@ -108,11 +103,10 @@ void func_8005A538(struct MainObj* self)
         SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.target = (struct Main29Record*)child;
         child->ext.main_29.source = self;
         for (i = 0; i < 4; i++)
-            child->ext.main_29.slots.children[i] = NULL;
+            ((struct Main29Ext*)&child->ext)->slots.children[i] = NULL;
     }
     set_animation(self, 0);
 }
-#endif
 
 void pod_spawner_main(struct MainObj* self)
 {
@@ -132,9 +126,6 @@ void pod_spawner_idle(struct MainObj* self)
 }
 
 // pod_spawner_spawn
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005A758);
-#else
 void func_8005A758(struct MainObj* self)
 {
     u8 direction;
@@ -199,7 +190,6 @@ void func_8005A758(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 void pod_spawner_wait(struct MainObj* self)
 {
@@ -487,34 +477,103 @@ void func_8005AF5C(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x68, 0x68);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005AF5C);
+void func_8005AF5C(struct MainObj* self)
+{
+    struct MainObj* source = self->ext.main_29.source;
+    u32 i;
+    struct Main29Record* record;
+
+    self->x_pos = source->x_pos;
+    self->y_pos = source->y_pos;
+    self->unk42 = source->unk42;
+    animate_object(ANIMATED_OBJECT(self));
+
+    switch (self->unk6) {
+    case 0:
+        self->unk7C = 0;
+        self->ext.main_29.unk96 = D_800FD89C[get_random() & 0xF];
+        break;
+    case 1:
+        for (i = 0; i < self->ext.main_29.unk96; i++) {
+            if (((struct Main29Ext*)&self->ext)->slots.children[i] == NULL && self->unk7C == 0) {
+                struct MainObj* child = find_free_main_obj();
+                if (child != NULL) {
+                    s32 resource;
+
+                    ((struct Main29Ext*)&self->ext)->slots.children[i] = child;
+                    record = source->ext.main_29.slots.controller.record;
+                    child->active = self->active;
+                    child->id = 0x1C;
+                    child->state = 0;
+                    child->unk5 = 0;
+                    child->unk6 = 0;
+                    child->unk2 = ((u8*)record)[2];
+                    child->x_pos = self->x_pos;
+                    child->y_pos = self->y_pos;
+                    resource = func_8002938C(child->id);
+                    child->unk40 = OBJECT_STAGE_TEXTURE(resource);
+                    child->unk42 = OBJECT_STAGE_CLUT(child->id);
+                    resource = func_8002938C(child->id);
+                    child->sprite_frames = (const u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+                    self->unk7C = 1;
+                    child->ext.main_28.context = self;
+                    child->ext.main_28.index = i;
+                    self->ext.main_29.unk94++;
+                }
+            }
+            if (self->ext.main_29.unk94 >= self->ext.main_29.unk96) {
+                self->unk6 = 2;
+                break;
+            }
+        }
+        break;
+    case 2:
+        self->unk6 = 3;
+        source->unk6 = 4;
+        source->unk7C = 0x1E;
+        break;
+    case 3:
+        if (self->ext.main_29.unk94 == 0) {
+            self->unk6 = 4;
+            self->unk7C = 0x78;
+            record = source->ext.main_29.slots.controller.record;
+            if (record != NULL && record->unk0 != 0) {
+                record->unk4 = 2;
+                source->ext.main_29_controller.unk81 |= 2;
+            }
+        }
+        break;
+    case 4:
+        if (self->unk7C == 0) {
+            self->unk6 = 0;
+            source->ext.main_29_controller.unk81 = 0;
+        } else {
+            self->unk7C--;
+        }
+        break;
+    }
+    update_on_screen(BASE_OBJECT(self), 0x68, 0x68);
+}
 #endif
 
 // pod_spawner_copy_state_2
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B24C);
-#else
 void func_8005B24C(struct MainObj* self)
 {
     u32 i;
 
     self->ext.main_29.unk94 = 0;
     for (i = 0; i < 4; i++) {
-        struct MainObj* child = self->ext.main_29.slots.children[i];
+        struct MainObj* child = ((struct Main29Ext*)&self->ext)->slots.children[i];
         if (child != NULL) {
             if (child->active != 0 && child->id == 0x1C)
                 child->state = 3;
-            self->ext.main_29.slots.children[i] = NULL;
+            ((struct Main29Ext*)&self->ext)->slots.children[i] = NULL;
         }
     }
     ZeroObjectState(OBJECT_HEADER(self));
 }
-#endif
 
 // pod_spawner_copy_state_3
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005B2C8);
-#else
 void func_8005B2C8(struct MainObj* self)
 {
     struct MainObj* source = self->ext.main_29.source;
@@ -527,12 +586,12 @@ void func_8005B2C8(struct MainObj* self)
     case 0:
         self->ext.main_29.unk94 = 0;
         for (i = 0; i < 4; i++) {
-            child = self->ext.main_29.slots.children[i];
+            child = ((struct Main29Ext*)&self->ext)->slots.children[i];
             if (child != NULL) {
                 if (child->active != 0 && child->id == 0x1C) {
                     child->state = 3;
                 }
-                self->ext.main_29.slots.children[i] = NULL;
+                ((struct Main29Ext*)&self->ext)->slots.children[i] = NULL;
             }
         }
         self->unk5 = 1;
@@ -552,7 +611,6 @@ void func_8005B2C8(struct MainObj* self)
         break;
     }
 }
-#endif
 
 union AnimationStep pod_spawner_anim_0[] = {
     { 1, 0, 0, 0x00 },

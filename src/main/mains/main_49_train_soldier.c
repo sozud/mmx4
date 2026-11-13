@@ -64,9 +64,6 @@ extern union AnimationStep* highway_trooper_animations[27];
 extern u8 D_800FFB5C[4];
 extern ret_u8 func_8002938C(s32);
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_49_train_soldier", func_80068548);
-#else
 #ifdef MMX4_SATURN
 #define TRAIN_SOLDIER_CLUT(off) (func_8002938C(0x22) * 4 + (off))
 #else
@@ -141,7 +138,6 @@ void func_80068548(struct MainObj* arg0)
     SP_CUR_MAIN_OBJ->ext.main_49.index = 0;
     SP_CUR_MAIN_OBJ->ext.main_49.unk83 = 0;
 }
-#endif
 
 void train_soldier_main(struct MainObj* self)
 {

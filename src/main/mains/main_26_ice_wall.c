@@ -36,28 +36,25 @@ void ice_wall_update(struct MainObj* self)
 
 // ice_wall_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80058194(struct MainObj* arg0);
-void func_800583B0(struct MainObj* arg0, s16 x, s16 y, s32 base);
+void func_800583B0(struct MainObj* arg0, arg_s16 x, arg_s16 y, arg_u8 base);
 extern union AnimationStep* ice_wall_animations[];
 extern struct Unk_unk68 D_80106F74[];
 extern struct Unk_unk68 ice_wall_hurt_box[];
 extern union AnimationStep* ice_wall_animations[];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80058194(struct MainObj* arg0)
 {
     arg0->state++;
     arg0->unk5 = 2;
     arg0->unk2 = 0;
     arg0->bg_offset = g_Player.bg_offset;
+    arg0->hp = 9;
     arg0->animation_table = (const u8* const*)ice_wall_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->collision_data = (const u16*)D_80106F74;
     arg0->hurt_box = (const u8*)ice_wall_hurt_box;
     arg0->contact_damage = 3;
-    arg0->hp = 9;
     arg0->ext.main_26.last_health = 9;
     arg0->ext.main_26.stage = 2;
     arg0->unk15 = 0;
@@ -72,9 +69,6 @@ void func_80058194(struct MainObj* arg0)
     arg0->x_pos.i.hi &= ~0xF;
     arg0->y_pos.i.hi &= ~0xF;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_26_ice_wall", func_80058194);
-#endif
 
 void ice_wall_start_idle(struct MainObj* self)
 {
@@ -118,7 +112,7 @@ void ice_wall_main(struct MainObj* self)
 
 // spawn_ice_chunks
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_800583B0(struct MainObj* arg0, s16 x, s16 y, s32 base)
+void func_800583B0(struct MainObj* arg0, arg_s16 x, arg_s16 y, arg_u8 base)
 {
     u8 above;
     u8 below;
@@ -175,7 +169,83 @@ void func_800583B0(struct MainObj* arg0, s16 x, s16 y, s32 base)
         left, top);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_26_ice_wall", func_800583B0);
+// clang-format off
+void func_800583B0(arg0, x, y, base)
+    struct MainObj* arg0;
+    s16 x;
+    s16 y;
+    u8 base;
+{
+    // clang-format on
+    u8 above;
+    u8 below;
+    u8 tile;
+
+    above = func_8002D724((struct PlayerObj*)arg0, x, y - 0x20);
+    if (above != 0x38)
+        above = func_8002D724((struct PlayerObj*)arg0, x, y - 0x30);
+    below = func_8002D724((struct PlayerObj*)arg0, x, y + 0x30);
+
+    switch (above) {
+    case 0x3C:
+        tile = 0;
+        break;
+    case 0x30:
+        tile = 1;
+        break;
+    case 0x31:
+        tile = 2;
+        break;
+    case 0:
+        tile = 3;
+        break;
+    default:
+        tile = 4;
+        break;
+    case 0x38:
+        tile = 4;
+        break;
+    }
+    tile += base;
+    apply_tile_effect(tile, (s16)((x & -0x10) - 0x10), (s16)((y & -0x10) - 0x20));
+
+    switch (below) {
+    case 0x3C:
+        tile = 0xF;
+        break;
+    case 0x30:
+        tile = 0x10;
+        break;
+    case 0x31:
+        tile = 0x11;
+        break;
+    case 0:
+        tile = 0x12;
+        break;
+    default:
+        tile = 0x13;
+        break;
+    case 0x38:
+        tile = 0x13;
+        break;
+    }
+    tile += base;
+    apply_tile_effect(tile, (s16)((x & -0x10) - 0x10), (s16)((y & -0x10) + 0x10));
+
+    switch (base) {
+    case 0:
+        tile = 0x1E;
+        break;
+    case 5:
+        tile = 0x1F;
+        break;
+    case 10:
+    default:
+        tile = 0x20;
+        break;
+    }
+    apply_tile_effect(tile, (s16)((x & -0x10) - 0x10), (s16)(y & -0x10));
+}
 #endif
 
 void ice_wall_break_start(struct BaseObj* self)

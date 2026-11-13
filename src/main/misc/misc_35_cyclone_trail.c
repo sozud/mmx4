@@ -23,9 +23,6 @@ void cyclone_trail_update(struct MiscObj* self)
 void func_800CF184(struct MiscObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_35_cyclone_trail", func_800CF184);
-#else
 void func_800CF184(struct MiscObj* arg0)
 {
     struct BaseObj* source = arg0->ext.pointer.unk50;
@@ -57,7 +54,6 @@ void func_800CF184(struct MiscObj* arg0)
     arg0->y_vel.val = 0;
     is_on_screen(BASE_OBJECT(arg0));
 }
-#endif
 
 void cyclone_trail_animate(struct MiscObj* self)
 {

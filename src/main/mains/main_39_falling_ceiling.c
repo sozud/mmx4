@@ -50,11 +50,11 @@ s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
 void func_80061B58(struct MainObj* self);
 void func_80061918(struct MainObj* self);
 void func_800615CC(struct MainObj* self);
+#endif
 extern s8 D_800FE944[4];
 extern s8 D_800FE948[4];
 extern s8 D_800FE94C[4];
 extern union AnimationStep* falling_ceiling_animations[4];
-#endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800615CC(struct MainObj* self)
@@ -106,7 +106,112 @@ void func_800615CC(struct MainObj* self)
     self->unk1C = self->y_pos;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_800615CC);
+void func_800615CC(struct MainObj* self)
+{
+    self->hp = 6;
+    self->contact_damage = 0x14;
+    self->invincibility_timer = 0;
+    self->collision_data = D_801060F0;
+    self->bg_offset = g_Player.bg_offset;
+    self->air_state = 0;
+    self->animation_table = (const u8* const*)falling_ceiling_animations;
+    self->terrain_box = (struct Unk_unk68*)D_800FE94C;
+    self->hurt_box = D_800FE944;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->attack_box = D_800FE948;
+    self->unk15 = 0;
+    set_animation(self, 0);
+
+    switch (self->unk2) {
+    case 0:
+        self->ext.main_39.unk80.h.unk82 = 0xB20;
+        self->ext.main_39.unk80.h.unk80 = 0xB60;
+        self->ext.main_39.unk84.h.unk86 = 0x188;
+        self->x_pos.val = 0xB300000;
+        self->ext.main_39.unk84.h.unk84 = 0xB70;
+        break;
+    case 1:
+        self->ext.main_39.unk80.h.unk82 = 0xB20;
+        self->x_pos.val = 0xB900000;
+        self->ext.main_39.unk84.h.unk84 = 0xB70;
+        break;
+    case 2:
+        self->ext.main_39.unk80.h.unk82 = 0xC20;
+        self->ext.main_39.unk80.h.unk80 = 0xC60;
+        self->ext.main_39.unk84.h.unk86 = 0x188;
+        self->x_pos.val = 0xC300000;
+        self->ext.main_39.unk84.h.unk84 = 0xBF0;
+        break;
+    case 3:
+        self->ext.main_39.unk80.h.unk82 = 0xC20;
+        self->x_pos.val = 0xC900000;
+        self->ext.main_39.unk84.h.unk84 = 0xBF0;
+        break;
+    case 4:
+        self->ext.main_39.unk80.h.unk82 = 0xD20;
+        self->ext.main_39.unk80.h.unk80 = 0xD60;
+        self->ext.main_39.unk84.h.unk86 = 0x188;
+        self->x_pos.val = 0xD300000;
+        self->ext.main_39.unk84.h.unk84 = 0xCE0;
+        break;
+    case 5:
+        self->ext.main_39.unk80.h.unk82 = 0xD20;
+        self->x_pos.val = 0xD900000;
+        self->ext.main_39.unk84.h.unk84 = 0xCE0;
+        break;
+    case 6:
+        self->ext.main_39.unk80.h.unk82 = 0xE20;
+        self->ext.main_39.unk80.h.unk80 = 0xE60;
+        self->ext.main_39.unk84.h.unk86 = 0x188;
+        self->x_pos.val = 0xE300000;
+        self->ext.main_39.unk84.h.unk84 = 0xDD0;
+        break;
+    case 7:
+        self->ext.main_39.unk80.h.unk82 = 0xE20;
+        self->x_pos.val = 0xE900000;
+        self->ext.main_39.unk84.h.unk84 = 0xDD0;
+        break;
+    case 8:
+        self->ext.main_39.unk80.h.unk82 = 0xEA0;
+        self->ext.main_39.unk80.h.unk80 = 0xEE0;
+        self->ext.main_39.unk84.h.unk86 = 0x180;
+        self->x_pos.val = 0xEB00000;
+        self->ext.main_39.unk84.h.unk84 = 0xE50;
+        break;
+    case 9:
+        self->ext.main_39.unk80.h.unk82 = 0xEA0;
+        self->x_pos.val = 0xF100000;
+        self->ext.main_39.unk84.h.unk84 = 0xE50;
+        break;
+    case 10:
+        self->ext.main_39.unk80.h.unk82 = 0xF20;
+        self->ext.main_39.unk80.h.unk80 = 0xF60;
+        self->ext.main_39.unk84.h.unk86 = 0x180;
+        self->x_pos.val = 0xF300000;
+        self->ext.main_39.unk84.h.unk84 = 0xEB0;
+        break;
+    case 11:
+        self->ext.main_39.unk80.h.unk82 = 0xF20;
+        self->x_pos.val = 0xF900000;
+        self->ext.main_39.unk84.h.unk84 = 0xEB0;
+        break;
+    }
+    self->ext.main_39.unk8C = 0x1200000;
+    self->ext.main_39.unk88 = 0;
+    self->ext.main_39.unk90 = 0;
+    self->ext.main_39.unk94 = 1;
+    self->y_pos.val = 0x1100000;
+    self->unk7E = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0x2000;
+    self->state = 1;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+}
 #endif
 
 void falling_ceiling_main(struct MainObj* self)
@@ -131,9 +236,6 @@ void falling_ceiling_despawn(struct MainObj* self)
 }
 
 // falling_ceiling_wait
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061918);
-#else
 void func_80061918(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -173,7 +275,6 @@ void func_80061918(struct MainObj* self)
         }
     }
 }
-#endif
 
 void falling_ceiling_drop(struct MainObj* self)
 {
@@ -196,9 +297,6 @@ void falling_ceiling_drop_start(struct MainObj* self)
 }
 
 // falling_ceiling_drop_fall
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061B58);
-#else
 void func_80061B58(struct MainObj* self)
 {
     s32 i;
@@ -242,7 +340,6 @@ void func_80061B58(struct MainObj* self)
     }
     self->unk6 = 2;
 }
-#endif
 
 void falling_ceiling_drop_land(struct MainObj* self)
 {

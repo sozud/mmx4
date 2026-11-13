@@ -48,24 +48,21 @@ extern u8 ice_core_shard_hit_box[4];
 extern u8 ice_core_shard_terrain_box[4];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009B85C(struct ShotObj* arg0)
 {
-    const u8* offsets = (const u8*)&ice_core_shard_data + 0x14 + arg0->unk2 * 2;
-
     arg0->state = 1;
     arg0->on_screen = 1;
     arg0->unk58.data = (const u8*)D_80105FF0;
     arg0->unk42 &= 0x7FFF;
     set_velocity_from_angle(MOVING_OBJECT(arg0), (arg0->unk2 * 4) & 0xFC);
+    arg0->y_pos.i.hi += (s8)ice_core_shard_offsets[arg0->unk2 * 2 + 1];
     arg0->y_vel.val *= 6;
-    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + (s8)offsets[1];
     if (arg0->unk15 == 0) {
+        arg0->x_pos.i.hi += (s8)ice_core_shard_offsets[arg0->unk2 * 2];
         arg0->x_vel.val *= 6;
-        arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi + (s8)offsets[0];
     } else {
+        arg0->x_pos.i.hi -= (s8)ice_core_shard_offsets[arg0->unk2 * 2];
         arg0->x_vel.val = -(arg0->x_vel.val * 6);
-        arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi - (s8)offsets[0];
     }
     arg0->unk54 = ice_core_spray_hit_box;
     arg0->unk50.data = ice_core_spray_hit_box;
@@ -75,9 +72,6 @@ void func_8009B85C(struct ShotObj* arg0)
     arg0->unk60 = 3;
     set_animation(arg0, arg0->unk2 + 0x11);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_12_ice_core_shot", func_8009B85C);
-#endif
 
 void ice_core_spray_fly(struct ShotObj* self)
 {
@@ -187,8 +181,25 @@ struct Shot12CollisionData ice_core_shard_data = {
 #ifdef MMX4_WIN32
     { 0 },
 #endif
+};
+
+u8 ice_core_shard_offsets[16] = {
     0x16,
-    { 0xFF, 0x0E, 0xEF, 0xFE, 0xE7, 0xF1, 0xF1, 0xEB, 0x01, 0xF2, 0x0F, 0xFF, 0x17, 0x0D, 0x11 },
+    0xFF,
+    0x0E,
+    0xEF,
+    0xFE,
+    0xE7,
+    0xF1,
+    0xF1,
+    0xEB,
+    0x01,
+    0xF2,
+    0x0F,
+    0xFF,
+    0x17,
+    0x0D,
+    0x11,
 };
 
 u8 ice_core_shard_debris[4] = { 0x1F, 0x20, 0x1F, 0x20 };

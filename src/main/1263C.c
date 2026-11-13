@@ -13,9 +13,6 @@
 #endif
 void func_80016F0C();
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/1263C", func_80021E3C);
-#else
 void func_80021E3C(void)
 {
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -23,12 +20,13 @@ void func_80021E3C(void)
     engine_obj.stage = REPLAY_DATA[0x18];
     engine_obj.substage = REPLAY_DATA[0x19];
 #else
-    engine_obj.cur_character = D_801F604F;
-    engine_obj.stage = D_801F6018;
-    engine_obj.substage = D_801F6019;
+    struct EngineObj* saved = (struct EngineObj*)(REPLAY_DATA + 0xC);
+
+    engine_obj.cur_character = saved->cur_character;
+    engine_obj.stage = saved->stage;
+    engine_obj.substage = saved->substage;
 #endif
 }
-#endif
 
 #ifdef MMX4_PC
 #include "pc_replay.h"

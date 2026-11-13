@@ -102,12 +102,6 @@ s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source, u8 pan)
     return 0;
 }
 
-struct ControllerButtons {
-    u16 current;
-    u16 previous;
-    u16 pressed;
-};
-
 struct ControllerButtons D_80166D50;
 static u16 decode_pad_buttons(const u8* pad)
 {
@@ -143,7 +137,7 @@ void func_80012328(void)
 #endif
 
 #ifndef MMX4_SATURN
-void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
+void func_8002217C(arg_u16 message, arg_u8 portrait, s32 delay_only)
 {
     struct MiscObj* window;
     u8* window_archive;

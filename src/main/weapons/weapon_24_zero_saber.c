@@ -10,9 +10,9 @@
 
 void zero_saber_follow(struct WeaponObj*, struct PlayerObj*);
 
-extern u8 zero_saber_animations[24];
+extern u8 zero_saber_animations[12][2];
 extern struct Unk_unk68 rakuhouha_orb_box[];
-extern u16 ryuenjin_flame_offsets[8];
+extern u16 ryuenjin_flame_offsets[4][2];
 extern u8 ryuenjin_flame_animations[];
 
 #include "weapon_resources.h"
@@ -65,22 +65,18 @@ void zero_saber_update(struct WeaponObj* arg0)
 void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player);
 void func_800981CC(struct WeaponObj* self);
 void func_80098474(struct MiscObj* self);
-extern u8 zero_saber_animations[24];
+extern u8 zero_saber_animations[12][2];
 // src/main/weapons/weapon_24_zero_saber.c
 
 extern struct Unk_unk68 rakuhouha_orb_box[];
 extern u8 ryuenjin_flame_animations[];
-extern u16 ryuenjin_flame_offsets[8];
+extern u16 ryuenjin_flame_offsets[4][2];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80097FC4);
-#else
 void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
 {
     u8 animation;
     s32 palette;
-    s32 index;
 
     weapon->on_screen = 1;
     if (weapon->id == 0x21) {
@@ -94,9 +90,8 @@ void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
     weapon->animation_table = player->animation_table;
     weapon->unk42 = WEAPON_PALETTE_1;
     weapon->unk16 = 2;
-    index = (weapon->id - 0x18) * 2;
-    animation = zero_saber_animations[index];
-    palette = zero_saber_animations[index + 1];
+    animation = zero_saber_animations[weapon->id - 0x18][0];
+    palette = zero_saber_animations[weapon->id - 0x18][1];
     if (palette == 3 && ((u8)player->boss_flags & 0x40)) {
         palette = 4;
     }
@@ -113,15 +108,10 @@ void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
     need_palette_load |= 1;
     weapon->state++;
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", zero_saber_follow);
-#else
 void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
     u8 id;
-    u8 value;
 
     arg0->x_pos.val = arg1->x_pos.val;
     arg0->y_pos.val = arg1->y_pos.val;
@@ -133,23 +123,20 @@ void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
     }
     id = arg0->id;
     if (id - 0x18 < 2U) {
-        value = arg0->unk2 + 1;
+        arg0->unk64 = arg0->unk2 + 1;
     } else {
-        value = arg0->animation_step.fields.event;
+        arg0->unk64 = arg0->animation_step.fields.event;
     }
-    arg0->unk64 = value;
     update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
 }
-#endif
 
 // WeaponObj, weapon_object_update_funcs[36]
 
 // rakuhouha_orb_update
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_800981CC);
-#else
 void func_800981CC(struct WeaponObj* self)
 {
+    struct PlayerObj* player = &g_Player;
+
     if (self->state == 0) {
         self->on_screen = 1;
         self->unk50 = rakuhouha_orb_box;
@@ -158,8 +145,8 @@ void func_800981CC(struct WeaponObj* self)
         self->unk42 = WEAPON_PALETTE_3;
         self->unk40 = WEAPON_TEXTURE_BASE;
         self->unk16 = 1;
-        self->x_pos.u.hi = g_Player.x_pos.u.hi;
-        self->y_pos.u.hi = g_Player.y_pos.u.hi + 0x15;
+        self->x_pos.u.hi = player->x_pos.u.hi;
+        self->y_pos.u.hi = player->y_pos.u.hi + 0x15;
         self->unk15 = 0;
         set_velocity_from_angle(MOVING_OBJECT(self), (0x10 - self->unk2 * 2) & 0xFE);
         self->x_vel.val *= 7;
@@ -178,7 +165,6 @@ void func_800981CC(struct WeaponObj* self)
     }
     ((void (*)(struct BaseObj*, s32, s32))is_on_screen)(BASE_OBJECT(self), 0x20, 0x20);
 }
-#endif
 
 // rising_flame_trail_update
 void func_80098338(struct VisualObj* self)
@@ -222,9 +208,6 @@ void func_80098338(struct VisualObj* self)
 }
 
 // ryuenjin_flame_update
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80098474);
-#else
 void func_80098474(struct MiscObj* self)
 {
     struct PlayerObj* player = &g_Player;
@@ -237,10 +220,10 @@ void func_80098474(struct MiscObj* self)
         self->unk42 = WEAPON_PALETTE_4;
         self->unk16 = 1;
         if (g_Player.unk15 == 0)
-            self->x_pos.u.hi = g_Player.x_pos.u.hi + ryuenjin_flame_offsets[(get_random() & 3) * 2];
+            self->x_pos.u.hi = g_Player.x_pos.u.hi + ryuenjin_flame_offsets[get_random() & 3][0];
         else
-            self->x_pos.u.hi = g_Player.x_pos.u.hi - ryuenjin_flame_offsets[(get_random() & 3) * 2];
-        self->y_pos.u.hi = player->y_pos.u.hi + ryuenjin_flame_offsets[(get_random() & 3) * 2 + 1];
+            self->x_pos.u.hi = g_Player.x_pos.u.hi - ryuenjin_flame_offsets[get_random() & 3][0];
+        self->y_pos.u.hi = player->y_pos.u.hi + ryuenjin_flame_offsets[get_random() & 3][1];
         self->unk15 = player->unk15;
         set_animation(self, ryuenjin_flame_animations[get_random() & 3]);
         self->state++;
@@ -253,7 +236,6 @@ void func_80098474(struct MiscObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x18, 0x18);
 }
-#endif
 
 struct Unk_unk68 rakuhouha_orb_box[] = {
     { -26, -26, 0x34, 0x34 },
@@ -323,31 +305,19 @@ struct Unk_unk68 zero_saber_hit_boxes[] = {
     { -64, -76, 0x3E, 0x54 },
 };
 
-u8 zero_saber_animations[24] = {
-    0x70,
-    0x03,
-    0x71,
-    0x03,
-    0x72,
-    0x03,
-    0x73,
-    0x03,
-    0x74,
-    0x03,
-    0x7D,
-    0x09,
-    0x75,
-    0x03,
-    0x76,
-    0x03,
-    0x77,
-    0x05,
-    0x79,
-    0x07,
-    0x7A,
-    0x03,
-    0x7B,
-    0x08,
+u8 zero_saber_animations[12][2] = {
+    { 0x70, 0x03 },
+    { 0x71, 0x03 },
+    { 0x72, 0x03 },
+    { 0x73, 0x03 },
+    { 0x74, 0x03 },
+    { 0x7D, 0x09 },
+    { 0x75, 0x03 },
+    { 0x76, 0x03 },
+    { 0x77, 0x05 },
+    { 0x79, 0x07 },
+    { 0x7A, 0x03 },
+    { 0x7B, 0x08 },
 };
 
 u8 ryuenjin_flame_animations[] = {
@@ -357,13 +327,9 @@ u8 ryuenjin_flame_animations[] = {
     0x14,
 };
 
-u16 ryuenjin_flame_offsets[8] = {
-    0xFFCE,
-    0xFFFA,
-    0xFFE0,
-    0x0000,
-    0xFFEC,
-    0xFFF2,
-    0xFFE8,
-    0x0002,
+u16 ryuenjin_flame_offsets[4][2] = {
+    { 0xFFCE, 0xFFFA },
+    { 0xFFE0, 0x0000 },
+    { 0xFFEC, 0xFFF2 },
+    { 0xFFE8, 0x0002 },
 };

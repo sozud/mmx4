@@ -115,9 +115,6 @@ void gunship_bob(struct MainObj*);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_80082574);
-#else
 void func_80082574(struct MainObj* arg0)
 {
     s32 collision;
@@ -159,7 +156,6 @@ skip:
     }
     despawn_object(OBJECT_HEADER(arg0));
 }
-#endif
 
 void gunship_destroyed(struct MainObj* self)
 {
@@ -217,9 +213,6 @@ void gunship_choose(struct MainObj* self)
 }
 
 // gunship_choose_attack
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_800828B4);
-#else
 void func_800828B4(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
@@ -241,7 +234,6 @@ void func_800828B4(struct MainObj* arg0)
         arg0->ext.main_67.unk8D = 1;
     }
 }
-#endif
 
 void gunship_gun(struct MainObj* self)
 {
@@ -467,16 +459,15 @@ void gunship_spawn_exhaust(struct MainObj* self)
     } while ((var_s1 & 0xFF) < 4U);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", gunship_is_within);
-#else
 s32 gunship_is_within(struct MainObj* self, s32 arg1, s32 arg2)
 {
-    POS_BOUNDS_CHECK_FAIL_RET0(self->x_pos.val, arg1)
-    POS_BOUNDS_CHECK_FAIL_RET0(self->y_pos.val, arg2)
-    return 1;
+    if (POS_WITHIN_3(self->x_pos.val, arg1)) {
+        if (POS_WITHIN_3(self->y_pos.val, arg2)) {
+            return 1;
+        }
+    }
+    return 0;
 }
-#endif
 
 struct Unk_unk68 gunship_hurt_box = { -77, -41, -105, 68 };
 

@@ -162,7 +162,105 @@ void func_800D3C58(struct QuadObj* arg0)
     }
 }
 #else
-INCLUDE_ASM("main/nonmatchings/quads/quad_00_search_light", func_800D3C58);
+extern s32 search_light_accels[3];
+void search_light_move(struct Unk22* arg0);
+
+void func_800D3C58(struct QuadObj* arg0)
+{
+    s16 origin;
+    s16 span;
+    s8 idx;
+    s32 margin;
+
+    if (arg0->runtime.search_light.pause_timer == 0) {
+        search_light_move((struct Unk22*)arg0);
+        arg0->vertices[0].x.val += arg0->ext.search_light.velocity;
+        arg0->vertices[1].x.val += arg0->ext.search_light.velocity;
+        idx = arg0->unk2;
+        margin = 0x20;
+        origin = search_light_shapes[idx].vertices[0];
+        span = search_light_shapes[idx].vertices[2] - origin;
+        switch (arg0->unk5) {
+        case 0:
+            if (!arg0->link.direction) {
+                if (arg0->vertices[0].x.i.hi >= (s16)(arg0->runtime.search_light.extent + (origin - margin))) {
+                    arg0->ext.search_light.acceleration = -search_light_accels[idx >> 1];
+                    arg0->unk5 = 1;
+                }
+            } else if ((s16)(origin + margin - arg0->runtime.search_light.extent) >= arg0->vertices[0].x.i.hi) {
+                arg0->ext.search_light.acceleration = search_light_accels[idx >> 1];
+                arg0->unk5 = 1;
+            }
+            break;
+        case 1:
+            if (!arg0->link.direction) {
+                if (arg0->ext.search_light.velocity <= 0x7FFF) {
+                    arg0->ext.search_light.velocity = 0x8000;
+                    arg0->ext.search_light.acceleration = 0;
+                }
+                if (arg0->vertices[0].x.i.hi >= origin + arg0->runtime.search_light.extent) {
+                    arg0->unk5 = 2;
+                    arg0->ext.search_light.acceleration = 0;
+                    arg0->ext.search_light.velocity = 0;
+                    arg0->vertices[1].x.i.lo = 0;
+                    arg0->vertices[0].x.i.lo = 0;
+                    arg0->vertices[0].x.i.hi = origin + arg0->runtime.search_light.extent;
+                    arg0->vertices[1].x.i.hi = span + (origin + arg0->runtime.search_light.extent);
+                    arg0->runtime.search_light.pause_timer = get_random() & 7;
+                    arg0->link.direction ^= 1;
+                }
+            } else {
+                if (arg0->ext.search_light.velocity >= -0x7FFF) {
+                    arg0->ext.search_light.velocity = -0x8000;
+                    arg0->ext.search_light.acceleration = 0;
+                }
+                if (origin - arg0->runtime.search_light.extent >= arg0->vertices[0].x.i.hi) {
+                    arg0->unk5 = 2;
+                    arg0->ext.search_light.acceleration = 0;
+                    arg0->ext.search_light.velocity = 0;
+                    arg0->vertices[1].x.i.lo = 0;
+                    arg0->vertices[0].x.i.lo = 0;
+                    arg0->vertices[0].x.i.hi = origin - arg0->runtime.search_light.extent;
+                    arg0->vertices[1].x.i.hi = span + (origin - arg0->runtime.search_light.extent);
+                    arg0->runtime.search_light.pause_timer = get_random() & 7;
+                    arg0->link.direction ^= 1;
+                }
+            }
+            break;
+        case 2:
+            if (!arg0->link.direction) {
+                arg0->ext.search_light.acceleration = search_light_accels[idx >> 1];
+            } else {
+                arg0->ext.search_light.acceleration = -search_light_accels[idx >> 1];
+            }
+            arg0->unk5 = 3;
+            arg0->runtime.search_light.base_speed = -arg0->runtime.search_light.base_speed;
+            break;
+        case 3:
+            if (!arg0->link.direction) {
+                if (arg0->vertices[0].x.i.hi >= (s16)(origin + margin - arg0->runtime.search_light.extent)) {
+                    arg0->ext.search_light.acceleration = 0;
+                    arg0->unk5 = 0;
+                    arg0->ext.search_light.velocity = arg0->runtime.search_light.base_speed;
+                }
+            } else if ((s16)(arg0->runtime.search_light.extent + (origin - margin)) >= arg0->vertices[0].x.i.hi) {
+                arg0->ext.search_light.acceleration = 0;
+                arg0->unk5 = 0;
+                arg0->ext.search_light.velocity = arg0->runtime.search_light.base_speed;
+            }
+            break;
+        }
+    } else {
+        arg0->runtime.search_light.pause_timer--;
+    }
+    if ((s16)search_light_is_visible(arg0)) {
+        arg0->on_screen = 1;
+    } else {
+        arg0->on_screen = 0;
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
 #endif
 
 // SearchLight state 2

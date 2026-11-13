@@ -28,7 +28,7 @@ extern struct Unk_unk68 D_80100214;
 extern u8 D_801005B0[4];
 
 extern u8** slash_beast_patterns[3];
-extern u8 slash_beast_pattern_weights[12];
+extern u8 slash_beast_pattern_weights[4][3];
 
 extern struct Unk_unk68 D_80100220;
 extern struct Unk_unk68 D_80100224;
@@ -145,6 +145,8 @@ extern struct Unk_unk68 D_80100248;
 extern struct Unk_unk68 D_80100218;
 extern struct Unk_unk68 D_8010021C;
 extern struct Unk_unk68 D_8010023C;
+extern u16 D_801005B8[];
+extern u16 D_801005C8[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006E920(struct MainObj* arg0, s32 value);
 void func_8006BB70(struct MainObj* arg0);
@@ -161,8 +163,6 @@ void func_8006D280(struct MainObj* arg0);
 void func_8006D3DC(struct MainObj* arg0);
 void func_8006DD44(struct MainObj* arg0);
 void func_8006E450(struct MainObj* arg0);
-extern u16 D_801005B8[];
-extern u16 D_801005C8[];
 extern struct Unk_unk68 D_8010020C;
 extern u8 slash_beast_pattern_steps[9][4];
 static void main54_spawn_shot(struct MainObj* arg0, s8 subtype)
@@ -198,9 +198,6 @@ static void main54_face_anim(struct MainObj* arg0, s32 anim)
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006BB70);
-#else
 void func_8006BB70(struct MainObj* arg0)
 {
     arg0->contact_damage = 6;
@@ -216,12 +213,12 @@ void func_8006BB70(struct MainObj* arg0)
         arg0->y_pos.val = background_objects[g_Player.bg_offset].y_pos.val + (s32)0xFFD00000;
     }
     arg0->bg_offset = g_Player.bg_offset;
+    arg0->x_speed = 0;
     arg0->animation_table = (const u8* const*)slash_beast_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->hurt_box = D_801001FC;
     arg0->attack_box = D_801001F8;
     arg0->unk15 = PLAYER_FACING_RIGHT;
-    arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
@@ -245,12 +242,8 @@ void func_8006BB70(struct MainObj* arg0)
     arg0->unk5 = 9;
     arg0->unk6 = 0;
 }
-#endif
 
 // slash_beast_run
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006BD1C);
-#else
 void func_8006BD1C(struct MainObj* arg0)
 {
     s32 hit;
@@ -327,7 +320,6 @@ void func_8006BD1C(struct MainObj* arg0)
     }
     update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
 }
-#endif
 
 void slash_beast_death(struct MainObj* self)
 {
@@ -440,9 +432,6 @@ void slash_beast_crescent_jump(struct MainObj* self)
 }
 
 // slash_beast_crescent_slash
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006C378);
-#else
 void func_8006C378(struct MainObj* arg0)
 {
     move_with_gravity(ANIMATED_OBJECT(arg0));
@@ -522,7 +511,6 @@ void func_8006C378(struct MainObj* arg0)
         break;
     }
 }
-#endif
 
 void slash_beast_crescent_land(struct MainObj* self)
 {
@@ -658,7 +646,133 @@ set_state:
     arg0->unk6 = 0;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006C6AC);
+void func_8006C6AC(struct MainObj* arg0)
+{
+    if (ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) > 0xA0 && (get_random() & 7) == 0) {
+        if (arg0->hp < 0x10) {
+            slash_beast_face_player(arg0);
+            set_animation(arg0, 0x26);
+            arg0->ext.main_54.grab = 1;
+            arg0->unk5 = 7;
+            arg0->unk6 = 0;
+            return;
+        } else {
+            slash_beast_face_player(arg0);
+            set_animation(arg0, 8);
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            return;
+        }
+    }
+    if (*arg0->ext.main_54.pattern++ == 0xFF)
+        slash_beast_pick_pattern(arg0);
+    switch (*arg0->ext.main_54.pattern) {
+    case 0:
+        if ((get_random() & 7) == 0) {
+            slash_beast_face_player(arg0);
+            set_animation(arg0, 8);
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            return;
+        }
+        slash_beast_face_player(arg0);
+        set_animation(arg0, 0xB);
+        arg0->unk7C = 0x3C;
+        arg0->unk6 = 1;
+        return;
+    case 1:
+        if ((get_random() & 7) == 0) {
+            slash_beast_face_player(arg0);
+            set_animation(arg0, 8);
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            return;
+        } else if (ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 0x70) {
+            if (arg0->ext.main_54.powered_up != 0) {
+                set_animation(arg0, 0x26);
+                arg0->unk5 = 0xB;
+                arg0->unk6 = 0;
+                return;
+            } else {
+                slash_beast_face_player(arg0);
+                set_animation(arg0, 0xC);
+                arg0->unk7C = 0x24;
+                arg0->unk7E = 2;
+                arg0->unk5 = 6;
+                arg0->unk6 = 0;
+                return;
+            }
+        } else {
+            slash_beast_face_player(arg0);
+            set_animation(arg0, 1);
+            arg0->ext.main_54.high_jump = 0;
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            return;
+        }
+    case 2:
+        if (ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 0x70 && (get_random() & 7) != 0) {
+            if (arg0->ext.main_54.powered_up != 0) {
+                set_animation(arg0, 0x26);
+                arg0->unk5 = 0xB;
+                arg0->unk6 = 0;
+                return;
+            } else {
+                slash_beast_face_player(arg0);
+                set_animation(arg0, 0xC);
+                arg0->unk7C = 0x24;
+                arg0->unk7E = 2;
+                arg0->unk5 = 6;
+                arg0->unk6 = 0;
+                return;
+            }
+        } else {
+            slash_beast_face_player(arg0);
+            set_animation(arg0, 8);
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            return;
+        }
+    case 3:
+        slash_beast_face_player(arg0);
+        set_animation(arg0, 0x26);
+        arg0->unk5 = 7;
+        arg0->unk6 = 0;
+        return;
+    case 4:
+        slash_beast_face_player(arg0);
+        set_animation(arg0, 0xC);
+        arg0->unk7C = 0x24;
+        arg0->unk7E = 2;
+        arg0->unk5 = 6;
+        arg0->unk6 = 0;
+        return;
+    case 5:
+        slash_beast_face_player(arg0);
+        set_animation(arg0, 0x14);
+        func_8001540C(2, 0x85, arg0);
+        arg0->unk7C = 0x5A;
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+        return;
+    case 6:
+        slash_beast_face_player(arg0);
+        set_animation(arg0, 0x26);
+        arg0->ext.main_54.grab = 1;
+        arg0->unk5 = 7;
+        arg0->unk6 = 0;
+        return;
+    case 7:
+        slash_beast_face_player(arg0);
+        set_animation(arg0, 1);
+        arg0->ext.main_54.high_jump = 1;
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        return;
+    default:
+        return;
+    }
+}
 #endif
 
 void slash_beast_crouch(struct MainObj* self)
@@ -682,9 +796,6 @@ void slash_beast_jump(struct MainObj* self)
 }
 
 // slash_beast_jump_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CB50);
-#else
 void func_8006CB50(struct MainObj* arg0)
 {
     s32 y;
@@ -718,7 +829,6 @@ void func_8006CB50(struct MainObj* arg0)
         animate_object(ANIMATED_OBJECT(arg0));
     }
 }
-#endif
 
 // slash_beast_jump_air
 void func_8006CC3C(struct MainObj* arg0)
@@ -768,9 +878,6 @@ void slash_beast_jump_recover(struct MainObj* self)
 }
 
 // slash_beast_guard
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CDD4);
-#else
 void func_8006CDD4(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
@@ -795,7 +902,6 @@ void func_8006CDD4(struct MainObj* arg0)
         arg0->unk6 = 1;
     }
 }
-#endif
 
 void slash_beast_dash(struct MainObj* self)
 {
@@ -1030,7 +1136,52 @@ void func_8006D3DC(struct MainObj* arg0)
     arg0->unk6 = 1;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006D3DC);
+void func_8006D3DC(struct MainObj* arg0)
+{
+    s32 target;
+    s16 steps;
+    s32 d;
+
+    if (ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi) < 0x70) {
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    } else if (arg0->animation_step.fields.event != 0) {
+        arg0->x_accel = 0;
+        if (M54_84(arg0) == 0) {
+            set_animation(arg0, 2);
+            target = arg0->x_pos.val;
+            arg0->hurt_box = &D_8010020C;
+            arg0->attack_box = &D_80100208;
+        } else {
+            M54_84(arg0) |= 0x80;
+            target = arg0->unk15 == 0 ? arg0->x_pos.val - 0x100000 : arg0->x_pos.val + 0x100000;
+            arg0->contact_damage = 0;
+            arg0->unk62 = 3;
+            set_animation(arg0, 4);
+            func_8001540C(2, SATURN_SOUND(0x87, 0x58), arg0);
+        }
+        if (M54_84(arg0) != 0) {
+            steps = ABS(target, g_Player.x_pos.val) / 0x10000;
+            arg0->gravity = 0x6800;
+        } else {
+            steps = ABS(target, g_Player.x_pos.val) / 0x24000;
+            arg0->gravity = 0x3800;
+        }
+        if (arg0->unk15 == 0)
+            arg0->x_speed = -0x1C000 - steps * 0x480;
+        else
+            arg0->x_speed = steps * 0x480 + 0x1C000;
+        d = ABS(target, g_Player.x_pos.val);
+        steps = d / (arg0->x_speed < 0 ? -arg0->x_speed : arg0->x_speed);
+        arg0->y_speed = ((steps + 1) * arg0->gravity) / 2;
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        func_8001540C(2, SATURN_SOUND(0x81, 0x52), arg0);
+        arg0->unk5 = 4;
+        arg0->unk6 = 1;
+    } else {
+        animate_object(ANIMATED_OBJECT(arg0));
+    }
+}
 #endif
 
 void slash_beast_grab(struct MainObj* self)
@@ -1226,9 +1377,6 @@ void slash_beast_intro_wait_warning(struct MainObj* self)
 }
 
 // slash_beast_intro_appear
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006DD44);
-#else
 void func_8006DD44(struct MainObj* arg0)
 {
     struct ItemObj* item;
@@ -1290,7 +1438,6 @@ void func_8006DD44(struct MainObj* arg0)
         arg0->unk7E = 0x1E;
     }
 }
-#endif
 
 void slash_beast_intro_leap(struct MainObj* self)
 {
@@ -1418,9 +1565,6 @@ void slash_beast_stagger(struct MainObj* self)
 }
 
 // slash_beast_stagger_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006E450);
-#else
 void func_8006E450(struct MainObj* arg0)
 {
     s16 x;
@@ -1459,7 +1603,6 @@ void func_8006E450(struct MainObj* arg0)
     move_object(MOVING_OBJECT(arg0));
     arg0->unk6 = 1;
 }
-#endif
 
 void slash_beast_stagger_land(struct MainObj* self)
 {
@@ -1600,7 +1743,38 @@ void func_8006E920(struct MainObj* arg0, s32 value)
     }
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006E920);
+void func_8006E920(struct MainObj* arg0, s32 value)
+{
+    s16 start = 0;
+    s16 end;
+    s32 i;
+    u32* attrs;
+
+    if (value == TILE_ATTR_VALUE(0x38)) {
+        end = engine_obj.stage != 0xC ? 8 : 0xE;
+    } else if (arg0->unk15 == 0) {
+        if (engine_obj.stage != 0xC) {
+            start = 4;
+            end = 8;
+        } else {
+            start = 7;
+            end = 0xE;
+        }
+    } else {
+        end = engine_obj.stage != 0xC ? 4 : 7;
+    }
+    for (i = start; i < end; i++) {
+        if (engine_obj.stage != 0xC) {
+            attrs = SP_BG_TILE_ATTRS;
+            attrs[D_801005B8[i]] &= ~0xFF;
+            attrs[D_801005B8[i]] |= value;
+        } else {
+            attrs = SP_BG_TILE_ATTRS;
+            attrs[D_801005C8[i]] &= ~0xFF;
+            attrs[D_801005C8[i]] |= value;
+        }
+    }
+}
 #endif
 
 void slash_beast_face_player(struct MainObj* self)
@@ -1612,39 +1786,27 @@ void slash_beast_face_player(struct MainObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", slash_beast_pick_pattern);
-#else
 void slash_beast_pick_pattern(struct MainObj* self)
 {
     u8* base;
     u8* current;
-    u8* thresholds;
-    u32 random;
+    u8 random;
     u8 index;
     s32 i;
 
-    random = get_random();
-    i = 0;
-    random &= 0xF;
+    random = get_random() & 0xF;
     index = self->ext.main_54.pattern_set;
-    thresholds = slash_beast_pattern_weights;
     base = slash_beast_patterns[index][0];
     current = base;
-    thresholds += (index << 1) + index;
-
-    for (; i < 3; i++) {
-        if (random < *thresholds) {
+    for (i = 0; i < 3; i++) {
+        if (random < slash_beast_pattern_weights[index][i]) {
             self->ext.main_54.pattern = current;
             return;
         }
         current += 4;
-        thresholds++;
     }
-
     self->ext.main_54.pattern = base + i * 4;
 }
-#endif
 
 union AnimationStep D_801001F8[] = {
     { -17, -15, 37, 0x22 },
@@ -1739,7 +1901,12 @@ u8** slash_beast_patterns[3] = {
     D_80100294,
 };
 
-u8 slash_beast_pattern_weights[12] = { 0x07, 0x10, 0x00, 0x09, 0x10, 0x00, 0x07, 0x0A, 0x10, 0x00, 0x00, 0x00 };
+u8 slash_beast_pattern_weights[4][3] = {
+    { 0x07, 0x10, 0x00 },
+    { 0x09, 0x10, 0x00 },
+    { 0x07, 0x0A, 0x10 },
+    { 0x00, 0x00, 0x00 },
+};
 
 union AnimationStep D_801002BC[] = {
     { 1, 1, 0, 0x00 },

@@ -504,9 +504,6 @@ void func_800681C4(struct MainObj* arg0);
 void func_80068340(struct MainObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_800681C4);
-#else
 void func_800681C4(struct MainObj* arg0)
 {
 
@@ -554,12 +551,8 @@ void func_800681C4(struct MainObj* arg0)
         break;
     }
 }
-#endif
 
 // sentry_drone_rotate_aim
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_80068340);
-#else
 void func_80068340(struct MainObj* arg0)
 {
     switch ((s8)(SP_CUR_MAIN_OBJ->ext.main_48.unk82 - 1)) {
@@ -583,7 +576,6 @@ void func_80068340(struct MainObj* arg0)
         break;
     }
 }
-#endif
 
 void sentry_drone_despawn(struct MainObj* self)
 {

@@ -33,9 +33,6 @@ extern union AnimationStep* falling_rock_d_animations[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_00_breakable_wall", func_800BE9E8);
-#else
 void func_800BE9E8(struct ItemObj* self)
 {
     self->unk16 = VISUAL_SATURN_LAYER(6);
@@ -46,8 +43,8 @@ void func_800BE9E8(struct ItemObj* self)
     self->unk42 = OBJECT_STAGE_CLUT(0x9A);
     self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x9A));
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x9A));
-    self->unk54 = breakable_wall_hit_box;
     self->unk50 = NULL;
+    self->unk54 = breakable_wall_hit_box;
     self->unk68 = NULL;
     self->unk58 = (const u8*)D_80108684;
     self->x_vel.val = 0;
@@ -56,7 +53,6 @@ void func_800BE9E8(struct ItemObj* self)
     self->unk2C = 0;
     self->state = 1;
 }
-#endif
 
 void breakable_wall_main(struct ItemObj* arg0)
 {

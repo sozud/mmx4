@@ -145,9 +145,6 @@ void func_800A83C4(struct ShotObj* arg0);
 void func_800A858C(struct ShotObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A7CE8);
-#else
 void func_800A7CE8(struct ShotObj* arg0)
 {
     set_animation(arg0, 0xE);
@@ -169,7 +166,6 @@ void func_800A7CE8(struct ShotObj* arg0)
     arg0->unk50.data = (const u8*)colonel_shot_box_0;
     arg0->unk6++;
 }
-#endif
 
 void colonel_wave_fly(struct ShotObj* self)
 {
@@ -413,9 +409,6 @@ void colonel_shockwave_spread(struct ShotObj* self)
 }
 
 // colonel_shockwave_move
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_45_colonel_shot", func_800A858C);
-#else
 void func_800A858C(struct ShotObj* arg0)
 {
     switch (arg0->animation_step.fields.frame_index) {
@@ -442,7 +435,6 @@ void func_800A858C(struct ShotObj* arg0)
         break;
     }
 }
-#endif
 
 void (*colonel_shot_state_funcs[])(struct ShotObj*) = {
     colonel_shot_init,

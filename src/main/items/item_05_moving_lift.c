@@ -145,9 +145,6 @@ void moving_lift_spawn_all(void);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_05_moving_lift", func_800C0EBC);
-#else
 void func_800C0EBC(struct ItemObj* arg0)
 {
 
@@ -177,12 +174,8 @@ void func_800C0EBC(struct ItemObj* arg0)
     if (arg0->unk2 == 0)
         ((void (*)(struct ItemObj*))moving_lift_spawn_all)(arg0);
 }
-#endif
 
 // moving_lift_move
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_05_moving_lift", func_800C1050);
-#else
 void func_800C1050(struct ItemObj* arg0)
 {
     s32 offset;
@@ -222,7 +215,6 @@ void func_800C1050(struct ItemObj* arg0)
         arg0->y_vel.val = velocity;
     }
 }
-#endif
 
 void moving_lift_despawn(struct ItemObj* arg0)
 {

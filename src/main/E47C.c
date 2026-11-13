@@ -1495,16 +1495,20 @@ void func_8001EF48(struct GameInfo* arg0)
     arg0->mode++;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/E47C", func_8001EFF0);
-#else
 void func_8001EFF0(struct GameInfo* arg0)
 {
-    struct TransitionState* transition;
+    struct MainBssState* state;
 
-    transition = &main_bss_state.transition;
-    if (main_bss_state.transition.active == 0) {
-        if ((transition->selection == 0) || (func_8001E980(1), main_bss_state.transition.selection == 0)) {
+    state = &main_bss_state;
+    if (state->transition.active == 0) {
+        switch (state->transition.selection) {
+        case 0:
+            break;
+        default:
+            func_8001E980(1);
+            break;
+        }
+        if (state->transition.selection == 0) {
             arg0->unk0 = 9;
             engine_obj.unk1 = 0;
             engine_obj.unk2 = 0;
@@ -1523,7 +1527,6 @@ void func_8001EFF0(struct GameInfo* arg0)
         }
     }
 }
-#endif
 
 void func_8001F0BC(struct GameInfo* arg0)
 {

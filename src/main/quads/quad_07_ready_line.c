@@ -534,9 +534,16 @@ void ready_line_move(struct QuadObj* arg0)
     arg0->ext.ready_line.y_vel.val += arg0->ext.ready_line.y_accel.val;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_07_ready_line", ready_line_converge_vertex);
+struct QuadExtRuntime {
+    union QuadExt ext;
+    union QuadRuntime runtime;
+};
+#ifdef MMX4_PC
+#define READY_LINE_STATE(obj) (obj)
 #else
+#define READY_LINE_STATE(obj) ((struct QuadExtRuntime*)&(obj)->ext)
+#endif
+
 void ready_line_converge_vertex(struct QuadObj* arg0, arg_u8 arg1, s32 arg2, const s16 target[2])
 {
     f32* vertex;
@@ -554,21 +561,20 @@ void ready_line_converge_vertex(struct QuadObj* arg0, arg_u8 arg1, s32 arg2, con
     temp_s2 = vertex[0].val - (target[0] << 0x10);
     temp_s3 = vertex[1].val - (target[1] << 0x10);
     quadrant = angle_from_delta(temp_s2, temp_s3);
-    if (((((arg0->runtime.ready_line.directions[vertex_index & 0xFF] ^ quadrant) & 0x10) != 0) || (arg0->runtime.ready_line.crossed[vertex_index & 0xFF] != 0)) && (arg0->runtime.ready_line.converging == 0)) {
+    if (((((READY_LINE_STATE(arg0)->runtime.ready_line.directions[vertex_index & 0xFF] ^ quadrant) & 0x10) != 0) || (READY_LINE_STATE(arg0)->runtime.ready_line.crossed[vertex_index & 0xFF] != 0)) && (arg0->runtime.ready_line.converging == 0)) {
         arg0->x_pos.i.lo = 0;
         arg0->y_pos.i.lo = 0;
-        arg0->runtime.ready_line.crossed[vertex_index & 0xFF] = 1;
+        READY_LINE_STATE(arg0)->runtime.ready_line.crossed[vertex_index & 0xFF] = 1;
     } else {
         vertex[0].val -= temp_s2 / (s32)arg0->runtime.ready_line.interpolation_frames;
         vertex[1].val -= temp_s3 / (s32)arg0->runtime.ready_line.interpolation_frames;
-        arg0->runtime.ready_line.crossed[vertex_index & 0xFF] = 0;
+        READY_LINE_STATE(arg0)->runtime.ready_line.crossed[vertex_index & 0xFF] = 0;
         if ((vertex_index & 0xFF) == 3) {
             arg0->runtime.ready_line.converging = 0;
         }
     }
-    arg0->runtime.ready_line.directions[vertex_index & 0xFF] = quadrant;
+    READY_LINE_STATE(arg0)->runtime.ready_line.directions[vertex_index & 0xFF] = quadrant;
 }
-#endif
 
 // ready_line_state_funcs state 2
 void ready_line_despawn(struct QuadObj* arg0)

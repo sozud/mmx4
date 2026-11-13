@@ -129,9 +129,6 @@ void unused_ride_armor_spawn_shot(struct MainObj* self, s32 arg1)
 }
 
 // unused_ride_armor_idle
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B020);
-#else
 void func_8008B020(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -165,12 +162,8 @@ void func_8008B020(struct MainObj* self)
         animate_object(self);
     }
 }
-#endif
 
 // unused_ride_armor_walk
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B188);
-#else
 #define RIDE_ARMOR_WALK_ATTACK 0x160
 #define RIDE_ARMOR_WALK_FRAMES 64
 
@@ -195,7 +188,6 @@ void func_8008B188(struct MainObj* self)
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
-#endif
 
 void unused_ride_armor_shoot(struct MainObj* self)
 {
@@ -277,9 +269,6 @@ void unused_ride_armor_land(struct MainObj* self)
 #define RIDE_ARMOR_DASH_SPEED FIXED(4.125)
 #define RIDE_ARMOR_DASH_FLASH 30
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B4B8);
-#else
 void func_8008B4B8(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -304,7 +293,6 @@ void func_8008B4B8(struct MainObj* self)
     unused_ride_armor_apply_x_speed(self);
     animate_object(self);
 }
-#endif
 
 void unused_ride_armor_fall(struct MainObj* self)
 {
@@ -334,9 +322,6 @@ void unused_ride_armor_fall(struct MainObj* self)
 }
 
 // unused_ride_armor_jump_shoot
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B69C);
-#else
 #define RIDE_ARMOR_FALL_LIMIT FIXED(-5.875)
 
 void func_8008B69C(struct MainObj* self)
@@ -362,8 +347,8 @@ void func_8008B69C(struct MainObj* self)
         if (self->y_speed < RIDE_ARMOR_FALL_LIMIT)
             self->y_speed = RIDE_ARMOR_FALL_LIMIT;
         move_with_gravity(ANIMATED_OBJECT(self));
-        if (--self->ext.main_72.lifetime != 0) {
-            if (--self->ext.main_72.spawn_timer & 15)
+        if (--((struct Main72Ext*)&self->ext)->lifetime != 0) {
+            if (--((struct Main72Ext*)&self->ext)->spawn_timer & 15)
                 unused_ride_armor_spawn_shot(self, 0);
             animate_object(self);
         } else {
@@ -371,7 +356,6 @@ void func_8008B69C(struct MainObj* self)
         }
     }
 }
-#endif
 
 void unused_ride_armor_rapid_fire(struct MainObj* self)
 {

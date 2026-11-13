@@ -56,8 +56,47 @@ void func_800D1B44(struct MiscObj* self)
     self->unk15 = 0;
     is_on_screen(BASE_OBJECT(self));
 }
-#else
-INCLUDE_ASM("main/nonmatchings/misc/misc_50_cutscene_actor", func_800D1B44);
+#elif !defined(MMX4_PC)
+void func_800D1B44(struct MiscObj* self)
+{
+    u16* palette;
+    u32 i;
+
+    if (self->unk2 != 0) {
+        self->animation_table = (u32**)cutscene_actor_animations;
+        self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 0);
+        self->unk40 = D_801406A8[0] >> 7;
+        self->unk42 = 0x7880;
+        palette = SP_PALETTE + 0x201;
+        for (i = 0; i < 15; i++)
+            *palette++ = 0x8000;
+        palette = SP_PALETTE + 0x211;
+        for (i = 0; i < 15; i++)
+            *palette++ = 0x8000;
+        palette = SP_PALETTE + 0x221;
+        for (i = 0; i < 15; i++)
+            *palette++ = 0x8000;
+        palette = SP_PALETTE + 0x231;
+        for (i = 0; i < 15; i++)
+            *palette++ = 0x8000;
+        need_palette_load |= 1;
+        set_animation(self, self->unk2 - 1);
+        self->state = 1;
+        self->unk16 = 0x10;
+    } else {
+        self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 1);
+        self->unk40 = D_801406A8[1] >> 7;
+        self->unk42 = 0x784C;
+        self->x_pos.i.hi = 0x88;
+        self->y_pos.i.hi = 0x78;
+        self->state = 2;
+        self->animation_step.fields.frame_index = 0;
+        self->unk16 = 0x11;
+    }
+    self->bg_offset = -1;
+    self->unk15 = 0;
+    is_on_screen(BASE_OBJECT(self));
+}
 #endif
 
 void cutscene_actor_wait(struct MiscObj* self)

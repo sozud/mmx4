@@ -183,9 +183,6 @@ extern struct Unk_unk68 D_80103F08;
 extern struct Unk_unk68 D_80103F0C;
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_8008329C);
-#else
 void func_8008329C(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -230,7 +227,6 @@ void func_8008329C(struct MainObj* self)
     play_boss_voice(0xC);
     colonel_spawn_afterimages(self);
 }
-#endif
 
 void sigma_intro_fill_health(struct MainObj* self)
 {
@@ -334,9 +330,6 @@ void sigma_cloak_teleport_fade_in(struct MainObj* self)
 }
 
 // sigma_cloak_teleport_windup
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_80083710);
-#else
 void func_80083710(struct MainObj* self)
 {
     struct VisualObj* visual;
@@ -362,7 +355,6 @@ void func_80083710(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 // sigma_cloak_teleport_fire
 void func_800837FC(struct MainObj* self)
@@ -1416,9 +1408,6 @@ void sigma_reveal_fall(struct MainObj* self)
 }
 
 // sigma_reveal_burn_cloak
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_80085A44);
-#else
 void func_80085A44(struct MainObj* self)
 {
     struct VisualObj* visual;
@@ -1463,7 +1452,6 @@ void func_80085A44(struct MainObj* self)
     if (self->unk7C & 1)
         is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void sigma_reveal_wait_cloak(struct MainObj* self)
 {

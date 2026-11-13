@@ -16,7 +16,7 @@ void train_boss_arm_wait_sync(struct ShotObj* arg0);
 
 extern u8 train_boss_bullet_hit_box[4];
 
-extern u16 train_boss_arm_debris_positions[3][2];
+extern u16 train_boss_arm_debris_positions[6];
 extern u8 train_boss_arm_debris[8];
 
 extern s16 train_boss_arm_offsets[3][2];

@@ -38,17 +38,9 @@ void cannon_shell_update(struct ShotObj* self)
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009D23C(struct ShotObj* arg0);
-static s32 shot_21_abs(s32 value);
 void func_8009D588(struct ShotObj* arg0);
-static s32 shot_21_abs(s32 value)
-{
-    return value < 0 ? -value : value;
-}
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_21_cannon_shell", func_8009D23C);
-#else
 void func_8009D23C(struct ShotObj* arg0)
 {
     struct WeaponObj* owner;
@@ -94,7 +86,6 @@ void func_8009D23C(struct ShotObj* arg0)
     arg0->unk2C = (u32)arg0->y_vel.val / steps;
     set_animation(arg0, 7);
 }
-#endif
 
 void cannon_shell_fly(struct ShotObj* self)
 {
@@ -156,42 +147,45 @@ void cannon_shell_idle(struct ShotObj* self)
 }
 
 // cannon_shell_update_facing
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#define SHOT_21_ABS(x) (((x) >= 0) ? (x) : -(x))
 void func_8009D588(struct ShotObj* arg0)
 {
+    s32 a;
+    s32 b;
+
     switch (arg0->unk84.value) {
     case 0:
-        if (shot_21_abs(arg0->y_vel.val) >= shot_21_abs(arg0->x_vel.val / 2))
-            return;
-        set_animation(arg0, 8);
-        arg0->unk68 = (struct Unk_unk68*)cannon_shell_flat_terrain_box;
-        arg0->unk54 = cannon_shell_flat_hit_box;
-        arg0->unk50.data = cannon_shell_flat_hit_box;
+        a = SHOT_21_ABS(arg0->y_vel.val);
+        b = arg0->x_vel.val / 2;
+        if ((b >= 0) ? (a < b) : (a < -b)) {
+            set_animation(arg0, 8);
+            arg0->unk68 = (struct Unk_unk68*)cannon_shell_flat_terrain_box;
+            arg0->unk50.data = arg0->unk54 = cannon_shell_flat_hit_box;
+            arg0->unk84.value++;
+        }
         break;
     case 1:
-        if (shot_21_abs(arg0->y_vel.val) < shot_21_abs(arg0->x_vel.val / 2))
-            return;
-        set_animation(arg0, 9);
-        arg0->unk68 = (struct Unk_unk68*)cannon_shell_terrain_box;
-        arg0->unk54 = cannon_shell_hit_box;
-        arg0->unk50.data = cannon_shell_hit_box;
+        a = SHOT_21_ABS(arg0->y_vel.val);
+        b = arg0->x_vel.val / 2;
+        if ((b >= 0) ? (a >= b) : (a >= -b)) {
+            set_animation(arg0, 9);
+            arg0->unk68 = (struct Unk_unk68*)cannon_shell_terrain_box;
+            arg0->unk50.data = arg0->unk54 = cannon_shell_hit_box;
+            arg0->unk84.value++;
+        }
         break;
     case 2:
-        if (shot_21_abs(arg0->x_vel.val) >= shot_21_abs(arg0->y_vel.val / 2))
-            return;
-        set_animation(arg0, 0xA);
-        arg0->unk68 = (struct Unk_unk68*)cannon_shell_steep_terrain_box;
-        arg0->unk54 = cannon_shell_steep_hit_box;
-        arg0->unk50.data = cannon_shell_steep_hit_box;
+        a = SHOT_21_ABS(arg0->x_vel.val);
+        b = arg0->y_vel.val / 2;
+        if ((b >= 0) ? (a < b) : (a < -b)) {
+            set_animation(arg0, 0xA);
+            arg0->unk68 = (struct Unk_unk68*)cannon_shell_steep_terrain_box;
+            arg0->unk50.data = arg0->unk54 = cannon_shell_steep_hit_box;
+            arg0->unk84.value++;
+        }
         break;
-    default:
-        return;
     }
-    arg0->unk84.value++;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_21_cannon_shell", func_8009D588);
-#endif
 
 void (*cannon_shell_state_funcs[])(struct ShotObj*) = {
     func_8009D23C,

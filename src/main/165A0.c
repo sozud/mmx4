@@ -436,9 +436,6 @@ extern s32* D_8013BD50[][6][8];
 
 extern s32 D_8013E2F0[][6][8];
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/165A0", func_800267D4);
-#else
 void func_800267D4(s32 input)
 {
     u32 i;
@@ -455,9 +452,8 @@ void func_800267D4(s32 input)
         D_8013BD50[1][input3][i] = &D_8013E2F0[1][input3][i];
     }
 }
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(VERSION_EU)
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 INCLUDE_ASM("main/nonmatchings/165A0", func_80026894);
 #else
 void func_80026894(s32 layer)
@@ -590,9 +586,6 @@ void func_8002728C(void)
 
 INCLUDE_ASM("main/nonmatchings/165A0", func_80027344);
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/165A0", func_800275DC);
-#else
 void func_800275DC(s32 layer, s32 x, s32 y)
 {
     s32 block_x;
@@ -603,42 +596,24 @@ void func_800275DC(s32 layer, s32 x, s32 y)
     s32 inner_y;
     u32 i;
     s32 block;
-    s32 end;
-    s32 rem;
-    s32 layer_offset;
 
     if (y >= 0) {
         block_x = x / 256;
-        rem = x;
         block_y = y / 256;
-        if (x < 0)
-            rem = x + 511;
-        tile_x = (x - ((rem >> 9) << 9)) / 16;
-        rem = y % 512;
-        if (rem < 0)
-            rem += 15;
-        tile_y = rem >> 4;
+        tile_x = (x % 512) / 16;
+        tile_y = (y % 512) / 16;
         inner_x = tile_x & 15;
         inner_y = tile_y & 15;
-        y = layout_size;
-        layer_offset = layer * y;
-        y = layer_offset;
-        x = layout_width;
-        x *= block_y;
-        block = (SP_BG_TILEMAP + y + x)[block_x];
-        block_y = x;
+        block = (SP_BG_TILEMAP + layer * layout_size + layout_width * block_y)[block_x];
         for (i = 0; i < 21; i++) {
-            end = 16;
-            D_801441C8[layer][tile_y][tile_x++] = (inner_y * 16 + (SP_BG_TILE_PIXELS + block * 256))[inner_x];
+            D_801441C8[layer][tile_y][tile_x++] = (SP_BG_TILE_PIXELS + block * 256 + inner_y * 16)[inner_x];
             tile_x &= 31;
-            if (++inner_x == end) {
+            if (++inner_x == 16) {
                 inner_x = 0;
                 block_x++;
-                end = (SP_BG_TILEMAP + y + block_y)[block_x];
-                block = end;
+                block = (SP_BG_TILEMAP + layer * layout_size + layout_width * block_y)[block_x];
             }
         }
     }
 }
-#endif
 #endif

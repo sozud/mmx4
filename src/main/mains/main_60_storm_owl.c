@@ -140,8 +140,8 @@ void storm_owl_ground_cyclone_takeoff(struct MainObj*);
 void storm_owl_ground_cyclone_leave(struct MainObj*);
 void func_80078180(struct MainObj* arg0);
 
-extern void* storm_owl_patterns[];
-extern u8 storm_owl_pattern_weights[];
+extern u8** storm_owl_patterns[];
+extern u8 storm_owl_pattern_weights[][3];
 
 void storm_owl_update(struct MainObj* self)
 {
@@ -370,7 +370,98 @@ void func_80075320(struct MainObj* arg0)
     update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075320);
+extern void (*storm_owl_step_funcs[13])();
+void storm_owl_spawn_hit_flash(struct PlayerObj* arg0);
+
+void func_80075320(struct MainObj* arg0)
+{
+    s32 hit = func_8002DD04(arg0);
+
+    if (arg0->unk5 != 0)
+        arg0->ext.main_60.saved_unk5 = arg0->unk5;
+    if (hit < 0) {
+        g_Player.spike_immune = 1;
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        arg0->unk42 &= 0x7FFF;
+        return;
+    }
+    if (arg0->ext.main_60.flash_mode == 1) {
+        if ((arg0->ext.main_60.flash_timer & 1) == 0)
+            arg0->unk42 |= 0x8000;
+        else
+            arg0->unk42 &= 0x7FFF;
+        if (--arg0->ext.main_60.flash_timer == 0) {
+            arg0->collision_data = D_80107B78;
+            arg0->ext.main_60.flash_mode = 0;
+        }
+    } else if (hit != 0) {
+        if (engine_obj.cur_character == CHARACTER_X) {
+            if (hit == 7 || hit == 0x10) {
+                if (arg0->unk5 != 0xB)
+                    func_8001540C(2, 0xBD, arg0);
+                if (hit == 0x10) {
+                    arg0->collision_data = D_80106070;
+                    arg0->unk42 &= 0x7FFF;
+                }
+                arg0->unk5 = 0xB;
+                arg0->unk6 = 0;
+                arg0->active |= 4;
+            } else {
+                arg0->collision_data = D_801060F0;
+                storm_owl_spawn_hit_flash((struct PlayerObj*)arg0);
+                arg0->ext.main_60.flash_timer = 0x40;
+                arg0->ext.main_60.flash_mode = 1;
+            }
+        } else {
+            switch (hit - 0x1A) {
+            case 0:
+            case 2:
+            case 4:
+            case 6:
+            case 7:
+            case 8:
+                storm_owl_spawn_hit_flash((struct PlayerObj*)arg0);
+                arg0->collision_data = D_801060F0;
+                arg0->ext.main_60.flash_timer = 0x40;
+                arg0->ext.main_60.flash_mode = 1;
+                break;
+            case 9:
+            case 10:
+                if (arg0->ext.main_60.flash_mode == 0) {
+                    arg0->ext.main_60.flash_mode = 2;
+                    arg0->ext.main_60.flash_timer = 8;
+                } else {
+                    storm_owl_spawn_hit_flash((struct PlayerObj*)arg0);
+                    arg0->collision_data = D_801060F0;
+                    arg0->ext.main_60.flash_mode = 1;
+                    arg0->ext.main_60.flash_timer = 0x40;
+                }
+                break;
+            case 11:
+                if (arg0->unk5 != 0xB)
+                    func_8001540C(2, 0xBD, arg0);
+                arg0->unk5 = 0xB;
+                arg0->unk6 = 0;
+                break;
+            }
+        }
+    } else if (arg0->ext.main_60.flash_mode == 2) {
+        if (--arg0->ext.main_60.flash_timer == 0)
+            arg0->ext.main_60.flash_mode = 0;
+    }
+    if (arg0->unk17 < 2 && --arg0->unk7 == 0) {
+        if (get_random() & 1)
+            func_8001540C(2, 0xB7, arg0);
+        else
+            func_8001540C(2, 0xB8, arg0);
+        arg0->unk7 = 0x28;
+    }
+    storm_owl_step_funcs[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
+}
 #endif
 
 void storm_owl_death(struct MainObj* self)
@@ -550,26 +641,19 @@ void storm_owl_intro_fill_health(struct MainObj* self)
 }
 
 // storm_owl_intro_takeoff
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075C6C);
-#else
 void func_80075C6C(struct MainObj* arg0)
 {
-    u8 index;
-
     animate_object(ANIMATED_OBJECT(arg0));
     set_animation(arg0, 1);
-    index = engine_obj.stage == 7 ? 0 : 2;
-    arg0->ext.main_60.corner = index;
+    arg0->ext.main_60.corner = engine_obj.stage == 7 ? 0 : 2;
     set_velocity_from_angle(MOVING_OBJECT(arg0),
-        angle_to_point(OBJECT_HEADER(arg0), (storm_owl_waypoints[index].x + background_objects[0].x_pos.i.hi) << 16,
-            (storm_owl_waypoints[index].y + background_objects[0].y_pos.i.hi) << 16)
+        angle_to_point(OBJECT_HEADER(arg0), (storm_owl_waypoints[arg0->ext.main_60.corner].x + background_objects[0].x_pos.i.hi) << 16,
+            (storm_owl_waypoints[arg0->ext.main_60.corner].y + background_objects[0].y_pos.i.hi) << 16)
             & 0xFF);
     arg0->x_speed <<= 1;
     arg0->y_speed <<= 1;
     arg0->unk6++;
 }
-#endif
 
 void storm_owl_intro_rise(struct MainObj* self)
 {
@@ -598,9 +682,6 @@ void storm_owl_patrol_start(struct MainObj* self)
 }
 
 // storm_owl_patrol_fly
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075E78);
-#else
 void func_80075E78(struct MainObj* arg0)
 {
     s32 target_x;
@@ -627,7 +708,6 @@ void func_80075E78(struct MainObj* arg0)
             arg0->unk6++;
     }
 }
-#endif
 
 void storm_owl_patrol_wait(struct MainObj* self)
 {
@@ -645,9 +725,6 @@ void storm_owl_patrol_wait(struct MainObj* self)
 }
 
 // storm_owl_patrol_fall
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_800760C4);
-#else
 void func_800760C4(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
@@ -672,7 +749,6 @@ void func_800760C4(struct MainObj* arg0)
         }
     }
 }
-#endif
 
 void storm_owl_patrol_return(struct MainObj* self)
 {
@@ -719,9 +795,6 @@ void storm_owl_grab_dive(struct MainObj* self)
 }
 
 // storm_owl_grab_swoop
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076364);
-#else
 void func_80076364(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
@@ -768,12 +841,8 @@ void func_80076364(struct MainObj* arg0)
         arg0->unk6 = 0;
     }
 }
-#endif
 
 // storm_owl_grab_rise
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_8007651C);
-#else
 void func_8007651C(struct MainObj* arg0)
 {
     s16 bg_x;
@@ -797,11 +866,7 @@ void func_8007651C(struct MainObj* arg0)
         arg0->unk6++;
     }
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_grab_carry);
-#else
 void storm_owl_grab_carry(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -811,7 +876,10 @@ void storm_owl_grab_carry(struct MainObj* self)
         self->y_speed = 0;
         self->gravity = 0;
     }
-    g_Player.x_pos.i.hi = (self->unk15 == 0 ? (u16)self->x_pos.i.hi - 0xA : (u16)self->x_pos.i.hi + 0xA);
+    if (self->unk15 == 0)
+        g_Player.x_pos.i.hi = self->x_pos.i.hi - 0xA;
+    else
+        g_Player.x_pos.i.hi = self->x_pos.i.hi + 0xA;
     g_Player.y_pos.i.hi = (u16)self->y_pos.i.hi + 0x1E;
     if (--self->unk7C == 0) {
         set_animation(self, 8);
@@ -819,7 +887,6 @@ void storm_owl_grab_carry(struct MainObj* self)
         self->unk6++;
     }
 }
-#endif
 
 void storm_owl_grab_slam(struct MainObj* self)
 {
@@ -1520,20 +1587,14 @@ void storm_owl_spawn_volley_feather(struct MainObj* self, s8 arg1)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_spawn_cyclones);
-#else
-void storm_owl_spawn_cyclones(struct MainObj* arg0)
+void storm_owl_spawn_cyclones(struct MainObj* self)
 {
-    struct MainObj* self;
-    s32 variant;
-    s32 i;
+    u8 variant;
+    u8 i;
     struct ShotObj* shot;
 
-    self = arg0;
     variant = ((self->ext.main_60.corner % 2) == 0) * 2;
-    i = 0;
-    do {
+    for (i = 0; i < 3; i++) {
         shot = find_free_shot_obj();
         if (shot != 0) {
             shot->active = 0x41;
@@ -1548,10 +1609,8 @@ void storm_owl_spawn_cyclones(struct MainObj* arg0)
             shot->unk16 = VISUAL_SATURN_LAYER(4);
             shot->unk15 = self->unk15;
         }
-        i += 1;
-    } while ((u8)i < 3);
+    }
 }
-#endif
 
 void storm_owl_spawn_storm_charge(struct AnimatedObj* self)
 {
@@ -1625,9 +1684,6 @@ void storm_owl_spawn_hit_flash(struct PlayerObj* self)
 }
 
 // storm_owl_spawn_ground_cyclone
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80078314);
-#else
 void func_80078314(struct MainObj* arg0)
 {
     struct VisualObj* visual;
@@ -1702,7 +1758,6 @@ void func_80078314(struct MainObj* arg0)
         }
     }
 }
-#endif
 
 void storm_owl_choose_corner(struct MainObj* self)
 {
@@ -1723,38 +1778,23 @@ void storm_owl_choose_corner(struct MainObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_choose_pattern);
-#else
 void storm_owl_choose_pattern(struct MainObj* self)
 {
-    u32 idx;
+    u8 idx;
     u8** table;
-    u8* weights;
-    u8* base;
-    u8 i;
     u8 rnd;
-    u32 gr;
+    u8 i;
 
-    idx = self->hp - 1;
-    if ((s32)idx < 0)
-        idx = self->hp + 0xE;
-    idx >>= 4;
-    idx &= 0xFF;
-    table = ((u8**)storm_owl_patterns)[idx];
-    gr = get_random();
-    i = 0;
-    base = storm_owl_pattern_weights;
-    rnd = gr & 0xF;
-    while (i < 3) {
-        if (rnd < (base + idx * 3)[i]) {
+    idx = (self->hp - 1) / 16;
+    table = storm_owl_patterns[idx];
+    rnd = get_random() & 0xF;
+    for (i = 0; i < 3; i++) {
+        if (rnd < storm_owl_pattern_weights[idx][i]) {
             self->ext.main_60.pattern = table[i];
             return;
         }
-        i++;
     }
 }
-#endif
 
 void storm_owl_clear_shots(void)
 {
@@ -2169,13 +2209,18 @@ u8* storm_owl_patterns_low_health[3] = {
     storm_owl_pattern_6,
 };
 
-void* storm_owl_patterns[3] = {
+u8** storm_owl_patterns[3] = {
     storm_owl_patterns_low_health,
     storm_owl_patterns_mid_health,
     storm_owl_patterns_high_health,
 };
 
-u8 storm_owl_pattern_weights[12] = { 0x04, 0x0A, 0x10, 0x08, 0x10, 0x10, 0x0A, 0x10, 0x10, 0x00, 0x00, 0x00 };
+u8 storm_owl_pattern_weights[4][3] = {
+    { 0x04, 0x0A, 0x10 },
+    { 0x08, 0x10, 0x10 },
+    { 0x0A, 0x10, 0x10 },
+    { 0x00, 0x00, 0x00 },
+};
 
 void (*storm_owl_state_funcs[3])() = {
     storm_owl_start,
