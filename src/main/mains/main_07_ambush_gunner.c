@@ -52,7 +52,7 @@ void func_80047818(struct MainObj* arg0);
 extern struct Unk_unk68 ambush_gunner_terrain_box;
 extern union AnimationStep* ambush_gunner_animations[];
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80047404(struct MainObj* arg0)
 {
     u8 kind = (u8)arg0->unk2;

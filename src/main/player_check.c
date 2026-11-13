@@ -527,7 +527,7 @@ void player_enter_ladder_climb_off_top(struct PlayerObj* arg0);
 void player_enter_ladder_step_off_bottom(struct PlayerObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80033D54(struct PlayerObj* arg0)
 {
     const struct PlayerHurtVelocity* state;
@@ -685,11 +685,7 @@ s32 player_check_script(struct PlayerObj* self)
     }
 
     if (self->script_state > 0) {
-#ifdef MMX4_SATURN
         func_80034E2C(self);
-#else
-        func_80034E2C();
-#endif
         return 1;
     }
     return 0;

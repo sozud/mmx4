@@ -122,7 +122,7 @@ void func_800BC784(struct EffectObj* arg0)
 }
 
 // rock_dropper_drop
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800BC92C(struct EffectObj* arg0)
 {
     struct Effect33Ext* ext = &arg0->ext.effect_33;

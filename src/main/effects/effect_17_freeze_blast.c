@@ -153,7 +153,7 @@ void func_800B9354(struct EffectObj* self)
 }
 
 // freeze_blast_spawn_enemies
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800B94B8(struct EffectObj* self)
 {
     struct Effect17SpawnGroupPC* group = &((struct Effect17SpawnGroupPC*)freeze_blast_spawn_groups)[(s8)self->unk2];

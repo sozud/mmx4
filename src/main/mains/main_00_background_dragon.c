@@ -698,7 +698,7 @@ void background_dragon_sequence(struct MainObj* self)
 }
 
 // background_dragon_chase
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800419B8(struct MainObj* arg0)
 {
     s32 distance;

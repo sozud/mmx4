@@ -47,7 +47,7 @@ void dragon_shot_update(struct ShotObj* self)
 void func_800994DC(struct ShotObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800994DC(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;

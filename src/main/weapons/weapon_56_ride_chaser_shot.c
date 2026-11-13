@@ -33,7 +33,7 @@ extern u8 ride_chaser_shot_angles[];
 extern u8 ride_chaser_shot_animations[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80098630(struct WeaponObj* arg0)
 {
     s32 dx;

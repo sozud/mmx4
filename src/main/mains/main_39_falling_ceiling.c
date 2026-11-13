@@ -56,7 +56,7 @@ extern s8 D_800FE948[4];
 extern s8 D_800FE94C[4];
 extern union AnimationStep* falling_ceiling_animations[4];
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800615CC(struct MainObj* self)
 {
     u8* ext;

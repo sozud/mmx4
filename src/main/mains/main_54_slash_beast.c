@@ -544,7 +544,17 @@ void slash_beast_decide(struct MainObj* self)
 }
 
 // slash_beast_pick_attack
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_PC
+// the cursor can sit one byte before the first pattern, which on PSX is the last byte of D_8010024C
+static u8 slash_beast_next_step(struct MainObj* arg0)
+{
+    u8* cursor = arg0->ext.main_54.pattern++;
+
+    return cursor + 1 == slash_beast_pattern_steps[0] ? (u8)D_8010024C.unk3 : *cursor;
+}
+#endif
+
+#ifdef MMX4_SATURN
 void func_8006C6AC(struct MainObj* arg0)
 {
     u8* cursor;
@@ -664,7 +674,11 @@ void func_8006C6AC(struct MainObj* arg0)
             return;
         }
     }
+#ifdef MMX4_PC
+    if (slash_beast_next_step(arg0) == 0xFF)
+#else
     if (*arg0->ext.main_54.pattern++ == 0xFF)
+#endif
         slash_beast_pick_pattern(arg0);
     switch (*arg0->ext.main_54.pattern) {
     case 0:
@@ -1072,7 +1086,7 @@ void slash_beast_dash_turn(struct MainObj* self)
 }
 
 // slash_beast_pounce
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8006D3DC(struct MainObj* arg0)
 {
     s32 target;
@@ -1708,7 +1722,7 @@ void slash_beast_high_leap_recover(struct MainObj* self)
 }
 
 // slash_beast_set_floor_palette
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8006E920(struct MainObj* arg0, s32 value)
 {
     s32 start = 0;

@@ -42,7 +42,7 @@ extern union AnimationStep* cyberspace_warp_animations[5];
 extern s16 cyberspace_warp_positions[14];
 extern ret_u8 func_8002938C(s32);
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800CE388(struct MiscObj* arg0)
 {
     s32 resource;

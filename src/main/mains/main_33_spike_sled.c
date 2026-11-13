@@ -372,7 +372,7 @@ void spike_sled_charge_start(struct MainObj* self)
 }
 
 // spike_sled_charge_dash
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8005DC58(struct MainObj* arg0)
 {
     struct Main33Ext* ext = &arg0->ext.main_33;

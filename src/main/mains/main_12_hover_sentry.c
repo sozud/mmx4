@@ -267,7 +267,7 @@ land:
 }
 
 // hover_sentry_attack_1
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8004BF5C(struct MainObj* arg0)
 {
     switch (arg0->unk6) {

@@ -19,6 +19,13 @@ void (*tile_scanner_fill_funcs[1])(struct EffectObj*) = { func_800B6660 };
 
 // tile_scanner_update
 
+#ifdef MMX4_PC
+#define TILE_SCANNER_FOOT_Y() \
+    (g_Player.y_pos.i.hi + (g_Player.unk68 != NULL ? g_Player.unk68->unk3 + (s8)g_Player.unk68->unk1 : 0))
+#else
+#define TILE_SCANNER_FOOT_Y() (g_Player.y_pos.i.hi + g_Player.unk68->unk3 + (s8)g_Player.unk68->unk1)
+#endif
+
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 static u8 effect_05_probe(s16 x, s32 y_offset);
 static void effect_05_dispatch(struct EffectObj* arg0);
@@ -309,7 +316,7 @@ void func_800B64BC(struct EffectObj* arg0)
 }
 
 // tile_scanner_flood_fill
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800B6660(struct EffectObj* arg0)
 {
     struct Effect5Ext* ext = &arg0->ext.effect_5;
@@ -380,7 +387,7 @@ void func_800B6660(struct EffectObj* arg0)
         arg0->x_pos.val += arg0->ext.effect_5.unk14;
         arg0->ext.effect_5.unk14 += arg0->ext.effect_5.unk18;
         tile = func_8002D724(&g_Player, arg0->x_pos.i.hi,
-            g_Player.y_pos.i.hi + g_Player.unk68->unk3 + (s8)g_Player.unk68->unk1);
+            TILE_SCANNER_FOOT_Y());
         if (!(tile == 0x3C || tile == 0 || tile == 0x18 || tile == 0x1C || tile == 0x14 || tile == 0x1A)) {
             g_Player.x_pos.val = arg0->x_pos.val;
             arg0->state = 1;
@@ -399,7 +406,7 @@ void func_800B6660(struct EffectObj* arg0)
         arg0->x_pos.val += arg0->ext.effect_5.unk14;
         arg0->ext.effect_5.unk14 += arg0->ext.effect_5.unk18;
         tile = func_8002D724(&g_Player, arg0->x_pos.i.hi,
-            g_Player.y_pos.i.hi + g_Player.unk68->unk3 + (s8)g_Player.unk68->unk1);
+            TILE_SCANNER_FOOT_Y());
         if (!(tile == 0x3C || tile == 0 || tile == 0x18 || tile == 0x1C || tile == 0x14 || tile == 0x1A)) {
             g_Player.x_pos.val = arg0->x_pos.val;
             arg0->state = 1;

@@ -87,7 +87,7 @@ void trident_shot_flash_despawn(struct ShotObj* self)
 }
 
 // trident_shot_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8009B1E8(struct ShotObj* arg0)
 {
     s32 index = arg0->unk2;

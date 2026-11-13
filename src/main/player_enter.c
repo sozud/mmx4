@@ -540,14 +540,8 @@ void player_enter_ladder_down(struct PlayerObj* self)
 }
 
 // player_start_script
-#ifdef MMX4_PC
-void func_80034E2C(void)
-{
-    struct PlayerObj* player = &g_Player;
-#else
 void func_80034E2C(struct PlayerObj* player)
 {
-#endif
 
     player->unk6 = 0;
     player->unk5 = player->script_action;

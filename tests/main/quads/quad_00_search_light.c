@@ -6,7 +6,7 @@
 extern struct SearchLightIntensityLookup search_light_blend_modes;
 extern struct SearchLightColorLookup search_light_colors;
 extern s32 search_light_speeds[3];
-extern void search_light_move(struct Unk22* arg0);
+extern void search_light_move(struct QuadObj* arg0);
 
 extern s32 search_light_accels[3];
 extern struct SearchLightSpawner search_light_spawners[12];
@@ -399,20 +399,22 @@ static u32 test_motion_helper(u32 row)
         { -0x8000, 0, 0x8000, 0 },
     };
     static const u8 steps[5] = { 1, 2, 3, 7, 16 };
-    struct Unk22 value, want;
+    struct QuadObj value, want;
     u32 i, n = steps[row / 6], v = row % 6;
     memset(&value, 0xA5, sizeof(value));
-    value.unk38 = vectors[v][0];
-    value.unk3C = vectors[v][1];
-    value.unk40 = vectors[v][2];
-    value.unk44 = vectors[v][3];
-    value.unk48 = -0x1234567;
-    value.unk4C = 0x2345678;
+    value.ext.search_light.velocity = vectors[v][0];
+    value.ext.search_light.acceleration = vectors[v][1];
+    value.ext.search_light.vertical_velocity = vectors[v][2];
+    value.ext.search_light.vertical_acceleration = vectors[v][3];
+    value.runtime.search_light.x_accumulator = -0x1234567;
+    value.runtime.search_light.y_accumulator = 0x2345678;
     want = value;
-    want.unk38 += n * value.unk3C;
-    want.unk40 += n * value.unk44;
-    want.unk48 += (s32)n * value.unk38 + (s32)(n * (n - 1) / 2) * value.unk3C;
-    want.unk4C += (s32)n * value.unk40 + (s32)(n * (n - 1) / 2) * value.unk44;
+    want.ext.search_light.velocity += n * value.ext.search_light.acceleration;
+    want.ext.search_light.vertical_velocity += n * value.ext.search_light.vertical_acceleration;
+    want.runtime.search_light.x_accumulator += (s32)n * value.ext.search_light.velocity
+        + (s32)(n * (n - 1) / 2) * value.ext.search_light.acceleration;
+    want.runtime.search_light.y_accumulator += (s32)n * value.ext.search_light.vertical_velocity
+        + (s32)(n * (n - 1) / 2) * value.ext.search_light.vertical_acceleration;
     for (i = 0; i < n; i++)
         search_light_move(&value);
     c_test_same_words(&value, &want, sizeof(want));

@@ -78,7 +78,7 @@ void func_80058AC8(struct MainObj* arg0);
 void func_80059640(struct MainObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80058740(struct MainObj* arg0)
 {
     struct Main27Ext* ext = &arg0->ext.main_27;

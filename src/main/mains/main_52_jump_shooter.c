@@ -365,7 +365,7 @@ void jump_shooter_face_player(struct AnimatedObj* self)
 }
 
 // jump_shooter_aim_at_player
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8006AE80(struct MainObj* arg0)
 {
     u8 angle;

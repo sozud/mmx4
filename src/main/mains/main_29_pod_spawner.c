@@ -386,7 +386,7 @@ void pod_spawner_copy_init(struct MainObj* self)
 }
 
 // pod_spawner_copy_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8005AF5C(struct MainObj* self)
 {
     struct MainObj* source = self->ext.main_29.source;

@@ -150,7 +150,7 @@ void ride_armor_pilot_apply_x_speed(struct MainObj*);
 void ride_armor_pilot_set_walk_speed(struct MainObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80089C7C(struct MainObj* self)
 {
     struct Main71Ext* ext = &self->ext.main_71;

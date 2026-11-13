@@ -185,7 +185,7 @@ void gunship_shot_idle(struct ShotObj* self)
 }
 
 // gunship_shot_missile_steer
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800A6DF4(struct ShotObj* arg0)
 {
     u8 timer = arg0->unk90.bytes[1];

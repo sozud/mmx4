@@ -17,7 +17,7 @@ struct Effect10Trigger {
 };
 
 // sound_zone_update
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 extern struct Effect10Trigger* sound_zone_lists[2];
 u8 player_in_bounds(s16* bounds);
 

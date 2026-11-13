@@ -476,7 +476,7 @@ void robot_bee_sting_recoil(struct MainObj* self)
 }
 
 // robot_bee_sting_return
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80045DD8(struct MainObj* self)
 {
     u8 phase = self->ext.main_5.unk80;

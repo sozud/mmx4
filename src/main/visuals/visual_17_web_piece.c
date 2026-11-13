@@ -50,7 +50,7 @@ static const s16* visual_17_target(struct VisualObj* arg0)
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800B20CC(struct VisualObj* arg0)
 {
     const s16* target;

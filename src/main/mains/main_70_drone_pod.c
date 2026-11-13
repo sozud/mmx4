@@ -378,7 +378,7 @@ void drone_pod_launch_close(struct MainObj* self)
 }
 
 // drone_pod_spawn_drones
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80089588(struct MainObj* self)
 {
     u8 start = self->ext.main_70.unk84;

@@ -122,7 +122,7 @@ void func_80057160(struct MainObj* self)
 }
 
 // caterkiller_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80057308(struct MainObj* self)
 {
     unsigned index;
@@ -643,7 +643,7 @@ struct Unk_unk68* D_800FD018[] = {
 
 struct Unk_unk68* D_800FD048[] = {
     D_800FCFF4,
-#ifndef MMX4_WIN32
+#if !defined(MMX4_WIN32) && !defined(MMX4_PC)
 };
 
 struct Unk_unk68* D_800FD04C[] = {

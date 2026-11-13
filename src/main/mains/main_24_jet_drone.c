@@ -41,7 +41,7 @@ extern struct Unk_unk68 jet_drone_hurt_box[];
 extern struct Unk_unk68 jet_drone_terrain_box[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800567C4(struct MainObj* arg0)
 {
     u8 subtype;

@@ -111,35 +111,40 @@ void ice_wall_main(struct MainObj* self)
 }
 
 // spawn_ice_chunks
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800583B0(struct MainObj* arg0, arg_s16 x, arg_s16 y, arg_u8 base)
 {
+    u8 above;
+    u8 below;
     u8 tile;
     s16 left = (x & -0x10) - 0x10;
     s16 top = y & -0x10;
 
-    if ((func_8002D724(PLAYER_OBJECT(arg0), x, y - 0x20)) != 0x38)
+    above = func_8002D724(PLAYER_OBJECT(arg0), x, y - 0x20);
+    if (above != 0x38)
+        above = func_8002D724(PLAYER_OBJECT(arg0), x, y - 0x30);
+    below = func_8002D724(PLAYER_OBJECT(arg0), x, y + 0x30);
 
-        switch ((func_8002D724(PLAYER_OBJECT(arg0), x, y - 0x30))) {
-        case 0x31:
-            tile = 2;
-            break;
-        case 0:
-            tile = 3;
-            break;
-        case 0x30:
-            tile = 1;
-            break;
-        case 0x3C:
-            tile = 0;
-            break;
-        default:
-            tile = 4;
-            break;
-        }
+    switch (above) {
+    case 0x31:
+        tile = 2;
+        break;
+    case 0:
+        tile = 3;
+        break;
+    case 0x30:
+        tile = 1;
+        break;
+    case 0x3C:
+        tile = 0;
+        break;
+    default:
+        tile = 4;
+        break;
+    }
     apply_tile_effect(tile + base, left, top - 0x20);
 
-    switch ((func_8002D724(PLAYER_OBJECT(arg0), x, y + 0x30))) {
+    switch (below) {
     case 0x31:
         tile = 0x11;
         break;

@@ -20,7 +20,7 @@ void sigma_final_fx_follow(struct MiscObj*);
 void func_800D3084(struct MiscObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800D3084(struct MiscObj* self)
 {
     struct MainObj* owner = (struct MainObj*)self->ext.misc_55.owner;
