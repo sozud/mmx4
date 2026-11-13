@@ -150,12 +150,14 @@ static inline void item_carrier_spawn_item(struct MainObj* arg0)
 
 void func_80042AFC(struct MainObj* arg0)
 {
+    s32 hit;
     s32 i;
 
     if (arg0->unk2 == 0) {
         for (i = 0; i < 2; i++) {
             arg0->hurt_box = (const u8*)item_carrier_part_hurtboxes[i];
-            if (func_8002DD04(arg0) < 0) {
+            hit = func_8002DD04(arg0);
+            if (hit < 0) {
                 spawn_explosion(BASE_OBJECT(arg0));
                 spawn_debris(item_carrier_part_debris_counts[i], item_carrier_part_debris[i], arg0);
                 if (i == 0) {
@@ -170,7 +172,7 @@ void func_80042AFC(struct MainObj* arg0)
                 return;
             }
         }
-    } else if (func_8002DD04(arg0) < 0) {
+    } else if ((hit = func_8002DD04(arg0)) < 0) {
         spawn_explosion(BASE_OBJECT(arg0));
         spawn_debris(3, item_carrier_capsule_debris, arg0);
         item_carrier_spawn_item(arg0);

@@ -71,10 +71,10 @@ void func_800C4D20(struct ItemObj* self)
     self->unk61 = 0;
     self->unk75 = 0;
     self->unk67 = 0;
-    self->state = 1;
-    self->unk5 = 0;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
+    self->state = 1;
+    self->unk5 = 0;
 }
 
 void gravity_switch_main(struct ItemObj* arg0)

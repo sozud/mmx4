@@ -238,18 +238,11 @@ void robot_bee_wait_start(struct MainObj* self)
 
 void robot_bee_wait_for_player(struct MainObj* self)
 {
-    s32 object_x;
-    s32 player_x;
-    s32 x_vel;
-
     animate_object(ANIMATED_OBJECT(self));
-    object_x = self->x_pos.val;
-    player_x = g_Player.x_pos.val;
-    if (ABS(object_x, player_x) <= FIXED(144)) {
-        x_vel = robot_bee_approach_speeds[!(self->unk15 & PLAYER_FACING_RIGHT)];
+    if (ABS(self->x_pos.val, g_Player.x_pos.val) <= FIXED(144)) {
+        self->x_speed = robot_bee_approach_speeds[!(self->unk15 & PLAYER_FACING_RIGHT)];
         self->y_speed = 0;
         self->unk5 = 3;
-        self->x_speed = x_vel;
     }
 }
 
@@ -265,12 +258,9 @@ void robot_bee_glide(struct MainObj* self)
 
 void robot_bee_glide_start(struct MainObj* self)
 {
-    s32 x_vel;
-
     animate_object(ANIMATED_OBJECT(self));
-    x_vel = robot_bee_approach_speeds[!(self->unk15 & PLAYER_FACING_RIGHT)];
+    self->x_speed = robot_bee_approach_speeds[!(self->unk15 & PLAYER_FACING_RIGHT)];
     self->y_speed = FIXED(1);
-    self->x_speed = x_vel;
     self->unk6++;
 }
 
@@ -600,9 +590,9 @@ void func_8004619C(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 1);
     func_8001540C(2, SATURN_SOUND(0x13, 0x12), self);
+    self->x_speed = 0;
     self->x_accel = 0x400;
     self->ext.main_5.unk80 = self->unk15;
-    self->x_speed = 0;
     self->y_speed = D_800FA130[0];
     self->gravity = -0x400;
     self->ext.main_5.unk81 = 0;

@@ -1027,11 +1027,11 @@ void func_80073E80(struct MainObj* arg0)
     else
         arg0->x_speed = 0x20000;
     arg0->y_speed = 0x38000;
+    arg0->x_accel = 0;
     arg0->gravity = 0x4200;
     arg0->air_state = 1;
     arg0->ext.main_57.flash_timer = 0xC8;
     arg0->ext.main_57.flashing = 1;
-    arg0->x_accel = 0;
     arg0->collision_data = D_801060F0;
     arg0->unk6++;
 }

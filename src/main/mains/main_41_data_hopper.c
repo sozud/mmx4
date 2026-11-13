@@ -347,8 +347,8 @@ void func_80062BBC(struct MainObj* self)
     s32 status;
 
     self->unk18 = self->x_pos;
-    self->unk1C = self->y_pos;
     self->on_screen = 0;
+    self->unk1C = self->y_pos;
     if (self->unk5 != 7)
         func_80062AEC(self);
     ((void (*)(struct MainObj*))data_hopper_step_funcs[self->unk5])(self);

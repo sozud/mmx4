@@ -1036,8 +1036,8 @@ void func_8006D280(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event == 2) {
-        arg0->hurt_box = D_801001FC;
         arg0->ext.main_54.claw_hitbox = 0;
+        arg0->hurt_box = D_801001FC;
         arg0->attack_box = D_801001F8;
     }
     if (arg0->animation_step.fields.event != 1)
@@ -1597,8 +1597,8 @@ void func_8006E450(struct MainObj* arg0)
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = 0x10000;
     }
-    arg0->y_speed = 0x40000;
     arg0->x_accel = 0;
+    arg0->y_speed = 0x40000;
     arg0->gravity = 0x8000;
     move_object(MOVING_OBJECT(arg0));
     arg0->unk6 = 1;

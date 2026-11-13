@@ -92,9 +92,9 @@ void func_800A9F30(struct ShotObj* self)
             self->x_vel.val = FIXED(4);
         }
         set_animation(self, 0x10);
+        self->unk5++;
         self->unk54 = (const u8*)double_ball_box_1;
         self->unk50.data = (const u8*)double_ball_box_1;
-        self->unk5++;
         func_8001540C(2, SATURN_SOUND(0xF3, 0xD0), NULL);
     } else {
         animate_object(ANIMATED_OBJECT(self));

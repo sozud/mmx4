@@ -91,10 +91,10 @@ void func_800B91E0(struct EffectObj* self)
     if (((struct Effect17Ext*)&self->ext)->phase-- != 0)
         return;
     if ((u16)g_FilterAmountR >= 0x1E) {
+        need_palette_load |= 1;
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
-        need_palette_load |= 1;
         engine_obj.character_state.fields.active = 1;
         func_800B9354(self);
         engine_obj.unk10 = 0;

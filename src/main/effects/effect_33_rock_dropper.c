@@ -54,9 +54,9 @@ void func_800BC784(struct EffectObj* arg0)
         arg0->ext.effect_33.period = 0x26;
         arg0->ext.effect_33.cooldown = 0x8C;
         arg0->ext.effect_33.burst = 4;
+        arg0->ext.effect_33.variant = arg0->unk2 & 0xF;
         arg0->state = 1;
         arg0->unk5 = 0;
-        arg0->ext.effect_33.variant = arg0->unk2 & 0xF;
         return;
     case 0x20:
         switch (arg0->unk2 & 0xF) {

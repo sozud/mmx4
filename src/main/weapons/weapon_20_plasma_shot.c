@@ -46,8 +46,8 @@ void func_800929DC(struct WeaponObj* self)
     self->on_screen = 1;
     self->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 12);
     self->animation_table = D_8011BF40;
-    self->unk42 = WEAPON_PALETTE_2;
     self->unk40 = WEAPON_TEXTURE_BASE;
+    self->unk42 = WEAPON_PALETTE_2;
     if (self->id == 0x14) {
         self->unk16 = 0;
         self->unk50 = D_8010871C;
@@ -58,19 +58,19 @@ void func_800929DC(struct WeaponObj* self)
             self->x_vel.val = -0xB0000;
         set_animation(self, 0x1D);
     } else {
+        self->unk16 = 1;
         self->unk50 = D_80108720;
         self->unk64 = 2;
-        ext->lifetime = 0x5A;
-        self->unk16 = 1;
         self->x_vel.val = 0;
+        ext->lifetime = 0x5A;
         ext->timer = 4;
         set_animation(self, 0x1E);
     }
     self->unk28.val = 0;
     self->y_vel.val = 0;
     self->unk2C = 0;
-    self->unk5 = 0;
     self->state++;
+    self->unk5 = 0;
     update_on_screen(BASE_OBJECT(self), 0x2A, 0x22);
 }
 

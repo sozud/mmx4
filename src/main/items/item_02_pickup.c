@@ -611,9 +611,6 @@ void func_800BFBD0(struct ItemObj* arg0)
 }
 
 // pickup_collect_weapon_energy
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800BFCC0);
-#else
 void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
 {
     struct PlayerObj* player;
@@ -682,9 +679,8 @@ void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
             }
         }
     } else if (g_Player.boss_flags & 1) {
-        current = player->weapon_energy[g_Player.weapon];
-        if (current < 0x30) {
-            current += charge_step;
+        if (player->weapon_energy[g_Player.weapon] < 0x30) {
+            s8 current = player->weapon_energy[g_Player.weapon] + charge_step;
             player->weapon_energy[g_Player.weapon] = current;
             if (current >= 0x31) {
                 player->weapon_energy[g_Player.weapon] = 0x30;
@@ -704,15 +700,12 @@ engine:
         }
     }
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", pickup_collect_health);
-#else
-void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
+void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s8 arg2)
 {
     u8 player_status;
     s8 value;
+    s8 i;
     player_status = HP_DAMAGE_FLAG(g_Player.hp);
     if (HP_VALUE(g_Player.hp) < engine_obj.max_hp) {
         set_objects_frozen(1);
@@ -736,9 +729,9 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
         g_Player.weapon_energy[0] = 0x30;
     }
 
-    for (arg1 = 0; arg1 < 2; arg1++) {
-        if (engine_obj.collected_upgrades & (0x1000 << arg1)) {
-            value = TANK_VALUE(engine_obj.sub_tanks[arg1]);
+    for (i = 0; i < 2; i++) {
+        if (engine_obj.collected_upgrades & (0x1000 << i)) {
+            value = TANK_VALUE(engine_obj.sub_tanks[i]);
             if (value < 0x20) {
                 value += arg2;
                 if (value >= 0x20) {
@@ -748,13 +741,12 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
                     func_8001540C(0, 0x17, 0);
                 }
                 value |= 0x80;
-                engine_obj.sub_tanks[arg1] = value;
+                engine_obj.sub_tanks[i] = value;
                 return;
             }
         }
     }
 }
-#endif
 // pickup_check_collect
 void func_800C00BC(struct ItemObj* arg0)
 {

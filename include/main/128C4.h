@@ -11,7 +11,7 @@ struct PlayerGaugePosition {
     u16 bottom;
 };
 
-void func_8002217C(arg_u16, arg_u8, s32);
+void func_8002217C(arg_u16, arg_u8, arg_u8);
 void func_80022730(struct AbcObj*);
 
 #endif

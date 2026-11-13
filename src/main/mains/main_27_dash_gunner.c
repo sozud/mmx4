@@ -517,8 +517,8 @@ void func_80059154(struct MainObj* self)
             }
             self->unk5 = 2;
         } else {
-            self->ext.main_27.unk89 = 0x14;
             self->ext.main_27.unk88 = 0;
+            self->ext.main_27.unk89 = 0x14;
             self->unk5 = 6;
         }
         self->unk6 = 0;
@@ -647,9 +647,9 @@ void func_80059590(struct MainObj* self)
             }
             self->unk5 = 2;
         } else {
+            self->ext.main_27.unk88 = 0;
             self->ext.main_27.unk89 = 0x14;
             self->ext.main_27.unk8C = 0x12C;
-            self->ext.main_27.unk88 = 0;
             self->unk5 = 6;
         }
         self->unk6 = 0;

@@ -89,9 +89,9 @@ void func_8009C784(struct ShotObj* self)
     }
     if (self->y_pos.i.hi - background_objects[(s8)self->bg_offset].y_pos.i.hi >= 0xAC && self->unk2 != 0) {
         self->y_vel.val = 0x10000 - self->y_vel.val;
-        self->unk5++;
         self->unk28 = 0;
         self->unk2C = 0x1000;
+        self->unk5++;
     }
 }
 

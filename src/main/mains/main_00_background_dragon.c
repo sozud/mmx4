@@ -53,7 +53,7 @@ ret_s8 func_8002DD04(struct MainObj* object);
 
 extern union AnimationStep* D_800F9934[16];
 extern struct Unk_unk68 D_801062F0[32];
-extern s16 D_800F98EC[36];
+extern s16 D_800F98EC[18][2];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80040644(struct MainObj* arg0);
 void func_80040838(struct MainObj* arg0);
@@ -139,9 +139,6 @@ void background_dragon_reset(struct MainObj* self)
 }
 
 // background_dragon_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040838);
-#else
 #ifdef MMX4_SATURN
 #define FRAME_COUNTER_U8 ((u8)WEAPON_FRAME_COUNTER)
 #else
@@ -154,16 +151,15 @@ void func_80040838(struct MainObj* arg0)
     u8 saved_substep;
     s32 spawn;
     s32 x;
-    u8 timer;
 
     if (engine_obj.character_state.bytes[0] != 0) {
-        ((u8*)&arg0->ext)[5] = 1;
+        arg0->ext.main_0.exit_mode = 1;
     }
     saved_step = arg0->unk5;
     saved_substep = arg0->unk6;
     result = func_8002DD04(arg0);
     if (result < 0) {
-        ((u8*)&arg0->ext)[5] = 2;
+        arg0->ext.main_0.exit_mode = 2;
         arg0->unk5 = saved_step;
         arg0->unk6 = saved_substep;
         arg0->invincibility_timer = 0x1E;
@@ -189,31 +185,26 @@ void func_80040838(struct MainObj* arg0)
     }
     background_dragon_step_funcs[arg0->unk5](arg0);
     if (!(get_random_nonzero() & 1)) {
-        if (((u8*)&arg0->ext)[5] == 2) {
+        if (arg0->ext.main_0.exit_mode == 2) {
             spawn = (FRAME_COUNTER_U8 ^ 1) & 1;
-            x = (s16)(arg0->x_pos.i.hi + (arg0->unk15 != 0 ? -D_800F98EC[(get_random() & 0x1F) * 2] : D_800F98EC[(get_random() & 0x1F) * 2]));
-            spawn_explosion_at(0, x, arg0->y_pos.i.hi + D_800F98EC[(get_random() & 0x1F) * 2 + 1], spawn)->unk16 = 0x21;
+            x = (s16)(arg0->x_pos.i.hi + (arg0->unk15 != 0 ? -D_800F98EC[get_random() & 0x1F][0] : D_800F98EC[get_random() & 0x1F][0]));
+            spawn_explosion_at(0, x, arg0->y_pos.i.hi + D_800F98EC[get_random() & 0x1F][1], spawn)->unk16 = 0x21;
         }
     }
-    if (((u8*)&arg0->ext)[5] == 2) {
-        timer = ((u8*)&arg0->ext)[6];
-        ((u8*)&arg0->ext)[6] += 0xFF;
-        if (timer == 0) {
-            ((u8*)&arg0->ext)[6] = 4;
+    if (arg0->ext.main_0.exit_mode == 2) {
+        if (arg0->ext.main_0.damage_flash_timer-- == 0) {
+            arg0->ext.main_0.damage_flash_timer = 4;
             arg0->unk42 ^= 0x8000;
         }
         return;
     }
     if (arg0->hp < 0x18) {
-        timer = ((u8*)&arg0->ext)[6];
-        ((u8*)&arg0->ext)[6] += 0xFF;
-        if (timer == 0) {
-            ((u8*)&arg0->ext)[6] = 0x1E;
+        if (arg0->ext.main_0.damage_flash_timer-- == 0) {
+            arg0->ext.main_0.damage_flash_timer = 0x1E;
             arg0->unk42 ^= 0x8000;
         }
     }
 }
-#endif
 
 // background_dragon_pick_step
 #if defined(VERSION_EU) && !defined(MMX4_PC)
@@ -1249,43 +1240,25 @@ u8 background_dragon_attack_map[128] = {
     0x08,
 };
 
-s16 D_800F98EC[36] = {
-    (s16)0xFFD3,
-    (s16)0x0021,
-    (s16)0x0000,
-    (s16)0x001E,
-    (s16)0xFFD4,
-    (s16)0x001F,
-    (s16)0xFFE0,
-    (s16)0x003B,
-    (s16)0xFFDF,
-    (s16)0x0050,
-    (s16)0x0029,
-    (s16)0x0053,
-    (s16)0x0013,
-    (s16)0xFFFF,
-    (s16)0xFFDD,
-    (s16)0xFFF5,
-    (s16)0xFFDD,
-    (s16)0xFFF5,
-    (s16)0xFFF3,
-    (s16)0xFFF5,
-    (s16)0xFFF3,
-    (s16)0xFFE0,
-    (s16)0x0037,
-    (s16)0x000B,
-    (s16)0xFFCC,
-    (s16)0x000F,
-    (s16)0xFFEE,
-    (s16)0x000D,
-    (s16)0xFFE7,
-    (s16)0x0024,
-    (s16)0x0010,
-    (s16)0x0021,
-    (s16)0x0016,
-    (s16)0xFFE3,
-    (s16)0xFFE7,
-    (s16)0xFFE3,
+s16 D_800F98EC[18][2] = {
+    { (s16)0xFFD3, (s16)0x0021 },
+    { (s16)0x0000, (s16)0x001E },
+    { (s16)0xFFD4, (s16)0x001F },
+    { (s16)0xFFE0, (s16)0x003B },
+    { (s16)0xFFDF, (s16)0x0050 },
+    { (s16)0x0029, (s16)0x0053 },
+    { (s16)0x0013, (s16)0xFFFF },
+    { (s16)0xFFDD, (s16)0xFFF5 },
+    { (s16)0xFFDD, (s16)0xFFF5 },
+    { (s16)0xFFF3, (s16)0xFFF5 },
+    { (s16)0xFFF3, (s16)0xFFE0 },
+    { (s16)0x0037, (s16)0x000B },
+    { (s16)0xFFCC, (s16)0x000F },
+    { (s16)0xFFEE, (s16)0x000D },
+    { (s16)0xFFE7, (s16)0x0024 },
+    { (s16)0x0010, (s16)0x0021 },
+    { (s16)0x0016, (s16)0xFFE3 },
+    { (s16)0xFFE7, (s16)0xFFE3 },
 };
 
 union AnimationStep* D_800F9934[16] = {

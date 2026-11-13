@@ -83,8 +83,8 @@ void func_80095254(struct WeaponObj* arg0)
         arg0->x_pos.i.hi = g_Player.x_pos.i.hi - (s8)rising_fire_charged_offsets[arg0->unk2][0];
     arg0->y_pos.i.hi = player->y_pos.i.hi + (s8)rising_fire_charged_offsets[arg0->unk2][1];
     arg0->x_vel.val = 0;
-    arg0->y_vel.val = 0x70000;
     arg0->unk28.val = 0;
+    arg0->y_vel.val = 0x70000;
     arg0->unk2C = 0;
     arg0->unk67 = 1;
     arg0->unk49 = 0;

@@ -307,17 +307,15 @@ void func_80025DA0(s32 texture_depth, s32 blend_mode)
 void func_80026118(void)
 {
     u32 var_a1;
-    u8 temp_v0;
     u8* var_a0;
     u8* var_a2;
 
     var_a0 = D_8010FFDC[engine_obj.stage][engine_obj.substage];
     var_a2 = SP_BG_TILEMAP;
     for (var_a1 = 0; var_a1 < (u32)(layout_size * 3); var_a1++) {
-        temp_v0 = *var_a0;
-        var_a0 += 1;
-        *var_a2 = temp_v0;
+        *var_a2 = *var_a0;
         var_a2 += 1;
+        var_a0 += 1;
     }
     func_800261B4(-1);
 }

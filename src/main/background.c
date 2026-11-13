@@ -53,6 +53,11 @@ void func_80027AAC(struct BackgroundObj*);
 void func_80027AFC(struct BackgroundObj*);
 void func_80027B70(struct Unk9*);
 
+// the double reads only match when the volatile pointer comes from an inline accessor
+static inline volatile s16* bg_y_ptr(struct BackgroundObj* bg) { return &bg->y_pos.i.hi; }
+
+static inline volatile s16* bg_x_ptr(struct BackgroundObj* bg) { return &bg->x_pos.i.hi; }
+
 void func_80027E90(struct BackgroundObj*);
 void func_80027EBC(struct BackgroundObj*);
 void func_80027F50(struct BackgroundObj*);
@@ -222,13 +227,12 @@ void func_800279D8(struct BackgroundObj* arg0)
 
 void func_80027A5C(struct BackgroundObj* a0)
 {
-    s16 v0, v1;
+    s16 v0;
 
-    v1 = g_Player.y_pos.i.hi - a0->y_pos.i.hi;
-    v0 = v1 - a0->unk2C;
+    v0 = g_Player.y_pos.i.hi - a0->y_pos.i.hi - a0->unk2C;
 
-    if (v0 > -1) {
-        v0 = v1 - a0->unk2E;
+    if (v0 >= 0) {
+        v0 = g_Player.y_pos.i.hi - a0->y_pos.i.hi - a0->unk2E;
 
         if (v0 <= 0) {
             return;
@@ -240,13 +244,12 @@ void func_80027A5C(struct BackgroundObj* a0)
 
 void func_80027AAC(struct BackgroundObj* a0)
 {
-    s16 v0, v1;
+    s16 v0;
 
-    v1 = g_Player.x_pos.i.hi - a0->x_pos.i.hi;
-    v0 = v1 - a0->unk30;
+    v0 = g_Player.x_pos.i.hi - a0->x_pos.i.hi - a0->unk30;
 
-    if (v0 > -1) {
-        v0 = v1 - a0->unk32;
+    if (v0 >= 0) {
+        v0 = g_Player.x_pos.i.hi - a0->x_pos.i.hi - a0->unk32;
 
         if (v0 <= 0) {
             return;
@@ -356,11 +359,7 @@ INCLUDE_ASM("main/nonmatchings/background", func_80027DC0);
 void func_80027DC0(struct BackgroundObj* arg0)
 {
     // overlap with D_800F32D5
-#ifdef MMX4_WIN32
-    arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].secondary;
-#else
     arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].primary;
-#endif
 }
 #endif
 
@@ -396,12 +395,9 @@ void func_80027E68(struct BackgroundObj* arg0)
     arg0->y_pos.i.hi = value;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/background", func_80027E90);
-#else
 void func_80027E90(struct BackgroundObj* arg0)
 {
-    volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
+    volatile s16* background = bg_y_ptr(background_objects);
     s16 value = background[0];
     s16 second = background[0];
     value >>= 2;
@@ -409,14 +405,10 @@ void func_80027E90(struct BackgroundObj* arg0)
     value = arg0->unk42 + value;
     arg0->y_pos.i.hi = value;
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/background", func_80027EBC);
-#else
 void func_80027EBC(struct BackgroundObj* arg0)
 {
-    volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
+    volatile s16* background = bg_y_ptr(background_objects);
     s16 value = background[0];
     s16 second = background[0];
     value >>= 1;
@@ -424,7 +416,6 @@ void func_80027EBC(struct BackgroundObj* arg0)
     value = arg0->unk42 + value;
     arg0->y_pos.i.hi = value;
 }
-#endif
 
 void func_80027EE8(struct BackgroundObj* arg0)
 {
@@ -452,12 +443,9 @@ void func_80027F28(struct BackgroundObj* arg0)
     arg0->x_pos.u.hi = value;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/background", func_80027F50);
-#else
 void func_80027F50(struct BackgroundObj* arg0)
 {
-    volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
+    volatile s16* background = bg_x_ptr(background_objects);
     s16 value = background[0];
     s16 second = background[0];
     value >>= 2;
@@ -465,14 +453,10 @@ void func_80027F50(struct BackgroundObj* arg0)
     value = arg0->unk40 + value;
     arg0->x_pos.i.hi = value;
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/background", func_80027F7C);
-#else
 void func_80027F7C(struct BackgroundObj* arg0)
 {
-    volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
+    volatile s16* background = bg_x_ptr(background_objects);
     s16 value = background[0];
     s16 second = background[0];
     value >>= 1;
@@ -480,7 +464,6 @@ void func_80027F7C(struct BackgroundObj* arg0)
     value = arg0->unk40 + value;
     arg0->x_pos.i.hi = value;
 }
-#endif
 
 #define FUNC_NAME func_80027FA8
 
@@ -549,11 +532,7 @@ INCLUDE_ASM("main/nonmatchings/background", func_80028268);
 #else
 void func_80028268(struct BackgroundObj* arg0)
 {
-#ifdef MMX4_WIN32
-    arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].primary;
-#else
     arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].secondary;
-#endif
 }
 #endif
 
@@ -589,12 +568,9 @@ void func_80028310(struct BackgroundObj* arg0)
     arg0->y_pos.i.hi = value;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/background", func_80028338);
-#else
 void func_80028338(struct BackgroundObj* arg0)
 {
-    volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
+    volatile s16* background = bg_y_ptr(background_objects);
     s16 value = background[0];
     s16 second = background[0];
     value >>= 2;
@@ -602,14 +578,10 @@ void func_80028338(struct BackgroundObj* arg0)
     value = arg0->unk42 + value;
     arg0->y_pos.i.hi = value;
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/background", func_80028364);
-#else
 void func_80028364(struct BackgroundObj* arg0)
 {
-    volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
+    volatile s16* background = bg_y_ptr(background_objects);
     s16 value = background[0];
     s16 second = background[0];
     value >>= 1;
@@ -617,7 +589,6 @@ void func_80028364(struct BackgroundObj* arg0)
     value = arg0->unk42 + value;
     arg0->y_pos.i.hi = value;
 }
-#endif
 
 void func_80028390(struct BackgroundObj* arg0)
 {
@@ -644,12 +615,9 @@ void func_800283D0(struct BackgroundObj* arg0)
     arg0->x_pos.i.hi = value;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/background", func_800283F8);
-#else
 void func_800283F8(struct BackgroundObj* arg0)
 {
-    volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
+    volatile s16* background = bg_x_ptr(background_objects);
     s16 value = background[0];
     s16 second = background[0];
     value >>= 2;
@@ -657,14 +625,10 @@ void func_800283F8(struct BackgroundObj* arg0)
     value = arg0->unk40 + value;
     arg0->x_pos.i.hi = value;
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/background", func_80028424);
-#else
 void func_80028424(struct BackgroundObj* arg0)
 {
-    volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
+    volatile s16* background = bg_x_ptr(background_objects);
     s16 value = background[0];
     s16 second = background[0];
     value >>= 1;
@@ -672,7 +636,6 @@ void func_80028424(struct BackgroundObj* arg0)
     value = arg0->unk40 + value;
     arg0->x_pos.i.hi = value;
 }
-#endif
 
 #define FUNC_NAME func_80028450
 

@@ -159,9 +159,9 @@ void gunship_shot_missile_fly(struct ShotObj* self)
             misc->ext.unk.unk54 = 0;
             misc->x_pos.i.hi = self->x_pos.i.hi;
             misc->y_pos.i.hi = self->y_pos.i.hi;
-            misc->unk7 = 1;
             misc->x_vel.val = 0;
             misc->y_vel.val = 0;
+            misc->unk7 = 1;
             misc->unk16 = VISUAL_SATURN_LAYER(7);
         }
         self->unk7 = 2;

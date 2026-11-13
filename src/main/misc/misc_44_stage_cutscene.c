@@ -171,9 +171,6 @@ struct Misc45PositionData {
 };
 extern struct Misc45PositionData scripted_slider_offsets[];
 
-#if defined(VERSION_JP) && !defined(MMX4_PC) && !defined(MMX4_SATURN)
-INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0D68);
-#else
 void func_800D0D68(struct MiscObj* self, u8 kind)
 {
     struct MiscObj* child;
@@ -194,7 +191,6 @@ void func_800D0D68(struct MiscObj* self, u8 kind)
         child->ext.misc_45.owner = (struct MainObj*)self;
     }
 }
-#endif
 
 union AnimationStep stage_cutscene_anim_0[6] = {
     { 72, 0, 1, 0x00 },

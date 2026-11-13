@@ -46,8 +46,8 @@ void func_800CE114(struct MiscObj* arg0)
     arg0->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
     arg0->animation_table = (u32**)option_toggle_animations;
     arg0->bg_offset = -1;
-    arg0->unk42 = 0x7806;
     arg0->unk15 = 0;
+    arg0->unk42 = 0x7806;
 #endif
     arg0->x_pos.i.hi += 8;
     arg0->y_pos.i.hi = rows[main_bss_state.transition.selection * 2 + 2] + 8;

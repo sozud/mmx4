@@ -539,7 +539,6 @@ void trident_mech_fan_shot_start(struct MainObj* self)
 void trident_mech_fan_shot_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
-    u8 facing;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk7C == 8) {
@@ -559,9 +558,8 @@ void trident_mech_fan_shot_fire(struct MainObj* self)
             shot->bg_offset = self->bg_offset;
             shot->x_pos.val = self->x_pos.val;
             shot->y_pos.val = self->y_pos.val;
-            facing = self->unk15;
+            shot->unk15 = self->unk15;
             shot->state = 3;
-            shot->unk15 = facing;
         }
 
         self->ext.main_16.unk80 &= 0x1F;

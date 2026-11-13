@@ -81,12 +81,11 @@ void func_8001F198(struct EngineObj* arg0)
 {
     s32* dst;
     s32* src;
-    u8 stage;
     u32 i;
 
     for (i = 0; i < 0x10; i++)
         arg0->character_state.bytes[i] = 0;
-    stage = arg0->stage;
+    arg0->character_state.bytes[0] = arg0->stage;
     arg0->character_state.bytes[2] = 0;
     arg0->character_state.bytes[1] = 0;
     arg0->stage = 0xF;
@@ -94,7 +93,6 @@ void func_8001F198(struct EngineObj* arg0)
     arg0->checkpoint = 0;
     arg0->unk1F = 0;
     arg0->enable_boss = 0;
-    arg0->character_state.bytes[0] = stage;
     func_80013014();
     reset_objects();
     func_8002AB20();

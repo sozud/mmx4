@@ -283,7 +283,7 @@ void ready_line_main(struct QuadObj* arg0)
 // ready_line_type_funcs state 0
 void ready_line_sweep(struct QuadObj* arg0)
 {
-    u16* verts;
+    s16* verts;
     struct EffectObj* temp_s1;
     struct MiscObj* misc_obj;
     switch (arg0->unk5) {
@@ -345,16 +345,12 @@ void ready_line_sweep(struct QuadObj* arg0)
 }
 
 // ready_line_type_funcs state 1
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_07_ready_line", ready_line_shutter);
-#else
 void ready_line_shutter(struct QuadObj* arg0)
 {
-    u16* verts;
+    s16* verts;
     u16* temp_v1_2;
     u32 var_s1;
     u32 var_s1_2;
-    u8 pad[0x10];
 
     switch (arg0->unk5) {
     case 0:
@@ -388,7 +384,8 @@ void ready_line_shutter(struct QuadObj* arg0)
     case 1:
         var_s1 = 0;
         do {
-            ready_line_converge_vertex(arg0, arg0->unk7 & 0xFF, var_s1 & 0xFF, &ready_line_shutter_open_vertices[arg0->unk7][var_s1]);
+            verts = ready_line_shutter_open_vertices[arg0->unk7][var_s1];
+            ready_line_converge_vertex(arg0, (u8)arg0->unk7, var_s1 & 0xFF, verts);
             var_s1 += 1;
         } while (var_s1 < 4);
         if (--arg0->runtime.legacy.unk50 == 0) {
@@ -415,7 +412,8 @@ void ready_line_shutter(struct QuadObj* arg0)
     case 2:
         var_s1_2 = 0;
         do {
-            ready_line_converge_vertex(arg0, arg0->unk7 & 0xFF, var_s1_2 & 0xFF, &ready_line_shutter_close_vertices[arg0->unk7][var_s1_2]);
+            verts = ready_line_shutter_close_vertices[arg0->unk7][var_s1_2];
+            ready_line_converge_vertex(arg0, (u8)arg0->unk7, var_s1_2 & 0xFF, verts);
             var_s1_2 += 1;
         } while (var_s1_2 < 4);
         if (--arg0->runtime.legacy.unk50 == 0) {
@@ -449,7 +447,6 @@ void ready_line_shutter(struct QuadObj* arg0)
         break;
     }
 }
-#endif
 
 extern u8 ready_line_streak_shapes[];
 

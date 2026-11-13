@@ -26,10 +26,6 @@ void intro_messenger_fly_up(struct MiscObj*);
 void intro_messenger_finish(struct MiscObj*);
 #include "weapon_resources.h"
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/misc/misc_43_intro_messenger", func_800D03A8_jp);
-#endif
-
 void intro_messenger_update(struct MiscObj* self)
 {
     intro_messenger_state_funcs[self->state](self);

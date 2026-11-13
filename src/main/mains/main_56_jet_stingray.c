@@ -978,8 +978,8 @@ void func_80071740(struct MainObj* arg0)
         }
         if (arg0->animation_step.fields.event == 2) {
             arg0->animation_step.fields.event = 0;
-            arg0->unk7C = 0x14;
             arg0->unk6++;
+            arg0->unk7C = 0x14;
         }
         break;
     }

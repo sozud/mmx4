@@ -101,8 +101,8 @@ void func_80093D78(struct WeaponObj* arg0)
     struct Weapon2Ext* ext;
 
     arg0->on_screen = 1;
-    arg0->unk64 = 1;
     arg0->unk50 = frost_tower_hit_box;
+    arg0->unk64 = 1;
     arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[3];
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0xB];
     arg0->animation_table = D_8011C094;

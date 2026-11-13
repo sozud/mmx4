@@ -84,8 +84,8 @@ void func_80095854(struct WeaponObj* self)
 
     self->on_screen = 1;
     self->unk50 = ground_hunter_crawl_box;
-    self->unk64 = 1;
     self->unk68 = ground_hunter_terrain_box;
+    self->unk64 = 1;
     self->unk38 = (u8*)SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, 6);
     self->unk3C = (u8*)SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 14);
     self->animation_table = D_8011C0C8;
@@ -101,8 +101,8 @@ void func_80095854(struct WeaponObj* self)
     } else {
         self->x_vel.val = FIXED(-6);
     }
-    self->y_vel.val = FIXED(-2);
     self->unk28.val = 0;
+    self->y_vel.val = FIXED(-2);
     self->unk2C = 0;
     self->unk67 = 1;
 
@@ -318,8 +318,8 @@ void func_80095E3C(struct WeaponObj* self)
         func_8001540C(1, 9, self);
         self->unk5 = 0;
     } else {
-        self->unk50 = ground_hunter_charged_shot_box;
         self->unk16 = 1;
+        self->unk50 = ground_hunter_charged_shot_box;
         self->unk64 = 0;
         if (self->unk2 == 1)
             self->y_vel.val = FIXED(8);

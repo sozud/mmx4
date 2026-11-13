@@ -195,9 +195,9 @@ void func_800A4D20(struct ShotObj* self)
 {
     self->state = 8;
     self->on_screen = 1;
+    self->unk58.data = NULL;
     self->unk61 = 1;
     self->y_vel.val = FIXED(1.5);
-    self->unk58.data = NULL;
     self->x_vel.val = 0;
     self->unk2C = 0;
     self->unk42 &= 0x7FFF;
@@ -209,10 +209,10 @@ void func_800A4D20(struct ShotObj* self)
     self->y_pos.u.hi += (s8)mushroom_shot_spray_offsets[self->unk2 * 2 + 1];
     self->unk28 = mushroom_shot_spray_speeds[(s32)self->unk2];
     self->unk16 = 0;
-    self->unk50.data = mushroom_shot_sprout_hit_box;
-    self->unk5C = 1;
     self->unk68 = NULL;
     self->unk54 = NULL;
+    self->unk50.data = mushroom_shot_sprout_hit_box;
+    self->unk5C = 1;
     self->unk60 = 6;
     set_animation(ANIMATED_OBJECT(self), 0x12);
 }

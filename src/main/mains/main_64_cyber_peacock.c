@@ -690,7 +690,7 @@ void func_8007D5D0(struct MainObj* arg0)
             break;
         }
         arg0->x_speed += arg0->x_accel;
-        if (WEAPON_FRAME_COUNTER & 1)
+        if (FLICKER_ENABLED && (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 1))
             arg0->x_pos.val = ((s16)arg0->ext.main_64.target_x << 16) + arg0->x_speed;
         else
             arg0->x_pos.val = ((s16)arg0->ext.main_64.target_x << 16) - arg0->x_speed;
@@ -777,14 +777,14 @@ void func_8007D838(struct MainObj* arg0)
         g_Player.spike_immune = 1;
     } else if (hit > 0 && hit != 0x7F) {
         if (hit == 4 || hit == 0x24) {
+            arg0->ext.main_64.saved_health = arg0->hp;
             arg0->unk5 = 5;
             arg0->unk6 = 0;
             arg0->unk7 = 0;
             arg0->ext.main_64.flash_timer = 0x40;
-            arg0->ext.main_64.saved_health = arg0->hp;
         } else {
-            arg0->ext.main_64.flash_timer = 0x40;
             arg0->ext.main_64.saved_health = arg0->hp;
+            arg0->ext.main_64.flash_timer = 0x40;
             arg0->ext.main_64.hit_count++;
         }
     }

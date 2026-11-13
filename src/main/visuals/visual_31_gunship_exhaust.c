@@ -22,22 +22,17 @@ void gunship_exhaust_update(struct VisualObj* arg0)
 void gunship_exhaust_init(struct VisualObj* self)
 {
     s16 timer;
-    s16 flags;
-    s8 type;
     struct PlayerObj* player = self->unk50;
 
-    flags = self->unk42;
-    type = player->unk15;
-    self->unk42 = flags & 0x7FFF;
-    self->unk15 = type;
+    self->unk15 = player->unk15;
+    self->unk42 = self->unk42 & 0x7FFF;
     self->on_screen = 1;
     if (get_random() & 1) {
         set_animation(self, 0x15);
     } else {
         set_animation(self, 0x16);
     }
-    type = self->unk2;
-    switch (type) {
+    switch (self->unk2) {
     case 0:
         self->x_pos.i.hi = player->x_pos.u.hi - 0x3C;
         self->y_pos.i.hi = player->y_pos.u.hi - 9;

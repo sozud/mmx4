@@ -49,8 +49,8 @@ void func_80066DE8(struct MainObj* self)
     self->hp = 0x10;
     self->unk5D = 0x10;
     self->contact_damage = 2;
-    self->collision_data = D_80107678;
     self->invincibility_timer = 0;
+    self->collision_data = D_80107678;
     self->x_speed = FIXED(1);
     self->y_speed = 0;
     self->x_accel = 0;
@@ -58,8 +58,8 @@ void func_80066DE8(struct MainObj* self)
     self->air_state = 0;
     self->unk16 = 3;
     self->terrain_box = NULL;
-    self->attack_box = NULL;
     self->hurt_box = (u8*)train_boss_armor_hurt_boxes[self->unk2];
+    self->attack_box = NULL;
     self->unk15 = 0;
     shot = find_free_shot_obj();
     if (shot != NULL) {
@@ -83,16 +83,10 @@ void func_80066DE8(struct MainObj* self)
 }
 
 // train_boss_armor_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066F1C);
-#else
 extern u8 D_800FF9FC[4], D_800FFA00[4], D_800FFA04[8];
 void func_80066F1C(struct MainObj* self)
 {
     s32 collision;
-    u16* x_offsets;
-    u16* y_offsets;
-    s32 unused[2];
 
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
@@ -106,14 +100,12 @@ void func_80066F1C(struct MainObj* self)
 #endif
             collision = func_8002DD04(self);
             if (collision < 0) {
-                self->x_pos.i.hi += train_boss_armor_smoke_offsets[self->unk2][0];
-                x_offsets = train_boss_armor_smoke_offsets[0];
-                y_offsets = x_offsets + 1;
-                self->y_pos.i.hi += y_offsets[self->unk2 * 2];
+                self->x_pos.i.hi += train_boss_armor_smoke_offsets[0][self->unk2 * 2];
+                self->y_pos.i.hi += train_boss_armor_smoke_offsets[0][self->unk2 * 2 + 1];
                 spawn_debris(6, D_800FFA04, self);
                 spawn_explosion(BASE_OBJECT(self));
-                self->x_pos.i.hi -= x_offsets[self->unk2 * 2];
-                self->y_pos.i.hi -= y_offsets[self->unk2 * 2];
+                self->x_pos.i.hi -= train_boss_armor_smoke_offsets[0][self->unk2 * 2];
+                self->y_pos.i.hi -= train_boss_armor_smoke_offsets[0][self->unk2 * 2 + 1];
                 *self->ext.main_47.boss_hp -= (u8)self->unk5D - (u8)self->hp;
                 self->ext.main_47.train_boss->attack_flags |= D_800FF9FC[self->unk2];
                 self->ext.main_47.train_boss->attack_flags |= D_800FFA00[self->unk2];
@@ -148,7 +140,6 @@ void func_80066F1C(struct MainObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
 }
-#endif
 
 void train_boss_armor_smoke(struct MainObj* self)
 {

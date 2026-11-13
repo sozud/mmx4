@@ -48,14 +48,14 @@ void func_8009B1E8(struct ShotObj* arg0);
 void func_8009B0B8(struct ShotObj* arg0)
 {
     arg0->state = 1;
+    arg0->on_screen = 1;
     arg0->unk58.collision_bounds = D_801060F0;
     arg0->unk16 = VISUAL_SATURN_LAYER(5);
+    arg0->unk68 = NULL;
     arg0->unk54 = trident_shot_flash_box;
     arg0->unk50.data = trident_shot_flash_box;
-    arg0->on_screen = 1;
     arg0->unk5C = 1;
     arg0->unk60 = 3;
-    arg0->unk68 = NULL;
     arg0->unk84.value = 0x1E;
     arg0->unk42 &= 0x7FFF;
     set_animation(ANIMATED_OBJECT(arg0), 5);

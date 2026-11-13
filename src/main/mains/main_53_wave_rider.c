@@ -69,8 +69,8 @@ void func_8006AF70(struct MainObj* arg0)
         break;
     case 3:
         arg0->x_speed = 0x54000;
-        arg0->unk5 = 2;
         arg0->state++;
+        arg0->unk5 = 2;
         break;
     case 4:
     default:

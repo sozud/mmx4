@@ -51,9 +51,6 @@ extern s16 magma_fire_wave_offsets[8];
 
 // magma_fire_init
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A56E4);
-#else
 void func_800A56E4(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
@@ -90,10 +87,16 @@ void func_800A56E4(struct ShotObj* arg0)
         arg0->unk60 = 4;
         arg0->x_pos.val = owner->x_pos.val + (owner->unk15 != 0 ? -0x100000 : 0x100000);
         arg0->y_pos.val = owner->y_pos.val - 0x200000;
+#ifdef VERSION_EU
+        vel = (s16)magma_fire_wave_offsets[arg0->unk7] << 12;
+        if (arg0->unk15 != 0)
+            vel = -vel;
+#else
         if (arg0->unk15 != 0)
             vel = -((s16)magma_fire_wave_offsets[arg0->unk7] << 12);
         else
             vel = (s16)magma_fire_wave_offsets[arg0->unk7] << 12;
+#endif
         arg0->x_vel.val = vel;
         arg0->y_vel.val = 0x50000;
         arg0->unk5 = 3;
@@ -125,8 +128,8 @@ void func_800A56E4(struct ShotObj* arg0)
         arg0->unk50.data = magma_fire_burst_hit_box;
         arg0->unk68 = (struct Unk_unk68*)magma_fire_burst_terrain_box;
         arg0->unk60 = 6;
-        arg0->unk5 = 5;
         arg0->unk54 = NULL;
+        arg0->unk5 = 5;
         arg0->timer = 3;
         arg0->state++;
         set_animation(arg0, 0x1B);
@@ -134,7 +137,6 @@ void func_800A56E4(struct ShotObj* arg0)
     }
     update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
 }
-#endif
 
 void magma_fire_wave(struct ShotObj* arg0)
 {

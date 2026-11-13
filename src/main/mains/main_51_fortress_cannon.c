@@ -110,8 +110,8 @@ void func_80069BE4(struct MainObj* self)
 
     if (check < 0) {
         spawn_debris(5, fortress_cannon_debris, self);
-        self->unk7C = 0x1E;
         self->on_screen = 0;
+        self->unk7C = 0x1E;
         self->unk7E = 5;
         self->state++;
         return;

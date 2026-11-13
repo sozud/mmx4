@@ -5,6 +5,7 @@
 #include "main/objects.h"
 
 extern u8 ride_armor_punch_hit_boxes[][4];
+extern u8 D_80108C10[][4];
 extern u8 ride_armor_punch_animations[8];
 extern u8 ride_armor_punch_steps[8];
 
@@ -37,9 +38,7 @@ void ride_armor_punch_init(struct WeaponObj* arg0)
 
 void ride_armor_punch_main(struct WeaponObj* self)
 {
-    s8 index;
     s8 event;
-    u16 timer;
     struct PlayerObj* owner;
 
     owner = self->owner;
@@ -47,20 +46,18 @@ void ride_armor_punch_main(struct WeaponObj* self)
     self->y_pos.i.hi = (s16)(u16)owner->y_pos.i.hi;
     self->animation_step.fields.event = (owner->animation_step.fields.event >> 4) & 0xF;
     if (self->unk2 != 0) {
-        timer = --self->unk88.half;
-        if ((timer << 16) == 0) {
+        if ((--self->unk88.half << 16) == 0) {
             self->unk88.half = 6;
             self->unk64 = (u8)self->unk64 + 1;
         }
     }
-    index = self->unk2;
-    if ((ride_armor_punch_animations[index] == owner->unk17) && (ride_armor_punch_steps[index] == owner->unk5) && (owner->state == 1)) {
+    if ((ride_armor_punch_animations[self->unk2] == owner->unk17) && (ride_armor_punch_steps[self->unk2] == owner->unk5) && (owner->state == 1)) {
         event = self->animation_step.fields.event;
         if (event == 0) {
             self->unk50 = NULL;
             return;
         }
-        self->unk50 = &ride_armor_punch_hit_boxes[event];
+        self->unk50 = &D_80108C10[event - 1];
         return;
     }
     ZeroObjectState(OBJECT_HEADER(self));
@@ -71,7 +68,6 @@ void ride_armor_punch_despawn(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-#ifdef MMX4_WIN32
 u8 ride_armor_punch_hit_boxes[1][4] = {
     { 0xFC, 0xFD, 6, 5 },
 };
@@ -84,17 +80,6 @@ u8 D_80108C10[6][4] = {
     { 0xB1, 0xBF, 0x4A, 0x60 },
     { 0x96, 0xF1, 0x72, 0x29 },
 };
-#else
-u8 ride_armor_punch_hit_boxes[7][4] = {
-    { 0xFC, 0xFD, 6, 5 },
-    { 0xC0, 0xF9, 0x38, 0x1A },
-    { 0xB9, 0xCD, 0x31, 0x40 },
-    { 0xB1, 0xBF, 0x4A, 0x60 },
-    { 0xB9, 0xD4, 0x3E, 0x3F },
-    { 0xB1, 0xBF, 0x4A, 0x60 },
-    { 0x96, 0xF1, 0x72, 0x29 },
-};
-#endif
 
 u8 ride_armor_punch_animations[8] = { 8, 9, 0x0A, 0x0B, 0x0F, 0, 0, 0 };
 

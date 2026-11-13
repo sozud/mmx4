@@ -334,8 +334,8 @@ void func_8002C2EC(struct CollisionObj* arg0, struct CollisionObj* arg1)
     struct Unk_unk68* bounds0;
 
     bounds0 = arg0->collision_bounds;
-    bounds1 = arg1->collision_bounds;
     center0 = arg0->y_pos.i.hi + bounds0->unk1;
+    bounds1 = arg1->collision_bounds;
     center1 = arg1->y_pos.i.hi + bounds1->unk1;
     if (center0 > center1) {
         center0 = center0 - bounds0->unk3;

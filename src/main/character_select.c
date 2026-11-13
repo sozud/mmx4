@@ -46,7 +46,6 @@ extern u16 D_800F44D6;
 void character_select_state_0(struct EngineObj* arg0)
 {
     u8 var_v1;
-    u8 palette_load;
 
     for (var_v1 = 0; var_v1 < 0x10; var_v1++) {
         arg0->character_state.bytes[var_v1] = 0;
@@ -67,20 +66,19 @@ void character_select_state_0(struct EngineObj* arg0)
     func_800127C8(1);
     saturn_music_start(arg0->stage, 0);
 #else
-    palette_load = need_palette_load;
+    need_palette_load = need_palette_load | 1;
     background_objects[0].unk3 = 0;
     background_objects[1].unk3 = 0;
     background_objects[2].unk3 = 1;
-    need_palette_load = palette_load | 1;
     func_8001663C(MUSIC_CHARACTER_SELECT, 0x70);
 #endif
     arg0->unk37 = 0;
     func_800129A4(8);
     arg0->cur_character = CHARACTER_X;
     arg0->character_state.bytes[3] = 0; // already cleared above?
+    arg0->unk1++;
     arg0->unk2 = 0;
     arg0->unkA = 3;
-    arg0->unk1++;
 }
 
 void character_select_state_1(struct EngineObj* arg0)

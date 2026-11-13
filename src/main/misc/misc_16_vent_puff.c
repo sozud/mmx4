@@ -68,9 +68,9 @@ void func_800CACF0(struct MiscObj* arg0)
         }
         limit = engine_obj.stage != 0xC ? 0x5D0 : 0x6D0;
         if (arg0->y_pos.i.hi >= limit) {
-            arg0->unk5 = 1;
             arg0->y_vel.val = 0;
             arg0->unk2C = 0;
+            arg0->unk5 = 1;
             arg0->ext.misc_16.timer = 0x14;
         }
         is_on_screen(BASE_OBJECT(arg0));
@@ -81,7 +81,7 @@ void func_800CACF0(struct MiscObj* arg0)
         return;
     }
     arg0->on_screen = 0;
-    if (arg0->ext.misc_16.timer & 1)
+    if (BLINK_CLOCK(arg0->ext.misc_16.timer) & 1)
         is_on_screen(BASE_OBJECT(arg0));
 }
 

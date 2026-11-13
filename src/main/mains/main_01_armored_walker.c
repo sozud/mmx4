@@ -48,35 +48,24 @@ void armored_walker_update(struct MainObj* self)
     CollisionRelated(PLAYER_OBJECT(self));
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_01_armored_walker", armored_walker_init);
-#else
 void armored_walker_init(struct MainObj* self)
 {
-    u8 state;
-    s32 y_pos;
-    s32 x_pos;
-
-    state = (u8)self->state;
+    self->state++;
     self->unk5 = 2;
-    y_pos = self->y_pos.val;
     self->unk7C = 0;
     self->unk2 = 0;
-    state += 1;
-    self->state = state;
-    x_pos = self->x_pos.val;
-    self->bg_offset = (s8)((u8)g_Player.bg_offset);
-    self->unk1C.val = y_pos;
-    self->unk18.val = x_pos;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
     self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     self->animation_table = (u32**)armored_walker_animations;
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->terrain_box = &armored_walker_terrain_box;
     self->hurt_box = &armored_walker_hit_box;
     self->attack_box = &armored_walker_hit_box;
+    self->invincibility_timer = 0;
     self->collision_data = D_80106370;
     self->hp = 0xF;
-    self->invincibility_timer = 0;
     self->contact_damage = 4;
     self->x_speed = 0;
     self->x_accel = 0;
@@ -85,7 +74,6 @@ void armored_walker_init(struct MainObj* self)
     self->air_state = 0;
     set_animation(self, 1);
 }
-#endif
 
 void armored_walker_main(struct MainObj* obj)
 {

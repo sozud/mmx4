@@ -124,13 +124,10 @@ s32 water_wake_player_idle(struct PlayerObj* arg0)
 {
     u8 mode;
 
-    switch (arg0->unk2) {
-    case 0:
+    if (arg0->unk2 == 0) {
         mode = x_water_wake_modes[0][arg0->unk17];
-        break;
-    default:
+    } else {
         mode = zero_water_wake_modes[0][arg0->unk17];
-        break;
     }
     return mode == 1;
 }

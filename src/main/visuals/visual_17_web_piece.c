@@ -143,24 +143,21 @@ void web_piece_main(struct VisualObj* arg0)
 }
 
 // web_piece_attach
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_17_web_piece", func_800B22B4);
-#else
 void func_800B22B4(struct VisualObj* arg0)
 {
-    s32 i = arg0->unk2 - 1;
+    s32 index;
     s32 target_x;
     s32 target_y;
     u8 direction;
     struct BaseObj* quad;
-    s32 unused[4];
 
+    index = (arg0->unk2 - 1) * 2;
     if (engine_obj.stage != 0xC) {
-        target_x = web_piece_positions_a[i][0] << 16;
-        target_y = web_piece_positions_a[i][1] << 16;
+        target_x = web_piece_positions_a[0][index] << 16;
+        target_y = web_piece_positions_a[0][index + 1] << 16;
     } else {
-        target_x = web_piece_positions_b[i][0] << 16;
-        target_y = web_piece_positions_b[i][1] << 16;
+        target_x = web_piece_positions_b[0][index] << 16;
+        target_y = web_piece_positions_b[0][index + 1] << 16;
     }
     direction = angle_from_delta(arg0->x_pos.val - target_x, arg0->y_pos.val - target_y);
     quad = (struct BaseObj*)arg0->unk5C.owner;
@@ -181,7 +178,6 @@ void func_800B22B4(struct VisualObj* arg0)
     quad->x_pos.val = arg0->x_pos.val;
     quad->y_pos.val = arg0->y_pos.val;
 }
-#endif
 
 void web_piece_hang(struct VisualObj* arg0)
 {

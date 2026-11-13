@@ -110,12 +110,14 @@ void func_80044458(struct MainObj* self)
 // drill_copter_main
 void func_80044508(struct MainObj* self)
 {
+    s32 hit;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     if (self->unk2 == 1)
         CollisionRelated(PLAYER_OBJECT(self));
     func_8002D9BC(self);
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(D_800FA0B4[(s8)self->unk2], D_800FA0A8[(s8)self->unk2], self);
         if (self->unk2 != 2)
@@ -127,7 +129,11 @@ void func_80044508(struct MainObj* self)
         func_80044DE4(self);
     drill_copter_step_funcs[(s8)self->unk5](self);
     if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+#ifdef MMX4_WIN32
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
+#else
         ((void (*)(struct BaseObj*, s32, s32))is_on_screen)(BASE_OBJECT(self), 0x20, 0x20);
+#endif
         return;
     }
     self->state = 2;

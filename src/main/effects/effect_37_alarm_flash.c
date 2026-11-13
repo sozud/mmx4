@@ -39,13 +39,13 @@ void func_800BD3C0(struct EffectObj* self)
     g_FilterAmountR = 0;
     g_FilterAmountG = 0;
     g_FilterAmountB = 0;
-    self->unk7 = 0x27;
     self->ext.effect_37.action = (s8)self->unk2 >> 4;
     self->ext.effect_37.timer = self->ext.effect_37.unk1E;
     self->ext.effect_37.unk19 = self->ext.effect_37.unk1F;
     self->ext.effect_37.unk1A = self->ext.effect_37.unk20;
     self->ext.effect_37.unk22 = (s8)self->unk2 >> 4;
     self->state++;
+    self->unk7 = 0x27;
 }
 
 void alarm_flash_main(struct EffectObj* self)

@@ -30,16 +30,14 @@ void SearchLightUpdate(struct QuadObj* arg0)
 // SearchLight state 0
 void search_light_init(struct QuadObj* arg0)
 {
-    u16 temp_a0;
     struct SearchLightInit* temp_v0;
     s8 temp = arg0->unk2;
 
     arg0->active |= 0x90;
     arg0->unk36 = search_light_blend_modes.values[arg0->unk2 >> 1];
-    temp_a0 = search_light_colors.values[temp >> 1];
+    arg0->unk34 = search_light_colors.values[temp >> 1];
     temp_v0 = &search_light_shapes[arg0->unk2];
     arg0->state = 1;
-    arg0->unk34 = temp_a0;
     arg0->vertices[0].x.i.hi = temp_v0->vertices[0];
     arg0->vertices[0].y.i.hi = temp_v0->vertices[1];
     arg0->vertices[1].x.i.hi = temp_v0->vertices[2];

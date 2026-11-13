@@ -1345,7 +1345,7 @@ void func_800257BC(struct PlayerObj* arg0)
 #endif
 
 #ifndef MMX4_SATURN
-#if defined(MMX4_PC) || defined(VERSION_EU)
+#if defined(MMX4_PC) || defined(VERSION_EU) || defined(MMX4_WIN32)
 INCLUDE_ASM("main/nonmatchings/14A60", func_8002588C);
 #else
 // clang-format off

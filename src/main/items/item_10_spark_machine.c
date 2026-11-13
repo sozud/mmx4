@@ -209,12 +209,12 @@ void func_800C2528(struct ItemObj* self)
     self->unk16 = VISUAL_SATURN_LAYER(5);
     self->unk40 = (u16)(OBJECT_STAGE_TEXTURE(func_8002938C(0x9D)));
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x9D));
+    self->unk15 = 0;
     self->unk42 = OBJECT_CLUT(0x7986);
     self->animation_table = (const u8* const*)spark_machine_animations;
     self->unk68 = (struct Unk_unk68*)spark_machine_terrain_box;
     self->unk54 = spark_machine_hit_box;
     self->unk58 = (const u8*)D_80108604;
-    self->unk15 = 0;
     self->bg_offset = g_Player.bg_offset;
     self->unk61 = 0;
     self->unk75 = 1;

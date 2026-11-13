@@ -195,8 +195,8 @@ void func_80088EA4(struct MainObj* self)
     if (collision < 0) {
         set_animation(self, 3);
         self->unk5 = 0;
-        self->unk6 = 0;
         self->state++;
+        self->unk6 = 0;
     } else {
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     }
