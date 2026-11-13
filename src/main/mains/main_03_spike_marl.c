@@ -84,9 +84,6 @@ void func_80043C0C(struct MainObj* arg0);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043390);
-#else
 void func_80043390(struct MainObj* arg0)
 {
     s32 column;
@@ -152,7 +149,6 @@ void func_80043390(struct MainObj* arg0)
     arg0->state = 1;
     arg0->unk6 = 0;
 }
-#endif
 
 void spike_marl_run(struct MainObj* self)
 {
@@ -344,9 +340,6 @@ void spike_marl_roll_update(struct MainObj* self)
 }
 
 // spike_marl_roll_slow
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043C0C);
-#else
 void func_80043C0C(struct MainObj* arg0)
 {
     if ((arg0->x_speed < 0 ? -arg0->x_speed : arg0->x_speed) < 0x10000
@@ -361,7 +354,6 @@ void func_80043C0C(struct MainObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 void spike_marl_fall(struct MainObj* self)
 {

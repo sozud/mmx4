@@ -33,78 +33,85 @@ s32 func_8002BD58(struct MainObj* obj0, struct MainObj* obj1, s16* out_x, s16* o
 s32 func_8002BD58(struct MainObj*, struct MainObj*, s16*, s16*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+INCLUDE_ASM("main/nonmatchings/collision", func_8002BB80);
+#else
+#define HITBOX(p) ((const struct Unk_unk68*)(p))
 s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1)
 {
     const struct Unk_unk68* box0;
     const struct Unk_unk68* box1;
-    s32 flip0;
-    s32 flip1;
+    s32 w0;
+    s32 w1;
     s32 sum;
-    s32 t1;
-    s32 t2;
-    s32 a0;
-    s32 a1;
-    s32 a2;
+    s32 x0;
+    s32 x1;
+    s32 dist;
     s32 overlap;
 
     if (obj1->invincibility_timer != 0) {
         return 0;
     }
-    box0 = (const struct Unk_unk68*)obj0->attack_box;
+    box0 = HITBOX(obj0->attack_box);
     if (box0 == NULL) {
         return 0;
     }
-    box1 = (const struct Unk_unk68*)obj1->hurt_box;
+    box1 = HITBOX(obj1->hurt_box);
     if (box1 == NULL) {
         return 0;
     }
-
-    flip0 = (u8)obj0->unk15 & PLAYER_FACING_RIGHT;
-    flip1 = (u8)obj1->unk15 & PLAYER_FACING_RIGHT;
-    t1 = box0->unk2;
-    t2 = box1->unk2;
-    sum = t1 + t2;
-    a2 = flip0 ? obj0->x_pos.i.hi - box0->unk0 : obj0->x_pos.i.hi + box0->unk0;
-    a0 = flip1 ? obj1->x_pos.i.hi - box1->unk0 : obj1->x_pos.i.hi + box1->unk0;
-    a1 = a0 - a2;
-    if (a1 < 0) {
-        a1 = a2 - a0;
+    sum = box0->unk2 + box1->unk2;
+    w0 = box0->unk2;
+    w1 = box1->unk2;
+    if (obj0->unk15 & PLAYER_FACING_RIGHT) {
+        x0 = obj0->x_pos.i.hi - HITBOX(obj0->attack_box)->unk0;
+    } else {
+        x0 = obj0->x_pos.i.hi + HITBOX(obj0->attack_box)->unk0;
     }
-
-    if (a0 < a2) {
-        if (flip0) {
-            overlap = flip1 ? a1 < t1 : a1 < sum;
-        } else if (flip1) {
+    if (obj1->unk15 & PLAYER_FACING_RIGHT) {
+        x1 = obj1->x_pos.i.hi - HITBOX(obj1->hurt_box)->unk0;
+    } else {
+        x1 = obj1->x_pos.i.hi + HITBOX(obj1->hurt_box)->unk0;
+    }
+    dist = ABS(x1, x0);
+    if (x1 < x0) {
+        if (obj0->unk15 & PLAYER_FACING_RIGHT) {
+            if (obj1->unk15 & PLAYER_FACING_RIGHT) {
+                overlap = dist < w0;
+            } else {
+                overlap = dist < sum;
+            }
+        } else if (obj1->unk15 & PLAYER_FACING_RIGHT) {
             return 0;
         } else {
-            overlap = a1 < t2;
+            overlap = dist < w1;
         }
-    } else if (flip0) {
-        if (!flip1) {
+    } else if (obj0->unk15 & PLAYER_FACING_RIGHT) {
+        if (!(obj1->unk15 & PLAYER_FACING_RIGHT)) {
             return 0;
         }
-        overlap = a1 < t2;
+        overlap = dist < w1;
+    } else if (obj1->unk15 & PLAYER_FACING_RIGHT) {
+        overlap = dist < sum;
     } else {
-        overlap = flip1 ? a1 < sum : a1 < t1;
+        overlap = dist < w0;
     }
     if (overlap == 0) {
         return 0;
     }
 
-    a2 = obj0->y_pos.i.hi + box0->unk1;
-    a0 = obj1->y_pos.i.hi + box1->unk1;
-    a1 = a0 - a2;
-    if (a1 < 0) {
-        a1 = a2 - a0;
+    x0 = obj0->y_pos.i.hi + HITBOX(obj0->attack_box)->unk1;
+    x1 = obj1->y_pos.i.hi + HITBOX(obj1->hurt_box)->unk1;
+    dist = ABS(x1, x0);
+    if (x1 < x0) {
+        if (dist < HITBOX(obj1->hurt_box)->unk3) {
+            return 1;
+        }
+    } else if (dist < HITBOX(obj0->attack_box)->unk3) {
+        return 1;
     }
-    if (a0 < a2) {
-        return a1 < box1->unk3;
-    }
-    return a1 < box0->unk3;
+    return 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/collision", func_8002BB80);
 #endif
 
 s32 func_8002BD58(struct MainObj* arg0, struct MainObj* arg1, s16* arg2, s16* arg3)
@@ -395,7 +402,77 @@ void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
         arg0->unk78 = (flags & 0xB) != 0;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/collision", func_8002C36C);
+void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
+{
+    s16 x0, x1, y0, y1;
+    s16 d;
+    s32 flags;
+    struct PlayerObj* self;
+    struct PlayerObj* other;
+
+    self = arg0;
+    flags = 0;
+    other = arg1;
+    x0 = self->x_pos.i.hi + self->unk68->unk0;
+    y0 = self->y_pos.i.hi + self->unk68->unk1;
+    x1 = other->x_pos.i.hi + other->unk68->unk0;
+    y1 = other->y_pos.i.hi + other->unk68->unk1;
+
+    d = ABS(y0, y1);
+    if (d == (s16)(self->unk68->unk3 + other->unk68->unk3)) {
+        d = ABS(x0, x1);
+        if (d < (s16)(self->unk68->unk2 + other->unk68->unk2)) {
+            flags |= y0 < y1 ? 4 : 8;
+        }
+    }
+    d = ABS(x0, x1);
+    if (d == (s16)(self->unk68->unk2 + other->unk68->unk2)) {
+        d = ABS(y0, y1);
+        if (d < (s16)(self->unk68->unk3 + other->unk68->unk3)) {
+            flags |= x0 < x1 ? 2 : 1;
+            other->wall_climbable = self->unk75;
+        }
+    }
+
+    switch ((u32)slot) {
+    case 0:
+        self->unk72 = flags;
+        break;
+    case 1:
+        self->unk73 = flags;
+        break;
+    case 2:
+        self->unk74 = flags;
+        break;
+    }
+    other->unk71 |= flags;
+
+    if (flags & 0xB) {
+        switch ((u32)slot) {
+        case 0:
+            self->unk76 = 1;
+            break;
+        case 1:
+            self->unk77 = 1;
+            break;
+        case 2:
+            self->unk78 = 1;
+            break;
+        }
+    } else {
+        switch ((u32)slot) {
+        case 0:
+            self->unk76 = 0;
+            break;
+        case 1:
+            self->unk77 = 0;
+            break;
+        case 2:
+            self->unk78 = 0;
+            break;
+        }
+    }
+}
 #endif
 
 // megaman falls through floor in intro stage if nopped out

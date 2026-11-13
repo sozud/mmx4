@@ -55,9 +55,6 @@ void spike_sled_update(struct MainObj* self)
     spike_sled_state_funcs[self->state](self);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", spike_sled_init);
-#else
 void spike_sled_init(struct MainObj* self)
 {
     u8 bg_offset;
@@ -70,9 +67,9 @@ void spike_sled_init(struct MainObj* self)
     self->invincibility_timer = 0;
     self->collision_data = D_801072F4;
     bg_offset = (u8)g_Player.bg_offset;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
     x_pos = self->x_pos.val;
     self->y_pos.i.hi = 0x2E8;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     y_pos = self->y_pos.val;
     self->animation_table = (const u8* const*)spike_sled_animations;
     self->hurt_box = &D_800FDD88;
@@ -102,7 +99,6 @@ void spike_sled_init(struct MainObj* self)
     self->unk5 = 2;
     self->unk6 = 0;
 }
-#endif
 
 void spike_sled_run(struct MainObj* self)
 {
@@ -161,12 +157,9 @@ void func_8005DC58(struct MainObj* arg0);
 void func_8005DED4(struct MainObj* arg0);
 void func_8005E108(struct MainObj* arg0);
 void func_8005E298(struct MainObj* arg0);
-extern u8 D_800FDD98[8];
 #endif
+extern u8 D_800FDD98[8];
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005D4E0);
-#else
 void func_8005D4E0(struct MainObj* arg0)
 {
     s32 x;
@@ -236,7 +229,6 @@ void func_8005D4E0(struct MainObj* arg0)
         break;
     }
 }
-#endif
 
 void spike_sled_despawn(struct MainObj* self)
 {
@@ -437,7 +429,76 @@ void func_8005DC58(struct MainObj* arg0)
     arg0->unk6 = 2;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005DC58);
+void func_8005DC58(struct MainObj* arg0)
+{
+    s16 target;
+    s16 delta;
+    u8 first;
+    s32 slot;
+    u8 mask;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->ext.main_33.target_x != 0) {
+        arg0->unk6 = 3;
+        return;
+    }
+    move_object(MOVING_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        target = g_Player.x_pos.i.hi;
+        if (target < 0x1220) {
+            arg0->ext.main_33.variant = 0;
+            if (!(arg0->ext.main_33.unk80 & D_800FDD98[0])) {
+                arg0->ext.main_33.variant = 1;
+                if (!(arg0->ext.main_33.unk80 & D_800FDD98[1]))
+                    arg0->ext.main_33.variant = 0;
+            }
+        } else if (target > 0x1320) {
+            arg0->ext.main_33.variant = 4;
+            if (!(arg0->ext.main_33.unk80 & D_800FDD98[4])) {
+                arg0->ext.main_33.variant = 3;
+                if (!(arg0->ext.main_33.unk80 & D_800FDD98[3]))
+                    arg0->ext.main_33.variant++;
+            }
+        } else {
+            delta = target - 0x1220;
+            arg0->ext.main_33.variant = delta / 64;
+            arg0->ext.main_33.variant += (delta & 0x3F) > 0x20;
+            first = arg0->ext.main_33.variant;
+            slot = arg0->ext.main_33.variant;
+            if (!(arg0->ext.main_33.unk80 & D_800FDD98[slot])) {
+                arg0->ext.main_33.variant = (delta & 0x3F) <= 0x20 ? slot + 1 : slot - 1;
+                mask = arg0->ext.main_33.unk80;
+                if (!(mask & D_800FDD98[arg0->ext.main_33.variant]))
+                    arg0->ext.main_33.variant = first;
+            }
+        }
+        arg0->ext.main_33.target_x = arg0->ext.main_33.variant * 64 + 0x1220;
+        target = arg0->ext.main_33.target_x;
+    } else {
+        target = g_Player.x_pos.i.hi;
+    }
+    if (arg0->unk15 == 0) {
+        if (arg0->x_pos.i.hi < 0x1220 && arg0->ext.main_33.target_x == 0) {
+            set_animation(arg0, 4);
+            arg0->x_accel = -0x4000;
+            arg0->unk6 = 2;
+        } else if (target > arg0->x_pos.i.hi) {
+            set_animation(arg0, 4);
+            arg0->x_accel = -0x4000;
+            arg0->unk6 = 2;
+        }
+    } else {
+        if (arg0->x_pos.i.hi > 0x1320 && arg0->ext.main_33.target_x == 0) {
+            set_animation(arg0, 4);
+            arg0->x_accel = -0x4000;
+            arg0->unk6 = 2;
+        } else if (target < arg0->x_pos.i.hi) {
+            set_animation(arg0, 4);
+            arg0->x_accel = -0x4000;
+            arg0->unk6 = 2;
+        }
+    }
+}
 #endif
 
 // spike_sled_charge_target
@@ -511,12 +572,9 @@ void spike_sled_bomb(struct MainObj* self)
 }
 
 // spike_sled_bomb_jump
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E108);
-#else
 void func_8005E108(struct MainObj* arg0)
 {
-    u8 slot;
+    u32 slot;
     u8 mask;
 
     move_object(MOVING_OBJECT(arg0));
@@ -528,7 +586,7 @@ void func_8005E108(struct MainObj* arg0)
     } else if (slot < 2 && (mask & 0x20)) {
         arg0->ext.main_33.variant = 5;
         arg0->unk7C = 0x22;
-    } else if (slot >= 2 && (u8)(slot - 3) < 2 && (mask & 0x40)) {
+    } else if (slot >= 2 && (u8)(arg0->ext.main_33.variant - 3) < 2 && (mask & 0x40)) {
         arg0->ext.main_33.variant = 6;
         arg0->unk7C = 0x22;
     } else {
@@ -537,7 +595,6 @@ void func_8005E108(struct MainObj* arg0)
     }
     arg0->unk6 = 1;
 }
-#endif
 
 void spike_sled_bomb_rise(struct MainObj* self)
 {
@@ -581,9 +638,6 @@ void spike_sled_bomb_rise(struct MainObj* self)
 }
 
 // spike_sled_bomb_drop
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E298);
-#else
 void func_8005E298(struct MainObj* arg0)
 {
     s32 x;
@@ -611,7 +665,6 @@ void func_8005E298(struct MainObj* arg0)
     arg0->ext.main_33.variant = 0xFF;
     arg0->unk6 = 1;
 }
-#endif
 
 void spike_sled_intro(struct MainObj* self)
 {

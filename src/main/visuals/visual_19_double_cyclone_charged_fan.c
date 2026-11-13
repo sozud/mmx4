@@ -12,9 +12,6 @@ extern struct VisualSpawnOffset double_cyclone_charged_fan_offsets[2];
 
 // double_cyclone_charged_fan_update
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_19_double_cyclone_charged_fan", func_800B2698);
-#else
 void func_800B2698(struct VisualObj* arg0)
 {
     s32* player_gfx;
@@ -77,7 +74,6 @@ void func_800B2698(struct VisualObj* arg0)
         double_cyclone_charged_fan_draw(arg0);
     }
 }
-#endif
 
 void double_cyclone_charged_fan_draw(struct VisualObj* arg0)
 {

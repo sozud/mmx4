@@ -327,9 +327,6 @@ void title_quad_morph(struct QuadObj* arg0)
 
 // TitleUpdate2 state 6
 // title_quad_flash
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", func_800D7468);
-#else
 void func_800D7468(struct QuadObj* quad)
 {
     struct QuadVertex* vertex;
@@ -345,20 +342,20 @@ void func_800D7468(struct QuadObj* quad)
         dx = vertex->x.val - FIXED(point[0]);
         dy = vertex->y.val - FIXED(point[1]);
         hit = angle_from_delta(dx, dy);
-        if ((((quad->ext.title_quad.unk3E[i] ^ hit) & 0x10) || quad->ext.title_quad.unk3A[i] != 0) && quad->ext.title_quad.unk42 == 0) {
+        if ((((((struct TitleQuadExt*)&quad->ext)->unk3E[i] ^ hit) & 0x10) || ((struct TitleQuadExt*)&quad->ext)->unk3A[i] != 0) && quad->ext.title_quad.unk42 == 0) {
             vertex->x.val = FIXED(point[0]);
             vertex->y.val = FIXED(point[1]);
-            quad->ext.title_quad.unk3A[i] = 1;
+            ((struct TitleQuadExt*)&quad->ext)->unk3A[i] = 1;
         } else {
             vertex->x.val -= dx / quad->ext.title_quad.unk38;
             vertex->y.val -= dy / quad->ext.title_quad.unk38;
-            quad->ext.title_quad.unk3A[i] = 0;
+            ((struct TitleQuadExt*)&quad->ext)->unk3A[i] = 0;
             if (i == 3) {
                 quad->ext.title_quad.unk42 = 0;
             }
         }
         vertex++;
-        quad->ext.title_quad.unk3E[i] = hit;
+        ((struct TitleQuadExt*)&quad->ext)->unk3E[i] = hit;
     }
     if (--quad->ext.title_quad.unk38 == 0) {
         point = title_quad_shapes[quad->unk2];
@@ -375,7 +372,6 @@ void func_800D7468(struct QuadObj* quad)
     }
     quad_is_on_screen(quad);
 }
-#endif
 
 // TitleUpdate2 state 2
 void title_quad_despawn(struct QuadObj* arg0)

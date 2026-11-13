@@ -157,7 +157,42 @@ void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range
     spawn_explosion_at((s8)type, x, y, variant);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/visuals/visual_03_small_effect", func_800AF95C);
+// clang-format off
+void func_800AF95C(arg0, type, x_range, y_range, divisor)
+    struct ObjectHeader* arg0;
+    s8 type;
+    s32 x_range;
+    s32 y_range;
+    u8 divisor;
+// clang-format on
+{
+    struct ObjectHeader* obj = arg0;
+    s16 x;
+    s16 y;
+    s32 roll;
+    u8 variant;
+    u8 toggle;
+
+    x_range &= get_random();
+    if (get_random() & 1)
+        x = obj->x_pos.u.hi + (x_range & 0xFF);
+    else
+        x = obj->x_pos.u.hi - (x_range & 0xFF);
+    y_range &= get_random();
+    if (get_random() & 1)
+        y = obj->y_pos.u.hi + (y_range & 0xFF);
+    else
+        y = obj->y_pos.u.hi - (y_range & 0xFF);
+    roll = get_random_nonzero();
+    if (divisor == 0 || roll % divisor == 0) {
+        toggle = D_8013B8E4 + 1;
+        D_8013B8E4 = toggle;
+        variant = (toggle & 1) ? 2 : 3;
+    } else {
+        variant = 0xFF;
+    }
+    spawn_explosion_at(type, x, y, variant);
+}
 #endif
 
 struct VisualObj* spawn_explosion_at(s8 arg0, s16 x, s16 y, u8 arg3)

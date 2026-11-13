@@ -112,7 +112,32 @@ void func_8009B1E8(struct ShotObj* arg0)
     set_animation(ANIMATED_OBJECT(arg0), index + 8);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/shots/shot_09_trident_shot", func_8009B1E8);
+void func_8009B1E8(struct ShotObj* arg0)
+{
+    s32 x;
+    s32 new_x;
+
+    arg0->state = 4;
+    arg0->on_screen = 1;
+    arg0->unk58.collision_data = D_80106070;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk54 = trident_shot_hit_box;
+    arg0->unk50.data = trident_shot_hit_box;
+    arg0->unk42 &= 0x7FFF;
+    x = arg0->x_pos.i.hi;
+    if (arg0->unk15 == 0)
+        new_x = x + trident_shot_muzzle_offsets[arg0->unk2][0];
+    else
+        new_x = x - trident_shot_muzzle_offsets[arg0->unk2][0];
+    arg0->x_pos.i.hi = new_x;
+    arg0->y_pos.i.hi += trident_shot_muzzle_offsets[0][arg0->unk2 * 2 + 1];
+    arg0->x_vel.val *= 4;
+    arg0->y_vel.val *= 4;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
+    set_animation(ANIMATED_OBJECT(arg0), arg0->unk2 + 8);
+}
 #endif
 
 void trident_shot_fly(struct ShotObj* self)

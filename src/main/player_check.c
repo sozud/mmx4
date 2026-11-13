@@ -451,17 +451,19 @@ s32 player_check_wall_jump(struct PlayerObj* self)
     return 0;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_check", player_is_pushing_wall);
-#else
 s32 player_is_pushing_wall(struct PlayerObj* self)
 {
-    if ((self->input_locked != 0) || (self->wall_climbable == 0)) {
+    if (self->input_locked != 0) {
         return 0;
     }
-    return (self->input.buttons.held & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT) & self->unk88.bytes.collision_flags) != 0;
+    if (self->wall_climbable == 0) {
+        return 0;
+    }
+    if (self->input.buttons.held & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT) & self->unk88.bytes.collision_flags) {
+        return 1;
+    }
+    return 0;
 }
-#endif
 
 void player_check_damage(struct PlayerObj* self)
 {
@@ -559,7 +561,40 @@ void func_80033D54(struct PlayerObj* arg0)
     arg0->unk6 = 0;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/player_check", func_80033D54);
+void func_80033D54(struct PlayerObj* arg0)
+{
+    s8 hurt_type;
+    s32 index;
+    u8 type;
+
+    player_set_collision_bounds(arg0);
+    arg0->hp = HP_VALUE((u8)arg0->hp);
+    if (arg0->unk5 == 0x11) {
+        return;
+    }
+
+    arg0->hurt_phase = 1;
+    player_reset_actions(arg0);
+    hurt_type = arg0->hurt_type;
+    index = hurt_type;
+    type = hurt_type;
+    arg0->unk15 = (u8)arg0->hit_facing;
+    player_set_animation(arg0, player_hurt_animations[index]);
+    arg0->x_vel.val = player_hurt_velocities[index].x_vel;
+    arg0->unk28 = player_hurt_velocities[index].x_accel;
+    arg0->y_vel.val = player_hurt_velocities[index].y_vel;
+    arg0->unk2C = player_hurt_velocities[index].gravity;
+    if (arg0->unk15 != 0) {
+        arg0->x_vel.val = -arg0->x_vel.val;
+    }
+    arg0->invincibility_timer = player_hurt_invincibility[index];
+    if ((u8)(type - 2) < 2) {
+        arg0->air_state = 1;
+    }
+    func_8001540C(3, (get_random() & 1) ^ 1, arg0);
+    arg0->unk5 = 0x11;
+    arg0->unk6 = 0;
+}
 #endif
 u8 func_8002D8B8(struct PlayerObj* arg0);
 
@@ -606,9 +641,6 @@ void player_enter_ladder_step_off_bottom(struct PlayerObj* self);
 void player_enter_ladder_climb_off_top(struct PlayerObj* self);
 
 // player_check_ladder_end
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_check", func_80033FF0);
-#else
 s32 func_80033FF0(struct PlayerObj* arg0)
 {
     u8 attribute = func_8002D994(arg0);
@@ -635,7 +667,6 @@ s32 func_80033FF0(struct PlayerObj* arg0)
     }
     return 0;
 }
-#endif
 s32 player_check_off_ladder(struct PlayerObj* self)
 {
     if (func_8002D994(self) != 0x20) {

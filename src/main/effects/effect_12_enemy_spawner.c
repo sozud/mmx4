@@ -152,19 +152,15 @@ void enemy_spawner_despawn(struct EffectObj* self)
 }
 
 // enemy_spawner_count_children
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_12_enemy_spawner", func_800B8490);
-#else
 s32 func_800B8490(struct EffectObj* arg0)
 {
     s16 dx = arg0->x_pos.i.hi - background_objects[0].x_pos.i.hi;
     s16 dy = arg0->y_pos.i.hi - background_objects[0].y_pos.i.hi;
 
-    if (dx >= -0x40 && dx < 0x180 && dy >= -0x40 && dy < 0x130)
+    if ((dx >= -0x40 && dx < 0x180) && (dy >= -0x40 && dy < 0x130))
         return 0;
     return 1;
 }
-#endif
 
 void (*enemy_spawner_state_funcs[])(struct EffectObj*) = {
     enemy_spawner_init,

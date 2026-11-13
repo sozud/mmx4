@@ -128,8 +128,111 @@ facing:
     if (g_Player.x_pos.val != g_Player.unk18.val)
         ext->unk1E = (g_Player.x_pos.val >= g_Player.unk18.val) << 6;
 }
-#else
+#elif defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/effects/effect_05_tile_scanner", func_800B60BC);
+#else
+void func_800B60BC(struct EffectObj* arg0)
+{
+    s32 delta;
+    s32 step;
+    s32 tile;
+
+    arg0->ext.effect_5.unk21 = arg0->ext.effect_5.unk20;
+    arg0->ext.effect_5.unk20 = func_8002D724(&g_Player, g_Player.x_pos.i.hi,
+        g_Player.unk68->unk1 + ((u16)g_Player.y_pos.i.hi + g_Player.unk68->unk3));
+    delta = g_Player.x_pos.val - g_Player.unk18.val;
+    if (g_Player.state != 1)
+        goto facing;
+loop:
+    switch (arg0->ext.effect_5.unk20) {
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+        arg0->state = 1;
+        if (arg0->ext.effect_5.unk21 == 0x3C && g_Player.unk15 != 0 && g_Player.unk5 != 0xC) {
+            g_Player.x_pos.val = g_Player.unk18.val;
+        } else {
+            step = delta - 0x38000;
+            if (step < -0x68000)
+                step = -0x68000;
+            g_Player.x_pos.val = g_Player.unk18.val + step;
+        }
+        break;
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+        arg0->state = 1;
+        if (arg0->ext.effect_5.unk21 == 0x3C && g_Player.unk15 == 0 && g_Player.unk5 != 0xC) {
+            g_Player.x_pos.val = g_Player.unk18.val;
+        } else {
+            step = delta + 0x38000;
+            if (step > 0x68000)
+                step = 0x68000;
+            g_Player.x_pos.val = g_Player.unk18.val + step;
+        }
+        break;
+    case 25:
+    case 26:
+        arg0->state = 1;
+        if (arg0->ext.effect_5.unk21 == 0x3C && g_Player.unk15 != 0 && g_Player.unk5 != 0xC) {
+            g_Player.x_pos.val = g_Player.unk18.val;
+        } else {
+            step = delta - 0x38000;
+            if (step < -0x68000)
+                step = -0x68000;
+            g_Player.x_pos.val = g_Player.unk18.val + step;
+        }
+        break;
+    case 27:
+    case 28:
+        arg0->state = 1;
+        if (arg0->ext.effect_5.unk21 == 0x3C && g_Player.unk15 == 0 && g_Player.unk5 != 0xC) {
+            g_Player.x_pos.val = g_Player.unk18.val;
+        } else {
+            step = delta + 0x38000;
+            if (step > 0x68000)
+                step = 0x68000;
+            g_Player.x_pos.val = g_Player.unk18.val + step;
+        }
+        break;
+    case 16:
+        arg0->ext.effect_5.unk20 = func_8002D724(&g_Player, g_Player.x_pos.i.hi,
+            g_Player.unk68->unk1 + ((u16)g_Player.y_pos.i.hi + g_Player.unk68->unk3) - 0x10);
+        goto loop;
+    case 0:
+        if (arg0->state == 2)
+            tile_scanner_fill_funcs[0](arg0);
+        goto record;
+    case 60:
+        goto dispatch;
+    default:
+        arg0->state = 1;
+        goto record;
+    }
+
+    arg0->ext.effect_5.unk20 = func_8002D724(&g_Player, g_Player.x_pos.i.hi,
+        g_Player.unk68->unk1 + ((u16)g_Player.y_pos.i.hi + g_Player.unk68->unk3));
+    tile = arg0->ext.effect_5.unk20;
+    if (tile < 0x1D) {
+        if (tile >= 0x10)
+            goto facing;
+        if (tile == 0) {
+            if (arg0->state == 2)
+                goto record;
+            tile_scanner_state_funcs[arg0->state](arg0);
+            goto record;
+        }
+    }
+dispatch:
+    tile_scanner_state_funcs[arg0->state](arg0);
+record:
+    arg0->ext.effect_5.unk1C = g_Player.unk5;
+facing:
+    if (g_Player.x_pos.val != g_Player.unk18.val)
+        arg0->ext.effect_5.unk1E = (g_Player.x_pos.val >= g_Player.unk18.val) << 6;
+}
 #endif
 
 void tile_scanner_init(struct EffectObj* self)
@@ -142,9 +245,6 @@ void tile_scanner_init(struct EffectObj* self)
 }
 
 // tile_scanner_scan
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_05_tile_scanner", func_800B64BC);
-#else
 void func_800B64BC(struct EffectObj* arg0)
 {
 
@@ -207,7 +307,6 @@ void func_800B64BC(struct EffectObj* arg0)
     }
     arg0->state++;
 }
-#endif
 
 // tile_scanner_flood_fill
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -266,5 +365,75 @@ void func_800B6660(struct EffectObj* arg0)
     }
 }
 #else
-INCLUDE_ASM("main/nonmatchings/effects/effect_05_tile_scanner", func_800B6660);
+void func_800B6660(struct EffectObj* arg0)
+{
+    u8 tile;
+    s32 x;
+
+    if (g_Player.unk5 == 6 || g_Player.unk5 == 9 || (g_Player.unk88.bytes.collision_flags & 3)) {
+        arg0->state = 1;
+        return;
+    }
+
+    if (arg0->ext.effect_5.unk1D < 2) {
+        arg0->x_pos.val = g_Player.x_pos.val;
+        arg0->x_pos.val += arg0->ext.effect_5.unk14;
+        arg0->ext.effect_5.unk14 += arg0->ext.effect_5.unk18;
+        tile = func_8002D724(&g_Player, arg0->x_pos.i.hi,
+            g_Player.y_pos.i.hi + g_Player.unk68->unk3 + (s8)g_Player.unk68->unk1);
+        if (!(tile == 0x3C || tile == 0 || tile == 0x18 || tile == 0x1C || tile == 0x14 || tile == 0x1A)) {
+            g_Player.x_pos.val = arg0->x_pos.val;
+            arg0->state = 1;
+            return;
+        }
+        g_Player.x_pos.val = arg0->x_pos.val;
+        if (arg0->ext.effect_5.unk1D != 0) {
+            if (arg0->ext.effect_5.unk14 < 0)
+                arg0->state = 1;
+        } else {
+            if (arg0->ext.effect_5.unk14 >= 0)
+                arg0->state = 1;
+        }
+    } else if (--arg0->ext.effect_5.unk1F != 0xFF) {
+        arg0->x_pos.val = g_Player.x_pos.val;
+        arg0->x_pos.val += arg0->ext.effect_5.unk14;
+        arg0->ext.effect_5.unk14 += arg0->ext.effect_5.unk18;
+        tile = func_8002D724(&g_Player, arg0->x_pos.i.hi,
+            g_Player.y_pos.i.hi + g_Player.unk68->unk3 + (s8)g_Player.unk68->unk1);
+        if (!(tile == 0x3C || tile == 0 || tile == 0x18 || tile == 0x1C || tile == 0x14 || tile == 0x1A)) {
+            g_Player.x_pos.val = arg0->x_pos.val;
+            arg0->state = 1;
+            return;
+        }
+        x = arg0->x_pos.val;
+        g_Player.x_pos.val = x;
+        if (g_Player.unk5 != 0xC && g_Player.unk6 != 2) {
+            s32 d = arg0->ext.effect_5.unk14;
+            if (d > 0) {
+                if (d < x - g_Player.unk18.val)
+                    arg0->state = 1;
+            } else {
+                if (x - g_Player.unk18.val < d)
+                    arg0->state = 1;
+            }
+        }
+    } else {
+        if (arg0->ext.effect_5.unk18 > 0)
+            arg0->ext.effect_5.unk18 = -0x600;
+        else
+            arg0->ext.effect_5.unk18 = 0x600;
+        arg0->ext.effect_5.unk1D -= 2;
+        func_800B6660(arg0);
+    }
+
+    if (arg0->ext.effect_5.unk1D & 1) {
+        if (g_Player.x_pos.val < g_Player.unk18.val) {
+            if (ABS(g_Player.unk18.i.hi, g_Player.x_pos.i.hi) <= 0)
+                arg0->state = 1;
+        }
+    } else if (g_Player.x_pos.val > g_Player.unk18.val) {
+        if (ABS(g_Player.x_pos.i.hi, g_Player.unk18.i.hi) != 1)
+            arg0->state = 1;
+    }
+}
 #endif

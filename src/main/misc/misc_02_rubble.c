@@ -66,9 +66,6 @@ void func_800C7F1C(struct MiscObj* arg0);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", func_800C7F1C);
-#else
 void func_800C7F1C(struct MiscObj* arg0)
 {
     s32 index;
@@ -98,7 +95,6 @@ void func_800C7F1C(struct MiscObj* arg0)
     arg0->state++;
     is_on_screen(BASE_OBJECT(arg0));
 }
-#endif
 
 void rubble_fall(struct MiscObj* self)
 {

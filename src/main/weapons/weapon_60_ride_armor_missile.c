@@ -34,14 +34,10 @@ void func_80099118(struct WeaponObj* arg0);
 #endif
 
 extern u8 ride_armor_missile_hit_box[4];
-extern struct Weapon60SpawnOffset ride_armor_missile_offsets[3];
+extern s16 ride_armor_missile_offsets[3][2];
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_60_ride_armor_missile", func_80098F88);
-#else
 void func_80098F88(struct WeaponObj* self)
 {
-    struct Weapon60SpawnOffset* offsets;
     u8 direction;
     u16 dx;
 
@@ -51,12 +47,11 @@ void func_80098F88(struct WeaponObj* self)
     self->unk68 = NULL;
     self->unk54 = NULL;
     self->unk50 = ride_armor_missile_hit_box;
-    dx = *(s16*)&ride_armor_missile_offsets[self->unk2];
-    offsets = ride_armor_missile_offsets;
+    dx = ride_armor_missile_offsets[0][self->unk2 * 2];
     if (self->unk15 != 0)
         dx = -dx;
     self->x_pos.i.hi += dx;
-    self->y_pos.i.hi += ((s16*)((u8*)offsets - -(self->unk2 * 4)))[1];
+    self->y_pos.i.hi += ride_armor_missile_offsets[0][self->unk2 * 2 + 1];
     switch (self->unk2) {
     case 0:
         direction = (self->unk15 == 0) << 4;
@@ -82,7 +77,6 @@ void func_80098F88(struct WeaponObj* self)
     self->y_vel.val *= 6;
     set_animation(self, 0x21);
 }
-#endif
 
 // ride_armor_missile_main
 void func_80099118(struct WeaponObj* arg0)
@@ -151,7 +145,7 @@ void ride_armor_missile_despawn(struct WeaponObj* arg0)
 
 u8 ride_armor_missile_hit_box[4] = { 0xFC, 0xFD, 6, 5 };
 
-struct Weapon60SpawnOffset ride_armor_missile_offsets[3] = {
+s16 ride_armor_missile_offsets[3][2] = {
     { -0x28, 0 },
     { -0x28, 0 },
     { -0x28, 0 },

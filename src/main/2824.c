@@ -151,8 +151,57 @@ void func_800122E0(struct DrawInfo* arg0)
 }
 #endif
 
-#ifndef MMX4_SATURN
-INCLUDE_ASM("main/nonmatchings/2824", func_80012328);
+#if !defined(MMX4_SATURN) && !defined(MMX4_PC)
+extern u8 pad_port1_packet[0x22];
+extern struct ControllerButtons D_80166D50;
+
+void func_80012328(void)
+{
+    s32 raw;
+    s32 raw2;
+    u16 buttons;
+
+    if (pad_port1_packet[0] == 0xFF) {
+        buttons = 0;
+#ifdef VERSION_EU
+        D_80166D68 = 1;
+#endif
+    } else {
+#ifdef VERSION_EU
+        D_80166D68 = 0;
+#endif
+        if (pad_port1_packet[1] != 0x41) {
+            buttons = 0;
+        } else {
+            raw = ~pad_port1_packet[3] & ~(pad_port1_packet[2] << 8);
+            buttons = raw;
+            if ((raw & 0xA000) == 0xA000) {
+                buttons = raw & 0x5FFF;
+            }
+            if ((buttons & 0x5000) == 0x5000) {
+                buttons &= 0xAFFF;
+            }
+        }
+    }
+    controller_input.previous = controller_input.held;
+    controller_input.held = buttons;
+    controller_input.pressed = buttons & (buttons ^ controller_input.previous);
+    if (D_8012F46C[0] == 0xFF || D_8012F46C[1] != 0x41) {
+        buttons = 0;
+    } else {
+        raw2 = ~D_8012F46C[3] & ~(D_8012F46C[2] << 8);
+        buttons = raw2;
+        if ((raw2 & 0xA000) == 0xA000) {
+            buttons = raw2 & 0x5FFF;
+        }
+        if ((buttons & 0x5000) == 0x5000) {
+            buttons &= 0xAFFF;
+        }
+    }
+    D_80166D50.previous = D_80166D50.current;
+    D_80166D50.current = buttons;
+    D_80166D50.pressed = buttons & (buttons ^ D_80166D50.previous);
+}
 #endif
 
 #ifndef MMX4_SATURN
@@ -184,11 +233,6 @@ void func_80012454(void)
 
 extern void (*D_800EE45C[9])();
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-#ifndef MMX4_SATURN
-INCLUDE_ASM("main/nonmatchings/2824", func_80012560);
-#endif
-#else
 #ifndef MMX4_SATURN
 void func_80012560(void)
 {
@@ -206,6 +250,23 @@ void func_80012560(void)
     s32* src;
     volatile s32* var_v1;
 
+#ifdef VERSION_EU
+    var_a1 = 0;
+    var_t0 = 0x40000404;
+    var_a3 = 0x801FEC00;
+    var_a2 = 0xC0;
+    do {
+        GAME_THREADS[var_a1].state = 0;
+        temp_v0 = ptr[0x10 / 4];
+        GAME_THREADS[var_a1].stack = var_a3;
+        var_a3 += 0x400;
+        GAME_THREADS[var_a1].unkC = temp_v0 + var_a2;
+        var_a2 += 0xC0;
+        ((s32*)GAME_THREADS[var_a1].unkC)[0x94 / 4] = var_t0;
+        GAME_THREADS[var_a1].pad48[0x70 - 0x48] = 0;
+        var_a1++;
+    } while (var_a1 < 4);
+#else
     var_a1 = 0;
     var_t0 = 0x40000404;
     var_v1 = (volatile s32*)0x801F8170;
@@ -225,6 +286,7 @@ void func_80012560(void)
         *(volatile u8*)var_v1 = 0;
         var_v1 += 0x20;
     } while (var_a1 < 4);
+#endif
 
     dst = (s32*)0x801F8000;
     var_a1 = 0;
@@ -234,7 +296,6 @@ void func_80012560(void)
     }
 #endif
 }
-#endif
 #endif
 
 #ifndef MMX4_SATURN
@@ -280,49 +341,40 @@ void func_80012600(void)
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-#ifndef MMX4_SATURN
-INCLUDE_ASM("main/nonmatchings/2824", func_80012740);
-#endif
-#else
 #ifndef MMX4_SATURN
 void func_80012740(s32 arg0, void* arg1)
 {
 #ifdef MMX4_PC
     mmx4_pc_thread_create(arg0, (void (*)(void))arg1);
 #else
-    s32 temp_s0;
-    u16* ptr;
+    struct GameThread* thread;
 
     EnterCriticalSection();
-    temp_s0 = arg0 << 7;
-    ptr = (u16*)(0x801f8100 + temp_s0);
-    *(s32*)(0x801f8108 + temp_s0) = OpenTh((long (*)())arg1, *(s32*)(0x801f8110 + temp_s0),
-        *(s32*)(0x801f8144 + temp_s0));
+    thread = &GAME_THREADS[arg0];
+    thread->handle = OpenTh((long (*)())arg1, thread->stack, thread->global_pointer);
     ExitCriticalSection();
-    *ptr = 2;
+    thread->state = 2;
 #endif
 }
 #endif
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-#ifndef MMX4_SATURN
-INCLUDE_ASM("main/nonmatchings/2824", func_800127C8);
-#endif
-#else
 #ifndef MMX4_SATURN
 void func_800127C8(s32 arg0)
 {
-    D_801F8300->timer = arg0;
-    D_801F8300->state = 1;
+#ifdef MMX4_PC
+    struct GameThread* thread = D_801F8300;
+#else
+    struct GameThread* thread = CUR_GAME_THREAD;
+#endif
+
+    thread->timer = arg0;
+    thread->state = 1;
 #ifdef MMX4_PC
     mmx4_pc_thread_yield();
 #else
     ChangeTh(0xFF000000);
 #endif
 }
-#endif
 #endif
 
 #ifndef MMX4_SATURN
@@ -341,31 +393,22 @@ void func_800127FC()
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-#ifndef MMX4_SATURN
-INCLUDE_ASM("main/nonmatchings/2824", func_80012854);
-#endif
-#else
 #ifndef MMX4_SATURN
 void func_80012854(s32 arg0)
 {
 #ifdef MMX4_PC
     mmx4_pc_thread_slot(arg0)->state = 0;
 #else
-    s32 temp_s0;
-    u16* temp_v1;
+    struct GameThread* thread = &GAME_THREADS[arg0];
 
-    temp_s0 = arg0 << 7;
-    temp_v1 = temp_s0 + 0x801F8100;
-    if (*temp_v1 != 0) {
-        *temp_v1 = 0;
+    if (thread->state != 0) {
+        thread->state = 0;
         EnterCriticalSection();
-        CloseTh(*(u32*)(temp_s0 + 0x801F8108));
+        CloseTh(thread->handle);
         ExitCriticalSection();
     }
 #endif
 }
-#endif
 #endif
 
 #ifndef MMX4_SATURN

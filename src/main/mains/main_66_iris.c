@@ -106,9 +106,6 @@ void iris_face_player(struct MainObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080700);
-#else
 void func_80080700(struct MainObj* self)
 {
     if (engine_obj.cur_character == 0) {
@@ -147,12 +144,8 @@ void func_80080700(struct MainObj* self)
     self->unk5 = 2;
     self->unk6 = 0;
 }
-#endif
 
 // iris_run
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080834);
-#else
 void func_80080834(struct MainObj* self)
 {
     struct MiscObj* misc;
@@ -293,7 +286,6 @@ void func_80080834(struct MainObj* self)
     func_8002D9BC(self);
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
-#endif
 
 void iris_death(struct BarObj* self)
 {
@@ -584,9 +576,6 @@ void iris_robot_hover(struct MainObj* self)
 }
 
 // iris_robot_hover_chase
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081718);
-#else
 void func_80081718(struct MainObj* self)
 {
     s32 saved_y = g_Player.y_pos.val;
@@ -607,7 +596,6 @@ void func_80081718(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 void iris_robot_dash(struct MainObj* self)
 {
@@ -720,9 +708,6 @@ void iris_robot_release_crystal(struct MainObj* self)
 }
 
 // iris_robot_release_crystal_spawn
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081BA0);
-#else
 void func_80081BA0(struct MainObj* self)
 {
     struct MainObj* body;
@@ -768,7 +753,6 @@ void func_80081BA0(struct MainObj* self)
     }
     self->unk6 = 1;
 }
-#endif
 
 void iris_robot_release_crystal_wait(struct MainObj* self)
 {
@@ -819,9 +803,6 @@ void iris_robot_release_crystal_finish(struct MainObj* self)
 }
 
 // iris_crystal_follow
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081E44);
-#else
 void func_80081E44(struct MainObj* self)
 {
     s32 direction;
@@ -853,7 +834,6 @@ void func_80081E44(struct MainObj* self)
         self->unk6 = 0;
     }
 }
-#endif
 
 void iris_crystal_drop(struct MainObj* self)
 {

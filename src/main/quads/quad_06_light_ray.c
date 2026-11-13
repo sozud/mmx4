@@ -31,9 +31,6 @@ void light_ray_despawn(struct QuadObj*);
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_06_light_ray", func_800D5934);
-#else
 void func_800D5934(struct QuadObj* arg0)
 {
     u8 angle;
@@ -50,19 +47,19 @@ void func_800D5934(struct QuadObj* arg0)
     if (angle < 0x10) {
         x_sign = -1;
         if (angle < 8) {
-            index = 8 - angle;
+            index = 8 - QUAD6_ANGLE(arg0);
             y_sign = 1;
         } else {
-            index = angle - 8;
+            index = QUAD6_ANGLE(arg0) - 8;
             y_sign = -1;
         }
     } else {
         x_sign = 1;
         if (angle < 0x18) {
-            index = 0x18 - angle;
+            index = 0x18 - QUAD6_ANGLE(arg0);
             y_sign = -1;
         } else {
-            index = angle - 0x18;
+            index = QUAD6_ANGLE(arg0) - 0x18;
             y_sign = 1;
         }
     }
@@ -91,7 +88,6 @@ void func_800D5934(struct QuadObj* arg0)
     QUAD6_AGE(arg0) = 0;
     arg0->state++;
 }
-#endif
 
 void light_ray_main(struct QuadObj* arg0)
 {

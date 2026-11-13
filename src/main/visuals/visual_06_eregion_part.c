@@ -273,9 +273,6 @@ extern union AnimationStep* D_800FADD0[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_06_eregion_part", func_800B0320);
-#else
 void func_800B0320(struct VisualObj* arg0)
 {
     s32 animation;
@@ -334,7 +331,6 @@ void func_800B0320(struct VisualObj* arg0)
     arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 }
-#endif
 
 void eregion_part_slash(struct VisualObj* arg0)
 {

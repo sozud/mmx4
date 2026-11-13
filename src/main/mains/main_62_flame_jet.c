@@ -48,7 +48,7 @@ u8 func_8007BABC(struct MainObj* arg0);
 void func_8007BE40(struct MainObj* arg0);
 s32 func_8002BD58(struct MainObj*, struct MainObj*, s16*, s16*);
 extern struct Unk_unk68 flame_jet_extinguish_debris[2];
-extern s16 flame_jet_smoke_offsets[20];
+extern s16 flame_jet_smoke_offsets[10][2];
 static struct VisualObj* main_62_spawn_arm(struct MainObj* arg0, s8 side)
 {
     struct VisualObj* visual = find_free_visual_obj();
@@ -65,9 +65,6 @@ static struct VisualObj* main_62_spawn_arm(struct MainObj* arg0, s8 side)
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007B90C);
-#else
 void func_8007B90C(struct MainObj* arg0)
 {
     struct VisualObj* visual;
@@ -118,7 +115,6 @@ void func_8007B90C(struct MainObj* arg0)
     arg0->air_state = 0;
     arg0->unk5++;
 }
-#endif
 
 // flame_jet_is_vent_blocked
 u8 func_8007BABC(struct MainObj* arg0)
@@ -217,17 +213,17 @@ void flame_jet_main(struct MainObj* self)
 }
 
 // flame_jet_extinguish
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007BE40);
-#else
 extern struct Unk_unk68 flame_jet_extinguish_debris[2];
-extern s16 flame_jet_smoke_offsets[20];
+extern s16 flame_jet_smoke_offsets[10][2];
 void func_8007BE40(struct MainObj* arg0)
 {
     if (--arg0->unk7E == 0) {
         arg0->unk5++;
-        spawn_debris_offset(8, (u8*)flame_jet_extinguish_debris, (struct MiscObj*)arg0, (arg0->unk15 != 0 ? -*(s16*)((u8*)flame_jet_smoke_offsets + ((arg0->animation_step.fields.frame_index - 3) << 2)) : *(s16*)((u8*)flame_jet_smoke_offsets + ((arg0->animation_step.fields.frame_index - 3) << 2))) << 16,
-            *(s16*)((u8*)flame_jet_smoke_offsets + 2 + ((arg0->animation_step.fields.frame_index - 3) << 2)) << 16);
+        spawn_debris_offset(8, (u8*)flame_jet_extinguish_debris, (struct MiscObj*)arg0,
+            (arg0->unk15 != 0 ? -flame_jet_smoke_offsets[arg0->animation_step.fields.frame_index - 3][0]
+                              : flame_jet_smoke_offsets[arg0->animation_step.fields.frame_index - 3][0])
+                << 16,
+            flame_jet_smoke_offsets[arg0->animation_step.fields.frame_index - 3][1] << 16);
         arg0->state = 1;
         arg0->unk5 = 3;
         arg0->unk7E = 0xC8;
@@ -239,7 +235,6 @@ void func_8007BE40(struct MainObj* arg0)
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
     arg0->ext.main_62.unk86 = arg0->on_screen;
 }
-#endif
 
 void flame_jet_extinguished_idle(void)
 {
@@ -405,7 +400,7 @@ void (*flame_jet_step_funcs[4])() = {
     flame_jet_pause,
 };
 
-s16 flame_jet_smoke_offsets[20] = {
+s16 flame_jet_smoke_offsets[10][2] = {
     (s16)0x005F,
     (s16)0xFFEF,
     (s16)0x0051,

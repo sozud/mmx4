@@ -128,23 +128,21 @@ void move_object(struct MovingObj* arg0)
     arg0->y_pos.val -= arg0->y_vel.val;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/object_motion", get_random);
-#else
 u8 get_random()
 {
-    u16 temp = cur_random * 3;
+    u16 temp = cur_random + cur_random * 2;
     u32 temp_v1;
+    u16 value;
     u8 pad[2];
 
     temp_v1 = temp >> 8;
-    cur_random += temp_v1;
-    cur_random &= 0xFF;
-    cur_random |= temp_v1 << 8;
+    value = cur_random + temp_v1;
+    value &= 0xFF;
+    value |= temp_v1 << 8;
+    cur_random = value;
 
-    return cur_random;
+    return value;
 }
-#endif
 
 #ifdef MMX4_SATURN
 s32 saturn_get_random_signed(void)

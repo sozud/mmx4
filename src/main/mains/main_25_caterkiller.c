@@ -67,9 +67,6 @@ void func_80057874(struct MainObj* self);
 void func_80057C00(struct MainObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057160);
-#else
 void func_80057160(struct MainObj* self)
 {
     self->hp = 3;
@@ -123,7 +120,6 @@ void func_80057160(struct MainObj* self)
     self->state = 1;
     self->unk6 = 0;
 }
-#endif
 
 // caterkiller_main
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -242,9 +238,6 @@ void caterkiller_crawl_start(struct MainObj* self)
 }
 
 // caterkiller_crawl_move
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_8005754C);
-#else
 void func_8005754C(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -278,7 +271,6 @@ void func_8005754C(struct MainObj* self)
     }
     move_object(MOVING_OBJECT(self));
 }
-#endif
 
 void caterkiller_crawl_end(struct MainObj* self)
 {
@@ -329,9 +321,6 @@ void caterkiller_lunge_start(struct MainObj* self)
 }
 
 // caterkiller_lunge_move
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057874);
-#else
 void func_80057874(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -356,7 +345,6 @@ void func_80057874(struct MainObj* self)
         self->unk6 = 2;
     }
 }
-#endif
 
 void caterkiller_lunge_end(struct MainObj* self)
 {
@@ -427,9 +415,6 @@ void caterkiller_fall_drop(struct MainObj* self)
 }
 
 // caterkiller_fall_land
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057C00);
-#else
 void func_80057C00(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -472,7 +457,6 @@ void func_80057C00(struct MainObj* self)
         break;
     }
 }
-#endif
 
 void caterkiller_climb(struct MainObj* self)
 {

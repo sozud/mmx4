@@ -38,9 +38,6 @@ extern u8 cannon_shot_boxes[4][4];
 extern s32 cannon_shot_speeds[4];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FB9C);
-#else
 void func_8009FB9C(struct ShotObj* arg0)
 {
     struct WeaponObj* owner;
@@ -83,12 +80,8 @@ void func_8009FB9C(struct ShotObj* arg0)
     arg0->unk84.value = 0x10;
     arg0->unk8C.word = 0;
 }
-#endif
 
 // cannon_shot_fly
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FD00);
-#else
 void func_8009FD00(struct ShotObj* arg0)
 {
     s32 speed;
@@ -116,7 +109,6 @@ void func_8009FD00(struct ShotObj* arg0)
     arg0->unk8C.word = 1;
     arg0->state++;
 }
-#endif
 
 void cannon_shot_despawn(struct ShotObj* self)
 {

@@ -138,14 +138,13 @@ void boss_door_init(struct ItemObj* arg0)
     set_animation(ANIMATED_OBJECT(arg0), 0);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", boss_door_main);
-#else
 void boss_door_main(struct ItemObj* arg0)
 {
-    boss_door_step_funcs[arg0->unk5](arg0, &engine_obj, &g_Player);
+    struct EngineObj* engine = &engine_obj;
+    struct PlayerObj* player = &g_Player;
+
+    boss_door_step_funcs[arg0->unk5](arg0, engine, player);
 }
-#endif
 
 void boss_door_wait_player(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
@@ -180,9 +179,6 @@ s8 func_800C1E7C(struct ItemObj* arg0);
 void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", func_800C1C88);
-#else
 void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
 {
@@ -224,7 +220,6 @@ void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
     background_objects[0].unk26 = arg0->x_pos.i.hi;
     arg0->unk5 = 3;
 }
-#endif
 
 void boss_door_walk_through(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
@@ -285,7 +280,39 @@ s8 func_800C1E7C(struct ItemObj* arg0)
     return arg0->y_pos.i.hi + item_bounds->unk3 >= g_Player.y_pos.i.hi + player_bounds->unk3;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", func_800C1E7C);
+s8 func_800C1E7C(struct ItemObj* arg0)
+{
+    struct PlayerObj* player = &g_Player;
+    struct ItemObj* item;
+    struct PlayerObj* other;
+    s16 item_x;
+    s16 player_x;
+    s16 dx;
+
+    if (g_Player.hurt_phase != 0 || g_Player.unk5 == 3 || g_Player.unk5 == 0xB)
+        return 0;
+    if (g_Player.unk2 != 0 && g_Player.attacking != 0)
+        return 0;
+    if (player->spike_immune != 0)
+        return 0;
+    item = arg0;
+    other = player;
+    if (other->x_pos.i.hi > item->x_pos.i.hi)
+        return 0;
+    item_x = item->x_pos.i.hi + item->unk68->unk0;
+    player_x = other->x_pos.i.hi + other->unk68->unk0;
+    if (item_x - player_x >= 0)
+        dx = item_x - player_x;
+    else
+        dx = player_x - item_x;
+    if (dx > item->unk68->unk2 + other->unk68->unk2)
+        return 0;
+    if ((s16)(item->y_pos.i.hi - item->unk68->unk3) > (s16)(other->y_pos.i.hi - other->unk68->unk3))
+        return 0;
+    if ((s16)(item->y_pos.i.hi + item->unk68->unk3) < (s16)(other->y_pos.i.hi + other->unk68->unk3))
+        return 0;
+    return 1;
+}
 #endif
 
 void boss_door_locked(struct ItemObj* arg0)

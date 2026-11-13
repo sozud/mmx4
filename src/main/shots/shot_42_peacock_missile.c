@@ -96,9 +96,6 @@ void func_800A63B0(struct ShotObj* arg0)
 #endif
 
 // peacock_missile_home
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A6510);
-#else
 void func_800A6510(struct ShotObj* arg0)
 {
     s16 timer;
@@ -114,13 +111,22 @@ void func_800A6510(struct ShotObj* arg0)
             target = angle_to_object(OBJECT_HEADER(arg0), object);
             direction = arg0->unk84.value;
             if (((direction - (target & 0xFF)) & 0x1F) >= 2) {
+#ifdef VERSION_EU
+                if ((u32)((target - arg0->unk84.bytes[0]) & 0x1F) < 0x10)
+#else
                 if ((u32)((target - direction) & 0x1F) < 0x10)
+#endif
                     arg0->unk84.value = direction + 1;
                 else
                     arg0->unk84.value = direction - 1;
+#ifdef VERSION_EU
+                arg0->unk84.value &= 0x1F;
+                set_velocity_from_angle(MOVING_OBJECT(arg0), arg0->unk84.bytes[0] & 0x1E);
+#else
                 next = arg0->unk84.value;
                 arg0->unk84.value = next & 0x1F;
                 set_velocity_from_angle(MOVING_OBJECT(arg0), next & 0x1E);
+#endif
                 arg0->x_vel.val *= 4;
                 arg0->y_vel.val *= 4;
                 target = (arg0->unk84.value >> 1) + 0xD;
@@ -133,7 +139,6 @@ void func_800A6510(struct ShotObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 void peacock_missile_explode_start(struct ShotObj* self)
 {
@@ -150,9 +155,6 @@ void peacock_missile_explode_start(struct ShotObj* self)
 }
 
 // peacock_missile_spawn_explosion
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A666C);
-#else
 void func_800A666C(struct ShotObj* arg0, s32 x_range, s32 y_range)
 {
     struct MiscObj* misc = find_free_misc_obj();
@@ -182,7 +184,6 @@ void func_800A666C(struct ShotObj* arg0, s32 x_range, s32 y_range)
     misc->ext.misc_49.owner = arg0;
     misc->unk15 = 0;
 }
-#endif
 
 void peacock_missile_explode(struct ShotObj* self)
 {

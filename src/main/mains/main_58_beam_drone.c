@@ -65,9 +65,6 @@ void func_800745E8(struct MainObj* self);
 void func_80074438(struct MainObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_58_beam_drone", func_80074438);
-#else
 void func_80074438(struct MainObj* self)
 {
     self->active = 0x41;
@@ -117,12 +114,8 @@ void func_80074438(struct MainObj* self)
     self->unk5 = 2;
     self->unk6 = 0;
 }
-#endif
 
 // beam_drone_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_58_beam_drone", func_800745E8);
-#else
 void func_800745E8(struct MainObj* self)
 {
     s32 status;
@@ -179,7 +172,6 @@ void func_800745E8(struct MainObj* self)
         self->state = 2;
     }
 }
-#endif
 
 void beam_drone_despawn(struct MainObj* self)
 {

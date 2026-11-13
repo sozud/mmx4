@@ -60,13 +60,33 @@ void func_800DA2D4(struct LayerObj* arg0)
     func_800DA358(arg0);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/layers/layer_05_airship_bob", func_800DA2D4);
+void func_800DA2D4(struct LayerObj* arg0)
+{
+    arg0->state++;
+    if (engine_obj.substage == 0) {
+        background_objects[1].unk4D = 2;
+        background_objects[1].unk4E = 7;
+        background_objects[2].unk4D = 2;
+        background_objects[2].unk4E = 8;
+    } else {
+        background_objects[1].unk4D = 2;
+        background_objects[1].unk4E = 7;
+        background_objects[2].unk4D = 2;
+        background_objects[2].unk4E = 8;
+    }
+    *(s32*)&arg0->bg_offset = 0x8000;
+    arg0->unk18.val = -0x5800;
+    arg0->private_state.value.val = 0;
+    *(s32*)arg0->unk20 = 0;
+    arg0->unk24 = 3;
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+    func_800DA358(arg0);
+}
 #endif
 
 // airship_bob_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/layers/layer_05_airship_bob", func_800DA358);
-#else
 void func_800DA358(struct LayerObj* arg0)
 {
     s32 half = (background_objects[0].unk14.val - background_objects[0].x_pos.val) / 2;
@@ -84,7 +104,6 @@ void func_800DA358(struct LayerObj* arg0)
         }
     }
 }
-#endif
 
 void airship_bob_despawn(struct LayerObj* arg0)
 {

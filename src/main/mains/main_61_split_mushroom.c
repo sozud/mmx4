@@ -165,7 +165,7 @@ void func_8007877C(struct MainObj* self)
 
 // split_mushroom_main
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only);
+void func_8002217C(arg_u16 message, arg_u8 portrait, s32 delay_only);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
@@ -196,9 +196,6 @@ static void main61_wall_hit(struct MainObj* arg0)
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_800788E4);
-#else
 void func_800788E4(struct MainObj* arg0)
 {
     s32 hit;
@@ -337,7 +334,6 @@ void func_800788E4(struct MainObj* arg0)
         func_8002D9BC(arg0);
     update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
 }
-#endif
 
 void split_mushroom_death(struct MainObj* self)
 {
@@ -357,13 +353,9 @@ void split_mushroom_death_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", split_mushroom_death_explode);
-#else
 void split_mushroom_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
-    u8 value;
 
     if (--self->unk7C == 0) {
         self->unk5 = 2;
@@ -385,14 +377,9 @@ void split_mushroom_death_explode(struct MainObj* self)
         if ((s8)self->invincibility_timer > 0x19) {
             self->invincibility_timer = 0;
         }
-        value = self->invincibility_timer;
-        if ((s8)self->invincibility_timer < 5) {
-            value = 5;
-        }
-        self->unk7E = (s8)value;
+        self->unk7E = (s8)self->invincibility_timer < 6 ? 5 : (s8)self->invincibility_timer;
     }
 }
-#endif
 
 void split_mushroom_death_finish(struct MainObj* self)
 {
@@ -506,9 +493,6 @@ void split_mushroom_intro_land(struct MainObj* self)
 }
 
 // split_mushroom_intro_talk
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_800793AC);
-#else
 void func_800793AC(struct MainObj* arg0)
 {
     s32 i;
@@ -548,7 +532,6 @@ void func_800793AC(struct MainObj* arg0)
         arg0->unk6 = 5;
     }
 }
-#endif
 
 void split_mushroom_intro_start_health_bar(struct MainObj* self)
 {
@@ -659,9 +642,6 @@ void split_mushroom_stun_merge(struct MainObj* self)
 }
 
 // split_mushroom_stun_rejoin
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_80079824);
-#else
 void func_80079824(struct MainObj* arg0)
 {
     u8 angle;
@@ -679,7 +659,6 @@ void func_80079824(struct MainObj* arg0)
     arg0->y_speed *= 4;
     move_object(MOVING_OBJECT(arg0));
 }
-#endif
 
 void split_mushroom_stun_land(struct MainObj* self)
 {
@@ -724,9 +703,6 @@ void split_mushroom_spore_rain(struct MainObj* self)
 }
 
 // split_mushroom_spore_rain_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_80079A8C);
-#else
 void func_80079A8C(struct MainObj* arg0)
 {
     s32 target;
@@ -743,20 +719,15 @@ void func_80079A8C(struct MainObj* arg0)
     arg0->x_speed = target / 48;
     func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
 }
-#endif
 
 // split_mushroom_spore_rain_jump
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80079B50(struct MainObj* arg0)
 {
+    s8 phase;
     s32 row;
     s32 col;
-    s32 x_step;
-    s8 phase;
-    u16 delay;
-    u16 base_y;
+    s16 base_y;
     s16 base_x;
-    s16 y;
 
     move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
@@ -764,12 +735,10 @@ void func_80079B50(struct MainObj* arg0)
         return;
     set_animation(arg0, 4);
     phase = 0;
-    delay = 0x104;
     base_y = background_objects[g_Player.bg_offset].y_pos.i.hi - 0x20;
     base_x = background_objects[g_Player.bg_offset].x_pos.i.hi - 0x10;
     for (row = 0; row < 0xC0; row += 0x20) {
-        y = base_y - row;
-        for (col = 0, x_step = 0; col < 10; col++, x_step += 0x40) {
+        for (col = 0; col < 10; col++) {
             if (!(col & 1)) {
                 struct VisualObj* visual = find_free_visual_obj();
 
@@ -778,19 +747,22 @@ void func_80079B50(struct MainObj* arg0)
                 visual->active = 0x41;
                 visual->id = 0x22;
                 visual->unk2 = 0;
-                visual->x_pos.i.hi = base_x + phase + x_step;
-                visual->y_pos.i.hi = y;
+                visual->x_pos.i.hi = base_x + (phase + col * 0x40);
+                visual->y_pos.i.hi = base_y - row;
                 visual->unk15 = 0;
                 visual->bg_offset = arg0->bg_offset;
                 visual->animation_table = (void*)arg0->animation_table;
                 visual->unk40 = arg0->unk40;
                 visual->unk3C = (void*)arg0->sprite_frames;
                 visual->unk42 = arg0->unk42 & 0x7FFF;
-                visual->unk16 = row < 0x41 ? 0x13 : 0x12;
+                if (row <= 0x40)
+                    visual->unk16 = 0x13;
+                else
+                    visual->unk16 = 0x12;
                 visual->unk5C.value = phase;
                 visual->unk50 = (struct PlayerObj*)arg0;
                 visual->state = 0;
-                visual->unk5C.fields.unk5E = delay;
+                visual->unk5C.fields.unk5E = row + 0x104;
                 set_animation(visual, 0xE);
             } else {
                 struct MiscObj* misc = find_free_misc_obj();
@@ -800,31 +772,30 @@ void func_80079B50(struct MainObj* arg0)
                 misc->active = 0x41;
                 misc->id = 0x1E;
                 misc->unk2 = 0;
-                misc->x_pos.i.hi = base_x + phase + x_step;
-                misc->y_pos.i.hi = y;
+                misc->x_pos.i.hi = base_x + (phase + col * 0x40);
+                misc->y_pos.i.hi = base_y - row;
                 misc->unk15 = 0;
                 misc->bg_offset = arg0->bg_offset;
                 misc->animation_table = (void*)arg0->animation_table;
                 misc->unk40 = arg0->unk40;
                 misc->unk3C = (void*)arg0->sprite_frames;
                 misc->unk42 = arg0->unk42 & 0x7FFF;
-                misc->unk16 = row < 0x41 ? 0x13 : 0x12;
+                if (row <= 0x40)
+                    misc->unk16 = 0x13;
+                else
+                    misc->unk16 = 0x12;
                 misc->ext.misc_30.unk54 = phase;
                 misc->ext.misc_30.owner = arg0;
                 misc->state = 0;
-                misc->ext.misc_30.unk56 = delay;
+                misc->ext.misc_30.unk56 = row + 0x104;
                 set_animation(misc, 0xE);
             }
         }
         phase ^= 0x20;
-        delay += 0x20;
     }
     arg0->unk7C = 0xF0;
     arg0->unk6 = 2;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_80079B50);
-#endif
 
 void split_mushroom_spore_rain_split(struct MainObj* self)
 {
@@ -994,9 +965,6 @@ done:;
 }
 
 // split_mushroom_walk_jump
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007A2B4);
-#else
 void func_8007A2B4(struct MainObj* arg0)
 {
     s16 speed = split_mushroom_hop_speeds[arg0->ext.main_61.speed_level];
@@ -1015,7 +983,6 @@ void func_8007A2B4(struct MainObj* arg0)
     arg0->unk6 = 3;
     arg0->unk7 = 0;
 }
-#endif
 
 void split_mushroom_walk_fall(struct MainObj* self)
 {
@@ -1053,9 +1020,6 @@ void split_mushroom_dash(struct MainObj* self)
 }
 
 // split_mushroom_dash_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007A4EC);
-#else
 void func_8007A4EC(struct MainObj* arg0)
 {
     struct MiscObj* misc;
@@ -1097,7 +1061,6 @@ void func_8007A4EC(struct MainObj* arg0)
     }
     arg0->unk6 = 1;
 }
-#endif
 
 void split_mushroom_dash_bounce(struct MainObj* self)
 {
@@ -1208,34 +1171,35 @@ void split_mushroom_combo(struct MainObj* self)
 }
 
 // split_mushroom_combo_jump
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007A96C);
-#else
 void func_8007A96C(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
     if (--arg0->unk7C == 0) {
         if ((s8)arg0->ext.main_61.combo_count == 0) {
             if (arg0->unk15 == 0) {
+                s32 bgx = background_objects[g_Player.bg_offset].x_pos.val;
                 s32 offset = 0xFFD40000;
 
-                arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset)) / 48;
+                arg0->x_speed = (bgx - (arg0->x_pos.val + offset)) / 48;
             } else {
+                s32 bgx = background_objects[g_Player.bg_offset].x_pos.val;
                 s32 offset = 0xFEE80000;
 
-                arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset)) / 48;
+                arg0->x_speed = (bgx - (arg0->x_pos.val + offset)) / 48;
             }
             arg0->y_speed = 0x55C00;
             func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
         } else {
             if (arg0->unk15 == 0) {
+                s32 bgx = background_objects[g_Player.bg_offset].x_pos.val;
                 s32 offset = 0xFFD40000;
 
-                arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset)) / 36;
+                arg0->x_speed = (bgx - (arg0->x_pos.val + offset)) / 36;
             } else {
+                s32 bgx = background_objects[g_Player.bg_offset].x_pos.val;
                 s32 offset = 0xFEE80000;
 
-                arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + offset)) / 36;
+                arg0->x_speed = (bgx - (arg0->x_pos.val + offset)) / 36;
             }
             func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
             arg0->y_speed = 0x5D31C;
@@ -1246,7 +1210,6 @@ void func_8007A96C(struct MainObj* arg0)
         arg0->unk7 = 0;
     }
 }
-#endif
 
 // split_mushroom_combo_dash
 void func_8007AB1C(struct MainObj* arg0)
@@ -1431,9 +1394,6 @@ void split_mushroom_wall_jump(struct MainObj* self)
 }
 
 // split_mushroom_wall_jump_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007B1BC);
-#else
 void func_8007B1BC(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
@@ -1445,13 +1405,15 @@ void func_8007B1BC(struct MainObj* arg0)
     else
         arg0->unk15 = 0;
     if (arg0->unk15 == 0) {
+        s32 bgx = background_objects[g_Player.bg_offset].x_pos.val;
         s32 target = (s32)0xFFD40000;
 
-        arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + target)) / 48;
+        arg0->x_speed = (bgx - (arg0->x_pos.val + target)) / 48;
     } else {
+        s32 bgx = background_objects[g_Player.bg_offset].x_pos.val;
         s32 target = (s32)0xFEE80000;
 
-        arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val - (arg0->x_pos.val + target)) / 48;
+        arg0->x_speed = (bgx - (arg0->x_pos.val + target)) / 48;
     }
     arg0->y_speed = 0x706AA;
     func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
@@ -1460,7 +1422,6 @@ void func_8007B1BC(struct MainObj* arg0)
     arg0->unk6 = 1;
     arg0->unk7 = 0;
 }
-#endif
 
 void split_mushroom_wall_jump_air(struct MainObj* self)
 {
@@ -1497,20 +1458,14 @@ void split_mushroom_wall_jump_cling(struct MainObj* self)
 }
 
 // split_mushroom_wall_jump_shoot
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007B418);
-#else
 void func_8007B418(struct MainObj* arg0)
 {
     struct ShotObj* shot;
-    s16 count;
 
     animate_object(ANIMATED_OBJECT(arg0));
     if (--arg0->unk7C != 0)
         return;
-    count = arg0->unk7E;
-    arg0->unk7E = count - 1;
-    if (count == 0) {
+    if (arg0->unk7E-- == 0) {
         set_animation(arg0, 0x17);
         arg0->unk6 = 4;
         return;
@@ -1544,7 +1499,6 @@ void func_8007B418(struct MainObj* arg0)
     shot->state = 4;
     shot->unk6 = 0;
 }
-#endif
 
 void split_mushroom_wall_jump_turn(struct MainObj* self)
 {
@@ -1589,9 +1543,6 @@ void split_mushroom_face_player(struct AnimatedObj* self)
 }
 
 // split_mushroom_turn_around
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007B6BC);
-#else
 void func_8007B6BC(struct AnimatedObj* obj)
 {
     struct MainObj* arg0 = (struct MainObj*)obj;
@@ -1623,7 +1574,6 @@ void func_8007B6BC(struct AnimatedObj* obj)
         arg0->unk6 = 0;
     }
 }
-#endif
 
 void split_mushroom_load_palette(void)
 {

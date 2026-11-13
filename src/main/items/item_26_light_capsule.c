@@ -83,9 +83,6 @@ extern struct Item26AnimationStep* light_capsule_animations[14];
 void collide_with_players(struct PlayerObj*);
 extern ret_u8 func_8002938C(s32);
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_26_light_capsule", func_800C63BC);
-#else
 void func_800C63BC(struct ItemObj* arg0)
 {
     struct ItemObj* child;
@@ -150,7 +147,6 @@ void func_800C63BC(struct ItemObj* arg0)
     collide_with_players(PLAYER_OBJECT(arg0));
     update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
 }
-#endif
 
 void light_capsule_spawn_visual(struct ItemObj* arg0, s8 arg1, s8 arg2)
 {
@@ -421,9 +417,6 @@ void capsule_visual_init(struct VisualObj* arg0, struct PlayerObj* arg1)
 }
 
 // capsule_part_update
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_26_light_capsule", func_800C6EDC);
-#else
 void func_800C6EDC(struct VisualObj* arg0)
 {
     s32 resource;
@@ -484,7 +477,6 @@ void func_800C6EDC(struct VisualObj* arg0)
     }
     update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
 }
-#endif
 
 struct Item26AnimationStep {
     u8 duration;

@@ -51,9 +51,6 @@ void func_800CFB70(struct MiscObj* arg0)
 }
 
 // ambient_bubble_wait
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_40_ambient_bubble", func_800CFC6C);
-#else
 void func_800CFC6C(struct MiscObj* arg0)
 {
     if ((u16)arg0->ext.misc_24.timer != 0) {
@@ -69,7 +66,6 @@ void func_800CFC6C(struct MiscObj* arg0)
     arg0->x_vel.val = ambient_bubble_speeds[arg0->unk2];
     arg0->unk2C = ambient_bubble_accels[arg0->unk2];
 }
-#endif
 
 void ambient_bubble_float(struct MiscObj* self)
 {

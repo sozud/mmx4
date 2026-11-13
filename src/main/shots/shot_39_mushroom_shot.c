@@ -191,9 +191,6 @@ void mushroom_shot_sprout_despawn(struct ShotObj* self)
 }
 
 // mushroom_shot_spray_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_39_mushroom_shot", func_800A4D20);
-#else
 void func_800A4D20(struct ShotObj* self)
 {
     self->state = 8;
@@ -210,16 +207,15 @@ void func_800A4D20(struct ShotObj* self)
         self->x_pos.u.hi -= (s8)mushroom_shot_spray_offsets[self->unk2 * 2];
     }
     self->y_pos.u.hi += (s8)mushroom_shot_spray_offsets[self->unk2 * 2 + 1];
-    self->unk28 = mushroom_shot_spray_speeds[self->unk2];
+    self->unk28 = mushroom_shot_spray_speeds[(s32)self->unk2];
+    self->unk16 = 0;
     self->unk50.data = mushroom_shot_sprout_hit_box;
     self->unk5C = 1;
-    self->unk16 = 0;
     self->unk68 = NULL;
     self->unk54 = NULL;
     self->unk60 = 6;
     set_animation(ANIMATED_OBJECT(self), 0x12);
 }
-#endif
 
 void mushroom_shot_spray_fly(struct ShotObj* self)
 {
@@ -338,9 +334,6 @@ void mushroom_shot_sprout_jump(struct ShotObj* self)
 void func_800A5194(struct ShotObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_39_mushroom_shot", func_800A5194);
-#else
 void func_800A5194(struct ShotObj* arg0)
 {
     s32 dx;
@@ -368,7 +361,6 @@ void func_800A5194(struct ShotObj* arg0)
         arg0->unk5 = 6;
     }
 }
-#endif
 
 void mushroom_shot_sprout_fall(struct ShotObj* self)
 {

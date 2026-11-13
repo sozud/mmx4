@@ -21,9 +21,6 @@ void func_800CF4B8(struct MiscObj* arg0);
 void func_800CF660(struct MiscObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_38_dragoon_flame", func_800CF4B8);
-#else
 void func_800CF4B8(struct MiscObj* arg0)
 {
     struct MainObj* source = arg0->ext.misc_7.position;
@@ -67,7 +64,6 @@ void func_800CF4B8(struct MiscObj* arg0)
     }
     is_on_screen(BASE_OBJECT(arg0));
 }
-#endif
 
 void dragoon_flame_burn(struct MiscObj* self)
 {

@@ -176,10 +176,10 @@ extern void (*drone_pod_step_funcs[4])(struct MainObj*);
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80088EA4(struct MainObj* self);
 void func_80089588(struct MainObj* self);
-extern u8 D_801049B8[20];
-extern s16 D_801049CC[12];
 extern ret_u8 func_8002938C(s32);
 #endif
+extern u8 D_801049B8[20];
+extern s16 D_801049CC[12];
 
 void func_80088EA4(struct MainObj* self)
 {
@@ -424,7 +424,45 @@ void func_80089588(struct MainObj* self)
         self->ext.main_70.unk84 = start - 0xE;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", func_80089588);
+void func_80089588(struct MainObj* self)
+{
+    struct MainObj* child;
+    u8 i;
+    u16 part;
+
+    for (i = 0; i < 2; i++) {
+        child = find_free_main_obj();
+        if (child == NULL)
+            continue;
+        child->active = 0x41;
+        child->id = 0x3A;
+        part = D_801049B8[self->ext.main_70.unk84 + i];
+        switch (part) {
+        case 0:
+        case 2:
+        case 3:
+        case 5:
+            child->unk2 = 1;
+            break;
+        case 1:
+        case 4:
+            child->unk2 = 2;
+            break;
+        }
+        child->unk42 = self->unk42;
+        child->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x3A));
+        child->unk42 = CLUT_FROM_ID(0x3A);
+        child->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x3A));
+        child->unk15 = part < 3 ? 0x40 : 0;
+        child->bg_offset = self->bg_offset;
+        child->unk16 = 5;
+        child->x_pos.u.hi = D_801049CC[part * 2];
+        child->y_pos.u.hi = D_801049CC[part * 2 + 1];
+    }
+    self->ext.main_70.unk84 += 2;
+    if (D_801049B8[self->ext.main_70.unk84] == 0xFF)
+        self->ext.main_70.unk84 -= 16;
+}
 #endif
 
 void drone_pod_random_explosion(struct MainObj* self)

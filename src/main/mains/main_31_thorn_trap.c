@@ -38,7 +38,7 @@ void thorn_trap_extend_high(struct MainObj* arg0);
 extern void (*thorn_trap_state_funcs[])(struct MainObj*);
 
 extern union AnimationStep* thorn_trap_animations[21];
-extern s8 D_800FDC40[8];
+extern s8 D_800FDC40[4][2];
 
 void thorn_trap_update(struct MainObj* self)
 {
@@ -54,9 +54,6 @@ void func_8005BDE4(struct MainObj* self);
 void func_8005BFC0(struct MainObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005B8D0);
-#else
 void func_8005B8D0(struct MainObj* self)
 {
     s32 variant;
@@ -94,7 +91,6 @@ void func_8005B8D0(struct MainObj* self)
     set_animation(self, 1);
     update_on_screen(BASE_OBJECT(self), 0x70, 0x30);
 }
-#endif
 
 void thorn_trap_idle(struct MainObj* self)
 {
@@ -234,9 +230,6 @@ void thorn_trap_extend(struct MainObj* self)
 }
 
 // thorn_trap_extended
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005BDE4);
-#else
 void func_8005BDE4(struct MainObj* self)
 {
     u8 choice;
@@ -255,8 +248,8 @@ void func_8005BDE4(struct MainObj* self)
             shot->state = 0;
             shot->unk5 = 0;
             shot->unk6 = 0;
-            shot->x_pos.val = self->x_pos.val + (self->unk15 != 0 ? -(D_800FDC40[choice * 2] << 16) : D_800FDC40[choice * 2] << 16);
-            shot->y_pos.val = self->y_pos.val + (D_800FDC40[choice * 2 + 1] << 16);
+            shot->x_pos.val = self->x_pos.val + (self->unk15 != 0 ? -(D_800FDC40[choice][0] << 16) : D_800FDC40[choice][0] << 16);
+            shot->y_pos.val = self->y_pos.val + (D_800FDC40[choice][1] << 16);
             shot->unk2 = 0;
             self->animation_step.fields.event = 0;
         }
@@ -268,7 +261,6 @@ void func_8005BDE4(struct MainObj* self)
         animate_object(ANIMATED_OBJECT(self));
     }
 }
-#endif
 
 void thorn_trap_extend_high(struct MainObj* self)
 {
@@ -752,15 +744,11 @@ u8 D_800FDC3C[] = {
     0x00,
 };
 
-s8 D_800FDC40[8] = {
-    54,
-    -2,
-    19,
-    -9,
-    -14,
-    7,
-    0,
-    0,
+s8 D_800FDC40[4][2] = {
+    { 54, -2 },
+    { 19, -9 },
+    { -14, 7 },
+    { 0, 0 },
 };
 
 void (*thorn_trap_state_funcs[])(struct MainObj*) = {

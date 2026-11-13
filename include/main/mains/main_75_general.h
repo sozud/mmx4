@@ -27,8 +27,8 @@ void func_800917AC(struct MainObj*);
 
 void func_80091218(struct MainObj*);
 
-extern void* general_scripts[2];
-extern u8 general_script_weights[4];
+extern void** general_scripts[2];
+extern u8 general_script_weights[2][2];
 
 extern struct Unk_unk68 D_801059D8;
 extern struct Unk_unk68 D_801059DC;

@@ -197,12 +197,9 @@ static u8 main43_column(s16 index)
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006346C);
-#else
 void func_8006346C(struct MainObj* arg0)
 {
-    u8 value;
+    s32 value;
     u16 arena_x;
 
     switch (arg0->unk6) {
@@ -253,7 +250,6 @@ void func_8006346C(struct MainObj* arg0)
         return;
     }
 }
-#endif
 
 void web_spider_intro_spawn_thread(struct MainObj* self)
 {
@@ -370,9 +366,6 @@ void web_spider_intro_climb(struct MainObj* self)
 }
 
 // web_spider_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_8006398C);
-#else
 void func_8006398C(struct MainObj* arg0)
 {
     s32 result;
@@ -408,7 +401,6 @@ void func_8006398C(struct MainObj* arg0)
     func_8002D9BC(arg0);
     is_on_screen(BASE_OBJECT(arg0));
 }
-#endif
 
 void web_spider_drop(struct MainObj* self)
 {
@@ -416,9 +408,6 @@ void web_spider_drop(struct MainObj* self)
 }
 
 // web_spider_drop_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80063B20);
-#else
 void func_80063B20(struct MainObj* arg0)
 {
     s32 threshold;
@@ -450,10 +439,10 @@ void func_80063B20(struct MainObj* arg0)
                 arg0->y_speed = -0x80000;
                 arg0->gravity = 0;
             }
-            if (g_Player.stun_timer == 0 && (get_random() & 3) == 0)
-                threshold = 0x50;
-            else
+            if (g_Player.stun_timer != 0 || (get_random() & 3) != 0)
                 threshold = 0x80;
+            else
+                threshold = 0x50;
             if (arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi >= threshold) {
                 arg0->unk7 = 2;
                 arg0->unk7C = 0xA;
@@ -484,7 +473,6 @@ void func_80063B20(struct MainObj* arg0)
         break;
     }
 }
-#endif
 
 void web_spider_drop_climb(struct MainObj* self)
 {
@@ -588,9 +576,6 @@ void web_spider_swing_start(struct MainObj* self)
 }
 
 // web_spider_swing_move
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80064154);
-#else
 void func_80064154(struct MainObj* arg0)
 {
     const u16* point;
@@ -618,7 +603,9 @@ void func_80064154(struct MainObj* arg0)
         arg0->ext.main_43.attack_cooldown--;
     }
     point = (const u16*)web_spider_swing_paths[arg0->ext.main_43.animation_set] + arg0->ext.main_43.animation_index * 2;
-    func_80065168(arg0, (s16)(point[0] + web_spider_arena_x + 0x10), (s16)(point[1] + web_spider_arena_y));
+    dx = point[0] + web_spider_arena_x + 0x10;
+    dy = point[1] + web_spider_arena_y;
+    func_80065168(arg0, dx, dy);
     if (--arg0->unk7C == 0) {
         arg0->ext.main_43.animation_index++;
         if (arg0->ext.main_43.animation_length < arg0->ext.main_43.animation_index) {
@@ -637,7 +624,6 @@ void func_80064154(struct MainObj* arg0)
     }
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 void web_spider_swing_wait(struct MainObj* self)
 {
@@ -752,9 +738,6 @@ void web_spider_big_web(struct MainObj* self)
 }
 
 // web_spider_big_web_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_800646EC);
-#else
 void func_800646EC(struct MainObj* arg0)
 {
     switch (arg0->unk7) {
@@ -767,8 +750,8 @@ void func_800646EC(struct MainObj* arg0)
         arg0->x_pos.i.lo = 0;
         arg0->y_speed = 0;
         arg0->ext.main_43.flash_timer = 0;
-        arg0->collision_data = D_801060F0;
         arg0->x_pos.i.hi = web_spider_arena_x + 0xB0;
+        arg0->collision_data = D_801060F0;
         vent_spawn_mixed_puffs((struct MiscObj*)arg0, 8);
         set_animation(arg0, 0);
         break;
@@ -808,7 +791,6 @@ void func_800646EC(struct MainObj* arg0)
         break;
     }
 }
-#endif
 
 void web_spider_big_web_spin(struct MainObj* arg0)
 {
@@ -1245,16 +1227,18 @@ void func_80065574(struct MainObj* arg0)
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80065574);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", spiderling_run);
-#else
 void spiderling_run(struct MainObj* self)
 {
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     spiderling_step_funcs[self->unk5](self);
     CollisionRelated(PLAYER_OBJECT(self));
-    if ((func_8002DD04(self) < 0) || (self->ext.main_43.effect->state == 2)) {
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        self->state = 2;
+        return;
+    }
+    if (self->ext.main_43.effect->state == 2) {
         spawn_explosion(BASE_OBJECT(self));
         self->state = 2;
         return;
@@ -1262,7 +1246,6 @@ void spiderling_run(struct MainObj* self)
     func_8002D9BC(self);
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void spiderling_fall(struct MainObj* self)
 {

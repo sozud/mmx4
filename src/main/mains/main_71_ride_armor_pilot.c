@@ -191,7 +191,51 @@ void func_80089C7C(struct MainObj* self)
     }
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_80089C7C);
+void func_80089C7C(struct MainObj* self)
+{
+    u32 i;
+    s16 x;
+    s16 y;
+
+    if (self->unk5 < 2)
+        return;
+    if (ABS(self->x_pos.i.hi, g_Player.x_pos.i.hi) <= 0x40) {
+        self->ext.main_71.unk87 = 1;
+    } else if (self->unk2 == 0) {
+        if (ABS(self->x_pos.i.hi, g_Player.x_pos.i.hi) >= 0x98)
+            self->ext.main_71.unk88 = 1;
+        if (self->x_pos.i.hi - g_Player.x_pos.i.hi < 0)
+            self->ext.main_71.unk8A = 1;
+        else
+            self->ext.main_71.unk8A = 2;
+    } else {
+        self->ext.main_71.unk8A = 0;
+    }
+    if (self->air_state != 0 || (*(u32*)&self->ext.main_71.unk84 & 0xFFFF0000) || (self->ext.main_71.unk8D & 8))
+        return;
+    y = self->y_pos.u.hi + self->terrain_box->unk3;
+    if (self->collision_flags & self->ext.main_71.unk8A) {
+        if (self->unk15 == 0)
+            x = self->x_pos.u.hi - self->terrain_box->unk2;
+        else
+            x = self->x_pos.u.hi + (self->terrain_box->unk2 + 1);
+        y--;
+        for (i = 0; i < 5; i++) {
+            u8 hit = func_8002D724((struct PlayerObj*)self, x, y);
+            y -= 0x10;
+            if (hit == 0) {
+                i = 5;
+                self->ext.main_71.unk86 = 1;
+            }
+        }
+        if (self->ext.main_71.unk86 == 0) {
+            self->ext.main_71.unk8A = 0;
+            self->ext.main_71.unk86 = 0;
+        }
+    } else if (func_8002D724((struct PlayerObj*)self, self->x_pos.i.hi, y + 2) == 0) {
+        self->ext.main_71.unk86 = 1;
+    }
+}
 #endif
 
 void ride_armor_pilot_set_step(struct BaseObj* self, s8 arg1)
@@ -395,9 +439,6 @@ void ride_armor_pilot_punch(struct MainObj* self)
 }
 
 // ride_armor_pilot_jump
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A3B0);
-#else
 void func_8008A3B0(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -431,25 +472,18 @@ void func_8008A3B0(struct MainObj* self)
     }
     ride_armor_pilot_set_step(BASE_OBJECT(self), 4);
 }
-#endif
 
 // ride_armor_pilot_land
-#ifdef VERSION_EU
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A4D8);
-#else
 void func_8008A4D8(struct MainObj* self)
 {
-    struct Main71Ext* ext = &self->ext.main_71;
-
     if (self->unk6 == 0) {
         self->unk6++;
-        ext->unk84 = 0x160;
+        self->ext.main_71.unk84 = 0x160;
         self->air_state = 0;
         set_animation(self, 4);
         self->hurt_box = ride_armor_pilot_hurt_box;
         self->attack_box = ride_armor_pilot_attack_box;
-        ext->unk86 = 0;
+        self->ext.main_71.unk86 = 0;
         self->contact_damage = 5;
         self->collision_flags |= 8;
         func_8001540C(2, SATURN_SOUND(0x3D, 0x140), self);
@@ -458,10 +492,10 @@ void func_8008A4D8(struct MainObj* self)
         ride_armor_pilot_return_to_idle(self);
         return;
     }
-    if (!(ext->unk8D & 2)) {
+    if (!(self->ext.main_71.unk8D & 2)) {
         if (!(self->collision_flags & 8))
             ride_armor_pilot_set_step(BASE_OBJECT(self), 4);
-        else if (ext->unk87)
+        else if (self->ext.main_71.unk87)
             ride_armor_pilot_set_step(BASE_OBJECT(self), 9);
         else if (ride_armor_pilot_update_facing(self)) {
             ride_armor_pilot_set_walk_speed(self);
@@ -470,41 +504,6 @@ void func_8008A4D8(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
-#else
-void func_8008A4D8(struct MainObj* self)
-{
-    struct Main71Ext* ext = &self->ext.main_71;
-
-    if (self->unk6 == 0) {
-        self->unk6++;
-        ext->unk84 = 0x160;
-        self->air_state = 0;
-        set_animation(self, 4);
-        self->hurt_box = ride_armor_pilot_hurt_box;
-        self->attack_box = ride_armor_pilot_attack_box;
-        ext->unk86 = 0;
-        self->contact_damage = 5;
-        self->collision_flags |= 8;
-        func_8001540C(2, SATURN_SOUND(0x3D, 0x140), self);
-    }
-    if (self->animation_step.fields.relative_step == 0) {
-        ride_armor_pilot_return_to_idle(self);
-        return;
-    }
-    if (!(ext->unk8D & 2)) {
-        if (!(self->collision_flags & 8))
-            ride_armor_pilot_set_step(BASE_OBJECT(self), 4);
-        else if (ext->unk87)
-            ride_armor_pilot_set_step(BASE_OBJECT(self), 9);
-        else if (ride_armor_pilot_update_facing(self)) {
-            ride_armor_pilot_set_walk_speed(self);
-            ride_armor_pilot_apply_x_speed(self);
-        }
-    }
-    animate_object(ANIMATED_OBJECT(self));
-}
-#endif
 
 // ride_armor_pilot_jump_punch
 void func_8008A60C(struct MainObj* self)
@@ -635,32 +634,27 @@ void func_8008A8E4(struct MainObj* self)
 }
 
 // ride_armor_pilot_guard
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A9F4);
-#else
 void func_8008A9F4(struct MainObj* self)
 {
-    struct Main71Ext* ext = &self->ext.main_71;
-
     if (self->unk6 == 0) {
         self->unk6 = 1;
         set_animation(self, 8);
         self->attack_box = &ride_armor_pilot_guard_box;
         self->contact_damage = 6;
-        ext->unk8D |= 8;
+        self->ext.main_71.unk8D |= 8;
         func_8001540C(2, SATURN_SOUND(0x3C, 0x13F), self);
     }
 
-    ext->unk8E--;
+    self->ext.main_71.unk8E--;
     if (!(self->collision_flags & 8)) {
         ride_armor_pilot_set_step(BASE_OBJECT(self), 4);
         return;
     }
-    if (!(ext->unk8D & 2)) {
+    if (!(self->ext.main_71.unk8D & 2)) {
         if ((self->collision_flags & 3) || (self->animation_step.fields.event & 1)) {
-            if ((s8)ext->unk8E < 0) {
+            if ((s8)self->ext.main_71.unk8E < 0) {
                 ride_armor_pilot_set_step(BASE_OBJECT(self), 7);
-                ext->unk8D &= ~8;
+                self->ext.main_71.unk8D &= ~8;
             } else {
                 ride_armor_pilot_apply_x_speed(self);
             }
@@ -668,15 +662,10 @@ void func_8008A9F4(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 // ride_armor_pilot_fall
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008AAF4);
-#else
 void func_8008AAF4(struct MainObj* self)
 {
-    struct Main71Ext* ext = &self->ext.main_71;
     if (self->unk6 == 0) {
         self->unk6 = 1;
         self->x_speed = 0;
@@ -693,13 +682,13 @@ void func_8008AAF4(struct MainObj* self)
         ride_armor_pilot_set_step(BASE_OBJECT(self), 5);
         return;
     }
-    if (ext->unk8D & 2)
+    if (self->ext.main_71.unk8D & 2)
         return;
-    if (ext->unk87 != 0) {
+    if (self->ext.main_71.unk87 != 0) {
         ride_armor_pilot_set_step(BASE_OBJECT(self), 0xA);
         return;
     }
-    if (self->id == 0x48 && ext->unk86 != 0) {
+    if (self->id == 0x48 && self->ext.main_71.unk86 != 0) {
         ride_armor_pilot_set_step(BASE_OBJECT(self), 0xC);
         return;
     }
@@ -709,7 +698,6 @@ void func_8008AAF4(struct MainObj* self)
         self->y_speed = -0x5E000;
     move_with_gravity(ANIMATED_OBJECT(self));
 }
-#endif
 
 void ride_armor_pilot_reset(struct MainObj* self)
 {

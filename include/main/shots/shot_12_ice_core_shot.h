@@ -6,8 +6,6 @@ struct Shot12CollisionData {
 #ifdef MMX4_WIN32
     u8 pad14[4];
 #endif
-    u8 effect_id;
-    u8 animation[15];
 };
 
 void ice_core_shot_update(struct ShotObj*);
@@ -17,6 +15,8 @@ void func_8009B85C(struct ShotObj*);
 void func_8009BA6C(struct ShotObj*);
 
 extern struct Shot12CollisionData ice_core_shard_data;
+
+extern u8 ice_core_shard_offsets[16];
 
 extern u8 ice_core_shard_debris[4];
 

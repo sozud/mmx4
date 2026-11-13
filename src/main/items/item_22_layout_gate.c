@@ -204,9 +204,6 @@ void layout_gate_apply_layout(struct ItemObj* arg0)
 
 // layout_gate_restore_layout
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_22_layout_gate", func_800C5994);
-#else
 void func_800C5994(struct ItemObj* self, u8 collision)
 {
     s16 x = self->x_pos.i.hi;
@@ -239,7 +236,6 @@ void func_800C5994(struct ItemObj* self, u8 collision)
         spawn_explosion_at(0, x, y, 0xFF);
     }
 }
-#endif
 
 void layout_gate_check_layout(struct ItemObj* arg0)
 {

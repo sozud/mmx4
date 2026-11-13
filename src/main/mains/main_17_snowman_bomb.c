@@ -44,9 +44,6 @@ void snowman_bomb_update(struct MainObj* self)
     CollisionRelated((struct PlayerObj*)self);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_17_snowman_bomb", snowman_bomb_init);
-#else
 void snowman_bomb_init(struct MainObj* self)
 {
     self->hp = 6;
@@ -54,12 +51,12 @@ void snowman_bomb_init(struct MainObj* self)
     self->invincibility_timer = 0;
     self->collision_data = D_80106AF4;
     self->bg_offset = (u8)g_Player.bg_offset;
+    self->x_speed = 0;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     self->animation_table = (const u8* const*)snowman_bomb_animations;
     self->terrain_box = &snowman_bomb_terrain_box;
     self->hurt_box = &snowman_bomb_hurt_box;
-    self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
@@ -77,7 +74,6 @@ void snowman_bomb_init(struct MainObj* self)
     self->unk6 = 0;
     self->ext.main_17.saved_unk5 = self->y_pos.val;
 }
-#endif
 
 void snowman_bomb_main(struct MainObj* self)
 {
@@ -128,9 +124,6 @@ void snowman_bomb_resume_step(struct MainObj* self)
 void func_80050278(struct MainObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_17_snowman_bomb", func_80050278);
-#else
 void func_80050278(struct MainObj* arg0)
 {
     if (--arg0->ext.main_17.unk80 == 0) {
@@ -173,7 +166,6 @@ void func_80050278(struct MainObj* arg0)
     move_object(MOVING_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 void snowman_bomb_turn(struct MainObj* self)
 {

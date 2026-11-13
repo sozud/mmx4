@@ -371,9 +371,6 @@ void apply_tile_effect(u8 effect_id, s32 x_offset, s32 y_offset)
 #undef UPDATE_XY
 
 // tile_effect_apply_tile
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/CB184", func_800DADA0);
-#else
 void func_800DADA0(struct TileEffectRecord* arg0, u16 arg1, u16 arg2, u8 arg3,
     u8 arg4)
 {
@@ -393,7 +390,6 @@ void func_800DADA0(struct TileEffectRecord* arg0, u16 arg1, u16 arg2, u8 arg3,
         D_801441C8[arg0->layer][row][col] = arg0->tiles[arg3];
     }
 }
-#endif
 void tile_effect_nop(void)
 {
 }

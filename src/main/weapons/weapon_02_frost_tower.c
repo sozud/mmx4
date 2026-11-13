@@ -95,9 +95,6 @@ void frost_tower_charged_spawn_part(s8 arg0);
 void frost_tower_hide(struct WeaponObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_80093D78);
-#else
 void func_80093D78(struct WeaponObj* arg0)
 {
     struct PlayerObj* player;
@@ -134,7 +131,6 @@ void func_80093D78(struct WeaponObj* arg0)
     decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
     update_on_screen(BASE_OBJECT(arg0), 0x28, 0x38);
 }
-#endif
 
 void frost_tower_main(struct WeaponObj* arg0)
 {
@@ -270,27 +266,22 @@ void frost_tower_charged_update(struct WeaponObj* arg0)
 }
 
 // frost_tower_charged_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_80094280);
-#else
 void func_80094280(struct WeaponObj* arg0)
 {
+    u8* ext = arg0->ext.raw;
+
     arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[3];
     arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->previous_animation_index = 0xFF;
     arg0->animation_step.fields.frame_index = 9;
-    arg0->ext.raw[2] = 0;
-    arg0->ext.raw[3] = 0;
+    ext[2] = 0;
+    ext[3] = 0;
     arg0->state++;
     arg0->unk5 = 0;
     decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
 }
-#endif
 
 // frost_tower_charged_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_800942E8);
-#else
 void func_800942E8(struct WeaponObj* arg0)
 {
     u8* ext = arg0->ext.raw;
@@ -328,7 +319,6 @@ void func_800942E8(struct WeaponObj* arg0)
         ext[2]--;
     }
 }
-#endif
 
 void frost_tower_charged_spawn_part(s8 arg0)
 {
@@ -346,9 +336,6 @@ void frost_tower_charged_spawn_part(s8 arg0)
 }
 
 // frost_tower_charged_part_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_800944B8);
-#else
 void func_800944B8(struct WeaponObj* arg0)
 {
     struct PlayerObj* player;
@@ -377,7 +364,6 @@ void func_800944B8(struct WeaponObj* arg0)
     arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0x28, 0x38);
 }
-#endif
 
 void frost_tower_charged_part_main(struct WeaponObj* arg0)
 {

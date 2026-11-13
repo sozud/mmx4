@@ -1211,9 +1211,6 @@ void player_rising_fire_charged_fall(struct PlayerObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player_special", player_zero_check_ground_technique);
-#else
 s32 player_zero_check_ground_technique(struct PlayerObj* self)
 {
     if (self->unk2 == 0) {
@@ -1222,12 +1219,15 @@ s32 player_zero_check_ground_technique(struct PlayerObj* self)
         return 0;
     } else if (func_80039F28(self) != 0) {
         return 1;
-    } else if (player_zero_check_ryuenjin(self) == 0) {
-        return player_zero_check_raijingeki(self) != 0;
     }
-    return 1;
+    if (player_zero_check_ryuenjin(self) != 0) {
+        return 1;
+    }
+    if (player_zero_check_raijingeki(self) != 0) {
+        return 1;
+    }
+    return 0;
 }
-#endif
 
 s32 player_zero_check_saber(struct PlayerObj* self)
 {

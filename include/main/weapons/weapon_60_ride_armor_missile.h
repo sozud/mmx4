@@ -12,6 +12,6 @@ void func_80098F88(struct WeaponObj*);
 void func_80099118(struct WeaponObj*);
 
 extern u8 ride_armor_missile_hit_box[4];
-extern struct Weapon60SpawnOffset ride_armor_missile_offsets[3];
+extern s16 ride_armor_missile_offsets[3][2];
 
 #endif

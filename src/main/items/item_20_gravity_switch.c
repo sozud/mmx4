@@ -184,12 +184,9 @@ void gravity_switch_flip_objects(void)
 }
 
 // gravity_switch_flip_camera
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_20_gravity_switch", func_800C5210);
-#else
 void func_800C5210(struct ItemObj* self)
 {
-    u32 index = (u8)self->unk2 >> 4;
+    u8 index = (u8)self->unk2 >> 4;
 
     background_objects[0].unk22 = gravity_switch_camera_bounds[index].first;
     background_objects[0].unk2A = gravity_switch_camera_bounds[index].first;
@@ -203,7 +200,6 @@ void func_800C5210(struct ItemObj* self)
         background_objects[2].unk42 -= 0xC0;
     }
 }
-#endif
 
 void (*gravity_switch_state_funcs[])(struct ItemObj*) = {
     func_800C4D20,

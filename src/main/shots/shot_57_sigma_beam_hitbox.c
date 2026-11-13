@@ -102,7 +102,6 @@ u8* sigma_beam_hitbox_boxes[30] = {
 void func_800AE450(struct ShotObj* self);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AE450(struct ShotObj* self)
 {
     self->unk15 = 0;
@@ -113,13 +112,15 @@ void func_800AE450(struct ShotObj* self)
     self->bg_offset = self->unk7C->bg_offset;
     self->x_pos.u.hi = sigma_beam_hitbox_offsets[self->unk2][0];
     self->y_pos.u.hi = sigma_beam_hitbox_offsets[self->unk2][1];
-    self->unk5C = 1;
-    self->unk60 = 9;
+    if (self->unk2 < 4) {
+        self->unk5C = 1;
+        self->unk60 = 9;
+    } else {
+        self->unk5C = 1;
+        self->unk60 = 9;
+    }
     self->state = 1;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/shots/shot_57_sigma_beam_hitbox", func_800AE450);
-#endif
 
 void sigma_beam_hitbox_pulse(struct ShotObj* self)
 {

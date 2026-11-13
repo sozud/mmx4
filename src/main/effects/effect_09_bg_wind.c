@@ -133,17 +133,14 @@ void func_800B76A4(struct EffectObj* arg0)
     ext->velocity = 0x10000;
     arg0->unk5++;
 }
-#elif defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B76A4);
 #else
 void func_800B76A4(struct EffectObj* arg0)
 {
-    struct Effect9Ext* ext = &arg0->ext.effect_9;
     s32 x;
 
-    if (ext->direction != 0) {
+    if (arg0->ext.effect_9.direction != 0) {
         background_objects[2].y_pos.val = 0;
-        ext->transition_timer = 1;
+        arg0->ext.effect_9.transition_timer = 1;
         background_objects[2].unk4C = 1;
         arg0->unk5 = 0;
         arg0->state--;
@@ -151,14 +148,14 @@ void func_800B76A4(struct EffectObj* arg0)
     }
     background_objects[2].y_pos.val = 0x1800000;
     background_objects[2].unk4C = 1;
-    ext->movement_timer = 0x168;
-    ext->movement_table = (u8*)bg_wind_steps_fast;
-    ext->timer = ext->movement_table[0];
-    ext->frame = ext->movement_table[1];
-    ext->target_x = ext->movement_table[2];
-    x = (ext->target_x << 9) + (u8)background_objects[2].x_pos.i.hi;
+    arg0->ext.effect_9.movement_timer = 0x168;
+    arg0->ext.effect_9.movement_table = (u8*)bg_wind_steps_fast;
+    arg0->ext.effect_9.timer = bg_wind_steps_fast[0].timer;
+    arg0->ext.effect_9.frame = arg0->ext.effect_9.movement_table[1];
+    arg0->ext.effect_9.target_x = arg0->ext.effect_9.movement_table[2];
+    x = (arg0->ext.effect_9.target_x << 9) + (u8)background_objects[2].x_pos.i.hi;
     background_objects[2].x_pos.i.hi = x;
-    ext->velocity = 0x10000;
+    arg0->ext.effect_9.velocity = 0x10000;
     arg0->unk5++;
 }
 #endif
@@ -185,16 +182,13 @@ void bg_wind_gust_slow(struct EffectObj* effect)
     }
     bg_wind_advance(effect, FIXED(1.5), 1);
 }
-#elif defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_slow);
 #else
 void bg_wind_gust_slow(struct EffectObj* effect)
 {
-    s16* x_hi;
     s32 new_hi;
     s32 target_hi;
 
-    if (--effect->ext.effect_9.movement_timer << 16 == 0) {
+    if (--((struct Effect9Ext*)&effect->ext)->movement_timer << 16 == 0) {
         effect->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
         effect->ext.effect_9.timer = effect->ext.effect_9.movement_table[0];
         effect->ext.effect_9.frame = effect->ext.effect_9.movement_table[1];
@@ -207,15 +201,14 @@ void bg_wind_gust_slow(struct EffectObj* effect)
         }
         return;
     }
-    if (--effect->ext.effect_9.timer == 0) {
+    if (--((struct Effect9Ext*)&effect->ext)->timer == 0) {
         effect->ext.effect_9.movement_table = (u8*)&effect->ext.effect_9.movement_table[(effect->ext.effect_9.frame * 4)];
         effect->ext.effect_9.target_x = effect->ext.effect_9.movement_table[2];
         effect->ext.effect_9.timer = effect->ext.effect_9.movement_table[0];
         effect->ext.effect_9.frame = effect->ext.effect_9.movement_table[1];
 
-        x_hi = &background_objects[2].x_pos.i.hi;
-        new_hi = (effect->ext.effect_9.target_x << 9) + *(u8*)x_hi;
-        *x_hi = (s16)new_hi;
+        new_hi = (effect->ext.effect_9.target_x << 9) + background_objects[2].x_pos.bytes[2];
+        background_objects[2].x_pos.i.hi = new_hi;
 
         background_objects[2].unk4C = 1;
     }
@@ -340,13 +333,11 @@ void bg_wind_gust_medium(struct EffectObj* self)
     }
     bg_wind_advance(self, FIXED(3.5), 1);
 }
-#elif defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_medium);
 #else
 void bg_wind_gust_medium(struct EffectObj* self)
 {
     s32 shifted_target;
-    if (0 == --self->ext.effect_9.movement_timer << 16) {
+    if (0 == --((struct Effect9Ext*)&self->ext)->movement_timer << 16) {
         if (self->ext.effect_9.direction != 0) {
             self->ext.effect_9.movement_timer = 0xB4;
             self->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
@@ -361,8 +352,7 @@ void bg_wind_gust_medium(struct EffectObj* self)
         self->ext.effect_9.target_x = self->ext.effect_9.movement_table[2];
         return;
     }
-    if (--self->ext.effect_9.timer == 0) {
-        s16* bg_hi;
+    if (--((struct Effect9Ext*)&self->ext)->timer == 0) {
         s32 final_target;
 
         self->ext.effect_9.movement_table = (u8*)&self->ext.effect_9.movement_table[(self->ext.effect_9.frame * 4)];
@@ -370,9 +360,8 @@ void bg_wind_gust_medium(struct EffectObj* self)
         self->ext.effect_9.timer = self->ext.effect_9.movement_table[0];
         self->ext.effect_9.frame = self->ext.effect_9.movement_table[1];
 
-        bg_hi = &background_objects[2].x_pos.i.hi;
-        final_target = (self->ext.effect_9.target_x << 9) + *(u8*)bg_hi;
-        *bg_hi = (s32)final_target;
+        final_target = (self->ext.effect_9.target_x << 9) + background_objects[2].x_pos.bytes[2];
+        background_objects[2].x_pos.i.hi = final_target;
 
         background_objects[2].unk4C = 1;
     }
@@ -415,25 +404,23 @@ void func_800B7CFC(struct EffectObj* effect)
     }
     bg_wind_advance(effect, FIXED(4.5), 0);
 }
-#elif defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B7CFC);
 #else
 void func_800B7CFC(struct EffectObj* effect)
 {
     s32 new_hi;
     s32 target_hi;
 
-    if (--effect->ext.effect_9.movement_timer << 16 == 0) {
+    if (--((struct Effect9Ext*)&effect->ext)->movement_timer << 16 == 0) {
         effect->ext.effect_9.direction = 1;
         effect->ext.effect_9.movement_timer = 0x78;
         effect->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
-        effect->ext.effect_9.timer = effect->ext.effect_9.movement_table[0];
+        effect->ext.effect_9.timer = bg_wind_steps_slow[0].timer;
         effect->ext.effect_9.frame = effect->ext.effect_9.movement_table[1];
         effect->ext.effect_9.target_x = effect->ext.effect_9.movement_table[2];
         effect->unk5--;
         return;
     }
-    if (--effect->ext.effect_9.timer == 0) {
+    if (--((struct Effect9Ext*)&effect->ext)->timer == 0) {
         effect->ext.effect_9.movement_table = (u8*)&effect->ext.effect_9.movement_table[(effect->ext.effect_9.frame * 4)];
         effect->ext.effect_9.target_x = effect->ext.effect_9.movement_table[2];
         effect->ext.effect_9.timer = effect->ext.effect_9.movement_table[0];

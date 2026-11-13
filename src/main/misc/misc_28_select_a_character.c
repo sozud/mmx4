@@ -61,9 +61,6 @@ enum SubTypes {
 };
 
 // SelectACharacterUpdate state 0
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_28_select_a_character", select_char_init);
-#else
 void select_char_init(struct MiscObj* self)
 {
     s8 temp_v0;
@@ -101,9 +98,8 @@ void select_char_init(struct MiscObj* self)
         self->y_pos.val = FIXED(select_char_positions[self->unk2].y);
     }
     if (self->unk2 > 0xB) {
-        s32 temp = self->unk2 - 0xC;
-        self->x_pos.val = FIXED(select_char_text_positions[temp].x);
-        self->y_pos.val = FIXED(select_char_text_positions[(self->unk2 - 0xC)].y);
+        self->x_pos.val = FIXED(select_char_text_positions[self->unk2 - 0xC].x);
+        self->y_pos.val = FIXED(select_char_text_positions[self->unk2 - 0xC].y);
     }
     self->unk16 = VISUAL_SATURN_LAYER(select_char_priorities[self->unk2]);
     set_animation(self, select_char_initial_animations[self->unk2]);
@@ -117,7 +113,6 @@ void select_char_init(struct MiscObj* self)
     self->state++;
     self->unk5 = self->unk2;
 }
-#endif
 
 // select_char_portrait_funcs state 0
 void select_char_portrait_slide_in(struct MiscObj* self)

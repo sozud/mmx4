@@ -683,27 +683,28 @@ struct EffectObj* func_8002B468(s8 id, s8 arg1)
 // delete_effects
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_8002B560(s8 id, s8 subtype);
+s32 func_8002B560(s8 id, s8 subtype);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_8002B560(s8 id, s8 subtype)
+s32 func_8002B560(s8 id, s8 subtype)
 {
-    s32 i;
+    struct EffectObj* effect;
+    s8 i;
 
-    for (i = 0; i < 0x20; i++) {
-        struct EffectObj* effect = &effect_objects[i];
-
-        if (!effect->active)
-            continue;
-        if (id >= 0) {
-            if (effect->id == id && effect->unk2 == subtype)
+    if (id >= 0) {
+        for (i = 0; i < 0x20; i++) {
+            effect = &effect_objects[i];
+            if (effect->active != 0 && effect->id == id && effect->unk2 == subtype) {
                 ZeroObjectState(OBJECT_HEADER(effect));
-        } else if (effect->id == (id & 0x7F)) {
-            ZeroObjectState(OBJECT_HEADER(effect));
+            }
+        }
+    } else {
+        id &= 0x7F;
+        for (i = 0; i < 0x20; i++) {
+            effect = &effect_objects[i];
+            if (effect->active != 0 && effect->id == id) {
+                ZeroObjectState(OBJECT_HEADER(effect));
+            }
         }
     }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/objects", func_8002B560);
-#endif

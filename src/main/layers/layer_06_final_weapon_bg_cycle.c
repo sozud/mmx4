@@ -21,12 +21,9 @@ void final_weapon_bg_cycle_init(struct LayerObj* arg0)
     arg0->state++;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/layers/layer_06_final_weapon_bg_cycle", final_weapon_bg_cycle_main);
-#else
 void final_weapon_bg_cycle_main(struct LayerObj* arg0)
 {
-    struct BackgroundObj* background;
+    u8* p = (u8*)&arg0->bg_offset;
     u8 temp_v0;
     s16 temp_v0_3;
 
@@ -34,23 +31,20 @@ void final_weapon_bg_cycle_main(struct LayerObj* arg0)
     arg0->bg_offset = temp_v0;
     if (temp_v0 == 8) {
         arg0->bg_offset = 0;
-        arg0->unk15 += 1;
-        if (arg0->unk15 == 4) {
+        p[1] = arg0->unk15 + 1;
+        if (p[1] == 4) {
             arg0->unk15 = 0;
         }
 #ifdef MMX4_SATURN
-        background = &background_objects[1];
-        background->x_pos.i.hi = (arg0->unk15 & 1) << 9;
-        background->y_pos.i.hi = (arg0->unk15 & 2) << 7;
+        background_objects[1].x_pos.i.hi = (arg0->unk15 & 1) << 9;
+        background_objects[1].y_pos.i.hi = (arg0->unk15 & 2) << 7;
 #else
         temp_v0_3 = arg0->unk15;
-        background = &background_objects[1];
-        background->x_pos.i.hi = temp_v0_3 << 9;
+        background_objects[1].x_pos.i.hi = temp_v0_3 << 9;
 #endif
-        background->unk4C = 1;
+        background_objects[1].unk4C = 1;
     }
 }
-#endif
 
 void (*final_weapon_bg_cycle_state_funcs[])(struct LayerObj*) = {
     final_weapon_bg_cycle_init,

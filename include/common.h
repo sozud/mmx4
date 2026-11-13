@@ -46,8 +46,8 @@ __asm__(".include \"macro.inc\"\n");
 #define CLUT_FROM_ID(id) CLUT_FROM_XY(func_8002938C(id), func_8002938C(id))
 // Player and ride-armor HP and Sub Tanks store a 7-bit quantity with bit 7
 // latched on the frame it is damaged or drained.
-#define HP_VALUE(v) ((v) & 0x7F)
-#define HP_DAMAGE_FLAG(v) ((v) & 0x80)
+#define HP_VALUE(v) ((v)&0x7F)
+#define HP_DAMAGE_FLAG(v) ((v)&0x80)
 #define TANK_VALUE(v) HP_VALUE(v)
 #define TANK_DRAINED(v) HP_DAMAGE_FLAG(v)
 #define WITHIN_BOUNDS(lo, v, hi) ((lo) < (v) && (v) < (hi))
@@ -62,13 +62,21 @@ __asm__(".include \"macro.inc\"\n");
             return 0;                    \
     }
 
+#define POS_WITHIN_3(a, b) \
+    (((a) - (b) >= 0) ? ((a) - (b) <= 0x2FFFF) : ((b) - (a) <= 0x2FFFF))
+
 #define ABS(A, B) (((A) - (B) < 0) ? (B) - (A) : (A) - (B))
 
 #define ON_SCREEN_X(X, W) ((u16)((X) + (W)) < (u16)((W) + ((W) + SCREEN_WIDTH)))
 #define ON_SCREEN_Y(Y, H) ((u16)((Y) + (H)) < (u16)((H) + ((H) + SCREEN_HEIGHT)))
 
 #if defined(MMX4_SHC_LAYOUT_CHECKS)
-#define MMX4_STATIC_ASSERT(name, condition) int shc_layout_check_##name(void) { return (condition); } extern int shc_layout_decl_##name
+#define MMX4_STATIC_ASSERT(name, condition) \
+    int shc_layout_check_##name(void)       \
+    {                                       \
+        return (condition);                 \
+    }                                       \
+    extern int shc_layout_decl_##name
 #elif defined(MMX4_SHC)
 #define MMX4_STATIC_ASSERT(name, condition) extern int shc_layout_check_##name(void)
 #elif defined(MMX4_WIN32)
@@ -259,6 +267,12 @@ struct ControllerInput {
     u16 pressed;
 };
 extern struct ControllerInput controller_input;
+
+struct ControllerButtons {
+    u16 current;
+    u16 previous;
+    u16 pressed;
+};
 
 struct MemcardMenuState {
     u8* buffer;
@@ -474,6 +488,9 @@ extern u8 D_801397D8;
 extern struct Func80022730Config* D_801397DC;
 extern s16 D_801397E0;
 extern u16 D_801397E4[0x20];
+#if defined(VERSION_EU) && !defined(MMX4_PC)
+#define D_80139824 D_8016C910_eu
+#endif
 extern u8 D_80139824;
 extern u8 D_80139828;
 #ifdef MMX4_PC
@@ -613,8 +630,10 @@ extern u8 D_8013BD40;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern struct BootTransitionDataRegion g_BootTransitionDataRegion;
 #define D_800F1C0F (g_BootTransitionDataRegion.stage_map)
+#define D_800F1C10 (g_BootTransitionDataRegion.stage_map + 1)
 #else
 extern u8 D_800F1C0F[];
+extern u8 D_800F1C10[];
 #endif
 #ifndef MMX4_SATURN
 extern CdlATV D_80139644;

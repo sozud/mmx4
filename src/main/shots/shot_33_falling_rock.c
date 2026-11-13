@@ -134,7 +134,65 @@ void func_800A03F4(struct ShotObj* arg0)
     arg0->unk5 = 0;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A03F4);
+void func_800A03F4(struct ShotObj* arg0)
+{
+    struct MiscObj* misc;
+    s32 random;
+    s32 offset;
+    u8 random2;
+
+    arg0->on_screen = 1;
+    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->unk5C = 0xF;
+    arg0->unk60 = 3;
+    arg0->unk42 &= 0x7FFF;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x8E));
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x8E)];
+    arg0->unk42 = OBJECT_STAGE_CLUT(0x8E);
+    arg0->animation_table = (u32**)falling_rock_a_animations;
+    random = get_random();
+    random2 = get_random();
+    random &= 1;
+    random <<= 8;
+    offset = random2 + random;
+    offset += 0x40;
+    arg0->x_pos.i.hi = background_objects[g_Player.bg_offset].x_pos.i.hi + offset;
+    arg0->y_pos.i.hi = background_objects[g_Player.bg_offset].y_pos.i.hi - 0x40;
+    arg0->unk16 = 1;
+    arg0->unk15 = 0;
+    arg0->x_vel.val = -0x10000;
+    arg0->y_vel.val = -0x10000;
+    arg0->unk28 = 0x400;
+    arg0->unk2C = 0x400;
+    arg0->unk68 = falling_rock_box_3;
+    arg0->unk54 = (const u8*)falling_rock_box_0;
+    arg0->unk50.data = (const u8*)falling_rock_box_0;
+    arg0->unk62 = 2;
+    set_animation(arg0, 1);
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 0x1B;
+        misc->unk16 = 0;
+        misc->unk40 = arg0->unk40;
+        misc->unk42 = arg0->unk42 & 0x7FFF;
+        misc->animation_table = arg0->animation_table;
+        misc->unk3C = arg0->unk3C;
+        misc->bg_offset = arg0->bg_offset;
+        misc->x_pos.val = arg0->x_pos.val;
+        misc->y_pos.val = arg0->y_pos.val;
+        misc->unk15 = arg0->unk15;
+        misc->ext.misc_5.owner = (struct MainObj*)arg0;
+        misc->state = 0;
+        misc->unk6 = 0;
+        misc->unk7 = 0;
+        set_animation(misc, 0);
+        arg0->unk7C = (struct WeaponObj*)misc;
+    }
+    arg0->state = 1;
+    arg0->unk5 = 0;
+}
 #endif
 
 // falling_rock_a_fall
@@ -233,9 +291,6 @@ void falling_rock_a_despawn(struct ShotObj* self)
 }
 
 // falling_rock_b_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0A38);
-#else
 void func_800A0A38(struct ShotObj* arg0)
 {
     struct MiscObj* misc;
@@ -285,12 +340,8 @@ void func_800A0A38(struct ShotObj* arg0)
     arg0->state = 4;
     arg0->unk5 = 0;
 }
-#endif
 
 // falling_rock_b_fall
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0C4C);
-#else
 void func_800A0C4C(struct ShotObj* arg0)
 {
     s32 collision;
@@ -355,7 +406,6 @@ void func_800A0C4C(struct ShotObj* arg0)
     }
     update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
 }
-#endif
 
 void falling_rock_b_despawn(struct ShotObj* self)
 {
@@ -363,9 +413,6 @@ void falling_rock_b_despawn(struct ShotObj* self)
 }
 
 // falling_rock_c_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0FE8);
-#else
 void func_800A0FE8(struct ShotObj* arg0)
 {
     struct MiscObj* misc;
@@ -431,7 +478,6 @@ void func_800A0FE8(struct ShotObj* arg0)
     arg0->state = 7;
     arg0->unk5 = 0;
 }
-#endif
 
 // falling_rock_c_fall
 void func_800A12EC(struct ShotObj* self)

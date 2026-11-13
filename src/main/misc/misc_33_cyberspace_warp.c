@@ -37,11 +37,10 @@ struct Misc33Position {
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CE388(struct MiscObj* arg0);
-extern union AnimationStep* cyberspace_warp_animations[5];
-extern struct Misc33Position cyberspace_warp_positions[6];
-extern struct Misc33Position cyberspace_warp_exit_position;
-extern ret_u8 func_8002938C(s32);
 #endif
+extern union AnimationStep* cyberspace_warp_animations[5];
+extern s16 cyberspace_warp_positions[14];
+extern ret_u8 func_8002938C(s32);
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CE388(struct MiscObj* arg0)
@@ -81,20 +80,81 @@ void func_800CE388(struct MiscObj* arg0)
         break;
     }
     if (engine_obj.substage != 0) {
-        arg0->x_pos.i.hi = ((s16*)&cyberspace_warp_exit_position)[0];
-        arg0->y_pos.i.hi = ((s16*)&cyberspace_warp_exit_position)[1];
+        arg0->x_pos.i.hi = cyberspace_warp_positions[12];
+        arg0->y_pos.i.hi = cyberspace_warp_positions[13];
     } else if (arg0->unk2 >= 2) {
-        arg0->x_pos.i.hi = ((s16(*)[2])cyberspace_warp_positions)[engine_obj.checkpoint][0];
-        arg0->y_pos.i.hi = ((s16(*)[2])cyberspace_warp_positions)[engine_obj.checkpoint][1];
+        arg0->x_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2];
+        arg0->y_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2 + 1];
     } else {
-        arg0->x_pos.i.hi = ((s16(*)[2])cyberspace_warp_positions)[engine_obj.checkpoint][0] - 0xA;
-        arg0->y_pos.i.hi = ((s16(*)[2])cyberspace_warp_positions)[engine_obj.checkpoint][1] + 0x30;
+        arg0->x_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2] - 0xA;
+        arg0->y_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2 + 1] + 0x30;
     }
     arg0->state = 1;
     arg0->unk6 = 0;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/misc/misc_33_cyberspace_warp", func_800CE388);
+void func_800CE388(struct MiscObj* arg0)
+{
+    s32 resource;
+
+    arg0->unk16 = 2;
+    arg0->unk15 = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->animation_table = (u32**)cyberspace_warp_animations;
+    resource = func_8002938C(0x9B);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
+    resource = func_8002938C(0x9B);
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->unk42 = OBJECT_STAGE_CLUT(0x9B);
+    arg0->x_pos.i.hi = g_Player.x_pos.i.hi;
+    arg0->y_pos.i.hi = g_Player.y_pos.i.hi;
+    switch (arg0->unk2) {
+    case 0:
+        set_animation(arg0, 0);
+        arg0->ext.misc_33.timer = 0x48;
+        arg0->unk5 = 0;
+        arg0->unk16 = 6;
+        break;
+    case 1:
+        set_animation(arg0, 1);
+        arg0->ext.misc_33.timer = 0x48;
+        arg0->unk5 = 0;
+        arg0->unk16 = 0x11;
+        break;
+    case 2:
+        set_animation(arg0, 2);
+        arg0->unk5 = 1;
+        arg0->unk16 = 0x10;
+        break;
+    case 3:
+        set_animation(arg0, 3);
+        arg0->unk5 = 1;
+        arg0->unk16 = 0x10;
+        break;
+    case 4:
+        set_animation(arg0, 4);
+        arg0->unk5 = 1;
+        arg0->unk16 = 0x10;
+        break;
+    }
+    if (engine_obj.substage == 0) {
+        if (arg0->unk2 >= 2) {
+            arg0->x_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2];
+            arg0->y_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2 + 1];
+        } else if (arg0->unk2 == 0) {
+            arg0->x_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2] - 0xA;
+            arg0->y_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2 + 1] + 0x30;
+        } else {
+            arg0->x_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2] - 0xA;
+            arg0->y_pos.i.hi = cyberspace_warp_positions[engine_obj.checkpoint * 2 + 1] + 0x30;
+        }
+    } else {
+        arg0->x_pos.i.hi = cyberspace_warp_positions[12];
+        arg0->y_pos.i.hi = cyberspace_warp_positions[13];
+    }
+    arg0->state = 1;
+    arg0->unk6 = 0;
+}
 #endif
 
 void cyberspace_warp_main(struct MiscObj* self)
@@ -225,16 +285,22 @@ union AnimationStep* cyberspace_warp_animations[5] = {
 
 #undef STEP
 
-struct Misc33Position cyberspace_warp_positions[6] = {
-    { 0x778, 0x60 },
-    { 0x378, 0x360 },
-    { 0x878, 0x260 },
-    { 0x378, 0x360 },
-    { 0xC78, 0x560 },
-    { 0x378, 0x360 },
+s16 cyberspace_warp_positions[14] = {
+    0x778,
+    0x60,
+    0x378,
+    0x360,
+    0x878,
+    0x260,
+    0x378,
+    0x360,
+    0xC78,
+    0x560,
+    0x378,
+    0x360,
+    0xFF0,
+    0x290,
 };
-
-struct Misc33Position cyberspace_warp_exit_position = { 0xFF0, 0x290 };
 
 void (*cyberspace_warp_state_funcs[3])(struct MiscObj*) = {
     func_800CE388,

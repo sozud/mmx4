@@ -42,9 +42,6 @@ static u16 misc_31_palette(struct MiscObj* arg0)
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", func_800CDE44);
-#else
 void func_800CDE44(struct MiscObj* arg0)
 {
 
@@ -79,7 +76,6 @@ void func_800CDE44(struct MiscObj* arg0)
     }
     is_on_screen(BASE_OBJECT(arg0));
 }
-#endif
 
 // option_toggle_appear
 void func_800CDF4C(struct MiscObj* self)

@@ -27,14 +27,15 @@ extern void (*sigma_fx_state_funcs[])(struct VisualObj*);
 void sigma_fx_run(struct VisualObj*);
 void sigma_fx_despawn(struct VisualObj*);
 #include "weapon_resources.h"
-extern u8 sigma_fx_x_offsets[4];
-extern u8 sigma_fx_y_offsets[4];
+extern u8 sigma_fx_offsets[2][4];
 extern u8 sigma_fx_cloak_piece_animations[4];
 extern s32 sigma_fx_cloak_piece_x_vels[8];
 extern s32 sigma_fx_cloak_piece_y_vels[8];
 
-u8 sigma_fx_x_offsets[4] = { 0xF, 6, 0x16, 0xF0 };
-u8 sigma_fx_y_offsets[4] = { 0xF8, 0x16, 2, 0xFF };
+u8 sigma_fx_offsets[2][4] = {
+    { 0xF, 6, 0x16, 0xF0 },
+    { 0xF8, 0x16, 2, 0xFF },
+};
 u8 sigma_fx_cloak_piece_animations[4] = { 0xD, 0xC, 0xD, 0xB };
 s32 sigma_fx_cloak_piece_x_vels[8] = {
     -0x50000,
@@ -63,9 +64,6 @@ s32 sigma_fx_cloak_piece_y_vels[8] = {
 void func_800B4E34(struct VisualObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/visuals/visual_32_sigma_fx", func_800B4E34);
-#else
 void func_800B4E34(struct VisualObj* self)
 {
     struct PlayerObj* parent = self->unk50;
@@ -90,9 +88,9 @@ void func_800B4E34(struct VisualObj* self)
         set_animation(self, 2);
         break;
     case 1:
-        offset = sigma_fx_x_offsets[get_random() & 3];
+        offset = sigma_fx_offsets[0][get_random() & 3];
         self->x_pos.i.hi += parent->unk15 ? -(s8)offset : (s8)offset;
-        self->y_pos.i.hi += (s8)sigma_fx_y_offsets[get_random() & 3];
+        self->y_pos.i.hi += (s8)sigma_fx_offsets[1][get_random() & 3];
         self->y_vel.val = sigma_fx_cloak_piece_y_vels[get_random() & 7];
         self->x_vel.val = sigma_fx_cloak_piece_x_vels[get_random() & 7];
         set_animation(self, sigma_fx_cloak_piece_animations[self->unk54]);
@@ -101,9 +99,9 @@ void func_800B4E34(struct VisualObj* self)
     case 2:
     case 5:
         self->unk16 = VISUAL_SATURN_LAYER(5);
-        offset = sigma_fx_x_offsets[get_random() & 3];
+        offset = sigma_fx_offsets[0][get_random() & 3];
         self->x_pos.i.hi += parent->unk15 ? -(s8)offset : (s8)offset;
-        self->y_pos.i.hi += (s8)sigma_fx_y_offsets[get_random() & 3];
+        self->y_pos.i.hi += (s8)sigma_fx_offsets[1][get_random() & 3];
         set_animation(self, 0xA);
         break;
     case 3:
@@ -137,7 +135,6 @@ void func_800B4E34(struct VisualObj* self)
         break;
     }
 }
-#endif
 
 void sigma_fx_glow(struct VisualObj* self)
 {

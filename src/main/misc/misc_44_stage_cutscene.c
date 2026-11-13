@@ -33,9 +33,6 @@ void stage_cutscene_update(struct MiscObj* self)
 }
 
 // stage_cutscene_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0828);
-#else
 void func_800D0828(struct MiscObj* self)
 {
     if (engine_obj.cur_character == 0) {
@@ -47,8 +44,8 @@ void func_800D0828(struct MiscObj* self)
         return;
     }
     self->bg_offset = g_Player.bg_offset;
-    self->y_vel.val = FIXED(10);
     self->x_vel.val = 0;
+    self->y_vel.val = FIXED(10);
     self->unk28 = 0;
     self->unk2C = 0x2000;
     self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x42));
@@ -62,7 +59,6 @@ void func_800D0828(struct MiscObj* self)
     self->ext.unk.unk55 = 0;
     set_animation(self, 0);
 }
-#endif
 
 void stage_cutscene_main(struct MiscObj* self)
 {
@@ -175,7 +171,7 @@ struct Misc45PositionData {
 };
 extern struct Misc45PositionData scripted_slider_offsets[];
 
-#if (defined(VERSION_EU) || defined(VERSION_JP)) && !defined(MMX4_PC) && !defined(MMX4_SATURN)
+#if defined(VERSION_JP) && !defined(MMX4_PC) && !defined(MMX4_SATURN)
 INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0D68);
 #else
 void func_800D0D68(struct MiscObj* self, u8 kind)

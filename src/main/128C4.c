@@ -4,6 +4,7 @@
 #include "main/128C4.h"
 #include "main/14A60.h"
 #include "main/55C4.h"
+#include "archive_memory.h"
 #ifdef MMX4_SATURN
 #include "main/13A8C.h"
 extern struct DialogueGlyphData D_801396C8;
@@ -28,6 +29,8 @@ extern u8 D_800F2B5C[21][12];
 extern u8 D_800F2C58[];
 extern u8 D_800F2D18[];
 extern u32 D_800F2F08[12];
+extern const u32* D_800F2FD4[];
+extern union MainPaletteData D_800F1660;
 extern u32 D_800F2F38[2];
 extern union AnimationStep D_800F2F60[];
 extern union AnimationStep D_800F3000[10];
@@ -156,7 +159,7 @@ static void copy_dialogue_palette(u16* dst, const u16* src, u32 count)
     }
 }
 
-void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
+void func_8002217C(arg_u16 message, arg_u8 portrait, s32 delay_only)
 {
     struct MiscObj* window;
     u16* dialogue_palette;
@@ -259,16 +262,211 @@ void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
     abc_object.unkD = 0;
 }
 
-#else
+#elif defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/128C4", func_8002217C);
+#elif !defined(MMX4_PC)
+#define HIDE_DIALOGUE_PART(part)                \
+    if ((part != NULL) && (part->id == 0x16)) { \
+        part->active = 0;                       \
+        part->on_screen = 0;                    \
+    }
+
+// clang-format off
+void func_8002217C(message, portrait, delay_only)
+    u16 message;
+    u8 portrait;
+    s32 delay_only;
+// clang-format on
+{
+    u8 one;
+    u16* dst;
+    struct AbcObj* abc;
+    s8* boss_flag;
+    s32 final_track;
+    s32 index;
+    s32 src;
+    u16 v0;
+    u16 v1;
+    u16 v2;
+    u32 msg;
+    s32 count;
+    u8 saved_boss;
+    u8 saved_1F;
+    u8 track;
+    u8* config;
+    struct MiscObj* window;
+    s32 offset;
+
+    abc = &abc_object;
+    if (abc->unkC != 0) {
+        if (abc->unkC == 0x80) {
+            abc->unk10 = message | 0x8000;
+            return;
+        }
+        HIDE_DIALOGUE_PART(D_801397C0);
+        HIDE_DIALOGUE_PART(D_801397C4);
+        HIDE_DIALOGUE_PART(D_801397CC);
+        HIDE_DIALOGUE_PART(D_801397C8);
+        HIDE_DIALOGUE_PART(D_801397D4);
+        HIDE_DIALOGUE_PART(D_801397D0);
+        abc->unkC = 0x80;
+        abc->unkA = 0x27;
+        abc->unkD = 4;
+        abc->unk10 = message | 0x8000;
+        return;
+    }
+    *(volatile u8*)&abc_object.unkC = 0x80;
+    *(volatile u8*)&abc_object.unkC = 0x80;
+    abc->unk10 = 0;
+    D_801397D8 = portrait;
+    D_801397BC = NULL;
+    D_801397C0 = NULL;
+    D_801397C4 = NULL;
+    D_801397C8 = NULL;
+    D_801397CC = NULL;
+    D_801397D0 = NULL;
+    D_801397D4 = NULL;
+    abc->unkE = 0;
+    if (delay_only & 0xFF) {
+        abc->unkA = 0x3C;
+        abc->unkD = 6;
+        return;
+    }
+    boss_flag = &engine_obj.enable_boss;
+    saved_boss = *boss_flag;
+    saved_1F = engine_obj.unk1F;
+    dst = &D_801397E4[0];
+    engine_obj.unk1F = 0;
+    *boss_flag = 0;
+    D_80139828 = saved_boss;
+    D_80139824 = saved_1F;
+    if (engine_obj.stage != 0xD) {
+        src = (s32)((u8*)SP_PALETTE + 0x2A0);
+    } else {
+        src = (s32)((u8*)SP_PALETTE + 0x7C0);
+    }
+    count = 0;
+    do {
+        v0 = *(u16*)src;
+        src += 2;
+        count++;
+        *(dst++) = v0;
+    } while (count < 0x20);
+    if (engine_obj.stage != 0xD) {
+        dst = (u16*)((u8*)SP_PALETTE + 0x2A0);
+    } else {
+        dst = (u16*)((u8*)SP_PALETTE + 0x7C0);
+    }
+    src = (s32)&D_800F1660.raw[0xA0];
+    count = 0;
+    do {
+        v1 = *(u16*)src;
+        src += 2;
+        count++;
+        *(dst++) = v1;
+    } while (count < 0x20);
+    src = D_801397D8;
+    index = message & 0xFFFF;
+    if (!(src & 0x80)) {
+        config = (u8*)D_800F2DD0[engine_obj.cur_character] + (src * 6);
+        D_801397DC = (struct Func80022730Config*)config;
+        if (engine_obj.cur_character == 0) {
+            count = 0;
+            src = (s32)&D_800F2F40[0];
+            dst = (u16*)((u8*)SP_PALETTE + ((config[3] << 7) + 0x360));
+            do {
+                v2 = *(u16*)src;
+                src += 2;
+                count++;
+                *(dst++) = v2;
+            } while (count < 0x10);
+        }
+        index = message & 0xFFFF;
+    }
+    index <<= 1;
+    one = 1;
+    count = (s32)SP_ARC_48;
+    index += count;
+    index = *(u16*)index;
+    need_palette_load |= one;
+    count += index;
+    abc->unk0 = (u16*)count;
+    index = *(u16*)count;
+    abc->unk6 = -0x78;
+    abc->unk8 = 0x1D;
+    abc->unkF = one;
+    D_801397E0 = 0;
+    abc->unk4 = index;
+    window = find_free_misc_obj();
+    if (window != NULL) {
+        D_801397BC = window;
+        window->id = 0x16;
+        window->unk2 = 2;
+        window->unk16 = 0x11;
+        window->animation_table = (u32**)&D_800F2FD4[0];
+        window->active = one;
+        *(volatile u16*)&window->unk40 = 0x1E00;
+        if (engine_obj.stage == 0xD) {
+            window->unk42 = 0x78CF;
+        } else {
+            window->unk42 = 0x7846;
+        }
+        offset = *(s32*)(WINDOW_ARCHIVE_DATA + 8);
+        window->bg_offset = -1;
+        window->x_pos.i.hi = 0xA0;
+        window->unk3C = (void*)(offset + (s32)WINDOW_ARCHIVE_DATA);
+        if (!(abc->unk4 & 0x800)) {
+            if (D_801397D8 == 0x80) {
+                window->y_pos.i.hi = 0x74;
+            } else {
+                window->y_pos.i.hi = 0x3C;
+            }
+        } else {
+            if (D_801397D8 == 0xFF) {
+                window->y_pos.i.hi = 0xB4;
+            } else {
+                window->y_pos.i.hi = 0xAC;
+            }
+        }
+        window->unk15 = 0;
+        set_animation(window, 0);
+    }
+    msg = message & 0xFFFF;
+    if (engine_obj.cur_character == 0) {
+        if (msg >= 0x1E) {
+            track = ((u8*)D_800F2F08)[msg - 0x1E];
+        } else {
+            track = 0xFE;
+            if (msg == 0xC) {
+                track = 0x19;
+            }
+        }
+    } else {
+        if (msg < 0x19) {
+            track = 0xFE;
+            if (msg == 0xC) {
+                track = 0x19;
+            }
+        } else {
+            track = ((u8*)D_800F2F08)[0x18 + (msg - 0x19)];
+        }
+    }
+    final_track = track & 0xFF;
+    if (final_track != 0xFE) {
+        if (final_track == 0xFF) {
+            func_80016F0C();
+        } else {
+            func_8001663C(final_track, 0x7F);
+        }
+    }
+    abc->unkA = 0x27;
+    abc->unkD = 0;
+}
 #endif
 void func_8002328C(struct AbcObj*);
 
 #define CONFIG D_801397DC
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/128C4", func_80022730);
-#else
 void func_80022730(struct AbcObj* arg0)
 {
     s32 charOffset;
@@ -320,20 +518,7 @@ void func_80022730(struct AbcObj* arg0)
                         obj->unk40 = D_801406A8[CONFIG->unk0 + engine_obj.cur_character + 2] >> 7;
                     }
 
-                    temp_v1 = CONFIG->unk3 * 4;
-                    charOffset = engine_obj.cur_character + 0x1A;
-                    temp_v1 += charOffset;
-
-                    temp_v0 = temp_v1;
-                    if (temp_v1 < 0) {
-                        temp_v0 = temp_v1 + 0xF;
-                    }
-
-                    temp_a0 = temp_v0 >> 4;
-                    temp_v0 = temp_a0 << 4;
-                    temp_a1 = temp_v1 - temp_v0;
-
-                    obj->unk42 = temp_a1 | ((temp_a0 + 0x1E0) << 6);
+                    obj->unk42 = ((CONFIG->unk3 * 4 + 0x1A + engine_obj.cur_character) % 16) | (((CONFIG->unk3 * 4 + 0x1A + engine_obj.cur_character) / 16 + 0x1E0) << 6);
 #endif
 
                     temp_v0 = func_8002938C(engine_obj.cur_character + 0x91);
@@ -409,24 +594,7 @@ void func_80022730(struct AbcObj* arg0)
                     }
 
                     value = CONFIG->unk3;
-                    temp_v0 = value * 4;
-
-                    temp_v1 = temp_v0 + 0x18;
-                    temp_a2 = temp_v1;
-
-                    if (temp_v1 < 0) {
-                        temp_a2 = temp_v0 + 0x27;
-                    }
-
-                    temp_a1 = value + 6;
-                    temp_v1 -= temp_a2 & 0x7F0;
-
-                    if (temp_a1 < 0) {
-                        temp_a1 = value;
-                        temp_a1 += 9;
-                    }
-
-                    obj->unk42 = temp_v1 | (((temp_a1 >> 2) + 0x1E0) << 6);
+                    obj->unk42 = ((value * 4 + 0x18) % 16) | ((((value + 6) / 4) + 0x1E0) << 6);
 #endif
 
                     temp_v0 = func_8002938C(0x97);
@@ -471,23 +639,7 @@ void func_80022730(struct AbcObj* arg0)
                         }
 
                         value = CONFIG->unk3;
-                        temp_v0 = value * 4;
-
-                        temp_a0 = temp_v0 + 0x19;
-                        temp_a2 = temp_a0;
-
-                        if (temp_a0 < 0) {
-                            temp_a2 = temp_v0 + 0x28;
-                        }
-
-                        temp_v1 = value + 6;
-                        temp_a0 -= temp_a2 & 0x7F0;
-
-                        if (temp_v1 < 0) {
-                            temp_v1 = value + 9;
-                        }
-
-                        obj->unk42 = temp_a0 | (((temp_v1 >> 2) + 0x1E0) << 6);
+                        obj->unk42 = ((value * 4 + 0x19) % 16) | ((((value + 6) / 4) + 0x1E0) << 6);
 #endif
 
                         temp_v0 = func_8002938C(CONFIG->unk2);
@@ -538,23 +690,7 @@ void func_80022730(struct AbcObj* arg0)
                         }
 
                         value = CONFIG->unk3;
-                        temp_v0 = value * 4;
-
-                        temp_v1 = temp_v0 + 0x18;
-                        temp_a2 = temp_v1;
-
-                        if (temp_v1 < 0) {
-                            temp_a2 = temp_v0 + 0x27;
-                        }
-
-                        temp_a1 = value + 6;
-                        temp_v1 -= temp_a2 & 0x7F0;
-
-                        if (temp_a1 < 0) {
-                            temp_a1 = value + 9;
-                        }
-
-                        obj->unk42 = temp_v1 | (((temp_a1 >> 2) + 0x1E0) << 6);
+                        obj->unk42 = ((value * 4 + 0x18) % 16) | ((((value + 6) / 4) + 0x1E0) << 6);
 #endif
 
                         temp_v0 = func_8002938C(0x97);
@@ -826,5 +962,4 @@ void func_8002328C(struct AbcObj* arg0)
     arg0->unkC = 0xFF;
     arg0->unkD = 3;
 }
-#endif
 #endif

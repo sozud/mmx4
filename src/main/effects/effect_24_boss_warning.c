@@ -27,9 +27,6 @@ void func_800BABA8(struct EffectObj* arg0);
 void func_800BAC58(struct EffectObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BABA8);
-#else
 void func_800BABA8(struct EffectObj* arg0)
 {
     struct EffectObj* spawned;
@@ -50,12 +47,8 @@ void func_800BABA8(struct EffectObj* arg0)
     arg0->state++;
     arg0->ext.effect_24.unk1B = 0;
 }
-#endif
 
 // boss_warning_spawn_tiles
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BAC58);
-#else
 void func_800BAC58(struct EffectObj* arg0)
 {
     struct QuadObj* quad;
@@ -79,7 +72,6 @@ void func_800BAC58(struct EffectObj* arg0)
         arg0->ext.effect_24.timer--;
     }
 }
-#endif
 
 void boss_warning_wait(struct EffectObj* self)
 {

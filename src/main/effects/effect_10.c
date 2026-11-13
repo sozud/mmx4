@@ -89,7 +89,46 @@ void func_800B7EE8(struct EffectObj* arg0)
 }
 #endif
 #else
-INCLUDE_ASM("main/nonmatchings/effects/effect_10", func_800B7EE8);
+extern struct Effect10Trigger* sound_zone_lists[2];
+u8 player_in_bounds(s16* bounds);
+
+void func_800B7EE8(struct EffectObj* arg0)
+{
+    struct Effect10Trigger* triggers;
+    struct Effect10Trigger* trigger;
+    u8 index;
+    u8 active;
+
+    if (arg0->state == 0) {
+        arg0->state++;
+        arg0->ext.unk_effect.unk14 = 0;
+        return;
+    }
+
+    triggers = sound_zone_lists[engine_obj.substage];
+    for (index = 0; index < 4; index++) {
+        trigger = &triggers[index];
+        if (player_in_bounds(&trigger->left)) {
+            active = arg0->ext.unk_effect.unk14;
+            if (!((active >> index) & 1)) {
+                if (engine_obj.substage == 0 || active == 0) {
+                    func_8001540C(5, trigger->sound_id, NULL);
+                }
+                arg0->ext.unk_effect.unk14 |= 1 << index;
+            }
+        } else {
+            active = arg0->ext.unk_effect.unk14;
+            if ((active >> index) & 1) {
+                if (engine_obj.substage == 0) {
+                    stop_sound(5, trigger->sound_id);
+                } else if (active != 3 && active != 6) {
+                    stop_sound(5, trigger->sound_id);
+                }
+                arg0->ext.unk_effect.unk14 &= ~(1 << index);
+            }
+        }
+    }
+}
 #endif
 
 struct Effect10Trigger sound_zone_list_0[4] = {

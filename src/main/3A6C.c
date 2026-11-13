@@ -109,13 +109,10 @@ struct Prim D_800EE504[9] = {
     { 0x78, 0xD0, 0x89, 0x03, 0x01, 0x00 },
 };
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/3A6C", func_8001326C);
-#else
 void func_8001326C(u8 arg0)
 {
     DR_MODE* draw_mode;
-    u8 temp_a0;
+    u32 clut;
     SPRT* sprt;
     struct Prim* prim;
     s32 tpage;
@@ -129,11 +126,13 @@ void func_8001326C(u8 arg0)
         setSprt(sprt);
         setXY0(sprt, prim->x, prim->y);
         setUV0(sprt, (prim->uv & 0xF) * 0x10, prim->uv & 0xF0);
-        temp_a0 = prim->clut;
+        clut = prim->clut;
         setShadeTex(sprt, 1);
         setSemiTrans(sprt, 0);
-        // this ought to be setClut but can't figure it out
-        sprt->clut = ((temp_a0 & 0xF) | (((temp_a0 >> 4) + 0x1E0) << 6));
+        {
+            u32 clut_y = clut >> 4;
+            sprt->clut = (clut & 0xF) | ((clut_y + 0x1E0) << 6);
+        }
         setWH(sprt, prim->w * 0x10, prim->h * 0x10);
         catPrim(draw_mode, sprt);
         addPrims(&cur_draw_info->ordering_table.mid, draw_mode, sprt);
@@ -141,17 +140,10 @@ void func_8001326C(u8 arg0)
         SP_DRAW_MODE_CURSOR = ++draw_mode;
     }
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/3A6C", func_80013404);
-#else
 void func_80013404(u8 arg0)
 {
-    s32 temp_v1;
     u8 var_s0;
-    s8* a0;
-    s8* var_v0;
     struct EngineObj* ptr = &engine_obj;
     SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;
     SP_DRAW_MODE_CURSOR = temp2[SP_DRAW_BUFFER].data;
@@ -169,9 +161,7 @@ void func_80013404(u8 arg0)
         }
         func_8001326C(5);
 
-        a0 = &D_800EE54C;
-        var_v0 = ptr->stage == 0xC ? a0 + 0xB : a0 + ptr->stage;
-        ((u8*)D_800EE504)[0x34] = *var_v0;
+        D_800EE504[6].uv = D_800EE54C.stage_archive_indices[ptr->stage == 0xC ? 11 : ptr->stage];
 
         func_8001326C(6);
 
@@ -184,7 +174,6 @@ void func_80013404(u8 arg0)
         }
     }
 }
-#endif
 #ifndef MMX4_PC
 void func_80013530(void)
 {

@@ -140,7 +140,7 @@ void (*general_fist_funcs[2])(struct ShotObj*) = {
     general_fist_leader,
 };
 
-s8 general_ring_offsets[4] = { -63, -40, 13, -40 };
+s8 general_ring_offsets[2][2] = { { -63, -40 }, { 13, -40 } };
 
 void (*general_ring_funcs[])(struct ShotObj*) = {
     func_800AD6DC,
@@ -185,9 +185,6 @@ void func_800AD6DC(struct ShotObj* self);
 extern u8 D_8013B8DC[4];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AC8C4);
-#else
 void func_800AC8C4(struct ShotObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk7C;
@@ -325,7 +322,6 @@ void func_800AC8C4(struct ShotObj* self)
         break;
     }
 }
-#endif
 
 void general_shot_intro_prop(struct ShotObj* self)
 {
@@ -642,9 +638,6 @@ void general_shot_fist(struct ShotObj* self)
 }
 
 // general_ring_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800AD6DC);
-#else
 void func_800AD6DC(struct ShotObj* self)
 {
     u8 angle;
@@ -654,8 +647,8 @@ void func_800AD6DC(struct ShotObj* self)
     if (--self->timer != 0)
         return;
     self->unk5++;
-    self->x_pos.i.hi += self->unk15 != 0 ? -general_ring_offsets[(self->unk2 - 4) << 1] : general_ring_offsets[(self->unk2 - 4) << 1];
-    self->y_pos.i.hi += general_ring_offsets[((self->unk2 - 4) << 1) + 1];
+    self->x_pos.i.hi += self->unk15 != 0 ? -general_ring_offsets[self->unk2 - 4][0] : general_ring_offsets[self->unk2 - 4][0];
+    self->y_pos.i.hi += general_ring_offsets[self->unk2 - 4][1];
     set_animation(self, 0x23);
     angle = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
     set_velocity_from_angle(MOVING_OBJECT(self), angle);
@@ -664,7 +657,6 @@ void func_800AD6DC(struct ShotObj* self)
     self->unk42 &= 0x7FFF;
     func_8001540C(2, SATURN_SOUND(7, 0xE1), self);
 }
-#endif
 
 void general_ring_fly(struct ShotObj* self)
 {

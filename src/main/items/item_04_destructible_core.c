@@ -21,121 +21,12 @@ void destructible_core_finish(struct ItemObj*);
 void destructible_core_flash_palette(struct ItemObj*);
 #include "weapon_resources.h"
 
-#ifdef MMX4_SATURN
-struct Item04Data destructible_core_data = {
-    0x0CC0,
-    { 0x0168, 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 },
-    {
-        0x00,
-        0x00,
-        0x06,
-        0xC8,
-        0x01,
-        0x98,
-        0x0C,
-        0xB0,
-        0x0C,
-        0xC0,
-        0x0C,
-        0xB0,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x01,
-        0x00,
-        0x08,
-        0xC8,
-        0x01,
-        0x98,
-        0x0C,
-        0xB0,
-        0x0C,
-        0xC0,
-        0x0C,
-        0xB0,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x02,
-        0x00,
-        0x0A,
-        0xC8,
-        0x01,
-        0x98,
-        0x0C,
-        0xB0,
-        0x0C,
-        0xC0,
-        0x0C,
-        0xB0,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x03,
-        0x00,
-    },
+struct Item04Data destructible_core_data[4] = {
+    { 0x0CC0, 0x0168, { 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 }, 0, 0 },
+    { 0x06C8, 0x0198, { 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 }, 1, 0 },
+    { 0x08C8, 0x0198, { 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 }, 2, 0 },
+    { 0x0AC8, 0x0198, { 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 }, 3, 0 },
 };
-#else
-struct Item04Data destructible_core_data = {
-    0x0CC0,
-    { 0x0168, 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 },
-    {
-        0,
-        0,
-        0xC8,
-        6,
-        0x98,
-        1,
-        0xB0,
-        0xC,
-        0xC0,
-        0xC,
-        0xB0,
-        0xC,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0xC8,
-        8,
-        0x98,
-        1,
-        0xB0,
-        0xC,
-        0xC0,
-        0xC,
-        0xB0,
-        0xC,
-        0,
-        0,
-        0,
-        0,
-        2,
-        0,
-        0xC8,
-        0xA,
-        0x98,
-        1,
-        0xB0,
-        0xC,
-        0xC0,
-        0xC,
-        0xB0,
-        0xC,
-        0,
-        0,
-        0,
-        0,
-        3,
-        0,
-    },
-};
-#endif
 
 u8 destructible_core_boxes[4][4] = {
     { 0xE8, 0xA8, 0x18, 0xA0 },
@@ -158,13 +49,10 @@ void destructible_core_update(struct ItemObj* arg0)
 extern u32* dragon_rubble_animations[14];
 extern struct Unk_unk68 D_80108504[];
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_04_destructible_core", func_800C0864);
-#else
 void func_800C0864(struct ItemObj* arg0)
 {
     if (engine_obj.checkpoint >= 2 && arg0->unk2 == 0) {
-        apply_tile_effect(destructible_core_data.object_ids[0], 0, 0);
+        apply_tile_effect(destructible_core_data[0].object_id, 0, 0);
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
@@ -178,8 +66,8 @@ void func_800C0864(struct ItemObj* arg0)
     arg0->unk42 = OBJECT_CLUT(0x78C0);
     arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(6));
     arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 6);
-    arg0->x_pos.i.hi = ((u16*)((u8*)&destructible_core_data + (arg0->unk2 << 4)))[0];
-    arg0->y_pos.i.hi = ((u16*)((u8*)&destructible_core_data + (arg0->unk2 << 4)))[1];
+    arg0->x_pos.i.hi = destructible_core_data[arg0->unk2].x;
+    arg0->y_pos.i.hi = destructible_core_data[arg0->unk2].y;
     arg0->unk58 = (const u8*)D_80108504;
     if (arg0->unk2 != 0) {
         arg0->unk5C = 0x20;
@@ -196,7 +84,6 @@ void func_800C0864(struct ItemObj* arg0)
     arg0->tail_ext.unk1.unk84.previous_value = arg0->unk5C;
     arg0->tail_ext.unk1.unk88 = 0;
 }
-#endif
 
 void destructible_core_main(struct ItemObj* arg0)
 {
@@ -227,7 +114,7 @@ void destructible_core_main(struct ItemObj* arg0)
     }
 
     if (temp_s1 < 0) {
-        apply_tile_effect(destructible_core_data.object_ids[arg0->unk2 * 0x10], 0, 0);
+        apply_tile_effect(destructible_core_data[arg0->unk2].object_id, 0, 0);
         switch (arg0->unk2) {
         case 0:
             engine_obj.character_state.bytes[0] = 1;

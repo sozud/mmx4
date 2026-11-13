@@ -150,15 +150,11 @@ void func_80066F1C(struct MainObj* self)
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", train_boss_armor_smoke);
-#else
 void train_boss_armor_smoke(struct MainObj* self)
 {
     s32 tableIndex;
     s16 x;
     s16 y;
-    s32 frameArea[2];
 
     if (--self->unk7C == 0) {
         self->state = 3;
@@ -167,14 +163,13 @@ void train_boss_armor_smoke(struct MainObj* self)
 
     if (--self->unk7E == 0) {
         tableIndex = self->unk2;
-        y = (u16)((struct BaseObj*)self->ext.main_47.train_boss)->x_pos.i.hi + train_boss_armor_smoke_offsets[tableIndex][0];
-        x = (u16)self->y_pos.i.hi + train_boss_armor_smoke_offsets[tableIndex][1];
+        y = (u16)((struct BaseObj*)self->ext.main_47.train_boss)->x_pos.i.hi + train_boss_armor_smoke_offsets[0][tableIndex * 2];
+        x = (u16)self->y_pos.i.hi + train_boss_armor_smoke_offsets[0][tableIndex * 2 + 1];
         func_800B10E4(0x11, (s16)(y - 6), (s16)(x - 6),
             (s16)(y + 6), (s16)(x + 6), 1);
         self->unk7E = 10;
     }
 }
-#endif
 
 void train_boss_armor_clear(struct MainObj* self)
 {

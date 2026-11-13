@@ -7,7 +7,8 @@ struct Item03StageEntry {
     u16 velocity;
     u16 right;
     u16 trigger_x;
-    u16 object_id;
+    u8 frame_index;
+    u8 pad;
     s16 width;
     s16 height;
 };

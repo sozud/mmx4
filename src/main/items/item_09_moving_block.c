@@ -59,9 +59,6 @@ void func_800C229C(struct ItemObj* self);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_09_moving_block", func_800C229C);
-#else
 void func_800C229C(struct ItemObj* self)
 {
     s32 velocity;
@@ -101,7 +98,6 @@ void func_800C229C(struct ItemObj* self)
     }
     collide_with_players(PLAYER_OBJECT(self));
 }
-#endif
 
 void moving_block_despawn(struct ItemObj* arg0)
 {

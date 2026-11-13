@@ -119,9 +119,6 @@ void func_80029E1C(struct GameInfo* arg0)
     D_8013B7D0++;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002A098);
-#else
 void func_8002A098(struct GameInfo* info)
 {
     u8 index;
@@ -179,7 +176,6 @@ void func_8002A098(struct GameInfo* info)
         }
     }
 }
-#endif
 
 void func_8002A394(struct GameInfo* arg0)
 {

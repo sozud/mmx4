@@ -19,7 +19,7 @@ void grenade_idle(struct ShotObj* arg0);
 #include "weapon_resources.h"
 
 extern u8 grenade_hit_box[4];
-extern s8 grenade_spawn_offsets[8];
+extern s8 grenade_spawn_offsets[4][2];
 extern u8 grenade_terrain_box[4];
 
 void grenade_update(struct ShotObj* self)
@@ -33,16 +33,14 @@ void grenade_update(struct ShotObj* self)
 void func_8009EBA8(struct ShotObj* self);
 extern u8 grenade_hit_box[4];
 extern u8 grenade_terrain_box[4];
-extern s8 grenade_spawn_offsets[8];
+extern s8 grenade_spawn_offsets[4][2];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_25_grenade", func_8009EBA8);
-#else
 void func_8009EBA8(struct ShotObj* self)
 {
     s32 velocity;
     s32 x;
+    s32 pos;
 
     self->on_screen = 1;
     self->state = (u8)self->state + 1;
@@ -74,20 +72,19 @@ void func_8009EBA8(struct ShotObj* self)
 
     x = self->x_pos.i.hi;
     if (self->unk15 != 0) {
-        x += (s8)grenade_spawn_offsets[((u8)self->unk2 & 0xF) << 1];
+        pos = x + grenade_spawn_offsets[(u8)self->unk2 & 0xF][0];
     } else {
-        x -= (s8)grenade_spawn_offsets[((u8)self->unk2 & 0xF) << 1];
+        pos = x - grenade_spawn_offsets[(u8)self->unk2 & 0xF][0];
     }
-    self->x_pos.i.hi = x;
+    self->x_pos.i.hi = pos;
 
-    self->y_pos.u.hi += (s8)grenade_spawn_offsets[(((u8)self->unk2 & 0xF) << 1) + 1];
+    self->y_pos.u.hi += grenade_spawn_offsets[(u8)self->unk2 & 0xF][1];
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk68 = (struct Unk_unk68*)grenade_terrain_box;
     self->unk54 = grenade_hit_box;
     self->unk50.data = grenade_hit_box;
     self->unk67 = 0;
 }
-#endif
 
 void grenade_fly(struct ShotObj* self)
 {
@@ -127,7 +124,7 @@ u8 grenade_hit_box[4] = { 0xF9, 0xF9, 0x0C, 0x0C };
 
 u8 grenade_terrain_box[4] = { 0, 0, 4, 4 };
 
-s8 grenade_spawn_offsets[8] = { 0x21, -0x2A, 0x30, -0x15, 0x28, 7, 0, 0 };
+s8 grenade_spawn_offsets[4][2] = { { 0x21, -0x2A }, { 0x30, -0x15 }, { 0x28, 7 }, { 0, 0 } };
 
 void (*grenade_state_funcs[])(struct ShotObj*) = {
     func_8009EBA8,

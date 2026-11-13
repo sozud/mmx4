@@ -31,9 +31,6 @@ void func_800CA228(struct MiscObj* self);
 void func_800CA40C(struct MiscObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_12_stage_icon", func_800CA228);
-#else
 void func_800CA228(struct MiscObj* self)
 {
     s32 index;
@@ -78,7 +75,6 @@ void func_800CA228(struct MiscObj* self)
     }
     self->unk7 = 0;
 }
-#endif
 
 void stage_icon_highlight(struct MiscObj* self)
 {
@@ -92,9 +88,6 @@ void stage_icon_highlight(struct MiscObj* self)
 }
 
 // stage_icon_follow_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_12_stage_icon", func_800CA40C);
-#else
 void func_800CA40C(struct MiscObj* self)
 {
     if (engine_obj.unk3 == (self->unk2 | 0x80)) {
@@ -104,7 +97,6 @@ void func_800CA40C(struct MiscObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void stage_icon_follow(struct MiscObj* self)
 {

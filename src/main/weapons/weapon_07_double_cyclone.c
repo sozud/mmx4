@@ -68,9 +68,6 @@ void double_cyclone_update(struct WeaponObj* arg0)
 
 // double_cyclone_init
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80096EA4);
-#else
 void func_80096EA4(struct WeaponObj* arg0)
 {
     struct Weapon7Ext* ext = &arg0->ext.weapon_7;
@@ -83,8 +80,8 @@ void func_80096EA4(struct WeaponObj* arg0)
     arg0->unk50 = double_cyclone_hit_box;
     arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[8];
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x10];
-    arg0->unk16 = 1;
     arg0->animation_table = D_8011C0F0;
+    arg0->unk16 = 1;
     arg0->unk42 = WEAPON_PALETTE_1;
     dx = double_cyclone_spawn_offsets[arg0->unk2].x;
     dy = double_cyclone_spawn_offsets[arg0->unk2].y;
@@ -120,7 +117,6 @@ void func_80096EA4(struct WeaponObj* arg0)
     arg0->state++;
     double_cyclone_draw(arg0);
 }
-#endif
 
 void double_cyclone_main(struct WeaponObj* arg0)
 {
@@ -261,9 +257,6 @@ void double_cyclone_charged_update(struct WeaponObj* arg0)
 }
 
 // double_cyclone_charged_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097430);
-#else
 void func_80097430(struct WeaponObj* arg0)
 {
     struct Weapon16Ext* ext = &arg0->ext.weapon_16;
@@ -315,7 +308,6 @@ void func_80097430(struct WeaponObj* arg0)
     double_cyclone_charged_draw(arg0);
     update_on_screen(BASE_OBJECT(arg0), 0x18, 0x30);
 }
-#endif
 
 void double_cyclone_charged_main(struct WeaponObj* arg0)
 {
@@ -337,22 +329,20 @@ void double_cyclone_charged_main(struct WeaponObj* arg0)
 }
 
 // double_cyclone_charged_gather
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097670);
-#else
 void func_80097670(struct WeaponObj* arg0)
 {
-    if (arg0->ext.weapon_16.delay == 0) {
+    struct Weapon16Ext* ext = &arg0->ext.weapon_16;
+
+    if (ext->delay == 0) {
         arg0->on_screen = 1;
         arg0->unk50 = double_cyclone_charged_hit_box;
         arg0->unk64 = 1;
         arg0->unk5++;
         update_on_screen(BASE_OBJECT(arg0), 0x18, 0x30);
     } else {
-        arg0->ext.weapon_16.delay--;
+        ext->delay--;
     }
 }
-#endif
 
 void double_cyclone_charged_fly(struct WeaponObj* arg0)
 {

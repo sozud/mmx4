@@ -164,9 +164,6 @@ void func_800AB050(struct ShotObj* self);
 void func_800AB170(struct ShotObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AAC98);
-#else
 void func_800AAC98(struct ShotObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk7C;
@@ -178,10 +175,10 @@ void func_800AAC98(struct ShotObj* self)
     self->unk42 = (self->unk2 + (parent->unk42 + 4)) & 0x7FFF;
     self->unk15 = 0;
     self->bg_offset = parent->bg_offset;
+    self->state++;
     self->x_pos.i.hi = 0;
     self->y_pos.i.hi = 0;
     self->unk16 = 0;
-    self->state++;
     self->unk5 = 3;
     self->unk58.animation_steps = D_80105FF0;
     self->unk54 = (u8*)sigma_head_boxes;
@@ -189,7 +186,6 @@ void func_800AAC98(struct ShotObj* self)
     self->unk5C = 0x30;
     self->unk60 = 9;
 }
-#endif
 
 void sigma_head_resume(struct ShotObj* self)
 {
@@ -252,9 +248,6 @@ void sigma_head_move_to_formation(struct ShotObj* self)
 }
 
 // sigma_head_wait
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AB050);
-#else
 void func_800AB050(struct ShotObj* self)
 {
     struct MainObj* owner = (struct MainObj*)self->unk7C;
@@ -287,7 +280,6 @@ void func_800AB050(struct ShotObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
-#endif
 
 void sigma_head_fire_wall_start(struct ShotObj* self)
 {
@@ -298,9 +290,6 @@ void sigma_head_fire_wall_start(struct ShotObj* self)
 }
 
 // sigma_head_fire_wall_track
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AB170);
-#else
 void func_800AB170(struct ShotObj* self)
 {
     s32 y;
@@ -320,7 +309,6 @@ void func_800AB170(struct ShotObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 void sigma_head_fire_wall_shoot(struct ShotObj* self)
 {

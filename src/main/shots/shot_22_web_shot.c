@@ -77,9 +77,6 @@ void web_shot_fly(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_22_web_shot", web_shot_home);
-#else
 void web_shot_home(struct ShotObj* self)
 {
     s32 target;
@@ -95,7 +92,15 @@ void web_shot_home(struct ShotObj* self)
             target = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
             direction = self->unk84.value;
             if ((direction - (target & 0xFF)) & 0x1F) {
-                self->unk84.value = (u32)((target - direction) & 0x1F) < 0x10 ? direction + 1 : direction - 1;
+#ifdef VERSION_EU
+                if ((u32)((target - self->unk84.bytes[0]) & 0x1F) < 0x10) {
+#else
+                if ((u32)((target - direction) & 0x1F) < 0x10) {
+#endif
+                    self->unk84.value = direction + 1;
+                } else {
+                    self->unk84.value = direction - 1;
+                }
                 self->unk84.value &= 0x1F;
                 set_velocity_from_angle(MOVING_OBJECT(self), self->unk84.value);
                 self->x_vel.val *= 3;
@@ -107,7 +112,6 @@ void web_shot_home(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 }
-#endif
 
 void web_shot_pin_player(struct ShotObj* self)
 {

@@ -53,9 +53,6 @@ void sigma_sequencer_fx_wait_player(struct EffectObj* self)
 void func_800BE364(struct EffectObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", func_800BE364);
-#else
 void func_800BE364(struct EffectObj* self)
 {
     struct MainObj* owner;
@@ -64,14 +61,14 @@ void func_800BE364(struct EffectObj* self)
 
     count = 0;
     for (i = 0; i < 3; i++) {
-        if (self->ext.effect_42.owner.main->ext.main_73_parts.parts[i]->unk5 == 3)
+        if (((struct Main73PartsExt*)&self->ext.effect_42.owner.main->ext)->parts[i]->unk5 == 3)
             count++;
     }
     if (count == 3) {
         count = 0;
         owner = self->ext.effect_42.owner.main;
         for (i = 0; i < 3; i++) {
-            if (owner->ext.main_73_parts.parts[i]->unk2 == owner->ext.main_73_parts.object_id)
+            if (((struct Main73PartsExt*)&owner->ext)->parts[i]->unk2 == ((struct Main73PartsExt*)&owner->ext)->object_id)
                 count = 1;
         }
         if (count != 0) {
@@ -84,11 +81,7 @@ void func_800BE364(struct EffectObj* self)
         }
     }
 }
-#endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", sigma_sequencer_fx_wait_parts);
-#else
 void sigma_sequencer_fx_wait_parts(struct EffectObj* self)
 {
     s32 count;
@@ -99,7 +92,7 @@ void sigma_sequencer_fx_wait_parts(struct EffectObj* self)
     i = 0;
     match = 3;
     do {
-        if (self->ext.effect_42.owner.main->ext.main_73_parts.parts[i]->unk5 == match) {
+        if (((struct Main73PartsExt*)&self->ext.effect_42.owner.main->ext)->parts[i]->unk5 == match) {
             count += 1;
         }
         i += 1;
@@ -110,7 +103,6 @@ void sigma_sequencer_fx_wait_parts(struct EffectObj* self)
         self->ext.effect_42.timer = 0xC8;
     }
 }
-#endif
 
 void sigma_sequencer_fx_hold(struct EffectObj* self)
 {

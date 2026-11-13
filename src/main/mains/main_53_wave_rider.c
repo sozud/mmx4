@@ -54,9 +54,6 @@ void wave_rider_move(struct MainObj*);
 s32 wave_rider_check_camera(struct MainObj*);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006AF70);
-#else
 void func_8006AF70(struct MainObj* arg0)
 {
     struct ShotObj* shot;
@@ -120,7 +117,6 @@ void func_8006AF70(struct MainObj* arg0)
         visual->unk50 = PLAYER_OBJECT(arg0);
     }
 }
-#endif
 
 void wave_rider_wait_offscreen(struct MainObj* self)
 {
@@ -170,9 +166,6 @@ scan:
 }
 
 // wave_rider_float
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B2A4);
-#else
 void func_8006B2A4(struct MainObj* arg0)
 {
 
@@ -208,12 +201,8 @@ void func_8006B2A4(struct MainObj* arg0)
     }
     arg0->ext.main_53.unk80 = arg0->ext.main_53.unk81;
 }
-#endif
 
 // wave_rider_bob
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B398);
-#else
 void func_8006B398(struct MainObj* arg0)
 {
     s32 tile;
@@ -253,7 +242,6 @@ void func_8006B398(struct MainObj* arg0)
     else
         func_800B10E4(2, (s16)(arg0->x_pos.i.hi + 0x18), (s16)(arg0->y_pos.i.hi + 9), (s16)(arg0->x_pos.i.hi - 0xA), (s16)(arg0->y_pos.i.hi + 0x19), 0x10);
 }
-#endif
 
 void wave_rider_move(struct MainObj* self)
 {
@@ -311,9 +299,6 @@ void func_8006B5F8(struct MainObj* arg0)
 }
 
 // wave_rider_ride_back
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B6B0);
-#else
 void func_8006B6B0(struct MainObj* arg0)
 {
     u8 tile;
@@ -354,7 +339,6 @@ void func_8006B6B0(struct MainObj* arg0)
     arg0->air_state = 1;
     update_on_screen(BASE_OBJECT(arg0), 0x30, 0x20);
 }
-#endif
 
 void wave_rider_catch_up(struct MainObj* self)
 {

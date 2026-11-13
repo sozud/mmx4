@@ -27,9 +27,6 @@ void func_800C52CC(struct ItemObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_21_hopper_switch", func_800C52CC);
-#else
 void func_800C52CC(struct ItemObj* self)
 {
     u8 index;
@@ -45,7 +42,6 @@ void func_800C52CC(struct ItemObj* self)
     self->unk68 = (struct Unk_unk68*)hopper_switch_box;
     self->state = 1;
 }
-#endif
 
 s32 hopper_switch_hopper_touching(struct ItemObj* arg0)
 {

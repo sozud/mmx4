@@ -10,6 +10,6 @@ void ice_wall_break(struct MainObj*);
 
 extern u8 ice_wall_debris[];
 
-void func_800583B0(struct MainObj*, s16, s16, s32);
+void func_800583B0(struct MainObj*, arg_s16, arg_s16, arg_u8);
 
 #endif

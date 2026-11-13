@@ -36,7 +36,7 @@ void func_800CFEE0(struct MiscObj* self);
 void func_800D0118(struct MiscObj* self);
 #endif
 
-#if (defined(VERSION_EU) && !defined(MMX4_PC)) || defined(MMX4_SATURN)
+#if defined(MMX4_SATURN)
 INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800CFEE0);
 #else
 void func_800CFEE0(struct MiscObj* self)
@@ -96,8 +96,20 @@ void func_800CFEE0(struct MiscObj* self)
             self->x_pos.i.hi = 0x50;
 #endif
             break;
+#ifdef VERSION_EU
+        case 1:
+            self->x_pos.i.hi = 0x28;
+            if (main_bss_state.transition.selection != 0) {
+                self->y_pos.i.hi = 0x98;
+            } else {
+                self->y_pos.i.hi = 0x78;
+            }
+            break;
+        case 3:
+#else
         case 1:
         case 3:
+#endif
             self->x_pos.i.hi = 0x28;
             self->y_pos.i.hi = 0x78;
             break;
@@ -123,7 +135,7 @@ void func_800CFEE0(struct MiscObj* self)
 #endif
 
 // menu_icon_animate
-#if (defined(VERSION_EU) || defined(VERSION_JP)) && !defined(MMX4_PC) && !defined(MMX4_SATURN)
+#if defined(VERSION_JP) && !defined(MMX4_PC) && !defined(MMX4_SATURN)
 INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800D0118);
 #else
 void func_800D0118(struct MiscObj* self)
@@ -180,14 +192,14 @@ void func_800D0118(struct MiscObj* self)
                 }
                 break;
             case 4:
-                if (main_bss_state.transition.selection != 0)
-                    self->y_pos.i.hi = 0xB8;
-                else
+                if (main_bss_state.transition.selection == 0)
 #ifdef VERSION_JP
                     self->y_pos.i.hi = 0x98;
 #else
                     self->y_pos.i.hi = 0xA8;
 #endif
+                else
+                    self->y_pos.i.hi = 0xB8;
                 break;
             }
             self->ext.misc_42.unk57 = main_bss_state.transition.selection;

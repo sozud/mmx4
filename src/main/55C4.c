@@ -547,15 +547,57 @@ void func_800153D4(u8 arg0)
     arg0 ? SsSetStereo() : SsSetMono();
 }
 
+extern u32* D_80137E08;
+s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
 // play_sound
+#ifndef MMX4_PC
+s32 func_800154E8(s32 arg0, s32 arg1, void* source);
+// clang-format off
+s32 func_8001540C(arg0, arg1, arg2)
+    u8 arg0;
+    u8 arg1;
+    void* arg2;
+// clang-format on
+{
+    u8 group;
+    s8 ret;
+    u8 type;
+    u8 count;
+    u8 id;
+    u8 cmd;
+
+    if (D_8013E198[arg0 & 0x7F] == -1) {
+        return -1;
+    }
+    group = arg0 & 0xF;
+    count = ((u32)D_80141EE8[group] - (u32)D_80141F50[group]) >> 2;
+    if (count - 1 < arg1) {
+        return -2;
+    }
+    D_80137E08 = (u32*)D_80141F50[group] + arg1;
+    if (*D_80137E08 == 0) {
+        return -5;
+    }
+    cmd = *(u8*)D_80137E08;
+    type = D_800F164C[cmd >> 6];
+    id = cmd & 0x3F;
+    if (type != 0) {
+#ifdef VERSION_EU
+        ret = func_800157AC(type, id, arg2);
+#else
+        ret = func_800157AC(type, arg1, arg2);
+#endif
+    } else {
+        ret = func_800154E8(arg0, id, arg2);
+    }
+    return ret;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/55C4", func_8001540C);
+#endif
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_800154E8);
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/55C4", func_800157AC);
-#else
-extern u32* D_80137E08;
 s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source)
 {
     s32 access;
@@ -589,7 +631,6 @@ s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source)
     }
     return 0;
 }
-#endif
 void stop_sound(u8 arg0, u8 arg1)
 {
     u8* entry;
@@ -697,13 +738,11 @@ extern u8 D_800F1654[];
 
 extern union SepBundle D_801459C8;
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/55C4", func_80015C10);
-#else
 void func_80015C10(void)
 {
     u8 var_s1;
     s8 temp_a0;
+    s32* offset;
 
     for (var_s1 = 0; var_s1 < 4; var_s1++) {
         temp_a0 = D_8013E1C8[var_s1];
@@ -721,13 +760,13 @@ void func_80015C10(void)
         SsSepSetVol(D_8013E1C8[0], var_s1, 0x7F, 0x7F);
     }
 
-    D_8013E1C8[1] = SsSepOpenJ((u_long*)&D_801459C8.raw[D_801459C8.offsets[1]], D_8013E198[1], 2);
+    offset = &D_801459C8.offsets[1];
+    D_8013E1C8[1] = SsSepOpenJ((u_long*)&D_801459C8.raw[*offset], D_8013E198[1], 2);
 
     for (var_s1 = 0; var_s1 < 2; var_s1++) {
         SsSepSetVol(D_8013E1C8[1], var_s1, 0x7F, 0x7F);
     }
 }
-#endif
 
 #endif
 
@@ -923,9 +962,6 @@ void func_800160F4(void)
 
 extern DR_MODE D_80139250[2];
 extern SPRT D_80139268[2][17];
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/55C4", func_80016124);
-#else
 void func_80016124(void)
 {
     SPRT* sprite = D_80139268[SP_DRAW_BUFFER];
@@ -966,7 +1002,6 @@ void func_80016124(void)
     SetDrawMode(draw_mode, 0, 0, GetTPage(0, 0, 0x380, 0x100), 0);
     addPrim(&cur_draw_info->ordering_table.ui, draw_mode);
 }
-#endif
 
 void func_80016334(void)
 {
@@ -1218,9 +1253,6 @@ void func_8001663C(u8 selection, u8 volume)
     D_80139530 = 7;
 }
 
-#ifdef VERSION_EU
-INCLUDE_RODATA("main/nonmatchings/55C4", D_80010050);
-#endif
 void func_80016F0C();
 
 extern s32 D_80139530;
@@ -1546,15 +1578,12 @@ void func_80016FB4(s32 arg0)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/55C4", decompress_gfx);
-#else
 void decompress_gfx(u16* src, u16* dest)
 {
     s32 var_a3;
     u32 upper_bits;
-    u16 var_t0;
-    u16 var_t1;
+    u32 var_t0;
+    u32 var_t1;
     u32 var_v1;
     s32 arg2;
     u16* copy_src;
@@ -1563,9 +1592,8 @@ start:
 
     var_t0 = 0x8000;
     for (var_a3 = 0x10; var_a3 != 0; var_t0 >>= 1, var_a3--) {
-        if (!(var_t1 & var_t0)) {
-            // v1 assignment probably fake, found by permuter
-            *(dest++) = (var_v1 = *(src++));
+        if (!(var_t0 & var_t1)) {
+            *(dest++) = *(src++);
             continue;
         }
         arg2 = *(src++);
@@ -1597,7 +1625,6 @@ start:
 
     goto start;
 }
-#endif
 
 extern RECT D_800F1AD0;
 
@@ -1615,9 +1642,6 @@ extern u16* D_80139578;
 extern SPRT_16* D_8013957C;
 extern DR_TPAGE D_80139580[2];
 void func_80017268(s16 x_start);
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/55C4", func_80017100);
-#else
 void func_80017100(void)
 {
     DR_TPAGE* page;
@@ -1626,21 +1650,21 @@ void func_80017100(void)
     D_8013957C = D_8015D9D0[SP_DRAW_BUFFER].sprites;
     page = &D_80139580[SP_DRAW_BUFFER];
     setlen(page, 1);
+#ifdef VERSION_EU
+    page->code[0] = 0xE100001D;
+#else
     page->code[0] = (GetGraphType() == 1 || GetGraphType() == 2)
         ? ((GetGraphType() == 1 || GetGraphType() == 2) ? 0xE100002D : 0xE100001D)
         : ((GetGraphType() == 1 || GetGraphType() == 2) ? 0xE100002D : 0xE100001D);
+#endif
     setaddr(page, D_8013957C);
     func_80017268(0);
     func_80017268(0x100);
     setaddr(D_8013957C - 1, getaddr(&cur_draw_info->ordering_table.ui));
     setaddr(&cur_draw_info->ordering_table.ui, page);
 }
-#endif
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80017268);
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/55C4", func_80017340);
-#else
 void func_80017340(void)
 {
     u8 start;
@@ -1694,11 +1718,10 @@ void func_80017340(void)
     func_800175AC(0x20);
     if (engine_obj.stage >= 1 && engine_obj.stage <= 8) {
         if (engine_obj.cur_character == CHARACTER_X) {
-            var_v0 = bar_object.options.items[engine_obj.stage + 1];
-        } else {
-            var_v0 = bar_object.options.items[D_800F1C0F[engine_obj.stage]];
-        }
-        if (var_v0 != 0) {
+            if (bar_object.options.items[engine_obj.stage + 1] != 0) {
+                func_800175AC(0x21);
+            }
+        } else if (bar_object.options.items[D_800F1C10[engine_obj.stage - 1]] != 0) {
             func_800175AC(0x21);
         }
     }
@@ -1706,9 +1729,105 @@ void func_80017340(void)
     func_800179BC();
     func_80017F2C();
 }
-#endif
 
-INCLUDE_ASM("main/nonmatchings/55C4", func_800175AC);
+#if !defined(MMX4_PC)
+static inline u16 pause_menu_clut(u8 value)
+{
+    return (value & 0xF) | (((value >> 4) + 0x1E0) << 6);
+}
+
+void func_800175AC(u8 index)
+{
+    struct HudLayoutData* layout = &D_800F1AD8[index];
+    s16 x = layout->x;
+    s16 y = layout->y;
+    u8* archive;
+    u16* frame;
+    u8* pieces;
+    u32 count;
+    u16 clut;
+    SPRT_16* slot;
+    SPRT_16* sprite;
+    DR_TPAGE* page;
+    u16 texture;
+    u16 base;
+    u8 code;
+    u8 flags;
+    s16 sx;
+    s16 sy;
+    u8 v;
+
+    if (index == 0x20) {
+        y = 0xD8;
+        x = ((s8)engine_obj.max_hp << 1) + 0x80;
+    }
+    archive = SP_TITLE_FRAMES;
+    if (index != 0x1F)
+        frame = (u16*)(archive + layout->tile * 4);
+    else
+        frame = (u16*)(archive + (layout->tile + engine_obj.player_lives) * 4);
+    if (index == 0x26 && bar_object.options.fields.unk25 != 0)
+        frame = (u16*)(archive + (layout->tile * 4 + 0x28));
+    count = frame[0];
+    pieces = archive + frame[1] * 4;
+    base = 0x1D60;
+    if (bar_object.unk14 == layout->character) {
+        if (main_bss_state.frame_counter & 0x10)
+            clut = pause_menu_clut(layout->alternate_clut);
+        else
+            clut = pause_menu_clut(layout->clut);
+    } else if (engine_obj.cur_character == CHARACTER_X) {
+        clut = pause_menu_clut(layout->clut);
+        if (g_Player.weapon + 1 == layout->character)
+            clut = pause_menu_clut(layout->alternate_clut);
+        else if (g_Player.weapon == 0 && layout->character == 0)
+            clut = pause_menu_clut(layout->alternate_clut);
+    } else {
+        if (index < 0x21)
+            clut = pause_menu_clut(layout->alternate_clut);
+        else
+            clut = pause_menu_clut(layout->clut);
+    }
+    if (engine_obj.cur_character == CHARACTER_X && layout->character == 1) {
+        if (g_Player.weapon_energy[0] >= 0x30)
+            clut = pause_menu_clut(layout->alternate_clut);
+        else
+            clut = pause_menu_clut(layout->clut);
+    }
+    code = 0x7D;
+    slot = SP_PRIM_CURSOR;
+    page = SP_DRAW_MODE_CURSOR;
+    for (; count != 0; count--) {
+        flags = pieces[0];
+        sx = (s8)pieces[2] + x;
+        sy = y + (s8)pieces[3];
+        texture = base + (pieces[1] | ((flags & 3) << 8));
+        sprite = slot;
+        setlen(sprite, 3);
+        sprite->code = code;
+        sprite->clut = clut + ((flags & 0xC) >> 2);
+        sprite->x0 = sx;
+        sprite->y0 = sy;
+        v = texture & 0xF0;
+        sprite->u0 = texture << 4;
+        sprite->v0 = v;
+        BG_DRAW_TPAGE(page, (texture >> 8) | 0x20);
+        setaddr(page, sprite);
+        setaddr(sprite, page + 1);
+        page++;
+        slot = (SPRT_16*)((POLY_FT4*)slot + 1);
+        pieces += 4;
+    }
+    SP_PRIM_CURSOR = slot;
+    {
+        u32 buffer = SP_DRAW_BUFFER;
+        u8 ordering = 5;
+        setaddr(D_8013BC40[buffer][ordering >> 4][ordering & 0xF], SP_DRAW_MODE_CURSOR);
+        D_8013BC40[buffer][ordering >> 4][ordering & 0xF] = (P_TAG*)((POLY_FT4*)slot - 1);
+    }
+    SP_DRAW_MODE_CURSOR = page;
+}
+#endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 static const s16* pause_bar_geometry(u32 index)
@@ -2019,15 +2138,65 @@ void func_80018000(arg_u8 temp)
 
 // capcom logo playing code
 #ifndef SKIP_MDEC
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/55C4", func_800182E8);
-#else
 #ifdef VERSION_JP
 #define CAPCOM_LOGO_FILE 0x89
 #else
 #define CAPCOM_LOGO_FILE 0x8A
 #endif
 extern s32 D_80139594;
+#ifdef VERSION_EU
+// clang-format off
+void func_800182E8(movie)
+    u8 movie;
+// clang-format on
+{
+    RECT rect = { 0, 0, 0x1E0, 0xF0 };
+    s32 status;
+    s32 finished;
+
+    D_80139598 = 0x80178000;
+    D_8013959C = 0x8017C000;
+    D_801395A0 = 0x80189000;
+    D_801395A4 = 0x80196000;
+    Set24BitDisp(0x140, 0xF0);
+    func_80018FD0(0x80);
+    func_80019058(1);
+    ((u8*)D_80175EE8)[1] = 1;
+    status = func_80018AD0(D_800F1D04[movie].file_id, 1, D_800F1D04[movie].arg2,
+        D_801395A4, D_800F1D04[movie].arg8, D_8013959C, D_801395A0,
+        D_80139598, 1, 1);
+    D_80139594 = 0;
+    if (status == 0) {
+        do {
+            D_80139594 ^= 1;
+            finished = func_80018B88(0, D_80139594 != 0 ? 0xF0 : 0);
+            func_80018EEC();
+            VSync(0);
+            func_80012328();
+            if (controller_input.pressed & D_800F1D04[movie].skip_button)
+                finished = 1;
+            PutDispEnv(&draw_infos[D_80139594].dispenv);
+        } while (finished == 0);
+    }
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = 0x1E0;
+    rect.h = 0x1E0;
+    ClearImage(&rect, 0U, 0U, 0U);
+    DrawSync(0);
+    func_80018E50();
+    SetDispMask(0);
+    controller_input.pressed = 0;
+    controller_input.held = 0;
+    draw_infos[0].dispenv = old_dispenv[0];
+    draw_infos[1].dispenv = old_dispenv[1];
+    D_80139594 ^= 1;
+    PutDispEnv(&draw_infos[D_80139594].dispenv);
+    DrawSync(0);
+    VSync(0);
+    DrawSync(0);
+}
+#else
 void func_800182E8(void)
 {
     RECT rect = { 0, 0, 0x1E0, 0xF0 };
@@ -2125,11 +2294,7 @@ void Set24BitDisp(s32 w, s32 h)
 #endif
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/55C4", func_80018788);
-#else
 extern u32* D_801395D4[];
-extern s32 D_801395D8;
 extern s32 D_801395DC;
 extern s32 D_801395E0;
 extern s32 D_801395EC;
@@ -2156,7 +2321,7 @@ s32 func_80018788(s32 pos, u32 channel, s32 arg2, u32* ring, u32 ring_size, u32*
     D_801441C0 = 0;
     D_80139610 = 0;
     D_801395D4[0] = dest;
-    D_801395D8 = arg6;
+    ((s32*)D_801395D4)[1] = arg6;
     D_801395DC = arg7;
     D_801395E4 = rgb24;
     D_801395E8 = rgb24;
@@ -2214,7 +2379,6 @@ s32 func_80018788(s32 pos, u32 channel, s32 arg2, u32* ring, u32 ring_size, u32*
     StFreeRing(addr);
     return 0;
 }
-#endif
 
 s32 func_80018AD0(
     s32 arg0,
@@ -2243,7 +2407,64 @@ s32 func_80018AD0(
         arg9);
 }
 
-INCLUDE_ASM("main/nonmatchings/55C4", func_80018B88);
+extern s32 D_80139614;
+extern RECT D_80139618;
+extern u32* D_80139620;
+extern s32 D_80139628;
+extern u32 D_8013962C;
+extern u32 D_80139630;
+extern u32 D_80139638;
+extern u32 D_8013963C;
+
+s32 func_80018B88(s32 x, s32 y)
+{
+    u32* addr;
+    StHEADER* header;
+    u32 i;
+    u32 width;
+    s16 w;
+    s32 result;
+
+    i = 0;
+    while (StGetNext(&addr, &header) != 0) {
+        VSync(0);
+        if (++i >= 0x259)
+            return 1;
+    }
+    w = 0x10;
+    D_80139618.x = x;
+    D_80139618.y = y;
+    D_80139610--;
+    width = D_801395F0.width;
+    D_80139638 = width;
+    D_8013963C = D_801395F0.height;
+    D_801441C0 = D_801395F0.frameCount;
+    result = (u32)D_801395F0.frameCount >= (u32)D_801395E0;
+    if (D_801395E4 != 0)
+        w = 0x18;
+    D_80139618.w = w;
+    D_80139618.h = D_8013963C;
+    D_8013962C = 0;
+    D_80139630 = width >> 4;
+    D_80139620 = (u32*)D_801395DC;
+    D_80139628 = D_801395F0.height * 16 * (D_801395E4 ? 3 : 2) / 4;
+    if (D_80139614 == 0) {
+        movie_slice_offset = 0;
+    } else {
+        movie_slice_offset = D_8013963C * 16 * (D_801395E4 ? 3 : 2) / 4;
+    }
+    DecDCTReset(1);
+    DecDCTin(D_801395D4[D_801395EC], D_801395E4);
+    DecDCTout((u32*)D_801395DC, D_80139628);
+    D_801395EC = D_801395EC == 0;
+    D_801395F0 = *header;
+    D_801395F0.width = (D_801395F0.width + 8) / 16 * 16;
+    D_801395F0.height = (D_801395F0.height + 8) / 16 * 16;
+    DecDCTvlc(addr, D_801395D4[D_801395EC]);
+    StFreeRing(addr);
+    return result;
+}
+
 void func_80018E50(void)
 {
     u8 sp10 = 0x80;

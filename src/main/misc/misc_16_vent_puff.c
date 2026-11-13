@@ -55,9 +55,6 @@ void vent_puff_init(struct MiscObj* self)
 void func_800CACF0(struct MiscObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_16_vent_puff", func_800CACF0);
-#else
 void func_800CACF0(struct MiscObj* arg0)
 {
     s16 limit;
@@ -87,7 +84,6 @@ void func_800CACF0(struct MiscObj* arg0)
     if (arg0->ext.misc_16.timer & 1)
         is_on_screen(BASE_OBJECT(arg0));
 }
-#endif
 
 void vent_puff_despawn(struct MiscObj* self)
 {

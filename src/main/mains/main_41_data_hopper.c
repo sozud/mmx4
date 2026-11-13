@@ -34,11 +34,9 @@ void data_hopper_update(struct MainObj* self)
     data_hopper_state_funcs[self->state](self);
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", data_hopper_init);
-#else
 void data_hopper_init(struct MainObj* self)
 {
+    struct Main41Ext* ext;
     s8 mode = 2;
 
     self->state = 1;
@@ -63,14 +61,14 @@ void data_hopper_init(struct MainObj* self)
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->ext.main_41.unk84 = 0;
-    self->ext.main_41.unk83 = 0;
-    self->ext.main_41.unk82 = 0;
-    self->unk7E = 0xF0;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
+    ext = &self->ext.main_41;
+    ext->unk84 = 0;
+    ext->unk83 = 0;
+    self->ext.main_41.unk82 = 0;
+    self->unk7E = 0xF0;
 }
-#endif
 
 void data_hopper_spawn_item(struct MainObj* self)
 {
@@ -146,9 +144,6 @@ void func_80062AEC(struct MainObj*);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062650);
-#else
 void func_80062650(struct MainObj* self)
 {
     switch (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi,
@@ -176,7 +171,6 @@ void func_80062650(struct MainObj* self)
         break;
     }
 }
-#endif
 
 void data_hopper_land(struct MainObj* self)
 {
@@ -200,12 +194,9 @@ void data_hopper_land(struct MainObj* self)
 }
 
 // data_hopper_hop
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062778);
-#else
 void func_80062778(struct MainObj* self)
 {
-    s32 flags;
+    u8 flags;
     u8 direction;
 
     if (self->unk6 == 0) {
@@ -233,7 +224,7 @@ void func_80062778(struct MainObj* self)
     }
     if (flags & 3) {
         direction = self->unk15 != 0 ? 1 : 2;
-        if (direction & flags) {
+        if (flags & direction) {
         selected:
             self->unk5 = 2;
             self->unk6 = 0;
@@ -255,7 +246,6 @@ void func_80062778(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     self->ext.main_41.unk81 = self->ext.main_41.unk80;
 }
-#endif
 
 void data_hopper_blink(struct MainObj* self)
 {

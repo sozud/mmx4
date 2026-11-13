@@ -59,18 +59,15 @@ void func_800545EC(struct MainObj* arg0);
 void func_800548B8(struct MainObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800545EC);
-#else
 void func_800545EC(struct MainObj* arg0)
 {
     arg0->unk5 = 2;
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk15 = 0;
     arg0->animation_table = (const u8* const*)ice_block_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->collision_data = D_80106C74;
-    arg0->unk15 = 0;
     arg0->terrain_box = NULL;
     arg0->invincibility_timer = 0;
     arg0->hp = 9;
@@ -97,7 +94,6 @@ void func_800545EC(struct MainObj* arg0)
     set_animation(arg0, 0);
     update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
 }
-#endif
 
 void ice_block_start_idle(struct MainObj* self)
 {
@@ -119,10 +115,10 @@ void ice_block_main(struct MainObj* self)
         countdown = self->ext.main_20.unk81--;
         if (countdown != 1) {
             if (countdown == 2) {
-                func_800583B0(self, self->x_pos.i.hi, self->y_pos.i.hi - 0x10, 0);
+                func_800583B0(self, self->x_pos.i.hi, (s16)(self->y_pos.i.hi - 0x10), 0);
             }
         } else {
-            func_800583B0(self, self->x_pos.i.hi, self->y_pos.i.hi - 0x10, 5);
+            func_800583B0(self, self->x_pos.i.hi, (s16)(self->y_pos.i.hi - 0x10), 5);
             self->hp = 1;
         }
         self->ext.main_20.unk80 = self->hp;
@@ -143,9 +139,6 @@ void ice_block_main(struct MainObj* self)
 }
 
 // ice_block_break_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_20_ice_block", func_800548B8);
-#else
 void func_800548B8(struct MainObj* arg0)
 {
     struct WeaponObj* weapon;
@@ -215,7 +208,6 @@ void func_800548B8(struct MainObj* arg0)
     if (arg0->unk2 == 0)
         func_800C842C(0xC, ice_wall_debris, arg0, 0x1A, ice_wall_animations);
 }
-#endif
 
 void ice_block_break_crumble(struct MainObj* self)
 {

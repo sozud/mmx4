@@ -1162,17 +1162,99 @@ void func_8002509C(struct PlayerObj* arg0)
 #endif
 
 #ifndef MMX4_SATURN
+#if defined(VERSION_EU) || defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/14A60", func_80025188);
+#else
+void func_80025188(s32 slot, u8 index)
+{
+    u8* archive;
+    SPRT_16* sprite;
+    DR_TPAGE* mode;
+    u8* table;
+    u8* entry;
+    u8* pieces;
+    s32 count;
+    u16 clut;
+    u8 flags;
+    s16 x;
+    s16 y;
+    u8 low;
+    u32 texture;
+    s32 texture_index;
+    u16 tpage;
+    u8 u;
+
+    archive = (u8*)SP_SPRITE_FRAMES;
+    sprite = SP_BG_PRIM_CURSOR;
+    mode = SP_OT_CURSOR;
+    table = archive + *(s32*)(archive + 4);
+    entry = table + index * 4;
+    count = *(u16*)entry;
+    pieces = table + *(u16*)(entry + 2) * 4;
+    clut = D_800F30F4[slot].clut;
+    while (count != 0) {
+        flags = pieces[0];
+        x = D_800F30F4[slot].x + (s8)pieces[2];
+        y = D_800F30F4[slot].y + (s8)pieces[3];
+        low = pieces[1];
+        setlen(sprite, 3);
+        sprite->code = 0x7D;
+        sprite->x0 = x;
+        sprite->y0 = y;
+        texture = low | ((flags & 3) << 8);
+        texture_index = ((u16)(texture / 80) << 8) + texture % 80;
+        tpage = texture_index + 0x5B0;
+        u = tpage << 4;
+        sprite->v0 = tpage & 0xF0;
+        sprite->u0 = u;
+        sprite->clut = clut + ((flags & 0xC) >> 2);
+        BG_DRAW_TPAGE(mode, (u16)tpage >> 8);
+        setaddr(mode, sprite);
+        setaddr(sprite, mode + 1);
+        mode++;
+        sprite++;
+        pieces += 4;
+        count--;
+    }
+    SP_BG_PRIM_CURSOR = sprite;
+    addPrims(&cur_draw_info->ordering_table.unk3, SP_OT_CURSOR, sprite - 1);
+    SP_OT_CURSOR = mode;
+}
+#endif
 #endif
 
 #ifndef MMX4_SATURN
+#ifdef MMX4_PC
 INCLUDE_ASM("main/nonmatchings/14A60", func_800253F0);
-#endif
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-#ifndef MMX4_SATURN
-INCLUDE_ASM("main/nonmatchings/14A60", func_80025588);
-#endif
 #else
+void func_800253F0(struct MainObj* arg0, s32 gauge)
+{
+    struct MainObj* player = arg0;
+    s8 value = HP_VALUE(player->hp);
+    s8 target = gauge == 0 ? engine_obj.max_hp : 0x30;
+    s32 low = value < target / 3;
+    s16 x = D_800F3124[gauge].x;
+    u16 bottom = D_800F3124[gauge].bottom;
+
+    func_80025588(x, x + 5, bottom - value, bottom, low);
+    if (value == player->unk5D)
+        return;
+    if (player->unk5D < value) {
+        player->unk5D = value;
+        return;
+    }
+    if (HP_DAMAGE_FLAG(player->hp))
+        player->drain_hold_timer = 0x10;
+    func_80025588(x, x + 5, bottom - (s8)player->unk5D, bottom - value, 2);
+    if (player->drain_hold_timer != 0) {
+        player->drain_hold_timer--;
+        return;
+    }
+    if (!(main_bss_state.frame_counter & 3))
+        player->unk5D--;
+}
+#endif
+#endif
 #ifndef MMX4_SATURN
 void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 {
@@ -1190,12 +1272,11 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
     setPolyF4(prim);
     prim->x0 = prim->x2 = arg0;
     prim->x1 = prim->x3 = arg1;
-    color = arg2;
-    prim->y0 = prim->y1 = color;
+    prim->y0 = prim->y1 = arg2;
     prim->y2 = prim->y3 = arg3;
     color = D_800F312C[arg4];
 
-    if (((u16)g_FilterAmountB | (g_FilterAmountR | (u16)g_FilterAmountG)) != 0) {
+    if ((g_FilterAmountR | g_FilterAmountG | g_FilterAmountB) != 0) {
         if ((engine_obj.stage != 0x2 || engine_obj.substage != 0) && g_FilterAmountR == ((u16)g_FilterAmountG >> 5) && g_FilterAmountR == ((u16)g_FilterAmountB >> 10)) {
             if (*(u8*)&g_FilterModeR != 0) {
                 var_r = g_FilterAmountR <= (color & 0x1F) ? (color & 0x1F) - g_FilterAmountR : 0;
@@ -1207,29 +1288,23 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
                 }
             }
 
-            temp_v1 = color & 0x3E0;
             if (*(u8*)&g_FilterModeG != 0) {
-                var_g = 0;
-                if (temp_v1 >= (u16)g_FilterAmountG) {
-                    var_g = temp_v1 - (u16)g_FilterAmountG;
-                }
+                var_g = (u16)g_FilterAmountG <= (color & 0x3E0) ? (color & 0x3E0) - (u16)g_FilterAmountG : 0;
             } else {
-                temp_v1 += (u16)g_FilterAmountG;
+                temp_v1 = (color & 0x3E0) + (u16)g_FilterAmountG;
                 var_g = 0x3E0;
                 if (temp_v1 < 0x3E1U) {
                     var_g = temp_v1;
                 }
             }
 
-            temp_v1 = color & 0x7C00;
             if (*(u8*)&g_FilterModeB != 0) {
-                var_b = temp_v1 < (u16)g_FilterAmountB ? 0 : temp_v1 - (u16)g_FilterAmountB;
+                var_b = (u16)g_FilterAmountB <= (color & 0x7C00) ? (color & 0x7C00) - (u16)g_FilterAmountB : 0;
             } else {
-                temp_v1 += (u16)g_FilterAmountB;
+                temp_v1 = (color & 0x7C00) + (u16)g_FilterAmountB;
+                var_b = 0x7C00;
                 if (temp_v1 < 0x7C01U) {
                     var_b = temp_v1;
-                } else {
-                    var_b = 0x7C00;
                 }
             }
 
@@ -1247,7 +1322,6 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
     addPrim(&cur_draw_info->ordering_table.unk3, prim);
     SP_AUX_CURSOR = SP_AUX_POLY_F4_CURSOR + 1;
 }
-#endif
 #endif
 #ifndef MMX4_SATURN
 void func_800257BC(struct PlayerObj* arg0)
@@ -1271,7 +1345,130 @@ void func_800257BC(struct PlayerObj* arg0)
 #endif
 
 #ifndef MMX4_SATURN
+#if defined(MMX4_PC) || defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/14A60", func_8002588C);
+#else
+// clang-format off
+void func_8002588C(arg0, part, clut)
+    struct PlayerObj* arg0;
+    s32 part;
+    u16 clut;
+// clang-format on
+{
+    POLY_FT4* primitive;
+    DR_TPAGE* draw_mode;
+    SPRT_16* sprite;
+    P_TAG** tail;
+    u8* table;
+    u16* frame_header;
+    u8* frame_data;
+    u8 flipped;
+    u16 texture;
+    u16 origin_x;
+    u16 origin_y;
+    s32 frame_count;
+
+    if (arg0->bg_offset < 0) {
+        origin_x = arg0->x_pos.u.hi;
+        origin_y = arg0->y_pos.u.hi;
+    } else {
+        origin_x = arg0->x_pos.u.hi - background_objects[arg0->bg_offset].x_pos.u.hi;
+        origin_y = arg0->y_pos.u.hi - background_objects[arg0->bg_offset].y_pos.u.hi;
+    }
+
+    primitive = SP_PRIM_CURSOR;
+    draw_mode = SP_DRAW_MODE_CURSOR;
+    table = (u8*)SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, part + 5);
+    frame_header = (u16*)(table + arg0->animation_step.fields.frame_index * 4);
+    frame_count = frame_header[0];
+    frame_data = table + frame_header[1] * 4;
+    flipped = arg0->unk15;
+    texture = arg0->unk40;
+
+    for (; frame_count != 0; frame_count--) {
+        u8 flags = frame_data[0];
+        s8 dx = frame_data[2];
+        s8 dy;
+        u16 x0 = dx;
+        u16 x1;
+        u16 y0;
+        u16 y1;
+        u32 texture_index;
+        u16 primitive_clut;
+        u8 v0;
+        u8 u1;
+
+        if (flipped == 0) {
+            x1 = x0 + 16;
+        } else {
+            x1 = -x0;
+            x0 = -(x0 + 16);
+        }
+        x0 += origin_x;
+        x1 += origin_x;
+        dy = frame_data[3];
+        y0 = origin_y + dy;
+        y1 = y0 + 16;
+        primitive_clut = clut + ((flags & 0xC) >> 2);
+        texture_index = (frame_data[1] | ((flags & 3) << 8)) + texture;
+        v0 = texture_index & 0xF0;
+
+        if (((flags & 0x40) ^ flipped) == 0) {
+            sprite = (SPRT_16*)primitive;
+            setSprt16(sprite);
+            setShadeTex(sprite, 1);
+            setSemiTrans(sprite, arg0->active & 0x10);
+            sprite->clut = primitive_clut;
+            sprite->x0 = x0;
+            sprite->y0 = y0;
+            u1 = texture_index * 16;
+            sprite->u0 = u1;
+            sprite->v0 = v0;
+            BG_DRAW_TPAGE(draw_mode, ((texture_index & 0xFFFF) >> 8) | 0x20);
+            setaddr(draw_mode, sprite);
+            setaddr(sprite, draw_mode + 1);
+        } else {
+            u8 u0;
+            u8 v1;
+
+            setPolyFT4(primitive);
+            setShadeTex(primitive, 1);
+            setSemiTrans(primitive, arg0->active & 0x10);
+            u0 = texture_index * 16 - 1;
+            u1 = texture_index * 16 | 0xF;
+            primitive->tpage = ((texture_index & 0xFFFF) >> 8) | 0x20;
+            primitive->clut = primitive_clut;
+            if ((u8)u0 == 0xFF) {
+                u0 = texture_index * 16;
+                x1--;
+            }
+            v1 = v0 + 16;
+            if ((u8)v1 == 0) {
+                v1 = v0 | 0xF;
+                y1--;
+            }
+            setXY4(primitive, x0, y0, x1, y0, x0, y1, x1, y1);
+            setUV4(primitive, u1, v0, u0, v0, u1, v1, u0, v1);
+            BG_DRAW_TPAGE(draw_mode, 0x20);
+            setaddr(draw_mode, primitive);
+            setaddr(primitive, draw_mode + 1);
+        }
+        primitive++;
+        draw_mode++;
+        frame_data += 4;
+    }
+
+    {
+        u32 buffer = SP_DRAW_BUFFER;
+        u8 ordering = arg0->unk16;
+
+        SP_PRIM_CURSOR = primitive;
+        setaddr(D_8013BC40[buffer][ordering >> 4][ordering & 0xF], SP_DRAW_MODE_CURSOR);
+        D_8013BC40[buffer][ordering >> 4][ordering & 0xF] = (P_TAG*)(primitive - 1);
+        SP_DRAW_MODE_CURSOR = draw_mode;
+    }
+}
+#endif
 #endif
 #ifndef MMX4_SATURN
 void func_80025CDC(void)

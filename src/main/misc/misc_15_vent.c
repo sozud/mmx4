@@ -19,9 +19,6 @@ extern union AnimationStep* vent_animations[2];
 void func_800CA86C(struct MiscObj* self);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/misc/misc_15_vent", func_800CA86C);
-#else
 void func_800CA86C(struct MiscObj* self)
 {
     s8 animation;
@@ -45,7 +42,6 @@ void func_800CA86C(struct MiscObj* self)
     self->state++;
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void vent_animate(struct MiscObj* self)
 {

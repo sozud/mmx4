@@ -78,9 +78,6 @@ void func_800B8630(struct EffectObj* self)
 void func_800B875C(struct EffectObj* arg0, s16 unused);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/effects/effect_13_edge_spawner", func_800B875C);
-#else
 void func_800B875C(struct EffectObj* arg0, s16 unused)
 {
     s16 x;
@@ -108,7 +105,6 @@ void func_800B875C(struct EffectObj* arg0, s16 unused)
         }
     }
 }
-#endif
 
 // edge_spawner_spawn_items
 void func_800B887C(s16 x_min, s16 x_max, s16 y_min, s16 y_max)

@@ -111,9 +111,6 @@ extern u32 D_800FA740;
 extern u32 D_800FA744;
 extern void (*eregion_step_funcs[])(struct MainObj*);
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80047D04);
-#else
 void func_80047D04(struct MainObj* arg0)
 {
     struct VisualObj* visual;
@@ -161,7 +158,6 @@ void func_80047D04(struct MainObj* arg0)
     arg0->x_pos.val = FIXED(0xF60);
     arg0->y_pos.val = FIXED(0x170);
 }
-#endif
 
 // eregion_run
 void func_80047E58(struct MainObj* arg0)
@@ -252,17 +248,10 @@ void eregion_pick_start(struct MainObj* self)
 }
 
 // eregion_pick_attack
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_800480D0);
-#else
 void func_800480D0(struct MainObj* arg0)
 {
-    u16 timer;
-
     animate_object(ANIMATED_OBJECT(arg0));
-    timer = arg0->unk7C;
-    arg0->unk7C = timer - 1;
-    if (timer != 0)
+    if (arg0->unk7C-- != 0)
         return;
 
     arg0->unk7C = 0;
@@ -312,7 +301,6 @@ void func_800480D0(struct MainObj* arg0)
         arg0->unk5 = 4;
     }
 }
-#endif
 
 void eregion_roar_start(struct MainObj* self)
 {
@@ -802,9 +790,6 @@ void eregion_recoil_start(struct MainObj* self)
 }
 
 // eregion_recoil_wait
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_8004932C);
-#else
 void func_8004932C(struct MainObj* arg0)
 {
     if ((u8)(arg0->animation_step.fields.frame_index - 0x1C) < 2)
@@ -826,7 +811,6 @@ void func_8004932C(struct MainObj* arg0)
         arg0->x_pos.i.hi = (s16)arg0->x_speed;
     }
 }
-#endif
 
 void eregion_recoil(struct MainObj* self)
 {

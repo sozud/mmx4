@@ -1046,9 +1046,6 @@ void player_script_wait(struct PlayerObj* self)
 }
 
 // player_script_walk
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/player", func_80033108);
-#else
 void func_80033108(struct PlayerObj* self)
 {
     if (engine_obj.unkF != 0) {
@@ -1068,7 +1065,6 @@ void func_80033108(struct PlayerObj* self)
         player_script_walk_to_mark(self);
     }
 }
-#endif
 
 void player_script_vanish(struct PlayerObj* self)
 {

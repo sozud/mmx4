@@ -38,9 +38,6 @@ extern struct Unk_unk68 D_80107174[];
 void func_8005B438(struct MainObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_30_regen_turret", func_8005B438);
-#else
 void func_8005B438(struct MainObj* arg0)
 {
     arg0->unk5 = 2;
@@ -64,7 +61,6 @@ void func_8005B438(struct MainObj* arg0)
     set_animation(arg0, 0);
     update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
 }
-#endif
 
 void regen_turret_start_idle(struct MainObj* self)
 {

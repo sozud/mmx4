@@ -10,7 +10,7 @@
 #include "main/player_common.h"
 #include "weapon_resources.h"
 
-s32 func_8003D7E4(struct RideArmorObj*, u8, s32);
+s32 func_8003D7E4(struct RideArmorObj*, arg_u8, arg_u8);
 
 void func_8003D3F8(struct RideArmorObj* arg0)
 {
@@ -50,6 +50,12 @@ s32 func_8003E048(struct PlayerObj*);
 
 #define RIDE_U8(object, offset) (((u8*)&(object)->unk7C)[(offset)-0x7C])
 #define RIDE_U16(object, offset) (*(u16*)&RIDE_U8(object, offset))
+struct RideArmorTimers {
+    u8 pad88[0x91 - 0x88];
+    u8 unk91;
+    u8 unk92;
+};
+#define RIDE_TIMERS(object) ((struct RideArmorTimers*)&(object)->collision_flags)
 extern union AnimationStep* D_800F9428[31];
 extern union AnimationStep* D_800F965C[38];
 extern struct Unk_unk68 D_800F9120;
@@ -80,12 +86,10 @@ void func_80040248(struct RideArmorObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mech", func_8003D4C8);
-#else
 void func_8003D4C8(struct RideArmorObj* arg0)
 {
     u8 resource;
+    u8* ext;
 
     arg0->active |= 0x40;
     arg0->on_screen = 1;
@@ -102,6 +106,7 @@ void func_8003D4C8(struct RideArmorObj* arg0)
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
     arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
     arg0->unk42 = VISUAL_STAGE_PALETTE(resource);
+    ext = (u8*)&arg0->collision_flags;
     arg0->hp = 0x20;
     arg0->unk60 = 0;
     arg0->unk61 = 0;
@@ -124,15 +129,14 @@ void func_8003D4C8(struct RideArmorObj* arg0)
     arg0->unk80.bytes.unk81 = 0;
     arg0->unk80.bytes.unk80 = 0;
     arg0->spawned_parts = 0;
-    RIDE_U8(arg0, 0x8E) = 0;
-    RIDE_U8(arg0, 0x8D) = 0;
-    RIDE_U8(arg0, 0x93) = 0;
+    ext[6] = 0;
+    ext[5] = 0;
+    ext[0xB] = 0;
     RIDE_ARMOR_FLAGS(arg0) = 0;
     arg0->unkA6 = 0;
     RIDE_U8(arg0, 0x8C) = 0;
     arg0->unk87 = 0;
 }
-#endif
 
 void func_8003D638(struct VisualObj* arg0, u8 arg1)
 {
@@ -189,10 +193,12 @@ void func_8003D7A0(void)
 }
 
 // The unused integer return type preserves the original delay-slot scheduling.
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mech", func_8003D7E4);
-#else
-s32 func_8003D7E4(struct RideArmorObj* arg0, u8 kind, s32 variant)
+// clang-format off
+s32 func_8003D7E4(arg0, kind, variant)
+    struct RideArmorObj* arg0;
+    u8 kind;
+    u8 variant;
+// clang-format on
 {
     struct WeaponObj* weapon = find_free_weapon_obj();
     if (weapon != NULL) {
@@ -210,7 +216,6 @@ s32 func_8003D7E4(struct RideArmorObj* arg0, u8 kind, s32 variant)
         weapon->unk15 = arg0->unk15;
     }
 }
-#endif
 
 // Callers discard the legacy integer return value.
 s32 func_8003D8A8(struct RideArmorObj* owner, s32 shot_kind, s32 shot_variant)
@@ -245,9 +250,6 @@ s32 func_8003D8A8(struct RideArmorObj* owner, s32 shot_kind, s32 shot_variant)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mech", func_8003D9E0);
-#else
 void func_8003D9E0(struct RideArmorObj* arg0)
 {
     u16 mode;
@@ -326,7 +328,6 @@ void func_8003D9E0(struct RideArmorObj* arg0)
         return;
     }
 }
-#endif
 
 void func_8003DC1C(struct PlayerObj* arg0, s8 arg1)
 {
@@ -574,9 +575,6 @@ void func_8003E0D0(struct RideArmorObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mech", func_8003E274);
-#else
 void func_8003E274(struct RideArmorObj* arg0)
 {
     if (arg0->unk6 == 0) {
@@ -607,7 +605,6 @@ void func_8003E274(struct RideArmorObj* arg0)
     }
     animate_object(ANIMATED_OBJECT(arg0));
 }
-#endif
 
 void func_8003E368(struct RideArmorObj* self)
 {
@@ -1114,9 +1111,6 @@ void func_8003F31C(struct RideArmorObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mech", func_8003F44C);
-#else
 void func_8003F44C(struct RideArmorObj* self)
 {
     u32 i;
@@ -1129,6 +1123,8 @@ void func_8003F44C(struct RideArmorObj* self)
     if (!(self->unk94.bytes.unk97 & 2)) {
         if (!(self->input_flags & 8)) {
             func_8003DC44(BASE_OBJECT(self), 0xC);
+            animate_object(ANIMATED_OBJECT(self));
+            return;
         } else {
             func_8003DC50(self);
             if (!(self->unk94.bytes.unk97 & 0x10)) {
@@ -1149,7 +1145,6 @@ void func_8003F44C(struct RideArmorObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 void func_8003F570(struct RideArmorObj* arg0)
 {
@@ -1527,24 +1522,20 @@ void func_800401F8(struct PlayerObj* arg0)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mech", func_80040248);
-#else
 void func_80040248(struct RideArmorObj* arg0)
 {
     if ((u8)RIDE_ARMOR_FLAGS(arg0) & 0x80) {
         arg0->unk42 &= 0x7FFF;
-        if (--RIDE_U8(arg0, 0x92) == 0) {
+        if (--RIDE_TIMERS(arg0)->unk92 == 0) {
             arg0->unk42 |= 0x8000;
             RIDE_U8(arg0, 0x92) = RIDE_U8(arg0, 0x91);
-            if (--RIDE_U8(arg0, 0x91) == 0) {
+            if (--RIDE_TIMERS(arg0)->unk91 == 0) {
                 RIDE_U8(arg0, 0x8D) = 1;
                 arg0->unk42 &= 0x7FFF;
             }
         }
     }
 }
-#endif
 
 void func_800402C4(struct PlayerObj* self)
 {
@@ -1568,9 +1559,6 @@ void func_800402C4(struct PlayerObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mech", func_800403DC);
-#else
 void func_800403DC(struct RideArmorObj* arg0)
 {
     s32 flag;
@@ -1629,7 +1617,6 @@ void func_800403DC(struct RideArmorObj* arg0)
         func_800402C4((struct PlayerObj*)arg0);
     }
 }
-#endif
 
 void func_800405D4(struct RideArmorObj* arg0)
 {

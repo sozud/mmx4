@@ -69,9 +69,6 @@ void func_8008C664(struct MainObj* self);
 void double_spawn_afterimage(struct MainObj*, s8);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BA38);
-#else
 void func_8008BA38(struct MainObj* self)
 {
     s32 index;
@@ -115,12 +112,8 @@ void func_8008BA38(struct MainObj* self)
         set_animation(o, 0);
     }
 }
-#endif
 
 // double_intro_warning
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BB6C);
-#else
 void func_8008BB6C(struct MainObj* self)
 {
     struct Main73Ext* ext = &self->ext.main_73;
@@ -167,7 +160,6 @@ void func_8008BB6C(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void double_intro_dialogue(struct MainObj* self)
 {
@@ -451,12 +443,9 @@ void double_dive_aim(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", double_dive_fall);
-#else
 void double_dive_fall(struct MainObj* self)
 {
-    s32 flags;
+    u16 flags;
     u16 mask;
 
     flags = self->collision_flags;
@@ -475,19 +464,15 @@ void double_dive_fall(struct MainObj* self)
     } else {
         mask = 1;
     }
-    if (mask & flags) {
+    if (flags & mask) {
         self->x_speed = 0;
         self->x_accel = 0;
     }
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 // double_dive_slide
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C664);
-#else
 void func_8008C664(struct MainObj* self)
 {
     s32 direction;
@@ -528,7 +513,6 @@ void func_8008C664(struct MainObj* self)
         animate_object(ANIMATED_OBJECT(self));
     }
 }
-#endif
 
 void double_dive_hit_wall(struct MainObj* self)
 {
@@ -711,9 +695,6 @@ void double_aerial_shot(struct MainObj* self)
 }
 
 // double_run
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008CD80);
-#else
 void func_8008CD80(struct MainObj* self)
 {
     s32 collision;
@@ -761,7 +742,6 @@ void func_8008CD80(struct MainObj* self)
     func_8002D9BC(self);
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void double_death_flicker(struct MainObj* self)
 {

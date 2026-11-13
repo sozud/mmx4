@@ -74,7 +74,20 @@ static u32 test_sigma_shot_flash(u32 row)
 extern void* sigma_animations[44];
 extern struct Unk_unk68 lemon_hit_box[1];
 s32 sigma_shot_at_position(struct ShotObj*, s32, s32);
-extern s8 sigma_shot_boxes[10][4];
+extern s8 sigma_shot_box_0[4], sigma_shot_box_1[4], sigma_shot_box_2[4], sigma_shot_box_3[4], sigma_shot_box_4[4],
+    sigma_shot_box_5[4], sigma_shot_box_6[4], sigma_shot_box_7[4], sigma_shot_box_8[4], sigma_shot_box_9[4];
+static s8* const sigma_shot_boxes[10] = {
+    sigma_shot_box_0,
+    sigma_shot_box_1,
+    sigma_shot_box_2,
+    sigma_shot_box_3,
+    sigma_shot_box_4,
+    sigma_shot_box_5,
+    sigma_shot_box_6,
+    sigma_shot_box_7,
+    sigma_shot_box_8,
+    sigma_shot_box_9,
+};
 extern u8 sigma_shot_init_box[4], sigma_shot_debris[20];
 struct ShotInit {
     u8 animation, frame, damage;

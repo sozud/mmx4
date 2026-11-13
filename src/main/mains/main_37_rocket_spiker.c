@@ -77,9 +77,6 @@ void func_8005FE1C(struct MainObj* arg0);
 void rocket_spiker_face_player(struct AnimatedObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_37_rocket_spiker", func_8005FE1C);
-#else
 void func_8005FE1C(struct MainObj* arg0)
 {
 
@@ -88,10 +85,10 @@ void func_8005FE1C(struct MainObj* arg0)
     arg0->invincibility_timer = 0;
     arg0->unk62 = 2;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->animation_table = (const u8* const*)rocket_spiker_animations;
-    arg0->terrain_box = &D_800FE4E4;
     arg0->air_state = 0;
+    arg0->animation_table = (const u8* const*)rocket_spiker_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
+    arg0->terrain_box = &D_800FE4E4;
     switch (arg0->unk2) {
     case 0:
         arg0->collision_data = (const u16*)D_80107474;
@@ -179,7 +176,6 @@ void func_8005FE1C(struct MainObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
 }
-#endif
 
 extern void (*rocket_spiker_step_funcs[])(struct MainObj*);
 

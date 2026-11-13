@@ -85,9 +85,6 @@ void func_8009E8E0(struct ShotObj* self);
 extern u8 train_boss_arm_active_bits[4];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", func_8009E188);
-#else
 void func_8009E188(struct ShotObj* self)
 {
     self->unk42 &= 0x7FFF;
@@ -134,7 +131,6 @@ despawn:
     self->on_screen = 0;
     self->state = 2;
 }
-#endif
 
 void train_boss_bullet_despawn(struct ShotObj* self)
 {
@@ -148,15 +144,9 @@ void train_boss_bullet_despawn(struct ShotObj* self)
     self->unk84.shot_24.timer--;
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", train_boss_arm_init);
-#else
 void train_boss_arm_init(struct ShotObj* self)
 {
     u16 y_offset;
-#ifndef MMX4_SHC
-    volatile s64 stack_pad;
-#endif
 
     self->state = 4;
     self->unk5 = 2;
@@ -167,8 +157,8 @@ void train_boss_arm_init(struct ShotObj* self)
     self->x_vel.val = FIXED(1);
     self->y_vel.val = 0;
     self->unk42 &= 0x7FFF;
-    self->x_pos.i.hi += train_boss_arm_offsets[self->unk2][0];
-    y_offset = train_boss_arm_offsets[self->unk2][1];
+    self->x_pos.i.hi += train_boss_arm_offsets[0][self->unk2 * 2];
+    y_offset = train_boss_arm_offsets[0][self->unk2 * 2 + 1];
     self->unk16 = VISUAL_SATURN_LAYER(5);
     self->unk68 = NULL;
     self->unk54 = train_boss_arm_attack_box;
@@ -178,7 +168,6 @@ void train_boss_arm_init(struct ShotObj* self)
     self->unk5C = 0x1A;
     self->unk60 = 6;
 }
-#endif
 
 void train_boss_arm_main(struct ShotObj* self)
 {
@@ -337,8 +326,8 @@ void func_8009E8E0(struct ShotObj* self)
     saved_x = self->x_pos;
     saved_y = self->y_pos;
 #endif
-    self->x_pos.i.hi = train_boss_arm_debris_positions[subtype][0];
-    self->y_pos.i.hi = train_boss_arm_debris_positions[subtype][1];
+    self->x_pos.i.hi = train_boss_arm_debris_positions[subtype * 2];
+    self->y_pos.i.hi = train_boss_arm_debris_positions[subtype * 2 + 1];
     spawn_debris(6, train_boss_arm_debris, self);
     spawn_explosion(BASE_OBJECT(self));
     self->x_pos = saved_x;
@@ -353,7 +342,26 @@ void func_8009E8E0(struct ShotObj* self)
     self->unk5 = 9;
 }
 #else
-INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", func_8009E8E0);
+void func_8009E8E0(struct ShotObj* self)
+{
+
+    f32 saved_x = self->x_pos, saved_y = self->y_pos;
+
+    self->x_pos.i.hi = train_boss_arm_debris_positions[self->unk2 * 2];
+    self->y_pos.i.hi = train_boss_arm_debris_positions[self->unk2 * 2 + 1];
+    spawn_debris(6, train_boss_arm_debris, self);
+    spawn_explosion(BASE_OBJECT(self));
+    self->x_pos = saved_x;
+    self->y_pos = saved_y;
+    ((struct Main45Ext*)self->unk7C)->attack_flags |= train_boss_arm_active_bits[self->unk2];
+    self->x_pos.i.hi = ((struct Main45Ext*)self->unk7C)->unk8A + train_boss_arm_offsets[self->unk2][0] - 0x70;
+    self->unk5C = 0x1A;
+    self->unk42 &= 0x7FFF;
+    self->unk28 = 0;
+    self->x_vel.val = FIXED(1);
+    self->unk61 = 1;
+    self->unk5 = 9;
+}
 #endif
 
 void train_boss_arm_return(struct ShotObj* self)
@@ -381,20 +389,15 @@ void train_boss_arm_wait_sync(struct ShotObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", train_boss_arm_destroyed);
-#else
 void train_boss_arm_destroyed(struct ShotObj* self)
 {
-    u8 pad[8];
     self->state = 0;
-    self->x_pos.i.hi = train_boss_arm_debris_positions[self->unk2][0];
-    self->y_pos.i.hi = train_boss_arm_debris_positions[self->unk2][1];
+    self->x_pos.i.hi = train_boss_arm_debris_positions[self->unk2 * 2];
+    self->y_pos.i.hi = train_boss_arm_debris_positions[self->unk2 * 2 + 1];
     spawn_debris(6, train_boss_arm_debris, self);
     spawn_explosion(self);
     ZeroObjectState(OBJECT_HEADER(self));
 }
-#endif
 
 u8 train_boss_bullet_hit_box[4] = { 0xFD, 0xFD, 0x05, 0x05 };
 
@@ -413,10 +416,13 @@ s16 train_boss_arm_offsets[3][2] = {
 
 s16 train_boss_arm_reach[4] = { -0x53, -0x4F, -0x4E, 0 };
 
-u16 train_boss_arm_debris_positions[3][2] = {
-    { 0x1A8B, 0x0143 },
-    { 0x1A8E, 0x0168 },
-    { 0x1A8F, 0x018A },
+u16 train_boss_arm_debris_positions[6] = {
+    0x1A8B,
+    0x0143,
+    0x1A8E,
+    0x0168,
+    0x1A8F,
+    0x018A,
 };
 
 u8 train_boss_arm_extended_bits[4] = { 1, 2, 4, 0 };

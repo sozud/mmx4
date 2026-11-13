@@ -58,9 +58,6 @@ void colonel_beam_drop(struct QuadObj* arg0)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_14_colonel_beam", colonel_beam_widen);
-#else
 void colonel_beam_widen(struct QuadObj* arg0)
 {
     arg0->vertices[0].x.i.hi = arg0->vertices[0].x.i.hi + 3;
@@ -68,15 +65,16 @@ void colonel_beam_widen(struct QuadObj* arg0)
     arg0->vertices[2].x.i.hi = arg0->vertices[2].x.i.hi - 6;
     arg0->vertices[3].x.i.hi = arg0->vertices[3].x.i.hi + 6;
     if (arg0->vertices[2].x.i.hi - arg0->vertices[3].x.i.hi >= 0) {
-        if (arg0->vertices[2].x.i.hi - arg0->vertices[3].x.i.hi < 0x40) {
-            return;
+        if (arg0->vertices[2].x.i.hi - arg0->vertices[3].x.i.hi >= 0x40) {
+            goto inc;
         }
-        arg0->unk5++;
-    } else if (arg0->vertices[3].x.i.hi - arg0->vertices[2].x.i.hi >= 0x40) {
+        return;
+    }
+    if (arg0->vertices[3].x.i.hi - arg0->vertices[2].x.i.hi >= 0x40) {
+    inc:
         arg0->unk5++;
     }
 }
-#endif
 
 void colonel_beam_wait(struct QuadObj* arg0)
 {

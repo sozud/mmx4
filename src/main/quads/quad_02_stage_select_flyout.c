@@ -65,16 +65,13 @@ u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y, s32 x_speed, s32 y_
 void func_800D4B30(struct QuadObj* arg0);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/quads/quad_02_stage_select_flyout", func_800D4B30);
-#else
 void func_800D4B30(struct QuadObj* arg0)
 {
     u8 direction;
     s16* target;
 
-    arg0->ext.quad_2.x_scale.value += 0xC;
     arg0->ext.quad_2.direction[1] = arg0->ext.quad_2.direction[0];
+    arg0->ext.quad_2.x_scale.value += 0xC;
     arg0->ext.quad_2.y_scale.value += 0xC;
     direction = func_800D41EC(&arg0->x_pos.val, &arg0->y_pos.val,
         stage_select_flyout_targets[arg0->unk2][0] << 16, stage_select_flyout_targets[arg0->unk2][1] << 16, 0x28, 0x28);
@@ -89,7 +86,6 @@ void func_800D4B30(struct QuadObj* arg0)
     stage_select_flyout_scale(arg0);
     quad_is_on_screen(arg0);
 }
-#endif
 
 void stage_select_flyout_wait(struct QuadObj* arg0)
 {

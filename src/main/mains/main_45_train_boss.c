@@ -155,9 +155,6 @@ void collide_with_players(struct PlayerObj*);
 extern u8 D_800FF8B0[8];
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80065EA4);
-#else
 void func_80065EA4(struct MainObj* self)
 {
     if (self->x_pos.i.hi + 0x69 < g_Player.x_pos.i.hi && (u8)(get_layout_screen(1, 0xA0, 0x80) - 0x23) < 2) {
@@ -216,12 +213,8 @@ void func_80065EA4(struct MainObj* self)
     collide_with_players(PLAYER_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
 }
-#endif
 
 // train_boss_despawn
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800661AC);
-#else
 void func_800661AC(struct MainObj* self)
 {
 #ifdef VERSION_JP
@@ -249,12 +242,8 @@ void func_800661AC(struct MainObj* self)
     collide_with_players(PLAYER_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
 }
-#endif
 
 // train_boss_update_parts
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_8006630C);
-#else
 extern u8 D_800FF8B0[8];
 void func_8006630C(struct MainObj* self)
 {
@@ -290,16 +279,12 @@ void func_8006630C(struct MainObj* self)
         } else if ((flags & 0x70) == 0x70) {
             self->ext.main_45.projectile_command = 0xFF;
         }
-    } else if (flags & D_800FF8B0[command]) {
+    } else if (flags & D_800FF8B0[self->ext.main_45.projectile_command]) {
         self->ext.main_45.projectile_command = 0xFF;
     }
 }
-#endif
 
 // train_boss_update_projectiles
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80066478);
-#else
 void func_80066478(struct MainObj* self)
 {
 
@@ -330,7 +315,6 @@ void func_80066478(struct MainObj* self)
         }
     }
 }
-#endif
 
 void train_boss_arrive(struct MainObj* self)
 {
@@ -338,9 +322,6 @@ void train_boss_arrive(struct MainObj* self)
 }
 
 // train_boss_arrive_start
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800665BC);
-#else
 void func_800665BC(struct MainObj* self)
 {
     struct LayerObj* layer = find_free_layer_obj();
@@ -349,20 +330,18 @@ void func_800665BC(struct MainObj* self)
     s32 index;
 
     if (layer != NULL) {
-        struct Main45LayerSignals* signals = (struct Main45LayerSignals*)&layer->unk16;
-
         layer->active = 1;
         layer->id = 3;
         layer->unk2 = 1;
         layer->bg_offset = 0;
         layer->unk16 = 0;
         layer->unk17 = 0;
-        signals->projectile_state[0] = 0;
-        signals->projectile_state[1] = 0;
-        signals->projectile_state[2] = 0;
+        ((struct Main45LayerSignals*)&layer->unk16)->projectile_state[0] = 0;
+        ((struct Main45LayerSignals*)&layer->unk16)->projectile_state[1] = 0;
+        ((struct Main45LayerSignals*)&layer->unk16)->projectile_state[2] = 0;
         self->ext.main_45.layer_bg_offset = (u8*)&layer->bg_offset;
         self->ext.main_45.layer_parameter = &layer->unk15;
-        self->ext.main_45.layer_signals = signals;
+        self->ext.main_45.layer_signals = ((struct Main45LayerSignals*)&layer->unk16);
         layer->state = 0;
     }
     floor = find_free_item_obj();
@@ -423,7 +402,6 @@ void func_800665BC(struct MainObj* self)
     self->x_speed = 0x10000;
     self->unk6 = 1;
 }
-#endif
 
 void train_boss_arrive_approach(struct MainObj* self)
 {

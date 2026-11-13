@@ -203,9 +203,6 @@ void func_800C2638(struct ItemObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_10_spark_machine", func_800C2528);
-#else
 void func_800C2528(struct ItemObj* self)
 {
     self->active = 0x41;
@@ -231,12 +228,8 @@ void func_800C2528(struct ItemObj* self)
     self->tail_ext.unk1.unk84.bytes[2] = 0x14;
     self->tail_ext.unk1.unk84.bytes[3] = 0;
 }
-#endif
 
 // spark_machine_main
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_10_spark_machine", func_800C2638);
-#else
 void func_800C2638(struct ItemObj* self)
 {
     s32 hit = func_8002DD04((struct MainObj*)self);
@@ -273,7 +266,6 @@ void func_800C2638(struct ItemObj* self)
             self->unk42 &= 0x7FFF;
     }
 }
-#endif
 
 void spark_machine_sparking(struct ItemObj* arg0)
 {

@@ -76,9 +76,6 @@ static void main_15_spawn_spark(struct MainObj* arg0, u8 index)
 }
 #endif
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004D9CC);
-#else
 void func_8004D9CC(struct MainObj* arg0)
 {
     if (arg0->air_state != 0 || (arg0->ext.main_0.background_relative & 3))
@@ -110,7 +107,6 @@ void func_8004D9CC(struct MainObj* arg0)
         arg0->ext.main_0.index = 0;
     }
 }
-#endif
 
 // shell_crawler_check_shell
 void func_8004DB10(struct MainObj* self)
@@ -163,9 +159,6 @@ void func_8004DB10(struct MainObj* self)
 }
 
 // shell_crawler_check_shoot
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004DCB0);
-#else
 void func_8004DCB0(struct MainObj* arg0)
 {
     struct WeaponObj* weapon;
@@ -197,7 +190,6 @@ void func_8004DCB0(struct MainObj* arg0)
         }
     }
 }
-#endif
 
 void shell_crawler_hop(struct MainObj* self)
 {
@@ -338,9 +330,6 @@ void shell_crawler_walk(struct MainObj* self)
 }
 
 // shell_crawler_frozen
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E300);
-#else
 void func_8004E300(struct MainObj* arg0)
 {
     u8 i;
@@ -389,12 +378,8 @@ void func_8004E300(struct MainObj* arg0)
         arg0->state = 2;
     }
 }
-#endif
 
 // shell_crawler_thaw
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E490);
-#else
 void func_8004E490(struct MainObj* arg0)
 {
     u8 i;
@@ -418,16 +403,10 @@ void func_8004E490(struct MainObj* arg0)
         }
     }
 }
-#endif
 
 // shell_crawler_init
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E55C);
-#else
 void func_8004E55C(struct MainObj* arg0)
 {
-    struct Main0Ext* ext = &arg0->ext.main_0;
-
     arg0->unk5 = 1;
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
@@ -448,10 +427,10 @@ void func_8004E55C(struct MainObj* arg0)
     arg0->x_accel = 0;
     arg0->y_speed = 0;
     arg0->gravity = 0;
-    ext->background_relative = 0;
-    ext->flags[0] = 0;
-    ext->index = 0;
-    ext->flags[1] = 0;
+    arg0->ext.main_0.background_relative = 0;
+    arg0->ext.main_0.flags[0] = 0;
+    arg0->ext.main_0.index = 0;
+    arg0->ext.main_0.flags[1] = 0;
     if ((u8)(arg0->unk2 - 2) < 2) {
         arg0->state = 5;
         arg0->hurt_box = NULL;
@@ -465,7 +444,6 @@ void func_8004E55C(struct MainObj* arg0)
         set_animation(arg0, 1);
     }
 }
-#endif
 
 void shell_crawler_main(struct MainObj* self)
 {
