@@ -577,8 +577,8 @@ void func_80086C00(struct MainObj* self)
         visual_obj->unk2 = 0;
         visual_obj->unk50 = PLAYER_OBJECT(self);
         self->unk7C = 0x10;
-        self->ext.main_69.linked_object = visual_obj;
         self->unk7++;
+        self->ext.main_69.linked_object = visual_obj;
         func_8001540C(2, SATURN_SOUND(0xD7, 0x99), self);
     }
 }
@@ -745,7 +745,10 @@ void colonel_intro_hall_wait(struct MainObj* self)
 void colonel_intro_hall_blink_in(struct MainObj* self)
 {
     if (--self->unk7C != 0) {
-        if (self->on_screen ^= 1) {
+        if (FLICKER_ENABLED) {
+            self->on_screen ^= 1;
+        }
+        if (self->on_screen) {
             is_on_screen(BASE_OBJECT(self));
         }
     } else {

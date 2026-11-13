@@ -308,7 +308,7 @@ void bee_hive_explode_done(void)
 }
 
 // bee_hive_spawn_bees
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800559BC(struct MainObj* self)
 {
     struct Main22Ext* ext;

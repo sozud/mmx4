@@ -181,8 +181,8 @@ void func_800C580C(struct ItemObj* self)
         }
     } else {
         self->state = 3;
-        self->unk5 = 0;
         self->unk2 = self->tail_ext.unk1.unk84.bytes[0];
+        self->unk5 = 0;
     }
 }
 

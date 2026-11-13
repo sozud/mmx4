@@ -1229,11 +1229,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80065574);
 
 void spiderling_run(struct MainObj* self)
 {
+    s32 hit;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     spiderling_step_funcs[self->unk5](self);
     CollisionRelated(PLAYER_OBJECT(self));
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         self->state = 2;
         return;

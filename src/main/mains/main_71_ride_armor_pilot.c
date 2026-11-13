@@ -150,7 +150,7 @@ void ride_armor_pilot_apply_x_speed(struct MainObj*);
 void ride_armor_pilot_set_walk_speed(struct MainObj*);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80089C7C(struct MainObj* self)
 {
     struct Main71Ext* ext = &self->ext.main_71;
@@ -246,7 +246,7 @@ void ride_armor_pilot_set_step(struct BaseObj* self, s8 arg1)
 
 void ride_armor_pilot_check_dash(struct MainObj* self)
 {
-    if (self->unk5 < 2) {
+    if (self->unk5 <= 1) {
         return;
     }
     if (self->unk5 == 6) {
@@ -374,10 +374,10 @@ void func_8008A180(struct MainObj* self)
         set_animation(self, 1);
         self->ext.main_71.unk84 = 0x160;
         ride_armor_pilot_update_facing(self);
+        self->ext.main_71.unk8D &= 0xF3;
         self->hurt_box = ride_armor_pilot_hurt_box;
         self->attack_box = ride_armor_pilot_attack_box;
         self->contact_damage = 5;
-        self->ext.main_71.unk8D &= 0xF3;
     }
 
     if (!(self->collision_flags & 8)) {
@@ -481,11 +481,11 @@ void func_8008A4D8(struct MainObj* self)
         self->ext.main_71.unk84 = 0x160;
         self->air_state = 0;
         set_animation(self, 4);
+        self->collision_flags |= 8;
+        self->ext.main_71.unk86 = 0;
         self->hurt_box = ride_armor_pilot_hurt_box;
         self->attack_box = ride_armor_pilot_attack_box;
-        self->ext.main_71.unk86 = 0;
         self->contact_damage = 5;
-        self->collision_flags |= 8;
         func_8001540C(2, SATURN_SOUND(0x3D, 0x140), self);
     }
     if (self->animation_step.fields.relative_step == 0) {
@@ -605,10 +605,10 @@ void func_8008A8E4(struct MainObj* self)
         self->unk6 = 1;
         self->ext.main_71.unk84 = 0x160;
         set_animation(self, 6);
+        self->ext.main_71.unk8D &= 0xFB;
         self->hurt_box = ride_armor_pilot_hurt_box;
         self->attack_box = ride_armor_pilot_attack_box;
         self->contact_damage = 5;
-        self->ext.main_71.unk8D &= 0xFB;
     }
 
     if (!(self->ext.main_71.unk8D & 2)) {
@@ -640,8 +640,8 @@ void func_8008A9F4(struct MainObj* self)
         self->unk6 = 1;
         set_animation(self, 8);
         self->attack_box = &ride_armor_pilot_guard_box;
-        self->contact_damage = 6;
         self->ext.main_71.unk8D |= 8;
+        self->contact_damage = 6;
         func_8001540C(2, SATURN_SOUND(0x3C, 0x13F), self);
     }
 

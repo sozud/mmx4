@@ -50,10 +50,6 @@ u8 stage_cutscene_data[24] = {
     0,
 };
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/misc/misc_45_scripted_slider", func_800D0E7C_jp);
-#endif
-
 // scripted_slider_init
 struct Misc45PositionData {
     s16 x;
@@ -223,10 +219,10 @@ void scripted_slider_follow_owner(struct MiscObj* self)
 // scripted_slider_step_4
 void func_800D11B0(struct MiscObj* self)
 {
+    self->x_pos.i.hi = self->ext.misc_45.target_x;
     self->unk28 = 0;
     self->x_vel.val = 0;
     self->unk5 = 2;
-    self->x_pos.i.hi = self->ext.misc_45.target_x;
 }
 
 void scripted_slider_main(struct MiscObj* self)

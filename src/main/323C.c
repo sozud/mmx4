@@ -147,9 +147,33 @@ void func_80012A3C(void)
 }
 #endif
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80012D28);
+#if !defined(MMX4_PC) && !defined(MMX4_SATURN) && !defined(MMX4_WIN32)
+extern s32 D_80175E98;
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80012D4C);
+// handwritten asm
+void func_80012D28(void)
+{
+    __asm__ volatile(".set noreorder\n"
+                     "lui $4, %hi(D_80175E98)\n"
+                     "ori $4, $4, %lo(D_80175E98)\n"
+                     "sw $29, 0($4)\n"
+                     "nop\n"
+                     "lui $29, 0x1F80\n"
+                     "ori $29, $29, 0x0400\n"
+                     ".set reorder");
+}
+
+// handwritten asm
+void func_80012D4C(void)
+{
+    __asm__ volatile(".set noreorder\n"
+                     "lui $4, %hi(D_80175E98)\n"
+                     "ori $4, $4, %lo(D_80175E98)\n"
+                     "lw $29, 0($4)\n"
+                     "nop\n"
+                     ".set reorder");
+}
+#endif
 
 void func_80012D68(u32* src, u32* dst, s32 count)
 {
@@ -158,13 +182,72 @@ void func_80012D68(u32* src, u32* dst, s32 count)
     } while (--count);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80012D88);
+#if !defined(MMX4_PC) && !defined(MMX4_SATURN) && !defined(MMX4_WIN32)
+// handwritten asm
+void func_80012D88(u32* src, u32* dst, s32 count)
+{
+    __asm__ volatile(".set\tnoreorder\n"
+                     "copy16_loop:\n"
+                     "lw $2, 0($4)\n"
+                     "lw $3, 4($4)\n"
+                     "lw $8, 8($4)\n"
+                     "lw $9, 12($4)\n"
+                     "sw $2, 0($5)\n"
+                     "sw $3, 4($5)\n"
+                     "sw $8, 8($5)\n"
+                     "sw $9, 12($5)\n"
+                     "addiu $4, $4, 16\n"
+                     "addiu $6, $6, -1\n"
+                     "bnez $6, copy16_loop\n"
+                     "addiu $5, $5, 16\n"
+                     ".set\treorder");
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80012DC0);
+// handwritten asm
+void func_80012DC0(u32* src, u32* dst, s32 count)
+{
+    __asm__ volatile(".set\tnoreorder\n"
+                     "copy32_loop:\n"
+                     "lw $2, 0($4)\n"
+                     "lw $3, 4($4)\n"
+                     "lw $8, 8($4)\n"
+                     "lw $9, 12($4)\n"
+                     "lw $10, 16($4)\n"
+                     "lw $11, 20($4)\n"
+                     "lw $12, 24($4)\n"
+                     "lw $13, 28($4)\n"
+                     "sw $2, 0($5)\n"
+                     "sw $3, 4($5)\n"
+                     "sw $8, 8($5)\n"
+                     "sw $9, 12($5)\n"
+                     "sw $10, 16($5)\n"
+                     "sw $11, 20($5)\n"
+                     "sw $12, 24($5)\n"
+                     "sw $13, 28($5)\n"
+                     "addiu $6, $6, -1\n"
+                     "addiu $4, $4, 32\n"
+                     "bnez $6, copy32_loop\n"
+                     "addiu $5, $5, 32\n"
+                     ".set\treorder");
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80012E18);
+// handwritten asm
+void func_80012E18(u8* start, u8* end)
+{
+    __asm__ volatile(".set\tnoreorder\n"
+                     "clear_loop:\n"
+                     "sw $0, 0($4)\n"
+                     "bne $5, $4, clear_loop\n"
+                     "addiu $4, $4, 4\n"
+                     ".set\treorder");
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80012E2C);
+// handwritten asm
+void func_80012E2C(void)
+{
+    __asm__ volatile(".word 0x0001018D");
+}
+#endif
 
 void func_80012E38(void)
 {

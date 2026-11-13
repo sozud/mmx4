@@ -128,7 +128,7 @@ void func_800AF878(void* arg0, s8 arg1, s32 arg2, s32 arg3)
 }
 
 // spawn_explosion_in_box
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range, s32 divisor)
 {
     s16 x;

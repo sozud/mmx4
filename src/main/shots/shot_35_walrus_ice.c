@@ -654,7 +654,9 @@ void func_800A348C(struct ShotObj* self)
         func_8001540C(2, SATURN_SOUND(0x96, 0x66), self);
         self->unk6++;
     } else {
-        self->on_screen ^= 1;
+        if (FLICKER_ENABLED) {
+            self->on_screen ^= 1;
+        }
         if (self->on_screen != 0) {
             is_on_screen(BASE_OBJECT(self));
         }

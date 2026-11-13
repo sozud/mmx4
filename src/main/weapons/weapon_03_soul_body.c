@@ -21,7 +21,7 @@ extern void (*soul_body_step_funcs[])(struct WeaponObj*);
 void soul_body_extend(struct WeaponObj*);
 void soul_body_hold(struct WeaponObj*);
 void soul_body_retract(struct WeaponObj*);
-void soul_body_load_palette(s32);
+void soul_body_load_palette(s16);
 #include "weapon_resources.h"
 
 void soul_body_update(struct WeaponObj* arg0)
@@ -52,7 +52,6 @@ void soul_body_update(struct WeaponObj* arg0)
 
 void soul_body_init(struct WeaponObj* arg0)
 {
-    u32** animation_table;
     struct Weapon3Ext* weapon_3;
 
     arg0->on_screen = 1;
@@ -60,17 +59,16 @@ void soul_body_init(struct WeaponObj* arg0)
     arg0->unk64 = 1;
     arg0->unk38 = g_Player.unk38;
     arg0->unk3C = g_Player.unk3C;
-    animation_table = g_Player.animation_table;
+    arg0->animation_table = g_Player.animation_table;
     arg0->unk40 = WEAPON_TEXTURE_PLAYER;
     arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 1;
-    arg0->animation_table = animation_table;
     arg0->unk15 = g_Player.unk15;
     arg0->animation_step.fields.frame_index = g_Player.animation_step.fields.frame_index;
     arg0->x_pos.val = g_Player.x_pos.val;
     arg0->y_pos.val = g_Player.y_pos.val;
     weapon_3 = &arg0->ext.weapon_3;
-    arg0->ext.weapon_3.offset = 0;
+    weapon_3->offset = 0;
     weapon_3->lifetime = 0x96;
     weapon_3->unk90 = 0;
     weapon_3->unk91 = 8;
@@ -191,14 +189,14 @@ void soul_body_despawn(struct WeaponObj* arg0)
     ZeroObjectState((struct ObjectHeader*)arg0);
 }
 
-void soul_body_load_palette(s32 arg0)
+void soul_body_load_palette(s16 arg0)
 {
     u16* var_a0;
     u16* var_v1;
     u32 var_a1;
 
     var_a1 = 0;
-    var_a0 = SP_PALETTE_BANK[(s16)arg0];
+    var_a0 = SP_PALETTE_BANK[arg0];
     var_v1 = SP_PALETTES[1];
     do {
         *var_v1++ = *var_a0++;
@@ -265,7 +263,7 @@ void soul_body_clone_update(void)
                 entity->y_pos.i.hi = obj->y_pos.i.hi;
             }
             decompress_player_gfx(GRAPHICS_OBJECT(entity), 320, 64);
-            if (entity->clone_timer != 0) {
+            if (entity->clone_timer != 0 && FLICKER_ENABLED) {
                 if (entity->clone_timer < 60) {
                     entity->on_screen ^= 1;
                 }

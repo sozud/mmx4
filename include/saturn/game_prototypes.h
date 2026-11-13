@@ -850,7 +850,7 @@ extern void menu_label_init (struct UnkObj *arg0);
 extern void menu_label_highlight (struct UnkObj *arg0);
 extern void menu_label_update (struct UnkObj *arg0);
 extern void search_light_init (struct QuadObj *arg0);
-extern void search_light_move (struct Unk22 *arg0);
+extern void search_light_move (struct QuadObj *arg0);
 extern void stage_select_panel_update (struct QuadObj *arg0);
 extern void stage_select_panel_idle (struct QuadObj *arg0);
 extern void stage_select_flyout_update (struct QuadObj *arg0);

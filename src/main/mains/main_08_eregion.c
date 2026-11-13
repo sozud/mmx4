@@ -164,7 +164,6 @@ void func_80047E58(struct MainObj* arg0)
 {
     s32 collision;
     s8 timer;
-    s32 frame;
 
     if (engine_obj.cur_character == 0)
         arg0->hurt_box = (const void*)&D_800FA740;
@@ -175,8 +174,7 @@ void func_80047E58(struct MainObj* arg0)
     func_8002DD04(arg0);
 
     arg0->collision_data = (const u16*)D_801066F0;
-    frame = arg0->animation_step.fields.frame_index;
-    switch (frame) {
+    switch (arg0->animation_step.fields.frame_index) {
     case 0x16:
     case 0x17:
         arg0->hurt_box = (const void*)&D_800FA73C;

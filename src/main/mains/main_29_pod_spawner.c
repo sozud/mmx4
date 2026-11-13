@@ -66,10 +66,10 @@ void func_8005A538(struct MainObj* self)
 
     self->state = 1;
     self->unk5 = 2;
-    self->hp = 8;
     self->unk6 = 0;
     self->unk7C = 0;
     self->on_screen = 1;
+    self->hp = 8;
     self->contact_damage = 3;
     self->invincibility_timer = 0;
     self->unk18 = self->x_pos;
@@ -348,7 +348,7 @@ void func_8005AD00(struct MainObj* self)
             move_with_gravity(ANIMATED_OBJECT(self));
         }
         self->on_screen = 0;
-        if (WEAPON_FRAME_COUNTER & 3) {
+        if (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 3) {
             update_on_screen(BASE_OBJECT(self), 0x68, 0x68);
         }
         if (!(WEAPON_FRAME_COUNTER & 0xF)) {
@@ -386,7 +386,7 @@ void pod_spawner_copy_init(struct MainObj* self)
 }
 
 // pod_spawner_copy_main
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8005AF5C(struct MainObj* self)
 {
     struct MainObj* source = self->ext.main_29.source;
@@ -602,7 +602,7 @@ void func_8005B2C8(struct MainObj* self)
     case 1:
         animate_object(ANIMATED_OBJECT(self));
         self->on_screen = 0;
-        if (WEAPON_FRAME_COUNTER & 3) {
+        if (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 3) {
             update_on_screen(BASE_OBJECT(self), 0x68, 0x68);
         }
         break;

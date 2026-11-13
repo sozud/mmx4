@@ -295,12 +295,10 @@ void double_wait_start(struct MainObj* self)
 }
 
 // double_pick_attack
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C10C);
-#else
 void func_8008C10C(struct MainObj* self)
 {
     u8 frame;
+    u8* script;
 
     if (self->unk7C == 0) {
         if (self->ext.main_73.cycle_step == 0) {
@@ -310,7 +308,9 @@ void func_8008C10C(struct MainObj* self)
                 self->ext.main_73.cycle_script = (u8*)double_script_table_1[get_random() & 1];
             }
         }
-        frame = self->ext.main_73.cycle_script[++self->ext.main_73.cycle_step];
+        self->ext.main_73.cycle_step++;
+        script = self->ext.main_73.cycle_script;
+        frame = script[self->ext.main_73.cycle_step];
         self->unk5 = frame;
         if ((s8)frame == -1) {
             self->ext.main_73.cycle_step = 0;
@@ -323,7 +323,6 @@ void func_8008C10C(struct MainObj* self)
         animate_object(ANIMATED_OBJECT(self));
     }
 }
-#endif
 
 void double_wait(struct MainObj* self)
 {
@@ -745,7 +744,13 @@ void func_8008CD80(struct MainObj* self)
 
 void double_death_flicker(struct MainObj* self)
 {
-    s16 timer = self->unk7C, next_timer = timer;
+    s16 timer, next_timer;
+
+    if (!FLICKER_ENABLED) {
+        return;
+    }
+    timer = self->unk7C;
+    next_timer = timer;
     if (timer == 0) {
         next_timer = 0x10;
         self->unk42 = self->unk42 | 0x8000;

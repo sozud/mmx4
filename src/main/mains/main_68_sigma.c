@@ -474,9 +474,9 @@ void func_80083C2C(struct MainObj* self)
         self->attack_box = &D_80103EE4;
         self->hurt_box = &D_80103EE8;
         if (--self->unk7C == 0) {
-            self->hurt_box = &D_80103EF8;
             self->unk7++;
             self->unk15 ^= PLAYER_FACING_RIGHT;
+            self->hurt_box = &D_80103EF8;
             set_animation(self, 1);
             set_animation(self->ext.main_68.scythe, 6);
             func_8001540C(2, SATURN_SOUND(2, 0xC1), self);
@@ -937,10 +937,10 @@ void func_80084B14(struct MainObj* self)
             return;
         self->unk7++;
         self->x_speed = self->unk15 != 0 ? FIXED(-2.5) : FIXED(2.5);
+        self->x_accel = 0;
         self->y_speed = 0x60000;
         self->gravity = 0x4200;
         self->attack_box = &D_80103F08;
-        self->x_accel = 0;
         self->hurt_box = &D_80103F0C;
         set_animation(self, 0x12);
         break;
@@ -949,8 +949,8 @@ void func_80084B14(struct MainObj* self)
         move_with_gravity(ANIMATED_OBJECT(self));
         if (self->y_speed >= 0)
             return;
-        self->y_speed = 0;
         self->unk7++;
+        self->y_speed = 0;
         set_animation(self, 0x13);
         break;
     case 3:
@@ -958,9 +958,9 @@ void func_80084B14(struct MainObj* self)
         move_with_gravity(ANIMATED_OBJECT(self));
         if (!(self->collision_flags & 8))
             return;
+        self->unk7++;
         self->attack_box = &D_80103F00;
         self->hurt_box = &D_80103F04;
-        self->unk7++;
         set_animation(self, 0x14);
         func_8001540C(2, SATURN_SOUND(1, 0xC0), self);
         break;
@@ -968,8 +968,8 @@ void func_80084B14(struct MainObj* self)
         animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.relative_step != 0)
             return;
-        self->unk7 = 0;
         self->unk6++;
+        self->unk7 = 0;
         set_animation(self, 0x1C);
         break;
     }
@@ -1257,15 +1257,13 @@ extern s16 D_8010442C[8][2];
 void func_80085460(struct MainObj* self)
 {
     u8 kind;
-    s32 x;
 
     engine_obj.gameplay_locked = 0;
     self->on_screen = 0;
     if (self->unk7C != 0) {
         if (get_random() % 7 == 0) {
             kind = (SIGMA_FRAME_COUNTER_U8 ^ 1) & 1;
-            x = D_8010442C[get_random() & 7][0] + 0x470;
-            SIGMA_SPAWN_EXPLOSION(0, x, D_8010442C[get_random() & 7][1] + 0x1E0, kind);
+            SIGMA_SPAWN_EXPLOSION(0, (D_8010442C[get_random() & 7][0] + 0x470), D_8010442C[get_random() & 7][1] + 0x1E0, kind);
         }
         self->unk7C--;
     } else {

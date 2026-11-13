@@ -250,7 +250,7 @@ void boss_door_close(struct ItemObj* arg0, struct EngineObj* arg1,
 }
 
 // boss_door_player_touching
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 s8 func_800C1E7C(struct ItemObj* arg0)
 {
     struct Unk_unk68* item_bounds;
@@ -299,6 +299,10 @@ s8 func_800C1E7C(struct ItemObj* arg0)
     other = player;
     if (other->x_pos.i.hi > item->x_pos.i.hi)
         return 0;
+#ifdef MMX4_PC
+    if (item->unk68 == NULL || other->unk68 == NULL)
+        return 0;
+#endif
     item_x = item->x_pos.i.hi + item->unk68->unk0;
     player_x = other->x_pos.i.hi + other->unk68->unk0;
     if (item_x - player_x >= 0)

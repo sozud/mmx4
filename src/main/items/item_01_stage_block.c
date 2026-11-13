@@ -192,7 +192,7 @@ void func_800BEFCC(struct ItemObj* arg0)
 }
 
 // stage_block_land
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800BF1FC(struct ItemObj* arg0)
 {
     u8 kind = (u8)arg0->unk2;

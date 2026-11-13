@@ -43,9 +43,6 @@ extern ret_u8 func_8002938C(s32);
 void func_8006F86C(struct MainObj* self);
 extern s16 jet_stingray_flyby_explosion_offsets[8][2];
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EB40);
-#else
 void func_8006EB40(struct MainObj* self)
 {
     if (engine_obj.palette_flags & 0x10) {
@@ -56,15 +53,15 @@ void func_8006EB40(struct MainObj* self)
     self->state = 1;
     self->unk5 = 2;
     self->bg_offset = g_Player.bg_offset;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk15 = PLAYER_FACING_RIGHT;
-    self->contact_damage = 6;
     self->x_speed = 0;
     self->x_accel = 0;
     self->y_speed = 0;
     self->gravity = 0;
     self->animation_table = (const u8* const*)&jet_stingray_flyby_animations;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->hp = 0x20;
+    self->contact_damage = 6;
     self->terrain_box = NULL;
     self->attack_box = &jet_stingray_flyby_attack_box;
     self->hurt_box = &jet_stingray_flyby_hurt_box;
@@ -82,7 +79,6 @@ void func_8006EB40(struct MainObj* self)
     }
     set_animation(self, 0);
 }
-#endif
 
 void jet_stingray_flyby_wait_on_screen(struct MainObj* self)
 {

@@ -134,7 +134,7 @@ void general_intro_wait_player(struct MainObj* self)
 // general_intro_init
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 general_at_position(struct ObjectHeader*, s16, s16);
-void func_8002217C(arg_u16 message, arg_u8 portrait, s32 delay_only);
+void func_8002217C(arg_u16 message, arg_u8 portrait, arg_u8 delay_only);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 

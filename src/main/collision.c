@@ -334,8 +334,8 @@ void func_8002C2EC(struct CollisionObj* arg0, struct CollisionObj* arg1)
     struct Unk_unk68* bounds0;
 
     bounds0 = arg0->collision_bounds;
-    bounds1 = arg1->collision_bounds;
     center0 = arg0->y_pos.i.hi + bounds0->unk1;
+    bounds1 = arg1->collision_bounds;
     center1 = arg1->y_pos.i.hi + bounds1->unk1;
     if (center0 > center1) {
         center0 = center0 - bounds0->unk3;
@@ -347,7 +347,7 @@ void func_8002C2EC(struct CollisionObj* arg0, struct CollisionObj* arg1)
     arg1->unk6E = center0 - center1;
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
 {
     struct Unk_unk68* bounds0 = arg0->unk68;
@@ -410,6 +410,21 @@ void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
     struct PlayerObj* self;
     struct PlayerObj* other;
 
+#ifdef MMX4_PC
+    if (arg0->unk68 == NULL || arg1->unk68 == NULL) {
+        if (slot == 0) {
+            arg0->unk72 = 0;
+            arg0->unk76 = 0;
+        } else if (slot == 1) {
+            arg0->unk73 = 0;
+            arg0->unk77 = 0;
+        } else if (slot == 2) {
+            arg0->unk74 = 0;
+            arg0->unk78 = 0;
+        }
+        return;
+    }
+#endif
     self = arg0;
     flags = 0;
     other = arg1;

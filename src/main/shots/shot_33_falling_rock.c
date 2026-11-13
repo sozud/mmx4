@@ -102,7 +102,7 @@ static void shot_33_spawn_shadow(struct ShotObj* arg0, s8 shadow_kind, s8 unk6,
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800A03F4(struct ShotObj* arg0)
 {
     s32 random;

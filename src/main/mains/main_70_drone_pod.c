@@ -195,8 +195,8 @@ void func_80088EA4(struct MainObj* self)
     if (collision < 0) {
         set_animation(self, 3);
         self->unk5 = 0;
-        self->unk6 = 0;
         self->state++;
+        self->unk6 = 0;
     } else {
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     }
@@ -378,7 +378,7 @@ void drone_pod_launch_close(struct MainObj* self)
 }
 
 // drone_pod_spawn_drones
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80089588(struct MainObj* self)
 {
     u8 start = self->ext.main_70.unk84;

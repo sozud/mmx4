@@ -86,27 +86,27 @@ void ray_trap_check_airborne(struct ShotObj* arg0);
 
 void func_800A16FC(struct ShotObj* arg0)
 {
-    arg0->unk18.val = arg0->x_pos.val;
     arg0->state = 1;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->x_vel.val = 0x60000;
     arg0->unk28 = 0;
     arg0->y_vel.val = 0;
-    arg0->unk1C.val = arg0->y_pos.val;
     arg0->unk2C = 0;
     arg0->unk16 = VISUAL_SATURN_LAYER(5);
     switch (arg0->unk2) {
     case 0:
+        arg0->unk5C = 1;
         arg0->unk54 = (u8*)&ray_trap_box4;
         arg0->unk50.data = (u8*)&ray_trap_box3;
         arg0->unk68 = &ray_trap_box5;
-        arg0->unk5C = 1;
         arg0->unk15 = arg0->x_pos.val < g_Player.x_pos.val ? PLAYER_FACING_RIGHT : 0;
         arg0->unk8C.bytes[3] = 0;
         arg0->timer = 0;
         break;
     case 1:
-        arg0->unk54 = (u8*)&ray_trap_box1;
         arg0->unk5C = 1;
+        arg0->unk54 = (u8*)&ray_trap_box1;
         arg0->unk50.data = (u8*)&ray_trap_box0;
         arg0->unk68 = NULL;
         arg0->timer = 0;
@@ -122,10 +122,10 @@ void func_800A16FC(struct ShotObj* arg0)
         arg0->timer = 0xE10;
         break;
     }
+    arg0->unk67 = 0;
     arg0->unk60 = 6;
     arg0->unk5C = 3;
     arg0->unk58.data = (u8*)D_80105FF0;
-    arg0->unk67 = 0;
     arg0->unk8C.bytes[0] = 7;
     arg0->unk8C.bytes[2] = 0;
     arg0->unk5 = ray_trap_animations[1][arg0->unk2];
@@ -412,7 +412,11 @@ void func_800A2098(struct ShotObj* arg0)
         ray_trap_check_airborne(arg0);
     ray_trap_step_funcs[arg0->unk5](arg0);
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) == 0)
+#ifdef MMX4_WIN32
+        update_on_screen(BASE_OBJECT(arg0), 0x10, 0x10);
+#else
         ((void (*)(struct BaseObj*, s32, s32))is_on_screen)(BASE_OBJECT(arg0), 0x10, 0x10);
+#endif
     else
         arg0->state = st;
 }

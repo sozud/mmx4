@@ -397,7 +397,7 @@ s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
     return (s8)(id + 1);
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
 {
     const struct EffectSpawnData* entry = &D_800F460C[arg0->id];
@@ -536,7 +536,7 @@ void collide_with_players(struct PlayerObj* arg0)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
 {
     s16 x_overlap;

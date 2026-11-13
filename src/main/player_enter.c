@@ -453,12 +453,12 @@ void func_80034B64(struct PlayerObj* player)
         player->x_vel.val = FIXED(2);
     }
 
+    player->unk28 = 0;
+    player->y_vel.val = 0;
     player->unk2C = 0x4200;
     player->unk8A.bytes.low = 4;
     player->air_state = -1;
     player->unk5 = 0xB;
-    player->unk28 = 0;
-    player->y_vel.val = 0;
     player->unk6 = 1;
 }
 void player_enter_ladder_grab(struct PlayerObj* self)
@@ -540,14 +540,8 @@ void player_enter_ladder_down(struct PlayerObj* self)
 }
 
 // player_start_script
-#ifdef MMX4_PC
-void func_80034E2C(void)
-{
-    struct PlayerObj* player = &g_Player;
-#else
 void func_80034E2C(struct PlayerObj* player)
 {
-#endif
 
     player->unk6 = 0;
     player->unk5 = player->script_action;

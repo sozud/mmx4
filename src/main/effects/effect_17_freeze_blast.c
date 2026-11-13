@@ -91,10 +91,10 @@ void func_800B91E0(struct EffectObj* self)
     if (((struct Effect17Ext*)&self->ext)->phase-- != 0)
         return;
     if ((u16)g_FilterAmountR >= 0x1E) {
+        need_palette_load |= 1;
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
-        need_palette_load |= 1;
         engine_obj.character_state.fields.active = 1;
         func_800B9354(self);
         engine_obj.unk10 = 0;
@@ -153,7 +153,7 @@ void func_800B9354(struct EffectObj* self)
 }
 
 // freeze_blast_spawn_enemies
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800B94B8(struct EffectObj* self)
 {
     struct Effect17SpawnGroupPC* group = &((struct Effect17SpawnGroupPC*)freeze_blast_spawn_groups)[(s8)self->unk2];

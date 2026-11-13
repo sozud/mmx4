@@ -176,10 +176,10 @@ void func_800AAC98(struct ShotObj* self)
     self->unk15 = 0;
     self->bg_offset = parent->bg_offset;
     self->state++;
+    self->unk5 = 3;
     self->x_pos.i.hi = 0;
     self->y_pos.i.hi = 0;
     self->unk16 = 0;
-    self->unk5 = 3;
     self->unk58.animation_steps = D_80105FF0;
     self->unk54 = (u8*)sigma_head_boxes;
     self->unk50.data = NULL;

@@ -65,6 +65,7 @@ void func_800D4C50(struct QuadObj* arg0);
 
 void func_800D4C50(struct QuadObj* arg0)
 {
+    arg0->state++;
     arg0->bg_offset = -1;
     arg0->unk34 = 4;
     arg0->unk36 = 0x10;
@@ -72,7 +73,6 @@ void func_800D4C50(struct QuadObj* arg0)
     arg0->x_pos.val = 0;
     arg0->y_pos.val = 0;
     arg0->ext.quad_2.x_scale.bytes.fraction = 0;
-    arg0->state++;
     arg0->vertices[0].x.val = boss_warning_quad_motions[arg0->unk2].vertex[0] << 16;
     arg0->vertices[1].x.val = boss_warning_quad_motions[arg0->unk2].vertex[2] << 16;
     arg0->vertices[2].x.val = boss_warning_quad_motions[arg0->unk2].vertex[2] << 16;

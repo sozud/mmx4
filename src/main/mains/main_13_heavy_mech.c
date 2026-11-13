@@ -74,6 +74,7 @@ void heavy_mech_init(struct MainObj* self)
 // heavy_mech_main
 void func_8004C860(struct MainObj* self)
 {
+    s32 hit;
     heavy_mech_check_fall(self);
     heavy_mech_check_catch(self);
     self->unk18.val = self->x_pos.val;
@@ -83,7 +84,8 @@ void func_8004C860(struct MainObj* self)
         func_8002D9BC(self);
     }
     self->ext.main_13.saved_unk5 = self->unk5;
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(9, heavy_mech_debris, self);
         drop_item(BASE_OBJECT(self), 8);

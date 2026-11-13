@@ -294,7 +294,7 @@ static void main_60_shot_setup(struct ShotObj* shot, struct MainObj* arg0, s8 id
 }
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80075320(struct MainObj* arg0)
 {
     s32 hit = func_8002DD04(arg0);

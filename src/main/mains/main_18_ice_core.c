@@ -185,11 +185,11 @@ void func_80050874(struct MainObj* arg0)
             spawn_explosion(BASE_OBJECT(arg0));
             g_Player.spike_immune = 1;
             spawn_debris(4, D_800FC33C, arg0);
-            arg0->unk7C = 4;
-            arg0->unk7E = 8;
             arg0->ext.main_18.ice_pieces = 0;
             arg0->ext.main_18.shed_timer = 0;
             arg0->terrain_box = NULL;
+            arg0->unk7C = 4;
+            arg0->unk7E = 8;
             arg0->state = 2;
             arg0->unk42 &= 0x7FFF;
             return;
@@ -677,8 +677,8 @@ void func_800517D0(struct MainObj* arg0)
             shot->bg_offset = arg0->bg_offset;
             shot->x_pos.val = (i << 21) + 0x17B10000;
             shot->y_pos.val = 0x8200000;
-            shot->state = 3;
             shot->unk15 = 0;
+            shot->state = 3;
             shot->unk7C = (struct WeaponObj*)&arg0->ext.main_18.ice_pieces;
         }
         arg0->ext.main_18.ice_pieces = 0x83FF;
@@ -955,9 +955,9 @@ void func_80052218(struct MainObj* self)
             item->active = 0;
         }
     }
-    self->y_speed = FIXED(1);
     self->x_speed = 0;
     self->x_accel = 0;
+    self->y_speed = FIXED(1);
     self->gravity = 0;
     self->unk7C = 0x74;
     player_start_script_action(0x15, 0);

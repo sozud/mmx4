@@ -787,8 +787,8 @@ void func_8001E130(struct GameInfo* game)
         reset = D_80169498.title.coordinates;
         for (i = 0; i < 0x24; i++) {
             reset->val = FIXED(*target);
-            target++;
             reset++;
+            target++;
         }
 
         game->mode++;

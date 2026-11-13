@@ -165,7 +165,7 @@ void func_8007877C(struct MainObj* self)
 
 // split_mushroom_main
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_8002217C(arg_u16 message, arg_u8 portrait, s32 delay_only);
+void func_8002217C(arg_u16 message, arg_u8 portrait, arg_u8 delay_only);
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
@@ -705,18 +705,15 @@ void split_mushroom_spore_rain(struct MainObj* self)
 // split_mushroom_spore_rain_start
 void func_80079A8C(struct MainObj* arg0)
 {
-    s32 target;
-
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event == 0)
         return;
     arg0->ext.main_61.stunned = 1;
-    target = background_objects[g_Player.bg_offset].x_pos.val + 0xA00000 - arg0->x_pos.val;
+    arg0->x_speed = (background_objects[g_Player.bg_offset].x_pos.val + 0xA00000 - arg0->x_pos.val) / 48;
     arg0->y_speed = 0x85C00;
     arg0->gravity = 0x3800;
     arg0->unk7C = 0x30;
     arg0->unk6 = 1;
-    arg0->x_speed = target / 48;
     func_8001540C(2, SATURN_SOUND(0xA5, 0x28), arg0);
 }
 
@@ -1235,8 +1232,8 @@ void func_8007AB1C(struct MainObj* arg0)
         arg0->contact_damage = 5;
         set_animation(arg0, 0);
         arg0->unk7C = 0x28;
-        arg0->unk6 = 5;
         arg0->unk15 ^= PLAYER_FACING_RIGHT;
+        arg0->unk6 = 5;
         return;
     }
     if (arg0->unk7E == 0) {
@@ -1253,8 +1250,8 @@ void func_8007AB1C(struct MainObj* arg0)
         split_mushroom_spawn_afterimage(arg0);
         if (!(background_objects[g_Player.bg_offset].unk34 & 0x10))
             start_screen_shake_x(0x10, 8, 2);
-        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->unk7E = 0;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->unk7C = 0xA;
         arg0->unk6 = 0;
     } else {

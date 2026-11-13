@@ -61,19 +61,19 @@ void func_800CFEE0(struct MiscObj* self)
         break;
     case 1:
         self->unk16 = VISUAL_SATURN_LAYER(6);
+        self->unk3C = (u8*)WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
         self->unk40 = 0x1E00;
         self->unk42 = 0x7807;
-        self->unk3C = (u8*)WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
         break;
     case 2:
         self->unk15 = PLAYER_FACING_RIGHT;
-        self->unk40 = 0x1E00;
         self->unk3C = (u8*)WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
+        self->unk40 = 0x1E00;
         break;
     case 3:
         self->unk16 = 3;
-        self->unk40 = 0x1DE0;
         self->unk3C = (u8*)WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[3];
+        self->unk40 = 0x1DE0;
         break;
     case 4:
         self->unk40 = 0x1E00;
@@ -135,9 +135,6 @@ void func_800CFEE0(struct MiscObj* self)
 #endif
 
 // menu_icon_animate
-#if defined(VERSION_JP) && !defined(MMX4_PC) && !defined(MMX4_SATURN)
-INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800D0118);
-#else
 void func_800D0118(struct MiscObj* self)
 {
     is_on_screen(BASE_OBJECT(self));
@@ -223,7 +220,6 @@ void func_800D0118(struct MiscObj* self)
         break;
     }
 }
-#endif
 
 #ifndef MMX4_SATURN
 void (*menu_icon_state_funcs[2])(struct MiscObj*) = {

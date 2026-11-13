@@ -185,11 +185,8 @@ void iris_laser_despawn(struct ShotObj* self)
 void func_800A73C4(struct ShotObj* self)
 {
     self->on_screen = 1;
-    self->timer = 0x78;
-    self->unk60 = 8;
-    self->unk61 = 1;
-    self->unk5C = 1;
     self->unk58.data = NULL;
+    self->unk61 = 1;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
     self->unk2C = 0;
@@ -198,6 +195,9 @@ void func_800A73C4(struct ShotObj* self)
     self->unk68 = NULL;
     self->unk54 = NULL;
     self->unk50.data = NULL;
+    self->timer = 0x78;
+    self->unk5C = 1;
+    self->unk60 = 8;
     self->unk42 &= 0x7FFF;
     self->y_pos.i.hi -= 0x86;
     set_animation(self, 0x1B);

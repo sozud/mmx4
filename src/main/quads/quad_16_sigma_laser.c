@@ -40,10 +40,12 @@ void func_800D845C(struct QuadObj* self);
 // src/main/quads/quad_16_sigma_laser.c
 #endif
 
+#ifndef MMX4_PC
 extern s16 sigma_laser_origin_offsets[2][2];
+#endif
 extern s16 sigma_laser_start_offsets[8][2];
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800D802C(struct QuadObj* self)
 {
     s32 i;
@@ -269,12 +271,18 @@ void sigma_laser_update(struct QuadObj* arg0)
     sigma_laser_state_funcs[arg0->state](arg0);
 }
 
+#ifdef MMX4_PC
+s16 sigma_laser_offsets[16][2] = {
+    { 0x50E, 0x29C },
+    { 0x50D, 0x29B },
+#else
 s16 sigma_laser_origin_offsets[2][2] = {
     { 0x50E, 0x29C },
     { 0x50D, 0x29B },
 };
 
 s16 sigma_laser_sweep_offsets[14][2] = {
+#endif
     { 0x492, 0x2F0 },
     { 0x493, 0x2F0 },
     { 0x4FF, 0x279 },

@@ -76,8 +76,8 @@ void func_80096EA4(struct WeaponObj* arg0)
     s16 dy;
 
     arg0->on_screen = 1;
-    arg0->unk64 = 1;
     arg0->unk50 = double_cyclone_hit_box;
+    arg0->unk64 = 1;
     arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[8];
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x10];
     arg0->animation_table = D_8011C0F0;
@@ -105,8 +105,8 @@ void func_80096EA4(struct WeaponObj* arg0)
         s16 y = player->y_pos.i.hi + dy;
         arg0->unk28.val = 0;
         arg0->y_vel.val = 0;
-        arg0->unk2C = 0;
         arg0->y_pos.i.hi = y;
+        arg0->unk2C = 0;
     }
     arg0->unk49 = arg0->unk2;
     ext->timer = 0x23;

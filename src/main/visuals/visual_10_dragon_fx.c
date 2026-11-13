@@ -38,7 +38,7 @@ void dragon_fx_flash_init(struct VisualObj* arg0)
 void func_800B158C(struct VisualObj* arg0);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800B158C(struct VisualObj* arg0)
 {
     struct PlayerObj* owner = arg0->unk50;

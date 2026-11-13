@@ -111,7 +111,7 @@ void ice_wall_main(struct MainObj* self)
 }
 
 // spawn_ice_chunks
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800583B0(struct MainObj* arg0, arg_s16 x, arg_s16 y, arg_u8 base)
 {
     u8 above;

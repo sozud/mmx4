@@ -69,7 +69,6 @@ void func_8005B8D0(struct MainObj* self)
         self->x_pos.val = background_objects[0].x_pos.val + 0x1AC0000;
         self->unk15 = PLAYER_FACING_RIGHT;
     }
-    variant = ((s8)self->unk2 >> 1) % 3;
     self->animation_table = (const u8* const*)thorn_trap_animations;
     self->unk16 = 0x21;
     self->terrain_box = NULL;
@@ -77,6 +76,7 @@ void func_8005B8D0(struct MainObj* self)
     self->attack_box = thorn_trap_attack_box;
     self->hp = 6;
     self->contact_damage = 6;
+    variant = ((s8)self->unk2 >> 1) % 3;
     self->invincibility_timer = 0;
     self->unk62 = 0;
     self->air_state = 0;
@@ -97,12 +97,9 @@ void thorn_trap_idle(struct MainObj* self)
 }
 
 // thorn_trap_wait
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005BA2C);
-#else
 void func_8005BA2C(struct MainObj* self)
 {
-    s32 step;
+    s16 step;
     s32 x;
     s32 pos;
 
@@ -134,19 +131,14 @@ void func_8005BA2C(struct MainObj* self)
     }
     x = self->x_pos.i.hi;
     if (self->unk15 != 0) {
-        if (step > 8)
-            step = 8;
-        pos = x - step;
+        pos = x - (step < 8 ? step : 8);
     } else {
-        if (step > 8)
-            step = 8;
-        pos = x + step;
+        pos = x + (step < 8 ? step : 8);
     }
     self->x_pos.i.hi = pos;
     self->ext.main_31.distance -= 8;
     animate_object(ANIMATED_OBJECT(self));
 }
-#endif
 
 void thorn_trap_open(struct MainObj* self)
 {

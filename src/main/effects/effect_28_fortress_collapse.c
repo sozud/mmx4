@@ -44,9 +44,9 @@ void func_800BBC50(struct EffectObj* self)
     g_FilterAmountR = 0;
     g_FilterAmountG = 0;
     g_FilterAmountB = 0;
+    self->ext.effect_28.palette_index = 0;
     self->ext.effect_28.timer = 0x28;
     self->ext.effect_28.filter_timer = 4;
-    self->ext.effect_28.palette_index = 0;
     self->ext.effect_28.unk1A = 3;
     func_8002B560(2, 1);
     self->state++;

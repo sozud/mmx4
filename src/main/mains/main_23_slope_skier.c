@@ -377,8 +377,8 @@ void slope_skier_slide(struct MainObj* self)
 // slope_skier_init
 void func_800564B4(struct MainObj* arg0)
 {
-    arg0->unk5 = 1;
     arg0->state++;
+    arg0->unk5 = 1;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
@@ -401,13 +401,13 @@ void func_800564B4(struct MainObj* arg0)
     arg0->hp = 3;
     arg0->contact_damage = 1;
     arg0->collision_data = (const u16*)D_80106DF4;
-    arg0->ext.main_23.unk80 = 0;
     arg0->x_speed = 0;
     arg0->x_accel = 0;
     arg0->y_speed = 0;
     arg0->gravity = 0;
     arg0->air_state = 0;
     arg0->unk7C = 10;
+    arg0->ext.main_23.unk80 = 0;
     arg0->ext.main_23.unk81 = 0;
     arg0->ext.main_23.unk82 = 0;
     set_animation(arg0, arg0->ext.main_23.unk80 + 4);

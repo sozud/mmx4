@@ -332,11 +332,11 @@ void func_8007DD98(struct MainObj* arg0)
     arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)magma_dragoon_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(5);
+    arg0->terrain_box = NULL;
     arg0->attack_box = &magma_dragoon_attack_box;
     arg0->invincibility_timer = 0;
     arg0->ext.main_65.flash_timer = 0;
     arg0->unk62 = 0;
-    arg0->terrain_box = NULL;
     arg0->collision_data = D_80107D7C;
     arg0->hurt_box = NULL;
     arg0->unk40 = (u16)((OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0x160));
@@ -362,8 +362,8 @@ void func_8007DD98(struct MainObj* arg0)
     arg0->contact_damage = 4;
     arg0->hp = 0;
     arg0->air_state = 0;
-    arg0->unk5 = 2;
     arg0->state++;
+    arg0->unk5 = 2;
     if (engine_obj.stage == 4)
         engine_obj.checkpoint = 3;
 }
@@ -1121,11 +1121,11 @@ void func_8007F780(struct MainObj* arg0)
 
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event == 1) {
-        arg0->air_state = 1;
-        arg0->y_speed = 0x40000;
-        arg0->animation_step.fields.event = 0;
-        arg0->gravity = 0x1C00;
         arg0->unk6++;
+        arg0->air_state = 1;
+        arg0->animation_step.fields.event = 0;
+        arg0->y_speed = 0x40000;
+        arg0->gravity = 0x1C00;
         if (arg0->x_pos.i.hi > g_Player.x_pos.i.hi) {
             arg0->unk15 = 0;
             arg0->x_speed = -0x60000;

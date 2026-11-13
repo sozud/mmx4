@@ -42,8 +42,8 @@ __asm__(".include \"macro.inc\"\n");
 #define FIXED(x) ((s32)((x)*0x10000))
 #define COUNT(x) (sizeof(x) / sizeof(x[0]))
 #define SOME_COORDINATE_CONVERSION(v) ((((v)*4) + 24) % 16 | (((((v)*4) + 24) / 16) + 480) << 6)
-#define CLUT_FROM_XY(x, y) ((((x)*4 + 0x18) % 16) | ((((y) + 6) / 4 + 0x1E0) << 6))
-#define CLUT_FROM_ID(id) CLUT_FROM_XY(func_8002938C(id), func_8002938C(id))
+#define CLUT_FROM_XY(x, y) ((((x)*4 + 0x18) % 16) | ((((y)*4 + 24) / 16 + 0x1E0) << 6))
+#define CLUT_FROM_ID(id) SOME_COORDINATE_CONVERSION(func_8002938C(id))
 // Player and ride-armor HP and Sub Tanks store a 7-bit quantity with bit 7
 // latched on the frame it is damaged or drained.
 #define HP_VALUE(v) ((v)&0x7F)

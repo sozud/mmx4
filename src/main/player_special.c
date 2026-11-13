@@ -1599,11 +1599,7 @@ void player_zero_attack_finish(struct PlayerObj* self)
             return;
         }
         if (self->script_state != 0) {
-#ifdef MMX4_SATURN
             func_80034E2C(self);
-#else
-            func_80034E2C();
-#endif
             return;
         }
         player_enter_idle(self);

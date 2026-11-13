@@ -12,7 +12,7 @@ extern struct SearchLightColorLookup search_light_colors;
 extern struct SearchLightIntensityLookup search_light_blend_modes;
 
 #ifdef MMX4_PC
-extern void search_light_move(struct Unk22* arg0);
+extern void search_light_move(struct QuadObj* arg0);
 #endif
 
 // D_8010F690
@@ -30,16 +30,14 @@ void SearchLightUpdate(struct QuadObj* arg0)
 // SearchLight state 0
 void search_light_init(struct QuadObj* arg0)
 {
-    u16 temp_a0;
     struct SearchLightInit* temp_v0;
     s8 temp = arg0->unk2;
 
     arg0->active |= 0x90;
     arg0->unk36 = search_light_blend_modes.values[arg0->unk2 >> 1];
-    temp_a0 = search_light_colors.values[temp >> 1];
+    arg0->unk34 = search_light_colors.values[temp >> 1];
     temp_v0 = &search_light_shapes[arg0->unk2];
     arg0->state = 1;
-    arg0->unk34 = temp_a0;
     arg0->vertices[0].x.i.hi = temp_v0->vertices[0];
     arg0->vertices[0].y.i.hi = temp_v0->vertices[1];
     arg0->vertices[1].x.i.hi = temp_v0->vertices[2];
@@ -71,7 +69,7 @@ void func_800D3C58(struct QuadObj* arg0);
 extern s32 search_light_accels[3];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800D3C58(struct QuadObj* arg0)
 {
     const struct SearchLightInit* init = &search_light_shapes[(u8)arg0->unk2];
@@ -163,7 +161,7 @@ void func_800D3C58(struct QuadObj* arg0)
 }
 #else
 extern s32 search_light_accels[3];
-void search_light_move(struct Unk22* arg0);
+void search_light_move(struct QuadObj* arg0);
 
 void func_800D3C58(struct QuadObj* arg0)
 {
@@ -173,7 +171,7 @@ void func_800D3C58(struct QuadObj* arg0)
     s32 margin;
 
     if (arg0->runtime.search_light.pause_timer == 0) {
-        search_light_move((struct Unk22*)arg0);
+        search_light_move(arg0);
         arg0->vertices[0].x.val += arg0->ext.search_light.velocity;
         arg0->vertices[1].x.val += arg0->ext.search_light.velocity;
         idx = arg0->unk2;
@@ -271,12 +269,12 @@ void search_light_despawn(struct QuadObj* arg0)
 }
 
 // search light helper
-void search_light_move(struct Unk22* arg0)
+void search_light_move(struct QuadObj* arg0)
 {
-    arg0->unk48 += arg0->unk38;
-    arg0->unk4C += arg0->unk40;
-    arg0->unk38 += arg0->unk3C;
-    arg0->unk40 += arg0->unk44;
+    arg0->runtime.search_light.x_accumulator += arg0->ext.search_light.velocity;
+    arg0->runtime.search_light.y_accumulator += arg0->ext.search_light.vertical_velocity;
+    arg0->ext.search_light.velocity += arg0->ext.search_light.acceleration;
+    arg0->ext.search_light.vertical_velocity += arg0->ext.search_light.vertical_acceleration;
 }
 
 // search light helper

@@ -372,9 +372,6 @@ void func_800B0CA0(type, mode, source, radius, count)
         (high) <<= 8,                  \
         ((low)&0xFF) + (high) + 1)
 
-#ifdef MMX4_PC
-void func_800B10E4(u8 kind, s32 left, s32 top, s32 right, s32 bottom, s32 count_arg)
-#else
 // clang-format off
 void func_800B10E4(kind, left, top, right, bottom, count_arg)
     u8 kind;
@@ -384,7 +381,6 @@ void func_800B10E4(kind, left, top, right, bottom, count_arg)
     s16 bottom;
     s32 count_arg;
 // clang-format on
-#endif
 {
     s16 x_min = left;
     s16 y_min = top;

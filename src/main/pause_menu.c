@@ -394,7 +394,7 @@ void func_800301BC(struct BarObj* arg0)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800304E4(struct BarObj* arg0)
 {
     u8* bytes = (u8*)arg0;
@@ -808,7 +808,7 @@ void func_80030A2C(struct BarObj* arg0)
     }
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_80030C54(struct BarObj* arg0)
 {
     u32 i;

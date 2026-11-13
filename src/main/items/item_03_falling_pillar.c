@@ -56,7 +56,6 @@ void func_800C044C(struct ItemObj* arg0);
 void func_800C044C(struct ItemObj* arg0)
 {
     s32* frames;
-    s32 offset;
 
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
@@ -65,16 +64,14 @@ void func_800C044C(struct ItemObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->animation_step.fields.frame_index = falling_pillar_entries[arg0->unk2].frame_index;
-    if (arg0->unk2 < 10 || arg0->unk2 == 20)
+    if (arg0->unk2 <= 9 || arg0->unk2 == 20)
         arg0->x_vel.val = 0x4000;
     else
         arg0->x_vel.val = -0x4000;
-    frames = SP_MENU_FRAMES;
     arg0->unk40 = SATURN_ALT(0x1500, OBJECT_STAGE_TEXTURE(8));
     arg0->unk42 = OBJECT_CLUT(0x79C1);
-    offset = frames[8];
+    arg0->sprite_frames = (const u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[8];
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->sprite_frames = (const u8*)frames + offset;
     arg0->unk61 = 0;
     arg0->unk68 = NULL;
     if (arg0->unk2 == 4 || arg0->unk2 == 14)
@@ -99,32 +96,26 @@ void falling_pillar_wait_player(struct ItemObj* arg0)
 }
 
 // falling_pillar_fall
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/items/item_03_falling_pillar", func_800C05FC);
-#else
 void func_800C05FC(struct ItemObj* pillar)
 {
-    s32 in_range;
-    s32 right;
-
     if (pillar->unk2 <= 0x9 || pillar->unk2 == 0x14) {
         if (pillar->x_pos.i.hi >= falling_pillar_entries[pillar->unk2].trigger_x && pillar->ext.packed == 0) {
             apply_tile_effect(pillar->unk2 + 0xB, 0, 0);
             pillar->ext.packed = 1;
         }
-        right = falling_pillar_entries[pillar->unk2].right;
-        in_range = pillar->x_pos.i.hi < right;
+        if (pillar->x_pos.i.hi >= falling_pillar_entries[pillar->unk2].right) {
+            pillar->x_pos.i.hi = falling_pillar_entries[pillar->unk2].right;
+            pillar->state++;
+        }
     } else {
         if (pillar->x_pos.i.hi <= falling_pillar_entries[pillar->unk2].trigger_x && pillar->ext.packed == 0) {
             apply_tile_effect(pillar->unk2 + 0xB, 0, 0);
             pillar->ext.packed = 1;
         }
-        right = falling_pillar_entries[pillar->unk2].right;
-        in_range = pillar->x_pos.i.hi > right;
-    }
-    if (in_range == 0) {
-        pillar->x_pos.i.hi = right;
-        pillar->state++;
+        if (pillar->x_pos.i.hi <= falling_pillar_entries[pillar->unk2].right) {
+            pillar->x_pos.i.hi = falling_pillar_entries[pillar->unk2].right;
+            pillar->state++;
+        }
     }
     if (--pillar->unk7C.timer == 0 && pillar->unk2 == 0) {
         pillar->unk7C.timer = 0x28;
@@ -136,7 +127,6 @@ void func_800C05FC(struct ItemObj* pillar)
     }
     update_on_screen(BASE_OBJECT(pillar), falling_pillar_entries[pillar->unk2].width, falling_pillar_entries[pillar->unk2].height);
 }
-#endif
 
 void falling_pillar_finish(struct ItemObj* arg0)
 {

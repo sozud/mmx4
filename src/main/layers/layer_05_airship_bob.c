@@ -39,7 +39,7 @@ void airship_bob_update_section(struct LayerObj*);
 void airship_bob_sway(struct LayerObj*);
 extern void (*airship_bob_section_funcs[])(struct LayerObj*);
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800DA2D4(struct LayerObj* arg0)
 {
     s32 scroll = 0x8000;

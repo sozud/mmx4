@@ -311,7 +311,7 @@ void train_boss_arm_retract(struct ShotObj* self)
 }
 
 // train_boss_arm_break
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_8009E8E0(struct ShotObj* self)
 {
     struct Main45Ext* owner = (struct Main45Ext*)self->unk7C;

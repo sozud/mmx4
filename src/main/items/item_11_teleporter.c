@@ -294,13 +294,10 @@ void teleporter_delay(struct ItemObj* arg0)
 
 void teleporter_finish(struct ItemObj* arg0)
 {
-    u8 checkpoint;
-
     if (g_Player.script_state < 0) {
         player_end_script_action();
-        checkpoint = arg0->unk2;
+        engine_obj.checkpoint = arg0->unk2 & 0xF;
         engine_obj.unkF = -0x40;
-        engine_obj.checkpoint = checkpoint & 0xF;
         arg0->state = 3;
         arg0->unk5 = 0;
     }

@@ -231,12 +231,9 @@ void bomb_bat_fly_off(struct MainObj* self)
 
 void bomb_bat_fly_off_start(struct MainObj* self)
 {
-    s32 selected;
-
     set_animation(self, 3);
-    selected = bomb_bat_fly_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
+    self->x_speed = bomb_bat_fly_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
     self->y_speed = FIXED(0.3125);
-    self->x_speed = selected;
     self->unk6++;
 }
 
@@ -253,14 +250,11 @@ void bomb_bat_flee(struct MainObj* self)
 
 void bomb_bat_flee_start(struct MainObj* self)
 {
-    s32 selected;
-
     set_animation(self, 3);
-    selected = bomb_bat_fly_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
+    self->x_speed = bomb_bat_fly_speeds[(self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
     self->y_speed = 0;
     self->attack_box = (const u8*)&bomb_bat_body_box;
     self->ext.main_32.unk88 = 1;
-    self->x_speed = selected;
     self->unk6++;
 }
 

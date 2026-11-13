@@ -273,16 +273,15 @@ void func_800A8628(struct ShotObj* self)
     }
 }
 
-#if defined(VERSION_EU) && !defined(MMX4_PC)
-INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_shot_at_position);
-#else
 s32 sigma_shot_at_position(struct ShotObj* self, s32 arg1, s32 arg2)
 {
-    POS_BOUNDS_CHECK_FAIL_RET0(self->x_pos.val, arg1)
-    POS_BOUNDS_CHECK_FAIL_RET0(self->y_pos.val, arg2)
-    return 1;
+    if (POS_WITHIN_3(self->x_pos.val, arg1)) {
+        if (POS_WITHIN_3(self->y_pos.val, arg2)) {
+            return 1;
+        }
+    }
+    return 0;
 }
-#endif
 
 void sigma_shot_cloak_scythe(struct ShotObj* self)
 {

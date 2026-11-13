@@ -17,7 +17,7 @@ void func_800D9C84(struct LayerObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
 void func_800D9C84(struct LayerObj* self)
 {
     struct Main45LayerSignals* signals = (struct Main45LayerSignals*)&self->unk16;
@@ -107,6 +107,12 @@ struct Layer03Counters {
     s8 counters[12];
 };
 
+#ifdef MMX4_PC
+#define LAYER03_COUNTER(self, i) (((s8*)&(self)->unk18)[(i)])
+#else
+#define LAYER03_COUNTER(self, i) (((struct Layer03Counters*)(self))->counters[(i) + 4])
+#endif
+
 void func_800D9C84(struct LayerObj* self)
 {
     struct MainObj* object;
@@ -148,7 +154,7 @@ void func_800D9C84(struct LayerObj* self)
         object->x_pos.i.hi += (s8)(u8)self->bg_offset;
     }
     for (shot = &shot_objects[0]; shot < &shot_objects[5]; shot++) {
-        if (shot->state < 3 || ((struct Layer03Counters*)self)->counters[shot->unk2 + 4] == 0) {
+        if (shot->state < 3 || LAYER03_COUNTER(self, shot->unk2) == 0) {
             if ((s8)self->unk16 != 0) {
                 shot->unk42 |= 0x8000;
             } else {
@@ -156,7 +162,8 @@ void func_800D9C84(struct LayerObj* self)
             }
         } else {
             shot->unk42 |= 0x8000;
-            ((struct Layer03Counters*)self)->counters[shot->unk2 + 4]--;
+            LAYER03_COUNTER(self, shot->unk2)
+            --;
         }
         shot->x_pos.i.hi += (s8)(u8)self->bg_offset;
     }

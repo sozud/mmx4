@@ -134,11 +134,11 @@ void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* a
 {
     struct Quad10Ext* state;
     struct PlayerUnk8CFields* player_state;
-    s32 index;
+    u32 index;
 
     state = &arg0->ext.quad_10;
     player_state = (struct PlayerUnk8CFields*)&arg2->afterimage;
-    for (index = 0xF; index != 0; index--) {
+    for (index = 0xF; index > 0; index--) {
         state->history[index] = state->history[index - 1];
     }
 

@@ -358,11 +358,11 @@ void func_800A83C4(struct ShotObj* arg0)
 {
     u8 kind;
 
-    arg0->unk60 = 9;
-    arg0->unk50.data = (const u8*)colonel_shot_box_0;
     arg0->unk5C = 0;
+    arg0->unk60 = 9;
     arg0->unk58.data = NULL;
     arg0->unk54 = NULL;
+    arg0->unk50.data = (const u8*)colonel_shot_box_0;
     kind = arg0->unk2 & 0xF;
     arg0->x_vel.val = arg0->unk15 != 0 ? 0x18000 : -0x18000;
     arg0->unk28 = 0;

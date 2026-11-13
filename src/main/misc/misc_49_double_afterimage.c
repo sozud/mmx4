@@ -23,18 +23,18 @@ void func_800D1990(struct MiscObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
-    arg0->unk16 = 3;
     arg0->unk5 = 0;
     arg0->unk6 = 0;
     arg0->unk7 = 0;
+    arg0->unk16 = 3;
     if (arg0->unk2 != 4) {
         set_animation(arg0, 0x12);
         set_velocity_from_angle(MOVING_OBJECT(arg0), double_afterimage_angles[arg0->unk2]);
-        arg0->unk2C = 0x4000;
-        arg0->ext.misc_49.timer = 0xA;
         arg0->unk28 = 0;
         arg0->x_vel.val *= 2;
         arg0->y_vel.val *= 3;
+        arg0->unk2C = 0x4000;
+        arg0->ext.misc_49.timer = 0xA;
     } else {
         arg0->ext.misc_49.timer = 0x14;
         set_animation(arg0, 0x1E);
