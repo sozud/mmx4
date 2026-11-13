@@ -156,5 +156,41 @@ void func_80017100(void)
     setaddr(&cur_draw_info->ordering_table.ui, page);
 }
 
+#if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/image_load", func_80017268);
+#else
+void func_80017268(s16 x_start)
+{
+    SPRT_16* sprite = D_8013957C;
+    u32 row;
+    u32 column;
+    s16 x;
+    s16 y = 0;
+    u16 tile;
+    u8 lo;
+    u8 u;
+
+    for (row = 0; row < 16; row++, y += 16) {
+        x = x_start;
+        for (column = 0; column < 16; column++, x += 16) {
+            tile = *D_80139578++;
+            if (x >= 0x140)
+                continue;
+            lo = tile;
+            do {
+            } while (0);
+            u = (lo & 0xF) << 4;
+            sprite->x0 = x;
+            sprite->clut = (tile >> 12) | 0x7900;
+            sprite->code &= 0xFD;
+            sprite->v0 = lo & 0xF0;
+            sprite->u0 = u;
+            sprite->y0 = y;
+            setaddr(sprite, sprite + 1);
+            sprite++;
+        }
+    }
+    D_8013957C = sprite;
+}
+#endif
 #endif

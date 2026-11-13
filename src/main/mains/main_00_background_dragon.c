@@ -66,8 +66,8 @@ void func_80041060(struct MainObj* arg0);
 void func_800415B0(struct MainObj* arg0);
 void background_dragon_spawn_trail(struct PlayerObj*, s8);
 extern void (*background_dragon_step_funcs[13])(struct MainObj*);
-extern u16 D_800F99BC[4];
 #endif
+extern u16 D_800F99BC[4];
 extern u8 background_dragon_attack_map[128];
 
 void func_80040644(struct MainObj* arg0)
@@ -456,7 +456,41 @@ void func_80041060(struct MainObj* arg0)
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 }
 #else
-INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80041060);
+void func_80041060(struct MainObj* arg0)
+{
+    s32 velocity;
+    u8 next_substep;
+
+    if (arg0->ext.main_0.index != 3) {
+        if (ABS(arg0->x_pos.i.hi, (s16)D_800F99BC[arg0->ext.main_0.index]) < 2 && ABS(arg0->y_pos.i.hi, 0x170) < 2) {
+            *(volatile s32*)&arg0->y_pos.val = 0x01700000;
+            next_substep = *(volatile u8*)&arg0->unk6;
+            velocity = -0xC000;
+            arg0->unk15 = 0;
+            goto start_attack;
+        }
+        set_velocity_from_angle(MOVING_OBJECT(arg0),
+            angle_to_point(OBJECT_HEADER(arg0),
+                (s16)D_800F99BC[arg0->ext.main_0.index] << 16, 0x01700000));
+        arg0->x_speed *= 2;
+        arg0->y_speed *= 2;
+        move_object(MOVING_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
+    } else {
+        velocity = -0xC000;
+        *(volatile s32*)&arg0->y_pos.val = 0x01700000;
+        next_substep = *(volatile u8*)&arg0->unk6;
+    start_attack:
+        arg0->unk6 = next_substep + 1;
+        if (arg0->unk15 != 0) {
+            velocity = 0xC000;
+        }
+        arg0->x_speed = velocity;
+        arg0->y_speed = 0x8000;
+        set_animation(arg0, 1);
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
+}
 #endif
 
 void background_dragon_projectile_attack_update(struct MainObj* self)
