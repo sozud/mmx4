@@ -11,7 +11,7 @@ struct CdImageOrigin {
     u16 x, y;
 };
 
-typedef unsigned long CdLoadAddress;
+typedef ulong_ptr CdLoadAddress;
 
 // D_800F1640
 void func_800148E4(void);

@@ -473,7 +473,7 @@ void func_80022730(struct AbcObj* arg0)
     s32 temp_a0;
     s32 temp_a1;
     s32 temp_v0;
-    signed long temp_v1;
+    slong_ptr temp_v1;
     u16 temp_a2;
     struct MiscObj* obj;
     u8* readyText;
@@ -523,7 +523,7 @@ void func_80022730(struct AbcObj* arg0)
 
                     temp_v0 = func_8002938C(engine_obj.cur_character + 0x91);
 
-                    temp_v1 = (signed long)SP_MENU_FRAMES;
+                    temp_v1 = (slong_ptr)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                     obj->ext.pointer.unk50 = readyText;
@@ -598,7 +598,7 @@ void func_80022730(struct AbcObj* arg0)
 #endif
 
                     temp_v0 = func_8002938C(0x97);
-                    temp_v1 = (signed long)SP_MENU_FRAMES;
+                    temp_v1 = (slong_ptr)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                     obj->state = 0;
@@ -644,7 +644,7 @@ void func_80022730(struct AbcObj* arg0)
 
                         temp_v0 = func_8002938C(CONFIG->unk2);
 
-                        temp_v1 = (signed long)SP_MENU_FRAMES;
+                        temp_v1 = (slong_ptr)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                         obj->state = 0;
@@ -695,7 +695,7 @@ void func_80022730(struct AbcObj* arg0)
 
                         temp_v0 = func_8002938C(0x97);
 
-                        temp_v1 = (signed long)SP_MENU_FRAMES;
+                        temp_v1 = (slong_ptr)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                         obj->state = 0;

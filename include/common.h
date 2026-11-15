@@ -87,7 +87,10 @@ __asm__(".include \"macro.inc\"\n");
 #if defined(MMX4_SATURN) && !defined(assert)
 #define assert(condition) ((void)0)
 #endif
-#ifdef MMX4_PC
+#if defined(MMX4_PC) && defined(_MSC_VER)
+#include <stddef.h>
+#define MMX4_OFFSET_OF(type, member) offsetof(type, member)
+#elif defined(MMX4_PC)
 #define MMX4_OFFSET_OF(type, member) __builtin_offsetof(type, member)
 #else
 #define MMX4_OFFSET_OF(type, member) ((u32) & (((type*)0)->member))
@@ -112,6 +115,13 @@ typedef struct ShcUnsupportedUnsigned64 u64;
 typedef unsigned __int64 u64;
 #else
 typedef unsigned long long u64;
+#endif
+#if defined(MMX4_PC) && defined(_WIN64)
+typedef signed __int64 slong_ptr;
+typedef unsigned __int64 ulong_ptr;
+#else
+typedef signed long slong_ptr;
+typedef unsigned long ulong_ptr;
 #endif
 
 struct PlayerHurtVelocity {

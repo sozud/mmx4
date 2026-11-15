@@ -270,6 +270,9 @@ static u32 test_sfx_file(u32 row)
     u32 i, nonzero = 0;
     int wait_status, result;
     char cue[sizeof(__FILE__) + 32];
+#ifdef _WIN32
+    c_test_skip();
+#endif
     disc_path(cue);
     assert(mkdtemp(directory) != NULL);
     snprintf(raw, sizeof(raw), "%s/audio.pcm", directory);

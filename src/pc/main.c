@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#define setenv(name, value, overwrite) _putenv_s(name, value)
+#endif
+
 s32 mmx4_pc_sfx_group = -1;
 u32 mmx4_pc_sfx_index;
 const char* mmx4_pc_sfx_raw;

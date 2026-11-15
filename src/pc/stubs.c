@@ -44,11 +44,20 @@ static void mmx4_pc_unimplemented(const char* name)
     }
 }
 
+#ifdef _MSC_VER
+#define PC_GAME_STUB(name)            \
+    void pc_stub_##name(void)         \
+    {                                 \
+        mmx4_pc_unimplemented(#name); \
+    }                                 \
+    __pragma(comment(linker, "/alternatename:" #name "=pc_stub_" #name))
+#else
 #define PC_GAME_STUB(name)                \
     __attribute__((weak)) void name(void) \
     {                                     \
         mmx4_pc_unimplemented(#name);     \
     }
+#endif
 
 PC_GAME_STUB(func_8003DCD8)
 
@@ -60,6 +69,9 @@ PC_GAME_STUB(func_80028690)
 PC_GAME_STUB(func_80028E24)
 PC_GAME_STUB(func_8002588C)
 PC_GAME_STUB(func_800AF95C)
+
+PC_GAME_STUB(StUnSetRing)
+PC_GAME_STUB(StCdInterrupt)
 
 PC_GAME_STUB(ChangeTh)
 PC_GAME_STUB(CloseTh)
