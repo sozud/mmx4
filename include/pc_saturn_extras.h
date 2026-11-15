@@ -1,6 +1,11 @@
 #ifndef MMX4_PC_SATURN_EXTRAS_H
 #define MMX4_PC_SATURN_EXTRAS_H
 
+int mmx4_pc_saturn_music_open(const char* path);
+int mmx4_pc_saturn_music_enabled(void);
+void mmx4_pc_saturn_music_select(int psx_track);
+void mmx4_pc_saturn_music_set_playing(int playing);
+
 struct Mmx4PcLineScroll {
     u32 vdp2[0x40];
     s32 work[512];
