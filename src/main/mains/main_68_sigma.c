@@ -1263,7 +1263,14 @@ void func_80085460(struct MainObj* self)
     if (self->unk7C != 0) {
         if (get_random() % 7 == 0) {
             kind = (SIGMA_FRAME_COUNTER_U8 ^ 1) & 1;
+#ifdef MMX4_PC
+            {
+                s32 x = D_8010442C[get_random() & 7][0] + 0x470;
+                SIGMA_SPAWN_EXPLOSION(0, x, D_8010442C[get_random() & 7][1] + 0x1E0, kind);
+            }
+#else
             SIGMA_SPAWN_EXPLOSION(0, (D_8010442C[get_random() & 7][0] + 0x470), D_8010442C[get_random() & 7][1] + 0x1E0, kind);
+#endif
         }
         self->unk7C--;
     } else {
@@ -1506,7 +1513,7 @@ void sigma_reveal_fill_health(struct MainObj* self)
 
 void sigma_reveal_finish(struct MainObj* self)
 {
-    unsigned long temp_v1;
+    ulong_ptr temp_v1;
 
     if (--self->unk7C == 0) {
         temp_v1 = 1;
@@ -1520,7 +1527,7 @@ void sigma_reveal_finish(struct MainObj* self)
         self->unk7 = 0;
         self->ext.main_68.flash_timer = 0;
         player_end_script_action();
-        temp_v1 = (unsigned long)self->ext.main_68.scythe;
+        temp_v1 = (ulong_ptr)self->ext.main_68.scythe;
         ((struct MainObj*)temp_v1)->state++;
     }
     is_on_screen(BASE_OBJECT(self));

@@ -275,7 +275,12 @@ void func_8005CF9C(struct MainObj* arg0)
     u16 spread;
 
     set_animation(arg0, 3);
+#ifdef MMX4_PC
+    spread = get_random() << 8;
+    spread += get_random();
+#else
     spread = (get_random() << 8) + get_random();
+#endif
     arg0->x_speed = D_800FDC98[(arg0->unk15 & PLAYER_FACING_RIGHT) != 0];
     if (get_random() & 1)
         arg0->x_speed += spread;

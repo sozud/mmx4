@@ -2132,7 +2132,9 @@ void func_80018000(arg_u8 movie)
 #else
 void func_80018000(arg_u8 temp)
 {
+#ifndef _MSC_VER
     asm(".rept 184 ; nop ; .endr");
+#endif
 }
 #endif
 
@@ -2257,7 +2259,9 @@ void func_800182E8(s32 arg0)
 void func_800182E8(void)
 #endif
 {
+#ifndef _MSC_VER
     asm(".rept 194 ; nop ; .endr");
+#endif
 }
 #endif
 void Set24BitDisp(s32 w, s32 h)

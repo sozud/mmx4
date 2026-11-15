@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(mmx4_pc C)
 
-if(NOT CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin")
-    message(FATAL_ERROR "The MMX4 PC build currently supports Linux and macOS only")
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Windows")
+    message(FATAL_ERROR "The MMX4 PC build supports Linux, macOS and Windows")
 endif()
 
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tools/psyz/psyz/CMakeLists.txt")
@@ -51,7 +51,6 @@ add_library(mmx4_game OBJECT
     src/pc/objectlog.c
     src/pc/oracle.c
     src/pc/placeholder.c
-    src/pc/playerdump.c
     src/pc/renderlog.c
     src/pc/scratchpad.c
     src/pc/screenshot.c
@@ -59,13 +58,21 @@ add_library(mmx4_game OBJECT
     src/pc/threads.c
     ${MMX4_PC_GAME_SOURCES}
 )
+if(WIN32)
+    target_sources(mmx4_game PRIVATE src/pc/fibers_win32.c src/pc/playerdump_win32.c)
+else()
+    target_sources(mmx4_game PRIVATE src/pc/playerdump.c)
+endif()
 target_compile_definitions(mmx4_game PUBLIC MMX4_PC=1 __psyz=1 SKIP_MDEC=1
     VERSION_${MMX4_PC_VERSION_UPPER}=1)
-target_compile_options(mmx4_game PUBLIC -ffunction-sections -fdata-sections)
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(mmx4_game PUBLIC
+        -ffunction-sections -fdata-sections
         -fno-strict-aliasing
         -Werror=implicit-function-declaration)
+endif()
+if(MSVC)
+    target_compile_definitions(mmx4_game PUBLIC _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
 endif()
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     target_compile_options(mmx4_game PUBLIC
@@ -73,13 +80,18 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
         -Wno-error=incompatible-function-pointer-types)
 endif()
 target_include_directories(mmx4_game PUBLIC include tools/psyz/psyz/include)
-target_link_libraries(mmx4_game PUBLIC psyz z)
+target_link_libraries(mmx4_game PUBLIC psyz)
+if(NOT WIN32)
+    target_link_libraries(mmx4_game PUBLIC z)
+endif()
 if(MMX4_PC_COVERAGE)
     target_compile_options(mmx4_game PUBLIC -fprofile-instr-generate -fcoverage-mapping)
     target_link_options(mmx4_game PUBLIC -fprofile-instr-generate)
 endif()
 if(APPLE)
     target_link_options(mmx4_game PUBLIC -Wl,-dead_strip)
+elseif(MSVC)
+    target_link_options(mmx4_game PUBLIC /OPT:REF)
 else()
     target_link_options(mmx4_game PUBLIC -Wl,--gc-sections)
 endif()
@@ -142,6 +154,9 @@ if(BUILD_TESTING)
         target_include_directories(mmx4_tests PRIVATE tests tests/runtime)
         if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
             target_compile_options(mmx4_tests PRIVATE -UNDEBUG)
+        elseif(MSVC)
+            target_compile_options(mmx4_tests PRIVATE /UNDEBUG /FIposix_env.h)
+            target_include_directories(mmx4_tests PRIVATE tests/compat/msvc)
         endif()
         target_link_libraries(mmx4_tests PRIVATE mmx4_game)
         add_test(NAME unit_tests COMMAND mmx4_tests)

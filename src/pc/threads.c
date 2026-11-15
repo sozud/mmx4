@@ -6,9 +6,17 @@
 
 #include "common.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef _WIN32
+void* mmx4_pc_fiber_scheduler(void);
+void* mmx4_pc_fiber_create(size_t stack_size, void (*entry)(void*), void* parameter);
+void mmx4_pc_fiber_delete(void* fiber);
+void mmx4_pc_fiber_switch(void* fiber);
+#else
 #include <ucontext.h>
+#endif
 
 #ifdef MMX4_PC_ASAN
 #include <sanitizer/common_interface_defs.h>
@@ -18,7 +26,11 @@
 #define PC_THREAD_STACK_SIZE (256 * 1024)
 
 struct PcThread {
+#ifdef _WIN32
+    void* fiber;
+#else
     ucontext_t context;
+#endif
     void (*entry)(void);
     unsigned char* stack;
     int initialized;
@@ -30,7 +42,11 @@ struct PcThread {
 
 static struct GameThread game_threads[PC_THREAD_COUNT];
 static struct PcThread pc_threads[PC_THREAD_COUNT];
+#ifdef _WIN32
+static void* scheduler_fiber;
+#else
 static ucontext_t scheduler_context;
+#endif
 static int current_thread = -1;
 static int debug_threads = -1;
 #ifdef MMX4_PC_ASAN
@@ -48,6 +64,7 @@ static int thread_debug_enabled(void)
 
 struct GameThread* D_801F8300;
 
+#ifndef _WIN32
 static void thread_trampoline(int slot)
 {
 #ifdef MMX4_PC_ASAN
@@ -63,6 +80,50 @@ static void thread_trampoline(int slot)
         NULL, scheduler_stack_bottom, scheduler_stack_size);
 #endif
 }
+#endif
+
+#ifdef _WIN32
+static void fiber_main(void* parameter)
+{
+    int slot = (int)(intptr_t)parameter;
+    pc_threads[slot].entry();
+    game_threads[slot].state = 0;
+    pc_threads[slot].initialized = 0;
+    current_thread = -1;
+    mmx4_pc_fiber_switch(scheduler_fiber);
+    abort();
+}
+
+static void prepare_thread(int slot)
+{
+    struct PcThread* thread = &pc_threads[slot];
+    if (thread->fiber != NULL)
+        mmx4_pc_fiber_delete(thread->fiber);
+    thread->fiber = mmx4_pc_fiber_create(PC_THREAD_STACK_SIZE, fiber_main, (void*)(intptr_t)slot);
+    if (thread->fiber == NULL)
+        abort();
+    thread->initialized = 1;
+    thread->restart = 0;
+}
+
+static void switch_to_thread(struct PcThread* thread)
+{
+    scheduler_fiber = mmx4_pc_fiber_scheduler();
+    mmx4_pc_fiber_switch(thread->fiber);
+}
+
+static void switch_to_scheduler(struct PcThread* thread)
+{
+    (void)thread;
+    mmx4_pc_fiber_switch(scheduler_fiber);
+}
+#else
+static void switch_to_thread(struct PcThread* thread)
+{
+    swapcontext(&scheduler_context, &thread->context);
+}
+
+static void switch_to_scheduler(struct PcThread* thread) { swapcontext(&thread->context, &scheduler_context); }
 
 static void prepare_thread(int slot)
 {
@@ -80,6 +141,7 @@ static void prepare_thread(int slot)
     thread->initialized = 1;
     thread->restart = 0;
 }
+#endif
 
 void mmx4_pc_threads_init(void)
 {
@@ -127,7 +189,7 @@ void mmx4_pc_thread_run(s32 slot)
     __sanitizer_start_switch_fiber(
         &scheduler_asan_fake_stack, thread->stack, PC_THREAD_STACK_SIZE);
 #endif
-    swapcontext(&scheduler_context, &thread->context);
+    switch_to_thread(thread);
 #ifdef MMX4_PC_ASAN
     __sanitizer_finish_switch_fiber(
         scheduler_asan_fake_stack, NULL, NULL);
@@ -148,7 +210,7 @@ void mmx4_pc_thread_yield(void)
         &pc_threads[slot].asan_fake_stack,
         scheduler_stack_bottom, scheduler_stack_size);
 #endif
-    swapcontext(&pc_threads[slot].context, &scheduler_context);
+    switch_to_scheduler(&pc_threads[slot]);
 #ifdef MMX4_PC_ASAN
     __sanitizer_finish_switch_fiber(
         pc_threads[slot].asan_fake_stack, NULL, NULL);
@@ -165,7 +227,7 @@ void mmx4_pc_thread_close(void)
     __sanitizer_start_switch_fiber(
         NULL, scheduler_stack_bottom, scheduler_stack_size);
 #endif
-    swapcontext(&pc_threads[slot].context, &scheduler_context);
+    switch_to_scheduler(&pc_threads[slot]);
     abort();
 }
 void mmx4_pc_thread_replace(void (*entry)(void))
@@ -183,6 +245,6 @@ void mmx4_pc_thread_replace(void (*entry)(void))
     __sanitizer_start_switch_fiber(
         NULL, scheduler_stack_bottom, scheduler_stack_size);
 #endif
-    swapcontext(&pc_threads[slot].context, &scheduler_context);
+    switch_to_scheduler(&pc_threads[slot]);
     abort();
 }

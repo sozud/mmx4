@@ -1,0 +1,62 @@
+name: PC build (Windows)
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+      - '**/*.md'
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - '**/*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  SDL_VIDEO_DRIVER: dummy
+  SDL_AUDIO_DRIVER: dummy
+
+jobs:
+  windows:
+    name: Windows x64 (${{ matrix.version }})
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [us, jp]
+    runs-on: windows-2022
+    steps:
+      - name: Clone
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Configure (MSVC)
+        run: >
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+          -DMMX4_PC_VERSION=${{ matrix.version }}
+      - name: Build
+        run: cmake --build build --parallel --target mmx4_pc
+      - name: Package
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp build/mmx4_pc.exe dist/
+          cp LICENSE dist/LICENSE.txt
+      - name: Upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: mmx4-pc-${{ matrix.version }}-windows-x64
+          path: dist/

@@ -2718,7 +2718,7 @@ struct QuadObj {
     struct PlayerObj* unk5C; // might be something else
 }; // size 0x60
 
-#ifdef MMX4_WIN32
+#if defined(MMX4_WIN32) || defined(_MSC_VER)
 #pragma pack(push, 1)
 #endif
 union EngineCharacterState {
@@ -2737,13 +2737,13 @@ union EngineCharacterState {
 #endif
         u8 reserved[6];
     }
-#if !defined(MMX4_WIN32) && !defined(MMX4_SHC)
+#if !defined(MMX4_WIN32) && !defined(MMX4_SHC) && !defined(_MSC_VER)
     __attribute((packed))
 #endif
     fields;
 };
 
-#ifdef MMX4_WIN32
+#if defined(MMX4_WIN32) || defined(_MSC_VER)
 #pragma pack(pop)
 #endif
 
