@@ -1145,6 +1145,9 @@ void func_8001663C(u8 selection, u8 volume)
     const u16* entry;
     s32 channel;
     CdlLOC* location;
+#ifdef MMX4_PC
+    mmx4_pc_saturn_music_select(selection);
+#endif
     base = 0;
     channel = 0;
     D_80139568 = 0;
@@ -1337,6 +1340,9 @@ s32 func_800169D8(void)
 {
     u8 temp_a0;
 
+#ifdef MMX4_PC
+    mmx4_pc_saturn_music_set_playing(D_80141BD4 == 2 && D_80139530 != 0 && D_80139530 != 3 && D_80139530 != 4);
+#endif
     if (D_80141BD4 == 2) {
         if (*(u8*)&D_8013952C == 0) {
             D_800F1AB0[D_80139530]();
@@ -1554,6 +1560,9 @@ void func_80016F0C()
 #else
     s32 temp_s0 = D_80141BD4;
     if (temp_s0 == 2) {
+#ifdef MMX4_PC
+        mmx4_pc_saturn_music_select(-1);
+#endif
         func_80016420(0);
         if (D_80139564 == temp_s0) {
             if (D_8013955C != 0) {

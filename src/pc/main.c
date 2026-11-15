@@ -16,6 +16,7 @@ const char* mmx4_pc_sfx_raw;
 u32 mmx4_pc_sfx_frames = 360;
 extern s32 mmx4_pc_canonical_load;
 const char* mmx4_pc_replay_path;
+static const char* saturn_music_disc;
 
 static int configure_replay(const char* path)
 {
@@ -118,11 +119,14 @@ static int parse_args(int argc, char** argv, const char** disc)
             mmx4_pc_canonical_load = 0;
         } else if (strcmp(argv[i], "--saturn-heat") == 0) {
             mmx4_pc_saturn_heat = 1;
+        } else if (strcmp(argv[i], "--saturn-music") == 0 && i + 1 < argc) {
+            saturn_music_disc = argv[++i];
         } else if (strcmp(argv[i], "--help") == 0) {
             printf("usage: %s [--cue GAME.cue] [--sfx INDEX|GROUP:INDEX] "
                    "[--replay FILE] "
                    "[--audio-raw FILE --frames N] "
-                   "[--canonical-load|--fast-load] [--saturn-heat]\n",
+                   "[--canonical-load|--fast-load] [--saturn-heat] "
+                   "[--saturn-music SATURN.cue]\n",
                 argv[0]);
             return 1;
         } else {
@@ -147,6 +151,7 @@ int main(int argc, char** argv)
     int parse_result;
     mmx4_pc_canonical_load = canonical_load != NULL && canonical_load[0] != '\0' && canonical_load[0] != '0';
     mmx4_pc_saturn_heat = saturn_heat != NULL && saturn_heat[0] != '\0' && saturn_heat[0] != '0';
+    saturn_music_disc = getenv("MMX4_SATURN_CUE");
     if (disc == NULL)
 #ifdef VERSION_JP
         disc = "disks/mmx4.jp.cue";
@@ -162,6 +167,8 @@ int main(int argc, char** argv)
         fprintf(stderr, "MMX4 PC: unable to load disc image %s\n", disc);
         return 1;
     }
+    if (saturn_music_disc != NULL && saturn_music_disc[0] != '\0' && mmx4_pc_saturn_music_open(saturn_music_disc) != 0)
+        return 1;
 
     Psyz_SpuInit();
     if (getenv("MMX4_MAX_FRAMES") != NULL)
