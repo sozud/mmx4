@@ -199,6 +199,10 @@ void func_80028F58(void)
         background_objects[0].y_pos.i.hi - 0x30,
         background_objects[0].y_pos.i.hi + 0x120,
         0);
+#ifdef MMX4_PC
+    if (mmx4_pc_saturn_heat)
+        func_800292D0(mmx4_pc_saturn_heat_records(engine_obj.stage, engine_obj.substage));
+#endif
     func_800292D0(D_800F4430[engine_obj.stage][engine_obj.substage]);
 }
 

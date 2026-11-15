@@ -2,6 +2,7 @@
 #define MMX4_PC_BUILD_H
 
 #include "pc_bg_tile_cache.h"
+#include "pc_saturn_extras.h"
 
 struct UnkObj* find_free_unk_obj(void);
 void func_80012024(void);

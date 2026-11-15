@@ -116,11 +116,13 @@ static int parse_args(int argc, char** argv, const char** disc)
             mmx4_pc_canonical_load = 1;
         } else if (strcmp(argv[i], "--fast-load") == 0) {
             mmx4_pc_canonical_load = 0;
+        } else if (strcmp(argv[i], "--saturn-heat") == 0) {
+            mmx4_pc_saturn_heat = 1;
         } else if (strcmp(argv[i], "--help") == 0) {
             printf("usage: %s [--cue GAME.cue] [--sfx INDEX|GROUP:INDEX] "
                    "[--replay FILE] "
                    "[--audio-raw FILE --frames N] "
-                   "[--canonical-load|--fast-load]\n",
+                   "[--canonical-load|--fast-load] [--saturn-heat]\n",
                 argv[0]);
             return 1;
         } else {
@@ -141,8 +143,10 @@ int main(int argc, char** argv)
 {
     const char* disc = getenv("MMX4_CUE");
     const char* canonical_load = getenv("MMX4_CANONICAL_LOAD");
+    const char* saturn_heat = getenv("MMX4_SATURN_HEAT");
     int parse_result;
     mmx4_pc_canonical_load = canonical_load != NULL && canonical_load[0] != '\0' && canonical_load[0] != '0';
+    mmx4_pc_saturn_heat = saturn_heat != NULL && saturn_heat[0] != '\0' && saturn_heat[0] != '0';
     if (disc == NULL)
 #ifdef VERSION_JP
         disc = "disks/mmx4.jp.cue";

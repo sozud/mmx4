@@ -639,7 +639,8 @@ void mmx4_pc_player_dump(long frame)
             fprintf(stderr, "MMX4 PC: unable to create %s\n", poke_dir);
             exit(EXIT_FAILURE);
         }
-        mmx4_pc_hide_background = poke_dir != NULL && getenv("MMX4_PLAYER_POKE_BACKGROUND") == NULL;
+        mmx4_pc_hide_background = (poke_dir != NULL && getenv("MMX4_PLAYER_POKE_BACKGROUND") == NULL)
+            || getenv("MMX4_HIDE_BACKGROUND") != NULL;
     }
     if (poke_dir == NULL)
         return;

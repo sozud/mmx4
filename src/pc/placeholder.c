@@ -818,11 +818,53 @@ void func_800262B8(u8 layer)
     background->unk4C = 0;
 }
 
+static void heat_only_link(s32 layer)
+{
+    static TILE black[2];
+    s32 buffer = SP_DRAW_BUFFER;
+    s32 heat_layer = mmx4_pc_heat_layer_plane(layer) >= 0;
+    s32 last, i, j;
+    const char* only_layer = getenv("MMX4_HEAT_ONLY_LAYER");
+    if (only_layer != NULL && atoi(only_layer) != layer)
+        heat_layer = 0;
+
+    for (j = 0; j < 2; j++) {
+        s32 list = layer + j * 3;
+        for (i = 0; i < 8; i++) {
+            P_TAG* head = background_heads[buffer][list][i];
+            if (head != NULL && heat_layer) {
+                DR_TPAGE* page = &D_80171EB0[buffer][list][i];
+                setaddr(page, head);
+                addPrims(&cur_draw_info->ordering_table.start, page, background_tails[buffer][list][i]);
+            }
+            background_heads[buffer][list][i] = NULL;
+            background_tails[buffer][list][i] = NULL;
+        }
+    }
+    for (last = 2; last > 0 && background_objects[last].unk3 == 0; last--)
+        ;
+    if (layer == last) {
+        setTile(&black[buffer]);
+        setRGB0(&black[buffer], 0, 0, 0);
+        setXY0(&black[buffer], 0, 0);
+        setWH(&black[buffer], 320, 240);
+        addPrim(&cur_draw_info->ordering_table.start, &black[buffer]);
+    }
+}
+
 void func_80026894(s32 layer)
 {
     s32 buffer = SP_DRAW_BUFFER;
     s32 back_layer = layer + 3;
     s32 i;
+    static int heat_only = -1;
+
+    if (heat_only < 0)
+        heat_only = getenv("MMX4_HEAT_ONLY") != NULL;
+    if (heat_only) {
+        heat_only_link(layer);
+        return;
+    }
 
     for (i = 0; i < 8; i++) {
         P_TAG* head = background_heads[buffer][layer][i];
@@ -853,6 +895,100 @@ void func_80026894(s32 layer)
 }
 
 #ifndef MMX4_SATURN
+#define HEAT_LINES 240
+#define HEAT_COLUMNS 21
+#define HEAT_STRIPS (HEAT_LINES * HEAT_COLUMNS * 2)
+
+static SPRT heat_strips[2][HEAT_STRIPS];
+static s32 heat_strip_count[2];
+static unsigned long heat_strip_frame[2];
+
+static u16 heat_tile(s32 layer, s32 world_tile_x, s32 world_tile_y)
+{
+    struct BackgroundObj* bg = &background_objects[layer];
+    s32 first_x = bg->x_pos.i.hi / 16;
+    s32 first_y = bg->y_pos.i.hi / 16;
+    s32 block_x, block_y, height;
+    u8 block;
+
+    if (world_tile_x >= first_x && world_tile_x < first_x + HEAT_COLUMNS
+        && world_tile_y >= first_y && world_tile_y < first_y + 16)
+        return D_801441C8[layer][world_tile_y & 31][world_tile_x & 31];
+    if (world_tile_x < 0 || world_tile_y < 0 || layout_width == 0)
+        return 0;
+    block_x = world_tile_x / 16;
+    block_y = world_tile_y / 16;
+    height = layout_size / layout_width;
+    if (bg->unk4E >= bg->unk4D && bg->unk4E != 0) {
+        s32 span = bg->unk4E - bg->unk4D + 1;
+        while (block_x > bg->unk4E)
+            block_x -= span;
+        while (block_x < bg->unk4D)
+            block_x += span;
+    }
+    if (block_x >= layout_width || block_y >= height)
+        return 0;
+    block = SP_BG_TILEMAP[layer * layout_size + block_y * layout_width + block_x];
+    return SP_BG_TILE_PIXELS[block * 256 + (world_tile_y & 15) * 16 + (world_tile_x & 15)];
+}
+
+static int heat_draw_layer(s32 layer)
+{
+    struct BackgroundObj* bg = &background_objects[layer];
+    s32 world_x[HEAT_LINES];
+    s32 world_y[HEAT_LINES];
+    s32 buffer = SP_DRAW_BUFFER;
+    s32 plane = mmx4_pc_heat_layer_plane(layer);
+    s32 line;
+
+    if (plane < 0 || !mmx4_pc_heat_line_offsets(plane, bg->x_pos.val, bg->y_pos.val, world_x, world_y, HEAT_LINES))
+        return 0;
+    if (heat_strip_frame[buffer] != mmx4_pc_frame_number()) {
+        heat_strip_frame[buffer] = mmx4_pc_frame_number();
+        heat_strip_count[buffer] = 0;
+    }
+    for (line = 0; line < HEAT_LINES; line++) {
+        s32 tile_y = world_y[line] >> 4;
+        s32 tile_x = world_x[line] >> 4;
+        s32 screen_x = tile_x * 16 - world_x[line];
+        s32 column;
+
+        for (column = 0; column < HEAT_COLUMNS; column++, tile_x++, screen_x += 16) {
+            u16 tile = heat_tile(layer, tile_x, tile_y);
+            SPRT* strip;
+            u32 attributes;
+            s32 ordering_layer;
+            s32 priority;
+            P_TAG* tail;
+
+            if (tile == 0)
+                continue;
+            if (heat_strip_count[buffer] >= HEAT_STRIPS)
+                return 1;
+            strip = &heat_strips[buffer][heat_strip_count[buffer]++];
+            attributes = SP_BG_TILE_ATTRS[tile & 0x3FFF];
+            setSprt(strip);
+            setShadeTex(strip, 1);
+            setSemiTrans(strip, (tile & 0x4000) != 0);
+            strip->clut = 0x7900 | ((attributes & 0xF000) >> 6) | ((attributes & 0xF00) >> 8);
+            setUV0(strip, (attributes >> 12) & 0xF0, ((attributes >> 16) & 0xF0) + (world_y[line] & 15));
+            setXY0(strip, screen_x, line);
+            setWH(strip, 16, 1);
+
+            ordering_layer = layer + ((tile & 0x8000) != 0 ? 3 : 0);
+            priority = attributes >> 24;
+            tail = background_tails[buffer][ordering_layer][priority];
+            if (tail == NULL) {
+                background_heads[buffer][ordering_layer][priority] = (P_TAG*)strip;
+            } else {
+                setaddr(tail, strip);
+            }
+            background_tails[buffer][ordering_layer][priority] = (P_TAG*)strip;
+        }
+    }
+    return 1;
+}
+
 void func_80026AA0(s32 layer)
 {
     struct BackgroundObj* bg = &background_objects[layer];
@@ -861,9 +997,11 @@ void func_80026AA0(s32 layer)
     s32 tile_y = (bg->y_pos.i.hi / 16) & 31;
     s32 screen_y = -(bg->y_pos.i.hi & 15);
     s32 row;
+    int heat;
 
     if (mmx4_pc_hide_background)
         return;
+    heat = mmx4_pc_saturn_heat && heat_draw_layer(layer);
 
     for (row = 0; row < 16; row++) {
         s32 current_tile_x = tile_x;
@@ -892,13 +1030,15 @@ void func_80026AA0(s32 layer)
 
                 ordering_layer = layer + ((tile & 0x8000) != 0 ? 3 : 0);
                 priority = attributes >> 24;
-                tail = background_tails[SP_DRAW_BUFFER][ordering_layer][priority];
-                if (tail == NULL) {
-                    background_heads[SP_DRAW_BUFFER][ordering_layer][priority] = (P_TAG*)sprite;
-                } else {
-                    setaddr(tail, sprite);
+                if (!heat) {
+                    tail = background_tails[SP_DRAW_BUFFER][ordering_layer][priority];
+                    if (tail == NULL) {
+                        background_heads[SP_DRAW_BUFFER][ordering_layer][priority] = (P_TAG*)sprite;
+                    } else {
+                        setaddr(tail, sprite);
+                    }
+                    background_tails[SP_DRAW_BUFFER][ordering_layer][priority] = (P_TAG*)sprite;
                 }
-                background_tails[SP_DRAW_BUFFER][ordering_layer][priority] = (P_TAG*)sprite;
                 sprite++;
             }
 
