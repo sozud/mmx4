@@ -3,7 +3,7 @@
 #include "common.h"
 #include "main/effects/effect_11_null_effect.h"
 
-#ifdef MMX4_SATURN
+#if defined(MMX4_SATURN) || defined(MMX4_PC)
 #define LINE_SCROLL_CONTROL 0x9A
 #define LINE_SCROLL_TABLE_A 0xA0
 #define LINE_SCROLL_TABLE_B 0xA4
@@ -14,8 +14,13 @@
 #define LINE_SCROLL_VERTICAL 0x400
 #define LINE_TABLE_A_ADDRESS 0x12F37000
 #define LINE_TABLE_B_ADDRESS 0x12F37200
+#ifdef MMX4_SATURN
 #define LINE_SCROLL_X ((s32*)0x06002000)
 #define LINE_SCROLL_Y ((s32*)0x06002400)
+#else
+#define LINE_SCROLL_X (mmx4_pc_line_scroll.work)
+#define LINE_SCROLL_Y (mmx4_pc_line_scroll.work + LINE_COUNT)
+#endif
 #define LINE_SCROLL_VRAM 0x25E6E000
 #define LINE_SCROLL_BYTES 0x800
 #define LINE_COUNT 0x100
@@ -36,14 +41,19 @@ struct LineWave {
     u16 delay_y;
 };
 
-extern u16 saturn_vdp2_shadow[];
 extern u16 sound_zone_data[65];
+#ifdef MMX4_SATURN
+extern u16 saturn_vdp2_shadow[];
 void saturn_transfer_enqueue(u32 source, u32 destination, u32 byte_length);
 void saturn_transfer_profile(u32 add_a, u32 add_b, u32 attribute_index);
 
 #define SHADOW16(offset) (*(u16*)((u8*)saturn_vdp2_shadow + (offset)))
 #define SHADOW32(offset) (*(u32*)((u8*)saturn_vdp2_shadow + (offset)))
-#define LINE_WAVE(self) ((struct LineWave*)((u8*)(self) + 0x14))
+#else
+#define SHADOW16(offset) (*(u16*)((u8*)mmx4_pc_line_scroll.vdp2 + (offset)))
+#define SHADOW32(offset) (*(u32*)((u8*)mmx4_pc_line_scroll.vdp2 + (offset)))
+#endif
+#define LINE_WAVE(self) ((struct LineWave*)&(self)->ext)
 
 static s32 line_wave(s32 line, u16 phase, u16 scale)
 {
@@ -93,8 +103,12 @@ static s32 line_wave_y(struct LineWave* wave, s32 line, s32 multiplier)
 
 static void line_wave_commit(void)
 {
+#ifdef MMX4_SATURN
     saturn_transfer_profile(LINE_COUNT, 1, 0);
     saturn_transfer_enqueue((u32)LINE_SCROLL_X, LINE_SCROLL_VRAM, LINE_SCROLL_BYTES);
+#else
+    mmx4_pc_line_scroll_commit();
+#endif
 }
 
 static void line_wave_surface(struct EffectObj* self)
@@ -177,7 +191,20 @@ static void (*const null_effect_variants[])(struct EffectObj*) = {
 
 void null_effect_update(struct EffectObj* self)
 {
+#ifdef MMX4_PC
+    if (!mmx4_pc_saturn_heat)
+        return;
+    mmx4_pc_line_scroll_alive();
+    {
+        struct LineWave after;
+        null_effect_variants[self->unk2](self);
+        after = *LINE_WAVE(self);
+        null_effect_variants[self->unk2](self);
+        *LINE_WAVE(self) = after;
+    }
+#else
     null_effect_variants[self->unk2](self);
+#endif
 }
 
 static void null_effect_surface(struct EffectObj* self)

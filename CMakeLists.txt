@@ -52,6 +52,7 @@ add_library(mmx4_game OBJECT
     src/pc/oracle.c
     src/pc/placeholder.c
     src/pc/renderlog.c
+    src/pc/saturn_heat.c
     src/pc/scratchpad.c
     src/pc/screenshot.c
     src/pc/stubs.c
