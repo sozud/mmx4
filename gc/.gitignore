@@ -1,0 +1,9 @@
+# dtk-template outputs and downloaded tools
+build/
+build.ninja
+objdiff.json
+compile_commands.json
+.ninja_*
+__pycache__/
+# disc files (orig/GXGE08 holds or links the extracted disc: sys/main.dol, files/x4.rel)
+orig/

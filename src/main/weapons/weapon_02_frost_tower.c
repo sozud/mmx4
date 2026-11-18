@@ -287,7 +287,7 @@ void func_80094280(struct WeaponObj* arg0)
 void func_800942E8(struct WeaponObj* arg0)
 {
     u8* ext = arg0->ext.raw;
-    s32 strength;
+    s8 strength;
 
     if (ext[2] == 0) {
         ext[2] = 0x28;

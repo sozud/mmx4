@@ -331,7 +331,7 @@ void train_cannon_fire_blast(struct PlayerObj* self)
 
 void train_cannon_fire_volley(struct MainObj* self)
 {
-    s32 is_zero;
+    s32 nonzero;
     struct ShotObj* shot;
     u8 i;
     for (i = 0; i < 2; i++) {
@@ -347,8 +347,8 @@ void train_cannon_fire_volley(struct MainObj* self)
             shot->unk40 = self->unk40;
             shot->unk15 = self->unk15;
             shot->bg_offset = self->bg_offset;
-            is_zero = (i == 0);
-            shot->unk16 = is_zero ? VISUAL_SATURN_LAYER(4) : VISUAL_SATURN_LAYER(6);
+            nonzero = (i != 0);
+            shot->unk16 = nonzero ? VISUAL_SATURN_LAYER(6) : VISUAL_SATURN_LAYER(4);
         }
     }
 }

@@ -469,3 +469,43 @@ jobs:
       - name: Build Saturn image
         run: |
           python3 tools/saturn/saturn_native_build.py --output build/saturn-native --jobs $(nproc) --no-disc
+
+  gamecube:
+    name: Build GameCube (x4.rel)
+    if: github.event_name != 'pull_request_target'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Clone main repo
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Install requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ninja-build
+      - name: Get game dependencies
+        uses: actions/checkout@v7
+        with:
+          repository: sozud/mmx4-deps
+          ref: main
+          token: ${{ secrets.MMX4_DEPS_TOKEN }}
+          path: gc/orig/dependencies
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: gc/GXGE08/
+      - name: Set up the disc files
+        run: mv gc/orig/dependencies/gc/GXGE08 gc/orig/GXGE08
+      - name: Build and check x4.rel
+        working-directory: gc
+        run: |
+          python3 configure.py
+          ninja
+      - name: Upload progress report
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v7
+        with:
+          name: gc_report
+          path: gc/build/GXGE08/report.json

@@ -735,7 +735,8 @@ void web_spider_attack_web(struct MainObj* self)
         self->unk7 = 0;
         set_animation(self, self->ext.main_43.animation_id);
         web_spider_set_attack_cooldown(self);
-        if (++self->ext.main_43.attack_count >= 3) {
+        self->ext.main_43.attack_count++;
+        if (self->ext.main_43.attack_count >= 3) {
             self->ext.main_43.attack_count = 0;
         }
     }

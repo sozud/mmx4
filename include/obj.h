@@ -176,7 +176,7 @@ struct Main14Ext {
 };
 
 struct Main16Ext {
-    u32 unk80;
+    s32 unk80;
     s32 unk84;
     s32 unk88;
     u32 unk8C;
