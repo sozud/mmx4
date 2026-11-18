@@ -5,6 +5,7 @@ A matching decompilation of *Mega Man X4* (PlayStation, 1997).
 [![US](https://decomp.dev/sozud/mmx4/us.svg?mode=shield&category=game&label=US)](https://decomp.dev/sozud/mmx4)
 [![JP](https://decomp.dev/sozud/mmx4/jp.svg?mode=shield&category=game&label=JP)](https://decomp.dev/sozud/mmx4)
 [![EU](https://decomp.dev/sozud/mmx4/eu.svg?mode=shield&category=game&label=EU)](https://decomp.dev/sozud/mmx4)
+[![GameCube](https://decomp.dev/sozud/mmx4/gc.svg?mode=shield&category=game&label=GameCube)](https://decomp.dev/sozud/mmx4)
 [![Build](https://github.com/sozud/mmx4/actions/workflows/build.yaml/badge.svg)](https://github.com/sozud/mmx4/actions/workflows/build.yaml)
 
 The same C source builds:
@@ -12,6 +13,7 @@ The same C source builds:
 - byte-matching PlayStation executables for the US, JP and EU releases
 - a native PC port for Linux (US and JP)
 - a non-matching Sega Saturn build
+- the GameCube version from Mega Man X Collection
 
 This repository does not contain any game assets. You need your own copy of the game.
 
@@ -23,6 +25,7 @@ This repository does not contain any game assets. You need your own copy of the 
 | JP        | `SLPS_009.02`         | GCC 2.7.2                 | `check.jp.txt` |
 | EU        | `SLES_011.76`         | GCC 2.8.1                 | `check.eu.txt` |
 | Saturn US | `0.BIN`, `X4LOW.X4`   | `sh-elf-gcc` (retail: SHC) | non-matching   |
+| GameCube  | `x4.rel` (GXGE08)     | CodeWarrior GC/2.6        | `gc/config/GXGE08/build.sha1` |
 
 ## Building the PlayStation executables
 
