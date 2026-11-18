@@ -1,0 +1,14 @@
+object: sys/main.dol
+hash: 52d64b6e841702a354e6b567c47dab99538a1a1b
+object_base: orig/GXGE08
+symbols: config/GXGE08/main_symbols.txt
+splits: config/GXGE08/main_splits.txt
+mw_comment_version: 10
+
+modules:
+- object: files/x4.rel
+  hash: c763ddf60b0209572c5d1b961b4e3e7160ba3622
+  name: x4
+  symbols: config/GXGE08/x4_symbols.txt
+  splits: config/GXGE08/x4_splits.txt
+  ldscript_template: config/GXGE08/x4_ldscript.tpl
