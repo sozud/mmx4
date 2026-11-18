@@ -224,8 +224,7 @@ void airship_bob_update_section(struct LayerObj* arg0)
         if (player_x - airship_bob_section_positions[offset] < 0) {
             break;
         }
-        offset++;
-        if (offset >= 2) {
+        if (++offset >= 2) {
             break;
         }
     }

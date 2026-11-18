@@ -56,7 +56,7 @@ void tile_anim_trigger_init(struct EffectObj* self)
         self->ext.effect_29.palette.fields.unk1 = self->ext.effect_29.palette_source.animation->unused;
         self->ext.effect_29.palette.fields.step = self->ext.effect_29.palette_source.animation->frame_step;
         self->ext.effect_29.palette.fields.id = self->ext.effect_29.palette_source.animation->frame;
-        self->state = (u8)self->state + 1;
+        self->state++;
     }
 }
 
@@ -71,11 +71,7 @@ void tile_anim_trigger_main(struct EffectObj* self)
 
 void tile_anim_trigger_step(struct EffectObj* self)
 {
-    s8 timer;
-
-    timer = self->ext.effect_29.palette.fields.timer - 1;
-    self->ext.effect_29.palette.fields.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.effect_29.palette.fields.timer == 0) {
         self->ext.effect_29.palette_source.words += self->ext.effect_29.palette.fields.step;
         self->ext.effect_29.palette.packed = *self->ext.effect_29.palette_source.words;
         refresh_visible_tile_effect(self->ext.effect_29.palette.fields.id,

@@ -495,8 +495,7 @@ void func_8003DE84(struct RideArmorObj* arg0)
         }
     }
 
-    arg0->unk8E.bytes.timer--;
-    if (arg0->unk8E.bytes.timer == 0) {
+    if (--arg0->unk8E.bytes.timer == 0) {
         arg0->unk8E.bytes.active = 0;
     }
 }
@@ -1498,7 +1497,7 @@ void func_800400C8(struct PlayerObj* self)
         func_800AF878(BASE_OBJECT(self), 0, 0x1F, 0x1F);
         return;
     default:
-        if ((*(u8*)&self->afterimage == 0) && !(*(u8*)&self->last_shot_type & 0x80)) {
+        if (((u8)self->afterimage == 0) && !((u8)self->last_shot_type & 0x80)) {
             self->dash_timer = 0;
             self->unk42 &= 0x7FFF;
         }

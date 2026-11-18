@@ -251,7 +251,7 @@ void func_800583B0(arg0, x, y, base)
 void ice_wall_break_start(struct BaseObj* self)
 {
     func_800583B0(self, self->x_pos.i.hi, self->y_pos.i.hi, 10);
-    self->y_pos.u.hi += 0x18;
+    self->y_pos.i.hi += 0x18;
     spawn_debris(0xC, ice_wall_debris, self);
     self->unk5 += 2;
 }

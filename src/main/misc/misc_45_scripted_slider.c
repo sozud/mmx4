@@ -171,12 +171,12 @@ void scripted_slider_slide(struct MiscObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->ext.misc_45.direction == 0) {
         if (self->x_pos.i.hi > self->ext.misc_45.target_x) {
-            self->unk28 = FIXED(1);
             self->unk5++;
+            self->unk28 = FIXED(1);
         }
     } else if (self->x_pos.i.hi < self->ext.misc_45.target_x) {
-        self->unk28 = -FIXED(1);
         self->unk5++;
+        self->unk28 = -FIXED(1);
     }
 }
 
@@ -212,8 +212,8 @@ void scripted_slider_follow_owner(struct MiscObj* self)
 
     index = self->unk2;
     source = self->ext.misc_45.owner;
-    self->x_pos.u.hi = source->x_pos.u.hi + scripted_slider_offsets[index].x;
-    self->y_pos.u.hi = source->y_pos.u.hi + scripted_slider_offsets[self->unk2].y;
+    self->x_pos.i.hi = source->x_pos.i.hi + scripted_slider_offsets[index].x;
+    self->y_pos.i.hi = source->y_pos.i.hi + scripted_slider_offsets[self->unk2].y;
 }
 
 // scripted_slider_step_4

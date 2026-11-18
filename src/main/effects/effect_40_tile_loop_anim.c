@@ -29,7 +29,7 @@ void tile_loop_anim_init(struct EffectObj* self)
     self->ext.effect_40.palette.fields.unk1 = self->ext.effect_40.palette_source.bytes[1];
     self->ext.effect_40.palette.fields.step = self->ext.effect_40.palette_source.bytes[2];
     self->ext.effect_40.palette.fields.id = self->ext.effect_40.palette_source.bytes[3];
-    self->state = (u8)self->state + 1;
+    self->state++;
 }
 
 void tile_loop_anim_step(struct EffectObj* arg0);
@@ -41,11 +41,7 @@ void tile_loop_anim_main(struct EffectObj* self)
 
 void tile_loop_anim_step(struct EffectObj* self)
 {
-    s8 timer;
-
-    timer = self->ext.effect_40.palette.fields.timer - 1;
-    self->ext.effect_40.palette.fields.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.effect_40.palette.fields.timer == 0) {
         self->ext.effect_40.palette_source.words += self->ext.effect_40.palette.fields.step;
         self->ext.effect_40.palette.packed = *self->ext.effect_40.palette_source.words;
         apply_tile_effect(self->ext.effect_40.palette.fields.id,

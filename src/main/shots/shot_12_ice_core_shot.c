@@ -64,11 +64,11 @@ void func_8009B85C(struct ShotObj* arg0)
         arg0->x_pos.i.hi -= (s8)ice_core_shard_offsets[arg0->unk2 * 2];
         arg0->x_vel.val = -(arg0->x_vel.val * 6);
     }
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
     arg0->unk54 = ice_core_spray_hit_box;
     arg0->unk50.data = ice_core_spray_hit_box;
     arg0->unk5C = 6;
-    arg0->unk16 = 0;
-    arg0->unk68 = NULL;
     arg0->unk60 = 3;
     set_animation(arg0, arg0->unk2 + 0x11);
 }

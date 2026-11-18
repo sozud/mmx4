@@ -14,7 +14,7 @@
 #include "saturn/menu.h"
 #endif
 
-extern s32 D_800EE458;
+extern u32 D_800EE458;
 
 #ifndef MMX4_SATURN
 extern RECT D_800EE450;
@@ -52,6 +52,8 @@ void tile_effect_nop(void);
 
 void mmx4_pc_finish_cd_load(void);
 #endif
+
+void func_80012328(void);
 
 // entrypoint
 #ifndef MMX4_SATURN
@@ -209,7 +211,7 @@ void func_80012454(void)
 {
     if ((D_8013BD44 != 0) && (main_bss_state.transition.active == 0)) {
         if ((controller_input.held & 0x900) == 0x900) {
-            if ((--D_80141BD2 << 0x10) == 0) {
+            if (--D_80141BD2 == 0) {
                 if ((engine_obj.stage != 0) && (engine_obj.unk5F >= 3U)) {
                     func_8001C3E8();
                 }
@@ -317,8 +319,7 @@ void func_80012600(void)
     do {
         switch (CUR_GAME_THREAD->state) {
         case 1:
-            CUR_GAME_THREAD->timer--;
-            if (CUR_GAME_THREAD->timer == 0) {
+            if (--CUR_GAME_THREAD->timer == 0) {
             case 2:
             case 4:
             case 0x7F:
@@ -432,7 +433,7 @@ void func_800128EC(s32 arg0)
 #elif defined(MMX4_WIN32)
     u8* temp_a0 = win32_main_ram + 0x1F8100 + (arg0 << 7);
 #else
-    u16* temp_a0 = (arg0 << 7) + 0x801F8100;
+    u16* temp_a0 = (u16*)((arg0 << 7) + 0x801F8100);
 #endif
     *temp_a0 |= 0x40;
 }
@@ -444,7 +445,7 @@ void func_80012910(s32 arg0)
 #ifdef MMX4_PC
     u16* temp_a0 = &mmx4_pc_thread_slot(arg0)->state;
 #else
-    u16* temp_a0 = (arg0 << 7) + 0x801F8100;
+    u16* temp_a0 = (u16*)((arg0 << 7) + 0x801F8100);
 #endif
     *temp_a0 &= ~0x40;
 }
@@ -551,7 +552,7 @@ RECT D_800EE450 = { 0, 0, 1024, 512 };
 u8 pc_2824_data[24] = { 0x48, 0x00, 0x69, 0x00, 0x00, 0xB0, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x02, 0x48, 0x00, 0x69, 0x00, 0x00, 0xB0, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x02 };
 #endif
 
-s32 D_800EE458 = 0;
+u32 D_800EE458 = 0;
 
 #ifndef MMX4_SATURN
 void (*D_800EE45C[9])() = {

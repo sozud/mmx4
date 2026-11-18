@@ -56,22 +56,23 @@ void frost_tower_charged_spawn_part(s8 arg0);
 
 void frost_tower_update(struct WeaponObj* arg0)
 {
-    s32 should_change_state;
+    struct PlayerObj* player = &g_Player;
+    u32 should_change_state;
 
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
 
     should_change_state = 0;
-    if (g_Player.input_locked != 0) {
+    if (player->input_locked != 0) {
         should_change_state = 1;
     }
-    if (g_Player.capsule_state != 0) {
+    if (player->capsule_state != 0) {
         should_change_state = 1;
     }
-    if (g_Player.weapon != 2) {
+    if (player->weapon != 2) {
         should_change_state = 1;
     }
-    if (g_Player.shot_type == 0xB) {
+    if (player->shot_type == 0xB) {
         should_change_state = 1;
     }
     if (should_change_state != 0) {
@@ -226,16 +227,16 @@ void frost_tower_hide(struct WeaponObj* arg0)
 
 void frost_tower_spawn_shard(struct WeaponObj* arg0)
 {
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 
-    temp_v0 = find_free_misc_obj();
-    if (temp_v0 != NULL) {
-        temp_v0->active = 1;
-        temp_v0->id = 0x25;
-        temp_v0->unk2 = 0;
-        temp_v0->bg_offset = arg0->bg_offset;
-        temp_v0->x_pos.val = arg0->x_pos.val;
-        temp_v0->y_pos.val = arg0->y_pos.val;
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 1;
+        misc->id = 0x25;
+        misc->unk2 = 0;
+        misc->bg_offset = arg0->bg_offset;
+        misc->x_pos.val = arg0->x_pos.val;
+        misc->y_pos.val = arg0->y_pos.val;
     }
 }
 
@@ -243,16 +244,17 @@ void frost_tower_spawn_shard(struct WeaponObj* arg0)
 
 void frost_tower_charged_update(struct WeaponObj* arg0)
 {
-    s32 disabled;
+    struct PlayerObj* player = &g_Player;
+    u32 disabled;
 
     disabled = 0;
-    if (g_Player.input_locked != 0) {
+    if (player->input_locked != 0) {
         disabled = 1;
     }
-    if (g_Player.capsule_state != 0) {
+    if (player->capsule_state != 0) {
         disabled = 1;
     }
-    if (g_Player.weapon != 2) {
+    if (player->weapon != 2) {
         disabled = 1;
     }
     if (disabled != 0) {
@@ -377,7 +379,7 @@ void frost_tower_charged_part_main(struct WeaponObj* arg0)
             }
             if (arg0->animation_step.fields.event == 2) {
                 arg0->animation_step.fields.event = 0;
-                arg0->unk5 = (u8)arg0->unk5 + 1;
+                arg0->unk5++;
             }
         } else {
             move_object(MOVING_OBJECT(arg0));
@@ -461,15 +463,15 @@ void frost_particle_launch(struct MiscObj* self)
     self->on_screen = 1;
 
     if (get_random() & 1) {
-        self->x_pos.u.hi += get_random() & 0xF;
+        self->x_pos.i.hi += get_random() & 0xF;
     } else {
-        self->x_pos.u.hi -= get_random() & 0xF;
+        self->x_pos.i.hi -= get_random() & 0xF;
     }
 
     if (get_random() & 1) {
-        self->y_pos.u.hi += get_random() & 0x17;
+        self->y_pos.i.hi += get_random() & 0x17;
     } else {
-        self->y_pos.u.hi -= get_random() & 0x17;
+        self->y_pos.i.hi -= get_random() & 0x17;
     }
 
     if (get_random() & 1) {

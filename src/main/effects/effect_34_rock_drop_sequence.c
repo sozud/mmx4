@@ -34,7 +34,7 @@ void rock_drop_sequence_wait_player(struct EffectObj* self)
 
     if (g_Player.x_pos.i.hi > 0x240) {
         self->ext.effect_34.unk14 = 0;
-        self->ext.effect_34.timer = rock_drop_sequence_delays[0];
+        self->ext.effect_34.timer = rock_drop_sequence_delays[self->ext.effect_34.unk14];
         self->state = 1;
     }
 }

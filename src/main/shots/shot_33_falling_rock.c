@@ -484,7 +484,6 @@ void func_800A12EC(struct ShotObj* self)
 {
     u8 flags;
     s32 tile;
-    u16 timer;
     self->unk42 &= 0x7FFF;
     if (self->unk5 == 0) {
         move_with_gravity(ANIMATED_OBJECT(self));
@@ -556,9 +555,7 @@ void func_800A12EC(struct ShotObj* self)
             self->unk5 = 1;
         }
     } else {
-        timer = self->timer - 1;
-        self->timer = timer;
-        if ((timer << 0x10) == 0) {
+        if (--self->timer == 0) {
             self->unk84.effect->ext.effect_33.timer = 0xB4;
             spawn_debris(5, falling_rock_debris_5, self);
             self->state = 8;

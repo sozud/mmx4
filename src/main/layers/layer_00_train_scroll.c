@@ -196,8 +196,7 @@ void train_scroll_update_section(struct LayerObj* arg0)
         if (player_x - train_scroll_lock_positions[offset] < 0) {
             break;
         }
-        offset++;
-        if (offset >= 4) {
+        if (++offset >= 4) {
             break;
         }
     }

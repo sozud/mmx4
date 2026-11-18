@@ -50,14 +50,13 @@ void func_8009B424(struct ShotObj* self)
     self->unk54 = dragon_spread_shot_large_hit_box;
     self->x_vel.val *= 5;
     self->y_vel.val *= 5;
-    self->y_pos.u.hi -= 8;
+    self->y_pos.i.hi -= 8;
     set_animation(self, self->unk2 >> 1);
     self->unk84.value = 0;
 }
 
-void dragon_spread_shot_fly(struct ShotObj* arg0)
+void dragon_spread_shot_fly(struct ShotObj* self)
 {
-    struct ShotObj* self = arg0;
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
@@ -66,13 +65,13 @@ void dragon_spread_shot_fly(struct ShotObj* arg0)
         if (self->unk84.value > 2) {
             spawn_explosion(BASE_OBJECT(self));
         }
-        self->state = (u8)self->state + 1;
+        self->state++;
         return;
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
         update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
     } else {
-        self->state = (u8)self->state + 1;
+        self->state++;
     }
     self->unk84.value += 1;
 }

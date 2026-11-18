@@ -32,10 +32,10 @@ void func_80029DBC(void)
 
     for (a1 = 0; a1 < COUNT(unk_objects); a1++) {
         a0 = (u8*)&unk_objects[a1];
-        var_v1 = sizeof(unk_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(unk_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 }
 

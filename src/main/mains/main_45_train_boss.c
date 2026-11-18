@@ -229,8 +229,7 @@ void func_800661AC(struct MainObj* self)
         g_Player.unk1C = g_Player.y_pos;
     }
     func_80066970(self);
-    self->unk7C = (u16)self->unk7C - 1;
-    if (self->unk7C == 0) {
+    if (--self->unk7C == 0) {
         if ((u8)g_Player.hp != 0x80)
             engine_obj.unkF = 0x40;
         ZeroObjectState(OBJECT_HEADER(self));
@@ -288,8 +287,7 @@ void func_8006630C(struct MainObj* self)
 void func_80066478(struct MainObj* self)
 {
 
-    self->ext.main_45.unk84 = (u16)self->ext.main_45.unk84 - 1;
-    if (self->ext.main_45.unk84 == 0) {
+    if (--self->ext.main_45.unk84 == 0) {
         if (self->ext.main_45.unk82 == 0) {
             self->ext.main_45.unk81 = 1;
             self->ext.main_45.unk82 = 1;
@@ -304,8 +302,7 @@ void func_80066478(struct MainObj* self)
     }
     collide_with_players(PLAYER_OBJECT(self));
     if (self->ext.main_45.unk83 != 0) {
-        self->ext.main_45.unk83--;
-        if (self->ext.main_45.unk83 == 0) {
+        if (--self->ext.main_45.unk83 == 0) {
             self->ext.main_45.unk81 = 0;
             *self->ext.main_45.layer_bg_offset = 0;
         } else if ((self->ext.main_45.unk83 & 1) == 0) {
@@ -431,7 +428,7 @@ void train_boss_arrive_fill_hp(struct MainObj* self)
             func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
             self->unk7E = 3;
         }
-        self->hp = (u8)self->hp + 1;
+        self->hp++;
         return;
     }
     self->ext.main_45.projectile_command = 0xFF;
@@ -462,24 +459,23 @@ void func_80066970(struct MainObj* self)
     u16 x;
     u16 y;
 
-    self->unk7E = (u16)self->unk7E - 1;
-    if (self->unk7E == 3) {
-        x = self->x_pos.u.hi;
-        y = self->y_pos.u.hi;
-        self->x_pos.u.hi = x - 0x37;
-        self->y_pos.u.hi = y + 0xB;
+    if (--self->unk7E == 3) {
+        x = self->x_pos.i.hi;
+        y = self->y_pos.i.hi;
+        self->x_pos.i.hi = x - 0x37;
+        self->y_pos.i.hi = y + 0xB;
         func_800AF95C(OBJECT_HEADER(self), 1, 0x29, 0x59, 4);
-        self->x_pos.u.hi = x;
-        self->y_pos.u.hi = y;
+        self->x_pos.i.hi = x;
+        self->y_pos.i.hi = y;
     }
     if (self->unk7E == 0) {
-        x = self->x_pos.u.hi;
-        y = self->y_pos.u.hi;
-        self->x_pos.u.hi = x + 0x27;
-        self->y_pos.u.hi = y + 0x34;
+        x = self->x_pos.i.hi;
+        y = self->y_pos.i.hi;
+        self->x_pos.i.hi = x + 0x27;
+        self->y_pos.i.hi = y + 0x34;
         func_800AF95C(OBJECT_HEADER(self), 1, 0x37, 0x28, 2);
-        self->x_pos.u.hi = x;
-        self->y_pos.u.hi = y;
+        self->x_pos.i.hi = x;
+        self->y_pos.i.hi = y;
         self->unk7E = 6;
     }
 }

@@ -26,8 +26,8 @@ void laser_target_init(struct ItemObj* self)
 {
     struct MainObj* owner;
 
-    self->unk5 = 0;
     self->state = 1;
+    self->unk5 = 0;
     self->on_screen = 1;
     owner = self->backref;
     self->unk7C.owner = owner;

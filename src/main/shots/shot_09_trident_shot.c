@@ -50,6 +50,7 @@ void func_8009B0B8(struct ShotObj* arg0)
     arg0->state = 1;
     arg0->on_screen = 1;
     arg0->unk58.collision_bounds = D_801060F0;
+    arg0->unk42 &= 0x7FFF;
     arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->unk68 = NULL;
     arg0->unk54 = trident_shot_flash_box;
@@ -57,25 +58,22 @@ void func_8009B0B8(struct ShotObj* arg0)
     arg0->unk5C = 1;
     arg0->unk60 = 3;
     arg0->unk84.value = 0x1E;
-    arg0->unk42 &= 0x7FFF;
     set_animation(ANIMATED_OBJECT(arg0), 5);
 }
 
 void trident_shot_flash(struct ShotObj* self)
 {
-    s32 temp_v0;
-
     animate_object(ANIMATED_OBJECT(self));
-    temp_v0 = self->unk84.value - 1;
-    self->unk84.value = temp_v0;
-    if (temp_v0 != 0) {
-        if (*(u32*)self->unk7C != 0) {
-            func_8002D9BC(self);
-            func_8002DD04(MAIN_OBJECT(self));
-            if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
-                update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
-                return;
-            }
+    if (--self->unk84.value != 0) {
+        if (*(u32*)self->unk7C == 0) {
+            self->state = 2;
+            return;
+        }
+        func_8002D9BC(self);
+        func_8002DD04(MAIN_OBJECT(self));
+        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+            update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
+            return;
         }
     }
     self->state = 2;

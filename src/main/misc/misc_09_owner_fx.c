@@ -28,7 +28,7 @@ void owner_fx_init(struct MiscObj* self)
     self->unk16 = VISUAL_SATURN_LAYER(5);
     self->bg_offset = (s8)(u8)self->ext.misc_9.owner->bg_offset;
     set_animation(self, self->unk2);
-    self->state = (u8)self->state + 1;
+    self->state++;
     is_on_screen(BASE_OBJECT(self));
 }
 

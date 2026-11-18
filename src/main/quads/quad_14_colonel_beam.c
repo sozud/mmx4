@@ -34,7 +34,7 @@ void colonel_beam_init(struct QuadObj* arg0)
     arg0->y_pos.i.hi = 0;
     colonel_beam_place(arg0, (u8)arg0->unk2);
     arg0->unk5 = 0;
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
 }
 
 void colonel_beam_main(struct QuadObj* arg0)

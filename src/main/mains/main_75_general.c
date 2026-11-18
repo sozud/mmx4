@@ -167,8 +167,8 @@ void func_8008FBCC(struct MainObj* self)
         self->hp = 0;
         self->contact_damage = 5;
         self->invincibility_timer = 0;
-        self->x_pos.i.hi = 0xE98;
         self->unk5++;
+        self->x_pos.i.hi = 0xE98;
         self->y_pos.i.hi = 0x27B;
         self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
         bg_offset = g_Player.bg_offset;
@@ -288,8 +288,8 @@ void general_intro_dialogue(struct MainObj* self)
             self->unk6++;
         }
     } else if (abc_object.unkC == 0) {
-        self->unk6 = 0;
         self->unk5++;
+        self->unk6 = 0;
         play_boss_voice(0xB);
         self->unk7C = 1;
     }
@@ -389,8 +389,8 @@ void func_8009027C(struct MainObj* self)
         if (general_at_position(OBJECT_HEADER(self), self->unk15 != 0 ? 0xD7E : 0xEC5, 0x24B)) {
             self->unk7C = 0x3C;
             self->x_speed = 0;
-            self->y_speed = 0;
             self->unk6++;
+            self->y_speed = 0;
             set_animation(self->ext.main_75.thruster, 7);
             STOP_SOUND(2, 2, 0x6);
         }
@@ -456,7 +456,7 @@ void func_800905D4(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     turned = 0;
     if (self->ext.main_75.random_index == 0 && self->y_pos.i.hi + 0x30 < g_Player.y_pos.i.hi
-        && (self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0 ? self->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - self->x_pos.i.hi) < 8) {
+        && ABS(self->x_pos.i.hi, g_Player.x_pos.i.hi) < 8) {
         self->unk5 = 6;
         self->unk6 = 0;
         self->unk7 = 0;
@@ -523,7 +523,6 @@ void general_punch_launch(struct MainObj* self)
 {
     struct ShotObj* first;
     struct ShotObj* second;
-    struct ShotObj* shot;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
@@ -548,13 +547,12 @@ void general_punch_launch(struct MainObj* self)
         second->unk8C.shot = first;
     }
     if (self->animation_step.fields.frame_index == 0x1E) {
-        shot = self->ext.main_75.thruster;
-        shot->unk84.shot_55.x = self->unk15 != 0 ? -0x20 : 0x20;
+        self->ext.main_75.thruster->unk84.shot_55.x = self->unk15 != 0 ? -0x20 : 0x20;
         self->ext.main_75.thruster->unk84.shot_55.y = -4;
     }
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk7C = 0x3C;
         self->unk6++;
+        self->unk7C = 0x3C;
     }
 }
 
@@ -611,7 +609,8 @@ void general_punch(struct MainObj* self)
     general_punch_funcs[self->unk6](self);
     if ((self->unk6 >= 3) && (WEAPON_FRAME_COUNTER % 10 == 0)) {
         self->y_pos.i.hi += self->ext.main_75.bob_step;
-        if (--self->ext.main_75.bob_timer == 0) {
+        self->ext.main_75.bob_timer--;
+        if (self->ext.main_75.bob_timer == 0) {
             self->ext.main_75.bob_timer = 0xA;
             self->ext.main_75.bob_step *= -1;
         }
@@ -660,8 +659,8 @@ void general_orbs_fire(struct MainObj* self)
 void general_orbs_wait(struct MainObj* self)
 {
     if (self->ext.main_75.orbs_ready != 0) {
-        self->unk7C = 0x78;
         self->unk6++;
+        self->unk7C = 0x78;
     }
 }
 
@@ -680,7 +679,8 @@ void general_orbs(struct MainObj* self)
     general_orbs_funcs[self->unk6](self);
     if (WEAPON_FRAME_COUNTER % 10 == 0) {
         self->y_pos.i.hi += self->ext.main_75.bob_step;
-        if (--self->ext.main_75.bob_timer == 0) {
+        self->ext.main_75.bob_timer--;
+        if (self->ext.main_75.bob_timer == 0) {
             self->ext.main_75.bob_timer = 0xA;
             self->ext.main_75.bob_step *= -1;
         }
@@ -704,8 +704,8 @@ void general_slam_windup(struct MainObj* self)
         }
     } else if (self->animation_step.fields.event != 0) {
         self->x_speed = 0;
-        self->y_speed = FIXED(-5);
         self->unk6++;
+        self->y_speed = FIXED(-5);
         self->unk7 = 0;
     }
 }
@@ -737,8 +737,8 @@ void general_slam_land(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        self->unk7C = 0x28;
         self->unk6++;
+        self->unk7C = 0x28;
     }
 }
 
@@ -901,7 +901,7 @@ void general_death_start(struct MainObj* self)
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
     self->ext.main_75.blink_delay = 0x19;
-    background_objects[0].unk26 = background_objects[0].x_pos.u.hi;
+    background_objects[0].unk26 = background_objects[0].x_pos.i.hi;
     g_Player.stun_timer = 0;
     player_start_script_action(0x15, 0);
     self->unk5++;
@@ -942,30 +942,31 @@ void general_death_blink(struct MainObj* self)
 // general_death_explode
 void func_800915C4(struct MainObj* self)
 {
-    struct ObjectHeader* effect = OBJECT_HEADER(self->ext.main_75.object.effect);
+    struct ObjectHeader* effect;
 
     self->on_screen = 0;
+    effect = OBJECT_HEADER(self->ext.main_75.object.effect);
     if (effect->active == 0)
         return;
     if (effect->unk7 == 0) {
         if (self->unk7E-- == 0) {
-            self->unk7E = 5;
             self->unk42 ^= 0x8000;
+            self->unk7E = 5;
         }
         return;
     }
 
     self->unk5++;
-    background_objects[0].unk2A = background_objects[0].y_pos.u.hi;
-    background_objects[0].unk28 = background_objects[0].y_pos.u.hi;
-    background_objects[0].unk26 = background_objects[0].x_pos.u.hi;
-    background_objects[0].unk24 = background_objects[0].x_pos.u.hi;
+    background_objects[0].unk2A = background_objects[0].y_pos.i.hi;
+    background_objects[0].unk28 = background_objects[0].y_pos.i.hi;
+    background_objects[0].unk26 = background_objects[0].x_pos.i.hi;
+    background_objects[0].unk24 = background_objects[0].x_pos.i.hi;
     self->unk40 = (OBJECT_STAGE_TEXTURE(1)) + OBJECT_TEXTURE_OFFSET(0xB0);
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0xA3));
     self->unk42 = OBJECT_STAGE_CLUT(0xA3);
     self->animation_table = (const u8* const*)final_cutscene_animations;
-    self->x_pos.u.hi = background_objects[0].x_pos.u.hi + 0xE0;
-    self->y_pos.u.hi = background_objects[0].y_pos.u.hi + 0x68;
+    self->x_pos.i.hi = background_objects[0].x_pos.i.hi + 0xE0;
+    self->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x68;
     self->unk15 = 0;
     set_animation(self, 0);
 }
@@ -974,8 +975,8 @@ void general_death_wait_explosion(struct MainObj* self)
 {
     if (self->ext.main_75.object.child->active == 0) {
         player_start_script_action(0x14, PLAYER_FACING_RIGHT);
-        self->unk7C = 0x78;
         self->unk5++;
+        self->unk7C = 0x78;
     }
 }
 
@@ -984,8 +985,7 @@ void func_800917AC(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk6 == 0) {
-        self->unk7C = (u16)self->unk7C - 1;
-        if (self->unk7C == 0) {
+        if (--self->unk7C == 0) {
             start_screen_shake_y(10, 2, 2);
             self->unk7E = 10;
             func_8002217C(engine_obj.cur_character == 0 ? 0x2A : 0x22, 6, 0);
@@ -994,8 +994,7 @@ void func_800917AC(struct MainObj* self)
     } else {
         if (abc_object.unkC == 0)
             engine_obj.unkF = 1;
-        self->unk7E = (u16)self->unk7E - 1;
-        if (self->unk7E == 0) {
+        if (--self->unk7E == 0) {
             start_screen_shake_y(10, 2, 2);
             self->unk7E = 10;
         }
@@ -1010,7 +1009,8 @@ void func_80091898(struct MainObj* self)
     general_death_funcs[self->unk5](self);
     if (WEAPON_FRAME_COUNTER % 10 == 0) {
         self->y_pos.i.hi += self->ext.main_75.bob_step;
-        if (--self->ext.main_75.bob_timer == 0) {
+        self->ext.main_75.bob_timer--;
+        if (self->ext.main_75.bob_timer == 0) {
             self->ext.main_75.bob_timer = 0xA;
             self->ext.main_75.bob_step *= -1;
         }

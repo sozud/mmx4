@@ -100,13 +100,13 @@ void func_800567C4(struct MainObj* arg0)
     arg0->invincibility_timer = 0;
     arg0->collision_data = (const u16*)D_80106E74;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->air_state = 0;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
+    arg0->air_state = 0;
     arg0->animation_table = (const u8* const*)jet_drone_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->hurt_box = (const u8*)jet_drone_hurt_box;
     arg0->terrain_box = NULL;
+    arg0->hurt_box = (const u8*)jet_drone_hurt_box;
     arg0->attack_box = (const u8*)jet_drone_terrain_box;
     switch (arg0->unk2) {
     case 0:
@@ -214,12 +214,12 @@ void jet_drone_main(struct MainObj* self)
             spawn_explosion(self);
             spawn_debris(5, jet_drone_debris, self);
             drop_item(BASE_OBJECT(self), 0xC);
+            self->state = 2;
         } else if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
             update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
-            return;
+        } else {
+            self->state = 2;
         }
-
-        self->state = 2;
     }
 }
 

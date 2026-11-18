@@ -52,18 +52,18 @@ void reset_main_and_shots()
 
     for (a1 = 0; a1 < COUNT(main_objects); a1++) {
         a0 = (u8*)&main_objects[a1];
-        var_v1 = sizeof(main_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(main_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     for (a1 = 0; a1 < COUNT(shot_objects); a1++) {
         a0 = (u8*)&shot_objects[a1];
-        var_v1 = sizeof(shot_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(shot_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 }
 
@@ -81,84 +81,84 @@ void reset_objects(void)
 
     for (a1 = 0; a1 < COUNT(foo_objects); a1++) {
         a0 = (u8*)&foo_objects[a1];
-        var_v1 = sizeof(foo_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(foo_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     for (a1 = 0; a1 < COUNT(baz_objects); a1++) {
         a0 = (u8*)&baz_objects[a1];
-        var_v1 = sizeof(baz_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(baz_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     for (a1 = 0; a1 < COUNT(weapon_objects); a1++) {
         a0 = (u8*)&weapon_objects[a1];
-        var_v1 = sizeof(weapon_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(weapon_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     reset_main_and_shots(); // clear main_objects and shot_objects
 
     for (a1 = 0; a1 < COUNT(visual_objects); a1++) {
         a0 = (u8*)&visual_objects[a1];
-        var_v1 = sizeof(visual_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(visual_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     for (a1 = 0; a1 < COUNT(effect_objects); a1++) {
         a0 = (u8*)&effect_objects[a1];
-        var_v1 = sizeof(effect_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(effect_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     for (a1 = 0; a1 < COUNT(item_objects); a1++) {
         a0 = (u8*)&item_objects[a1];
-        var_v1 = sizeof(item_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(item_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     for (a1 = 0; a1 < COUNT(misc_objects); a1++) {
         a0 = (u8*)&misc_objects[a1];
-        var_v1 = sizeof(misc_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(misc_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     for (a1 = 0; a1 < COUNT(unk_objects); a1++) {
         a0 = (u8*)&unk_objects[a1];
-        var_v1 = sizeof(unk_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(unk_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     for (a1 = 0; a1 < COUNT(layer_objects); a1++) {
         a0 = (u8*)&layer_objects[a1];
-        var_v1 = sizeof(layer_objects[0]) - 1;
-        do {
+        var_v1 = sizeof(layer_objects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     for (a1 = 0; a1 < COUNT(g_QuadObjects); a1++) {
         a0 = (u8*)&g_QuadObjects[a1];
-        var_v1 = sizeof(g_QuadObjects[0]) - 1;
-        do {
+        var_v1 = sizeof(g_QuadObjects[0]);
+        while (var_v1-- != 0) {
             *a0++ = fill;
-        } while (var_v1-- != 0);
+        }
     }
 
     a0 = (u8*)&qux_object;
@@ -296,7 +296,7 @@ struct VisualObj* find_free_visual_obj()
 {
     struct VisualObj* current;
     for (current = &visual_objects[0]; current < &visual_objects[0x20]; current++) {
-        if (current->active == NULL) {
+        if (current->active == 0) {
             return current;
         }
     }
@@ -495,11 +495,11 @@ s32 func_8002B160(struct BaseObj* arg0)
     u16 y;
 
     if (self->bg_offset < 0) {
-        x = self->x_pos.u.hi;
-        y = self->y_pos.u.hi;
+        x = self->x_pos.i.hi;
+        y = self->y_pos.i.hi;
     } else {
-        x = self->x_pos.u.hi - VISIBILITY_BACKGROUND(self).x_pos.u.hi;
-        y = self->y_pos.u.hi - VISIBILITY_BACKGROUND(self).y_pos.u.hi;
+        x = self->x_pos.i.hi - VISIBILITY_BACKGROUND(self).x_pos.i.hi;
+        y = self->y_pos.i.hi - VISIBILITY_BACKGROUND(self).y_pos.i.hi;
     }
     if ((u16)(x + 0x40) < 0x1C0 && (u16)(y + 0x40) < 0x170) {
         return 0;
@@ -514,11 +514,11 @@ s32 func_8002B1E8(struct BaseObj* self, s32 x_offset, s32 y_offset)
     u16 y_pos;
 
     if (self->bg_offset < 0) {
-        x_pos = self->x_pos.u.hi;
-        y_pos = self->y_pos.u.hi;
+        x_pos = self->x_pos.i.hi;
+        y_pos = self->y_pos.i.hi;
     } else {
-        x_pos = self->x_pos.u.hi - VISIBILITY_BACKGROUND(self).x_pos.u.hi;
-        y_pos = self->y_pos.u.hi - VISIBILITY_BACKGROUND(self).y_pos.u.hi;
+        x_pos = self->x_pos.i.hi - VISIBILITY_BACKGROUND(self).x_pos.i.hi;
+        y_pos = self->y_pos.i.hi - VISIBILITY_BACKGROUND(self).y_pos.i.hi;
     }
     if ((u16)(x_pos + x_offset) < (u16)((x_offset << 1) + 0x140) && (u16)(y_pos + y_offset) < (u16)((y_offset << 1) + 0xF0)) {
         return 0;
@@ -530,7 +530,6 @@ void is_on_screen(struct BaseObj* arg0)
 {
     s16 x_pos;
     s16 y_pos;
-    u16 y_range;
 
     arg0->on_screen = 0;
     if (arg0->bg_offset < 0) {
@@ -541,11 +540,8 @@ void is_on_screen(struct BaseObj* arg0)
         y_pos = arg0->y_pos.i.hi - VISIBILITY_BACKGROUND(arg0).y_pos.i.hi;
     }
     // check if the object is within 320x240 viewport += 32
-    if (x_pos >= -32 && x_pos < 352) {
-        y_range = y_pos + 32;
-        if ((u32)y_range < 0x130U) {
-            VISIBLE_OBJECT(arg0);
-        }
+    if ((u16)(x_pos + 32) < 0x180 && (u16)(y_pos + 32) < 0x130) {
+        VISIBLE_OBJECT(arg0);
     }
 }
 

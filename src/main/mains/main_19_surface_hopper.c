@@ -16,6 +16,14 @@
 #include "main/collision_bounds.h"
 #endif
 
+#ifdef __MWERKS__
+u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical);
+u8 func_80053B54(struct MainObj* arg0);
+u8 surface_hopper_aim_at_player(struct MainObj* self);
+u8 surface_hopper_probe_collision(struct PlayerObj* self, s16 arg1, s16 arg2);
+u8 surface_hopper_probe_tile(struct PlayerObj* self, s16 arg1, s16 arg2);
+#endif
+
 extern u8 surface_hopper_appear_animations[4];
 
 void func_80052A68(struct MainObj*);
@@ -136,10 +144,10 @@ void func_800528BC(struct MainObj* arg0)
     arg0->terrain_box = surface_hopper_attach_terrain_boxes[arg0->unk2 >> 1];
     arg0->collision_data = D_80106BF4;
     func_8002C808(PLAYER_OBJECT(arg0));
-    if (arg0->collision_flags != 0)
-        arg0->unk5 = 2;
-    else
+    if (arg0->collision_flags == 0)
         arg0->unk5 = 5;
+    else
+        arg0->unk5 = 2;
 }
 
 // surface_hopper_main
@@ -252,8 +260,8 @@ void func_80052CB8(struct MainObj* arg0)
     arg0->terrain_box = surface_hopper_attach_terrain_boxes[arg0->unk2 >> 1];
     set_animation(ANIMATED_OBJECT(arg0), animation);
     arg0->unk6 = 1;
-    SP_CUR_MAIN_OBJ->ext.main_19.unk86 = arg0->x_pos.u.hi;
-    SP_CUR_MAIN_OBJ->ext.main_19.unk88 = arg0->y_pos.u.hi;
+    SP_CUR_MAIN_OBJ->ext.main_19.unk86 = arg0->x_pos.i.hi;
+    SP_CUR_MAIN_OBJ->ext.main_19.unk88 = arg0->y_pos.i.hi;
 }
 
 // surface_hopper_crawl_move
@@ -285,9 +293,9 @@ void func_80052E94(struct MainObj* arg0)
             }
         } else if (arg0->animation_step.fields.event != 0) {
             if (SP_CUR_MAIN_OBJ->ext.main_19.unk80 == 0)
-                arg0->y_pos.u.hi -= SP_CUR_MAIN_OBJ->ext.main_19.unk8A;
+                arg0->y_pos.i.hi -= SP_CUR_MAIN_OBJ->ext.main_19.unk8A;
             else
-                arg0->y_pos.u.hi += SP_CUR_MAIN_OBJ->ext.main_19.unk8A;
+                arg0->y_pos.i.hi += SP_CUR_MAIN_OBJ->ext.main_19.unk8A;
             arg0->animation_step.fields.event = 0;
         }
     } else {
@@ -323,9 +331,9 @@ void func_80052E94(struct MainObj* arg0)
             }
         } else if (arg0->animation_step.fields.event != 0) {
             if (SP_CUR_MAIN_OBJ->ext.main_19.unk80 == 0)
-                arg0->x_pos.u.hi -= SP_CUR_MAIN_OBJ->ext.main_19.unk8A;
+                arg0->x_pos.i.hi -= SP_CUR_MAIN_OBJ->ext.main_19.unk8A;
             else
-                arg0->x_pos.u.hi += SP_CUR_MAIN_OBJ->ext.main_19.unk8A;
+                arg0->x_pos.i.hi += SP_CUR_MAIN_OBJ->ext.main_19.unk8A;
             arg0->animation_step.fields.event = 0;
         }
     }
@@ -486,7 +494,7 @@ void func_8005368C(struct MainObj* arg0)
             shot->id = 0xB;
             index = SP_CUR_MAIN_OBJ->ext.main_19.animation_index * 2;
             shot->x_pos.i.hi = arg0->x_pos.i.hi + D_800FC7E8[index];
-            index |= 1;
+            index++;
             shot->y_pos.i.hi = arg0->y_pos.i.hi + D_800FC7E8[index];
             shot->animation_table = (u32**)arg0->animation_table;
             shot->unk40 = arg0->unk40;
@@ -559,10 +567,10 @@ u8 surface_hopper_aim_at_player(struct MainObj* self)
     s16 dx;
     s8 flags;
 
-    player_x = g_Player.x_pos.u.hi;
-    player_y = g_Player.y_pos.u.hi;
-    dy = player_y - self->y_pos.u.hi;
-    dx = player_x - self->x_pos.u.hi;
+    player_x = g_Player.x_pos.i.hi;
+    player_y = g_Player.y_pos.i.hi;
+    dy = player_y - self->y_pos.i.hi;
+    dx = player_x - self->x_pos.i.hi;
     flags = 0;
 
     if ((dx < 0 ? -dx : dx) < 0x40 || (dy < 0 ? -dy : dy) >= 0x60) {
@@ -591,8 +599,8 @@ u8 surface_hopper_probe_collision(struct PlayerObj* self, s16 arg1, s16 arg2)
     saved_unk1C = self->unk1C.val;
     self->unk18.val = saved_x_pos;
     self->unk1C.val = saved_y_pos;
-    self->x_pos.u.hi = self->x_pos.u.hi + arg1;
-    self->y_pos.u.hi = self->y_pos.u.hi + arg2;
+    self->x_pos.i.hi = self->x_pos.i.hi + arg1;
+    self->y_pos.i.hi = self->y_pos.i.hi + arg2;
     CollisionRelated(self);
     self->x_pos.val = saved_x_pos;
     self->y_pos.val = saved_y_pos;
@@ -724,8 +732,8 @@ void func_80053EB8(struct MainObj* self)
         u16 y;
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(8, surface_hopper_debris, self);
-        x = self->x_pos.u.hi;
-        y = self->y_pos.u.hi;
+        x = self->x_pos.i.hi;
+        y = self->y_pos.i.hi;
         if (SP_CUR_MAIN_OBJ->ext.main_19.unk80 != 2) {
             switch (SP_CUR_MAIN_OBJ->ext.main_19.unk80) {
             case 0:
@@ -881,8 +889,7 @@ void surface_hopper_launch(struct MainObj* self)
         self->unk7C = 0x1E;
         return;
     }
-    self->unk7C -= 1;
-    if (self->unk7C == 0) {
+    if (--self->unk7C == 0) {
         self->unk5 = 2;
         self->unk6 = 0;
     }

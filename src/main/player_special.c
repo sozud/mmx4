@@ -982,12 +982,9 @@ void player_soul_body(struct PlayerObj* self)
 
 void player_soul_body_cast(struct PlayerObj* self)
 {
-    s8 event;
-
     animate_object(ANIMATED_OBJECT(self));
-    event = self->animation_step.fields.event;
-    if (event & 0x80) {
-        self->animation_step.fields.event = event & 0x7F;
+    if (self->animation_step.fields.event & 0x80) {
+        self->animation_step.fields.event &= 0x7F;
         func_8001540C(1, 9, self);
         player_play_voice(self, 5U);
         player_init_clone();
@@ -999,7 +996,7 @@ void player_soul_body_cast(struct PlayerObj* self)
         g_Entity.clone_timer = 0xF0;
         g_Entity.clone_offset.value = 0;
         player_set_collision_bounds(&g_Entity);
-        self->unk6 = (u8)self->unk6 + 1;
+        self->unk6++;
     }
 }
 
@@ -1014,33 +1011,29 @@ void player_soul_body_wait(struct PlayerObj* self)
 
 void player_soul_body_clone_advance(struct PlayerObj* self)
 {
-    u8 facing;
-    s16 offset;
-    s32 done;
+    u32 done;
 
     done = 0;
-    facing = g_Player.unk15;
-    self->unk15 = facing;
-    if (facing != 0) {
+    self->unk15 = g_Player.unk15;
+    if (self->unk15 != 0) {
         if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
             done = 1;
         } else {
-            self->x_pos.i.hi = g_Player.x_pos.u.hi + self->clone_offset.unsigned_value;
+            self->x_pos.i.hi = g_Player.x_pos.i.hi + self->clone_offset.value;
         }
     } else if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT) {
         done = 1;
     } else {
-        self->x_pos.i.hi = g_Player.x_pos.u.hi - self->clone_offset.unsigned_value;
+        self->x_pos.i.hi = g_Player.x_pos.i.hi - self->clone_offset.value;
     }
 
-    offset = self->clone_offset.value;
-    if (offset == 0x40) {
+    if (self->clone_offset.value == 0x40) {
         done = 1;
     }
     if (done != 0) {
         player_enter_land_or_fall(self);
     } else {
-        self->clone_offset.value = offset + 8;
+        self->clone_offset.value += 8;
     }
 }
 
@@ -1058,14 +1051,12 @@ void player_soul_body_clone_vanish(struct PlayerObj* self)
 void player_weapon_pose(struct PlayerObj* self)
 {
     struct WeaponObj* weapon;
-    s8 event;
     s8 row;
     s8 column;
 
     animate_object(ANIMATED_OBJECT(self));
-    event = self->animation_step.fields.event;
-    if (event & 0x80) {
-        self->animation_step.fields.event = event & 0x7F;
+    if (self->animation_step.fields.event & 0x80) {
+        self->animation_step.fields.event &= 0x7F;
         if (self->shot_type == 2) {
             weapon = player_spawn_weapon(1, 2, 0, NULL);
             if (weapon != NULL) {
@@ -1104,13 +1095,11 @@ void player_weapon_pose(struct PlayerObj* self)
 
 void player_rising_fire(struct PlayerObj* self)
 {
-    s8 event;
     struct WeaponObj* weapon;
 
     animate_object(ANIMATED_OBJECT(self));
-    event = self->animation_step.fields.event;
-    if (event & 0x80) {
-        self->animation_step.fields.event = event & 0x7F;
+    if (self->animation_step.fields.event & 0x80) {
+        self->animation_step.fields.event &= 0x7F;
         if (self->unk17 == 0x63) {
             weapon = player_spawn_weapon(1, 4, 0, NULL);
         } else {
@@ -1918,9 +1907,9 @@ void player_zero_hyouretsuzan_drop(struct PlayerObj* self)
                 debris->unk2 = 0;
                 debris->bg_offset = self->bg_offset;
                 if (self->unk15 == 0) {
-                    debris->x_pos.i.hi = self->x_pos.u.hi - 0x10;
+                    debris->x_pos.i.hi = self->x_pos.i.hi - 0x10;
                 } else {
-                    debris->x_pos.i.hi = self->x_pos.u.hi + 0x10;
+                    debris->x_pos.i.hi = self->x_pos.i.hi + 0x10;
                 }
                 debris->y_pos.i.hi = self->y_pos.i.hi;
             }
@@ -1973,12 +1962,9 @@ void player_zero_ryuenjin(struct PlayerObj* self)
 
 void player_zero_ryuenjin_start(struct PlayerObj* self)
 {
-    u8 event;
-
     player_zero_saber_on_event(self, 0x23);
-    event = self->animation_step.fields.event;
-    if (event & 0x20) {
-        self->animation_step.fields.event = event & 0x1F;
+    if (self->animation_step.fields.event & 0x20) {
+        self->animation_step.fields.event &= 0x1F;
         if (self->unk15 != 0) {
             self->x_vel.val = FIXED(4);
         } else {
@@ -2090,11 +2076,8 @@ void player_zero_rakuhouha(struct PlayerObj* self)
 
 void player_zero_saber_on_event(struct PlayerObj* self, s8 saber_id)
 {
-    s8 event;
-
-    event = self->animation_step.fields.event;
-    if (event & 0x80) {
-        self->animation_step.fields.event = event & 0x7F;
+    if (self->animation_step.fields.event & 0x80) {
+        self->animation_step.fields.event &= 0x7F;
         player_zero_spawn_saber(self, saber_id);
     }
 }

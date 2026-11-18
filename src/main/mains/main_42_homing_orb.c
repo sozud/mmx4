@@ -81,9 +81,9 @@ void homing_orb_wait(struct MainObj* self)
 
         self->x_accel = -((s32)(self->x_speed * 0x2D) >> 8);
         temp_a2 = self->y_speed;
+        self->gravity = -((s32)(temp_a2 * 0x2D) >> 8);
         self->x_speed = 0;
         self->y_speed = 0;
-        self->gravity = -((s32)(temp_a2 * 0x2D) >> 8);
         set_animation(self, 1);
         self->unk5 = 3;
         self->ext.main_42.background_relative += 1;

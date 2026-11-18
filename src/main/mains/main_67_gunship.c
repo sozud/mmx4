@@ -9,6 +9,8 @@
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
 
+void gunship_bob(struct MainObj* self);
+
 extern struct Unk_unk68 gunship_debris[];
 
 // gunship_state_funcs
@@ -168,8 +170,8 @@ void gunship_destroyed_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 0x13);
-    self->y_speed = FIXED(-0.5);
     self->x_speed = 0;
+    self->y_speed = FIXED(-0.5);
     self->x_accel = 0;
     self->gravity = FIXED(0.0078125);
     self->terrain_box = NULL;
@@ -437,23 +439,23 @@ void gunship_bob(struct MainObj* self)
 void gunship_spawn_exhaust(struct MainObj* self)
 {
     u8 var_s1;
-    struct VisualObj* temp_v0;
+    struct VisualObj* visual;
 
     var_s1 = 0;
     do {
-        temp_v0 = find_free_visual_obj();
-        if (temp_v0 != 0) {
-            temp_v0->active = 0x41;
-            temp_v0->id = 0x1F;
-            temp_v0->unk2 = var_s1;
-            temp_v0->unk50 = PLAYER_OBJECT(self);
-            temp_v0->unk42 = self->unk42;
-            temp_v0->animation_table = (u32**)gunship_animations;
-            temp_v0->unk3C = self->sprite_frames;
-            temp_v0->unk40 = self->unk40;
-            temp_v0->bg_offset = self->bg_offset;
-            temp_v0->unk16 = VISUAL_SATURN_LAYER(5);
-            temp_v0->unk15 = self->unk15;
+        visual = find_free_visual_obj();
+        if (visual != 0) {
+            visual->active = 0x41;
+            visual->id = 0x1F;
+            visual->unk2 = var_s1;
+            visual->unk50 = PLAYER_OBJECT(self);
+            visual->unk42 = self->unk42;
+            visual->animation_table = (u32**)gunship_animations;
+            visual->unk3C = self->sprite_frames;
+            visual->unk40 = self->unk40;
+            visual->bg_offset = self->bg_offset;
+            visual->unk16 = VISUAL_SATURN_LAYER(5);
+            visual->unk15 = self->unk15;
         }
         var_s1 += 1;
     } while ((var_s1 & 0xFF) < 4U);

@@ -168,7 +168,7 @@ void func_80042AFC(struct MainObj* arg0)
                     break;
                 }
                 item_carrier_spawn_item(arg0);
-                arg0->state = (u8)arg0->state + 1;
+                arg0->state++;
                 return;
             }
         }
@@ -176,7 +176,7 @@ void func_80042AFC(struct MainObj* arg0)
         spawn_explosion(BASE_OBJECT(arg0));
         spawn_debris(3, item_carrier_capsule_debris, arg0);
         item_carrier_spawn_item(arg0);
-        arg0->state = (u8)arg0->state + 1;
+        arg0->state++;
         return;
     }
 
@@ -185,7 +185,7 @@ void func_80042AFC(struct MainObj* arg0)
         update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
         return;
     }
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
 }
 
 void item_carrier_hide(struct MainObj* self)
@@ -216,11 +216,7 @@ void item_carrier_approach_fly(struct MainObj* self)
     s32 distance;
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    if (self->x_pos.val - g_Player.x_pos.val < 0) {
-        distance = g_Player.x_pos.val - self->x_pos.val;
-    } else {
-        distance = self->x_pos.val - g_Player.x_pos.val;
-    }
+    distance = ABS(self->x_pos.val, g_Player.x_pos.val);
     if (distance > FIXED(64)) {
         return;
     }
@@ -257,18 +253,13 @@ void item_carrier_hover_start(struct MainObj* self)
 
 void item_carrier_hover_bob(struct MainObj* self)
 {
-    s16 timer;
-    s16 countdown;
-
-    timer = self->unk7E;
-    if (timer == 0) {
+    if (self->unk7E == 0) {
         self->unk7E = 0x14;
         self->y_speed = -self->y_speed;
     } else {
-        self->unk7E = timer - 1;
+        self->unk7E--;
     }
-    countdown = --self->unk7C;
-    if ((countdown << 0x10) == 0) {
+    if (--self->unk7C == 0) {
         self->unk5 = 3;
         self->unk6 = 0;
     }
@@ -319,9 +310,9 @@ void item_carrier_drop_rise(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->y_speed < 0) {
+        self->unk6++;
         self->y_speed = 0;
         self->gravity = FIXED(0.2578125);
-        self->unk6++;
     }
     CollisionRelated(PLAYER_OBJECT(self));
 }
@@ -380,8 +371,8 @@ void item_carrier_leave_side(struct MainObj* self)
 
 void item_carrier_leave_side_start(struct MainObj* self)
 {
-    self->y_speed = 0;
     self->unk7++;
+    self->y_speed = 0;
     set_animation(self, 2);
 }
 

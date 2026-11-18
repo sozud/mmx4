@@ -169,8 +169,7 @@ void ready_text_appear(struct MiscObj* self)
         }
         // cycle palette when "READY" first appears
         ready_text_load_palette(self, (s32)ready_text_palette_cycle[self->ext.ready_text.palette_pos]);
-        self->ext.ready_text.palette_pos++;
-        if (self->ext.ready_text.palette_pos > 13) {
+        if (++self->ext.ready_text.palette_pos > 13) {
             self->ext.ready_text.palette_pos = 0;
             self->ext.ready_text.palette_cycle_done = 1;
         }
@@ -188,8 +187,7 @@ void ready_text_bounce(struct MiscObj* self)
         self->ext.ready_text.stay_up_timer--;
         return;
     }
-    self->ext.ready_text.unk54--;
-    if (self->ext.ready_text.unk54 == 0) {
+    if (--self->ext.ready_text.unk54 == 0) {
         if (self->unk6 == 0) {
             if (self->unk2 != 0) {
                 self->x_vel.val = FIXED(-.25);

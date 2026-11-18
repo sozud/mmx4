@@ -125,8 +125,7 @@ void func_8009F89C(struct ShotObj* arg0)
 
 void cannon_missile_slow(struct ShotObj* self)
 {
-    self->unk8C.shot_29.timer -= 1;
-    if (self->unk8C.shot_29.timer == 0) {
+    if (--self->unk8C.shot_29.timer == 0) {
         if (self->unk90.bytes[1] == 0) {
             self->x_vel.val = 0;
             self->y_vel.val = 0;

@@ -516,8 +516,7 @@ void func_80036F50(struct PlayerObj* player)
         weapon = player->weapon;
         if (input & 0x200) {
             while (1) {
-                weapon++;
-                if (weapon == 9) {
+                if (++weapon == 9) {
                     weapon = 0;
                     break;
                 }
@@ -1231,7 +1230,7 @@ void player_set_animation_shooting(struct PlayerObj* self, s32 animation)
 // player_continue_animation
 void func_80038568(struct PlayerObj* self, s32 frame)
 {
-    s32 attack_frame;
+    u32 attack_frame;
     u8 duration;
 
     if (self->unk2 != 0) {
@@ -1242,10 +1241,7 @@ void func_80038568(struct PlayerObj* self, s32 frame)
         duration = self->animation_step.fields.duration;
         player_set_animation_frame(self, frame, self->animation_step.fields.event & 0x3F);
         self->animation_step.fields.duration = duration;
-    } else {
-        if (self->attacking == 0 || self->unk17 == attack_frame) {
-            return;
-        }
+    } else if (self->attacking != 0 && self->unk17 != attack_frame) {
         duration = self->animation_step.fields.duration;
         player_set_animation_frame(self, attack_frame, self->animation_step.fields.event & 0x3F);
         self->animation_step.fields.duration = duration;

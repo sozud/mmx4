@@ -115,9 +115,9 @@ void func_800615CC(struct MainObj* self)
     self->bg_offset = g_Player.bg_offset;
     self->air_state = 0;
     self->animation_table = (const u8* const*)falling_ceiling_animations;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->terrain_box = (struct Unk_unk68*)D_800FE94C;
     self->hurt_box = D_800FE944;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->attack_box = D_800FE948;
     self->unk15 = 0;
     set_animation(self, 0);
@@ -200,8 +200,10 @@ void func_800615CC(struct MainObj* self)
     self->ext.main_39.unk88 = 0;
     self->ext.main_39.unk90 = 0;
     self->ext.main_39.unk94 = 1;
-    self->y_pos.val = 0x1100000;
     self->unk7E = 0;
+    self->y_pos.val = 0x1100000;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
@@ -209,8 +211,6 @@ void func_800615CC(struct MainObj* self)
     self->state = 1;
     self->unk5 = 0;
     self->unk6 = 0;
-    self->unk18.val = self->x_pos.val;
-    self->unk1C.val = self->y_pos.val;
 }
 #endif
 
@@ -332,9 +332,9 @@ void func_80061B58(struct MainObj* self)
                 item->unk2 = i + 2;
             item->bg_offset = self->bg_offset;
             item->x_pos.val = 0;
-            item->x_pos.u.hi = self->ext.main_39.unk80.h.unk80;
+            item->x_pos.i.hi = self->ext.main_39.unk80.h.unk80;
             item->y_pos.val = 0;
-            item->y_pos.u.hi = self->ext.main_39.unk84.h.unk86;
+            item->y_pos.i.hi = self->ext.main_39.unk84.h.unk86;
             item->state = 0;
         }
     }

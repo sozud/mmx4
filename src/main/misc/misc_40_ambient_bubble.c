@@ -44,8 +44,8 @@ void func_800CFB70(struct MiscObj* arg0)
     arg0->animation_table = (u32**)ambient_bubble_animations;
     arg0->unk16 = 0x20;
     arg0->bg_offset = 1;
-    arg0->unk15 = PLAYER_FACING_RIGHT;
     arg0->state++;
+    arg0->unk15 = PLAYER_FACING_RIGHT;
     arg0->unk2 &= 3;
     arg0->ext.misc_24.timer = ambient_bubble_respawn_delays[arg0->unk2];
 }

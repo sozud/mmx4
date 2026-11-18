@@ -18,17 +18,13 @@ void storm_owl_fx_update(struct VisualObj* arg0)
 
 void storm_owl_fx_init(struct VisualObj* obj)
 {
-    u16 flags;
-    u8 player_direction;
     s8 type;
     s8 mode;
     struct MainObj* owner = MAIN_OBJECT(obj->unk50);
 
-    flags = obj->unk42;
-    player_direction = owner->unk15;
-    obj->unk42 = flags & 0x7FFF;
+    obj->unk15 = owner->unk15;
+    obj->unk42 &= 0x7FFF;
     obj->on_screen = 1;
-    obj->unk15 = player_direction;
     type = obj->unk2;
 
     switch (type) {
@@ -92,8 +88,8 @@ void storm_owl_fx_main(struct VisualObj* arg0)
                 break;
             case 1:
                 set_animation(arg0, 0x1D);
-                arg0->unk54 = 0x3E;
                 arg0->unk5C.value++;
+                arg0->unk54 = 0x3E;
                 break;
             case 2:
                 set_animation(arg0, 0x1C);

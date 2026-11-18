@@ -252,8 +252,8 @@ void bee_hive_release_pause(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->ext.main_22.unk84 == 0) {
-        self->unk6 = 0;
         self->unk5++;
+        self->unk6 = 0;
     }
 }
 

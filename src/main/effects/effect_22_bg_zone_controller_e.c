@@ -214,8 +214,7 @@ void bg_zone_controller_e_update_zone(struct EffectObj* self)
         if (player_x - bg_zone_controller_e_zone_bounds[offset] < 0) {
             break;
         }
-        offset++;
-        if (offset >= 3) {
+        if (++offset >= 3) {
             break;
         }
     }

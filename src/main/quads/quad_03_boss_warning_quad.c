@@ -106,10 +106,10 @@ void boss_warning_quad_open(struct QuadObj* arg0)
             arg0->vertices[2].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[2]);
             arg0->vertices[3].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[2]);
         } else {
-            arg0->vertices[2].x.u.hi += boss_warning_quad_motions[arg0->unk2].speed[0] * 2;
-            arg0->vertices[3].x.u.hi += boss_warning_quad_motions[arg0->unk2].speed[2] * 2;
-            arg0->vertices[2].y.u.hi += boss_warning_quad_motions[arg0->unk2].speed[1] * 2;
-            arg0->vertices[3].y.u.hi += boss_warning_quad_motions[arg0->unk2].speed[3] * 2;
+            arg0->vertices[2].x.i.hi += boss_warning_quad_motions[arg0->unk2].speed[0] * 2;
+            arg0->vertices[3].x.i.hi += boss_warning_quad_motions[arg0->unk2].speed[2] * 2;
+            arg0->vertices[2].y.i.hi += boss_warning_quad_motions[arg0->unk2].speed[1] * 2;
+            arg0->vertices[3].y.i.hi += boss_warning_quad_motions[arg0->unk2].speed[3] * 2;
         }
     }
 }
@@ -140,10 +140,10 @@ void boss_warning_quad_close(struct QuadObj* arg0)
             arg0->vertices[2].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[0]);
             arg0->vertices[3].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[0]);
         } else {
-            arg0->vertices[1].x.u.hi += boss_warning_quad_motions[arg0->unk2].speed[0] * 2;
-            arg0->vertices[0].x.u.hi += boss_warning_quad_motions[arg0->unk2].speed[2] * 2;
-            arg0->vertices[1].y.u.hi += boss_warning_quad_motions[arg0->unk2].speed[1] * 2;
-            arg0->vertices[0].y.u.hi += boss_warning_quad_motions[arg0->unk2].speed[3] * 2;
+            arg0->vertices[1].x.i.hi += boss_warning_quad_motions[arg0->unk2].speed[0] * 2;
+            arg0->vertices[0].x.i.hi += boss_warning_quad_motions[arg0->unk2].speed[2] * 2;
+            arg0->vertices[1].y.i.hi += boss_warning_quad_motions[arg0->unk2].speed[1] * 2;
+            arg0->vertices[0].y.i.hi += boss_warning_quad_motions[arg0->unk2].speed[3] * 2;
         }
     }
 }
@@ -157,8 +157,7 @@ void func_800D5144(struct QuadObj* self)
         return;
     }
     self->unk34 = boss_warning_quad_blink_levels[self->ext.quad_2.x_scale.bytes.fraction];
-    self->ext.quad_2.x_scale.bytes.fraction++;
-    if (self->ext.quad_2.x_scale.bytes.fraction == 0xE) {
+    if (++self->ext.quad_2.x_scale.bytes.fraction == 0xE) {
         self->ext.quad_2.x_scale.bytes.fraction = 0;
     }
     QUAD_QUEUE(self);

@@ -27,8 +27,8 @@ void train_boss_turret_init(struct MainObj* self)
 {
     self->hp = 0x20;
     self->unk5D = 0x20;
-    self->invincibility_timer = 0;
     self->contact_damage = 4;
+    self->invincibility_timer = 0;
     self->collision_data = (const u16*)D_80106670;
     self->x_speed = FIXED(1);
     self->y_speed = 0;
@@ -55,12 +55,12 @@ void train_boss_turret_main(struct MainObj* self)
     func_8002D9BC(self);
     collision = func_8002DD04(self);
     if (collision < 0 || (self->ext.main_46.owner->attack_flags & 7) == 7) {
-        self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x54;
-        self->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x5B;
+        self->x_pos.i.hi = self->x_pos.i.hi - 0x54;
+        self->y_pos.i.hi = self->y_pos.i.hi - 0x5B;
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(6, train_boss_turret_debris, self);
-        self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x54;
-        self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x5B;
+        self->x_pos.i.hi = self->x_pos.i.hi + 0x54;
+        self->y_pos.i.hi = self->y_pos.i.hi + 0x5B;
         self->unk42 &= 0x7FFF;
         set_animation(self, 0xE);
         self->ext.main_46.owner->attack_flags |= 8;
@@ -112,8 +112,8 @@ void train_boss_turret_fire(struct MainObj* self)
             shot->animation_table = (u32**)self->animation_table;
             shot->unk3C = (void*)self->sprite_frames;
             shot->bg_offset = (u8)self->bg_offset;
-            shot->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x2D;
-            shot->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x5D;
+            shot->x_pos.i.hi = self->x_pos.i.hi - 0x2D;
+            shot->y_pos.i.hi = self->y_pos.i.hi - 0x5D;
             shot->unk15 = 0;
             shot->unk7C = (struct WeaponObj*)self->ext.main_46.owner;
             shot->state = 0;

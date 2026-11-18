@@ -113,7 +113,7 @@ void func_8006ED44(struct MainObj* self)
             self->ext.main_55.unk84 = 2;
             self->unk7C = 20;
         } else {
-            self->unk7C = (s16)((u16)self->unk7C + 1);
+            self->unk7C++;
         }
         break;
     case 2:
@@ -128,7 +128,7 @@ void func_8006ED44(struct MainObj* self)
                 }
             }
         } else {
-            self->unk7C = (s16)((u16)self->unk7C - 1);
+            self->unk7C--;
         }
         break;
     case 3:
@@ -174,7 +174,7 @@ void func_8006EF28(struct MainObj* self)
         self->unk6 = 0;
         self->y_speed = FIXED(2);
     } else {
-        self->unk7C = (u16)self->unk7C - 1;
+        self->unk7C--;
     }
     if (self->x_pos.i.hi >= 0x390F) {
         self->x_speed = FIXED(4);
@@ -202,11 +202,11 @@ void func_8006F0DC(struct MainObj* self)
     case 1:
         if (self->unk7C != 0) {
             move_object(MOVING_OBJECT(self));
-            self->unk7C = (u16)self->unk7C - 1;
+            self->unk7C--;
         } else {
+            self->unk6++;
             self->x_speed = FIXED(4);
             self->unk7C = 30;
-            self->unk6++;
             self->ext.main_55.distance = self->x_pos.val - background_objects[self->bg_offset].x_pos.val;
             set_animation(self, 0);
         }
@@ -227,14 +227,14 @@ void jet_stingray_flyby_attack_rise(struct MainObj* self)
 {
     if (self->unk2 == 1) {
         if (self->y_pos.val < background_objects[self->bg_offset].y_pos.val + FIXED(64)) {
-            self->unk6 = (u8)self->unk6 + 1;
+            self->unk6++;
             self->y_speed = 0;
             set_animation(self, 2);
             self->unk7C = 0;
             self->unk7E = 4;
         }
     } else {
-        self->unk6 = (u8)self->unk6 + 1;
+        self->unk6++;
         self->unk7C = 0;
         self->unk7E = 4;
         set_animation(self, 2);

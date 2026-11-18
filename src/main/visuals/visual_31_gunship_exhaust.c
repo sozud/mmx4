@@ -21,7 +21,6 @@ void gunship_exhaust_update(struct VisualObj* arg0)
 
 void gunship_exhaust_init(struct VisualObj* self)
 {
-    s16 timer;
     struct PlayerObj* player = self->unk50;
 
     self->unk15 = player->unk15;
@@ -34,25 +33,24 @@ void gunship_exhaust_init(struct VisualObj* self)
     }
     switch (self->unk2) {
     case 0:
-        self->x_pos.i.hi = player->x_pos.u.hi - 0x3C;
-        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        self->x_pos.i.hi = player->x_pos.i.hi - 0x3C;
+        self->y_pos.i.hi = player->y_pos.i.hi - 9;
         break;
     case 1:
-        self->x_pos.i.hi = player->x_pos.u.hi - 0x14;
-        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        self->x_pos.i.hi = player->x_pos.i.hi - 0x14;
+        self->y_pos.i.hi = player->y_pos.i.hi - 9;
         break;
     case 2:
-        self->x_pos.i.hi = player->x_pos.u.hi + 0x14;
-        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        self->x_pos.i.hi = player->x_pos.i.hi + 0x14;
+        self->y_pos.i.hi = player->y_pos.i.hi - 9;
         break;
     case 3:
-        self->x_pos.i.hi = player->x_pos.u.hi + 0x3C;
-        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        self->x_pos.i.hi = player->x_pos.i.hi + 0x3C;
+        self->y_pos.i.hi = player->y_pos.i.hi - 9;
         break;
     }
-    timer = get_random() & 0x1F;
-    self->unk56 = timer;
-    self->unk54 = 0x78 - timer;
+    self->unk56 = get_random() & 0x1F;
+    self->unk54 = 0x78 - self->unk56;
     self->state++;
 }
 
@@ -74,20 +72,20 @@ void gunship_exhaust_main(struct VisualObj* self)
     animate_object(ANIMATED_OBJECT(self));
     switch (self->unk2) {
     case 0:
-        self->x_pos.i.hi = player->x_pos.u.hi - 0x3C;
-        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        self->x_pos.i.hi = player->x_pos.i.hi - 0x3C;
+        self->y_pos.i.hi = player->y_pos.i.hi - 9;
         break;
     case 1:
-        self->x_pos.i.hi = player->x_pos.u.hi - 0x14;
-        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        self->x_pos.i.hi = player->x_pos.i.hi - 0x14;
+        self->y_pos.i.hi = player->y_pos.i.hi - 9;
         break;
     case 2:
-        self->x_pos.i.hi = player->x_pos.u.hi + 0x14;
-        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        self->x_pos.i.hi = player->x_pos.i.hi + 0x14;
+        self->y_pos.i.hi = player->y_pos.i.hi - 9;
         break;
     case 3:
-        self->x_pos.i.hi = player->x_pos.u.hi + 0x3C;
-        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        self->x_pos.i.hi = player->x_pos.i.hi + 0x3C;
+        self->y_pos.i.hi = player->y_pos.i.hi - 9;
         break;
     }
     if (--self->unk54 == 0 || player->active == 0) {

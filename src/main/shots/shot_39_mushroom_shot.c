@@ -127,9 +127,9 @@ void mushroom_shot_sprout_init(struct ShotObj* self)
 {
     self->unk58.collision_bounds = D_801061F0;
     if (self->unk15 == 0) {
-        self->x_pos.i.hi = self->x_pos.u.hi - 0x20;
+        self->x_pos.i.hi = self->x_pos.i.hi - 0x20;
     } else {
-        self->x_pos.u.hi = self->x_pos.u.hi + 0x20;
+        self->x_pos.i.hi = self->x_pos.i.hi + 0x20;
     }
     self->unk28 = 0;
     self->y_vel.val = FIXED(-3);
@@ -202,11 +202,11 @@ void func_800A4D20(struct ShotObj* self)
     self->unk2C = 0;
     self->unk42 &= 0x7FFF;
     if (self->unk15 == 0) {
-        self->x_pos.u.hi += (s8)mushroom_shot_spray_offsets[self->unk2 * 2];
+        self->x_pos.i.hi += (s8)mushroom_shot_spray_offsets[self->unk2 * 2];
     } else {
-        self->x_pos.u.hi -= (s8)mushroom_shot_spray_offsets[self->unk2 * 2];
+        self->x_pos.i.hi -= (s8)mushroom_shot_spray_offsets[self->unk2 * 2];
     }
-    self->y_pos.u.hi += (s8)mushroom_shot_spray_offsets[self->unk2 * 2 + 1];
+    self->y_pos.i.hi += (s8)mushroom_shot_spray_offsets[self->unk2 * 2 + 1];
     self->unk28 = mushroom_shot_spray_speeds[(s32)self->unk2];
     self->unk16 = 0;
     self->unk68 = NULL;
@@ -245,9 +245,8 @@ void mushroom_shot_spray_despawn(struct ShotObj* self)
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void mushroom_shot_sprout_grow(struct ShotObj* arg0)
+void mushroom_shot_sprout_grow(struct ShotObj* self)
 {
-    struct ShotObj* self = arg0;
     u32 var_v0;
     u8 var_v1;
 

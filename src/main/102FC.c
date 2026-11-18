@@ -24,6 +24,8 @@
 #include "saturn/menu.h"
 #endif
 
+void func_800200D4(struct EngineObj* arg0);
+
 extern RECT D_800F2428;
 extern RECT D_800F2430;
 
@@ -409,8 +411,7 @@ void func_800200D4(struct EngineObj* arg0)
             arg0->state = 5;
         }
     } else {
-        arg0->player_lives--;
-        if (arg0->player_lives < 0) {
+        if (--arg0->player_lives < 0) {
             arg0->state = 8;
             if (engine_obj.stage == 0xC && engine_obj.substage == 0) {
                 for (i = 0; i < 0x10; i++) {

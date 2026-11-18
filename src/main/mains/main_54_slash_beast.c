@@ -20,6 +20,8 @@
 #include "main/collision_bounds.h"
 #endif
 
+void func_8006E920(struct MainObj* arg0, s32 value);
+
 extern struct Unk_unk68 D_80100200;
 extern struct Unk_unk68 D_80100204;
 extern struct Unk_unk68 D_80100210;
@@ -343,23 +345,21 @@ void slash_beast_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
 
-    self->unk7C--;
-    if (self->unk7C == 0) {
+    if (--self->unk7C == 0) {
         self->unk5 = 2;
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x1A;
-            effect->x_pos.i.hi = self->x_pos.u.hi;
-            effect->y_pos.i.hi = self->y_pos.u.hi;
+            effect->x_pos.i.hi = self->x_pos.i.hi;
+            effect->y_pos.i.hi = self->y_pos.i.hi;
             self->ext.main_54.effect = effect;
         }
     }
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
     if (self->unk7E-- == 0) {
         self->unk42 ^= 0x8000;
-        self->invincibility_timer -= 5;
-        if (self->invincibility_timer > 0x19) {
+        if ((self->invincibility_timer -= 5) > 0x19) {
             self->invincibility_timer = 0;
         }
         self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
@@ -368,13 +368,15 @@ void slash_beast_death_blink(struct MainObj* self)
 
 void slash_beast_death_finish(struct MainObj* self)
 {
-    struct EffectObj* effect = self->ext.main_54.effect;
+    struct EffectObj* effect;
+
     self->on_screen = 0;
+    effect = self->ext.main_54.effect;
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
             if (self->unk7E-- == 0) {
-                self->unk7E = 5;
                 self->unk42 ^= 0x8000;
+                self->unk7E = 5;
             }
             update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
         }
@@ -1303,22 +1305,20 @@ void func_8006D888(struct MainObj* self)
         self->ext.main_54.afterimage_timer = 0xA;
     }
 
-    terrain_y = self->y_pos.u.hi + self->terrain_box->unk1;
+    terrain_y = self->y_pos.i.hi + self->terrain_box->unk1;
 
     if (self->unk15 == 0) {
-        g_Player.x_pos.i.hi = self->x_pos.u.hi - 35;
-        if ((func_8002D724(PLAYER_OBJECT(self),
-                 (s16)(self->x_pos.u.hi + self->terrain_box->unk0 - 48), terrain_y)
-                & 0xFF)
+        g_Player.x_pos.i.hi = self->x_pos.i.hi - 35;
+        if (func_8002D724(PLAYER_OBJECT(self),
+                (s16)(self->x_pos.i.hi + self->terrain_box->unk0 - 48), terrain_y)
             == 0x38) {
             func_8001540C(2, SATURN_SOUND(0x88, 0x59), self);
             self->unk6 = 3;
         }
     } else {
-        g_Player.x_pos.i.hi = self->x_pos.u.hi + 35;
-        if ((func_8002D724(PLAYER_OBJECT(self),
-                 (s16)(self->x_pos.u.hi + self->terrain_box->unk0 + 48), terrain_y)
-                & 0xFF)
+        g_Player.x_pos.i.hi = self->x_pos.i.hi + 35;
+        if (func_8002D724(PLAYER_OBJECT(self),
+                (s16)(self->x_pos.i.hi + self->terrain_box->unk0 + 48), terrain_y)
             == 0x38) {
             func_8001540C(2, SATURN_SOUND(0x88, 0x59), self);
             self->unk6 = 3;
@@ -1328,7 +1328,7 @@ void func_8006D888(struct MainObj* self)
 
 void slash_beast_grab_throw(struct MainObj* self)
 {
-    g_Player.x_pos.i.hi = self->x_pos.u.hi;
+    g_Player.x_pos.i.hi = self->x_pos.i.hi;
     start_screen_shake_x(0x1E, 8, 2);
     set_animation(self, 2);
     self->unk16 = VISUAL_SATURN_LAYER(6);
@@ -1403,7 +1403,7 @@ void func_8006DD44(struct MainObj* arg0)
         if (item != NULL) {
             item->active = 0x41;
             item->id = 0x12;
-            item->unk2 = 3 - (u8)arg0->unk7C;
+            item->unk2 = 3 - arg0->unk7C;
             item->unk16 = VISUAL_SATURN_LAYER(5);
             item->unk40 = arg0->unk40;
             item->unk42 = arg0->unk42 & 0x7FFF;

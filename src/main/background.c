@@ -431,7 +431,7 @@ void func_80027F08(struct BackgroundObj* arg0)
     u16 v1 = arg0->unk40;
     v0 >>= 2;
     v0 += v1;
-    arg0->x_pos.u.hi = v0;
+    arg0->x_pos.i.hi = v0;
 }
 
 void func_80027F28(struct BackgroundObj* arg0)
@@ -440,7 +440,7 @@ void func_80027F28(struct BackgroundObj* arg0)
     value >>= 1;
     value = value + (value >> 1);
     value = arg0->unk40 + value;
-    arg0->x_pos.u.hi = value;
+    arg0->x_pos.i.hi = value;
 }
 
 void func_80027F50(struct BackgroundObj* arg0)

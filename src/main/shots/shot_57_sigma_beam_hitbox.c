@@ -110,8 +110,8 @@ void func_800AE450(struct ShotObj* self)
     self->unk8C.bytes[0] = sigma_beam_hitbox_ranges[self->unk2][0];
     self->unk8C.bytes[1] = sigma_beam_hitbox_ranges[self->unk2][1];
     self->bg_offset = self->unk7C->bg_offset;
-    self->x_pos.u.hi = sigma_beam_hitbox_offsets[self->unk2][0];
-    self->y_pos.u.hi = sigma_beam_hitbox_offsets[self->unk2][1];
+    self->x_pos.i.hi = sigma_beam_hitbox_offsets[self->unk2][0];
+    self->y_pos.i.hi = sigma_beam_hitbox_offsets[self->unk2][1];
     if (self->unk2 < 4) {
         self->unk5C = 1;
         self->unk60 = 9;

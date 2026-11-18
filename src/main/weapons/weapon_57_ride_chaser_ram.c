@@ -32,11 +32,10 @@ void ride_chaser_ram_init(struct WeaponObj* arg0)
     set_animation(arg0, 0xC);
 }
 
-void ride_chaser_ram_main(struct WeaponObj* arg0)
+void ride_chaser_ram_main(struct WeaponObj* self)
 {
     s8 temp_v1;
     struct PlayerObj* temp_a0;
-    struct WeaponObj* self = arg0;
     temp_a0 = self->owner;
     if (temp_a0->state < 2) {
         temp_v1 = temp_a0->unk5;

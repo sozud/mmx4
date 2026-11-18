@@ -365,8 +365,8 @@ void func_8001D1A4(struct GameInfo* arg0)
     if (main_bss_state.transition.active == 0) {
         arg0->unkD = 1;
         func_8001D134();
-        arg0->mode = 0;
         arg0->unk0++;
+        arg0->mode = 0;
     }
 }
 
@@ -450,7 +450,7 @@ void func_8001D2D0(struct GameInfo* arg0)
 void func_8001D364(struct GameInfo* arg0)
 {
     u32 var_s0;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 
     reset_objects();
     func_8002AB20();
@@ -467,16 +467,16 @@ void func_8001D364(struct GameInfo* arg0)
     func_80023CE0();
     func_8001FDBC();
     for (var_s0 = 2; var_s0 < 5; var_s0++) {
-        temp_v0 = find_free_misc_obj();
-        if (temp_v0 != NULL) {
-            temp_v0->active = 1;
-            temp_v0->id = 0x12;
-            temp_v0->unk2 = var_s0;
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 1;
+            misc->id = 0x12;
+            misc->unk2 = var_s0;
         }
     }
     func_8001FEC0();
-    arg0->unk2 = 0;
     arg0->mode++;
+    arg0->unk2 = 0;
     func_800129A4(8);
 #ifndef MMX4_SATURN
     func_80023D68();
@@ -535,17 +535,17 @@ void func_8001D57C(struct GameInfo* arg0)
 
 void func_8001D5C8(struct GameInfo* arg0)
 {
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 
     arg0->unkD = 1;
     func_8001D134();
     func_80012E80();
     func_800160F4();
 #ifndef MMX4_SATURN
-    temp_v0 = find_free_misc_obj();
-    if (temp_v0 != NULL) {
-        temp_v0->active = 1;
-        temp_v0->id = 0x15;
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 1;
+        misc->id = 0x15;
     }
 #endif
     arg0->unk4 = 0x12C;
@@ -633,7 +633,7 @@ void func_8001D77C(struct GameInfo* arg0)
 void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
 {
     u8 var_s0;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 
     main_bss_state.transition.suspended = 0;
 #ifdef MMX4_SATURN
@@ -661,11 +661,11 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
              var_s0 < 14;
 #endif
          var_s0++) {
-        temp_v0 = find_free_misc_obj();
-        if (temp_v0 != NULL) {
-            temp_v0->active = 1;
-            temp_v0->id = 0x13;
-            temp_v0->unk2 = D_800F21A0[var_s0];
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 1;
+            misc->id = 0x13;
+            misc->unk2 = D_800F21A0[var_s0];
         }
     }
     func_800129A4(8);

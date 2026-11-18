@@ -37,6 +37,8 @@ extern struct Unk_unk68 D_800FB694, D_800FB698;
 void hover_sentry_face_player(struct MainObj* self);
 #endif
 
+void hover_sentry_face_player(struct MainObj* self);
+
 void hover_sentry_update(struct MainObj* self)
 {
     hover_sentry_state_funcs[self->state](self);
@@ -88,13 +90,13 @@ void func_8004B8FC(struct MainObj* arg0)
         arg0->hp = 3;
         arg0->contact_damage = 3;
         arg0->unk5 = 2;
+        arg0->x_speed = 0;
         arg0->y_speed = -0x8000;
+        arg0->x_accel = 0;
         arg0->gravity = -0x800;
         arg0->unk16 = VISUAL_SATURN_LAYER(6);
         arg0->terrain_box = &D_800FB684;
         arg0->hurt_box = &D_800FB68C;
-        arg0->x_speed = 0;
-        arg0->x_accel = 0;
         arg0->attack_box = &D_800FB688;
         set_animation(ANIMATED_OBJECT(arg0), 0);
         break;
@@ -102,9 +104,9 @@ void func_8004B8FC(struct MainObj* arg0)
         arg0->hp = 3;
         arg0->contact_damage = 3;
         arg0->unk5 = 6;
-        SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.u.hi;
-        arg0->y_speed = 0x4000;
+        SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.i.hi;
         arg0->x_speed = 0;
+        arg0->y_speed = 0x4000;
         arg0->x_accel = 0;
         arg0->gravity = 0;
         arg0->unk16 = VISUAL_SATURN_LAYER(6);
@@ -120,7 +122,7 @@ void func_8004B8FC(struct MainObj* arg0)
         arg0->unk7E = 0;
         arg0->unk5 = 4;
         arg0->unk6 = 0;
-        SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.i.hi;
         arg0->unk16 = VISUAL_SATURN_LAYER(6);
         arg0->terrain_box = NULL;
         arg0->hurt_box = NULL;
@@ -202,7 +204,7 @@ void func_8004BCFC(struct MainObj* arg0)
         arg0->unk6 = 1;
         arg0->unk7 = 0;
         arg0->air_state = 1;
-        SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.i.hi;
         arg0->y_speed = 0x80000;
         arg0->x_speed = 0;
         arg0->x_accel = 0;
@@ -456,8 +458,7 @@ void func_8004C210(struct MainObj* self)
     case 2:
         move_with_gravity(ANIMATED_OBJECT(self));
         animate_object(ANIMATED_OBJECT(self));
-        self->unk7C = (u16)self->unk7C - 1;
-        if (self->unk7C == 0) {
+        if (--self->unk7C == 0) {
             hover_sentry_face_player(self);
             self->unk5 = 5;
             self->unk6 = 0;
@@ -543,8 +544,8 @@ void func_8004C56C(struct MainObj* self)
         move_with_gravity(ANIMATED_OBJECT(self));
         animate_object(ANIMATED_OBJECT(self));
         bounds = self->terrain_box;
-        x = (u16)self->x_pos.u.hi + bounds->unk0;
-        y = (u16)self->y_pos.u.hi + bounds->unk1 + bounds->unk3;
+        x = (u16)self->x_pos.i.hi + bounds->unk0;
+        y = (u16)self->y_pos.i.hi + bounds->unk1 + bounds->unk3;
         if (self->unk7 == 0 && ((s32(*)(struct PlayerObj*, s16, s16))func_8002D724)(PLAYER_OBJECT(self), x, y) == 0x24) {
             spawn_common_effect(self, 1);
             self->unk7 = 1;
@@ -583,7 +584,7 @@ void hover_sentry_check_player_near(struct MainObj* self)
 
     if (self->unk7C != 0) {
         if (self->unk5 == 2) {
-            distance = (g_Player.x_pos.i.hi - self->x_pos.i.hi) < 0 ? self->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - self->x_pos.i.hi;
+            distance = ABS(g_Player.x_pos.i.hi, self->x_pos.i.hi);
             if (distance < 0x90) {
                 self->unk5 = 3;
                 self->unk6 = 0;

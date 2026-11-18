@@ -148,7 +148,7 @@ void dragon_rubble_b_wait(struct MiscObj* self)
         update_on_screen(BASE_OBJECT(self), 0x38, 0x20);
         return;
     }
-    main_obj->unk7C = (u16)main_obj->unk7C - 1;
+    main_obj->unk7C--;
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
@@ -174,7 +174,7 @@ void func_800C8BDC(struct MiscObj* arg0)
     struct MainObj* owner = arg0->ext.misc_4.owner;
 
     arg0->unk5 = 0x10;
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
     arg0->animation_table = (u32**)dragon_rubble_animations;
 
     arg0->unk42 = OBJECT_STAGE_CLUT(0x85);

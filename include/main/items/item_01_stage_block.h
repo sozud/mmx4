@@ -7,9 +7,11 @@ struct Item01StageEntry {
     u16 left;
     u16 right;
     u16 trigger_x;
-    u16 flags_and_palette;
+    u8 flags;
+    u8 unkB;
     u16 velocity;
-    u16 sound_id;
+    u8 sound_id;
+    u8 unkF;
 };
 
 struct Item01SpriteBounds {

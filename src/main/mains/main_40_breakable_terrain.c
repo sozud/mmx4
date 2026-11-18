@@ -139,8 +139,7 @@ void breakable_terrain_crumble(struct MainObj* self)
 {
     s32 index;
 
-    self->ext.main_40.timer--;
-    if (self->ext.main_40.timer != 0) {
+    if (--self->ext.main_40.timer != 0) {
         if (!(WEAPON_FRAME_COUNTER & 7)) {
             if (self->ext.main_40.unk80 < 2U) {
                 func_800AF878(BASE_OBJECT(self), 1, 0x10, 0x30);
@@ -205,8 +204,8 @@ u8 func_80062338(struct MainObj* self)
 {
     struct MainObj* object = self;
     struct PlayerObj* player = &g_Player;
-    s16 edge = object->x_pos.u.hi + object->terrain_box->unk0;
-    s16 player_edge = player->x_pos.u.hi + player->unk68->unk0;
+    s16 edge = object->x_pos.i.hi + object->terrain_box->unk0;
+    s16 player_edge = player->x_pos.i.hi + player->unk68->unk0;
     s16 distance = ABS(edge, player_edge);
 
     return distance <= object->terrain_box->unk2 + player->unk68->unk2;
@@ -227,8 +226,8 @@ static const struct Unk_unk68* relative_bounds_or_zero(const struct Unk_unk68* b
 u8 func_80062338(struct MainObj* self)
 {
     struct PlayerObj* player = &g_Player;
-    s16 edge = self->x_pos.u.hi + (s8)BOUNDS(self->terrain_box)->unk0;
-    s16 player_edge = player->x_pos.u.hi + (s8)BOUNDS(player->unk68)->unk0;
+    s16 edge = self->x_pos.i.hi + (s8)BOUNDS(self->terrain_box)->unk0;
+    s16 player_edge = player->x_pos.i.hi + (s8)BOUNDS(player->unk68)->unk0;
     s16 distance = ABS(edge, player_edge);
 
     return distance <= BOUNDS(self->terrain_box)->unk2 + BOUNDS(player->unk68)->unk2;

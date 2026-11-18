@@ -108,7 +108,7 @@ void depth_charge_fall(struct ShotObj* self)
         set_animation(self, 6);
         self->unk60 = 4;
         self->unk50.data = depth_charge_sink_box;
-        self->unk5 = (u8)self->unk5 + 1;
+        self->unk5++;
         self->y_pos.val = (background_objects[self->bg_offset].y_pos.i.hi + 0xAC) << 16;
         self->y_vel.val = FIXED(0.5);
         self->x_vel.val = 0;
@@ -121,8 +121,8 @@ void depth_charge_sink(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     func_8002D9BC(self);
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
         spawn_explosion(BASE_OBJECT(self));
     }
 }

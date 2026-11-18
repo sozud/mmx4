@@ -53,11 +53,11 @@ void func_8009F27C(struct ShotObj* self)
     self->unk28 *= 2;
     self->unk2C *= 2;
     if (self->unk15 == 0) {
-        self->x_pos.u.hi += jump_shooter_shot_muzzle_offsets[self->unk2 * 2];
+        self->x_pos.i.hi += jump_shooter_shot_muzzle_offsets[self->unk2 * 2];
     } else {
-        self->x_pos.u.hi -= jump_shooter_shot_muzzle_offsets[self->unk2 * 2];
+        self->x_pos.i.hi -= jump_shooter_shot_muzzle_offsets[self->unk2 * 2];
     }
-    self->y_pos.u.hi += jump_shooter_shot_muzzle_offsets[self->unk2 * 2 + 1];
+    self->y_pos.i.hi += jump_shooter_shot_muzzle_offsets[self->unk2 * 2 + 1];
     self->x_vel.val *= 2;
     self->y_vel.val *= 2;
     self->unk16 = 0;
@@ -71,22 +71,22 @@ void func_8009F27C(struct ShotObj* self)
 
 void jump_shooter_shot_fly(struct ShotObj* self)
 {
-    struct ShotObj* shot = self;
-
-    animate_object(ANIMATED_OBJECT(shot));
-    move_object(MOVING_OBJECT(shot));
-    func_8002D9BC(shot);
-    if (func_8002BB80(MAIN_OBJECT(shot), MAIN_OBJECT(&g_Player)) == 0) {
-        if (func_8002DD04(MAIN_OBJECT(shot)) < 0) {
-            spawn_explosion(BASE_OBJECT(shot));
-            shot->state = 2;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    func_8002D9BC(self);
+    if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) != 0) {
+        self->state = 2;
+    } else {
+        if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+            spawn_explosion(BASE_OBJECT(self));
+            self->state = 2;
         }
-        if (func_8002B1E8(BASE_OBJECT(shot), 0x20, 0x20) == 0) {
-            update_on_screen(BASE_OBJECT(shot), 0x10, 0x10);
-            return;
+        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+            update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
+        } else {
+            self->state = 2;
         }
     }
-    shot->state = 2;
 }
 
 void jump_shooter_shot_despawn(struct ShotObj* self)

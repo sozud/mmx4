@@ -211,8 +211,8 @@ u8 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
     u8 temp_v1;
     s32 var_v0;
 
-    temp_a1 = self->x_pos.u.hi + arg1;
-    temp_a2 = self->y_pos.u.hi + arg2;
+    temp_a1 = self->x_pos.i.hi + arg1;
+    temp_a2 = self->y_pos.i.hi + arg2;
     temp_v0 = ((s32(*)(struct PlayerObj*, s16, s16))func_8002D724)(
         self, temp_a1, temp_a2);
     tile = temp_v0;
@@ -279,7 +279,7 @@ void jet_stingray_intro_warning(struct MainObj* self)
             effect->active = 1;
             effect->id = 0x18;
             self->ext.main_56.object.effect = effect;
-            self->unk6 = (u8)self->unk6 + 1;
+            self->unk6++;
         }
         break;
     case 1:
@@ -291,7 +291,7 @@ void jet_stingray_intro_warning(struct MainObj* self)
     case 2:
         countdown = --self->unk7C;
         if (countdown == 0) {
-            self->unk5 = (u8)self->unk5 + 1;
+            self->unk5++;
             self->unk6 = 0;
             set_animation(self, 0x1D);
         }
@@ -307,7 +307,7 @@ void jet_stingray_intro_emerge(struct MainObj* self)
     self->on_screen = 1;
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk5 = (u8)self->unk5 + 1;
+        self->unk5++;
         self->unk7C = 0x1E;
         self->y_speed = FIXED(1);
         set_animation(self, 0x26);
@@ -347,11 +347,11 @@ void jet_stingray_intro_pose(struct MainObj* self)
                 func_8002217C(0xD, 0xFF, engine_obj.character_state.bytes[8]);
                 engine_obj.character_state.bytes[8] = 1;
             }
-            self->unk6 = (u8)self->unk6 + 1;
+            self->unk6++;
         }
     } else if (abc_object.unkC == 0) {
+        self->unk5++;
         self->unk6 = 0;
-        self->unk5 = (u8)self->unk5 + 1;
         self->unk7C = 2;
         play_boss_voice(4);
     }
@@ -371,8 +371,8 @@ void jet_stingray_intro_fill_health(struct MainObj* self)
             self->hp++;
             return;
         }
-        self->unk7C = 0x3C;
         self->unk5++;
+        self->unk7C = 0x3C;
     }
 }
 
@@ -380,9 +380,9 @@ void jet_stingray_intro_finish(struct MainObj* self)
 {
     self->on_screen = 1;
     if (--self->unk7C == 0) {
+        self->state++;
         self->unk5 = 2;
         self->unk6 = 0;
-        self->state++;
         self->unk7 = 0;
         player_end_script_action();
     }
@@ -433,8 +433,8 @@ void jet_stingray_swim_start(struct MainObj* self)
     self->contact_damage = 6;
     self->attack_box = (const u8*)&jet_stingray_swim_attack_box;
     self->hurt_box = (const u8*)&jet_stingray_swim_hurt_box;
-    self->air_state = 1;
     self->terrain_box = NULL;
+    self->air_state = 1;
     self->collision_flags = 0;
     self->ext.main_56.flags &= ~2;
     set_animation(self, 1);
@@ -520,7 +520,7 @@ void jet_stingray_land(struct MainObj* self)
         /* fall through */
     case 1:
         if (self->collision_flags & 8) {
-            self->unk6 = (u8)self->unk6 + 1;
+            self->unk6++;
             self->air_state = 0;
             self->y_speed = 0;
             set_animation(self, 0);
@@ -555,9 +555,9 @@ void jet_stingray_vortex_start(struct MainObj* self)
         set_animation(self, 2);
     }
     if (self->animation_step.fields.relative_step == 0) {
+        self->unk6++;
         self->unk7 = 0;
         self->unk7C = 0x14;
-        self->unk6++;
     }
 }
 
@@ -751,7 +751,7 @@ void jet_stingray_ambush_return(struct MainObj* self)
     } else {
         self->x_pos.i.hi = background_objects[self->bg_offset].unk1E + 0x120;
     }
-    self->y_pos.i.hi = background_objects[self->bg_offset].y_pos.u.hi - 0x50;
+    self->y_pos.i.hi = background_objects[self->bg_offset].y_pos.i.hi - 0x50;
 }
 
 // jet_stingray_ambush
@@ -804,9 +804,9 @@ void jet_stingray_dash_start(struct MainObj* self)
         set_animation(self, 5);
     }
     if (self->animation_step.fields.relative_step == 0) {
+        self->unk6++;
         self->unk7 = 0;
         self->unk7C = 0x14;
-        self->unk6++;
     }
 }
 
@@ -819,12 +819,12 @@ void jet_stingray_dash_charge(struct MainObj* self)
         timer = --self->unk7C;
         x_velocity = FIXED(-6);
         if (timer == 0) {
-            self->unk7 = (u8)self->unk7 + 1;
+            self->unk7++;
             if (self->unk15 != 0) {
                 x_velocity = FIXED(6);
             }
-            self->attack_box = &jet_stingray_dash_attack_box;
             self->x_speed = x_velocity;
+            self->attack_box = &jet_stingray_dash_attack_box;
             self->hurt_box = &jet_stingray_dash_hurt_box;
             set_animation(self, 6);
             func_8001540C(2, SATURN_SOUND(0xAF, 0x1A), self);
@@ -833,7 +833,7 @@ void jet_stingray_dash_charge(struct MainObj* self)
         self->unk7 = 0;
         self->unk7C = 0x78;
         self->x_speed = 0;
-        self->unk6 = (u8)self->unk6 + 1;
+        self->unk6++;
         self->y_pos.i.hi = background_objects[self->bg_offset].unk22 - 0x50;
     }
 }
@@ -853,7 +853,7 @@ void jet_stingray_dash_return(struct MainObj* self)
         self->x_pos.i.hi = background_objects[self->bg_offset].unk1E + 0x120;
     }
 
-    self->y_pos.i.hi = background_objects[self->bg_offset].y_pos.u.hi - 0x50;
+    self->y_pos.i.hi = background_objects[self->bg_offset].y_pos.i.hi - 0x50;
 }
 
 void jet_stingray_dash(struct MainObj* self)
@@ -1044,9 +1044,9 @@ void jet_stingray_stagger_wait(struct MainObj* self)
             self->unk7C = 0x78;
         }
     } else if (--self->unk7C == 0) {
+        self->unk6++;
         self->unk7 = 0;
         self->unk7C = 0xA;
-        self->unk6++;
         self->ext.main_56.unk89.value = 5;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -1060,7 +1060,7 @@ void jet_stingray_stagger_shake(struct MainObj* self)
     timer = --self->unk7C;
     if (timer != 0) {
         step = self->ext.main_56.unk89.value;
-        self->x_pos.i.hi = self->x_pos.u.hi + step;
+        self->x_pos.i.hi = self->x_pos.i.hi + step;
         self->ext.main_56.unk89.signed_value *= -1;
         return;
     }
@@ -1128,8 +1128,8 @@ void func_80071D30(struct MainObj* self)
     }
 
     if (check < 0) {
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
         self->unk42 &= 0x7FFF;
         g_Player.spike_immune = 1;
         return;
@@ -1219,13 +1219,15 @@ void jet_stingray_death_explode(struct MainObj* self)
 
 void jet_stingray_death_finish(struct MainObj* self)
 {
-    struct EffectObj* effect = self->ext.main_56.object.effect;
+    struct EffectObj* effect;
+
     self->on_screen = 0;
+    effect = self->ext.main_56.object.effect;
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
             if (self->unk7E-- == 0) {
-                self->unk7E = 5;
                 self->unk42 ^= 0x8000;
+                self->unk7E = 5;
             }
             is_on_screen(BASE_OBJECT(self));
         }

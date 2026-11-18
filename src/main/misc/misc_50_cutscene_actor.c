@@ -87,10 +87,10 @@ void func_800D1B44(struct MiscObj* self)
         self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 1);
         self->unk40 = D_801406A8[1] >> 7;
         self->unk42 = 0x784C;
+        self->animation_step.fields.frame_index = 0;
         self->x_pos.i.hi = 0x88;
         self->y_pos.i.hi = 0x78;
         self->state = 2;
-        self->animation_step.fields.frame_index = 0;
         self->unk16 = 0x11;
     }
     self->bg_offset = -1;

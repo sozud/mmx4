@@ -86,8 +86,7 @@ void cyberspace_trial_wait_goal(struct EffectObj* self)
 
 void cyberspace_trial_delay(struct EffectObj* self)
 {
-    self->ext.effect_38.timer--;
-    if (self->ext.effect_38.timer == 0) {
+    if (--self->ext.effect_38.timer == 0) {
         self->ext.effect_38.timer = 0x64;
         self->state++;
     }
@@ -105,15 +104,11 @@ void cyberspace_trial_wait_rank(struct EffectObj* self)
 
 void cyberspace_trial_advance(struct EffectObj* self)
 {
-    u8 timer;
-
     if (self->ext.effect_38.timer == 0x50) {
         cyberspace_trial_spawn_warps(self);
     }
 
-    timer = self->ext.effect_38.timer - 1;
-    self->ext.effect_38.timer = timer;
-    if (timer != 0) {
+    if (--self->ext.effect_38.timer != 0) {
         return;
     }
 
@@ -158,16 +153,16 @@ void cyberspace_trial_spawn_guide(struct EffectObj* self)
 void cyberspace_trial_spawn_warps(void* arg0)
 {
     s8 var_s0;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 
     var_s0 = 0;
     do {
-        temp_v0 = find_free_misc_obj();
-        if (temp_v0 != NULL) {
-            temp_v0->active = 0x41;
-            temp_v0->id = 0x21;
-            temp_v0->ext.pointer.unk50 = arg0;
-            temp_v0->unk2 = var_s0;
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 0x41;
+            misc->id = 0x21;
+            misc->ext.pointer.unk50 = arg0;
+            misc->unk2 = var_s0;
         }
         var_s0 += 1;
     } while (var_s0 < 2U);
@@ -249,27 +244,27 @@ void cyberspace_trial_clear_objects(struct EffectObj* self)
 
     for (i = 0; i < 0x30; i++) {
         ptr = (s8*)&main_objects[i];
-        count = sizeof(main_objects[i]) - 1;
-        do {
+        count = sizeof(main_objects[i]);
+        while (count-- != 0) {
             *ptr++ = fill;
-        } while (count-- != 0);
+        }
     }
 
     for (i = 0; i < 0x20; i++) {
         ptr = (s8*)&shot_objects[i];
-        count = sizeof(shot_objects[i]) - 1;
-        do {
+        count = sizeof(shot_objects[i]);
+        while (count-- != 0) {
             *ptr++ = fill;
-        } while (count-- != 0);
+        }
     }
 
     for (i = 0; i < 0x40; i++) {
         if ((misc_objects[i].id != 0x21 && misc_objects[i].id != 0x22)) {
             ptr = (s8*)&misc_objects[i];
-            count = sizeof(misc_objects[i]) - 1;
-            do {
+            count = sizeof(misc_objects[i]);
+            while (count-- != 0) {
                 *ptr++ = fill;
-            } while (count-- != 0);
+            }
         }
     }
 }
@@ -286,10 +281,10 @@ void delete_items(s32 arg0, s32 arg1)
     for (; i < 0x20; i++) {
         if (item_objects[i].id == arg0 && item_objects[i].unk2 == arg1) {
             ptr = (u8*)&item_objects[i];
-            count = sizeof(struct ItemObj) - 1;
-            do {
+            count = sizeof(struct ItemObj);
+            while (count-- != 0) {
                 *ptr++ = clear_value;
-            } while (count-- != 0);
+            }
         }
     }
 }

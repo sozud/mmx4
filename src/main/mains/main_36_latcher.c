@@ -191,8 +191,7 @@ void latcher_grab_drain(struct MainObj* self)
     struct MainObj* current;
 
     current = SP_CUR_MAIN_OBJ;
-    current->ext.main_36.unk8A -= 1;
-    if (current->ext.main_36.unk8A == 0) {
+    if (--current->ext.main_36.unk8A == 0) {
         self->unk62 = 0;
         self->attack_box = NULL;
         self->hurt_box = NULL;
@@ -218,8 +217,8 @@ void latcher_grab_drain(struct MainObj* self)
 void latcher_grab_release(struct MainObj* self)
 {
     if (self->animation_step.fields.event != 0) {
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
         self->unk6 = 0;
     }
 }

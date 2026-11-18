@@ -572,8 +572,8 @@ void trident_mech_fan_shot_fire(struct MainObj* self)
             set_animation(self, 7);
             self->unk6 = 2;
         } else {
-            self->unk7C = 8;
             self->ext.main_16.unk88++;
+            self->unk7C = 8;
         }
     }
 }
@@ -727,8 +727,8 @@ void trident_mech_throw_pod(struct MainObj* self)
 void trident_mech_wait_behind(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0x10) {
-        self->unk5 = 2;
         self->y_pos.i.hi -= 0x28;
+        self->unk5 = 2;
     }
 }
 
@@ -875,9 +875,9 @@ void func_8004FD38(struct MainObj* arg0, s8 animation)
     misc->y_pos.val = arg0->y_pos.val + FIXED(6);
     misc->unk15 = arg0->unk15;
     misc->x_pos.val = arg0->x_pos.val + FIXED(13);
-    misc->state = 3;
     misc->ext.misc_5.animation = animation;
     misc->ext.misc_5.owner = arg0;
+    misc->state = 3;
 }
 
 struct Unk_unk68 trident_mech_stunned_hurt_box = { -14, -28, 30, 59 };

@@ -215,13 +215,10 @@ void spike_marl_patrol_begin(struct MainObj* self)
 void spike_marl_patrol_update(struct MainObj* self)
 {
     struct MainObj* temp_s0;
-    s32 temp_v0;
 
     temp_s0 = self;
     if (temp_s0->ext.main_3.player_ahead == 0) {
-        temp_v0 = temp_s0->ext.main_3.turn_timer - 1;
-        temp_s0->ext.main_3.turn_timer = temp_v0;
-        if (temp_v0 == 0) {
+        if (--temp_s0->ext.main_3.turn_timer == 0) {
             set_animation(temp_s0, 2);
             temp_s0->unk5 = 3;
             temp_s0->unk6 = 0;
@@ -458,20 +455,20 @@ void spike_marl_check_patrol_path(struct MainObj* self)
         }
 
         if (self->unk15 != 0) {
-            var_v1 = self->x_pos.u.hi + self->terrain_box->unk0 + 0x10;
+            var_v1 = self->x_pos.i.hi + self->terrain_box->unk0 + 0x10;
         } else {
-            var_v1 = self->x_pos.u.hi - self->terrain_box->unk0 - 0x10;
+            var_v1 = self->x_pos.i.hi - self->terrain_box->unk0 - 0x10;
         }
 
 #ifdef MMX4_PC
         if (func_8002D724(
                 PLAYER_OBJECT(self), var_v1,
-                self->terrain_box->unk3 + (self->y_pos.u.hi + self->terrain_box->unk1))
+                self->terrain_box->unk3 + (self->y_pos.i.hi + self->terrain_box->unk1))
             == 0) {
 #else
         if (((s32(*)(void*, s16, s16))func_8002D724)(
                 self, var_v1,
-                self->terrain_box->unk3 + (self->y_pos.u.hi + self->terrain_box->unk1))
+                self->terrain_box->unk3 + (self->y_pos.i.hi + self->terrain_box->unk1))
             == 0) {
 #endif
             self->ext.main_3.turn_timer = 0x78;

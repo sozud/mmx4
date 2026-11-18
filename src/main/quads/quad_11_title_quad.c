@@ -178,10 +178,12 @@ void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
     }
     quad_is_on_screen(arg0);
 #else
-    if (game_info.unkA == 2) {
-        arg0->ext.title_quad.unk38 = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
-        arg0->state = 5;
+    if (game_info.unkA != 2) {
+        quad_is_on_screen(arg0);
+        return;
     }
+    arg0->ext.title_quad.unk38 = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
+    arg0->state = 5;
     quad_is_on_screen(arg0);
 #endif
 }
@@ -226,8 +228,7 @@ void title_quad_morph(struct QuadObj* quad)
                                         [++quad->ext.title_quad.unk43 < 14 ? ++quad->ext.title_quad.unk43 : 14];
     }
 
-    quad->ext.title_quad.unk38--;
-    if (quad->ext.title_quad.unk38 == 0) {
+    if (--quad->ext.title_quad.unk38 == 0) {
         ptr = title_quad_shapes[quad->unk2 + 5];
         quad->vertices[0].x.i.hi = *(u16*)ptr++;
         quad->vertices[0].y.i.hi = *(u16*)ptr++;
@@ -305,8 +306,7 @@ void title_quad_morph(struct QuadObj* arg0)
     }
 #endif
 
-    arg0->ext.title_quad.unk38--;
-    if (arg0->ext.title_quad.unk38 == 0) {
+    if (--arg0->ext.title_quad.unk38 == 0) {
         arg0->state = 2;
         ptr = title_quad_morph_targets[0];
         arg0->vertices[0].x.i.hi = *(u16*)ptr++;

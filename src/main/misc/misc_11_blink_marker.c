@@ -33,7 +33,7 @@ void blink_marker_init(struct MiscObj* self)
         break;
     }
     self->ext.misc_11.active = 0;
-    self->state = (u8)self->state + 1;
+    self->state++;
 }
 
 void blink_marker_main(struct MiscObj* self)

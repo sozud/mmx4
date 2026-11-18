@@ -22,7 +22,7 @@
 #include "saturn/menu.h"
 #endif
 
-extern s16 D_800F21DC[];
+extern u16 D_800F21DC[];
 extern u8 D_800F21F8[];
 
 // D_800F2294
@@ -159,7 +159,7 @@ void (*D_800F2294[15])(struct GameInfo*) = {
 
 #else
 #ifdef MMX4_SATURN
-s16 D_800F21DC[14] = {
+u16 D_800F21DC[14] = {
     0x8442,
     0x8C84,
     0x94C6,
@@ -267,7 +267,7 @@ s16 D_800F224C[36] = {
     81,
 };
 #else
-s16 D_800F21DC[14] = {
+u16 D_800F21DC[14] = {
     0x8442,
     0x8C84,
     0x94C6,
@@ -534,8 +534,8 @@ void func_8001DCCC(struct GameInfo* arg0)
     D_80139690 = OBJECT_HEADER(func_8001DC7C(0xB, 0xA));
 #endif
     func_800129A4(8);
-    arg0->unk4 = 0;
     arg0->mode++;
+    arg0->unk4 = 0;
 }
 
 void func_8001DDB0(struct GameInfo* arg0)
@@ -561,18 +561,18 @@ void func_8001DDB0(struct GameInfo* arg0)
         func_8001DC7C(0xB, 3);
         func_8001DC7C(0xB, 4);
         arg0->unk4 = 0x3C;
+        arg0->mode++;
 #else
+        arg0->mode++;
         arg0->unk4 = 0xA;
 #endif
-        arg0->mode++;
     }
 #endif
 }
 
 void func_8001DE20(struct GameInfo* arg0)
 {
-    arg0->unk4--;
-    if (arg0->unk4 == 0) {
+    if (--arg0->unk4 == 0) {
 #ifdef VERSION_JP
         arg0->unkA = 1;
         arg0->unk4 = 0x46;
@@ -588,8 +588,7 @@ extern s16 D_800F2204[];
 #ifdef VERSION_JP
 void func_8001DF24_jp(struct GameInfo* arg0)
 {
-    arg0->unk4--;
-    if (arg0->unk4 == 0) {
+    if (--arg0->unk4 == 0) {
         arg0->unkA = 2;
         arg0->mode++;
     }
@@ -603,7 +602,7 @@ void func_8001DE54(struct GameInfo* arg0)
     s16 var_a2;
     s16* var_a1;
     s32* var_a0;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 #ifdef VERSION_JP
     struct MiscObj* first;
 #else
@@ -621,17 +620,17 @@ void func_8001DE54(struct GameInfo* arg0)
             first->unk2 = 0xA;
         }
 #endif
-        temp_v0 = find_free_misc_obj();
-        if (temp_v0 != 0) {
-            temp_v0->active = 1;
-            temp_v0->id = 0x1D;
-            temp_v0->unk2 = 0x20;
+        misc = find_free_misc_obj();
+        if (misc != 0) {
+            misc->active = 1;
+            misc->id = 0x1D;
+            misc->unk2 = 0x20;
 #ifdef VERSION_JP
-            temp_v0->ext.unk.unk50 = (struct MiscUnk50_2*)first;
+            misc->ext.unk.unk50 = (struct MiscUnk50_2*)first;
 #else
-            temp_v0->ext.unk.unk50 = saved_reg_s2;
+            misc->ext.unk.unk50 = saved_reg_s2;
 #endif
-            D_80139690 = OBJECT_HEADER(temp_v0);
+            D_80139690 = OBJECT_HEADER(misc);
         }
         var_a1 = D_800F2204;
         var_a0 = D_80169498.sector;
@@ -679,12 +678,12 @@ void func_8001DF7C(struct GameInfo* arg0)
             obj->unk2 = 0xC;
             D_80139690 = OBJECT_HEADER(obj);
         }
+        arg0->mode++;
 #ifdef VERSION_EU
         arg0->unk4 = 0;
 #else
         arg0->unk4 = 0xA;
 #endif
-        arg0->mode++;
     }
 #ifdef VERSION_JP
     background_objects[0].x_pos.i.hi += 6;
@@ -870,8 +869,8 @@ void func_8001E4F0(struct GameInfo* arg0)
 {
     if (--arg0->unk4 == 0) {
         reset_objects();
-        arg0->unk4 = 1;
         arg0->mode++;
+        arg0->unk4 = 1;
     }
 }
 #endif
@@ -920,8 +919,7 @@ void func_8001E54C(struct GameInfo* /* D_80173C70 */ arg0)
 
 void func_8001E638(struct GameInfo* arg0)
 {
-    arg0->unk4--;
-    if (arg0->unk4 == 0) {
+    if (--arg0->unk4 == 0) {
         func_800129F0(8);
         arg0->mode++;
     }
@@ -942,8 +940,8 @@ void func_8001E6BC(struct GameInfo* arg0)
 #ifdef MMX4_SATURN
         saturn_stage_commit_video();
 #endif
-        arg0->mode = 0;
         arg0->unk0++;
+        arg0->mode = 0;
     }
 }
 
@@ -1208,11 +1206,11 @@ void func_8001ED44(struct GameInfo* arg0)
             if (main_bss_state.transition.selection != 1) {
                 func_800129F0(8);
             }
-            arg0->mode = (u8)arg0->mode + 1;
+            arg0->mode++;
         } else if (saturn_pad_pressed & SATURN_PAD_CANCEL) {
             func_800129F0(8);
             main_bss_state.transition.selection = 2;
-            arg0->mode = (u8)arg0->mode + 1;
+            arg0->mode++;
         } else {
             func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
         }
@@ -1420,11 +1418,11 @@ void func_8001ED44(struct GameInfo* arg0)
             if (main_bss_state.transition.selection != 1) {
                 func_800129F0(8);
             }
-            arg0->mode = (u8)arg0->mode + 1;
+            arg0->mode++;
         } else if (controller_input.pressed & PAD_SELECTION_ALT) {
             func_800129F0(8);
             main_bss_state.transition.selection = 2;
-            arg0->mode = (u8)arg0->mode + 1;
+            arg0->mode++;
         } else {
             func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
         }

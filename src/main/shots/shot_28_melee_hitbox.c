@@ -43,8 +43,8 @@ void melee_hitbox_init(struct ShotObj* self)
     self->unk68 = NULL;
     self->unk58.data = NULL;
     set_animation(self, 0xB);
-    self->unk5 = 2;
     self->state++;
+    self->unk5 = 2;
 }
 
 void melee_hitbox_active(struct ShotObj* self)

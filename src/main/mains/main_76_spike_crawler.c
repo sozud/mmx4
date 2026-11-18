@@ -30,9 +30,8 @@ void spike_crawler_update(struct MainObj* self)
     spike_crawler_state_funcs[self->state](self);
 }
 
-void spike_crawler_init(struct MainObj* arg0)
+void spike_crawler_init(struct MainObj* self)
 {
-    struct MainObj* self = arg0;
 
     self->state = 1;
     self->unk5 = 0;
@@ -130,7 +129,7 @@ void spike_crawler_update_speed(struct MainObj* self)
     s32 player_y;
     s32 distance;
 
-    object_y = self->y_pos.u.hi - 8;
+    object_y = self->y_pos.i.hi - 8;
     player_y = g_Player.y_pos.i.hi;
     distance = player_y - object_y;
 

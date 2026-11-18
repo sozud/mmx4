@@ -373,23 +373,24 @@ void split_mushroom_death_explode(struct MainObj* self)
 
     if (self->unk7E-- == 0) {
         self->unk42 ^= 0x8000;
-        self->invincibility_timer -= 5;
-        if ((s8)self->invincibility_timer > 0x19) {
+        if ((s8)(self->invincibility_timer -= 5) > 0x19) {
             self->invincibility_timer = 0;
         }
-        self->unk7E = (s8)self->invincibility_timer < 6 ? 5 : (s8)self->invincibility_timer;
+        self->unk7E = (s8)self->invincibility_timer > 5 ? (s8)self->invincibility_timer : 5;
     }
 }
 
 void split_mushroom_death_finish(struct MainObj* self)
 {
-    struct EffectObj* effect = self->ext.main_61.data.effect;
+    struct EffectObj* effect;
+
     self->on_screen = 0;
+    effect = self->ext.main_61.data.effect;
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
             if (self->unk7E-- == 0) {
-                self->unk7E = 5;
                 self->unk42 ^= 0x8000;
+                self->unk7E = 5;
             }
             update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
         }
@@ -475,8 +476,8 @@ void split_mushroom_intro_bounce(struct MainObj* self)
             self->unk6 = 3;
         } else {
             func_8001540C(2, SATURN_SOUND(0xA8, 0x2B), self);
-            self->y_speed = FIXED(6);
             self->unk7C--;
+            self->y_speed = FIXED(6);
             func_8001540C(2, SATURN_SOUND(0xA5, 0x28), self);
         }
     }
@@ -676,7 +677,7 @@ void split_mushroom_stun_split(struct MainObj* self)
     struct MainObj* parent;
     int one;
 
-    if ((--self->unk7C << 16) == 0) {
+    if (--self->unk7C == 0) {
         parent = self->ext.main_61.partner;
         if (parent->unk5 != 6) {
             if (self->x_pos.i.hi < background_objects[g_Player.bg_offset].x_pos.i.hi + 0xA0) {
@@ -1349,8 +1350,7 @@ void split_mushroom_combo_repeat(struct MainObj* self)
 
 void split_mushroom_combo_sync(struct MainObj* self)
 {
-    self->unk7C--;
-    if (self->unk7C == 0) {
+    if (--self->unk7C == 0) {
         self->unk7C = 1;
         self->unk5 = 5;
         self->unk6 = 4;
@@ -1595,29 +1595,29 @@ void split_mushroom_load_palette(void)
 void split_mushroom_spawn_afterimage(struct MainObj* self)
 {
     struct MainObj* source;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 
     source = self;
-    temp_v0 = find_free_misc_obj();
-    if (temp_v0 != 0) {
-        temp_v0->active = 0x41;
-        temp_v0->id = 0x16;
-        temp_v0->unk2 = 8;
-        temp_v0->unk15 = source->unk15;
-        temp_v0->x_pos.i.hi = source->x_pos.i.hi;
-        temp_v0->y_pos.i.hi = source->y_pos.i.hi;
-        temp_v0->bg_offset = (u8)source->bg_offset;
-        temp_v0->animation_table = (u32**)source->animation_table;
-        temp_v0->unk40 = source->unk40;
-        temp_v0->unk3C = (void*)source->sprite_frames;
-        temp_v0->unk42 = source->unk42 & 0x7FFF;
-        temp_v0->unk16 = VISUAL_SATURN_LAYER(5);
-        temp_v0->ext.misc_22.owner = source;
-        temp_v0->ext.misc_22.timer = 0xA;
-        set_animation(temp_v0, 0x19);
-        temp_v0->state = 0;
-        temp_v0->unk5 = 0;
-        temp_v0->unk6 = 1;
+    misc = find_free_misc_obj();
+    if (misc != 0) {
+        misc->active = 0x41;
+        misc->id = 0x16;
+        misc->unk2 = 8;
+        misc->unk15 = source->unk15;
+        misc->x_pos.i.hi = source->x_pos.i.hi;
+        misc->y_pos.i.hi = source->y_pos.i.hi;
+        misc->bg_offset = (u8)source->bg_offset;
+        misc->animation_table = (u32**)source->animation_table;
+        misc->unk40 = source->unk40;
+        misc->unk3C = (void*)source->sprite_frames;
+        misc->unk42 = source->unk42 & 0x7FFF;
+        misc->unk16 = VISUAL_SATURN_LAYER(5);
+        misc->ext.misc_22.owner = source;
+        misc->ext.misc_22.timer = 0xA;
+        set_animation(misc, 0x19);
+        misc->state = 0;
+        misc->unk5 = 0;
+        misc->unk6 = 1;
     }
 }
 

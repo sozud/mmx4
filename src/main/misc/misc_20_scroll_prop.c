@@ -27,8 +27,8 @@ void scroll_prop_init(struct MiscObj* self)
     self->unk40 = (s16)((u32)OBJECT_STAGE_TEXTURE(0));
     self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 0);
     self->unk42 = OBJECT_CLUT(0x7987);
-    self->x_pos.i.hi = background_objects[0].x_pos.u.hi + 0x160;
-    self->y_pos.i.hi = background_objects[0].y_pos.u.hi + 0x80;
+    self->x_pos.i.hi = background_objects[0].x_pos.i.hi + 0x160;
+    self->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x80;
     self->animation_step.fields.frame_index = 0;
     state = self->state + 1;
     self->bg_offset = g_Player.bg_offset;

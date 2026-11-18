@@ -32,6 +32,8 @@ void post_boss_cutscene_finish(struct UnkObj*);
 void post_boss_cutscene_spawn_afterimages(struct UnkObj* self);
 #endif
 
+void post_boss_cutscene_spawn_afterimages(struct UnkObj* self);
+
 void post_boss_cutscene_update(struct MiscObj* self)
 {
     post_boss_cutscene_state_funcs[self->state](self);

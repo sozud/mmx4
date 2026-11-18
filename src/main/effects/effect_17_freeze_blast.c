@@ -20,6 +20,9 @@ void freeze_blast_finish(struct EffectObj*);
 #include "main/object_motion.h"
 #endif
 
+void func_800B9354(struct EffectObj* self);
+void func_800B94B8(struct EffectObj* self);
+
 void freeze_blast_update(struct EffectObj* self)
 {
     freeze_blast_state_funcs[self->state](self);
@@ -170,8 +173,8 @@ void func_800B94B8(struct EffectObj* self)
             child->active = 0x41;
             child->id = 0x15;
             child->unk2 = (get_random_nonzero() % 6) + 6;
-            child->x_pos.u.hi = record->x + (j & 0xFF) * 0x10;
-            child->y_pos.u.hi = record->y;
+            child->x_pos.i.hi = record->x + (j & 0xFF) * 0x10;
+            child->y_pos.i.hi = record->y;
             index = func_8002938C(0x15);
             child->unk40 = OBJECT_STAGE_TEXTURE(index);
             column = func_8002938C(0x15) * 4 + 0x18;

@@ -36,8 +36,8 @@ void boss_death_fx_init(struct EffectObj* self)
         quad->active = 1;
         quad->id = 4;
         quad->unk2 = self->unk2;
-        quad->x_pos.u.hi = self->x_pos.u.hi;
-        quad->y_pos.u.hi = self->y_pos.u.hi;
+        quad->x_pos.i.hi = self->x_pos.i.hi;
+        quad->y_pos.i.hi = self->y_pos.i.hi;
     }
 
     quad = find_free_quad_obj();
@@ -45,8 +45,8 @@ void boss_death_fx_init(struct EffectObj* self)
         quad->active = 1;
         quad->id = 4;
         quad->unk2 = (self->unk2 + 10) & 0x1F;
-        quad->x_pos.u.hi = self->x_pos.u.hi;
-        quad->y_pos.u.hi = self->y_pos.u.hi;
+        quad->x_pos.i.hi = self->x_pos.i.hi;
+        quad->y_pos.i.hi = self->y_pos.i.hi;
     }
 
     quad = find_free_quad_obj();
@@ -54,8 +54,8 @@ void boss_death_fx_init(struct EffectObj* self)
         quad->active = 1;
         quad->id = 4;
         quad->unk2 = (self->unk2 + 21) & 0x1F;
-        quad->x_pos.u.hi = self->x_pos.u.hi;
-        quad->y_pos.u.hi = self->y_pos.u.hi;
+        quad->x_pos.i.hi = self->x_pos.i.hi;
+        quad->y_pos.i.hi = self->y_pos.i.hi;
     }
 
     self->ext.effect_26.timer = 8;
@@ -166,8 +166,8 @@ void boss_death_fx_spawn_ray(struct EffectObj* self)
             quad->active = 1;
             quad->id = 4;
             quad->unk2 = get_random() & 0x1F;
-            quad->x_pos.u.hi = self->x_pos.u.hi;
-            quad->y_pos.u.hi = self->y_pos.u.hi;
+            quad->x_pos.i.hi = self->x_pos.i.hi;
+            quad->y_pos.i.hi = self->y_pos.i.hi;
         }
     }
 }
@@ -268,7 +268,7 @@ void func_800BB750(struct EffectObj* arg0)
 void boss_death_fx_wait(struct EffectObj* self)
 {
     if (self->ext.effect_26.timer-- == 0) {
-        self->state = (u8)self->state + 1;
+        self->state++;
     }
 }
 

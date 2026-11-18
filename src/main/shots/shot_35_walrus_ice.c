@@ -103,10 +103,10 @@ void walrus_ice_init(struct ShotObj* self)
 {
     struct WeaponObj* temp_v1;
 
-    self->state = (u8)self->state + 1 + ((s8)self->unk2 >> 4);
+    self->state += (self->unk2 >> 4) + 1;
+    self->unk2 = (u8)self->unk2 & 0xF;
     self->unk67 = 0;
     self->unk58.data = (u8*)D_80105FF0;
-    self->unk2 = (u8)self->unk2 & 0xF;
     if (self->state < 4) {
         temp_v1 = self->unk7C;
         self->unk3C = temp_v1->unk3C;
@@ -281,13 +281,10 @@ void walrus_ice_icicle_wait_drop(struct ShotObj* self)
 
 void walrus_ice_icicle_fall(struct ShotObj* self)
 {
-    s16 temp_v0;
-
     move_with_gravity(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
-    temp_v0 = self->timer;
-    if (temp_v0 != 0) {
-        self->timer = temp_v0 - 1;
+    if (self->timer != 0) {
+        self->timer--;
         return;
     }
     CollisionRelated(PLAYER_OBJECT(self));
@@ -431,12 +428,11 @@ void walrus_ice_ball_grow(struct ShotObj* self)
 
 void walrus_ice_ball_burst(struct ShotObj* self)
 {
-    s8 i;
+    u8 i;
     struct ShotObj* shot;
 
     if (self->unk8C.word != 0) {
-        i = 0;
-        do {
+        for (i = 0; i < 9; i++) {
             shot = find_free_shot_obj();
             if (shot != NULL) {
                 shot->active = 0x41;
@@ -452,8 +448,7 @@ void walrus_ice_ball_burst(struct ShotObj* self)
                 shot->unk15 = self->unk15;
                 shot->unk7C = self->unk7C;
             }
-            i++;
-        } while ((u8)i < 9);
+        }
         func_8001540C(2, SATURN_SOUND(0x97, 0x67), self);
         self->unk8C.word = 0;
         self->state = 6;
@@ -674,8 +669,7 @@ void walrus_ice_chunk_fall(struct ShotObj* obj)
     if (obj->unk70 & 8) {
         func_8001540C(2, SATURN_SOUND(0x97, 0x67), obj);
         spawn_debris(0xA, walrus_ice_chunk_debris, obj);
-        i = 0;
-        do {
+        for (i = 0; i < 6; i++) {
             shot = find_free_shot_obj();
             if (shot != 0) {
                 shot->active = 0x41;
@@ -691,8 +685,7 @@ void walrus_ice_chunk_fall(struct ShotObj* obj)
                 shot->unk15 = obj->unk15;
                 shot->unk7C = obj->unk7C;
             }
-            i++;
-        } while (i < 6);
+        }
         obj->unk6++;
     }
 }

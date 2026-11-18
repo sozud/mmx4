@@ -154,10 +154,10 @@ void func_800D0118(struct MiscObj* self)
             switch (self->ext.misc_42.unk56) {
             case 0:
             case 1:
-                if (main_bss_state.transition.selection != 0)
-                    self->y_pos.i.hi = 0x98;
-                else
+                if (main_bss_state.transition.selection == 0)
                     self->y_pos.i.hi = 0x78;
+                else
+                    self->y_pos.i.hi = 0x98;
                 break;
             case 2:
                 switch (main_bss_state.transition.selection) {

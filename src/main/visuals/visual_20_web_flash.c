@@ -39,10 +39,10 @@ void web_flash_main(struct VisualObj* arg0)
         temp_a0 = temp_v1->unk7C;
         arg0->x_pos.val = temp_a0->x_pos.val;
         arg0->y_pos.val = temp_a0->y_pos.val;
-        if (temp_v1->unk2 != 0) {
-            is_on_screen(arg0);
-        } else {
+        if (temp_v1->unk2 == 0) {
             ZeroObjectState(OBJECT_HEADER(arg0));
+        } else {
+            is_on_screen(arg0);
         }
     } else {
         temp_a0 = (struct WeaponObj*)arg0->unk50;

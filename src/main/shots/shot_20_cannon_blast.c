@@ -31,7 +31,7 @@ void cannon_blast_init(struct ShotObj* raw_arg0)
     struct WeaponObj* temp_s1;
 
     arg0 = raw_arg0;
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
     arg0->on_screen = 1;
     temp_s1 = arg0->unk7C;
     arg0->unk68 = 0;
@@ -88,10 +88,10 @@ void func_8009D048(struct ShotObj* self)
     distance = ABS(background_objects->x_pos.i.hi, owner->x_pos.i.hi);
     if ((u16)distance >= 0x1A0) {
         if (self->unk2 != 0) {
-            self->x_pos.i.hi = (owner->x_pos.u.hi - distance) + 0x29;
+            self->x_pos.i.hi = (owner->x_pos.i.hi - distance) + 0x29;
         } else {
             adjusted_distance = distance - 0x129;
-            self->x_pos.i.hi = owner->x_pos.u.hi - adjusted_distance;
+            self->x_pos.i.hi = owner->x_pos.i.hi - adjusted_distance;
         }
     }
 

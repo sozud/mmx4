@@ -51,13 +51,13 @@ void func_8002F510(struct EngineObj* arg0)
 
 void func_8002F524(struct EngineObj* arg0)
 {
-    struct QuadObj* temp_v0 = find_free_quad_obj();
-    if (temp_v0 != NULL) {
-        temp_v0->active = -0x7F;
-        temp_v0->id = 1;
-        temp_v0->unk2 = arg0->unk3 + 0x10;
+    struct QuadObj* quad = find_free_quad_obj();
+    if (quad != NULL) {
+        quad->active = -0x7F;
+        quad->id = 1;
+        quad->unk2 = arg0->unk3 + 0x10;
         arg0->unk2++;
-        arg0->unk3C = temp_v0;
+        arg0->unk3C = quad;
     }
 }
 
@@ -120,8 +120,8 @@ void func_8002F6E4(struct EngineObj* arg0)
     func_800160AC();
 #endif
     func_80023CE0();
-    background_objects[1].unk4C = 1;
     background_objects[1].x_pos.val = FIXED((D_8013B810 - 1) << 9);
+    background_objects[1].unk4C = 1;
     background_objects[2].x_pos.val = FIXED((D_8013B810 - 1) << 9);
     arg0->unk2++;
 }

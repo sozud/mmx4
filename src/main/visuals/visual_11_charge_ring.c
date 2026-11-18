@@ -52,14 +52,14 @@ void func_800B1864(struct VisualObj* self)
         set_animation(self, self->unk2);
     }
     animate_object(ANIMATED_OBJECT(self));
-    self->x_pos.u.hi = parent->x_pos.u.hi;
-    self->y_pos.u.hi = parent->y_pos.u.hi;
+    self->x_pos.i.hi = parent->x_pos.i.hi;
+    self->y_pos.i.hi = parent->y_pos.i.hi;
     if (parent->unk5 != 0) {
         if (parent->unk5 == 1) {
-            self->y_pos.u.hi -= 5;
+            self->y_pos.i.hi -= 5;
         } else {
-            self->x_pos.u.hi -= 2;
-            self->y_pos.u.hi -= 10;
+            self->x_pos.i.hi -= 2;
+            self->y_pos.i.hi -= 10;
         }
     }
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);

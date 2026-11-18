@@ -124,9 +124,9 @@ void npc_cutscene_talk_wait_player(struct MiscObj* self)
             player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         }
     } else if (background_objects[0].x_pos.i.hi == background_objects[0].unk26) {
+        self->unk5++;
         self->unk6 = 0;
         self->ext.misc_52.timer = 0x1E;
-        self->unk5++;
     }
 }
 
@@ -181,9 +181,7 @@ void npc_cutscene_reply(struct MiscObj* obj)
         state = obj->unk5;
         switch (state) {
         case 0:
-            timer = obj->ext.misc_52.timer - 1;
-            obj->ext.misc_52.timer = timer;
-            if (timer == 0) {
+            if (--obj->ext.misc_52.timer == 0) {
                 obj->unk5++;
             }
             break;
@@ -229,7 +227,8 @@ void npc_cutscene_main(struct MiscObj* self)
     npc_cutscene_type_funcs[self->unk2](self);
     if (WEAPON_FRAME_COUNTER % 10 == 0) {
         self->y_pos.i.hi += self->ext.misc_52.unk57;
-        if (--self->ext.misc_52.unk56 == 0) {
+        self->ext.misc_52.unk56--;
+        if (self->ext.misc_52.unk56 == 0) {
             self->ext.misc_52.unk56 = 7;
             self->ext.misc_52.unk57 *= -1;
         }
@@ -242,8 +241,8 @@ void npc_cutscene_blink(struct MiscObj* self)
 
     timer = self->ext.misc_52.timer;
     if (timer == 0) {
-        self->ext.misc_52.timer = 0x1E;
         self->unk6++;
+        self->ext.misc_52.timer = 0x1E;
     } else {
         self->ext.misc_52.timer = timer - 1;
     }

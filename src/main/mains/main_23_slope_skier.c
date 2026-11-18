@@ -147,7 +147,7 @@ void slope_skier_read_slope(struct MainObj* self)
         if (self->on_screen != 0) {
             spawn_explosion(BASE_OBJECT(self));
             spawn_debris(7, slope_skier_debris, self);
-            self->state = (u8)self->state + 1;
+            self->state++;
         }
     } else if (result != 0x10) {
         self->ext.main_23.unk80 = 0;
@@ -440,7 +440,7 @@ void slope_skier_main(struct MainObj* self)
             return;
         }
     }
-    self->state = (u8)self->state + 1;
+    self->state++;
 }
 
 void slope_skier_despawn(struct MainObj* self)

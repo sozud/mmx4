@@ -69,7 +69,7 @@ void rising_slab_rise(struct ItemObj* arg0)
     }
     arg0->unk68 = (struct Unk_unk68*)rising_slab_crush_boxes[arg0->unk2];
     if (!(arg0->unk7C.timer & 7)) {
-        func_800B0CA0(0x10, (u8)((u8)arg0->ext.packed + 3), MAIN_OBJECT(arg0), 4, 1);
+        func_800B0CA0(0x10, (u8)(arg0->ext.packed + 3), MAIN_OBJECT(arg0), 4, 1);
         arg0->ext.packed ^= 1;
     }
     arg0->unk68 = (struct Unk_unk68*)rising_slab_terrain_boxes[arg0->unk2];

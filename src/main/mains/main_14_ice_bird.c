@@ -313,26 +313,26 @@ void func_8004D6FC(struct MainObj* self)
 
 void ice_bird_spawn_charge_ring(struct MainObj* self, s8 arg1)
 {
-    struct VisualObj* temp_v0;
+    struct VisualObj* visual;
 
-    temp_v0 = find_free_visual_obj();
-    if (temp_v0 != 0) {
-        temp_v0->unk50 = PLAYER_OBJECT(self);
-        temp_v0->active = 0x41;
-        temp_v0->unk2 = arg1;
-        temp_v0->id = 0xB;
+    visual = find_free_visual_obj();
+    if (visual != 0) {
+        visual->unk50 = PLAYER_OBJECT(self);
+        visual->active = 0x41;
+        visual->unk2 = arg1;
+        visual->id = 0xB;
         self->ext.main_14.visual_variant = arg1;
-        temp_v0->state = 0;
-        temp_v0->unk5 = 0;
-        temp_v0->unk6 = 0;
-        temp_v0->unk38 = 0;
-        temp_v0->unk3C = ANIMATED_OBJECT(self)->unk3C;
-        temp_v0->animation_table = ANIMATED_OBJECT(self)->animation_table;
-        temp_v0->unk40 = self->unk40;
-        temp_v0->unk42 = self->unk42;
-        temp_v0->unk16 = VISUAL_SATURN_LAYER(4);
-        temp_v0->x_pos.val = self->x_pos.val;
-        temp_v0->y_pos.val = self->y_pos.val;
+        visual->state = 0;
+        visual->unk5 = 0;
+        visual->unk6 = 0;
+        visual->unk38 = 0;
+        visual->unk3C = ANIMATED_OBJECT(self)->unk3C;
+        visual->animation_table = ANIMATED_OBJECT(self)->animation_table;
+        visual->unk40 = self->unk40;
+        visual->unk42 = self->unk42;
+        visual->unk16 = VISUAL_SATURN_LAYER(4);
+        visual->x_pos.val = self->x_pos.val;
+        visual->y_pos.val = self->y_pos.val;
     }
 }
 

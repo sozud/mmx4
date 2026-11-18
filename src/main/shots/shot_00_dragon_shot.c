@@ -251,7 +251,7 @@ void dragon_shot_pulse(struct ShotObj* self)
 
 void dragon_shot_bomb_fall(struct ShotObj* self)
 {
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 
     move_with_gravity(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
@@ -265,15 +265,15 @@ void dragon_shot_bomb_fall(struct ShotObj* self)
         set_animation(self, 0xB);
 
         if (!(self->unk70 & 3)) {
-            temp_v0 = find_free_misc_obj();
-            if (temp_v0 != 0) {
-                temp_v0->active = 0x41;
-                temp_v0->id = 4;
-                temp_v0->unk2 = 0;
-                temp_v0->state = 0;
-                temp_v0->ext.pointer.unk50 = self->unk7C;
-                temp_v0->x_pos.val = self->x_pos.val + (get_random() & 3);
-                temp_v0->y_pos.val = self->y_pos.val + (get_random() & 3);
+            misc = find_free_misc_obj();
+            if (misc != 0) {
+                misc->active = 0x41;
+                misc->id = 4;
+                misc->unk2 = 0;
+                misc->state = 0;
+                misc->ext.pointer.unk50 = self->unk7C;
+                misc->x_pos.val = self->x_pos.val + (get_random() & 3);
+                misc->y_pos.val = self->y_pos.val + (get_random() & 3);
             }
         }
     }

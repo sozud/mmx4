@@ -48,13 +48,13 @@ void buster_shot_place_at_muzzle(struct VisualObj* arg0, struct PlayerObj* arg1,
     frame_component = arg1->animation_step.fields.frame_index * 2;
     weapon_offset = arg2;
     if (arg0->unk15 != 0) {
-        arg0->x_pos.i.hi = arg1->x_pos.u.hi - D_8011B230.components[frame_component];
+        arg0->x_pos.i.hi = arg1->x_pos.i.hi - D_8011B230.components[frame_component];
         arg0->x_pos.i.hi -= buster_muzzle_offsets[weapon_offset][0];
     } else {
-        arg0->x_pos.i.hi = arg1->x_pos.u.hi + D_8011B230.components[frame_component];
+        arg0->x_pos.i.hi = arg1->x_pos.i.hi + D_8011B230.components[frame_component];
         arg0->x_pos.i.hi += buster_muzzle_offsets[weapon_offset][0];
     }
-    y = arg1->y_pos.u.hi + ((struct PlayerFrameOffset*)&D_8011B230.components[frame_component])->y;
+    y = arg1->y_pos.i.hi + ((struct PlayerFrameOffset*)&D_8011B230.components[frame_component])->y;
     arg0->y_pos.i.hi = y;
     arg0->y_pos.i.hi = y + buster_muzzle_offsets[weapon_offset][1];
 }

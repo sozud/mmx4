@@ -125,8 +125,8 @@ void dragonfly_init(struct MainObj* self)
         break;
     }
     self->unk7C = 1;
-    self->state = 1;
     self->ext.main_10.turn_delay = 0;
+    self->state = 1;
     self->unk5 = 2;
     self->unk6 = 0;
 }
@@ -287,11 +287,9 @@ void func_80049E68(struct MainObj* arg0)
 
     move_object(MOVING_OBJECT(arg0));
 
-    timer = arg0->ext.main_10.timer - 1;
-    arg0->ext.main_10.timer = timer;
-    if (timer == 0) {
-        arg0->y_speed = FIXED(2);
+    if (--arg0->ext.main_10.timer == 0) {
         arg0->x_speed = 0;
+        arg0->y_speed = FIXED(2);
         arg0->unk62 = 0;
         arg0->attack_box = NULL;
         arg0->unk5 = 5;
@@ -300,14 +298,14 @@ void func_80049E68(struct MainObj* arg0)
 
     if (arg0->unk15 == 0) {
         if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0x30) {
-            arg0->ext.main_10.timer = 0x14;
             arg0->x_speed = 0;
+            arg0->ext.main_10.timer = 0x14;
             arg0->unk6 = 2;
         }
     } else {
         if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi >= 0x30) {
-            arg0->ext.main_10.timer = 0x14;
             arg0->x_speed = 0;
+            arg0->ext.main_10.timer = 0x14;
             arg0->unk6 = 2;
         }
     }
@@ -478,9 +476,7 @@ void dragonfly_carry_rise(struct MainObj* self)
         return;
     }
 
-    timer = self->ext.main_10.timer - 1;
-    self->ext.main_10.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.main_10.timer == 0) {
         set_animation(self, 4);
         self->ext.main_10.timer = 0xA;
         self->y_speed = 0;

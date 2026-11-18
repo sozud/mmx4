@@ -186,7 +186,6 @@ ret_u8 angle_to_object(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
 
 u8 angle_from_delta(s32 arg0, s32 arg1)
 {
-    extern u32 D_800F45E4[];
     s32 temp_lo;
     s16 var_a3, var_a2;
     u32* ptr;

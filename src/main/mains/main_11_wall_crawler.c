@@ -97,8 +97,8 @@ void func_8004A78C(struct MainObj* self)
         self->unk6 = 0;
         self->hurt_box = NULL;
         self->state++;
-        self->x_pos.u.hi = (self->x_pos.u.hi & -0x10) + 8;
-        self->y_pos.u.hi = (self->y_pos.u.hi & -0x10) + 0x14;
+        self->x_pos.i.hi = (self->x_pos.i.hi & -0x10) + 8;
+        self->y_pos.i.hi = (self->y_pos.i.hi & -0x10) + 0x14;
         return;
     }
 
@@ -113,7 +113,7 @@ void func_8004A78C(struct MainObj* self)
         self->x_speed = 0x18000;
     }
     move_object(MOVING_OBJECT(self));
-    x = self->x_pos.u.hi;
+    x = self->x_pos.i.hi;
     if (engine_obj.character_state.fields.active != 0 && ((u32)(x - 0xC0F) < 0x1E2 || (u32)(x - 0x100F) < 0x1E2 || (u32)(x - 0x1315) < 0x1DC || (u32)(x - 0x1613) < 0x1BF)) {
         set_animation(self, 0x16);
         self->state = 2;

@@ -13,6 +13,9 @@
 #include "main/collision_bounds.h"
 #include "main/misc/misc_15_vent.h"
 
+void func_80065168(struct MainObj* arg0, s16 x, s16 y);
+void web_spider_check_big_web(struct MainObj* self);
+
 extern u8 web_spider_move_timers[];
 extern u8 web_spider_attack_cooldowns[4];
 extern const u8* web_spider_swing_animations[];
@@ -143,8 +146,8 @@ void web_spider_intro_setup(struct MainObj* self)
             self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0x160);
             archive = SP_MENU_FRAMES;
             offset = archive[4];
-            self->unk42 = OBJECT_CLUT(0x7888);
             self->sprite_frames = (u8*)archive + offset;
+            self->unk42 = OBJECT_CLUT(0x7888);
         }
         self->animation_table = (const u8* const*)web_spider_animations;
         self->unk16 = VISUAL_SATURN_LAYER(4);
@@ -339,7 +342,7 @@ void web_spider_intro_fill_health(struct MainObj* self)
                 func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
                 self->unk7C = 2;
             }
-            self->hp = (u8)self->hp + 1;
+            self->hp++;
             return;
         }
         self->unk5 = 9;
@@ -634,8 +637,12 @@ void web_spider_swing_wait(struct MainObj* self)
 
 void web_spider_attack(struct MainObj* self)
 {
-    if ((self->ext.main_43.unk94 == 0) && (self->ext.main_43.attack_count != 0)) {
-        web_spider_attack_web(self);
+    if (self->ext.main_43.unk94 == 0) {
+        if (self->ext.main_43.attack_count == 0) {
+            func_800643B0(self);
+        } else {
+            web_spider_attack_web(self);
+        }
     } else {
         func_800643B0(self);
     }
@@ -724,8 +731,7 @@ void web_spider_attack_web(struct MainObj* self)
         self->unk7 = 0;
         set_animation(self, self->ext.main_43.animation_id);
         web_spider_set_attack_cooldown(self);
-        self->ext.main_43.attack_count++;
-        if (self->ext.main_43.attack_count >= 3) {
+        if (++self->ext.main_43.attack_count >= 3) {
             self->ext.main_43.attack_count = 0;
         }
     }
@@ -993,45 +999,45 @@ struct ShotObj* web_spider_spawn_thread(struct MainObj* self, s32 variant)
 
 void web_spider_spawn_web_piece(struct VisualObj* self, u8 arg1)
 {
-    struct VisualObj* temp_v0;
+    struct VisualObj* visual;
 
-    temp_v0 = find_free_visual_obj();
-    if (temp_v0 != NULL) {
-        temp_v0->active = 0x41;
-        temp_v0->id = 0x11;
-        temp_v0->unk2 = arg1;
-        temp_v0->x_pos.val = self->x_pos.val;
-        temp_v0->y_pos.val = self->y_pos.val;
-        temp_v0->animation_table = self->animation_table;
-        temp_v0->unk40 = self->unk40;
-        temp_v0->unk3C = self->unk3C;
-        temp_v0->unk42 = self->unk42 & 0x7FFF;
-        temp_v0->unk16 = self->unk16;
-        temp_v0->unk50 = (struct PlayerObj*)self;
-        temp_v0->unk15 = self->unk15;
+    visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = 0x41;
+        visual->id = 0x11;
+        visual->unk2 = arg1;
+        visual->x_pos.val = self->x_pos.val;
+        visual->y_pos.val = self->y_pos.val;
+        visual->animation_table = self->animation_table;
+        visual->unk40 = self->unk40;
+        visual->unk3C = self->unk3C;
+        visual->unk42 = self->unk42 & 0x7FFF;
+        visual->unk16 = self->unk16;
+        visual->unk50 = (struct PlayerObj*)self;
+        visual->unk15 = self->unk15;
     }
 }
 
 void web_spider_spawn_web_flash(struct AnimatedObj* arg0)
 {
     struct AnimatedObj* self;
-    struct VisualObj* temp_v0;
+    struct VisualObj* visual;
 
     self = arg0;
-    temp_v0 = find_free_visual_obj();
-    if (temp_v0 != 0) {
-        temp_v0->active = 0x41;
-        temp_v0->id = 0x14;
-        temp_v0->unk2 = 1;
-        temp_v0->x_pos.val = self->x_pos.val;
-        temp_v0->y_pos.val = self->y_pos.val + FIXED(28);
-        temp_v0->animation_table = self->animation_table;
-        temp_v0->unk40 = self->unk40;
-        temp_v0->unk3C = self->unk3C;
-        temp_v0->unk42 = self->unk42 & 0x7FFF;
-        temp_v0->unk16 = self->unk16;
-        temp_v0->unk50 = (struct PlayerObj*)self;
-        temp_v0->unk15 = self->unk15;
+    visual = find_free_visual_obj();
+    if (visual != 0) {
+        visual->active = 0x41;
+        visual->id = 0x14;
+        visual->unk2 = 1;
+        visual->x_pos.val = self->x_pos.val;
+        visual->y_pos.val = self->y_pos.val + FIXED(28);
+        visual->animation_table = self->animation_table;
+        visual->unk40 = self->unk40;
+        visual->unk3C = self->unk3C;
+        visual->unk42 = self->unk42 & 0x7FFF;
+        visual->unk16 = self->unk16;
+        visual->unk50 = (struct PlayerObj*)self;
+        visual->unk15 = self->unk15;
     }
 }
 
@@ -1114,7 +1120,7 @@ void web_spider_set_attack_cooldown(struct MainObj* self)
 
 void web_spider_set_swing_animation(struct MainObj* self)
 {
-    u8* animation_table;
+    const u8* animation_table;
     u8 animation_id;
 
     animation_table = web_spider_swing_animations[self->ext.main_43.animation_set];
@@ -1144,18 +1150,15 @@ void web_spider_death_explode(struct MainObj* self)
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x1A;
-            effect->x_pos.u.hi = self->x_pos.u.hi;
-            effect->y_pos.u.hi = self->y_pos.u.hi;
+            effect->x_pos.i.hi = self->x_pos.i.hi;
+            effect->y_pos.i.hi = self->y_pos.i.hi;
             self->ext.main_43.effect = effect;
         }
     }
     is_on_screen(BASE_OBJECT(self));
     if (self->unk7E-- == 0) {
-        u16 temp;
-        temp = self->ext.main_43.flash_timer - 5;
         self->unk42 ^= 0x8000;
-        self->ext.main_43.flash_timer = temp;
-        if (temp >= 0x1A) {
+        if ((self->ext.main_43.flash_timer -= 5) > 0x19) {
             self->ext.main_43.flash_timer = 0;
         }
         self->unk7E = self->ext.main_43.flash_timer > 5 ? self->ext.main_43.flash_timer : 5;
@@ -1169,8 +1172,8 @@ void web_spider_death_finish(struct MainObj* self)
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
             if (self->unk7E-- == 0) {
-                self->unk7E = 5;
                 self->unk42 ^= 0x8000;
+                self->unk7E = 5;
             }
             is_on_screen(BASE_OBJECT(self));
         }

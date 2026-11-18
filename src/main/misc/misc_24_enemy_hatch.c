@@ -137,10 +137,11 @@ void enemy_hatch_release_spawn(struct MiscObj* self)
         main->active = 0x41;
         if (self->unk2 != 0) {
             main->id = 3;
+            main->unk2 = -0x80;
         } else {
             main->id = 0x30;
+            main->unk2 = -0x80;
         }
-        main->unk2 = -0x80;
         main->unk15 = self->unk15;
         main->x_pos.val = self->x_pos.val;
         if (main->id == 3) {

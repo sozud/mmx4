@@ -86,20 +86,20 @@ void func_800ADF30(struct ShotObj* self)
         self->unk60 = 6;
         switch (get_random() & 3) {
         case 0:
-            self->x_pos.u.hi = background_objects[0].x_pos.u.hi + (get_random() & 0xFF);
-            self->y_pos.u.hi = background_objects[0].y_pos.u.hi - 0x20;
+            self->x_pos.i.hi = background_objects[0].x_pos.i.hi + (get_random() & 0xFF);
+            self->y_pos.i.hi = background_objects[0].y_pos.i.hi - 0x20;
             break;
         case 1:
-            self->x_pos.u.hi = background_objects[0].x_pos.u.hi + 0x160;
-            self->y_pos.u.hi = background_objects[0].y_pos.u.hi + (get_random() & 0xFF);
+            self->x_pos.i.hi = background_objects[0].x_pos.i.hi + 0x160;
+            self->y_pos.i.hi = background_objects[0].y_pos.i.hi + (get_random() & 0xFF);
             break;
         case 2:
-            self->x_pos.u.hi = background_objects[0].x_pos.u.hi + (get_random() & 0xFF);
-            self->y_pos.u.hi = background_objects[0].y_pos.u.hi + 0x110;
+            self->x_pos.i.hi = background_objects[0].x_pos.i.hi + (get_random() & 0xFF);
+            self->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x110;
             break;
         case 3:
-            self->x_pos.u.hi = background_objects[0].x_pos.u.hi - 0x20;
-            self->y_pos.u.hi = background_objects[0].y_pos.u.hi + (get_random() & 0xFF);
+            self->x_pos.i.hi = background_objects[0].x_pos.i.hi - 0x20;
+            self->y_pos.i.hi = background_objects[0].y_pos.i.hi + (get_random() & 0xFF);
             break;
         }
     } else {

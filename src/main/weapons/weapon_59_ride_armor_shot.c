@@ -101,9 +101,8 @@ void ride_armor_shot_despawn(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void enemy_ride_armor_shot_main(struct WeaponObj* arg0)
+void enemy_ride_armor_shot_main(struct WeaponObj* self)
 {
-    struct WeaponObj* self = arg0;
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
@@ -171,8 +170,8 @@ void func_80098EA8(struct WeaponObj* shot)
         visual->active = shot->active;
         visual->id = 0x16;
         visual->unk2 = 0;
-        visual->x_pos.u.hi = shot->x_pos.u.hi;
-        visual->y_pos.u.hi = shot->y_pos.u.hi;
+        visual->x_pos.i.hi = shot->x_pos.i.hi;
+        visual->y_pos.i.hi = shot->y_pos.i.hi;
         visual->animation_table = shot->animation_table;
         visual->unk40 = shot->unk40;
         visual->unk3C = shot->unk3C;

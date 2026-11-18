@@ -464,7 +464,7 @@ void func_80034B64(struct PlayerObj* player)
 void player_enter_ladder_grab(struct PlayerObj* self)
 {
     player_set_animation(self, 0x1B);
-    self->x_pos.i.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
+    self->x_pos.i.hi = (self->x_pos.i.hi & 0xFFF0) + 8;
     self->x_pos.u.lo = 0;
     self->y_pos.u.lo = 0;
     self->x_vel.val = 0;
@@ -482,8 +482,8 @@ void player_enter_ladder_climb_off_top(struct PlayerObj* self)
 {
     player_set_animation(self, 0x1C);
     self->unk68 = 0;
-    self->y_pos.u.lo = 0;
     self->y_pos.i.hi &= 0xFFF0;
+    self->y_pos.u.lo = 0;
     player_clear_attack(self);
     self->unk5 = PLAYER_LADDER_TRANSITION;
     self->unk6 = 1;
@@ -492,7 +492,7 @@ void player_enter_ladder_climb_off_top(struct PlayerObj* self)
 void player_enter_ladder_climb_on_top(struct PlayerObj* self)
 {
     player_set_animation(self, 0x1D);
-    self->x_pos.i.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
+    self->x_pos.i.hi = (self->x_pos.i.hi & 0xFFF0) + 8;
     self->x_pos.u.lo = 0;
     self->y_pos.u.lo = 0;
     self->unk68 = 0;
@@ -513,7 +513,7 @@ void player_enter_ladder_step_off_bottom(struct PlayerObj* self)
 
 void player_enter_ladder_up(struct PlayerObj* self)
 {
-    self->x_pos.i.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
+    self->x_pos.i.hi = (self->x_pos.i.hi & 0xFFF0) + 8;
     self->x_pos.i.lo = 0;
     self->y_pos.i.lo = 0;
     self->x_vel.val = 0;
@@ -527,7 +527,7 @@ void player_enter_ladder_up(struct PlayerObj* self)
 
 void player_enter_ladder_down(struct PlayerObj* self)
 {
-    self->x_pos.i.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
+    self->x_pos.i.hi = (self->x_pos.i.hi & 0xFFF0) + 8;
     self->x_pos.i.lo = 0;
     self->y_pos.i.lo = 0;
     self->x_vel.val = 0;

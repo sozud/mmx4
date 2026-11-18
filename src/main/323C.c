@@ -117,18 +117,18 @@ void func_80012A3C(void)
                 if (temp_v1 <= 0) {
                     dea0->unk4 = 0U;
                     state->transition.fade_amount = 2U;
-                    dea0->unk0 = (s16)((u16)dea0->unk0 + 1);
+                    dea0->unk0++;
                 }
                 if (dea0->unk2 == 2) {
                     SetDispMask(1);
                 }
-                dea0->unk2 = (s16)((u16)dea0->unk2 + 1);
+                dea0->unk2++;
             } else {
                 dea0->unk4 += (s8)state->transition.fade_amount;
                 if ((s16)dea0->unk4 >= 0x100) {
                     dea0->unk4 = 0xFFU;
                     state->transition.fade_amount = 2U;
-                    dea0->unk0 = (s16)((u16)dea0->unk0 + 1);
+                    dea0->unk0++;
                 }
             }
             continue;
@@ -147,7 +147,7 @@ void func_80012A3C(void)
 }
 #endif
 
-#if !defined(MMX4_PC) && !defined(MMX4_SATURN) && !defined(MMX4_WIN32)
+#if !defined(MMX4_PC) && !defined(MMX4_SATURN) && !defined(MMX4_WIN32) && !defined(__MWERKS__)
 extern s32 D_80175E98;
 
 // handwritten asm
@@ -182,7 +182,7 @@ void func_80012D68(u32* src, u32* dst, s32 count)
     } while (--count);
 }
 
-#if !defined(MMX4_PC) && !defined(MMX4_SATURN) && !defined(MMX4_WIN32)
+#if !defined(MMX4_PC) && !defined(MMX4_SATURN) && !defined(MMX4_WIN32) && !defined(__MWERKS__)
 // handwritten asm
 void func_80012D88(u32* src, u32* dst, s32 count)
 {
@@ -662,7 +662,6 @@ extern u8 D_8013BD40;
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #ifndef MMX4_SATURN
-s16 SsVabTransCompleted();
 #endif
 
 extern u8 D_801374B4;

@@ -59,9 +59,9 @@ void func_800C9510(struct MiscObj* self)
     self->unk42 = OBJECT_STAGE_CLUT(0x99);
     self->unk16 = VISUAL_SATURN_LAYER(7);
     self->unk15 = 0;
-    if ((u8)(self->unk2 - 0xD) < 6) {
+    if (self->unk2 >= 0xD && self->unk2 < 0x13) {
         self->unk15 = PLAYER_FACING_RIGHT;
-        self->x_pos.u.hi += 0x10;
+        self->x_pos.i.hi += 0x10;
     }
     self->ext.misc_8.timer = 0;
     if (self->ext.misc_8.alternate != 0) {
@@ -123,7 +123,7 @@ void crumbling_tile_break_first(struct MiscObj* self)
         if (self->unk15 != 0) {
             self->x_pos.i.hi -= 0x10;
         }
-        apply_tile_effect(crumbling_tile_first_effects[self->unk2].variant, (s16)self->x_pos.u.hi, self->y_pos.i.hi);
+        apply_tile_effect(crumbling_tile_first_effects[self->unk2].variant, (s16)self->x_pos.i.hi, self->y_pos.i.hi);
         self->state++;
     }
 }
@@ -131,8 +131,8 @@ void crumbling_tile_break_first(struct MiscObj* self)
 void crumbling_tile_second_wait_anim(struct MiscObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
-        self->ext.misc_8.timer = 0xF;
         self->unk5++;
+        self->ext.misc_8.timer = 0xF;
     }
 }
 
@@ -221,7 +221,7 @@ void crumbling_tile_break_second(struct MiscObj* self)
         if (self->unk15 != 0) {
             self->x_pos.i.hi -= 0x10;
         }
-        apply_tile_effect(crumbling_tile_second_effects.entries[self->unk2].third, (s16)self->x_pos.u.hi, self->y_pos.i.hi);
+        apply_tile_effect(crumbling_tile_second_effects.entries[self->unk2].third, (s16)self->x_pos.i.hi, self->y_pos.i.hi);
         self->state++;
     }
 }

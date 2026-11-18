@@ -46,13 +46,13 @@ void func_800A699C(struct ShotObj* arg0)
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
 
     arg0->on_screen = 1;
+    arg0->unk42 &= 0x7FFF;
     arg0->unk5C = 1;
     arg0->unk60 = 5;
     arg0->x_vel.val = 0;
     arg0->unk28 = 0;
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
-    arg0->unk42 &= 0x7FFF;
     if (arg0->unk2 < 2) {
         if (arg0->unk2 == 0) {
             if (arg0->unk15 == 0) {

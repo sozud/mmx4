@@ -18,6 +18,9 @@
 #define WEAPON_HIT_TEXTURE 0
 #endif
 
+void func_8002DF7C(struct WeaponObj* arg0, s32 arg1);
+void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1);
+
 void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2);
 
 void func_8002C99C(struct PlayerObj* arg0);
@@ -599,15 +602,15 @@ void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
     if (delta != 0) {
         direction = delta > 0 ? 2 : 1;
         if (!(direction & arg2)) {
-            target_hi = arg1->x_pos.u.hi;
-            target_prev_hi = arg1->unk18.u.hi;
-            arg1->x_pos.i.hi = (target_hi - target_prev_hi) + (arg0->x_pos.u.hi - (arg0->unk18.u.hi - target_prev_hi));
+            target_hi = arg1->x_pos.i.hi;
+            target_prev_hi = arg1->unk18.i.hi;
+            arg1->x_pos.i.hi = (target_hi - target_prev_hi) + (arg0->x_pos.i.hi - (arg0->unk18.i.hi - target_prev_hi));
         }
     }
     delta = arg0->y_pos.val - arg0->unk1C.val;
     if (delta > 0) {
-        target_hi = arg1->y_pos.u.hi;
-        target_prev_hi_y = arg1->unk1C.u.hi;
-        arg1->y_pos.i.hi = (target_hi - target_prev_hi_y) + (arg0->y_pos.u.hi - (arg0->unk1C.u.hi - target_prev_hi_y));
+        target_hi = arg1->y_pos.i.hi;
+        target_prev_hi_y = arg1->unk1C.i.hi;
+        arg1->y_pos.i.hi = (target_hi - target_prev_hi_y) + (arg0->y_pos.i.hi - (arg0->unk1C.i.hi - target_prev_hi_y));
     }
 }

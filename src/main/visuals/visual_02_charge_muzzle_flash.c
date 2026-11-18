@@ -74,22 +74,22 @@ void charge_muzzle_flash_main(struct VisualObj* arg0)
 
 void charge_muzzle_flash_spawn_shot(struct VisualObj* arg0)
 {
-    struct WeaponObj* temp_v0;
+    struct WeaponObj* weapon;
 
     if (arg0->animation_step.fields.event != 0) {
-        temp_v0 = find_free_weapon_obj();
-        if (temp_v0 != NULL) {
-            temp_v0->active = 0x21;
-            temp_v0->id = arg0->unk2;
-            temp_v0->unk2 = 0;
-            temp_v0->x_pos.val = arg0->x_pos.val;
-            temp_v0->y_pos.val = arg0->y_pos.val;
-            temp_v0->unk15 = arg0->unk15;
-            temp_v0->unk3C = arg0->unk3C;
-            temp_v0->animation_table = arg0->animation_table;
-            temp_v0->unk40 = arg0->unk40;
-            temp_v0->unk42 = arg0->unk42;
-            temp_v0->unk16 = arg0->unk16;
+        weapon = find_free_weapon_obj();
+        if (weapon != NULL) {
+            weapon->active = 0x21;
+            weapon->id = arg0->unk2;
+            weapon->unk2 = 0;
+            weapon->x_pos.val = arg0->x_pos.val;
+            weapon->y_pos.val = arg0->y_pos.val;
+            weapon->unk15 = arg0->unk15;
+            weapon->unk3C = arg0->unk3C;
+            weapon->animation_table = arg0->animation_table;
+            weapon->unk40 = arg0->unk40;
+            weapon->unk42 = arg0->unk42;
+            weapon->unk16 = arg0->unk16;
         }
         arg0->unk5++;
     }

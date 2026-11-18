@@ -197,8 +197,8 @@ void crumble_sequencer_chain(struct EffectObj* self)
                 misc->x_pos.i.hi = self->ext.effect_21.cursor->x;
                 misc->y_pos.i.hi = self->ext.effect_21.cursor->y;
                 misc->unk2 = self->ext.effect_21.cursor->object_id;
-                record = self->ext.effect_21.cursor;
                 self->ext.effect_21.timer = 1;
+                record = self->ext.effect_21.cursor;
                 if (record->flags & 0x80) {
                     item = find_free_item_obj();
                     if (item != NULL) {

@@ -119,8 +119,8 @@ void func_800D802C(struct QuadObj* self)
 void sigma_laser_wait(struct QuadObj* arg0)
 {
     if (--arg0->ext.unk38 == 0) {
-        arg0->ext.unk38 = 8;
         arg0->unk5++;
+        arg0->ext.unk38 = 8;
     }
 }
 
@@ -163,11 +163,10 @@ void func_800D8180(struct QuadObj* quad)
 void sigma_laser_flash(struct QuadObj* arg0)
 {
     struct MainObj* owner = MAIN_OBJECT(arg0->unk5C);
-    arg0->ext.unk38--;
-    if (arg0->ext.unk38 == 0) {
+    if (--arg0->ext.unk38 == 0) {
         arg0->unk34 = 0x12;
+        arg0->unk5++;
         arg0->ext.unk38 = 0x10;
-        arg0->unk5 = (u8)arg0->unk5 + 1;
         owner->ext.main_74.pad95 = 0;
     } else {
         arg0->unk34 = sigma_laser_flash_colors[arg0->ext.unk38 & 3];
@@ -217,8 +216,8 @@ void sigma_laser_main(struct QuadObj* arg0)
 void sigma_laser_cancel_wait(struct QuadObj* arg0)
 {
     if (--arg0->ext.unk38 == 0) {
-        arg0->ext.unk38 = 0x10;
         arg0->unk5++;
+        arg0->ext.unk38 = 0x10;
     }
 }
 
@@ -237,7 +236,7 @@ void func_800D845C(struct QuadObj* self)
             self->vertices[3].y.val += FIXED(-20);
             ((struct VisualObj * (*)(s32, s32, s32, s32)) spawn_explosion_at)(1, 0x430, 0x2F0 - (0x10 - self->ext.unk38) * 0x12, 0);
         }
-        if ((u32)(self->ext.unk38 - 5) < 7) {
+        if (self->ext.unk38 > 4 && self->ext.unk38 < 12) {
             owner->ext.main_74.pad95 = 1;
         } else {
             owner->ext.main_74.pad95 = 0;

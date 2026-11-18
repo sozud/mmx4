@@ -182,8 +182,8 @@ void cyber_peacock_intro_appear_start(struct MainObj* self)
 void cyber_peacock_intro_pose(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk7C = 2;
         self->unk6 += 1;
+        self->unk7C = 2;
         if (engine_obj.stage == 6) {
             func_8002217C(
                 0xE, 0xFF, engine_obj.character_state.bytes[8]);
@@ -277,8 +277,8 @@ u8 cyber_peacock_choose_attack(struct MainObj* self)
 
 void cyber_peacock_start_teleport(struct MainObj* self)
 {
-    self->ext.main_64.target_x = self->x_pos.u.hi;
-    self->ext.main_64.target_y = self->y_pos.u.hi;
+    self->ext.main_64.target_x = self->x_pos.i.hi;
+    self->ext.main_64.target_y = self->y_pos.i.hi;
     self->x_speed = 0;
     self->x_accel = FIXED(1);
     self->y_speed = 0;
@@ -444,9 +444,9 @@ void cyber_peacock_rising_kick_start(struct MainObj* self)
 void cyber_peacock_rising_kick_jump(struct MainObj* self)
 {
     if (self->animation_step.fields.event != 0) {
+        self->unk6++;
         self->air_state = 1;
         self->x_speed = 0;
-        self->unk6++;
         self->x_accel = 0;
         self->y_speed = FIXED(8);
         self->gravity = FIXED(0.34375);
@@ -544,8 +544,8 @@ void cyber_peacock_spawn_laser_target(struct MainObj* self)
     struct ItemObj* item = find_free_item_obj();
     if (item != NULL) {
         active = self->active;
-        item->id = 0x17;
         item->active = active;
+        item->id = 0x17;
         item->unk2 = self->ext.main_64.shot_count;
         item->x_pos.val = self->x_pos.val;
         item->y_pos.val = self->y_pos.val;
@@ -813,17 +813,15 @@ void cyber_peacock_death_explode(struct MainObj* self)
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x1A;
-            effect->x_pos.u.hi = self->x_pos.u.hi;
-            effect->y_pos.u.hi = self->y_pos.u.hi;
+            effect->x_pos.i.hi = self->x_pos.i.hi;
+            effect->y_pos.i.hi = self->y_pos.i.hi;
             self->ext.main_64.object = effect;
         }
     }
     is_on_screen(BASE_OBJECT(self));
     if (self->unk7E-- == 0) {
-        u8 unk92;
         self->unk42 ^= 0x8000;
-        self->ext.main_64.flash_timer = unk92 = self->ext.main_64.flash_timer - 5;
-        if (unk92 > 0x19) {
+        if ((self->ext.main_64.flash_timer -= 5) > 0x19) {
             self->ext.main_64.flash_timer = 0;
         }
         self->unk7E = self->ext.main_64.flash_timer > 5 ? self->ext.main_64.flash_timer : 5;
@@ -837,8 +835,8 @@ void cyber_peacock_death_finish(struct MainObj* self)
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
             if (self->unk7E-- == 0) {
-                self->unk7E = 5;
                 self->unk42 ^= 0x8000;
+                self->unk7E = 5;
             }
             is_on_screen(BASE_OBJECT(self));
         }

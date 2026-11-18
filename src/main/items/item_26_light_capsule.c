@@ -222,7 +222,7 @@ void light_capsule_start_dialogue(struct ItemObj* arg0)
         } else {
             func_8002217C((u16)light_capsule_dialogue_ids[arg0->unk2], 0xFF, 0);
         }
-        arg0->unk5 = (u8)arg0->unk5 + 1;
+        arg0->unk5++;
     }
 }
 
@@ -252,7 +252,7 @@ void light_capsule_end_dialogue(struct ItemObj* arg0)
         func_80016F0C();
         func_800164D8();
 #endif
-        arg0->unk5 = (u8)arg0->unk5 + 1;
+        arg0->unk5++;
     }
 }
 
@@ -267,7 +267,7 @@ void light_capsule_wait_enter(struct ItemObj* arg0)
         x_pos = arg0->x_pos.val;
         g_Player.x_pos.val = x_pos;
         g_Player.item_step = 1;
-        arg0->unk5 = (u8)arg0->unk5 + 1;
+        arg0->unk5++;
     }
 }
 
@@ -277,7 +277,7 @@ void light_capsule_wait_scan(struct ItemObj* arg0)
         light_capsule_spawn_visual(arg0, 0x25, 0);
         light_capsule_spawn_visual(arg0, 0x25, 1);
         light_capsule_spawn_visual(arg0, 0x25, 2);
-        arg0->unk5 = (u8)arg0->unk5 + 1;
+        arg0->unk5++;
     }
 }
 
@@ -292,13 +292,13 @@ void light_capsule_wait_beams(struct ItemObj* arg0)
 
 void light_capsule_grant_part(struct ItemObj* arg0)
 {
-    s32 timer;
+    u32 timer;
 
     timer = arg0->unk7C.timer;
     if (timer == 0) {
         set_animation(arg0, 1);
         light_capsule_spawn_visual(arg0, 0x26, arg0->unk2);
-        arg0->unk5 = (u8)arg0->unk5 + 1;
+        arg0->unk5++;
         return;
     }
     arg0->unk7C.timer = timer - 1;

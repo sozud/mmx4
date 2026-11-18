@@ -83,7 +83,7 @@ void anchored_mine_main(struct MainObj* self)
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
         return;
     }
-    self->state = (u8)self->state + 1;
+    self->state++;
 }
 
 void anchored_mine_despawn(struct MainObj* self)

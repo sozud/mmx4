@@ -52,26 +52,26 @@ void func_8009AD6C(struct ShotObj* arg0)
     set_animation(arg0, 2);
 }
 
-void dropped_bomb_fall(struct ShotObj* arg0)
+void dropped_bomb_fall(struct ShotObj* self)
 {
-    struct ShotObj* self = arg0;
-
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
         spawn_explosion(BASE_OBJECT(self));
+        self->state++;
     } else {
         func_8002D9BC(self);
         CollisionRelated(self);
         if (self->unk70 != 0) {
-            self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x20;
+            self->y_pos.i.hi += 0x20;
             spawn_explosion(BASE_OBJECT(self));
+            self->state++;
         } else if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
             update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
-            return;
+        } else {
+            self->state++;
         }
     }
-    self->state++;
 }
 
 void dropped_bomb_despawn(struct ShotObj* self)

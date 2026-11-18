@@ -165,13 +165,8 @@ void func_800ABE08(struct ShotObj* self)
 
 void sigma_final_shot_fireball(struct ShotObj* self)
 {
-    s16 timer;
-
-    timer = self->timer;
-    if (timer != 0) {
-        timer--;
-        self->timer = timer;
-        if (timer == 0) {
+    if (self->timer != 0) {
+        if (--self->timer == 0) {
             self->y_vel.val = 0;
         }
     }
@@ -229,8 +224,7 @@ void sigma_lightning_fly(struct ShotObj* self)
 
 void sigma_lightning_fade(struct ShotObj* self)
 {
-    self->timer--;
-    if (self->timer == 0) {
+    if (--self->timer == 0) {
         self->state = 2;
         self->unk5 = 0;
         self->unk6 = 0;
@@ -297,9 +291,9 @@ void sigma_spike_extend(struct ShotObj* self)
 {
 
     if (--self->timer == 0) {
+        self->unk6++;
         self->unk50.data = sigma_spike_box;
         self->timer = 0xD2;
-        self->unk6++;
     }
     if (self->timer & 1) {
         update_on_screen(BASE_OBJECT(self), 0x28, 0x28);
@@ -310,17 +304,16 @@ void sigma_spike_active(struct ShotObj* self)
 {
 
     if (--self->timer == 0) {
+        self->unk6++;
         self->timer = 0x3C;
         self->unk50.data = NULL;
-        self->unk6++;
     }
     update_on_screen(BASE_OBJECT(self), 0x28, 0x28);
 }
 
 void sigma_spike_retract(struct ShotObj* self)
 {
-    self->timer--;
-    if (self->timer == 0) {
+    if (--self->timer == 0) {
         self->state = 2;
         self->unk5 = 0;
         self->unk6 = 0;

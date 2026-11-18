@@ -103,8 +103,8 @@ void breakable_panel_main(struct ItemObj* arg0)
     if (collision < 0) {
         arg0->on_screen = 0;
         spawn_debris(0xA, breakable_panel_debris, arg0);
-        arg0->unk7C.timer = 0x1E;
         arg0->state++;
+        arg0->unk7C.timer = 0x1E;
         return;
     }
     if (collision > 0) {

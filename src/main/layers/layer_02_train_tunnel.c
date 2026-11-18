@@ -27,6 +27,8 @@ void train_tunnel_shake_braking(struct LayerObj*);
 void train_tunnel_spawn_scroll_prop(struct LayerObj*);
 #include "weapon_resources.h"
 
+void func_800D9B48(struct LayerObj* self);
+
 void train_tunnel_accelerate(struct LayerObj* arg0);
 void train_tunnel_brake(struct LayerObj* arg0);
 void train_tunnel_section_0_skip(struct LayerObj* arg0);
@@ -282,8 +284,7 @@ void train_tunnel_update_section(struct LayerObj* arg0)
         if (player_x - train_tunnel_lock_positions[offset] < 0) {
             break;
         }
-        offset++;
-        if (offset >= 4) {
+        if (++offset >= 4) {
             break;
         }
     }

@@ -52,8 +52,8 @@ void func_800CE8DC(struct MiscObj* self)
     resource = func_8002938C(0x90);
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
     self->unk42 = OBJECT_STAGE_CLUT(0x90);
-    self->x_pos.u.hi = g_Player.x_pos.u.hi;
-    y_pos = g_Player.y_pos.u.hi;
+    self->x_pos.i.hi = g_Player.x_pos.i.hi;
+    y_pos = g_Player.y_pos.i.hi;
     self->state = 1;
     self->unk5 = 0;
     self->unk6 = 0;
@@ -81,7 +81,7 @@ void func_800CE8DC(struct MiscObj* self)
     self->ext.tail.bytes[9] = 0;
     self->ext.tail.bytes[0] = 0x24;
 #endif
-    self->y_pos.u.hi = y_pos;
+    self->y_pos.i.hi = y_pos;
     set_animation(self, 0);
     func_8001540C(2, SATURN_SOUND(0xE9, 0xAA), self);
 }
@@ -179,9 +179,9 @@ void cyberspace_guide_leave_start(struct MiscObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 4);
-    self->y_vel.val = FIXED(1);
     self->ext.misc_34.enabled = 0;
     self->x_vel.val = 0;
+    self->y_vel.val = FIXED(1);
     self->ext.misc_34.timer = 0x1E;
     self->unk6++;
 }

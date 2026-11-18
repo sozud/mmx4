@@ -88,7 +88,7 @@ void big_elevator_wait_player(struct ItemObj* arg0)
     if (g_Player.unk5 != 0) {
         arg0->unk7C.timer = 0x4000;
         start_screen_shake_y(0x20, 1, 1);
-        arg0->unk6 = (u8)arg0->unk6 + 1;
+        arg0->unk6++;
     }
 }
 
@@ -116,8 +116,8 @@ void big_elevator_arrive(struct ItemObj* arg0)
     background_objects[0].unk2A = 0x2D0;
     background_objects[0].unk47 = 1;
     func_8001540C(5, SATURN_SOUND(5, 0x2E), NULL);
-    arg0->unk6 = 0;
     arg0->unk5++;
+    arg0->unk6 = 0;
 }
 
 // big_elevator_transition

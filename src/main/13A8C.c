@@ -161,7 +161,7 @@ extern s16 D_801397E0;
 void func_8002328C(struct AbcObj* arg0)
 {
     s16 temp_v0_2;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
     struct MiscObj* temp_v0_4;
     u16 temp_v1;
     u8 temp_v0_3;
@@ -173,37 +173,37 @@ void func_8002328C(struct AbcObj* arg0)
         if ((temp_v1 & 0x1FF) != 0x1FF) {
             if (D_801397E0 == 0) {
                 if (D_801397C0 == NULL) {
-                    temp_v0 = find_free_misc_obj();
-                    if (temp_v0 != NULL) {
-                        D_801397C0 = temp_v0;
-                        temp_v0->active = 1;
-                        temp_v0->id = 0x16;
-                        temp_v0->unk16 = 0x10;
-                        temp_v0->unk40 = 0x1F00;
-                        temp_v0->unk2 = 0;
-                        temp_v0->unk3C = &D_801396C8.count;
+                    misc = find_free_misc_obj();
+                    if (misc != NULL) {
+                        D_801397C0 = misc;
+                        misc->active = 1;
+                        misc->id = 0x16;
+                        misc->unk16 = 0x10;
+                        misc->unk40 = 0x1F00;
+                        misc->unk2 = 0;
+                        misc->unk3C = &D_801396C8.count;
                         if (engine_obj.stage == 0xD) {
-                            temp_v0->unk42 = 0x78CE;
+                            misc->unk42 = 0x78CE;
                         } else {
-                            temp_v0->unk42 = 0x7845;
+                            misc->unk42 = 0x7845;
                         }
-                        temp_v0->bg_offset = -1;
-                        temp_v0->x_pos.val = 0xA00000;
+                        misc->bg_offset = -1;
+                        misc->x_pos.val = 0xA00000;
                         if (!(arg0->unk4 & 0x800)) {
                             if (D_801397D8 != 0x80) {
-                                temp_v0->y_pos.val = 0;
+                                misc->y_pos.val = 0;
                             } else {
-                                temp_v0->y_pos.val = 0x380000;
+                                misc->y_pos.val = 0x380000;
                             }
                         } else {
                             if (D_801397D8 == 0xFF) {
-                                temp_v0->y_pos.val = 0x780000;
+                                misc->y_pos.val = 0x780000;
                             } else {
-                                temp_v0->y_pos.val = 0x700000;
+                                misc->y_pos.val = 0x700000;
                             }
                         }
-                        temp_v0->animation_step.fields.frame_index = 0;
-                        temp_v0->unk15 = 0;
+                        misc->animation_step.fields.frame_index = 0;
+                        misc->unk15 = 0;
                     }
                     D_801396C8.active = 1;
                 }
@@ -235,7 +235,7 @@ void func_8002328C(struct AbcObj* arg0)
     } while (!(arg0->unk4 & 0xB000));
     func_8001540C(0, 0xE, 0);
     if ((arg0->unk4 & 0xB000) == 0x1000) {
-        if (*(u8*)&controller_input.pressed != 0) {
+        if ((u8)controller_input.pressed != 0) {
             temp_v0_3 = arg0->unkF;
             if (temp_v0_3 != 0) {
                 arg0->unkF = (u8)(temp_v0_3 - 1);
@@ -521,13 +521,13 @@ void func_800237E4(struct EngineObj* arg0)
 #else
             if (background_objects[0].y_pos.i.hi == 4304) {
 #endif
+                arg0->unk1++;
                 arg0->unk2 = 0;
 #ifdef VERSION_JP
                 arg0->unk4 = 0x258;
 #else
                 arg0->unk4 = 0x1A4;
 #endif
-                arg0->unk1++;
 #ifdef VERSION_JP
                 func_80016F0C();
 #endif

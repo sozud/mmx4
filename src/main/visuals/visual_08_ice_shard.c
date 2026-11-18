@@ -247,7 +247,7 @@ void func_800B0CA0(type, mode, source, radius, count)
     left = source->x_pos.i.hi;
     limit = count;
     right = left;
-    top = source->y_pos.u.hi + bounds->unk1;
+    top = source->y_pos.i.hi + bounds->unk1;
     bottom = top;
 
     switch (m) {
@@ -372,6 +372,11 @@ void func_800B0CA0(type, mode, source, radius, count)
         (high) <<= 8,                  \
         ((low)&0xFF) + (high) + 1)
 
+#ifdef __MWERKS__
+void func_800B10E4(u8 kind, s32 left, s32 top, s32 right, s32 bottom_arg, s32 count_arg)
+{
+    s16 bottom = bottom_arg;
+#else
 // clang-format off
 void func_800B10E4(kind, left, top, right, bottom, count_arg)
     u8 kind;
@@ -382,6 +387,7 @@ void func_800B10E4(kind, left, top, right, bottom, count_arg)
     s32 count_arg;
 // clang-format on
 {
+#endif
     s16 x_min = left;
     s16 y_min = top;
     s16 x_max = right;

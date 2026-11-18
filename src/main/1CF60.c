@@ -106,8 +106,8 @@ void func_8002C9E4(struct PlayerObj* arg0)
 {
     arg0->x_pos.u.lo = 0;
     arg0->y_pos.u.lo = 0;
-    arg0->x_pos.u.hi += D_8013B800;
-    arg0->y_pos.u.hi += D_8013B804;
+    arg0->x_pos.i.hi += D_8013B800;
+    arg0->y_pos.i.hi += D_8013B804;
 }
 
 void func_8002CA18(struct PlayerObj* arg0)

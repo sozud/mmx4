@@ -172,7 +172,7 @@ void func_8002E698(struct EngineObj* arg0)
 {
     s8 var_a0;
     s8 var_a1;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
     struct MiscObj* temp_v0_2;
 
 #ifdef MMX4_SATURN
@@ -199,11 +199,11 @@ void func_8002E698(struct EngineObj* arg0)
     }
 #endif
     func_8002E5E0();
-    temp_v0 = find_free_misc_obj();
-    if (temp_v0 != 0) {
-        temp_v0->active = 0x41;
-        temp_v0->id = 0xA;
-        temp_v0->unk2 = 0;
+    misc = find_free_misc_obj();
+    if (misc != 0) {
+        misc->active = 0x41;
+        misc->id = 0xA;
+        misc->unk2 = 0;
     }
     if (arg0->cur_character == 0) {
         if ((u8)arg0->unk5F < 9) {
@@ -510,7 +510,7 @@ void func_8002EDD4(struct EngineObj* arg0)
         block_12:
             if ((arg0->stage > 8) || (arg0->stage == 0) || ((((u8)arg0->palette_flags >> (arg0->stage - 1)) & 1) != 0)) {
                 arg0->unk1 = 0;
-                arg0->state = (u8)arg0->state + 1;
+                arg0->state++;
             } else {
                 arg0->unk1 = 0xB;
             }

@@ -262,7 +262,7 @@ void aiming_laser_marker_wait_fire(struct WeaponObj* self, struct PlayerObj* pla
             quad->unk2 = (u8)self->unk2;
             quad->unk5C = owner;
         }
-        self->state = (u8)self->state + 1;
+        self->state++;
     }
 }
 
@@ -352,7 +352,7 @@ void aiming_laser_charged_init(struct WeaponObj* arg0)
     aiming_laser_charged_aim(arg0, &g_Player);
     func_8001540C(0, WEAPON_SOUND_LASER_CHARGE, arg0);
     arg0->unk5 = 0;
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
 }
 
 // aiming_laser_charged_main
@@ -403,13 +403,13 @@ void aiming_laser_charged_aim(struct WeaponObj* self, struct PlayerObj* player)
 
     self->unk15 = player->unk15;
     if (0 != player->unk15) {
-        self->x_pos.i.hi = player->x_pos.u.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        self->x_pos.i.hi = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2];
         ext->adjusted_direction = ext->direction;
     } else {
-        self->x_pos.i.hi = player->x_pos.u.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        self->x_pos.i.hi = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2];
         ext->adjusted_direction = 0x20 - ext->direction;
     }
-    self->y_pos.i.hi = player->y_pos.u.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
+    self->y_pos.i.hi = player->y_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
     set_velocity_from_angle(MOVING_OBJECT(self), (ext->adjusted_direction - 8) & 0x1F);
     self->x_pos.val += self->x_vel.val * 104;
     self->y_pos.val += self->y_vel.val * 104;

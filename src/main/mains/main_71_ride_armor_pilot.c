@@ -172,11 +172,11 @@ void func_80089C7C(struct MainObj* self)
     }
     if (self->air_state != 0 || ext->unk86 != 0 || ext->unk87 != 0 || (ext->unk8D & 8) != 0)
         return;
-    y = self->y_pos.u.hi + self->terrain_box->unk3;
+    y = self->y_pos.i.hi + self->terrain_box->unk3;
     if (ext->unk8A & self->collision_flags) {
         u32 i;
-        x = self->unk15 == 0 ? self->x_pos.u.hi - self->terrain_box->unk2
-                             : self->x_pos.u.hi + self->terrain_box->unk2 + 1;
+        x = self->unk15 == 0 ? self->x_pos.i.hi - self->terrain_box->unk2
+                             : self->x_pos.i.hi + self->terrain_box->unk2 + 1;
         y--;
         for (i = 0; i < 5; i++, y -= 0x10) {
             if ((u8)func_8002D724(PLAYER_OBJECT(self), x, y) == 0) {
@@ -213,12 +213,12 @@ void func_80089C7C(struct MainObj* self)
     }
     if (self->air_state != 0 || (*(u32*)&self->ext.main_71.unk84 & 0xFFFF0000) || (self->ext.main_71.unk8D & 8))
         return;
-    y = self->y_pos.u.hi + self->terrain_box->unk3;
+    y = self->y_pos.i.hi + self->terrain_box->unk3;
     if (self->collision_flags & self->ext.main_71.unk8A) {
         if (self->unk15 == 0)
-            x = self->x_pos.u.hi - self->terrain_box->unk2;
+            x = self->x_pos.i.hi - self->terrain_box->unk2;
         else
-            x = self->x_pos.u.hi + (self->terrain_box->unk2 + 1);
+            x = self->x_pos.i.hi + (self->terrain_box->unk2 + 1);
         y--;
         for (i = 0; i < 5; i++) {
             u8 hit = func_8002D724((struct PlayerObj*)self, x, y);
@@ -374,7 +374,7 @@ void func_8008A180(struct MainObj* self)
         set_animation(self, 1);
         self->ext.main_71.unk84 = 0x160;
         ride_armor_pilot_update_facing(self);
-        self->ext.main_71.unk8D &= 0xF3;
+        self->ext.main_71.unk8D &= ~0xC;
         self->hurt_box = ride_armor_pilot_hurt_box;
         self->attack_box = ride_armor_pilot_attack_box;
         self->contact_damage = 5;
@@ -501,8 +501,10 @@ void func_8008A4D8(struct MainObj* self)
             ride_armor_pilot_set_walk_speed(self);
             ride_armor_pilot_apply_x_speed(self);
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 // ride_armor_pilot_jump_punch
@@ -550,9 +552,10 @@ void func_8008A60C(struct MainObj* self)
             self->attack_box = ride_armor_pilot_attack_box;
             self->contact_damage = 5;
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 // ride_armor_pilot_dash
@@ -605,7 +608,7 @@ void func_8008A8E4(struct MainObj* self)
         self->unk6 = 1;
         self->ext.main_71.unk84 = 0x160;
         set_animation(self, 6);
-        self->ext.main_71.unk8D &= 0xFB;
+        self->ext.main_71.unk8D &= ~4;
         self->hurt_box = ride_armor_pilot_hurt_box;
         self->attack_box = ride_armor_pilot_attack_box;
         self->contact_damage = 5;
@@ -628,9 +631,10 @@ void func_8008A8E4(struct MainObj* self)
             ride_armor_pilot_set_step(BASE_OBJECT(self), 3);
             return;
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 // ride_armor_pilot_guard

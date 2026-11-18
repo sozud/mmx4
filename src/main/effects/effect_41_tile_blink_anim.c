@@ -20,16 +20,13 @@ void tile_blink_anim_update(struct EffectObj* self)
 
 void tile_blink_anim_init(struct EffectObj* self)
 {
-    u8* palette;
-
     self->ext.effect_41.unk14 = 1;
-    palette = tile_blink_anim_scripts[0];
-    self->ext.effect_41.palette_source.bytes = palette;
-    self->ext.effect_41.palette.fields.timer = palette[0];
+    self->ext.effect_41.palette_source.bytes = tile_blink_anim_scripts[0];
+    self->ext.effect_41.palette.fields.timer = self->ext.effect_41.palette_source.bytes[0];
     self->ext.effect_41.palette.fields.unk1 = self->ext.effect_41.palette_source.bytes[1];
     self->ext.effect_41.palette.fields.step = self->ext.effect_41.palette_source.bytes[2];
     self->ext.effect_41.palette.fields.id = self->ext.effect_41.palette_source.bytes[3];
-    self->state = (u8)self->state + 1;
+    self->state++;
 }
 
 void tile_blink_anim_main(struct EffectObj* self)
@@ -44,12 +41,9 @@ void tile_blink_anim_main(struct EffectObj* self)
 
 void tile_blink_anim_step(struct EffectObj* self)
 {
-    s8 timer;
     s32* frame;
 
-    timer = self->ext.effect_41.palette.fields.timer - 1;
-    self->ext.effect_41.palette.fields.timer = timer;
-    if (timer != 0) {
+    if (--self->ext.effect_41.palette.fields.timer != 0) {
         return;
     }
 

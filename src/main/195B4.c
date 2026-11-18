@@ -168,15 +168,14 @@ void func_80028E24(void)
 void func_80028E24(void)
 {
     struct BackgroundObj* bg = background_objects;
-    s16 x = background_objects[0].x_pos.i.hi;
 
-    if (background_objects[0].unk14.i.hi != x) {
-        if (background_objects[0].unk14.i.hi < x) {
-            func_80028FEC(x + 0x150, x + 0x170, background_objects[0].y_pos.i.hi - 0x30,
-                background_objects[0].y_pos.i.hi + 0x120, 1);
+    if (bg->unk14.i.hi != bg->x_pos.i.hi) {
+        if (bg->unk14.i.hi < bg->x_pos.i.hi) {
+            func_80028FEC(bg->x_pos.i.hi + 0x150, bg->x_pos.i.hi + 0x170, bg->y_pos.i.hi - 0x30,
+                bg->y_pos.i.hi + 0x120, 1);
         } else {
-            func_80028FEC(x - 0x30, x - 0x10, background_objects[0].y_pos.i.hi - 0x30,
-                background_objects[0].y_pos.i.hi + 0x120, 2);
+            func_80028FEC(bg->x_pos.i.hi - 0x30, bg->x_pos.i.hi - 0x10, bg->y_pos.i.hi - 0x30,
+                bg->y_pos.i.hi + 0x120, 2);
         }
     }
     if (bg->unk18.i.hi != bg->y_pos.i.hi) {

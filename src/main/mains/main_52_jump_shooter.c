@@ -100,11 +100,12 @@ void jump_shooter_main(struct MainObj* self)
         spawn_explosion(self);
         spawn_debris(3, &jump_shooter_debris, self);
         drop_item(BASE_OBJECT(self), 0);
+        self->state = 2;
     } else if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
-        return;
+    } else {
+        self->state = 2;
     }
-    self->state = 2;
 }
 
 void jump_shooter_despawn(struct MainObj* self)

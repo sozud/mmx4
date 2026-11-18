@@ -33,7 +33,7 @@ void tile_strip_anim_init(struct EffectObj* self)
     self->ext.effect_39.palette.fields.unk1 = self->ext.effect_39.palette_source.bytes[1];
     self->ext.effect_39.palette.fields.step = self->ext.effect_39.palette_source.bytes[2];
     self->ext.effect_39.palette.fields.id = self->ext.effect_39.palette_source.bytes[3];
-    self->state = (u8)self->state + 1;
+    self->state++;
 }
 
 void tile_strip_anim_main(struct EffectObj* self)
@@ -43,11 +43,7 @@ void tile_strip_anim_main(struct EffectObj* self)
 
 void tile_strip_anim_step(struct EffectObj* self)
 {
-    s8 temp_v0;
-
-    temp_v0 = self->ext.effect_39.palette.fields.timer - 1;
-    self->ext.effect_39.palette.fields.timer = temp_v0;
-    if (temp_v0 != 0) {
+    if (--self->ext.effect_39.palette.fields.timer != 0) {
         return;
     }
 
@@ -68,7 +64,7 @@ void tile_strip_anim_refresh_row(struct EffectObj* self)
     u16 x;
     s32 i;
 
-    x = self->x_pos.u.hi;
+    x = self->x_pos.i.hi;
     i = 0;
     do {
         refresh_visible_tile_effect(self->ext.effect_39.palette.fields.id, (s16)x - 0x40,

@@ -45,19 +45,20 @@ s32 double_cyclone_check_expired(struct WeaponObj* arg0);
 
 void double_cyclone_update(struct WeaponObj* arg0)
 {
-    s32 disabled;
+    struct PlayerObj* player = &g_Player;
+    u32 disabled;
 
     disabled = 0;
-    if (g_Player.input_locked != 0) {
+    if (player->input_locked != 0) {
         disabled = 1;
     }
-    if (g_Player.capsule_state != 0) {
+    if (player->capsule_state != 0) {
         disabled = 1;
     }
-    if (g_Player.weapon != 7) {
+    if (player->weapon != 7) {
         disabled = 1;
     }
-    if (g_Player.shot_type == 0x10) {
+    if (player->shot_type == 0x10) {
         disabled = 1;
     }
     if (disabled != 0) {
@@ -159,8 +160,7 @@ void double_cyclone_fly(struct WeaponObj* arg0)
         } else {
             struct Weapon7Ext* weapon_7 = &arg0->ext.weapon_7;
             if (weapon_7->unk90 != 0) {
-                weapon_7->unk90--;
-                if (weapon_7->unk90 == 0) {
+                if (--weapon_7->unk90 == 0) {
                     arg0->unk2C = FIXED(-0.21484375);
                 }
             }
@@ -232,22 +232,23 @@ void double_cyclone_draw(struct WeaponObj* arg0)
 
 void double_cyclone_charged_update(struct WeaponObj* arg0)
 {
-    s32 var_a1;
+    struct PlayerObj* player = &g_Player;
+    u32 var_a1;
 
     var_a1 = 0;
-    if (g_Player.input_locked != 0) {
+    if (player->input_locked != 0) {
         var_a1 = 1;
     }
-    if (g_Player.capsule_state != 0) {
+    if (player->capsule_state != 0) {
         var_a1 = 1;
     }
-    if (g_Player.weapon != 7) {
+    if (player->weapon != 7) {
         var_a1 = 1;
     }
-    if (g_Player.actions_reset != 0) {
+    if (player->actions_reset != 0) {
         var_a1 = 1;
     }
-    if (g_Player.hp == 0) {
+    if (player->hp == 0) {
         var_a1 = 1;
     }
     if (var_a1 != 0) {

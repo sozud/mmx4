@@ -610,8 +610,7 @@ void func_800304E4(struct BarObj* arg0)
     case PAUSE_PAD_RIGHT:
         cursor = original;
         for (;;) {
-            cursor++;
-            if (cursor >= 0xD) {
+            if (++cursor >= 0xD) {
                 if (arg0->options.items[cursor] != 0) {
                     arg0->unk5 = 2;
                 } else {
@@ -628,8 +627,7 @@ void func_800304E4(struct BarObj* arg0)
     case PAUSE_PAD_LEFT:
         cursor = original;
         for (;;) {
-            cursor--;
-            if (cursor < 10) {
+            if (--cursor < 10) {
                 cursor = original;
                 break;
             }
@@ -673,8 +671,7 @@ void func_80030728(struct BarObj* arg0)
         cursor = original;
         if (g_Player.unk2 == 0 && arg0->unk2 == 0) {
             do {
-                cursor--;
-                if (cursor < 0xD) {
+                if (--cursor < 0xD) {
                     cursor = 9;
                     do {
                         if (cursor == 0 || arg0->options.items[cursor] != 0)
@@ -697,8 +694,7 @@ void func_80030728(struct BarObj* arg0)
         if (pressed & PAUSE_PAD_DOWN) {
             cursor = original;
             do {
-                cursor++;
-                if (cursor >= 0xF) {
+                if (++cursor >= 0xF) {
                     cursor = 0xE;
                     break;
                 }

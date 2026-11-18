@@ -772,8 +772,7 @@ void func_800C00BC(struct ItemObj* arg0)
         pickup_collect_health(arg0, 0x10, 2);
         break;
     case 4:
-        engine_obj.player_lives++;
-        if (engine_obj.player_lives >= 10) {
+        if (++engine_obj.player_lives >= 10) {
             engine_obj.player_lives = 9;
         } else {
             func_8001540C(0, SATURN_SOUND(0x15, 0x1E), 0);

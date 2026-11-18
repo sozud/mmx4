@@ -98,11 +98,7 @@ void fortress_collapse_despawn(struct EffectObj* self)
 
 void fortress_collapse_flash_red(struct EffectObj* self)
 {
-    u8 temp_v0;
-
-    temp_v0 = self->ext.effect_28.filter_timer - 1;
-    self->ext.effect_28.filter_timer = temp_v0;
-    if (0 == temp_v0) {
+    if (--self->ext.effect_28.filter_timer == 0) {
         need_palette_load |= 1;
         self->ext.effect_28.timer = 0x5A;
         self->ext.effect_28.filter_timer = 4;

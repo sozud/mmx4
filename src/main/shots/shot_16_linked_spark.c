@@ -22,23 +22,18 @@ void linked_spark_update(struct ShotObj* self)
     linked_spark_state_funcs[self->state](self);
 }
 
-void linked_spark_init(struct ShotObj* rawArg0)
+void linked_spark_init(struct ShotObj* arg0)
 {
-    struct ShotObj* arg0 = rawArg0;
-    s32 value;
-
-    value = 1;
-    arg0->state = value;
-    arg0->on_screen = value;
-    arg0->unk5C = value;
-    value = arg0->unk2;
+    arg0->state = 1;
+    arg0->on_screen = 1;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk68 = 0;
     arg0->unk54 = 0;
     arg0->unk50.data = 0;
+    arg0->unk5C = 1;
     arg0->unk60 = 4;
 
-    switch (value) {
+    switch (arg0->unk2) {
     case 0:
         arg0->unk84.value = 6;
         arg0->unk15 = 0;
@@ -91,7 +86,7 @@ void func_8009C45C(struct ShotObj* self)
     self->y_pos = owner->y_pos;
     func_8002D9BC(self);
     func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player));
-    if (self->unk2 < 2)
+    if (self->unk2 <= 1)
         update_on_screen(BASE_OBJECT(self), 0x68, 0x10);
     else
         update_on_screen(BASE_OBJECT(self), 0x10, 0x68);
