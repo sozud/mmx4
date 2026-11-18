@@ -7,7 +7,7 @@
 #include "main/CB184.h"
 #include "main/collision_bounds.h"
 #include "main/items/breakable_boulder_debris_table.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 #include "main/misc/misc_08_crumbling_tile.h"
 #include "main/objects.h"
 

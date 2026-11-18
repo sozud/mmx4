@@ -1,5 +1,5 @@
 // MiscObj, misc_object_update_funcs[16]
-// 800CAC18..800CADF8
+// 800CA9EC..800CADF8
 #include "common.h"
 #include "main/misc/misc_16_vent_puff.h"
 #include "main/55C4.h"
@@ -15,6 +15,71 @@ extern void (*vent_puff_state_funcs[])(struct MiscObj*);
 void vent_puff_init(struct MiscObj*);
 
 void vent_puff_despawn(struct MiscObj*);
+
+void vent_spawn_mixed_puffs(struct MiscObj* self, u8 count)
+{
+    struct MiscObj* slot;
+    u32 i;
+
+    for (i = 0; i < count; i++) {
+        slot = find_free_misc_obj();
+        if (slot == NULL) {
+            continue;
+        }
+        slot->active = 0x41;
+        slot->id = 0x10;
+        slot->x_pos.val = self->x_pos.val;
+        slot->y_pos.val = self->y_pos.val;
+        slot->x_pos.i.hi += get_random() & 0x1F;
+        // The bits do not overlap, so both forms give the same value.
+        // Keep the original OR (EU) / ADDU (US/JP) instructions for matching.
+#ifdef VERSION_EU
+        slot->ext.misc_15.unk54 = (get_random() & 7) | (i << 3);
+#else
+        slot->ext.misc_15.unk54 = (get_random() & 7) + (i << 3);
+#endif
+        slot->unk2 = get_random() & 1;
+        if (i < 3) {
+            slot->unk2 = 0;
+        } else {
+            slot->unk2 = 1;
+        }
+        slot->animation_table = self->animation_table;
+        slot->unk40 = self->unk40;
+        slot->unk3C = self->unk3C;
+        slot->unk42 = self->unk42 & 0x7FFF;
+        slot->unk16 = 3;
+        slot->unk15 = self->unk15;
+    }
+}
+
+void vent_spawn_puffs(struct MiscObj* self, u8 count)
+{
+    struct MiscObj* slot;
+    u32 i;
+    u8 puff_variant;
+
+    for (i = 0; i < count; i++) {
+        slot = find_free_misc_obj();
+        if (slot == NULL) {
+            continue;
+        }
+        slot->active = 0x41;
+        slot->id = 0x10;
+        slot->x_pos.val = self->x_pos.val;
+        slot->y_pos.val = self->y_pos.val;
+        slot->x_pos.i.hi += get_random() & 0x1F;
+        puff_variant = get_random() & 7;
+        slot->ext.misc_15.unk54 = puff_variant + (i << 3);
+        slot->unk2 = 1;
+        slot->animation_table = self->animation_table;
+        slot->unk40 = self->unk40;
+        slot->unk3C = self->unk3C;
+        slot->unk42 = self->unk42 & 0x7FFF;
+        slot->unk16 = 3;
+        slot->unk15 = self->unk15;
+    }
+}
 
 void vent_puff_update(struct MiscObj* self)
 {

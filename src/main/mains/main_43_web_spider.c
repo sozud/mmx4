@@ -12,6 +12,10 @@
 #include "main/collision.h"
 #include "main/collision_bounds.h"
 #include "main/misc/misc_15_vent.h"
+#include "main/misc/misc_16_vent_puff.h"
+
+void func_80065168(struct MainObj* arg0, s16 x, s16 y);
+void web_spider_check_big_web(struct MainObj* self);
 
 void func_80065168(struct MainObj* arg0, s16 x, s16 y);
 void web_spider_check_big_web(struct MainObj* self);

@@ -1,5 +1,5 @@
 // MainObj, main_object_update_funcs[55]
-// 8006EB40..8006FABC
+// 8006EB40..8006FB20
 #include "common.h"
 #include "weapon_resources.h"
 #include "main/mains/main_55_jet_stingray_flyby.h"
@@ -8,10 +8,10 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #endif
 
 // jet_stingray_flyby_enter_funcs
@@ -624,3 +624,14 @@ void (*jet_stingray_flyby_state_funcs[3])() = {
     jet_stingray_flyby_main,
     jet_stingray_flyby_despawn,
 };
+
+void jet_stingray_flyby_despawn(struct MainObj* self)
+{
+    engine_obj.enable_boss = 0;
+    despawn_object_permanently(OBJECT_HEADER(self));
+}
+
+void jet_stingray_flyby_update(struct MainObj* self)
+{
+    jet_stingray_flyby_state_funcs[self->state](self);
+}

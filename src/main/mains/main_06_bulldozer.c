@@ -9,11 +9,11 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #endif
 
 // bulldozer_state_funcs

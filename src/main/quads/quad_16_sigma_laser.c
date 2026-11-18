@@ -3,10 +3,10 @@
 #include "common.h"
 #include "main/quads/quad_16_sigma_laser.h"
 #include "main/objects.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #endif
 
 extern u8 sigma_laser_flash_colors[];

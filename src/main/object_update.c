@@ -136,6 +136,7 @@
 #include "main/mains/main_52_jump_shooter.h"
 #include "main/mains/main_53_wave_rider.h"
 #include "main/mains/main_54_slash_beast.h"
+#include "main/mains/main_55_jet_stingray_flyby.h"
 #include "main/mains/main_56_jet_stingray.h"
 #include "main/mains/main_57_frost_walrus.h"
 #include "main/mains/main_58_beam_drone.h"

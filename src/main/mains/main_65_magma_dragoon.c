@@ -10,7 +10,7 @@
 #include "main/128C4.h"
 #include "main/55C4.h"
 #include "main/collision.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #include "main/collision_bounds.h"
 #include "main/1E1BC.h"
 

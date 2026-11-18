@@ -6,10 +6,10 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/objects.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 #endif
 
 extern struct Unk_unk68 flame_jet_hurt_box_7;

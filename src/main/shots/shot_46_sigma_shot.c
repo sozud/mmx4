@@ -8,7 +8,7 @@
 #include "main/collision.h"
 #include "main/object_motion.h"
 #include "main/collision_bounds.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 #include "main/stage_objects.h"
 
 // sigma_bolt_funcs
@@ -56,7 +56,7 @@ void sigma_shot_despawn(struct ShotObj*);
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 #include "main/stage_objects.h"
 #endif
 

@@ -6,9 +6,9 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 #include "main/objects.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #include "main/object_motion.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)

@@ -104,7 +104,7 @@ void func_800204AC(struct EngineObj* arg0)
 #endif
 
 #ifdef MMX4_SATURN
-void func_800204CC(s8* arg0, s32 arg1)
+void func_800204CC(s8* arg0, u32 arg1)
 {
     if (saturn_pad_pressed & SATURN_PAD_UP) {
         func_8001540C(0, SATURN_SE_CURSOR, 0);
@@ -124,9 +124,9 @@ void func_800204CC(s8* arg0, s32 arg1)
     }
 }
 #else
-void func_800204CC(s8* arg0, s32 arg1)
+void func_800204CC(s8* arg0, u32 arg1)
 {
-    if (controller_input.pressed & 0x1000) {
+    if (controller_input.pressed & PADLup) {
         func_8001540C(0, 0xC, 0);
         if (*arg0 == 0) {
             *arg0 = arg1;
@@ -134,7 +134,7 @@ void func_800204CC(s8* arg0, s32 arg1)
             *arg0 = *arg0 - 1;
         }
     }
-    if (controller_input.pressed & 0x4000) {
+    if (controller_input.pressed & PADLdown) {
         func_8001540C(0, 0xC, 0);
         if (*arg0 == arg1) {
             *arg0 = 0;

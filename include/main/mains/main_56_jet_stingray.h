@@ -1,10 +1,8 @@
 #ifndef MAIN_MAINS_MAIN_56_JET_STINGRAY_H
 #define MAIN_MAINS_MAIN_56_JET_STINGRAY_H
 
-void jet_stingray_flyby_update(struct MainObj* arg0);
 void jet_stingray_update(struct MainObj* arg0);
 
-void jet_stingray_flyby_despawn(struct MainObj* arg0);
 struct MainObj* func_8006FB20(struct MainObj*, s32, s32);
 
 void jet_stingray_intro_warning(struct MainObj*);

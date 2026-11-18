@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/misc/misc_15_vent.h"
+#include "main/misc/misc_16_vent_puff.h"
 
 #include "support/pool_full.h"
 static u32 pool_full_vent_spawn_mixed_puffs_one(void)

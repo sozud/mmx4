@@ -6,7 +6,7 @@
 #include "main/55C4.h"
 #include "main/objects.h"
 #include "main/stage_objects.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 
 // dragon_rubble_state_funcs
 extern void (*dragon_rubble_state_funcs[])(struct MiscObj*);

@@ -32,6 +32,4 @@ extern struct Item01StageEntry stage_block_entries[15];
 
 extern struct Item01SpriteBounds stage_block_bounds[15];
 
-void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
-
 #endif

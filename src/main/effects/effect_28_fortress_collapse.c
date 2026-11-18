@@ -8,7 +8,7 @@
 #include "main/effects/effect_29_tile_anim_trigger.h"
 #include "main/objects.h"
 #include "main/stage_objects.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 
 // fortress_collapse_state_funcs
 extern void (*fortress_collapse_state_funcs[])(struct EffectObj*);

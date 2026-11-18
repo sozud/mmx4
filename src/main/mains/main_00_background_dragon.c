@@ -8,11 +8,11 @@
 #include "main/CB184.h"
 #include "main/object_motion.h"
 #include "main/stage_objects.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #endif
 
 void background_dragon_spawn_trail(struct PlayerObj* self, s8 arg1);

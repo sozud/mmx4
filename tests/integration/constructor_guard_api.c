@@ -3,7 +3,7 @@
 #include "main/player.h"
 #include "main/objects.h"
 #include "main/102FC.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 void func_8001DF48(struct GameInfo* arg0);
 void func_8001DF7C(struct GameInfo* arg0);
 void weapon_overlay_update(struct VisualObj*);

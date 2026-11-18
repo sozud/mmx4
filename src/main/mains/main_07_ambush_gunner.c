@@ -6,7 +6,7 @@
 #include "main/objects.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
-#include "main/items/item_01_stage_block.h"
+#include "main/items/item_02_pickup.h"
 #include "main/misc/misc_02_rubble.h"
 #include "main/object_motion.h"
 #include "main/collision_bounds.h"

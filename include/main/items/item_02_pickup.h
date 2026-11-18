@@ -1,6 +1,8 @@
 #ifndef MAIN_ITEMS_ITEM_02_PICKUP_H
 #define MAIN_ITEMS_ITEM_02_PICKUP_H
 
+void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
+
 void pickup_update(struct ItemObj*);
 
 void func_800BF76C(struct ItemObj*);

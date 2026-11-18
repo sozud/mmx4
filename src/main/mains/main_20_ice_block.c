@@ -9,11 +9,11 @@
 #include "main/mains/main_26_ice_wall.h"
 #include "main/objects.h"
 #include "main/1CF60.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1CF60.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 #endif
 
 extern struct Unk_unk68 ice_block_crumble_attack_box;

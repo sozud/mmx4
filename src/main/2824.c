@@ -210,7 +210,7 @@ void func_80012328(void)
 void func_80012454(void)
 {
     if ((D_8013BD44 != 0) && (main_bss_state.transition.active == 0)) {
-        if ((controller_input.held & 0x900) == 0x900) {
+        if ((controller_input.held & (PADstart | PADselect)) == (PADstart | PADselect)) {
             if (--D_80141BD2 == 0) {
                 if ((engine_obj.stage != 0) && (engine_obj.unk5F >= 3U)) {
                     func_8001C3E8();
@@ -385,11 +385,13 @@ void func_800127FC()
     D_801F8300->state = 0;
     mmx4_pc_thread_close();
 #else
-    (*(s16**)0x801F8300)[0] = 0;
+    CUR_GAME_THREAD->state = 0;
     EnterCriticalSection();
-    CloseTh((*(s32**)0x801F8300)[2]);
+    CloseTh(CUR_GAME_THREAD->handle);
     ExitCriticalSection();
+#ifndef MMX4_BIG_ENDIAN
     ChangeTh(0xFF000000);
+#endif
 #endif
 }
 #endif
@@ -400,12 +402,10 @@ void func_80012854(s32 arg0)
 #ifdef MMX4_PC
     mmx4_pc_thread_slot(arg0)->state = 0;
 #else
-    struct GameThread* thread = &GAME_THREADS[arg0];
-
-    if (thread->state != 0) {
-        thread->state = 0;
+    if (GAME_THREADS[arg0].state != 0) {
+        GAME_THREADS[arg0].state = 0;
         EnterCriticalSection();
-        CloseTh(thread->handle);
+        CloseTh(GAME_THREADS[arg0].handle);
         ExitCriticalSection();
     }
 #endif
@@ -420,7 +420,9 @@ void func_800128B8(void (*arg0)(void))
 #else
     D_800EE458 = 1;
     D_8012F490 = arg0;
+#ifndef MMX4_BIG_ENDIAN
     ChangeTh(0xFF000000);
+#endif
 #endif
 }
 #endif
@@ -433,7 +435,7 @@ void func_800128EC(s32 arg0)
 #elif defined(MMX4_WIN32)
     u8* temp_a0 = win32_main_ram + 0x1F8100 + (arg0 << 7);
 #else
-    u16* temp_a0 = (u16*)((arg0 << 7) + 0x801F8100);
+    u16* temp_a0 = &GAME_THREADS[arg0].state;
 #endif
     *temp_a0 |= 0x40;
 }
@@ -445,7 +447,7 @@ void func_80012910(s32 arg0)
 #ifdef MMX4_PC
     u16* temp_a0 = &mmx4_pc_thread_slot(arg0)->state;
 #else
-    u16* temp_a0 = (u16*)((arg0 << 7) + 0x801F8100);
+    u16* temp_a0 = &GAME_THREADS[arg0].state;
 #endif
     *temp_a0 &= ~0x40;
 }

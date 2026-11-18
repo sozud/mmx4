@@ -1,5 +1,5 @@
 // ItemObj, item_object_update_funcs[1]
-// 800BEBB4..800BF730
+// 800BEBB4..800BF60C
 #include "common.h"
 #include "main/items/item_01_stage_block.h"
 #include "main/visuals/visual_08_ice_shard.h"
@@ -42,12 +42,10 @@ struct Item01DebrisPosition {
 
 extern struct Unk_unk68 D_80108504[];
 extern u8 stage_block_boxes[60];
-extern u8 drop_item_table[24][6];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BEBFC(struct ItemObj* arg0);
 void func_800BEFCC(struct ItemObj* arg0);
 void func_800BF1FC(struct ItemObj* arg0);
-void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
 extern struct Item01DebrisPosition stage_block_spawn_positions[6];
 extern ret_u8 func_8002938C(s32);
 #endif
@@ -352,45 +350,6 @@ void stage_block_destroyed(struct ItemObj* arg0)
 void stage_block_despawn(struct ItemObj* arg0)
 {
     despawn_object_permanently(OBJECT_HEADER(arg0));
-}
-
-void drop_item(struct BaseObj* arg0, s8 arg1)
-{
-    func_800BF638(arg0, arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi);
-}
-
-// drop_item_at
-void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3)
-{
-    u8 offset;
-    s32 roll;
-    u8 i;
-    struct ItemObj* item;
-    struct BaseObj* owner;
-
-    if (engine_obj.stage != 5) {
-        offset = arg1 * 6;
-        owner = arg0;
-        roll = get_random() & 0xFF;
-        i = 0xFF;
-        do {
-            i++;
-            roll = (roll & 0xFF) - drop_item_table[0][i + offset];
-        } while ((u32)(roll & 0xFFFF) < 0x100);
-        if (i != 0) {
-            item = find_free_item_obj();
-            if (item != NULL) {
-                item->active = 0x21;
-                item->id = 2;
-                item->unk2 = i - 1;
-                item->x_pos.i.hi = arg2;
-                item->y_pos.i.hi = arg3;
-                item->bg_offset = owner->bg_offset;
-                item->backref = NULL;
-                item->unk7C.value = 0;
-            }
-        }
-    }
 }
 
 struct Item01StageEntry stage_block_entries[15] = {

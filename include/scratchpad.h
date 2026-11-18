@@ -77,6 +77,9 @@ extern u8* pc_archive_slots[22];
 #ifdef MMX4_WIN32
 extern u8* scratchpad_base;
 #define SP(offset) (scratchpad_base + (offset))
+#elif defined(MMX4_BIG_ENDIAN) && !defined(MMX4_SATURN)
+extern u8 gc_scratchpad[];
+#define SP(offset) (gc_scratchpad + (offset))
 #else
 #define SP(offset) (0x1F800000 + (offset))
 #endif

@@ -11,7 +11,7 @@
 #include "main/collision.h"
 #include "main/collision_bounds.h"
 #include "main/stage_objects.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #include "main/1E1BC.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -896,7 +896,7 @@ void ice_core_spray_fire(struct MainObj* self)
     struct ShotObj* shot;
     s16 i;
 
-    for (i = (self->ext.main_18.state.runtime.unk86 ^ 1) & 0xFF; i < 8; i += 2) {
+    for (i = self->ext.main_18.state.runtime.unk86 ^ 1; i < 8; i += 2) {
         shot = find_free_shot_obj();
         if (shot == NULL) {
             continue;

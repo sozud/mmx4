@@ -9,10 +9,10 @@
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #endif
 
 extern s8 train_boss_terrain_box[4];
