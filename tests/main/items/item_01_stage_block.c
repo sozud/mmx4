@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/items/item_01_stage_block.h"
+#include "main/items/item_02_pickup.h"
 #include "main/player.h"
 #include "main/objects.h"
 #include "main/tile_effects.h"

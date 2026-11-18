@@ -294,6 +294,7 @@
 #include "main/quads/quad_14_colonel_beam.h"
 #include "main/quads/quad_15_sigma_beam.h"
 #include "main/quads/quad_16_sigma_laser.h"
+#include "main/quit_menu.h"
 #include "main/shots/eregion_fireball_data.h"
 #include "main/shots/eregion_wing_slash_data.h"
 #include "main/shots/general_shot_debris_data.h"

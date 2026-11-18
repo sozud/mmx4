@@ -403,7 +403,7 @@ void func_8001D1F0(struct GameInfo* arg0)
 void func_8001D230(struct GameInfo* arg0)
 {
     arg0->unkD = 1;
-    D_80173C80 = (u8*)0x80178000;
+    D_80173C80 = MAIN_ARCHIVE_ARENA;
     func_80018000(1); // nop out to skip opening cinematic
     arg0->mode++;
 }

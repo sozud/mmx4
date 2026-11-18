@@ -16,7 +16,7 @@
 #define MENU_PAD_ANY SATURN_PAD_ANY
 #else
 #define MENU_PAD_PRESSED controller_input.pressed
-#define MENU_PAD_ANY 0x8FF
+#define MENU_PAD_ANY (PADstart | PADRup | PADRright | PADRdown | PADRleft | PADL1 | PADL2 | PADR1 | PADR2)
 #endif
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)

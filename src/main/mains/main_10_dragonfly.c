@@ -203,14 +203,14 @@ void dragonfly_wait(struct MainObj* self)
         self->unk5 = 3;
         break;
     case 1:
-        if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xC1) {
+        if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0xC0) {
             self->ext.main_10.hold_state = 1;
             self->unk7A = 0;
             self->unk5 = 3;
         }
         break;
     case 2:
-        if (self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0xC1) {
+        if (self->x_pos.i.hi - g_Player.x_pos.i.hi > 0xC0) {
             self->ext.main_10.hold_state = 1;
             self->unk7A = 0;
             self->unk5 = 3;

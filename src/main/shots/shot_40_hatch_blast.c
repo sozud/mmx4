@@ -7,7 +7,7 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/CB184.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 #include "main/objects.h"
 
 extern s16 hatch_blast_tile_x[4];

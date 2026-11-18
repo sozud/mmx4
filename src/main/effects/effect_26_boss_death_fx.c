@@ -5,7 +5,7 @@
 #include "main/objects.h"
 #include "main/object_motion.h"
 #include "main/player_common.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #include "main/55C4.h"
 #include "main/1AC84.h"
 

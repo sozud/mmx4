@@ -10,9 +10,9 @@ void func_80020808(struct EngineObj*);
 void func_8002088C(struct EngineObj*);
 
 #ifdef MMX4_PC
-extern void func_800204A4 (void);
+extern void func_800204A4(void);
 #endif
 
-void func_800204CC(s8*, s32);
+void func_800204CC(s8*, u32);
 
 #endif

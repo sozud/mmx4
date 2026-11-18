@@ -11,7 +11,7 @@
 #include "main/128C4.h"
 #include "main/3D88.h"
 #include "main/CB184.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #include "main/collision_bounds.h"
 #include "main/1E1BC.h"
 

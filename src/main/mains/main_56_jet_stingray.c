@@ -1,5 +1,5 @@
 // MainObj, main_object_update_funcs[56]
-// 8006FABC..80072194
+// 8006FB20..80072194
 #include "common.h"
 #include "weapon_resources.h"
 #include "main/mains/main_55_jet_stingray_flyby.h"
@@ -140,17 +140,6 @@ void jet_stingray_flyby_drift(struct MainObj* self);
 // jet_stingray_flyby_destroyed
 
 void jet_stingray_flyby_main(struct MainObj* self);
-
-void jet_stingray_flyby_despawn(struct MainObj* self)
-{
-    engine_obj.enable_boss = 0;
-    despawn_object_permanently(OBJECT_HEADER(self));
-}
-
-void jet_stingray_flyby_update(struct MainObj* self)
-{
-    jet_stingray_flyby_state_funcs[self->state](self);
-}
 
 // jet_stingray_spawn_water
 struct MainObj* func_8006FB20(struct MainObj* self, s32 dx, s32 dy)

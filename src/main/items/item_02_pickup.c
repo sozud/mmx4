@@ -1,5 +1,5 @@
 // ItemObj, item_object_update_funcs[2]
-// 800BF730..800C0404
+// 800BF60C..800C0404
 #include "common.h"
 #include "main/items/item_02_pickup.h"
 #include "main/55C4.h"
@@ -312,6 +312,45 @@ u8 drop_item_table[24][6] = {
     { 0xC0, 0x10, 0x0A, 0x20, 0x06, 0x00 },
     { 0x80, 0x18, 0x28, 0x38, 0x08, 0x00 },
 };
+
+void drop_item(struct BaseObj* arg0, s8 arg1)
+{
+    func_800BF638(arg0, arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi);
+}
+
+// drop_item_at
+void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3)
+{
+    u8 offset;
+    s32 roll;
+    u8 i;
+    struct ItemObj* item;
+    struct BaseObj* owner;
+
+    if (engine_obj.stage != 5) {
+        offset = arg1 * 6;
+        owner = arg0;
+        roll = get_random() & 0xFF;
+        i = 0xFF;
+        do {
+            i++;
+            roll = (roll & 0xFF) - drop_item_table[0][i + offset];
+        } while ((u32)(roll & 0xFFFF) < 0x100);
+        if (i != 0) {
+            item = find_free_item_obj();
+            if (item != NULL) {
+                item->active = 0x21;
+                item->id = 2;
+                item->unk2 = i - 1;
+                item->x_pos.i.hi = arg2;
+                item->y_pos.i.hi = arg3;
+                item->bg_offset = owner->bg_offset;
+                item->backref = NULL;
+                item->unk7C.value = 0;
+            }
+        }
+    }
+}
 
 void pickup_update(struct ItemObj* arg0)
 {

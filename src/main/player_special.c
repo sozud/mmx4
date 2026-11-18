@@ -617,7 +617,7 @@ extern u8 player_shoot_animations[];
 
 void player_set_shoot_animation(struct PlayerObj* self)
 {
-    s32 animation;
+    u32 animation;
 
     animation = player_shoot_animations[self->shot_type];
     player_set_animation(self, animation);
@@ -1081,7 +1081,7 @@ void player_weapon_pose(struct PlayerObj* self)
             player_spawn_visual(1, 0x13, 1, NULL);
             for (row = 0; row < 2; row++) {
                 for (column = 0; column < 5; column++) {
-                    player_spawn_weapon(1, 0x10, column | (row << 7), NULL);
+                    player_spawn_weapon(1, 0x10, (row << 7) | column, NULL);
                 }
             }
             self->shot_count++;

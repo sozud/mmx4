@@ -601,7 +601,7 @@ void func_800239E0(struct EngineObj* arg0)
 void func_80023A54(struct EngineObj* arg0)
 {
 #ifdef VERSION_EU
-    if (arg0->unk1 != 7 && (controller_input.pressed & 0x840) != 0) {
+    if (arg0->unk1 != 7 && (controller_input.pressed & (PADstart | PADRdown)) != 0) {
         arg0->unk1 = 7;
         func_800129F0(8);
     }

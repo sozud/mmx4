@@ -256,6 +256,24 @@
    "source": "src/main/55C4.c"
   },
   {
+   "source": "src/main/animation.c"
+  },
+  {
+   "source": "src/main/cd_music.c"
+  },
+  {
+   "source": "src/main/decompress_gfx.c"
+  },
+  {
+   "source": "src/main/image_load.c"
+  },
+  {
+   "source": "src/main/pause_bar_draw.c"
+  },
+  {
+   "source": "src/main/movie.c"
+  },
+  {
    "source": "src/saturn/platform_boot.c"
   },
   {
@@ -308,6 +326,9 @@
   },
   {
    "source": "src/main/11184.c"
+  },
+  {
+   "source": "src/main/quit_menu.c"
   },
   {
    "source": "src/main/CB184.c"

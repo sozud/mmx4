@@ -14,7 +14,6 @@ void func_80020CB8(struct EngineObj*);
 void func_80020D3C(struct EngineObj*);
 
 #ifdef MMX4_PC
-extern void func_80021104 (struct EngineObj *arg0);
 #endif
 
 #endif

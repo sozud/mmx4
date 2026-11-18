@@ -6,7 +6,7 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
-#include "main/visuals/visual_03_small_effect.h"
+#include "main/visuals/visual_04_blast.h"
 #include "main/collision_bounds.h"
 
 // sigma_head_move_funcs

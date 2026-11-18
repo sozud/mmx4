@@ -4,7 +4,7 @@
 #include "main/misc/misc_08_crumbling_tile.h"
 #include "main/55C4.h"
 #include "main/CB184.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 #include "main/objects.h"
 
 extern struct Misc08EffectTripletTable crumbling_tile_second_effects;

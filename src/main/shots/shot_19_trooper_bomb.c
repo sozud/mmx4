@@ -4,7 +4,7 @@
 #include "main/shots/shot_19_trooper_bomb.h"
 #include "main/collision.h"
 #include "main/mains/main_50_train_crate.h"
-#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_03_debris.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
 #include "main/stage_objects.h"

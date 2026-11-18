@@ -202,6 +202,37 @@ typedef struct {
 #include "scratchpad.h"
 #include "archive_memory.h"
 
+#if defined(MMX4_BIG_ENDIAN) && !defined(MMX4_SATURN)
+#undef PADLup
+#undef PADLdown
+#undef PADLleft
+#undef PADLright
+#undef PADRup
+#undef PADRdown
+#undef PADRleft
+#undef PADRright
+#undef PADL1
+#undef PADL2
+#undef PADR1
+#undef PADR2
+#undef PADstart
+#undef PADselect
+#define PADLup 0x1
+#define PADLdown 0x2
+#define PADLleft 0x4
+#define PADLright 0x8
+#define PADRup 0x10
+#define PADRdown 0x20
+#define PADRright 0x100
+#define PADRleft 0x200
+#define PADL2 0x40
+#define PADR2 0x80
+#define PADL1 0x400
+#define PADR1 0x800
+#define PADselect 0x4000
+#define PADstart 0x8000
+#endif
+
 #ifdef VERSION_JP
 #define PAD_CONFIRM PADRright
 #define PAD_CANCEL PADRdown
@@ -274,9 +305,15 @@ struct MainBssState {
 extern struct MainBssState main_bss_state;
 
 struct ControllerInput {
+#if defined(MMX4_BIG_ENDIAN) && !defined(MMX4_SATURN)
+    u32 held;
+    u32 previous;
+    u32 pressed;
+#else
     u16 held;
     u16 previous;
     u16 pressed;
+#endif
 };
 extern struct ControllerInput controller_input;
 
@@ -577,6 +614,12 @@ extern s16 D_8016DEA4;
 #define D_801F8300 (*(struct GameThread**)(win32_main_ram + 0x1F8300))
 #define GAME_THREADS ((struct GameThread*)(win32_main_ram + 0x1F8100))
 #define CUR_GAME_THREAD (*(struct GameThread**)(win32_main_ram + 0x1F8300))
+#elif defined(MMX4_BIG_ENDIAN) && !defined(MMX4_SATURN)
+extern struct GameThread* D_801F8300;
+extern struct GameThread gc_game_threads[];
+extern struct GameThread* gc_cur_game_thread;
+#define GAME_THREADS gc_game_threads
+#define CUR_GAME_THREAD gc_cur_game_thread
 #else
 extern struct GameThread* D_801F8300;
 #define GAME_THREADS ((struct GameThread*)0x801F8100)
