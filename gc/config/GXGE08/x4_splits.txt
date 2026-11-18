@@ -1,0 +1,1450 @@
+Sections:
+	.text       type:code align:4
+	.rodata     type:rodata align:8
+	.ctors      type:rodata align:4
+	.dtors      type:rodata align:4
+	.data       type:data align:32
+	.bss        type:bss align:32
+
+gc/gcLoad.c:
+	.text       start:0x00000288 end:0x00000894
+
+gc/gcCdrom.c:
+	.text       start:0x00000894 end:0x000016C4
+
+main/bike.c:
+	.text       start:0x00001F68 end:0x00004104
+	.data       start:0x000029A8 end:0x00002D14
+
+main/collision.c:
+	.text       start:0x00004104 end:0x00004AFC
+
+main/1CF60.c:
+	.text       start:0x00004AFC end:0x0000711C
+
+main/1E1BC.c:
+	.text       start:0x000072DC end:0x00007F38
+
+main/1AC84.c:
+	.text       start:0x00007F38 end:0x00008238
+
+main/effects/effect_00_camera_trigger.c:
+	.text       start:0x00008238 end:0x00008484
+	.data       start:0x00002EB8 end:0x000036D0
+
+main/effects/effect_01_tile_animator.c:
+	.text       start:0x00008500 end:0x0000853C
+	.data       start:0x000036D0 end:0x000036D8
+
+main/effects/effect_02_color_filter.c:
+	.text       start:0x0000853C end:0x00008824
+	.data       start:0x000036D8 end:0x00003A78
+
+main/effects/effect_03_palette_animator.c:
+	.text       start:0x00008824 end:0x00008A38
+
+main/effects/effect_04_stage_music.c:
+	.text       start:0x00008A38 end:0x00008DB4
+	.data       start:0x00003B50 end:0x00003B70
+
+main/effects/effect_05_tile_scanner.c:
+	.text       start:0x00008DB4 end:0x00009788
+
+main/effects/effect_06_checkpoint_trigger.c:
+	.text       start:0x00009788 end:0x000098CC
+	.data       start:0x00003B80 end:0x00003B88
+
+main/effects/effect_07_search_light_maker.c:
+	.text       start:0x0000A038 end:0x0000A074
+	.data       start:0x00003B88 end:0x00003BF8
+
+main/effects/effect_08_bg_zone_controller.c:
+	.text       start:0x0000A078 end:0x0000A520
+	.data       start:0x00003BF8 end:0x00003C20
+
+main/effects/effect_09_bg_wind.c:
+	.text       start:0x0000A520 end:0x0000AD38
+	.data       start:0x00003C20 end:0x00003C68
+
+main/effects/effect_10.c:
+	.text       start:0x0000AD38 end:0x0000AED4
+
+main/effects/effect_11_null_effect.c:
+	.text       start:0x0000AED4 end:0x0000AED8
+
+main/effects/effect_12_enemy_spawner.c:
+	.text       start:0x0000AEF8 end:0x0000B2CC
+	.data       start:0x00003CC0 end:0x00003CE0
+
+main/effects/effect_13_edge_spawner.c:
+	.text       start:0x0000B2CC end:0x0000B77C
+	.data       start:0x00003CE0 end:0x00003CF0
+
+main/effects/effect_14_item_scatter.c:
+	.text       start:0x0000B77C end:0x0000B894
+	.data       start:0x00003D64 end:0x00003D70
+
+main/effects/effect_15_bg_zone_controller_b.c:
+	.text       start:0x0000BA08 end:0x0000BC50
+	.data       start:0x00003D70 end:0x00003DA0
+
+main/effects/effect_16_autoscroll_segment.c:
+	.text       start:0x0000BC50 end:0x0000BDA8
+	.data       start:0x00003DA0 end:0x00003DB8
+
+main/effects/effect_17_freeze_blast.c:
+	.text       start:0x0000BDA8 end:0x0000C1EC
+	.data       start:0x00003DB8 end:0x00003E58
+
+main/effects/effect_18_world_flip.c:
+	.text       start:0x0000C1EC end:0x0000C78C
+	.data       start:0x00003E58 end:0x00003E68
+
+main/effects/effect_19_bg_zone_controller_c.c:
+	.text       start:0x0000C808 end:0x0000C9DC
+	.data       start:0x00003E68 end:0x00003E88
+
+main/effects/effect_20_bg_zone_controller_d.c:
+	.text       start:0x0000CBE0 end:0x0000CC1C
+	.data       start:0x00003E88 end:0x00003EA8
+
+main/effects/effect_21_crumble_sequencer.c:
+	.text       start:0x0000CC1C end:0x0000D27C
+	.data       start:0x00003EA8 end:0x000044D8
+
+main/effects/effect_22_bg_zone_controller_e.c:
+	.text       start:0x0000D300 end:0x0000D678
+	.data       start:0x000044D8 end:0x00004500
+
+main/effects/effect_23_tile_flicker.c:
+	.text       start:0x0000D678 end:0x0000D7C8
+	.data       start:0x00004500 end:0x00004528
+
+main/effects/effect_24_boss_warning.c:
+	.text       start:0x0000D7C8 end:0x0000DB64
+	.data       start:0x00004528 end:0x00004548
+
+main/effects/effect_25_bg_zone_controller_f.c:
+	.text       start:0x0000DD78 end:0x0000DDB4
+	.data       start:0x00004548 end:0x00004568
+
+main/effects/effect_26_boss_death_fx.c:
+	.text       start:0x0000DDB4 end:0x0000E554
+	.data       start:0x00004568 end:0x00004588
+
+main/effects/effect_27_teleport_intro.c:
+	.text       start:0x0000E554 end:0x0000E76C
+	.data       start:0x00004588 end:0x00004598
+
+main/effects/effect_28_fortress_collapse.c:
+	.text       start:0x0000E76C end:0x0000EC34
+	.data       start:0x00004598 end:0x000045C0
+
+main/effects/effect_29_tile_anim_trigger.c:
+	.text       start:0x0000EC34 end:0x0000EDB4
+	.data       start:0x000045C0 end:0x00004608
+
+main/effects/effect_30_qux_spawner.c:
+	.text       start:0x0000EDB4 end:0x0000EF7C
+
+main/effects/effect_32_proximity_door.c:
+	.text       start:0x0000EF7C end:0x0000F160
+	.data       start:0x00004608 end:0x00004660
+
+main/effects/effect_33_rock_dropper.c:
+	.text       start:0x0000F160 end:0x0000F830
+	.data       start:0x00004660 end:0x00004694
+
+main/effects/effect_34_rock_drop_sequence.c:
+	.text       start:0x0000F830 end:0x0000FBC8
+	.data       start:0x00004698 end:0x000046D8
+
+main/effects/effect_36_stage_exit_fade.c:
+	.text       start:0x0000FBC8 end:0x0000FD90
+	.data       start:0x000046F8 end:0x00004708
+
+main/effects/effect_37_alarm_flash.c:
+	.text       start:0x0000FD90 end:0x00010020
+	.data       start:0x00004708 end:0x00004720
+
+main/effects/effect_38_cyberspace_trial.c:
+	.text       start:0x00010020 end:0x00010DE4
+	.data       start:0x00004720 end:0x00004758
+
+main/effects/effect_39_tile_strip_anim.c:
+	.text       start:0x00010EAC end:0x00010F68
+	.data       start:0x00004758 end:0x00004788
+
+main/effects/effect_40_tile_loop_anim.c:
+	.text       start:0x00010F68 end:0x0001109C
+	.data       start:0x00004788 end:0x000047D0
+
+main/effects/effect_41_tile_blink_anim.c:
+	.text       start:0x0001112C end:0x000111BC
+	.data       start:0x000047D0 end:0x000047F8
+
+main/effects/effect_42_sigma_sequencer_fx.c:
+	.text       start:0x000111BC end:0x000114A8
+	.data       start:0x000047F8 end:0x00004818
+
+main/effects/effect_43_sigma_collapse.c:
+	.text       start:0x000114A8 end:0x0001176C
+	.data       start:0x00004818 end:0x00004838
+
+main/effects/effect_44_stage_dialogue_trigger.c:
+	.text       start:0x0001176C end:0x000118E8
+	.data       start:0x00004838 end:0x00004848
+
+main/game_info.c:
+	.text       start:0x000118E8 end:0x000123C4
+	.data       start:0x00004848 end:0x000048B8
+
+main/E47C.c:
+	.text       start:0x000123C4 end:0x000134FC
+	.data       start:0x000048B8 end:0x000049B0
+
+main/engine.c:
+	.text       start:0x0001355C end:0x000140B0
+	.data       start:0x00004A20 end:0x00004A4C
+
+main/visuals/visual_07_water_wake.c:
+	.text       start:0x000140B0 end:0x00014518
+
+main/visuals/visual_02_charge_muzzle_flash.c:
+	.text       start:0x00014518 end:0x000147D8
+
+main/visuals/visual_01_dash_dust.c:
+	.text       start:0x000147D8 end:0x00014A18
+
+main/visuals/visual_00_wall_slide_dust.c:
+	.text       start:0x00014A18 end:0x00014D08
+
+main/afterimage.c:
+	.text       start:0x00014D08 end:0x00014F90
+	.data       start:0x00004B78 end:0x00004B84
+
+main/charge_glow.c:
+	.text       start:0x00014F90 end:0x00015070
+
+main/visuals/visual_03_small_effect.c:
+	.text       start:0x00015070 end:0x000151D0
+	.data       start:0x00004BB8 end:0x00004C38
+
+main/visuals/visual_04_blast.c:
+	.text       start:0x000151D0 end:0x00015760
+
+main/visuals/visual_05_object_afterimage.c:
+	.text       start:0x000157B4 end:0x000159E0
+	.data       start:0x00004C88 end:0x00004CA0
+
+main/visuals/visual_06_eregion_part.c:
+	.text       start:0x000159E0 end:0x000162D0
+
+main/visuals/visual_08_ice_shard.c:
+	.text       start:0x000162F4 end:0x00016D90
+	.data       start:0x00004E10 end:0x00004E28
+
+main/visuals/visual_10_dragon_fx.c:
+	.text       start:0x00016D90 end:0x00017064
+	.data       start:0x00004EB8 end:0x00004ED0
+
+main/visuals/visual_11_charge_ring.c:
+	.text       start:0x00017084 end:0x0001724C
+	.data       start:0x00004ED0 end:0x00004EE0
+
+main/visuals/visual_12_ride_dust.c:
+	.text       start:0x0001724C end:0x00017380
+	.data       start:0x00004EE0 end:0x00004F08
+
+main/visuals/visual_13_ride_chaser_jet.c:
+	.text       start:0x00017380 end:0x000174E0
+	.data       start:0x00004F08 end:0x00004F28
+
+main/visuals/visual_14_lift_effect.c:
+	.text       start:0x000174E0 end:0x000175F8
+	.data       start:0x00004F28 end:0x00004F38
+
+main/visuals/visual_15_ride_chaser_flash.c:
+	.text       start:0x000175F8 end:0x00017734
+	.data       start:0x00004F38 end:0x00004F48
+
+main/visuals/visual_16_enemy_charge_glow.c:
+	.text       start:0x00017734 end:0x00017930
+	.data       start:0x00004F48 end:0x00004F58
+
+main/visuals/visual_17_web_piece.c:
+	.text       start:0x00017930 end:0x00017DE0
+	.data       start:0x00004F58 end:0x00004F90
+
+main/visuals/visual_33_hover_jet.c:
+	.text       start:0x00017DE0 end:0x0001804C
+
+main/visuals/visual_27_weapon_gfx_preload.c:
+	.text       start:0x0001804C end:0x000180E4
+
+main/visuals/visual_26_weapon_overlay.c:
+	.text       start:0x000180E4 end:0x0001823C
+	.data       start:0x00004F90 end:0x00004FC0
+
+main/visuals/visual_19_double_cyclone_charged_fan.c:
+	.text       start:0x0001823C end:0x00018460
+
+main/visuals/visual_18_aiming_laser_scope.c:
+	.text       start:0x00018460 end:0x000185B4
+
+main/visuals/visual_20_web_flash.c:
+	.text       start:0x000185B4 end:0x00018704
+	.data       start:0x00004FC0 end:0x00004FC8
+
+main/visuals/visual_21_wave_rider_jet.c:
+	.text       start:0x00018704 end:0x000188BC
+	.data       start:0x00004FC8 end:0x00004FE8
+
+main/visuals/visual_22_missile_smoke.c:
+	.text       start:0x000188DC end:0x00018B28
+	.data       start:0x00004FE8 end:0x00004FF8
+
+main/visuals/visual_23_jet_stingray_fx.c:
+	.text       start:0x00018B28 end:0x00018E7C
+	.data       start:0x00004FF8 end:0x00005010
+
+main/visuals/visual_24_frost_walrus_fx.c:
+	.text       start:0x00018E7C end:0x000195AC
+	.data       start:0x00005010 end:0x000050A8
+
+main/visuals/visual_25_flame_jet_fx.c:
+	.text       start:0x000195AC end:0x000195E8
+	.data       start:0x000050A8 end:0x000050B8
+
+main/visuals/visual_28_storm_owl_fx.c:
+	.text       start:0x000196E0 end:0x00019A0C
+	.data       start:0x000050B8 end:0x000050C8
+
+main/visuals/visual_29_peacock_target.c:
+	.text       start:0x00019A0C end:0x00019DD4
+	.data       start:0x000050C8 end:0x000050E8
+
+main/visuals/visual_30_colonel_fx.c:
+	.text       start:0x00019DD4 end:0x0001A334
+	.data       start:0x000050E8 end:0x00005128
+
+main/visuals/visual_31_gunship_exhaust.c:
+	.text       start:0x0001A334 end:0x0001A600
+	.data       start:0x00005128 end:0x00005138
+
+main/visuals/visual_32_sigma_fx.c:
+	.text       start:0x0001A600 end:0x0001ACC0
+	.data       start:0x00005138 end:0x000051D4
+
+main/visuals/visual_34_split_mushroom_fx.c:
+	.text       start:0x0001ACE0 end:0x0001AE2C
+	.data       start:0x000051D8 end:0x000051E0
+
+main/shots/shot_00_dragon_shot.c:
+	.text       start:0x0001AE2C end:0x0001B458
+	.data       start:0x000077F8 end:0x00007840
+
+main/shots/shot_01_drill_copter_shot.c:
+	.text       start:0x0001B47C end:0x0001B654
+	.data       start:0x00007840 end:0x00007870
+
+main/shots/shot_02_gunner_shot.c:
+	.text       start:0x0001B674 end:0x0001C300
+	.data       start:0x00007870 end:0x00007888
+
+main/shots/shot_06_wall_crawler_shot.c:
+	.text       start:0x0001C418 end:0x0001C6E4
+	.data       start:0x000078E4 end:0x000079A4
+
+main/shots/shot_07_dropped_bomb.c:
+	.text       start:0x0001C708 end:0x0001C8AC
+	.data       start:0x000079A8 end:0x000079C0
+
+main/shots/shot_08_shell_crawler_shot.c:
+	.text       start:0x0001C8AC end:0x0001CA5C
+	.data       start:0x000079C0 end:0x000079D0
+
+main/shots/shot_09_trident_shot.c:
+	.text       start:0x0001CA5C end:0x0001CDE8
+	.data       start:0x000079D0 end:0x00007A00
+
+main/shots/shot_10_dragon_spread_shot.c:
+	.text       start:0x0001CDE8 end:0x0001D068
+	.data       start:0x00007A00 end:0x00007A98
+
+main/shots/shot_11_enemy_bullet.c:
+	.text       start:0x0001D088 end:0x0001D1F8
+	.data       start:0x00007A98 end:0x00007AA8
+
+main/shots/shot_12_ice_core_shot.c:
+	.text       start:0x0001D1F8 end:0x0001D784
+	.data       start:0x00007AA8 end:0x00007AF8
+
+main/shots/shot_13_jet_drone_bullet.c:
+	.text       start:0x0001D784 end:0x0001D978
+	.data       start:0x00007AF8 end:0x00007B08
+
+main/shots/shot_14_dash_gunner_shot.c:
+	.text       start:0x0001D978 end:0x0001DB80
+	.data       start:0x00007B08 end:0x00007B18
+
+main/shots/shot_15_turret_laser.c:
+	.text       start:0x0001DB80 end:0x0001DDE4
+	.data       start:0x00007B18 end:0x00007B38
+
+main/shots/shot_16_linked_spark.c:
+	.text       start:0x0001DDE4 end:0x0001E050
+	.data       start:0x00007B98 end:0x00007BA8
+
+main/shots/shot_17_depth_charge.c:
+	.text       start:0x0001E050 end:0x0001E500
+
+main/shots/shot_18_aimed_bullet.c:
+	.text       start:0x0001E500 end:0x0001E6BC
+	.data       start:0x00007BD0 end:0x00007BE0
+
+main/shots/shot_19_trooper_bomb.c:
+	.text       start:0x0001E6BC end:0x0001E91C
+	.data       start:0x00007BE0 end:0x00007C00
+
+main/shots/shot_20_cannon_blast.c:
+	.text       start:0x0001E990 end:0x0001EC00
+	.data       start:0x00007C00 end:0x00007C20
+
+main/shots/shot_21_cannon_shell.c:
+	.text       start:0x0001EC24 end:0x0001F0B0
+	.data       start:0x00007C20 end:0x00007C48
+
+main/shots/shot_22_web_shot.c:
+	.text       start:0x0001F0B0 end:0x0001F6E4
+	.data       start:0x00007C48 end:0x00007C70
+
+main/shots/shot_23_web_thread.c:
+	.text       start:0x0001F6E4 end:0x0001FA48
+	.data       start:0x00007C70 end:0x00007D10
+
+main/shots/shot_24_train_boss_shot.c:
+	.text       start:0x0001FA48 end:0x00020510
+
+main/shots/shot_25_grenade.c:
+	.text       start:0x00020534 end:0x00020824
+	.data       start:0x00007D98 end:0x00007DB8
+
+main/shots/shot_26_sentry_shot.c:
+	.text       start:0x00020BE8 end:0x00020C44
+
+main/shots/shot_27_jump_shooter_shot.c:
+	.text       start:0x00020C44 end:0x00020E84
+	.data       start:0x00007E60 end:0x00007E88
+
+main/shots/shot_28_melee_hitbox.c:
+	.text       start:0x00020E84 end:0x00021028
+	.data       start:0x00007E88 end:0x00007E98
+
+main/shots/shot_29_cannon_missile.c:
+	.text       start:0x00021028 end:0x0002152C
+
+main/shots/shot_30_cannon_shot.c:
+	.text       start:0x00021550 end:0x00021898
+	.data       start:0x00007EAC end:0x00007EE8
+
+main/shots/shot_31_slash_beast_crescent.c:
+	.text       start:0x00021898 end:0x00021B1C
+	.data       start:0x00007EE8 end:0x00007F00
+
+main/shots/shot_32_flame_pillar.c:
+	.text       start:0x00021B1C end:0x00021D5C
+
+main/shots/shot_33_falling_rock.c:
+	.text       start:0x00021D5C end:0x00022F7C
+	.data       start:0x00007F10 end:0x000081B8
+
+main/shots/shot_34_ray_trap.c:
+	.text       start:0x00022FDC end:0x00023BCC
+	.data       start:0x000081B8 end:0x00008240
+
+main/shots/shot_35_walrus_ice.c:
+	.text       start:0x00023BCC end:0x000251D0
+	.data       start:0x00008240 end:0x00008428
+
+main/shots/shot_36_drone_beam.c:
+	.text       start:0x000251F4 end:0x000254E0
+	.data       start:0x00008428 end:0x00008448
+
+main/shots/shot_37_owl_feather.c:
+	.text       start:0x00025538 end:0x00025A2C
+	.data       start:0x00008448 end:0x00008488
+
+main/shots/shot_38_owl_cyclone.c:
+	.text       start:0x00025A50 end:0x00025F24
+	.data       start:0x00008488 end:0x000084A0
+
+main/shots/shot_39_mushroom_shot.c:
+	.text       start:0x00025F58 end:0x00026AD4
+	.data       start:0x000084A0 end:0x00008540
+
+main/shots/shot_40_hatch_blast.c:
+	.text       start:0x00026AD4 end:0x00026E78
+	.data       start:0x00008540 end:0x00008580
+
+main/shots/shot_41_magma_fire.c:
+	.text       start:0x00026E78 end:0x00027B2C
+
+main/shots/shot_42_peacock_missile.c:
+	.text       start:0x00027B54 end:0x000280DC
+	.data       start:0x00008608 end:0x00008660
+
+main/shots/shot_43_gunship_shot.c:
+	.text       start:0x000280DC end:0x00028788
+	.data       start:0x00008660 end:0x00008704
+
+main/shots/shot_44_iris_shot.c:
+	.text       start:0x00028788 end:0x000292C8
+	.data       start:0x00008708 end:0x00008770
+
+main/shots/shot_45_colonel_shot.c:
+	.text       start:0x0002940C end:0x00029E38
+
+main/shots/shot_46_sigma_shot.c:
+	.text       start:0x00029E38 end:0x0002B1C4
+	.data       start:0x000087F0 end:0x000088DC
+
+main/shots/shot_52_double_mine_shot.c:
+	.text       start:0x0002B1C4 end:0x0002B3B0
+
+main/shots/shot_51_double_mine.c:
+	.text       start:0x0002B3B0 end:0x0002B864
+
+main/shots/shot_50_double_bouncer.c:
+	.text       start:0x0002B864 end:0x0002BB88
+
+main/shots/shot_49_double_aerial.c:
+	.text       start:0x0002BB88 end:0x0002BFD8
+	.data       start:0x00008918 end:0x00008934
+
+main/shots/shot_48_double_ball.c:
+	.text       start:0x0002BFD8 end:0x0002C370
+
+main/shots/shot_53_sigma_head.c:
+	.text       start:0x0002C4D8 end:0x0002D59C
+	.data       start:0x00008980 end:0x00008AD8
+
+main/shots/shot_54_sigma_final_shot.c:
+	.text       start:0x0002D600 end:0x0002DFF4
+	.data       start:0x00008AD8 end:0x00008B50
+
+main/shots/shot_55_general_shot.c:
+	.text       start:0x0002DFF4 end:0x0002F714
+	.data       start:0x00008B70 end:0x00008C70
+
+main/shots/shot_56_sigma_spit.c:
+	.text       start:0x0002F714 end:0x0002FC24
+	.data       start:0x00008C70 end:0x00008CD0
+
+main/shots/shot_57_sigma_beam_hitbox.c:
+	.text       start:0x0002FC24 end:0x0002FE90
+	.data       start:0x00008CD0 end:0x00008DF8
+
+main/enemy_reaction.c:
+	.text       start:0x0002FE90 end:0x00030314
+
+main/mains/main_00_background_dragon.c:
+	.text       start:0x00030314 end:0x00031B80
+	.data       start:0x00008E00 end:0x00009154
+
+main/mains/main_01_armored_walker.c:
+	.text       start:0x00031B80 end:0x000323B4
+	.data       start:0x00009158 end:0x00009278
+
+main/mains/main_02_item_carrier.c:
+	.text       start:0x000323B4 end:0x00032E88
+
+main/mains/main_03_spike_marl.c:
+	.text       start:0x00032E88 end:0x00033EC4
+	.data       start:0x00009420 end:0x00009610
+
+main/mains/main_04_drill_copter.c:
+	.text       start:0x00033EC4 end:0x000349CC
+
+main/mains/main_05_robot_bee.c:
+	.text       start:0x000349CC end:0x00036498
+	.data       start:0x00009850 end:0x00009BB0
+
+main/mains/main_06_bulldozer.c:
+	.text       start:0x00036500 end:0x00036D8C
+	.data       start:0x00009BB0 end:0x00009CF8
+
+main/mains/main_07_ambush_gunner.c:
+	.text       start:0x00036D8C end:0x00037658
+	.data       start:0x00009CF8 end:0x00009ED4
+
+main/mains/main_09_unused.c:
+	.text       start:0x00037658 end:0x0003765C
+
+main/mains/main_08_eregion.c:
+	.text       start:0x0003765C end:0x000392CC
+	.data       start:0x00009ED8 end:0x0000A6A4
+
+main/mains/main_10_dragonfly.c:
+	.text       start:0x000392CC end:0x0003A40C
+
+main/mains/main_11_wall_crawler.c:
+	.text       start:0x0003A40C end:0x0003B5DC
+	.data       start:0x0000A930 end:0x0000AED0
+
+main/mains/main_12_hover_sentry.c:
+	.text       start:0x0003B5DC end:0x0003C418
+	.data       start:0x0000AED0 end:0x0000B084
+
+main/mains/main_13_heavy_mech.c:
+	.text       start:0x0003C418 end:0x0003CCA8
+
+main/mains/main_14_ice_bird.c:
+	.text       start:0x0003CCDC end:0x0003D62C
+	.data       start:0x0000B1BC end:0x0000B380
+
+main/mains/main_15_shell_crawler.c:
+	.text       start:0x0003D62C end:0x0003E4C8
+	.data       start:0x0000B380 end:0x0000B4F0
+
+main/mains/main_16_trident_mech.c:
+	.text       start:0x0003E4C8 end:0x0003FE9C
+	.data       start:0x0000B4F0 end:0x0000B738
+
+main/mains/main_17_snowman_bomb.c:
+	.text       start:0x0003FE9C end:0x00040600
+	.data       start:0x0000B738 end:0x0000B818
+
+main/mains/main_18_ice_core.c:
+	.text       start:0x00040600 end:0x00042964
+
+main/mains/main_19_surface_hopper.c:
+	.text       start:0x00042964 end:0x00044A24
+	.data       start:0x0000BD48 end:0x0000C180
+
+main/mains/main_20_ice_block.c:
+	.text       start:0x00044A24 end:0x000450D4
+	.data       start:0x0000C180 end:0x0000C2F0
+
+main/mains/main_21_falling_icicle.c:
+	.text       start:0x000450D4 end:0x00045470
+	.data       start:0x0000C2F0 end:0x0000C360
+
+main/mains/main_22_bee_hive.c:
+	.text       start:0x00045470 end:0x00046070
+	.data       start:0x0000C360 end:0x0000C488
+
+main/mains/main_23_slope_skier.c:
+	.text       start:0x00046070 end:0x00046B64
+
+main/mains/main_24_jet_drone.c:
+	.text       start:0x00046B64 end:0x000474A0
+	.data       start:0x0000C810 end:0x0000C930
+
+main/mains/main_25_caterkiller.c:
+	.text       start:0x000474A0 end:0x00048514
+	.data       start:0x0000C930 end:0x0000CAF8
+
+main/mains/main_26_ice_wall.c:
+	.text       start:0x00048514 end:0x00048A28
+	.data       start:0x0000CAF8 end:0x0000CB60
+
+main/mains/main_27_dash_gunner.c:
+	.text       start:0x00048A28 end:0x00049FF0
+	.data       start:0x0000CB60 end:0x0000CD84
+
+main/mains/main_28_spawner_pod.c:
+	.text       start:0x00049FF0 end:0x0004A810
+	.data       start:0x0000CD88 end:0x0000CFF0
+
+main/mains/main_29_pod_spawner.c:
+	.text       start:0x0004A810 end:0x0004BCF8
+
+main/mains/main_30_regen_turret.c:
+	.text       start:0x0004BCF8 end:0x0004C190
+	.data       start:0x0000D260 end:0x0000D3A0
+
+main/mains/main_31_thorn_trap.c:
+	.text       start:0x0004C190 end:0x0004D128
+	.data       start:0x0000D3A0 end:0x0000D634
+
+main/mains/main_32_bomb_bat.c:
+	.text       start:0x0004D128 end:0x0004DA90
+
+main/mains/main_33_spike_sled.c:
+	.text       start:0x0004DA90 end:0x0004EE80
+	.data       start:0x0000D720 end:0x0000D950
+
+main/mains/main_34_highway_trooper.c:
+	.text       start:0x0004EE80 end:0x0004F580
+	.data       start:0x0000D950 end:0x0000DB48
+
+main/mains/main_35_wheel_charger.c:
+	.text       start:0x0004F580 end:0x0004FE44
+	.data       start:0x0000DB48 end:0x0000DC80
+
+main/mains/main_36_latcher.c:
+	.text       start:0x0004FE44 end:0x00050658
+
+main/mains/main_37_rocket_spiker.c:
+	.text       start:0x00050658 end:0x00051394
+	.data       start:0x0000DE70 end:0x0000E0D0
+
+main/mains/main_38_train_cannon.c:
+	.text       start:0x00051394 end:0x00051DFC
+	.data       start:0x0000E0D0 end:0x0000E2E0
+
+main/mains/main_39_falling_ceiling.c:
+	.text       start:0x00051DFC end:0x00052644
+
+main/mains/main_40_breakable_terrain.c:
+	.text       start:0x00052744 end:0x00052B9C
+	.data       start:0x0000E360 end:0x0000E468
+
+main/mains/main_41_data_hopper.c:
+	.text       start:0x00052BD0 end:0x000534F8
+	.data       start:0x0000E468 end:0x0000E828
+
+main/mains/main_42_homing_orb.c:
+	.text       start:0x000534F8 end:0x00053958
+	.data       start:0x0000E828 end:0x0000E958
+
+main/mains/main_43_web_spider.c:
+	.text       start:0x00053978 end:0x0005601C
+
+main/mains/main_44_anchored_mine.c:
+	.text       start:0x00056084 end:0x00056288
+	.data       start:0x0000F1B4 end:0x0000F250
+
+main/mains/main_45_train_boss.c:
+	.text       start:0x000562C8 end:0x000571A8
+	.data       start:0x0000F250 end:0x0000F378
+
+main/mains/main_46_train_boss_turret.c:
+	.text       start:0x000571A8 end:0x000574E4
+	.data       start:0x0000F378 end:0x0000F3A8
+
+main/mains/main_47_train_boss_armor.c:
+	.text       start:0x000574E4 end:0x00057A48
+	.data       start:0x0000F3A8 end:0x0000F410
+
+main/mains/main_48_sentry_drone.c:
+	.text       start:0x00057A48 end:0x00058A70
+	.data       start:0x0000F410 end:0x0000F778
+
+main/mains/main_49_train_soldier.c:
+	.text       start:0x00058A70 end:0x00059BC4
+
+main/mains/main_50_train_crate.c:
+	.text       start:0x00059BC8 end:0x00059F5C
+
+main/mains/main_51_fortress_cannon.c:
+	.text       start:0x0005A01C end:0x0005A9C4
+	.data       start:0x0000F7E0 end:0x0000F960
+
+main/mains/main_52_jump_shooter.c:
+	.text       start:0x0005A9C4 end:0x0005B4F4
+	.data       start:0x0000F960 end:0x0000FB78
+
+main/mains/main_53_wave_rider.c:
+	.text       start:0x0005B4F4 end:0x0005C280
+
+main/mains/main_54_slash_beast.c:
+	.text       start:0x0005C280 end:0x0005F480
+	.data       start:0x0000FD88 end:0x00010280
+
+main/mains/main_55_jet_stingray_flyby.c:
+	.text       start:0x0005F480 end:0x0006034C
+
+main/mains/main_56_jet_stingray.c:
+	.text       start:0x0006034C end:0x000629D0
+	.data       start:0x00010394 end:0x000109B8
+
+main/mains/main_57_frost_walrus.c:
+	.text       start:0x000629D0 end:0x00064E94
+	.data       start:0x000109B8 end:0x00011084
+
+main/mains/main_58_beam_drone.c:
+	.text       start:0x00064E94 end:0x000658D0
+
+main/mains/main_59_timed_explosion.c:
+	.text       start:0x000658D0 end:0x00065A98
+	.data       start:0x00011200 end:0x00011210
+
+main/mains/main_60_storm_owl.c:
+	.text       start:0x00065A98 end:0x00069374
+	.data       start:0x00011210 end:0x0001182C
+
+main/mains/main_61_split_mushroom.c:
+	.text       start:0x00069374 end:0x0006C6D8
+	.data       start:0x00011830 end:0x00011C78
+
+main/mains/main_62_flame_jet.c:
+	.text       start:0x0006C6D8 end:0x0006CE00
+	.data       start:0x00011C78 end:0x00011E00
+
+main/mains/main_63_hatch_turret.c:
+	.text       start:0x0006CE00 end:0x0006D044
+	.data       start:0x00011E00 end:0x00012028
+
+main/mains/main_64_cyber_peacock.c:
+	.text       start:0x0006D0E8 end:0x0006EA78
+	.data       start:0x00012028 end:0x00012600
+
+main/mains/main_65_magma_dragoon.c:
+	.text       start:0x0006EA78 end:0x00071820
+	.data       start:0x00012600 end:0x00013160
+
+main/mains/main_66_iris.c:
+	.text       start:0x00071820 end:0x00073598
+	.data       start:0x00013160 end:0x00013828
+
+main/mains/main_67_gunship.c:
+	.text       start:0x00073598 end:0x0007428C
+	.data       start:0x00013828 end:0x00013A88
+
+main/mains/main_68_sigma.c:
+	.text       start:0x0007428C end:0x00077050
+
+main/mains/main_69_colonel.c:
+	.text       start:0x00077050 end:0x00079F10
+	.data       start:0x0001402C end:0x000144A8
+
+main/mains/main_70_drone_pod.c:
+	.text       start:0x00079F10 end:0x0007AD20
+	.data       start:0x000144A8 end:0x000145E8
+
+main/mains/main_71_ride_armor_pilot.c:
+	.text       start:0x0007AD20 end:0x0007C328
+	.data       start:0x000145E8 end:0x000148D8
+
+main/mains/main_72_unused_ride_armor.c:
+	.text       start:0x0007C3E0 end:0x0007D190
+	.data       start:0x000148D8 end:0x00014AF0
+
+main/mains/main_73_double.c:
+	.text       start:0x0007D190 end:0x0007EF88
+	.data       start:0x00014AF0 end:0x00014EF8
+
+main/mains/main_74_sigma_final.c:
+	.text       start:0x0007EF88 end:0x0008189C
+	.data       start:0x00014EF8 end:0x00015578
+
+main/mains/main_75_general.c:
+	.text       start:0x0008189C end:0x00083754
+
+main/mains/main_76_spike_crawler.c:
+	.text       start:0x00083A2C end:0x00083B3C
+	.data       start:0x00015AF0 end:0x00015B70
+
+main/13A8C.c:
+	.text       start:0x00083B78 end:0x00084264
+
+main/102FC.c:
+	.text       start:0x0008433C end:0x00084E5C
+	.data       start:0x00015C68 end:0x00015CB8
+
+main/11184.c:
+	.text       start:0x00084E5C end:0x00085488
+
+main/10CA4.c:
+	.text       start:0x00085488 end:0x00085AC4
+
+main/quit_menu.c:
+	.text       start:0x00085AC4 end:0x00085EB8
+
+main/128C4.c:
+	.text       start:0x00086358 end:0x00087708
+
+main/1A5BC.c:
+	.text       start:0x00087708 end:0x00087D54
+	.data       start:0x00017770 end:0x00017828
+
+main/unks/unk_00_menu_text.c:
+	.text       start:0x00087D54 end:0x00088310
+	.data       start:0x00017828 end:0x00017858
+
+main/object_update.c:
+	.text       start:0x00088310 end:0x0008957C
+	.data       start:0x00017860 end:0x00017E98
+
+main/misc/misc_00_static_sprite.c:
+	.text       start:0x0008957C end:0x000896A4
+	.data       start:0x00017E98 end:0x00017EA8
+
+main/misc/misc_01_common_effect.c:
+	.text       start:0x000896A4 end:0x0008985C
+
+main/misc/misc_02_rubble.c:
+	.text       start:0x000898C8 end:0x00089BB0
+
+main/misc/misc_03_debris.c:
+	.text       start:0x00089BB0 end:0x0008A0E4
+	.data       start:0x00017FF8 end:0x00018038
+
+main/misc/misc_04_dragon_rubble.c:
+	.text       start:0x0008A0E4 end:0x0008A8B8
+	.data       start:0x00018038 end:0x0001812C
+
+main/misc/misc_05_pod_effect.c:
+	.text       start:0x0008A8B8 end:0x0008AABC
+	.data       start:0x00018130 end:0x00018148
+
+main/misc/misc_06_homing_point.c:
+	.text       start:0x0008AABC end:0x0008AC78
+	.data       start:0x00018148 end:0x00018158
+
+main/misc/misc_07_attached_effect.c:
+	.text       start:0x0008AC78 end:0x0008ADF4
+	.data       start:0x00018158 end:0x00018168
+
+main/misc/misc_08_crumbling_tile.c:
+	.text       start:0x0008ADF4 end:0x0008B5DC
+	.data       start:0x00018168 end:0x000186A8
+
+main/misc/misc_09_owner_fx.c:
+	.text       start:0x0008B5DC end:0x0008B6D4
+
+main/misc/misc_10_briefing_character.c:
+	.text       start:0x0008B6D4 end:0x0008B8F4
+	.data       start:0x000186A8 end:0x00018B28
+
+main/misc/misc_11_blink_marker.c:
+	.text       start:0x0008B8F4 end:0x0008BA54
+	.data       start:0x00018B28 end:0x00018B38
+
+main/misc/misc_12_stage_icon.c:
+	.text       start:0x0008BA54 end:0x0008BE08
+	.data       start:0x00018B38 end:0x00018BB8
+
+main/misc/misc_13_stage_portrait.c:
+	.text       start:0x0008BE08 end:0x0008C04C
+	.data       start:0x00018BB8 end:0x00018BF8
+
+main/misc/misc_14_frame_ghost.c:
+	.text       start:0x0008C04C end:0x0008C158
+	.data       start:0x00018BF8 end:0x00018C00
+
+main/misc/misc_15_vent.c:
+	.text       start:0x0008C158 end:0x0008C2F8
+	.data       start:0x00018C00 end:0x00018C30
+
+main/misc/misc_16_vent_puff.c:
+	.text       start:0x0008C2F8 end:0x0008C6B4
+	.data       start:0x00018C30 end:0x00018C40
+
+main/misc/misc_17_death_orb.c:
+	.text       start:0x0008C6B4 end:0x0008C864
+
+main/misc/misc_18_ready_text.c:
+	.text       start:0x0008C884 end:0x0008D08C
+	.data       start:0x00018C48 end:0x00018CD8
+
+main/misc/misc_21_center_sprite.c:
+	.text       start:0x0008D08C end:0x0008D100
+
+main/misc/misc_19_title.c:
+	.text       start:0x0008D100 end:0x0008D3D4
+	.data       start:0x00018CD8 end:0x00018DF0
+
+main/misc/misc_20_scroll_prop.c:
+	.text       start:0x0008D3D4 end:0x0008D570
+	.data       start:0x00018DF0 end:0x00018E00
+
+main/misc/misc_22_dialogue_ui.c:
+	.text       start:0x0008D570 end:0x0008D864
+
+main/misc/misc_23_explosion_puff.c:
+	.text       start:0x0008D864 end:0x0008D9C0
+
+main/misc/misc_24_enemy_hatch.c:
+	.text       start:0x0008D9C0 end:0x0008DF64
+	.data       start:0x00018E28 end:0x00018F28
+
+main/misc/misc_25_sentry_flash.c:
+	.text       start:0x0008DF64 end:0x0008E2EC
+	.data       start:0x00018F28 end:0x00018FC0
+
+main/misc/misc_26_slash_beast_afterimage.c:
+	.text       start:0x0008E30C end:0x0008E434
+	.data       start:0x00018FC0 end:0x00018FC8
+
+main/misc/misc_27_owner_aura.c:
+	.text       start:0x0008E454 end:0x0008E56C
+	.data       start:0x00018FC8 end:0x00018FD0
+
+main/misc/misc_28_select_a_character.c:
+	.text       start:0x0008E56C end:0x0008F034
+
+main/misc/misc_29_title_logo.c:
+	.text       start:0x0008F2A0 end:0x0008F838
+	.data       start:0x00019260 end:0x00019290
+
+main/misc/misc_30_spore_rain_fx.c:
+	.text       start:0x0008F838 end:0x0008F9A4
+	.data       start:0x00019290 end:0x00019298
+
+main/misc/misc_31_option_toggle.c:
+	.text       start:0x0008F9A4 end:0x0008FCB4
+
+main/misc/misc_32_option_sprite.c:
+	.text       start:0x0008FCB4 end:0x0008FED0
+	.data       start:0x0001933C end:0x00019348
+
+main/misc/misc_33_cyberspace_warp.c:
+	.text       start:0x0008FED0 end:0x00090428
+	.data       start:0x00019348 end:0x00019460
+
+main/misc/misc_34_cyberspace_guide.c:
+	.text       start:0x00090428 end:0x00090BB8
+	.data       start:0x00019460 end:0x00019568
+
+main/misc/misc_35_cyclone_trail.c:
+	.text       start:0x00090BB8 end:0x00090CD4
+
+main/misc/misc_36_item_sparkle.c:
+	.text       start:0x00090CD4 end:0x00090EE0
+	.data       start:0x00019568 end:0x00019578
+
+main/misc/misc_38_dragoon_flame.c:
+	.text       start:0x00090EE0 end:0x00091198
+	.data       start:0x00019578 end:0x00019590
+
+main/misc/misc_39_iris_intro_crystal.c:
+	.text       start:0x00091198 end:0x00091594
+	.data       start:0x00019590 end:0x000195B0
+
+main/misc/misc_40_ambient_bubble.c:
+	.text       start:0x00091594 end:0x000918C0
+	.data       start:0x000195B0 end:0x00019640
+
+main/misc/misc_42_menu_icon.c:
+	.text       start:0x000918C0 end:0x00091E14
+	.data       start:0x00019640 end:0x00019648
+
+main/misc/misc_43_intro_messenger.c:
+	.text       start:0x00091E14 end:0x000922CC
+	.data       start:0x00019648 end:0x000196B0
+
+main/misc/misc_44_stage_cutscene.c:
+	.text       start:0x000922CC end:0x00092808
+	.data       start:0x000196B0 end:0x00019720
+
+main/misc/misc_45_scripted_slider.c:
+	.text       start:0x00092808 end:0x00092E9C
+	.data       start:0x00019720 end:0x00019838
+
+main/misc/misc_46_post_boss_cutscene.c:
+	.text       start:0x00092E9C end:0x0009351C
+	.data       start:0x00019838 end:0x00019880
+
+main/misc/misc_49_double_afterimage.c:
+	.text       start:0x0009351C end:0x000936E0
+	.data       start:0x00019880 end:0x00019890
+
+main/misc/misc_50_cutscene_actor.c:
+	.text       start:0x000936E0 end:0x000939E8
+	.data       start:0x00019890 end:0x00019B60
+
+main/misc/misc_51_capsule_part.c:
+	.text       start:0x000939E8 end:0x00093DE8
+	.data       start:0x00019B60 end:0x00019B88
+
+main/misc/misc_52_npc_cutscene.c:
+	.text       start:0x00093DE8 end:0x0009468C
+	.data       start:0x00019B88 end:0x00019BF8
+
+main/misc/misc_53_final_cutscene.c:
+	.text       start:0x0009468C end:0x00094C20
+	.data       start:0x00019BF8 end:0x00019C38
+
+main/misc/misc_55_sigma_final_fx.c:
+	.text       start:0x00094C20 end:0x00094F3C
+	.data       start:0x00019C38 end:0x00019C50
+
+main/misc/misc_57_falling_piece.c:
+	.text       start:0x00094F3C end:0x0009510C
+	.data       start:0x00019C50 end:0x00019C78
+
+main/menu.c:
+	.text       start:0x000952A0 end:0x00097960
+	.data       start:0x00019C78 end:0x0001A100
+
+main/323C.c:
+	.text       start:0x00097CFC end:0x000982A8
+
+main/decompress_gfx.c:
+	.text       start:0x00098A2C end:0x00098AD8
+
+main/2824.c:
+	.text       start:0x00098ADC end:0x00098EFC
+	.bss        start:0x00035E68 end:0x00035E6C
+
+main/movie.c:
+	.text       start:0x00098FA8 end:0x00099070
+
+main/animation.c:
+	.text       start:0x00099070 end:0x00099774
+
+main/165A0.c:
+	.text       start:0x00099E4C end:0x0009A784
+
+main/55C4.c:
+	.text       start:0x0009A784 end:0x0009B38C
+	.data       start:0x0001A13C end:0x0001A148
+
+main/14A60.c:
+	.text       start:0x0009B38C end:0x0009C3B4
+
+main/144A4.c:
+	.text       start:0x0009CB94 end:0x0009D1B0
+
+main/image_load.c:
+	.text       start:0x0009D1B0 end:0x0009D410
+
+main/pause_bar_draw.c:
+	.text       start:0x0009DCF8 end:0x0009E0E8
+
+main/cd_music.c:
+	.text       start:0x0009E130 end:0x0009E68C
+
+main/player.c:
+	.text       start:0x0009E6BC end:0x000A0734
+	.data       start:0x0001A480 end:0x0001A5D0
+
+main/weapons/weapon_22_nova_strike_hitbox.c:
+	.text       start:0x000A0734 end:0x000A08C0
+
+main/weapons/weapon_20_plasma_shot.c:
+	.text       start:0x000A08C0 end:0x000A0BC4
+
+main/weapons/weapon_19_stock_shot.c:
+	.text       start:0x000A0BC4 end:0x000A1008
+
+main/weapons/weapon_09_charge_shot.c:
+	.text       start:0x000A1008 end:0x000A11E8
+
+main/weapons/weapon_00_lemon.c:
+	.text       start:0x000A11E8 end:0x000A1750
+	.data       start:0x0001A5D0 end:0x0001A604
+
+main/weapons/weapon_01_lightning_web.c:
+	.text       start:0x000A1750 end:0x000A2624
+	.data       start:0x0001A698 end:0x0001A718
+
+main/weapons/weapon_02_frost_tower.c:
+	.text       start:0x000A2624 end:0x000A3684
+	.data       start:0x0001A718 end:0x0001A7B8
+
+main/weapons/weapon_03_soul_body.c:
+	.text       start:0x000A3684 end:0x000A3D54
+	.data       start:0x0001A7B8 end:0x0001A7E0
+
+main/weapons/weapon_04_rising_fire.c:
+	.text       start:0x000A3D54 end:0x000A429C
+	.data       start:0x0001A7E0 end:0x0001A818
+
+main/weapons/weapon_05_ground_hunter.c:
+	.text       start:0x000A4334 end:0x000A4E60
+	.data       start:0x0001A818 end:0x0001A868
+
+main/weapons/weapon_06_aiming_laser_charged.c:
+	.text       start:0x000A4E60 end:0x000A5B58
+	.data       start:0x0001A868 end:0x0001A898
+
+main/weapons/weapon_07_double_cyclone.c:
+	.text       start:0x000A5B58 end:0x000A66D8
+	.data       start:0x0001A898 end:0x0001A8D8
+
+main/weapons/weapon_08_twin_slasher.c:
+	.text       start:0x000A66D8 end:0x000A6DB8
+	.data       start:0x0001A8D8 end:0x0001A928
+
+main/weapons/weapon_24_zero_saber.c:
+	.text       start:0x000A6DB8 end:0x000A741C
+
+main/weapons/weapon_56_ride_chaser_shot.c:
+	.text       start:0x000A741C end:0x000A7670
+	.data       start:0x0001AA50 end:0x0001AA88
+
+main/weapons/weapon_57_ride_chaser_ram.c:
+	.text       start:0x000A7670 end:0x000A77C4
+	.data       start:0x0001AA88 end:0x0001AA98
+
+main/weapons/weapon_58_ice_block_hitbox.c:
+	.text       start:0x000A77C4 end:0x000A78EC
+	.data       start:0x0001AA98 end:0x0001AAB0
+
+main/weapons/weapon_59_ride_armor_shot.c:
+	.text       start:0x000A78EC end:0x000A7C3C
+	.data       start:0x0001AAB0 end:0x0001AAD8
+
+main/weapons/weapon_60_ride_armor_missile.c:
+	.text       start:0x000A7C3C end:0x000A8118
+	.data       start:0x0001AAD8 end:0x0001AAF8
+
+main/weapons/weapon_61_ride_armor_punch.c:
+	.text       start:0x000A8138 end:0x000A8390
+
+main/player_check.c:
+	.text       start:0x000A8408 end:0x000A959C
+	.data       start:0x0001AB30 end:0x0001AB94
+
+main/player_enter.c:
+	.text       start:0x000A959C end:0x000AA5C4
+
+main/player_common.c:
+	.text       start:0x000AA5C4 end:0x000AE58C
+	.data       start:0x0001ABA0 end:0x0001AC48
+
+main/player_weapon.c:
+	.text       start:0x000AE58C end:0x000B0694
+
+main/player_special.c:
+	.text       start:0x000B0694 end:0x000B5944
+	.data       start:0x0001AE60 end:0x0001AFD8
+
+main/quads/quad_00_search_light.c:
+	.text       start:0x000B5944 end:0x000B5FA4
+	.data       start:0x0001DB70 end:0x0001DC10
+
+main/quads/quad_01_stage_select_panel.c:
+	.text       start:0x000B5FA4 end:0x000B666C
+	.data       start:0x0001DC10 end:0x0001DCA0
+
+main/quads/quad_02_stage_select_flyout.c:
+	.text       start:0x000B666C end:0x000B6994
+	.data       start:0x0001DCA0 end:0x0001DCF0
+
+main/quads/quad_03_boss_warning_quad.c:
+	.text       start:0x000B6994 end:0x000B6F40
+	.data       start:0x0001DCF0 end:0x0001DE20
+
+main/quads/quad_04_boss_death_shard.c:
+	.text       start:0x000B6F40 end:0x000B7200
+	.data       start:0x0001DE20 end:0x0001DF30
+
+main/quads/quad_05_web_piece_quad.c:
+	.text       start:0x000B7220 end:0x000B7594
+	.data       start:0x0001DF30 end:0x0001E060
+
+main/quads/quad_06_light_ray.c:
+	.text       start:0x000B7594 end:0x000B78AC
+	.data       start:0x0001E060 end:0x0001E070
+
+main/quads/quad_07_ready_line.c:
+	.text       start:0x000B78AC end:0x000B836C
+	.data       start:0x0001E070 end:0x0001E230
+
+main/quads/quad_08_flash_band.c:
+	.text       start:0x000B836C end:0x000B84AC
+	.data       start:0x0001E230 end:0x0001E240
+
+main/quads/quad_10_aiming_laser_charged_beam.c:
+	.text       start:0x000B84AC end:0x000B8E14
+
+main/quads/quad_09_aiming_laser_beam.c:
+	.text       start:0x000B8F50 end:0x000B90A8
+
+main/quads/quad_11_title_quad.c:
+	.text       start:0x000B90A8 end:0x000B96A8
+	.data       start:0x0001E250 end:0x0001E370
+
+main/quads/quad_12_title_facet.c:
+	.text       start:0x000B96A8 end:0x000B9980
+	.data       start:0x0001E370 end:0x0001E3A8
+
+main/quads/quad_13_null.c:
+	.text       start:0x000B9980 end:0x000B9984
+
+main/quads/quad_14_colonel_beam.c:
+	.text       start:0x000B9984 end:0x000B9BB0
+	.data       start:0x0001E3A8 end:0x0001E3C0
+
+main/quads/quad_15_sigma_beam.c:
+	.text       start:0x000B9BB0 end:0x000B9F00
+	.data       start:0x0001E3C0 end:0x0001E3E0
+
+main/quads/quad_16_sigma_laser.c:
+	.text       start:0x000B9F00 end:0x000BA580
+	.data       start:0x0001E3E0 end:0x0001E490
+
+main/1263C.c:
+	.text       start:0x000BA5DC end:0x000BA7C4
+
+main/mech.c:
+	.text       start:0x000BA7C4 end:0x000BEE54
+	.data       start:0x00023820 end:0x00023D48
+
+main/CB184.c:
+	.text       start:0x000BEE54 end:0x000BF1DC
+
+main/stage_objects.c:
+	.text       start:0x000BF1DC end:0x000BF234
+
+main/background.c:
+	.text       start:0x000BF50C end:0x000C0908
+	.data       start:0x00023E00 end:0x00023FE0
+
+main/layers/layer_00_train_scroll.c:
+	.text       start:0x000C0908 end:0x000C1124
+
+main/layers/layer_01_jungle_parallax.c:
+	.text       start:0x000C11F0 end:0x000C1294
+
+main/layers/layer_02_train_tunnel.c:
+	.text       start:0x000C14A8 end:0x000C1DE4
+
+main/layers/layer_03.c:
+	.text       start:0x000C1DE4 end:0x000C2234
+
+main/layers/layer_05_airship_bob.c:
+	.text       start:0x000C2464 end:0x000C256C
+
+main/layers/layer_06_final_weapon_bg_cycle.c:
+	.text       start:0x000C2A34 end:0x000C2A54
+
+main/layers/layer_07_space_port_parallax.c:
+	.text       start:0x000C2AB0 end:0x000C2AF0
+
+main/character_select.c:
+	.text       start:0x000C2BA4 end:0x000C3530
+	.data       start:0x000240C8 end:0x00024118
+
+main/items/item_00_breakable_wall.c:
+	.text       start:0x000C3530 end:0x000C3760
+	.data       start:0x00024118 end:0x00024130
+
+main/items/item_01_stage_block.c:
+	.text       start:0x000C3760 end:0x000C4150
+	.data       start:0x00024130 end:0x000242F0
+
+main/items/item_02_pickup.c:
+	.text       start:0x000C4150 end:0x000C5084
+	.data       start:0x000242F0 end:0x0002473C
+
+main/items/item_03_falling_pillar.c:
+	.text       start:0x000C5084 end:0x000C54D4
+	.data       start:0x00024740 end:0x000248B8
+
+main/items/item_04_destructible_core.c:
+	.text       start:0x000C55AC end:0x000C5BB8
+	.data       start:0x000248B8 end:0x00024930
+
+main/items/item_05_moving_lift.c:
+	.text       start:0x000C5BD8 end:0x000C6028
+	.data       start:0x00024930 end:0x00024AB0
+
+main/items/item_06_gate_core.c:
+	.text       start:0x000C6028 end:0x000C6398
+	.data       start:0x00024AB0 end:0x00024AC4
+
+main/items/item_07_rising_platform.c:
+	.text       start:0x000C6398 end:0x000C6628
+
+main/items/item_08_boss_door.c:
+	.text       start:0x000C6628 end:0x000C6DA0
+	.data       start:0x00024B70 end:0x00024CA8
+
+main/items/item_09_moving_block.c:
+	.text       start:0x000C6DA0 end:0x000C7198
+	.data       start:0x00024CA8 end:0x00024CC8
+
+main/items/item_10_spark_machine.c:
+	.text       start:0x000C7198 end:0x000C77BC
+
+main/items/item_11_teleporter.c:
+	.text       start:0x000C77BC end:0x000C7E0C
+	.data       start:0x00024E98 end:0x00025008
+
+main/items/item_12_crusher_wall.c:
+	.text       start:0x000C7E0C end:0x000C80F4
+	.data       start:0x00025008 end:0x00025030
+
+main/items/item_13_trap_floor.c:
+	.text       start:0x000C80F4 end:0x000C8448
+	.data       start:0x00025030 end:0x00025068
+
+main/items/item_14_big_elevator.c:
+	.text       start:0x000C8448 end:0x000C88C0
+	.data       start:0x00025068 end:0x00025098
+
+main/items/item_15_rising_slab.c:
+	.text       start:0x000C88C0 end:0x000C8BD4
+	.data       start:0x00025098 end:0x00025128
+
+main/items/item_16_sliding_floor.c:
+	.text       start:0x000C8BD4 end:0x000C8D14
+	.data       start:0x00025128 end:0x00025138
+
+main/items/item_25_breakable_boulder.c:
+	.text       start:0x000C8D14 end:0x000C8F58
+
+main/items/item_17_crumble_trigger.c:
+	.text       start:0x000C8F58 end:0x000C9118
+	.data       start:0x00025138 end:0x000251C8
+
+main/items/item_18_drop_pillar.c:
+	.text       start:0x000C9118 end:0x000C92EC
+	.data       start:0x00025200 end:0x00025210
+
+main/items/item_19_data_capsule.c:
+	.text       start:0x000C92EC end:0x000C98DC
+	.data       start:0x00025210 end:0x00025248
+
+main/items/item_20_gravity_switch.c:
+	.text       start:0x000C98DC end:0x000CA09C
+	.data       start:0x00025248 end:0x00025288
+
+main/items/item_21_hopper_switch.c:
+	.text       start:0x000CA09C end:0x000CA2D4
+	.data       start:0x00025288 end:0x00025298
+
+main/items/item_22_layout_gate.c:
+	.text       start:0x000CA2D4 end:0x000CAAC0
+
+main/items/item_23_laser_target.c:
+	.text       start:0x000CAAC0 end:0x000CAE78
+	.data       start:0x00025378 end:0x00025398
+
+main/items/item_24_breakable_panel.c:
+	.text       start:0x000CAE78 end:0x000CB0F4
+	.data       start:0x00025398 end:0x00025400
+
+main/items/item_26_light_capsule.c:
+	.text       start:0x000CB0F4 end:0x000CC068
+	.data       start:0x00025400 end:0x00025774
+
+main/items/item_27_boss_teleporter.c:
+	.text       start:0x000CC068 end:0x000CC948
+
+main/195B4.c:
+	.text       start:0x000CC948 end:0x000CCF48
+
+main/1FD10.c:
+	.text       start:0x000CCF48 end:0x000CD68C
+
+main/1EC20.c:
+	.text       start:0x000CD68C end:0x000CED54
+	.data       start:0x0002DC98 end:0x0002DE20
+
+main/objects.c:
+	.text       start:0x000CED54 end:0x000CFE98
+
+main/object_motion.c:
+	.text       start:0x000CFE98 end:0x000D0358
+	.data       start:0x0002DE78 end:0x0002DEE8
+
+main/pause_menu.c:
+	.text       start:0x000D0358 end:0x000D1A58
+	.data       start:0x0002DEE8 end:0x0002DF38
+
+gc/libsnd.c:
+	.text       start:0x000D64A8 end:0x000D65AC
+
+gc/libapi.c:
+	.text       start:0x000D65F0 end:0x000D6768
+	.bss        start:0x00182EC8 end:0x00182F00
+
+gc/gcGPU.c:
+	.text       start:0x000D7550 end:0x000DAB90
