@@ -125,7 +125,7 @@ void sentry_drone_main(struct MainObj* self)
             is_on_screen(BASE_OBJECT(self));
             return;
         }
-        self->state = (u8)self->state + 1;
+        self->state++;
     }
 }
 
@@ -141,8 +141,8 @@ void sentry_drone_drift(struct MainObj* self)
 
 void sentry_drone_drift_start(struct MainObj* self)
 {
-    self->air_state = 1;
     self->unk6++;
+    self->air_state = 1;
     self->x_speed = self->unk15 != 0 ? FIXED(0.5) : -FIXED(0.5);
     self->x_accel = 0;
     self->y_speed = 0;

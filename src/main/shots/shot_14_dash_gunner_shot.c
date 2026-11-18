@@ -26,12 +26,12 @@ void dash_gunner_shot_init(struct ShotObj* self)
     self->state = 1;
     self->on_screen = 1;
     self->unk58.collision_data = D_80106070;
-    self->unk16 = 0;
     self->unk42 &= 0x7FFF;
+    self->unk16 = 0;
     if (0 == self->unk15) {
-        self->x_pos.i.hi = (u16)self->x_pos.i.hi - 6;
+        self->x_pos.i.hi -= 6;
     } else {
-        self->x_pos.i.hi = (u16)self->x_pos.i.hi + 6;
+        self->x_pos.i.hi += 6;
     }
     self->unk68 = NULL;
     self->unk54 = dash_gunner_shot_hit_box;

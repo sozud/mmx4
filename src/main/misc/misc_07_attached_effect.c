@@ -23,9 +23,9 @@ void attached_effect_init(struct MiscObj* self)
     self->y_pos.val = ((struct FixedPointPosition*)self->ext.misc_7.position)->y;
     if (self->unk2 != 0) {
         if (self->unk15 != 0) {
-            self->x_pos.i.hi = self->x_pos.u.hi + 3;
+            self->x_pos.i.hi = self->x_pos.i.hi + 3;
         } else {
-            self->x_pos.i.hi = self->x_pos.u.hi - 3;
+            self->x_pos.i.hi = self->x_pos.i.hi - 3;
         }
     }
     self->state = 1;
@@ -33,17 +33,14 @@ void attached_effect_init(struct MiscObj* self)
 
 void attached_effect_animate(struct MiscObj* self)
 {
-    s16 x_pos;
     animate_object(ANIMATED_OBJECT(self));
     self->x_pos.val = ((struct FixedPointPosition*)self->ext.misc_7.position)->x;
     self->y_pos.val = ((struct FixedPointPosition*)self->ext.misc_7.position)->y;
     if (self->unk2 != 0) {
         if (self->unk15 != 0) {
-            x_pos = (u16)self->x_pos.i.hi + 3;
-            self->x_pos.i.hi = x_pos;
+            self->x_pos.i.hi += 3;
         } else {
-            x_pos = (u16)self->x_pos.i.hi - 3;
-            self->x_pos.i.hi = x_pos;
+            self->x_pos.i.hi -= 3;
         }
     }
     if (self->animation_step.fields.event != 0) {

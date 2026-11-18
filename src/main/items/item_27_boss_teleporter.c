@@ -437,7 +437,7 @@ void boss_teleporter_warp_start(struct ItemObj* arg0)
         misc->y_pos.val = arg0->y_pos.val;
         misc->ext.misc_24.main = MAIN_OBJECT(arg0);
         arg0->tail_ext.unk1.unk84.timer = 0x78;
-        arg0->unk6 = (u8)arg0->unk6 + 1;
+        arg0->unk6++;
     }
 }
 
@@ -447,7 +447,7 @@ void boss_teleporter_warp_charge(struct ItemObj* arg0)
         set_animation(arg0, 4);
         set_animation(arg0->unk7C.object, 8);
         arg0->tail_ext.unk1.unk84.timer = 0x78;
-        arg0->unk6 = (u8)arg0->unk6 + 1;
+        arg0->unk6++;
     }
 }
 
@@ -457,7 +457,7 @@ void boss_teleporter_warp_leave(struct ItemObj* arg0)
         player_start_script_action(0x16, g_Player.unk15);
         func_8001540C(5, SATURN_SOUND(1, 0x2A), NULL);
         arg0->tail_ext.unk1.unk84.timer = 0x28;
-        arg0->unk6 = (u8)arg0->unk6 + 1;
+        arg0->unk6++;
     }
 }
 
@@ -533,19 +533,19 @@ s8 func_800C7970(struct ItemObj* item, struct PlayerObj* player)
     character = player;
     teleporter_box = teleporter->unk68;
 
-    teleporter_left = teleporter->x_pos.u.hi - (teleporter_box->unk2 - 0x10);
-    player_left = character->x_pos.u.hi - player_box->unk2;
+    teleporter_left = teleporter->x_pos.i.hi - (teleporter_box->unk2 - 0x10);
+    player_left = character->x_pos.i.hi - player_box->unk2;
     if (teleporter_left > player_left) {
         return 0;
     }
-    teleporter_right = teleporter->x_pos.u.hi + (teleporter_box->unk2 - 0x10);
-    player_right = character->x_pos.u.hi + player_box->unk2;
+    teleporter_right = teleporter->x_pos.i.hi + (teleporter_box->unk2 - 0x10);
+    player_right = character->x_pos.i.hi + player_box->unk2;
     if (teleporter_right < player_right) {
         return 0;
     }
 
-    teleporter_y = teleporter->y_pos.u.hi + teleporter_box->unk1;
-    player_y = character->y_pos.u.hi + player_box->unk1;
+    teleporter_y = teleporter->y_pos.i.hi + teleporter_box->unk1;
+    player_y = character->y_pos.i.hi + player_box->unk1;
     distance = teleporter_y - player_y >= 0
         ? teleporter_y - player_y
         : player_y - teleporter_y;

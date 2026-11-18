@@ -77,11 +77,7 @@ void proximity_door_main(struct EffectObj* self)
 void proximity_door_step(struct EffectObj* self)
 {
     s32* entry;
-    s8 timer;
-
-    timer = self->ext.effect_32.palette.fields.timer - 1;
-    self->ext.effect_32.palette.fields.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.effect_32.palette.fields.timer == 0) {
         self->ext.effect_32.palette_source.words += self->ext.effect_32.palette.fields.step;
         self->ext.effect_32.palette.packed = *self->ext.effect_32.palette_source.words;
         apply_tile_effect(self->ext.effect_32.palette.fields.id,

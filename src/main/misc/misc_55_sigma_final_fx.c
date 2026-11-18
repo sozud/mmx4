@@ -136,8 +136,8 @@ void sigma_final_fx_gust(struct MiscObj* self)
 
 void sigma_final_fx_follow(struct MiscObj* self)
 {
-    self->x_pos.u.hi = self->ext.misc_55.owner->x_pos.u.hi;
-    self->y_pos.u.hi = self->ext.misc_55.owner->y_pos.u.hi;
+    self->x_pos.i.hi = self->ext.misc_55.owner->x_pos.i.hi;
+    self->y_pos.i.hi = self->ext.misc_55.owner->y_pos.i.hi;
     animate_object(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
     if (self->ext.misc_55.owner->state == 2) {

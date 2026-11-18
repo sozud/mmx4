@@ -103,17 +103,17 @@ void func_800A3A4C(struct ShotObj* self)
     if (distance >= 0x180) {
         if (self->unk2 != 0) {
             if (self->unk15 == 0) {
-                self->x_pos.i.hi = owner->x_pos.u.hi - distance - 0x10;
+                self->x_pos.i.hi = owner->x_pos.i.hi - distance - 0x10;
             } else {
-                self->x_pos.i.hi = distance + owner->x_pos.u.hi + 0x10;
+                self->x_pos.i.hi = distance + owner->x_pos.i.hi + 0x10;
             }
         } else {
             if (self->unk15 == 0) {
                 adjusted_distance = distance - 0xF0;
-                self->x_pos.i.hi = owner->x_pos.u.hi - adjusted_distance;
+                self->x_pos.i.hi = owner->x_pos.i.hi - adjusted_distance;
             } else {
                 adjusted_distance = distance - 0xF0;
-                self->x_pos.i.hi = owner->x_pos.u.hi + adjusted_distance;
+                self->x_pos.i.hi = owner->x_pos.i.hi + adjusted_distance;
             }
         }
     }

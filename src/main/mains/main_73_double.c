@@ -139,9 +139,9 @@ void func_8008BB6C(struct MainObj* self)
         effect = ext->unk80.effect;
         if (effect->active == 0) {
             self->unk6 = 2;
+            self->hp = 0;
             self->contact_damage = 6;
             self->invincibility_timer = -0x80;
-            self->hp = 0;
             self->unk62 = 0;
             self->unk63 = 2;
             self->unk7C = 0x20;
@@ -164,8 +164,8 @@ void func_8008BB6C(struct MainObj* self)
 void double_intro_dialogue(struct MainObj* self)
 {
     self->on_screen = 1;
-    self->unk7C = 2;
     self->unk6++;
+    self->unk7C = 2;
     func_8002217C(
         0x27, 0xFF, engine_obj.character_state.bytes[9]);
     engine_obj.character_state.bytes[9] = 1;
@@ -243,53 +243,53 @@ void double_face_player(struct MainObj* self)
 
 void double_spawn_shot(struct MainObj* self, s32 arg1, s32 arg2)
 {
-    struct ShotObj* temp_v0;
+    struct ShotObj* shot;
 
-    temp_v0 = find_free_shot_obj();
-    if (temp_v0 != NULL) {
-        temp_v0->active = 0x41;
-        temp_v0->id = arg1 + 0x30;
-        temp_v0->unk2 = arg2;
-        temp_v0->x_pos.val = self->x_pos.val;
-        temp_v0->y_pos.val = self->y_pos.val;
-        temp_v0->animation_table = (u32**)self->animation_table;
-        temp_v0->unk40 = self->unk40;
-        temp_v0->unk3C = (u8*)self->sprite_frames;
-        temp_v0->unk42 = self->unk42 & 0x7FFF;
-        temp_v0->unk16 = self->unk16;
-        temp_v0->unk7C = WEAPON_OBJECT(self);
-        temp_v0->unk15 = self->unk15;
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = arg1 + 0x30;
+        shot->unk2 = arg2;
+        shot->x_pos.val = self->x_pos.val;
+        shot->y_pos.val = self->y_pos.val;
+        shot->animation_table = (u32**)self->animation_table;
+        shot->unk40 = self->unk40;
+        shot->unk3C = (u8*)self->sprite_frames;
+        shot->unk42 = self->unk42 & 0x7FFF;
+        shot->unk16 = self->unk16;
+        shot->unk7C = WEAPON_OBJECT(self);
+        shot->unk15 = self->unk15;
     }
 }
 
 void double_spawn_afterimage(struct MainObj* self, s8 arg1)
 {
     struct MainObj* source;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 
     source = self;
-    temp_v0 = find_free_misc_obj();
-    if (temp_v0 != 0) {
-        temp_v0->active = 0x41;
-        temp_v0->id = 0x31;
-        temp_v0->unk2 = arg1;
-        temp_v0->x_pos.val = source->x_pos.val;
-        temp_v0->y_pos.val = source->y_pos.val;
-        temp_v0->animation_table = (u32**)source->animation_table;
-        temp_v0->unk40 = source->unk40;
-        temp_v0->unk3C = (u8*)source->sprite_frames;
-        temp_v0->unk42 = source->unk42 & 0x7FFF;
-        temp_v0->unk16 = source->unk16;
-        temp_v0->ext.pointer.unk50 = source;
-        temp_v0->unk15 = 0;
+    misc = find_free_misc_obj();
+    if (misc != 0) {
+        misc->active = 0x41;
+        misc->id = 0x31;
+        misc->unk2 = arg1;
+        misc->x_pos.val = source->x_pos.val;
+        misc->y_pos.val = source->y_pos.val;
+        misc->animation_table = (u32**)source->animation_table;
+        misc->unk40 = source->unk40;
+        misc->unk3C = (u8*)source->sprite_frames;
+        misc->unk42 = source->unk42 & 0x7FFF;
+        misc->unk16 = source->unk16;
+        misc->ext.pointer.unk50 = source;
+        misc->unk15 = 0;
     }
 }
 
 void double_wait_start(struct MainObj* self)
 {
     self->unk7 = 0;
-    self->unk7C = 0x3C;
     self->unk6++;
+    self->unk7C = 0x3C;
     double_face_player(self);
     set_animation(self, 1);
 }
@@ -341,8 +341,8 @@ void double_spawn_shot(struct MainObj*, s32, s32);
 void double_energy_ball_throw(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk7C = 0x32;
         self->unk6++;
+        self->unk7C = 0x32;
         double_face_player(self);
         return;
     }
@@ -358,16 +358,14 @@ void double_energy_ball_throw(struct MainObj* self)
 
 void double_energy_ball_recover(struct MainObj* self)
 {
-    s16 timer = self->unk7C;
-
-    if (timer == 0) {
+    if (self->unk7C == 0) {
         self->unk5 = 2;
         self->unk6 = 1;
         self->unk7C = 0;
         double_face_player(self);
         return;
     }
-    self->unk7C = timer - 1;
+    self->unk7C--;
     animate_object(ANIMATED_OBJECT(self));
 }
 
@@ -531,9 +529,7 @@ void double_dive_hit_wall(struct MainObj* self)
 
 void double_dive_stun(struct MainObj* self)
 {
-    s16 timer = self->unk7C;
-
-    if (timer == 0) {
+    if (self->unk7C == 0) {
         self->y_speed = 0;
         self->gravity = FIXED(0.2578125);
         self->x_accel = 0;
@@ -541,7 +537,7 @@ void double_dive_stun(struct MainObj* self)
         self->unk6++;
         return;
     }
-    self->unk7C = timer - 1;
+    self->unk7C--;
     animate_object(ANIMATED_OBJECT(self));
 }
 
@@ -568,9 +564,9 @@ void double_dive(struct MainObj* self)
 void double_aerial_shot_jump(struct MainObj* self)
 {
     self->unk6++;
-    self->y_speed = FIXED(5);
     self->x_accel = 0;
     self->x_speed = 0;
+    self->y_speed = FIXED(5);
     self->gravity = FIXED(0.2578125);
     self->ext.main_73.shot_count = 0;
     set_animation(self, 2);
@@ -592,10 +588,7 @@ void double_aerial_shot_fire(struct MainObj* self)
 
 void double_aerial_shot_hang(struct MainObj* self)
 {
-    s16 timer;
-
-    timer = self->unk7C;
-    if (timer == 0) {
+    if (self->unk7C == 0) {
         set_animation(self, 0xA);
         if (self->ext.main_73.shot_count < 2) {
             self->unk6 += 1;
@@ -605,8 +598,8 @@ void double_aerial_shot_hang(struct MainObj* self)
             self->y_speed = 0;
             self->gravity = FIXED(0.2578125);
             set_animation(self, 2);
-            self->ext.main_73.effect.position.x = self->x_pos.u.hi;
-            self->ext.main_73.effect.position.y = self->y_pos.u.hi + 0x28;
+            self->ext.main_73.effect.position.x = self->x_pos.i.hi;
+            self->ext.main_73.effect.position.y = self->y_pos.i.hi + 0x28;
             return;
         }
         self->unk6 += 3;
@@ -615,20 +608,17 @@ void double_aerial_shot_hang(struct MainObj* self)
         self->gravity = FIXED(0.2578125);
         return;
     }
-    self->unk7C = timer - 1;
+    self->unk7C--;
     animate_object(ANIMATED_OBJECT(self));
 }
 
-void double_aerial_shot_fire_again(struct MainObj* arg)
+void double_aerial_shot_fire_again(struct MainObj* self)
 {
-    struct MainObj* self;
     s16 targetY;
 
-    self = arg;
-
     if (--self->unk7C == 0) {
+        self->unk7C = 0;
         self->unk6 = 2;
-        *(volatile u16*)&self->unk7C = 0;
         self->unk7C = 0x32;
         set_animation(self, 9);
         double_spawn_shot(self, 1, 1);
@@ -653,8 +643,8 @@ void double_aerial_shot_fire_again(struct MainObj* arg)
 void func_8008CBF8(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
+        self->unk7C = 0;
         self->unk6 = 2;
-        *(volatile s16*)&self->unk7C = 0;
         self->unk7C = 0x5A;
         set_animation(self, 9);
         double_spawn_shot(self, 1, 1);
@@ -705,7 +695,8 @@ void func_8008CD80(struct MainObj* self)
     collision = func_8002DD04(self);
 
     if (self->ext.main_73.blink_delay != 0) {
-        if (--self->ext.main_73.blink_delay == 0) {
+        self->ext.main_73.blink_delay--;
+        if (self->ext.main_73.blink_delay == 0) {
             self->collision_data = D_80108204;
             self->unk42 &= 0x7FFF;
         } else if (self->ext.main_73.blink_delay & 1) {
@@ -721,7 +712,7 @@ void func_8008CD80(struct MainObj* self)
         g_Player.spike_immune = 1;
     } else if (collision > 0 && collision != 0x7F) {
         self->collision_data = D_801060F0;
-        if ((u32)(collision - 0x13) < 2 || (u32)(collision - 0x15) < 2 || collision == 0x17) {
+        if (collision == 0x13 || collision == 0x14 || collision == 0x15 || collision == 0x16 || collision == 0x17) {
             self->ext.main_73.blink_delay = 0x40;
         } else {
             self->ext.main_73.blink_delay = 0x40;
@@ -744,21 +735,15 @@ void func_8008CD80(struct MainObj* self)
 
 void double_death_flicker(struct MainObj* self)
 {
-    s16 timer, next_timer;
-
     if (!FLICKER_ENABLED) {
         return;
     }
-    timer = self->unk7C;
-    next_timer = timer;
-    if (timer == 0) {
-        next_timer = 0x10;
-        self->unk42 = self->unk42 | 0x8000;
-        self->unk7C = next_timer;
+    if (self->unk7C == 0) {
+        self->unk42 |= 0x8000;
+        self->unk7C = 0x10;
     } else {
-        next_timer--;
-        self->unk7C = next_timer;
-        self->unk42 = self->unk42 & 0x7FFF;
+        self->unk7C--;
+        self->unk42 &= 0x7FFF;
     }
 }
 
@@ -834,19 +819,15 @@ void double_death_blink(struct MainObj* self)
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x1A;
-            effect->x_pos.u.hi = self->x_pos.u.hi;
-            effect->y_pos.u.hi = self->y_pos.u.hi;
+            effect->x_pos.i.hi = self->x_pos.i.hi;
+            effect->y_pos.i.hi = self->y_pos.i.hi;
             self->ext.main_73.unk80.effect = effect;
         }
     }
     is_on_screen(BASE_OBJECT(self));
     if (self->unk7E-- == 0) {
-        u8 unk8B;
-        unk8B = self->ext.main_73.blink_delay;
         self->unk42 ^= 0x8000;
-        unk8B -= 5;
-        self->ext.main_73.blink_delay = unk8B;
-        if (unk8B > 0x19) {
+        if ((self->ext.main_73.blink_delay -= 5) > 0x19) {
             self->ext.main_73.blink_delay = 0;
         }
         self->unk7E = self->ext.main_73.blink_delay > 5 ? self->ext.main_73.blink_delay : 5;
@@ -861,8 +842,8 @@ void double_death_wait_explosion(struct MainObj* self)
     if (*script != 0) {
         if (script[7] == 0) {
             if (self->unk7E-- == 0) {
-                self->unk7E = 5;
                 self->unk42 ^= 0x8000;
+                self->unk7E = 5;
             }
             is_on_screen(BASE_OBJECT(self));
         }
@@ -874,8 +855,7 @@ void double_death_wait_explosion(struct MainObj* self)
 
 void double_death_finish(struct MainObj* self)
 {
-    self->unk7C -= 1;
-    if (self->unk7C == 0) {
+    if (--self->unk7C == 0) {
         engine_obj.unkF = 1;
         ZeroObjectState(OBJECT_HEADER(self));
     }

@@ -1,6 +1,10 @@
 #ifndef MMX4_COMMON_H
 #define MMX4_COMMON_H
 
+#if defined(MMX4_SATURN) && !defined(MMX4_BIG_ENDIAN)
+#define MMX4_BIG_ENDIAN
+#endif
+
 #ifdef VERSION_JP
 #define ASM_ROOT "asm/jp/"
 #elif defined(VERSION_EU)
@@ -65,7 +69,7 @@ __asm__(".include \"macro.inc\"\n");
 #define POS_WITHIN_3(a, b) \
     (((a) - (b) >= 0) ? ((a) - (b) <= 0x2FFFF) : ((b) - (a) <= 0x2FFFF))
 
-#define ABS(A, B) (((A) - (B) < 0) ? (B) - (A) : (A) - (B))
+#define ABS(A, B) (((A) - (B) < 0) ? -((A) - (B)) : (A) - (B))
 
 #define ON_SCREEN_X(X, W) ((u16)((X) + (W)) < (u16)((W) + ((W) + SCREEN_WIDTH)))
 #define ON_SCREEN_Y(Y, H) ((u16)((Y) + (H)) < (u16)((H) + ((H) + SCREEN_HEIGHT)))
@@ -166,9 +170,7 @@ typedef s32 arg_s16;
 #include <psyz.h>
 #include <libgte.h>
 #include <libgpu.h>
-#define SsVabTransCompleted PsyzSsVabTransCompleted
 #include <libsnd.h>
-#undef SsVabTransCompleted
 #include <libetc.h>
 #include <kernel.h>
 #include <libapi.h>
@@ -315,7 +317,7 @@ typedef char CdCompletionSlot_must_be_12_bytes[sizeof(struct CdCompletionSlot) =
 typedef union {
     s32 val;
     struct {
-#ifdef MMX4_SATURN
+#ifdef MMX4_BIG_ENDIAN
         s16 hi;
         s16 lo;
 #else
@@ -324,7 +326,7 @@ typedef union {
 #endif
     } i;
     struct {
-#ifdef MMX4_SATURN
+#ifdef MMX4_BIG_ENDIAN
         u16 hi;
         u16 lo;
 #else
@@ -335,7 +337,7 @@ typedef union {
     u8 bytes[4];
 } f32;
 
-#ifdef MMX4_SATURN
+#ifdef MMX4_BIG_ENDIAN
 typedef union {
     s32 val;
     struct {
@@ -749,7 +751,7 @@ void func_800298B4(struct EngineObj* arg0);
 void func_80029928(struct EngineObj* arg0);
 void func_80029978(struct EngineObj* arg0);
 
-s32 update_boss_music_delay(void);
+u32 update_boss_music_delay(void);
 
 // D_8010B34C
 extern void (*D_8010B34C[])(struct EffectObj*);
@@ -765,7 +767,7 @@ s32 func_800E5FF4(s32, s32, u8*);
 void quad_is_on_screen(struct QuadObj*);
 void drop_item(struct BaseObj*, s8);
 void spawn_debris(arg_u8, void*, void*);
-s32 update_boss_music_delay(void);
+u32 update_boss_music_delay(void);
 void func_800E5D78(s32);
 s32 func_800E5D90(s32, s32, s32);
 #ifdef MMX4_PC

@@ -110,17 +110,19 @@ void gunner_shot_fly(struct ShotObj* self)
     }
 
     func_8002D9BC(self);
-    if (func_8002BB80(self, &g_Player) == 0) {
+    if (func_8002BB80(self, &g_Player) != 0) {
+        self->state = 2;
+    } else {
         if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
             spawn_explosion(self);
             self->state = 2;
         }
         if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
             update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
-            return;
+        } else {
+            self->state = 2;
         }
     }
-    self->state = 2;
 }
 
 void gunner_shot_despawn(struct ShotObj* self)
@@ -200,7 +202,9 @@ void func_8009A10C(struct ShotObj* self)
         self->x_vel.val *= 8;
         self->y_vel.val *= 8;
     }
-    if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) == 0) {
+    if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) != 0) {
+        self->state = 2;
+    } else {
         if ((self->unk70 & 8) != 0) {
             self->unk68 = NULL;
             self->state = 3;
@@ -209,10 +213,10 @@ void func_8009A10C(struct ShotObj* self)
         move_object(MOVING_OBJECT(self));
         if (func_8002B1E8(BASE_OBJECT(self), 0x19, 0x19) == 0) {
             update_on_screen(BASE_OBJECT(self), 0x19, 0x19);
-            return;
+        } else {
+            self->state = 2;
         }
     }
-    self->state = 2;
 }
 
 void eregion_fireball_explode(struct ShotObj* self)
@@ -222,7 +226,7 @@ void eregion_fireball_explode(struct ShotObj* self)
         set_animation(self, 0x18);
         spawn_rubble(8, eregion_fireball_debris[0], self, -1);
         self->unk60 = 3;
-        self->unk5 = (u8)self->unk5 + 1;
+        self->unk5++;
     } else {
         func_8002D9BC(self);
         animate_object((struct AnimatedObj*)self);

@@ -32,15 +32,16 @@ extern union AnimationStep* D_8011C104[10];
 
 void twin_slasher_update(struct WeaponObj* arg0)
 {
-    s32 should_reset = 0;
+    struct PlayerObj* player = &g_Player;
+    u32 should_reset = 0;
 
-    if (g_Player.input_locked != 0) {
+    if (player->input_locked != 0) {
         should_reset = 1;
     }
-    if (g_Player.capsule_state != 0) {
+    if (player->capsule_state != 0) {
         should_reset = 1;
     }
-    if (g_Player.weapon != 8) {
+    if (player->weapon != 8) {
         should_reset = 1;
     }
     if (should_reset != 0) {
@@ -127,15 +128,16 @@ void twin_slasher_hide(struct WeaponObj* arg0)
 
 void twin_slasher_charged_update(struct WeaponObj* arg0)
 {
-    s32 should_reset = 0;
+    struct PlayerObj* player = &g_Player;
+    u32 should_reset = 0;
 
-    if (g_Player.input_locked != 0) {
+    if (player->input_locked != 0) {
         should_reset = 1;
     }
-    if (g_Player.capsule_state != 0) {
+    if (player->capsule_state != 0) {
         should_reset = 1;
     }
-    if (g_Player.weapon != 8) {
+    if (player->weapon != 8) {
         should_reset = 1;
     }
     if (should_reset != 0) {

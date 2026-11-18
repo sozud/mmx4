@@ -112,8 +112,8 @@ void dragon_fx_trail_init(struct VisualObj* arg0)
     struct PlayerObj* temp_v1;
 
     temp_v1 = arg0->unk50;
-    arg0->unk38 = 0;
     arg0->state++;
+    arg0->unk38 = 0;
     arg0->unk3C = temp_v1->unk3C;
     arg0->animation_table = temp_v1->animation_table;
     arg0->unk40 = temp_v1->unk40;

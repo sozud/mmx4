@@ -987,11 +987,11 @@ void func_80024920(struct QuadObj* quad)
     SP_SPRITE_COUNT++;
 
     if (quad->bg_offset < 0) {
-        x = quad->x_pos.u.hi;
-        y = quad->y_pos.u.hi;
+        x = quad->x_pos.i.hi;
+        y = quad->y_pos.i.hi;
     } else {
-        x = quad->x_pos.u.hi - background_objects[quad->bg_offset].x_pos.u.hi;
-        y = quad->y_pos.u.hi - background_objects[quad->bg_offset].y_pos.u.hi;
+        x = quad->x_pos.i.hi - background_objects[quad->bg_offset].x_pos.i.hi;
+        y = quad->y_pos.i.hi - background_objects[quad->bg_offset].y_pos.i.hi;
     }
 
     draw_mode = SP_DRAW_MODE_CURSOR;
@@ -1000,14 +1000,14 @@ void func_80024920(struct QuadObj* quad)
     setPolyF4(primitive);
     setSemiTrans(primitive, quad->active & 0x10);
 
-    primitive->x0 = x + quad->vertices[0].x.u.hi;
-    primitive->y0 = y + quad->vertices[0].y.u.hi;
-    primitive->x1 = x + quad->vertices[1].x.u.hi;
-    primitive->y1 = y + quad->vertices[1].y.u.hi;
-    primitive->x2 = x + quad->vertices[3].x.u.hi;
-    primitive->y2 = y + quad->vertices[3].y.u.hi;
-    primitive->x3 = x + quad->vertices[2].x.u.hi;
-    primitive->y3 = y + quad->vertices[2].y.u.hi;
+    primitive->x0 = x + quad->vertices[0].x.i.hi;
+    primitive->y0 = y + quad->vertices[0].y.i.hi;
+    primitive->x1 = x + quad->vertices[1].x.i.hi;
+    primitive->y1 = y + quad->vertices[1].y.i.hi;
+    primitive->x2 = x + quad->vertices[3].x.i.hi;
+    primitive->y2 = y + quad->vertices[3].y.i.hi;
+    primitive->x3 = x + quad->vertices[2].x.i.hi;
+    primitive->y3 = y + quad->vertices[2].y.i.hi;
 
     red = (u8)quad->unk34 & 0x1F;
     primitive->r0 = (red * 8) + (red >> 2);
@@ -1047,11 +1047,11 @@ void func_80024B9C(struct QuadObj* quad)
     SP_SPRITE_COUNT++;
 
     if (quad->bg_offset < 0) {
-        x = quad->x_pos.u.hi;
-        y = quad->y_pos.u.hi;
+        x = quad->x_pos.i.hi;
+        y = quad->y_pos.i.hi;
     } else {
-        x = quad->x_pos.u.hi - background_objects[quad->bg_offset].x_pos.u.hi;
-        y = quad->y_pos.u.hi - background_objects[quad->bg_offset].y_pos.u.hi;
+        x = quad->x_pos.i.hi - background_objects[quad->bg_offset].x_pos.i.hi;
+        y = quad->y_pos.i.hi - background_objects[quad->bg_offset].y_pos.i.hi;
     }
 
     draw_mode = SP_DRAW_MODE_CURSOR;
@@ -1060,14 +1060,14 @@ void func_80024B9C(struct QuadObj* quad)
     setPolyG4(primitive);
     setSemiTrans(primitive, quad->active & 0x10);
 
-    primitive->x0 = x + quad->vertices[0].x.u.hi;
-    primitive->y0 = y + quad->vertices[0].y.u.hi;
-    primitive->x1 = x + quad->vertices[1].x.u.hi;
-    primitive->y1 = y + quad->vertices[1].y.u.hi;
-    primitive->x2 = x + quad->vertices[3].x.u.hi;
-    primitive->y2 = y + quad->vertices[3].y.u.hi;
-    primitive->x3 = x + quad->vertices[2].x.u.hi;
-    primitive->y3 = y + quad->vertices[2].y.u.hi;
+    primitive->x0 = x + quad->vertices[0].x.i.hi;
+    primitive->y0 = y + quad->vertices[0].y.i.hi;
+    primitive->x1 = x + quad->vertices[1].x.i.hi;
+    primitive->y1 = y + quad->vertices[1].y.i.hi;
+    primitive->x2 = x + quad->vertices[3].x.i.hi;
+    primitive->y2 = y + quad->vertices[3].y.i.hi;
+    primitive->x3 = x + quad->vertices[2].x.i.hi;
+    primitive->y3 = y + quad->vertices[2].y.i.hi;
 
     color = D_800F2B5C[quad->unk34];
     primitive->r0 = *color++;
@@ -1278,7 +1278,7 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 
     if ((g_FilterAmountR | g_FilterAmountG | g_FilterAmountB) != 0) {
         if ((engine_obj.stage != 0x2 || engine_obj.substage != 0) && g_FilterAmountR == ((u16)g_FilterAmountG >> 5) && g_FilterAmountR == ((u16)g_FilterAmountB >> 10)) {
-            if (*(u8*)&g_FilterModeR != 0) {
+            if ((u8)g_FilterModeR != 0) {
                 var_r = g_FilterAmountR <= (color & 0x1F) ? (color & 0x1F) - g_FilterAmountR : 0;
             } else {
                 temp_v1 = (color & 0x1F) + g_FilterAmountR;
@@ -1288,7 +1288,7 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
                 }
             }
 
-            if (*(u8*)&g_FilterModeG != 0) {
+            if ((u8)g_FilterModeG != 0) {
                 var_g = (u16)g_FilterAmountG <= (color & 0x3E0) ? (color & 0x3E0) - (u16)g_FilterAmountG : 0;
             } else {
                 temp_v1 = (color & 0x3E0) + (u16)g_FilterAmountG;
@@ -1298,7 +1298,7 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
                 }
             }
 
-            if (*(u8*)&g_FilterModeB != 0) {
+            if ((u8)g_FilterModeB != 0) {
                 var_b = (u16)g_FilterAmountB <= (color & 0x7C00) ? (color & 0x7C00) - (u16)g_FilterAmountB : 0;
             } else {
                 temp_v1 = (color & 0x7C00) + (u16)g_FilterAmountB;
@@ -1324,6 +1324,8 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 }
 #endif
 #ifndef MMX4_SATURN
+void func_8002588C();
+
 void func_800257BC(struct PlayerObj* arg0)
 {
     struct PlayerObj* target = arg0;
@@ -1369,11 +1371,11 @@ void func_8002588C(arg0, part, clut)
     s32 frame_count;
 
     if (arg0->bg_offset < 0) {
-        origin_x = arg0->x_pos.u.hi;
-        origin_y = arg0->y_pos.u.hi;
+        origin_x = arg0->x_pos.i.hi;
+        origin_y = arg0->y_pos.i.hi;
     } else {
-        origin_x = arg0->x_pos.u.hi - background_objects[arg0->bg_offset].x_pos.u.hi;
-        origin_y = arg0->y_pos.u.hi - background_objects[arg0->bg_offset].y_pos.u.hi;
+        origin_x = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
+        origin_y = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
 
     primitive = SP_PRIM_CURSOR;

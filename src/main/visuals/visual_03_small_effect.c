@@ -114,14 +114,14 @@ void func_800AF878(void* arg0, s8 arg1, s32 arg2, s32 arg3)
 
     arg2 &= get_random();
     if (get_random() & 1)
-        x = obj->x_pos.u.hi + (arg2 & 0xFF);
+        x = obj->x_pos.i.hi + (arg2 & 0xFF);
     else
-        x = obj->x_pos.u.hi - (arg2 & 0xFF);
+        x = obj->x_pos.i.hi - (arg2 & 0xFF);
     arg3 &= get_random();
     if (get_random() & 1)
-        y = obj->y_pos.u.hi + (arg3 & 0xFF);
+        y = obj->y_pos.i.hi + (arg3 & 0xFF);
     else
-        y = obj->y_pos.u.hi - (arg3 & 0xFF);
+        y = obj->y_pos.i.hi - (arg3 & 0xFF);
     toggle = D_8013B8E0 + 1;
     D_8013B8E0 = toggle;
     spawn_explosion_at(arg1, x, y, (toggle & 1) ^ 1);
@@ -138,14 +138,14 @@ void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range
 
     x_range &= get_random();
     if (get_random() & 1)
-        x = arg0->x_pos.u.hi + (x_range & 0xFF);
+        x = arg0->x_pos.i.hi + (x_range & 0xFF);
     else
-        x = arg0->x_pos.u.hi - (x_range & 0xFF);
+        x = arg0->x_pos.i.hi - (x_range & 0xFF);
     y_range &= get_random();
     if (get_random() & 1)
-        y = arg0->y_pos.u.hi + (y_range & 0xFF);
+        y = arg0->y_pos.i.hi + (y_range & 0xFF);
     else
-        y = arg0->y_pos.u.hi - (y_range & 0xFF);
+        y = arg0->y_pos.i.hi - (y_range & 0xFF);
     roll = get_random_nonzero();
     divisor &= 0xFF;
     if (divisor == 0 || roll % divisor == 0) {
@@ -175,14 +175,14 @@ void func_800AF95C(arg0, type, x_range, y_range, divisor)
 
     x_range &= get_random();
     if (get_random() & 1)
-        x = obj->x_pos.u.hi + (x_range & 0xFF);
+        x = obj->x_pos.i.hi + (x_range & 0xFF);
     else
-        x = obj->x_pos.u.hi - (x_range & 0xFF);
+        x = obj->x_pos.i.hi - (x_range & 0xFF);
     y_range &= get_random();
     if (get_random() & 1)
-        y = obj->y_pos.u.hi + (y_range & 0xFF);
+        y = obj->y_pos.i.hi + (y_range & 0xFF);
     else
-        y = obj->y_pos.u.hi - (y_range & 0xFF);
+        y = obj->y_pos.i.hi - (y_range & 0xFF);
     roll = get_random_nonzero();
     if (divisor == 0 || roll % divisor == 0) {
         toggle = D_8013B8E4 + 1;
@@ -197,22 +197,22 @@ void func_800AF95C(arg0, type, x_range, y_range, divisor)
 
 struct VisualObj* spawn_explosion_at(s8 arg0, s16 x, s16 y, u8 arg3)
 {
-    struct VisualObj* temp_v0 = find_free_visual_obj();
-    if (temp_v0 != NULL) {
-        temp_v0->active = 0x21;
-        temp_v0->id = 4;
-        temp_v0->unk2 = arg0;
-        temp_v0->state = 0;
-        temp_v0->unk5 = 0;
-        temp_v0->unk6 = 0;
-        temp_v0->unk5C.value = arg3;
-        temp_v0->x_pos.i.hi = x;
-        temp_v0->x_pos.i.lo = 0;
-        temp_v0->y_pos.i.hi = y;
-        temp_v0->y_pos.i.lo = 0;
-        temp_v0->unk15 = 0;
-        temp_v0->bg_offset = 0;
-        temp_v0->unk16 = VISUAL_SATURN_LAYER(1);
+    struct VisualObj* visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = 0x21;
+        visual->id = 4;
+        visual->unk2 = arg0;
+        visual->state = 0;
+        visual->unk5 = 0;
+        visual->unk6 = 0;
+        visual->unk5C.value = arg3;
+        visual->x_pos.i.hi = x;
+        visual->x_pos.i.lo = 0;
+        visual->y_pos.i.hi = y;
+        visual->y_pos.i.lo = 0;
+        visual->unk15 = 0;
+        visual->bg_offset = 0;
+        visual->unk16 = VISUAL_SATURN_LAYER(1);
     }
-    return temp_v0;
+    return visual;
 }

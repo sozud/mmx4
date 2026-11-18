@@ -63,7 +63,7 @@ void func_800CDE44(struct MiscObj* arg0)
         arg0->unk42 = OPTION_TOGGLE_PALETTE;
     arg0->x_pos.i.hi = 0xA0;
     arg0->unk16 = 0x10;
-    if ((u8)(arg0->unk2 - 0x56) < 2) {
+    if (arg0->unk2 == 0x56 || arg0->unk2 == 0x57) {
         arg0->state += 2;
         arg0->ext.misc_31.animation = OPTION_TOGGLE_VALUE;
         if (OPTION_TOGGLE_VALUE != 0)

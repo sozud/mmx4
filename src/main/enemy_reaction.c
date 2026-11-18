@@ -97,8 +97,7 @@ void spike_crawler_hit_knockback(struct MainObj* self)
         self->unk42 |= 0x8000;
     }
 
-    self->invincibility_timer--;
-    if (self->invincibility_timer == 0) {
+    if (--self->invincibility_timer == 0) {
         self->unk5 = 1;
         self->unk6 = 0;
         self->x_speed = 0;
@@ -160,7 +159,7 @@ void play_boss_voice(s32 arg0)
 }
 #endif
 
-s32 update_boss_music_delay(void)
+u32 update_boss_music_delay(void)
 {
 #ifdef VERSION_JP
     if (D_80173C84 == 0) {
@@ -169,8 +168,7 @@ s32 update_boss_music_delay(void)
     }
 #else
     if ((D_80173C84 == 0) && (engine_obj.unk36.timer != 0)) {
-        engine_obj.unk36.timer--;
-        if (engine_obj.unk36.timer == 0) {
+        if (--engine_obj.unk36.timer == 0) {
             engine_obj.unk36.timer = 0;
             func_8001653C();
         }

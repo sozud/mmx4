@@ -116,27 +116,27 @@ void spawn_debris(arg_u8 arg0, void* arg1, void* arg2)
     s32 var_s1;
     u8* var_s3;
     struct MainObj* var_s2;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
 
     var_s3 = arg1;
     var_s1 = arg0;
     var_s2 = arg2;
     if (var_s1 & 0xFF) {
         do {
-            temp_v0 = find_free_misc_obj();
-            if (temp_v0 != NULL) {
-                temp_v0->active = 0x41;
-                temp_v0->id = 3;
-                temp_v0->unk2 = 0;
-                temp_v0->unk15 = get_random() & PLAYER_FACING_RIGHT;
-                temp_v0->state = 0;
-                temp_v0->unk5 = 0;
-                temp_v0->unk6 = 0;
-                temp_v0->x_pos.val = var_s2->x_pos.val + ((get_random() & 3) << 16);
-                temp_v0->y_pos.val = var_s2->y_pos.val + ((get_random() & 3) << 16);
-                temp_v0->ext.misc_2.unk58 = *var_s3;
+            misc = find_free_misc_obj();
+            if (misc != NULL) {
+                misc->active = 0x41;
+                misc->id = 3;
+                misc->unk2 = 0;
+                misc->unk15 = get_random() & PLAYER_FACING_RIGHT;
+                misc->state = 0;
+                misc->unk5 = 0;
+                misc->unk6 = 0;
+                misc->x_pos.val = var_s2->x_pos.val + ((get_random() & 3) << 16);
+                misc->y_pos.val = var_s2->y_pos.val + ((get_random() & 3) << 16);
+                misc->ext.misc_2.unk58 = *var_s3;
                 var_s3 += 1;
-                temp_v0->ext.misc_2.owner = var_s2;
+                misc->ext.misc_2.owner = var_s2;
             }
             var_s1 -= 1;
         } while (var_s1 & 0xFF);
@@ -149,7 +149,7 @@ void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
     u8* var_s3;
     s16 var_s4;
     struct MainObj* var_s2;
-    struct MiscObj* temp_v0;
+    struct MiscObj* misc;
     struct MiscObj* obj;
 
     var_s3 = arg1;
@@ -158,9 +158,9 @@ void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
     var_s2 = arg2;
     if (var_s1 & 0xFF) {
         do {
-            temp_v0 = find_free_misc_obj();
-            if (temp_v0 != NULL) {
-                obj = temp_v0;
+            misc = find_free_misc_obj();
+            if (misc != NULL) {
+                obj = misc;
                 obj->active = 0x41;
                 obj->id = 3;
                 obj->unk2 = 1;

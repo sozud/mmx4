@@ -73,8 +73,8 @@ void soul_body_init(struct WeaponObj* arg0)
     weapon_3->unk90 = 0;
     weapon_3->unk91 = 8;
     func_8001540C(1, 9, arg0);
+    arg0->state++;
     arg0->unk5 = 0;
-    arg0->state = (u8)arg0->state + 1;
     update_on_screen(BASE_OBJECT(arg0), 0x80, 0x20);
 }
 
@@ -120,9 +120,9 @@ void soul_body_extend(struct WeaponObj* arg0)
     arg0->on_screen = 1;
     offset_ptr = (s16*)&arg0->ext.weapon_3.offset;
     if (arg0->unk15 != 0) {
-        arg0->x_pos.i.hi = g_Player.x_pos.u.hi + *offset_ptr;
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + *offset_ptr;
     } else {
-        arg0->x_pos.i.hi = g_Player.x_pos.u.hi - *offset_ptr;
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - *offset_ptr;
     }
 
     offset = *(s16*)offset_ptr;
@@ -140,9 +140,9 @@ void soul_body_hold(struct WeaponObj* arg0)
 
     field_8c = &arg0->ext.weapon_3.offset;
     if (arg0->unk15 != 0) {
-        arg0->x_pos.i.hi = g_Player.x_pos.u.hi + 0x40;
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + 0x40;
     } else {
-        arg0->x_pos.i.hi = g_Player.x_pos.u.hi - 0x40;
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - 0x40;
     }
 
     temp_v0 = field_8c[1];

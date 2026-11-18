@@ -15,6 +15,8 @@
 #include "main/visuals/visual_03_small_effect.h"
 #endif
 
+void background_dragon_spawn_trail(struct PlayerObj* self, s8 arg1);
+
 extern s32 background_dragon_perch_points[][2];
 extern struct FixedPointPosition background_dragon_route_starts[];
 extern struct FixedPointPosition background_dragon_staging_offsets[];
@@ -104,7 +106,7 @@ void func_80040644(struct MainObj* arg0)
     ((u8*)&arg0->ext)[6] = 0;
     ((u8*)&arg0->ext)[5] = 0;
     ((u8*)&arg0->ext)[1] = 0;
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0xA0, 0xA0);
 }
 
@@ -292,7 +294,7 @@ s32 func_80040ABC(struct MainObj* arg0)
 void func_80040CCC(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
-    arg0->y_pos.u.hi += (s8)arg0->animation_step.fields.event;
+    arg0->y_pos.i.hi += (s8)arg0->animation_step.fields.event;
     arg0->x_speed = (g_Player.x_pos.val - arg0->x_pos.val < 0 ? arg0->x_pos.val - g_Player.x_pos.val : g_Player.x_pos.val - arg0->x_pos.val) > 0x20000 ? 0x20000 : (g_Player.x_pos.val - arg0->x_pos.val < 0 ? arg0->x_pos.val - g_Player.x_pos.val : g_Player.x_pos.val - arg0->x_pos.val);
     if (g_Player.x_pos.val > arg0->x_pos.val)
         arg0->x_speed = -arg0->x_speed;
@@ -636,7 +638,7 @@ void func_800415B0(struct MainObj* arg0)
             arg0->x_speed = 0;
             arg0->x_pos.val = (g_Player.x_pos.val - (arg0->unk15 == 0 ? offset : -offset));
             arg0->y_pos.i.hi = 0x214;
-            arg0->unk6 = (u8)arg0->unk6 + 1;
+            arg0->unk6++;
             func_8001540C(2, 4, arg0);
         }
     }
@@ -744,7 +746,7 @@ void func_800419B8(struct MainObj* arg0)
         if (height < 8) {
             arg0->y_pos.i.hi = 0x170;
             arg0->unk5 = 0xC;
-            arg0->x_pos.i.hi = g_Player.x_pos.u.hi;
+            arg0->x_pos.i.hi = g_Player.x_pos.i.hi;
         }
     }
 
@@ -766,7 +768,7 @@ void func_800419B8(struct MainObj* arg0)
     move_object(MOVING_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
     if (ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi) < 8 && ABS(arg0->y_pos.i.hi, 0x170) < 8) {
-        arg0->x_pos.i.hi = g_Player.x_pos.u.hi;
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi;
         arg0->y_pos.i.hi = 0x170;
         arg0->unk5 = 0xC;
     }
@@ -837,10 +839,10 @@ void background_dragon_fly_offscreen(struct MainObj* self)
 
     if (self->ext.main_0.exit_mode == 2) {
         self->x_speed = self->x_speed * 2;
-        *(volatile s32*)&self->y_speed = self->y_speed * 2;
+        self->y_speed *= 2;
     } else {
         self->x_speed = self->x_speed * 4;
-        *(volatile s32*)&self->y_speed = self->y_speed * 4;
+        self->y_speed *= 4;
     }
 
     move_with_gravity(ANIMATED_OBJECT(self));

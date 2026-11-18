@@ -359,8 +359,8 @@ void func_8007DD98(struct MainObj* arg0)
     arg0->gravity = 0;
     engine_obj.unk25 = 0;
     engine_obj.boss_ptr = arg0;
-    arg0->contact_damage = 4;
     arg0->hp = 0;
+    arg0->contact_damage = 4;
     arg0->air_state = 0;
     arg0->state++;
     arg0->unk5 = 2;
@@ -580,12 +580,12 @@ void magma_dragoon_dive_kick_jump(struct MainObj* self)
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     self->air_state = 1;
     func_8001540C(2, SATURN_SOUND(0, 0x7D), self);
-    self->unk6 = (u8)self->unk6 + 1;
+    self->unk6++;
     self->x_speed = self->unk15 != 0 ? FIXED(0.75) : FIXED(-0.75);
     self->y_speed = FIXED(4);
     self->x_accel = FIXED(0.03125);
     self->gravity = FIXED(-0.03125);
-    self->ext.main_65.jump_start_y = (u16)self->y_pos.i.hi;
+    self->ext.main_65.jump_start_y = self->y_pos.i.hi;
 }
 
 void magma_dragoon_dive_kick_rise(struct MainObj* self)
@@ -749,8 +749,8 @@ void magma_dragoon_fire_volley_fire(struct MainObj* self)
     event = self->animation_step.fields.event;
     if (event != 0) {
         if (event == 0xA) {
+            self->unk6++;
             self->unk7C = 0xF0;
-            self->unk6 = (u8)self->unk6 + 1;
         }
         spawn_debris(4, &magma_dragoon_fire_volley_debris, self);
         shot = find_free_shot_obj();
@@ -1122,8 +1122,8 @@ void func_8007F780(struct MainObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event == 1) {
         arg0->unk6++;
-        arg0->air_state = 1;
         arg0->animation_step.fields.event = 0;
+        arg0->air_state = 1;
         arg0->y_speed = 0x40000;
         arg0->gravity = 0x1C00;
         if (arg0->x_pos.i.hi > g_Player.x_pos.i.hi) {
@@ -1189,12 +1189,15 @@ void magma_dragoon_rising_punch_recover(struct MainObj* self)
         return;
     }
     self->unk6 = 0;
-    if ((self->y_pos.i.hi <= magma_dragoon_arena_floor) && (self->ext.main_65.attack == 3)) {
-        if (self->ext.main_65.attack_repeat++ == 0) {
-            return;
+    if (self->y_pos.i.hi > magma_dragoon_arena_floor) {
+        self->unk5 = 9;
+    } else if (self->ext.main_65.attack == 3) {
+        if (self->ext.main_65.attack_repeat++ != 0) {
+            self->unk5 = 9;
         }
+    } else {
+        self->unk5 = 9;
     }
-    self->unk5 = 9;
 }
 
 void magma_dragoon_rising_punch(struct MainObj* self)
@@ -1320,8 +1323,8 @@ void func_8007FD24(struct MainObj* arg0)
         else
             arg0->unk42 &= 0x7FFF;
         if (arg0->ext.main_65.flash_timer == 0) {
-            arg0->collision_data = D_80107D7C;
             arg0->unk42 &= 0x7FFF;
+            arg0->collision_data = D_80107D7C;
         }
     }
 
@@ -1332,9 +1335,9 @@ void func_8007FD24(struct MainObj* arg0)
 
 void magma_dragoon_death_start(struct MainObj* self)
 {
-    self->unk7C = 0x7F;
     self->unk5++;
     self->unk42 &= 0x7FFF;
+    self->unk7C = 0x7F;
     self->unk7E = 0x19;
     self->invincibility_timer = 0x19;
     set_animation(self, 0xD);
@@ -1353,16 +1356,15 @@ void func_8007FF00(struct MainObj* arg0)
         if (effect != NULL) {
             effect->active = -0x7F;
             effect->id = 0x1A;
-            effect->x_pos.u.hi = arg0->x_pos.u.hi;
-            effect->y_pos.u.hi = arg0->y_pos.u.hi;
+            effect->x_pos.i.hi = arg0->x_pos.i.hi;
+            effect->y_pos.i.hi = arg0->y_pos.i.hi;
             arg0->ext.main_65.object = effect;
         }
     }
 
     if (arg0->unk7E-- == 0) {
         arg0->unk42 ^= 0x8000;
-        arg0->invincibility_timer -= 5;
-        if (arg0->invincibility_timer > 0x19) {
+        if ((arg0->invincibility_timer -= 5) > 0x19) {
             arg0->invincibility_timer = 0;
         }
         arg0->unk7E = arg0->invincibility_timer > 5 ? arg0->invincibility_timer : 5;
@@ -1381,8 +1383,8 @@ void func_8007FFFC(struct MainObj* arg0)
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
             if (arg0->unk7E-- == 0) {
-                arg0->unk7E = 5;
                 arg0->unk42 ^= 0x8000;
+                arg0->unk7E = 5;
             }
             update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
         } else {
@@ -1409,8 +1411,8 @@ void func_8007FFFC(struct MainObj* arg0)
                 y = magma_dragoon_arena_floor;
                 arg0->y_pos.i.hi = y;
                 if (g_Player.ride_state < 0) {
-                    qux_object.y_pos.i.hi = y;
                     qux_object.x_pos.i.hi = magma_dragoon_arena_center;
+                    qux_object.y_pos.i.hi = y;
                 } else {
                     g_Player.y_pos.i.hi = y;
                     g_Player.x_pos.i.hi = magma_dragoon_arena_center;
@@ -1462,8 +1464,8 @@ void magma_dragoon_death_wait_dialog(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
         set_animation(self, 0x13);
-        self->unk7C = 0x50;
         self->unk5++;
+        self->unk7C = 0x50;
     }
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
@@ -1485,8 +1487,8 @@ void magma_dragoon_death_wait_dialog(struct MainObj* self)
 void magma_dragoon_death_smoke(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
-        self->unk7C = 0x28;
         self->unk5++;
+        self->unk7C = 0x28;
     }
 
     if ((self->unk7C & 7) == 0) {

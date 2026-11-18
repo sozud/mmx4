@@ -204,6 +204,10 @@ void func_80025CDC(void);
             : getTPage(tp, abr, x, y))
 #endif
 
+void func_80026894(s32 layer);
+void func_80026CEC(s32 arg0);
+void func_800275DC(s32 layer, s32 x, s32 y);
+
 s16 D_800F2FDC[2] = { 0x0300, 0x0600 };
 
 void (*D_800F2FE0[8])(struct EngineObj*) = {

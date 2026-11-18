@@ -42,12 +42,9 @@ void func_800AA68C(struct ShotObj* self);
 void func_800AA5E0(struct ShotObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
-        s32 offset;
-
         self->unk5++;
         self->unk8C.halves[1] = (get_random() & 1) ? 0x40 : 0x70;
-        offset = self->unk8C.halves[1] - 0xC0;
-        self->unk8C.halves[1] = background_objects[0].y_pos.u.hi - offset;
+        self->unk8C.halves[1] = background_objects[0].y_pos.i.hi + 0xC0 - self->unk8C.halves[1];
         self->timer = ABS((s16)self->unk8C.halves[1], self->y_pos.i.hi) / 4 + 1;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -93,7 +90,7 @@ void double_mine_dash(struct ShotObj* self)
     u8 angle;
 
     angle = angle_from_delta(self->x_pos.val - (self->unk8C.halves[0] << 16), 0);
-    if ((angle ^ self->unk84.value) & 0x10) {
+    if ((self->unk84.value ^ angle) & 0x10) {
         self->unk5++;
         self->x_pos.val = self->unk8C.halves[0] << 16;
         self->y_pos.val = self->unk8C.halves[1] << 16;
@@ -140,8 +137,7 @@ void double_mine_fire(struct ShotObj* self)
 
 void double_mine_cooldown(struct ShotObj* self)
 {
-    self->timer--;
-    if (self->timer == 0) {
+    if (--self->timer == 0) {
         self->unk5 = 3;
     }
     animate_object(self);

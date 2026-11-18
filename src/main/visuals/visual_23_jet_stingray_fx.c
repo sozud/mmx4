@@ -24,7 +24,7 @@ void jet_stingray_fx_init(struct VisualObj* arg0)
     switch (arg0->unk2) {
     case 0:
         arg0->unk5C.value = 0;
-        arg0->x_pos.i.hi -= arg0->unk15 ? -0x33 : 0x33;
+        arg0->x_pos.i.hi += arg0->unk15 ? 0x33 : -0x33;
         arg0->y_pos.i.hi -= 4;
         set_animation(arg0, 0x13);
         break;
@@ -37,7 +37,7 @@ void jet_stingray_fx_init(struct VisualObj* arg0)
         set_animation(arg0, 0x2B);
         break;
     }
-    arg0->unk42 &= ~0x8000;
+    arg0->unk42 &= 0x7FFF;
 }
 
 void jet_stingray_fx_vortex(struct VisualObj* arg0)

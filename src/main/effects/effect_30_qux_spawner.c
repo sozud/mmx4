@@ -38,19 +38,16 @@ void floor_trap_wait(struct EffectObj* self)
 
 void floor_trap_explode(struct EffectObj* self)
 {
-    s8 temp_v0;
-    struct ShotObj* temp_v0_2;
+    struct ShotObj* shot;
     struct ShotObj* temp_v0_3;
 
-    temp_v0 = self->unk5 - 1;
-    self->unk5 = temp_v0;
-    if (temp_v0 == 0) {
-        temp_v0_2 = find_free_shot_obj();
-        if (temp_v0_2 != 0) {
-            temp_v0_2->active = 0x41;
-            temp_v0_2->id = 0x20;
-            temp_v0_2->unk7C = WEAPON_OBJECT(self);
-            temp_v0_2->unk2 = 0;
+    if (--self->unk5 == 0) {
+        shot = find_free_shot_obj();
+        if (shot != 0) {
+            shot->active = 0x41;
+            shot->id = 0x20;
+            shot->unk7C = WEAPON_OBJECT(self);
+            shot->unk2 = 0;
         }
         temp_v0_3 = find_free_shot_obj();
         if (temp_v0_3 != 0) {
@@ -59,8 +56,8 @@ void floor_trap_explode(struct EffectObj* self)
             temp_v0_3->unk7C = WEAPON_OBJECT(self);
             temp_v0_3->unk2 = 1;
         }
-        spawn_explosion_at(0, self->x_pos.u.hi + 0x10, self->y_pos.i.hi, 0);
-        spawn_explosion_at(0, self->x_pos.u.hi + 0x28, self->y_pos.i.hi, 1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 0x10, self->y_pos.i.hi, 0);
+        spawn_explosion_at(0, self->x_pos.i.hi + 0x28, self->y_pos.i.hi, 1);
         apply_tile_effect(0xA, self->x_pos.i.hi, self->y_pos.i.hi - 0x20);
         ZeroObjectState(OBJECT_HEADER(self));
     }

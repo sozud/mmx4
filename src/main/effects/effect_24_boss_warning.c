@@ -42,9 +42,9 @@ void func_800BABA8(struct EffectObj* arg0)
         spawned->id = 4;
         arg0->ext.effect_24.spawned_effect = spawned;
     }
+    arg0->state++;
     arg0->ext.effect_24.timer = 0;
     arg0->ext.effect_24.unk1A = 5;
-    arg0->state++;
     arg0->ext.effect_24.unk1B = 0;
 }
 

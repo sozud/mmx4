@@ -158,6 +158,7 @@ void thorn_trap_open(struct MainObj* self)
                 return;
             }
             self->unk5 = 6;
+            set_animation(self, 3);
         } else {
             if (self->ext.main_0.flags[0] != 0) {
                 self->unk5 = 9;
@@ -165,8 +166,8 @@ void thorn_trap_open(struct MainObj* self)
                 return;
             }
             self->unk5 = 8;
+            set_animation(self, 3);
         }
-        set_animation(self, 3);
         return;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -342,19 +343,19 @@ void func_8005C0E4(struct MainObj* self)
         self->state++;
         self->unk5 = 0;
 
-        spawn_explosion_at(0, self->unk15 != 0 ? x - 0x47 : x + 0x47, self->y_pos.u.hi + 1, 0);
+        spawn_explosion_at(0, self->unk15 != 0 ? x - 0x47 : x + 0x47, self->y_pos.i.hi + 1, 0);
 
         x = self->x_pos.val >> 16;
         spawn_explosion_at(0, self->unk15 == 0 ? x + 0x28 : x - 0x28, self->y_pos.i.hi, 1);
 
         x = self->x_pos.val >> 16;
-        spawn_explosion_at(0, self->unk15 == 0 ? x + 0xC : x - 0xC, self->y_pos.u.hi - 1, 0xFF);
+        spawn_explosion_at(0, self->unk15 == 0 ? x + 0xC : x - 0xC, self->y_pos.i.hi - 1, 0xFF);
 
         x = self->x_pos.val >> 16;
-        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x15 : x + 0x15, self->y_pos.u.hi + 2, 0xFF);
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x15 : x + 0x15, self->y_pos.i.hi + 2, 0xFF);
 
         x = self->x_pos.val >> 16;
-        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x33 : x + 0x33, self->y_pos.u.hi - 1, 0xFF);
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x33 : x + 0x33, self->y_pos.i.hi - 1, 0xFF);
 
         x = self->x_pos.val >> 16;
         spawn_explosion_at(0, self->unk15 == 0 ? x - 0x50 : x + 0x50, self->y_pos.i.hi, 0xFF);
@@ -406,19 +407,19 @@ void func_8005C474(struct MainObj* self)
         self->state++;
 
         x = self->x_pos.val >> 16;
-        spawn_explosion_at(0, self->unk15 == 0 ? x + 0x47 : x - 0x47, self->y_pos.u.hi + 1, 0);
+        spawn_explosion_at(0, self->unk15 == 0 ? x + 0x47 : x - 0x47, self->y_pos.i.hi + 1, 0);
 
         x = self->x_pos.val >> 16;
         spawn_explosion_at(0, self->unk15 == 0 ? x + 0x28 : x - 0x28, self->y_pos.i.hi, 1);
 
         x = self->x_pos.val >> 16;
-        spawn_explosion_at(0, self->unk15 == 0 ? x + 0xC : x - 0xC, self->y_pos.u.hi - 1, 0xFF);
+        spawn_explosion_at(0, self->unk15 == 0 ? x + 0xC : x - 0xC, self->y_pos.i.hi - 1, 0xFF);
 
         x = self->x_pos.val >> 16;
-        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x15 : x + 0x15, self->y_pos.u.hi + 2, 0xFF);
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x15 : x + 0x15, self->y_pos.i.hi + 2, 0xFF);
 
         x = self->x_pos.val >> 16;
-        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x33 : x + 0x33, self->y_pos.u.hi - 1, 0xFF);
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x33 : x + 0x33, self->y_pos.i.hi - 1, 0xFF);
 
         x = self->x_pos.val >> 16;
         spawn_explosion_at(0, self->unk15 == 0 ? x - 0x50 : x + 0x50, self->y_pos.i.hi, 0xFF);

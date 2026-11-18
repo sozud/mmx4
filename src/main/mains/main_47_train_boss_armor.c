@@ -19,7 +19,7 @@ void train_boss_armor_arrive(struct MainObj* arg0);
 
 extern void (*train_boss_armor_state_funcs[])(struct MainObj*);
 
-extern u16 train_boss_armor_smoke_offsets[3][2];
+extern s16 train_boss_armor_smoke_offsets[3][2];
 
 extern s8 train_boss_armor_hurt_boxes[3][16];
 extern void (*train_boss_armor_step_funcs[3])(struct MainObj*);
@@ -124,9 +124,9 @@ void func_80066F1C(struct MainObj* self)
             if (collision != 0)
                 self->invincibility_timer = 2;
             if (collision == 0x7F) {
-                *(u8*)&self->ext.main_47.unk88 = 1;
+                self->ext.main_47.unk88.flag = 1;
             } else {
-                *(u8*)&self->ext.main_47.unk88 = 0;
+                self->ext.main_47.unk88.flag = 0;
                 if (self->unk42 & 0x8000)
                     self->ext.main_47.train_boss->layer_signals->unk16 = 1;
             }
@@ -135,7 +135,7 @@ void func_80066F1C(struct MainObj* self)
         }
     } else {
         self->invincibility_timer--;
-        if (*(u8*)&self->ext.main_47.unk88 == 0)
+        if (self->ext.main_47.unk88.flag == 0)
             self->ext.main_47.train_boss->layer_signals->unk16 = 1;
     }
     update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
@@ -166,7 +166,7 @@ void train_boss_armor_clear(struct MainObj* self)
 {
     self->ext.main_47.train_boss = 0;
     self->ext.main_47.boss_hp = 0;
-    self->ext.main_47.unk88 = 0;
+    self->ext.main_47.unk88.word = 0;
     self->ext.main_47.unk8C = 0;
     self->ext.main_47.unk90 = 0;
     self->ext.main_47.unk94 = 0;
@@ -197,7 +197,7 @@ s8 train_boss_armor_hurt_boxes[3][16] = {
     { -31, -6, 17, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 
-u16 train_boss_armor_smoke_offsets[3][2] = { { -30, -61 }, { -24, -26 }, { -23, 8 } };
+s16 train_boss_armor_smoke_offsets[3][2] = { { -30, -61 }, { -24, -26 }, { -23, 8 } };
 
 u8 D_800FF9FC[4] = { 1, 2, 4, 0 };
 

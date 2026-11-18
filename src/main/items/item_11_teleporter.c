@@ -157,10 +157,11 @@ void func_800C2C3C(struct ItemObj* arg0)
     set_animation(ANIMATED_OBJECT(arg0), 0);
     if (arg0->unk2 & 0x80) {
         arg0->state = 3;
+        arg0->unk5 = 0;
     } else {
         arg0->state = 1;
+        arg0->unk5 = 0;
     }
-    arg0->unk5 = 0;
     arg0->unk6 = 0;
 }
 
@@ -188,8 +189,8 @@ void teleporter_idle(struct ItemObj* arg0)
 void teleporter_wait_player(struct ItemObj* arg0)
 {
     if ((u8)arg0->unk72 & 8) {
-        g_Player.x_pos.u.hi = arg0->x_pos.u.hi;
-        g_Player.y_pos.i.hi = ((u16)arg0->y_pos.i.hi - arg0->unk68->unk3) - g_Player.unk68->unk3;
+        g_Player.x_pos.i.hi = arg0->x_pos.i.hi;
+        g_Player.y_pos.i.hi = (arg0->y_pos.i.hi - arg0->unk68->unk3) - g_Player.unk68->unk3;
         player_start_script_action(0x14, g_Player.unk15);
         reset_main_and_shots();
         arg0->unk5 = 1;
@@ -200,8 +201,8 @@ void teleporter_activate(struct ItemObj* arg0)
 {
     if (g_Player.script_state < 0) {
         arg0->tail_ext.unk1.unk84.timer = 0;
-        background_objects[0].unk26 = background_objects[0].x_pos.u.hi;
-        background_objects[0].unk24 = background_objects[0].x_pos.u.hi;
+        background_objects[0].unk26 = background_objects[0].x_pos.i.hi;
+        background_objects[0].unk24 = background_objects[0].x_pos.i.hi;
         set_animation(arg0, 1);
         arg0->unk5 = 2;
         func_8001540C(5, SATURN_SOUND(0, 0x29), NULL);
@@ -280,7 +281,7 @@ void teleporter_wait_flash(struct ItemObj* arg0)
         arg0->tail_ext.unk1.unk84.timer = 0;
         player_start_script_action(0x16, g_Player.unk15);
         func_8001540C(5, 1, NULL);
-        arg0->unk6 = (u8)arg0->unk6 + 1;
+        arg0->unk6++;
     }
 }
 

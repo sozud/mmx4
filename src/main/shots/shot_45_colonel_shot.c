@@ -180,9 +180,8 @@ void colonel_streak(struct ShotObj* self)
     is_on_screen((struct BaseObj*)self);
 }
 
-void colonel_streak_start(struct ShotObj* arg)
+void colonel_streak_start(struct ShotObj* self)
 {
-    struct ShotObj* self = arg;
 
     set_animation(self, 0x10);
     self->unk5C = 5;
@@ -358,12 +357,12 @@ void func_800A83C4(struct ShotObj* arg0)
 {
     u8 kind;
 
+    kind = arg0->unk2 & 0xF;
     arg0->unk5C = 0;
     arg0->unk60 = 9;
     arg0->unk58.data = NULL;
     arg0->unk54 = NULL;
     arg0->unk50.data = (const u8*)colonel_shot_box_0;
-    kind = arg0->unk2 & 0xF;
     arg0->x_vel.val = arg0->unk15 != 0 ? 0x18000 : -0x18000;
     arg0->unk28 = 0;
     arg0->y_vel.val = 0;

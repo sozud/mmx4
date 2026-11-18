@@ -64,7 +64,7 @@ void menu_label_init(struct UnkObj* self)
 #ifdef MMX4_PC
     self->unk3C = (u8*)addr_801F3000 + temp_v1;
 #else
-    self->unk3C = temp_v1 + (s32)addr_801F3000;
+    self->unk3C = (void*)(temp_v1 + (s32)addr_801F3000);
 #endif
     self->unk15 = 0;
     if (self->y_pos.i.hi == 0x10) {
@@ -81,8 +81,6 @@ void menu_label_init(struct UnkObj* self)
 
 void menu_label_highlight(struct UnkObj* self)
 {
-    s8 temp_v1; // probably fake
-
     if (self->y_pos.i.hi != 0x10) {
         if (self->unk7 == main_bss_state.transition.selection) {
             self->unk42 = 0x7803;
@@ -91,9 +89,11 @@ void menu_label_highlight(struct UnkObj* self)
         }
     }
     if ((main_bss_state.character_mode == 0) && (engine_obj.cur_character != CHARACTER_X)) {
-        temp_v1 = self->unk7;
-        if ((self->unk7 < 7) && (temp_v1 >= 5)) {
+        switch (self->unk7) {
+        case 5:
+        case 6:
             self->unk42 = 0x7804;
+            break;
         }
     }
     is_on_screen(self);

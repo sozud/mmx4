@@ -10,19 +10,19 @@
 void aiming_laser_scope_update(struct VisualObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
-    s32 var_a0;
+    u32 despawn;
 
-    var_a0 = 0;
+    despawn = 0;
     if (engine_obj.unkF != 0) {
-        var_a0 = 1;
+        despawn = 1;
     }
     if (6 != player->weapon) {
-        var_a0 = 1;
+        despawn = 1;
     }
     if (player->hp == 0) {
-        var_a0 = 1;
+        despawn = 1;
     }
-    if (var_a0 != 0) {
+    if (despawn != 0) {
         ZeroObjectState(arg0);
         return;
     }

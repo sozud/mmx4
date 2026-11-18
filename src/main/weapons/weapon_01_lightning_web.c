@@ -273,16 +273,17 @@ void lightning_web_draw(struct WeaponObj* arg0)
 
 void lightning_web_charged_update(struct WeaponObj* arg0)
 {
-    s32 disabled;
+    struct PlayerObj* player = &g_Player;
+    u32 disabled;
 
     disabled = 0;
-    if (g_Player.input_locked != 0) {
+    if (player->input_locked != 0) {
         disabled = 1;
     }
-    if (g_Player.capsule_state != 0) {
+    if (player->capsule_state != 0) {
         disabled = 1;
     }
-    if (g_Player.weapon != 1) {
+    if (player->weapon != 1) {
         disabled = 1;
     }
     if (disabled != 0) {

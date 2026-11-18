@@ -43,8 +43,8 @@ void func_800C20F4(struct ItemObj* self)
     self->y_vel.val = moving_block_motion[self->unk2].y_velocity;
     self->unk28 = 0;
     self->unk2C = 0;
-    self->unk7C.saved_pos.x = self->x_pos.u.hi;
-    self->unk7C.saved_pos.y = self->y_pos.u.hi;
+    self->unk7C.saved_pos.x = self->x_pos.i.hi;
+    self->unk7C.saved_pos.y = self->y_pos.i.hi;
     if (g_Player.x_pos.val < self->x_pos.val) {
         self->x_vel.val = -self->x_vel.val;
     }

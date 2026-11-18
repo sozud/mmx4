@@ -93,8 +93,8 @@ void bg_wind_delay(struct EffectObj* self)
 
     if (--self->ext.effect_9.transition_timer == 0) {
         self->ext.effect_9.direction = 0;
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
     }
 }
 
@@ -142,8 +142,8 @@ void func_800B76A4(struct EffectObj* arg0)
         background_objects[2].y_pos.val = 0;
         arg0->ext.effect_9.transition_timer = 1;
         background_objects[2].unk4C = 1;
-        arg0->unk5 = 0;
         arg0->state--;
+        arg0->unk5 = 0;
         return;
     }
     background_objects[2].y_pos.val = 0x1800000;
@@ -245,8 +245,8 @@ void bg_wind_gust_fast(struct EffectObj* self)
             self->unk5--;
         } else {
             self->ext.effect_9.movement_timer = 0x78;
-            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
             self->unk5++;
+            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
         }
         self->ext.effect_9.timer = self->ext.effect_9.movement_table[0];
         self->ext.effect_9.frame = self->ext.effect_9.movement_table[1];
@@ -269,8 +269,8 @@ void bg_wind_gust_fast(struct EffectObj* self)
             self->unk5--;
         } else {
             self->ext.effect_9.movement_timer = 0x78;
-            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
             self->unk5++;
+            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
         }
         self->ext.effect_9.timer = self->ext.effect_9.movement_table[0];
         self->ext.effect_9.frame = self->ext.effect_9.movement_table[1];
@@ -323,8 +323,8 @@ void bg_wind_gust_medium(struct EffectObj* self)
             self->unk5--;
         } else {
             self->ext.effect_9.movement_timer = 0x96;
-            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_medium;
             self->unk5++;
+            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_medium;
         }
         self->ext.effect_9.timer = self->ext.effect_9.movement_table[0];
         self->ext.effect_9.frame = self->ext.effect_9.movement_table[1];
@@ -344,8 +344,8 @@ void bg_wind_gust_medium(struct EffectObj* self)
             self->unk5--;
         } else {
             self->ext.effect_9.movement_timer = 0x96;
-            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_medium;
             self->unk5++;
+            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_medium;
         }
         self->ext.effect_9.timer = self->ext.effect_9.movement_table[0];
         self->ext.effect_9.frame = self->ext.effect_9.movement_table[1];

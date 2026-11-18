@@ -7,7 +7,7 @@
 #include "main/stage_objects.h"
 
 extern u8 crusher_wall_terrain_box[4];
-extern u16 crusher_wall_x_positions[4];
+extern s16 crusher_wall_x_positions[4];
 
 // crusher_wall_state_funcs
 extern void (*crusher_wall_state_funcs[])(struct ItemObj*);
@@ -66,7 +66,7 @@ void crusher_wall_rumble(struct ItemObj* arg0)
     crusher_wall_speed_funcs[arg0->unk5](arg0);
     if (--arg0->unk7C.timer16 != 0) {
         if (!(WEAPON_FRAME_COUNTER & 7)) {
-            arg0->y_pos.u.hi += 0x10;
+            arg0->y_pos.i.hi += 0x10;
             func_800AF878(BASE_OBJECT(arg0), 1, 0x30, 0x20);
             func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x10);
             arg0->y_pos.i.hi -= 0x10;
@@ -134,4 +134,4 @@ void (*crusher_wall_speed_funcs[])(struct ItemObj*) = {
 };
 
 u8 crusher_wall_terrain_box[4] = { 0, 0, 0x30, 0x38 };
-u16 crusher_wall_x_positions[4] = { 0x0900, 0x0D60, 0x13F0, 0x1A80 };
+s16 crusher_wall_x_positions[4] = { 0x0900, 0x0D60, 0x13F0, 0x1A80 };

@@ -38,7 +38,7 @@ void func_800C8610(struct MiscObj* arg0)
     arg0->x_vel.val = debris_x_speeds[get_random() & 7] + arg0->ext.misc_2.owner->x_speed / 2;
     arg0->y_vel.val = debris_y_speeds[get_random() & 7];
     set_animation(arg0, arg0->ext.misc_2.unk58);
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
     is_on_screen(BASE_OBJECT(arg0));
 }
 

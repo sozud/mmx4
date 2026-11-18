@@ -251,7 +251,10 @@ void player_check_fall(struct PlayerObj* self)
 
 s32 player_check_dash_input(struct PlayerObj* self)
 {
-    if (self->input_locked || (!self->double_tap_dash && !(self->pressed_input & PLAYER_INPUT_DASH))) {
+    if (self->input_locked) {
+        return 0;
+    }
+    if (!self->double_tap_dash && !(self->pressed_input & PLAYER_INPUT_DASH)) {
         return 0;
     }
 
@@ -340,7 +343,7 @@ s32 player_dash_should_end(struct PlayerObj* self)
 
 void player_check_capsule(struct PlayerObj* self)
 {
-    s32 play_turn;
+    u32 play_turn;
 
     if (self->capsule_state > 0 && self->hurt_phase <= 0) {
         player_clear_attack(self);
@@ -440,13 +443,12 @@ s32 player_check_wall(struct PlayerObj* self)
 
 s32 player_check_wall_jump(struct PlayerObj* self)
 {
-    if (self->input_locked == 0) {
-        if (self->pressed_input & PLAYER_INPUT_JUMP) {
-            if (self->wall_climbable > 0) {
-                func_800349F4(self);
-                return 1;
-            }
-        }
+    if (self->input_locked != 0) {
+        return 0;
+    }
+    if ((self->pressed_input & PLAYER_INPUT_JUMP) && self->wall_climbable > 0) {
+        func_800349F4(self);
+        return 1;
     }
     return 0;
 }
@@ -495,8 +497,7 @@ void player_check_damage(struct PlayerObj* self)
             return;
         }
         if (self->invincibility_timer != 0) {
-            self->invincibility_timer--;
-            if (self->invincibility_timer == 0) {
+            if (--self->invincibility_timer == 0) {
                 self->hurt_phase = 0;
                 player_reset_palette(self);
                 return;
@@ -602,7 +603,10 @@ u8 func_8002D94C(struct PlayerObj* arg0);
 
 s32 player_check_ladder(struct PlayerObj* self)
 {
-    if (self->input_locked || self->shot_cooldown) {
+    if (self->input_locked) {
+        return 0;
+    }
+    if (self->shot_cooldown) {
         return 0;
     }
     if (self->input.buttons.held & PLAYER_INPUT_UP && func_8002D8B8(self) == 0x20) {
@@ -644,7 +648,7 @@ void player_enter_ladder_climb_off_top(struct PlayerObj* self);
 s32 func_80033FF0(struct PlayerObj* arg0)
 {
     u8 attribute = func_8002D994(arg0);
-    s32 leave;
+    u32 leave;
 
     if (arg0->unk88.bytes.collision_flags & 8) {
         player_enter_ladder_step_off_bottom(arg0);
@@ -722,7 +726,7 @@ void player_script_walk_to_mark(struct PlayerObj* self)
 
 s32 player_leap_check_peak(struct PlayerObj* self)
 {
-    s32 result = 0;
+    u32 result = 0;
 
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_CEILING) {
         result = 1;

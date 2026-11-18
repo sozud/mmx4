@@ -22,7 +22,7 @@ struct PlayerDashEffectOffset {
 extern u8 player_death_orb_directions[4][8];
 
 extern struct PlayerDashEffectOffset player_dash_spark_offsets[2];
-extern u16 player_dash_splash_offsets[2];
+extern s16 player_dash_splash_offsets[2];
 
 #ifdef MMX4_PC
 extern void func_80036BF4(struct PlayerObj* arg0, s16 arg1);
@@ -339,7 +339,7 @@ struct PlayerDashEffectOffset player_dash_spark_offsets[2] = {
     { 0x10, 0x0E },
     { 0x1A, 0x11 },
 };
-u16 player_dash_splash_offsets[2] = { 0x10, 0x1A };
+s16 player_dash_splash_offsets[2] = { 0x10, 0x1A };
 
 #ifdef MMX4_SATURN
 struct PlayerDashEffectOffset player_wall_kick_spark_offsets[2] = {
@@ -356,6 +356,8 @@ f32 player_wall_kick_spark_offsets[2] = {
 #define PLAYER_WALL_KICK_X(index) player_wall_kick_spark_offsets[index].u.lo
 #define PLAYER_WALL_KICK_Y(index) player_wall_kick_spark_offsets[index].u.hi
 #endif
+
+void func_80036BF4(struct PlayerObj* self, s16 ground_y);
 
 s32 player_set_animation(struct PlayerObj* self, s32 animation)
 {
@@ -374,27 +376,15 @@ s32 player_set_animation(struct PlayerObj* self, s32 animation)
 
 void player_set_animation_frame(struct PlayerObj* self, s32 animation, s32 frame)
 {
-    s32* x_gfx;
-    s32* zero_gfx;
-    s32* zero_saber_gfx;
-    s32* x_frames;
-    s32* zero_frames;
-    s32* zero_saber_frames;
     if (self->unk2 == 0) {
-        x_gfx = SP_PLAYER_GFX;
-        x_frames = SP_SPRITE_FRAMES;
-        self->unk38 = SP_ARCHIVE_ENTRY(x_gfx, 0);
-        self->unk3C = SP_ARCHIVE_ENTRY(x_frames, 0);
+        self->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, 0);
+        self->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 0);
     } else if (D_8011AF60[animation] == 0) {
-        zero_gfx = SP_PLAYER_GFX;
-        zero_frames = SP_SPRITE_FRAMES;
-        self->unk38 = SP_ARCHIVE_ENTRY(zero_gfx, 0);
-        self->unk3C = SP_ARCHIVE_ENTRY(zero_frames, 0);
+        self->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, 0);
+        self->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 0);
     } else {
-        zero_saber_gfx = SP_PLAYER_GFX;
-        zero_saber_frames = SP_SPRITE_FRAMES;
-        self->unk38 = SP_ARCHIVE_ENTRY(zero_saber_gfx, 1);
-        self->unk3C = SP_ARCHIVE_ENTRY(zero_saber_frames, 5);
+        self->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, 1);
+        self->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 5);
     }
 
     set_animation_frame(ANIMATED_OBJECT(self), animation, frame);
@@ -566,8 +556,8 @@ void player_update_init(struct PlayerObj* self)
     if (self->is_clone != 0) {
         self->on_screen = 1;
         player_set_animation(self, 0x61);
-        self->unk5 = PLAYER_SOUL_BODY_CLONE;
         self->state++;
+        self->unk5 = PLAYER_SOUL_BODY_CLONE;
         return;
     }
     {
@@ -707,7 +697,7 @@ void player_death_start(struct PlayerObj* self)
         self->death_timer = 8;
         player_set_animation(self, 0x21);
     }
-    self->unk5 = (u8)self->unk5 + 1;
+    self->unk5++;
 }
 
 void player_death_wait(struct PlayerObj* self)
@@ -726,7 +716,7 @@ void player_death_wait(struct PlayerObj* self)
         func_8001540C(3, 0xC, self);
         self->death_timer = 0;
         self->unkC6 = 0;
-        self->unk5 = (u8)self->unk5 + 1;
+        self->unk5++;
         func_80035C20(self);
     }
 }
@@ -1055,7 +1045,7 @@ void player_check_low_hp_alarm(struct PlayerObj* self)
 void player_damage(s8 damage)
 {
     struct PlayerObj* player;
-    u8 amount;
+    s8 amount;
     s8 value;
 
     player = &g_Player;
@@ -1191,16 +1181,15 @@ void player_spawn_dash_spark(struct PlayerObj* self)
     facing = self->unk15;
     visual_obj->unk15 = facing;
     if (facing == 0) {
-        visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_dash_spark_offsets[self->unk2].x;
+        visual_obj->x_pos.i.hi = self->x_pos.i.hi + player_dash_spark_offsets[self->unk2].x;
     } else {
-        visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_dash_spark_offsets[self->unk2].x;
+        visual_obj->x_pos.i.hi = self->x_pos.i.hi - player_dash_spark_offsets[self->unk2].x;
     }
-    visual_obj->y_pos.i.hi = self->y_pos.u.hi + player_dash_spark_offsets[self->unk2].y;
+    visual_obj->y_pos.i.hi = self->y_pos.i.hi + player_dash_spark_offsets[self->unk2].y;
 }
 
 void player_spawn_dash_splash(struct PlayerObj* self)
 {
-    u8 facing;
     struct VisualObj* visual_obj;
     s32* menu_frames;
     s32 index;
@@ -1218,15 +1207,13 @@ void player_spawn_dash_splash(struct PlayerObj* self)
             index = func_8002938C(0x84) & 0xFF;
             visual_obj->unk40 = PLAYER_STAGE_TEXTURE(index);
             visual_obj->unk42 = PLAYER_STAGE_PALETTE();
-            facing = self->unk15;
-            visual_obj->unk15 = facing;
-            if (facing == 0) {
-                visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_dash_splash_offsets[self->unk2];
-                visual_obj->y_pos.i.hi = self->y_pos.u.hi;
+            visual_obj->unk15 = self->unk15;
+            if (visual_obj->unk15 == 0) {
+                visual_obj->x_pos.i.hi = self->x_pos.i.hi + player_dash_splash_offsets[self->unk2];
             } else {
-                visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_dash_splash_offsets[self->unk2];
-                visual_obj->y_pos.i.hi = self->y_pos.u.hi;
+                visual_obj->x_pos.i.hi = self->x_pos.i.hi - player_dash_splash_offsets[self->unk2];
             }
+            visual_obj->y_pos.i.hi = self->y_pos.i.hi;
         }
     }
 }
@@ -1256,11 +1243,11 @@ void player_spawn_wall_kick_spark(struct PlayerObj* self)
         facing = self->unk15;
         visual_obj->unk15 = facing;
         if (facing == 0) {
-            visual_obj->x_pos.i.hi = self->x_pos.u.hi + PLAYER_WALL_KICK_X(self->unk2);
+            visual_obj->x_pos.i.hi = self->x_pos.i.hi + PLAYER_WALL_KICK_X(self->unk2);
         } else {
-            visual_obj->x_pos.i.hi = self->x_pos.u.hi - PLAYER_WALL_KICK_X(self->unk2);
+            visual_obj->x_pos.i.hi = self->x_pos.i.hi - PLAYER_WALL_KICK_X(self->unk2);
         }
-        visual_obj->y_pos.i.hi = self->y_pos.u.hi + PLAYER_WALL_KICK_Y(self->unk2);
+        visual_obj->y_pos.i.hi = self->y_pos.i.hi + PLAYER_WALL_KICK_Y(self->unk2);
     }
 }
 
@@ -1298,7 +1285,7 @@ void player_end_script_action(void)
 void player_check_splash_tile(struct PlayerObj* self)
 {
     if (func_8002D994(self) == 0x24) {
-        s16 y = self->y_pos.u.hi & 0xFFF0;
+        s16 y = self->y_pos.i.hi & 0xFFF0;
         func_80036BF4(self, y);
     }
 }

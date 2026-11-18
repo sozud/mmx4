@@ -223,16 +223,18 @@ void func_800A3FEC(struct ShotObj* arg0)
                 arg0->y_vel.val = 0;
         } else if (arg0->unk8C.word == 0) {
             set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)) & 0xFF);
-            arg0->unk8C.word = 1;
             arg0->x_vel.val *= 5;
             arg0->y_vel.val *= 5;
+            arg0->unk8C.word = 1;
         }
     }
-    if (owner->state != 2 && owner->active != 0 && func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+    if (owner->state == 2 || owner->active == 0) {
+        arg0->state++;
+    } else if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
         update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
-        return;
+    } else {
+        arg0->state++;
     }
-    arg0->state++;
 }
 
 void owl_feather_despawn(struct ShotObj* self)

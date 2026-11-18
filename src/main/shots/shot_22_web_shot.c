@@ -133,7 +133,6 @@ void web_shot_catch(struct ShotObj* self)
 
 void web_shot_hold(struct ShotObj* self)
 {
-    s32 temp_v0;
 
     web_shot_pin_player(self);
     self->timer -= func_8002BAA4();
@@ -146,9 +145,7 @@ void web_shot_hold(struct ShotObj* self)
         return;
     }
     self->timer = self->timer - 1;
-    temp_v0 = self->unk90.val - 1;
-    self->unk90.val = temp_v0;
-    if (temp_v0 == 0) {
+    if (--self->unk90.val == 0) {
         player_damage(4);
         self->unk90.val = 0x30;
     }

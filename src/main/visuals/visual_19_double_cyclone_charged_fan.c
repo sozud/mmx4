@@ -7,6 +7,8 @@
 #include "weapon_resources.h"
 #include "main/mains/main_23_slope_skier.h"
 
+void double_cyclone_charged_fan_draw(struct VisualObj* arg0);
+
 extern union AnimationStep* D_8011C0F0[5];
 extern struct VisualSpawnOffset double_cyclone_charged_fan_offsets[2];
 

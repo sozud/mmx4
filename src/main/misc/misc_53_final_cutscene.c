@@ -33,9 +33,9 @@ void func_800D2A74(struct MiscObj* self)
     self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0xA3));
     self->animation_table = (u32**)final_cutscene_animations;
     self->unk16 = VISUAL_SATURN_LAYER(6);
-    self->x_pos.u.hi = 0x860;
     self->unk15 = 0;
-    self->y_pos.u.hi = 0x268;
+    self->x_pos.i.hi = 0x860;
+    self->y_pos.i.hi = 0x268;
     self->x_vel.val = FIXED(-2.5);
     self->y_vel.val = 0;
     set_animation(self, 0);
@@ -65,9 +65,9 @@ void final_cutscene_approach(struct MiscObj* self)
         return;
     }
 
+    self->unk5++;
     self->ext.misc_53.movement_timer = 0xA;
     self->ext.misc_53.x_step = 1;
-    self->unk5++;
     if (engine_obj.cur_character == 0) {
         func_8002217C(0x2D, 8, 0);
         return;
@@ -83,8 +83,8 @@ void func_800D2CA4(struct MiscObj* self)
         self->y_vel.val = 0x00050000;
         self->x_vel.val = 0;
         self->unk28 = 0;
-        self->unk2C = 0x4200;
         self->unk5++;
+        self->unk2C = 0x4200;
     }
     if (WEAPON_FRAME_COUNTER % 10 == 0) {
         self->y_pos.i.hi += self->ext.misc_53.x_step;
@@ -100,8 +100,8 @@ void final_cutscene_rise(struct MiscObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->y_vel.val < 0) {
-        self->y_vel.val = 0;
         self->unk5++;
+        self->y_vel.val = 0;
     }
 }
 
@@ -118,8 +118,8 @@ void final_cutscene_start_effect(struct MiscObj* self)
 {
     struct EffectObj* effect;
 
-    self->ext.misc_53.timer = 0x12C;
     self->unk5++;
+    self->ext.misc_53.timer = 0x12C;
     effect = find_free_effect_obj();
     if (effect != NULL) {
         effect->active = 0x41;
@@ -156,9 +156,7 @@ void final_cutscene_finish(struct MiscObj* self)
 {
     s16 timer;
 
-    timer = self->ext.misc_53.timer - 1;
-    self->ext.misc_53.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_53.timer == 0) {
         self->state = 2;
         D_8013E188[0] = -1;
         D_8013E188[1] = -1;

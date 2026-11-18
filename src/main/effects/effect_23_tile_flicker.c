@@ -63,11 +63,7 @@ void tile_flicker_main(struct EffectObj* self)
 void tile_flicker_step(struct EffectObj* self)
 {
     s32* entry;
-    s8 timer;
-
-    timer = self->ext.effect_23.palette.fields.timer - 1;
-    self->ext.effect_23.palette.fields.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.effect_23.palette.fields.timer == 0) {
         self->ext.effect_23.palette_source.words += self->ext.effect_23.palette.fields.step;
         self->ext.effect_23.palette.packed = *self->ext.effect_23.palette_source.words;
         refresh_visible_tile_effect(self->ext.effect_23.palette.fields.id,

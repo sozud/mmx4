@@ -21,6 +21,9 @@ extern u8 saturn_colonel_init_mode;
 #include "main/1E1BC.h"
 #endif
 
+void colonel_spawn_afterimages(struct MainObj* self);
+void func_800889DC(struct MainObj* arg0);
+
 extern struct Unk_unk68 D_8010450C;
 extern struct Unk_unk68 D_80104510;
 
@@ -378,8 +381,7 @@ void colonel_defeat_blink(struct MainObj* self)
     if (self->unk7E-- != 0)
         return;
     self->unk42 ^= 0x8000;
-    self->invincibility_timer -= 5;
-    if (self->invincibility_timer > 0x19)
+    if ((self->invincibility_timer -= 5) > 0x19)
         self->invincibility_timer = 0;
     self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
 }
@@ -388,13 +390,13 @@ void colonel_defeat_wait_explosion(struct MainObj* self)
 {
     struct MainObj* linked_object;
 
-    linked_object = (struct MainObj*)self->ext.main_69.effect;
     self->on_screen = 0;
+    linked_object = (struct MainObj*)self->ext.main_69.effect;
     if (linked_object->active != 0) {
         if (linked_object->unk7 == 0) {
             if (self->unk7E-- == 0) {
-                self->unk7E = 5;
                 self->unk42 ^= 0x8000;
+                self->unk7E = 5;
             }
             is_on_screen(BASE_OBJECT(self));
         }
@@ -599,7 +601,7 @@ void colonel_intro_port_flash(struct PlayerObj* self)
             visual_obj->unk54 = 0x20;
             self->input.buttons.held = 0x20;
             set_animation(self, 0x16);
-            self->unk7 = (u8)self->unk7 + 1;
+            self->unk7++;
         }
     } else {
         self->input.buttons.held = timer - 1;
@@ -849,8 +851,7 @@ void colonel_guard_pick(struct MainObj* self)
 void colonel_guard_watch(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    self->unk7C--;
-    if (self->unk7C <= 0) {
+    if (--self->unk7C <= 0) {
         self->unk6 = 0;
     } else if ((s8)colonel_shot_incoming(self)) {
         self->unk7C = 0x10;
@@ -1199,10 +1200,8 @@ void colonel_flash_strike_shake(struct MainObj* self)
 
 void colonel_flash_strike_reappear(struct MainObj* self)
 {
-    s16 timer;
 
-    timer = --self->unk7C;
-    if ((timer << 0x10) == 0) {
+    if (--self->unk7C == 0) {
         self->x_pos.i.hi = (s16)(background_objects[0].unk1E + 0xA0);
         self->unk7C = 0x14;
         self->x_speed = FIXED(32);
@@ -1214,12 +1213,11 @@ void colonel_flash_strike_reappear(struct MainObj* self)
 
 void colonel_flash_strike_slide(struct MainObj* self)
 {
-    self->unk7C = self->unk7C - 1;
-    if ((self->unk7C << 0x10) == 0) {
+    if (--self->unk7C == 0) {
         self->hurt_box = &D_801044FC;
         self->attack_box = &D_80104500;
         set_animation(self, 7);
-        self->unk6 = (u8)self->unk6 + 1;
+        self->unk6++;
     } else {
         animate_object(ANIMATED_OBJECT(self));
         self->x_speed += self->x_accel;
@@ -1450,7 +1448,7 @@ void colonel_jump_slam_recover(struct MainObj* self)
 
 ret_u8 colonel_shot_incoming(struct MainObj* self)
 {
-    volatile struct WeaponObj* weapon;
+    struct WeaponObj* weapon;
     u8 i;
     s32 x_diff;
 

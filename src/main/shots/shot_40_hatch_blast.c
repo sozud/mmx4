@@ -84,7 +84,7 @@ void hatch_blast_fire(struct ShotObj* self)
         shot->unk8A = 0x14;
         shot->unk7 = 1;
     }
-    shot->timer = (u16)shot->timer - 1;
+    shot->timer--;
     animate_object(ANIMATED_OBJECT(shot));
 }
 

@@ -336,11 +336,12 @@ void general_shot_intro_prop(struct ShotObj* self)
 
 void general_shot_thruster(struct ShotObj* self)
 {
-    struct WeaponObj* weapon = self->unk7C;
+    struct WeaponObj* weapon;
 
     self->on_screen = 0;
-    self->x_pos.u.hi = weapon->x_pos.u.hi + self->unk84.halves[0];
-    self->y_pos.u.hi = weapon->y_pos.u.hi + self->unk84.halves[1];
+    weapon = self->unk7C;
+    self->x_pos.i.hi = weapon->x_pos.i.hi + self->unk84.halves[0];
+    self->y_pos.i.hi = weapon->y_pos.i.hi + self->unk84.halves[1];
     self->unk15 = weapon->unk15;
     if (self->timer != 0) {
         animate_object(self);
@@ -390,8 +391,8 @@ void general_fist_fly_to_row(struct ShotObj* self)
     self->y_vel.val *= 4;
     if (sigma_final_shot_at_position(self, 0xE20, general_fist_rows[self->timer]) & 0xFF) {
         velocity = FIXED(-1.5);
-        self->y_vel.val = 0;
         self->unk5++;
+        self->y_vel.val = 0;
         if (self->unk15 != 0) {
             velocity = FIXED(1.5);
         }
@@ -414,15 +415,15 @@ void func_800ACF60(struct ShotObj* self)
     self->unk68 = (struct Unk_unk68*)general_shot_boxes;
     origin_x = self->x_pos.i.hi;
     probe_x = self->unk15 != 0 ? origin_x + 0x59 : origin_x - 0x59;
-    probe_y = self->y_pos.u.hi;
+    probe_y = self->y_pos.i.hi;
     tile_slot = D_8013B8D0;
     *probe_slot = probe_x;
     D_8013B8CC = probe_y;
     *tile_slot = func_8002D724(PLAYER_OBJECT(self), D_8013B8C8, probe_y);
     if (*tile_slot == 0x38) {
         self->x_vel.val = 0;
-        self->unk90.u.lo = 0x3C;
         self->unk5++;
+        self->unk90.u.lo = 0x3C;
     }
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
@@ -438,15 +439,15 @@ void func_800ACF60(struct ShotObj* self)
     self->unk68 = (struct Unk_unk68*)general_shot_boxes;
     origin_x = self->x_pos.i.hi;
     probe_x = self->unk15 != 0 ? origin_x + 0x59 : origin_x - 0x59;
-    probe_y = self->y_pos.u.hi;
+    probe_y = self->y_pos.i.hi;
     D_8013B8C8 = probe_x;
     D_8013B8CC = probe_y;
     tile = func_8002D724(PLAYER_OBJECT(self), probe_x, probe_y);
     D_8013B8D0[0] = tile;
     if (tile == 0x38) {
         self->x_vel.val = 0;
-        self->unk90.u.lo = 0x3C;
         self->unk5++;
+        self->unk90.u.lo = 0x3C;
     }
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
@@ -456,8 +457,7 @@ void func_800ACF60(struct ShotObj* self)
 void general_fist_hold(struct ShotObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    self->unk90.i.lo = self->unk90.u.lo - 1;
-    if (self->unk90.i.lo == 0) {
+    if (--self->unk90.i.lo == 0) {
         self->unk5++;
         if (self->unk2 == 3) {
             set_animation(self, 0x16);
@@ -479,11 +479,10 @@ void general_fist_turn(struct ShotObj* self)
         self->unk5++;
         if (self->unk2 == 3) {
             set_animation(self, 0xF);
-            func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
         } else {
             set_animation(self, 0x14);
-            func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
         }
+        func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
     }
 }
 
@@ -493,17 +492,16 @@ void general_fist_approach(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
 
     if (ABS(self->x_pos.i.hi, self->unk7C->x_pos.i.hi) < 0x30) {
+        self->unk5++;
         self->x_vel.val = 0;
         self->unk90.u.lo = 0x3C;
-        self->unk5++;
     }
 }
 
 void general_fist_pause(struct ShotObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    self->unk90.i.lo = self->unk90.u.lo - 1;
-    if (self->unk90.i.lo == 0) {
+    if (--self->unk90.i.lo == 0) {
         self->unk5++;
         if (self->unk2 == 3) {
             set_animation(self, 0x11);
@@ -524,7 +522,8 @@ void general_fist_sweep_turn(struct ShotObj* self)
         self->x_vel.val = self->unk15 != 0 ? FIXED(1.5) : FIXED(-1.5);
     }
     if (self->animation_step.fields.relative_step == 0) {
-        if ((++self->unk8A) == 2) {
+        self->unk8A++;
+        if (self->unk8A == 2) {
             self->unk5++;
             if (self->unk2 == 3) {
                 self->unk7C->unk6++;
@@ -537,11 +536,10 @@ void general_fist_sweep_turn(struct ShotObj* self)
         self->unk5 = 3;
         if (self->unk2 == 3) {
             set_animation(self, 0x14);
-            func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
         } else {
             set_animation(self, 0xF);
-            func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
         }
+        func_8001540C(2, SATURN_SOUND(5, 0xDF), self);
     }
 }
 
@@ -615,8 +613,8 @@ void general_fist_follower_fly_to_row(struct ShotObj* self)
             self, 0xE20,
             general_fist_rows[general_fist_row_order[SHOT_OBJECT(self->unk8C.object)->timer]])
         & 0xFF) {
+        self->unk5++;
         self->y_vel.val = 0;
-        self->unk5 = (u8)self->unk5 + 1;
         velocity = self->unk15 != 0 ? FIXED(1.5) : FIXED(-1.5);
         self->x_vel.val = velocity;
     }
@@ -700,8 +698,8 @@ void general_dust_burst(struct ShotObj* self)
         self->timer--;
     }
     if (self->timer == 0) {
-        self->unk50.data = NULL;
         self->unk5++;
+        self->unk50.data = NULL;
         if (self->unk2 == 6) {
             set_animation(self, 0x1A);
         } else {
@@ -748,7 +746,7 @@ void general_shot_orb_launcher(struct ShotObj* self)
         animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.relative_step == 0) {
             owner = self->unk7C;
-            self->unk5 = (u8)self->unk5 + 1;
+            self->unk5++;
             i = 0;
             do {
                 shot = find_free_shot_obj();
@@ -758,15 +756,15 @@ void general_shot_orb_launcher(struct ShotObj* self)
                     shot->unk2 = i + 0xA;
                     shot->timer = 0;
                     shot->unk7C = owner;
-                    shot->unk84.halves[0] = self->x_pos.u.hi - owner->x_pos.u.hi;
-                    shot->unk84.halves[1] = self->y_pos.u.hi - owner->y_pos.u.hi;
+                    shot->unk84.halves[0] = self->x_pos.i.hi - owner->x_pos.i.hi;
+                    shot->unk84.halves[1] = self->y_pos.i.hi - owner->y_pos.i.hi;
                     func_8001540C(2, SATURN_SOUND(4, 0xDE), self);
                 }
                 i++;
             } while (i < 2);
         }
     } else {
-        self->state = (u8)self->state + 1;
+        self->state++;
     }
     is_on_screen(BASE_OBJECT(self));
 }
@@ -779,11 +777,11 @@ void general_orb_spread(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk8A != 0) {
         move_object(MOVING_OBJECT(self));
-        self->unk8A = (u16)self->unk8A - 1;
+        self->unk8A--;
         return;
     }
     owner = self->unk7C;
-    self->unk5 = (u8)self->unk5 + 1;
+    self->unk5++;
     set_animation(self, 0x20);
     self->unk50.data = (u8*)general_shot_attack_boxes;
     if (self->timer < 2) {
@@ -792,10 +790,10 @@ void general_orb_spread(struct ShotObj* self)
             shot->active = 0x41;
             shot->id = 0x37;
             shot->unk2 = (u8)self->unk2;
-            shot->timer = (u16)self->timer + 1;
+            shot->timer = self->timer + 1;
             shot->unk7C = self->unk7C;
-            shot->unk84.halves[0] = self->x_pos.u.hi - owner->x_pos.u.hi;
-            shot->unk84.halves[1] = self->y_pos.u.hi - owner->y_pos.u.hi;
+            shot->unk84.halves[0] = self->x_pos.i.hi - owner->x_pos.i.hi;
+            shot->unk84.halves[1] = self->y_pos.i.hi - owner->y_pos.i.hi;
         }
     } else {
         MAIN_OBJECT(owner)->ext.main_75.orbs_ready = 1;
@@ -809,8 +807,8 @@ void general_orb_wait(struct ShotObj* self)
     weapon = self->unk7C;
     animate_object(ANIMATED_OBJECT(self));
     if (MAIN_OBJECT(weapon)->ext.main_75.orbs_ready != 0) {
-        self->unk8A = 0x14;
         self->unk5++;
+        self->unk8A = 0x14;
     }
 }
 
@@ -818,7 +816,7 @@ void general_orb_aim(struct ShotObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk8A == 0) {
-        self->unk5 = (u8)self->unk5 + 1;
+        self->unk5++;
         self->x_vel.val = self->unk15 ? FIXED(5) : FIXED(-5);
         self->y_vel.val = 0;
         func_8001540C(2, SATURN_SOUND(4, 0xDE), self);

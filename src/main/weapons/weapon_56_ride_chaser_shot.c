@@ -106,8 +106,8 @@ void ride_chaser_shot_despawn(struct WeaponObj* arg0)
 void ride_chaser_shot_follow_scroll(struct WeaponObj* arg0)
 {
     if (background_objects[0].unk4 == 1) {
-        arg0->x_pos.u.hi += background_objects[0].x_pos.u.hi - background_objects[0].unk14.u.hi;
-        arg0->y_pos.u.hi += background_objects[0].y_pos.u.hi - background_objects[0].unk18.u.hi;
+        arg0->x_pos.i.hi += background_objects[0].x_pos.i.hi - background_objects[0].unk14.i.hi;
+        arg0->y_pos.i.hi += background_objects[0].y_pos.i.hi - background_objects[0].unk18.i.hi;
     }
 }
 

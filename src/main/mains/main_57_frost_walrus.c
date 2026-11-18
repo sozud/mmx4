@@ -317,23 +317,21 @@ void frost_walrus_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
 
-    self->unk7C--;
-    if (self->unk7C == 0) {
+    if (--self->unk7C == 0) {
         self->unk5 = 2;
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x1A;
-            effect->x_pos.i.hi = self->x_pos.u.hi;
-            effect->y_pos.i.hi = self->y_pos.u.hi;
+            effect->x_pos.i.hi = self->x_pos.i.hi;
+            effect->y_pos.i.hi = self->y_pos.i.hi;
             self->ext.main_57.effect = effect;
         }
     }
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
     if (self->unk7E-- == 0) {
         self->unk42 ^= 0x8000;
-        self->invincibility_timer -= 5;
-        if (self->invincibility_timer > 0x19) {
+        if ((self->invincibility_timer -= 5) > 0x19) {
             self->invincibility_timer = 0;
         }
         self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
@@ -342,13 +340,15 @@ void frost_walrus_death_explode(struct MainObj* self)
 
 void frost_walrus_death_finish(struct MainObj* self)
 {
-    struct EffectObj* effect = self->ext.main_57.effect;
+    struct EffectObj* effect;
+
     self->on_screen = 0;
+    effect = self->ext.main_57.effect;
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
             if (self->unk7E-- == 0) {
-                self->unk7E = 5;
                 self->unk42 ^= 0x8000;
+                self->unk7E = 5;
             }
             update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
         }
@@ -526,7 +526,7 @@ void frost_walrus_charge_start(struct MainObj* self)
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->unk6 = (u8)self->unk6 + 1;
+    self->unk6++;
     if (self->ext.main_57.tusks_broken != 0) {
         set_animation(self, 0x17);
         self->x_speed = self->unk15 != 0 ? 0x18000 : -0x18000;
@@ -617,11 +617,11 @@ void frost_walrus_leap_start(struct MainObj* self)
     if (self->unk15 != 0) {
         x_vel = FIXED(3);
     }
+    self->x_speed = x_vel;
     self->y_speed = FIXED(6.5);
+    self->x_accel = 0;
     self->gravity = FIXED(0.2578125);
     self->hurt_box = (const u8*)&frost_walrus_hurt_box;
-    self->x_speed = x_vel;
-    self->x_accel = 0;
     self->attack_box = (const u8*)&frost_walrus_attack_box;
     set_animation(self, 1);
     self->ext.main_57.leap_grounded = 0;
@@ -1038,7 +1038,7 @@ void func_80073E80(struct MainObj* arg0)
 
 void frost_walrus_stagger_fall(struct MainObj* self)
 {
-    struct VisualObj* temp_v0;
+    struct VisualObj* visual;
 
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->y_speed < 0) {
@@ -1047,13 +1047,13 @@ void frost_walrus_stagger_fall(struct MainObj* self)
     if ((self->air_state == -1) && (self->collision_flags & 8)) {
         set_animation(self, 0x14);
         if (self->ext.main_57.tusks_broken == 0) {
-            temp_v0 = find_free_visual_obj();
-            if (temp_v0 != 0) {
-                temp_v0->active = 0x41;
-                temp_v0->id = 0x18;
-                temp_v0->unk2 = 0x50;
-                temp_v0->unk15 = self->unk15;
-                temp_v0->unk50 = PLAYER_OBJECT(self);
+            visual = find_free_visual_obj();
+            if (visual != 0) {
+                visual->active = 0x41;
+                visual->id = 0x18;
+                visual->unk2 = 0x50;
+                visual->unk15 = self->unk15;
+                visual->unk50 = PLAYER_OBJECT(self);
                 self->ext.main_57.tusks_broken = 1;
             }
         }
@@ -1108,8 +1108,8 @@ void frost_walrus_regrow_start(struct MainObj* self)
         visual->unk2 = 0x20;
         visual->unk15 = self->unk15;
         visual->unk50 = PLAYER_OBJECT(self);
-        visual->x_pos.u.hi = self->x_pos.u.hi;
-        visual->y_pos.u.hi = self->y_pos.u.hi;
+        visual->x_pos.i.hi = self->x_pos.i.hi;
+        visual->y_pos.i.hi = self->y_pos.i.hi;
         set_animation(self, 0x19);
         self->unk6++;
     }

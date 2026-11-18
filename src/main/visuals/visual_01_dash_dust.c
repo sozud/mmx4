@@ -29,7 +29,7 @@ void dash_dust_update(struct VisualObj* arg0)
 
         dash_dust_attach(arg0, entity);
         set_animation(arg0, 2);
-        arg0->state = (u8)arg0->state + 1;
+        arg0->state++;
     } else {
         animate_object(arg0);
         dash_dust_attach(arg0, entity);

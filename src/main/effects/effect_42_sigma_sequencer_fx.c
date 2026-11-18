@@ -98,7 +98,7 @@ void sigma_sequencer_fx_wait_parts(struct EffectObj* self)
         i += 1;
     } while (i < 3U);
     if (count == 3) {
-        self->unk5 = (u8)self->unk5 + 1;
+        self->unk5++;
         self->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 3;
         self->ext.effect_42.timer = 0xC8;
     }

@@ -104,11 +104,12 @@ void sentry_flash_animate(struct MiscObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (func_8002B160(BASE_OBJECT(self)) == 0) {
         update_on_screen(BASE_OBJECT(self), 0x30, 0x10);
-        if (self->animation_step.fields.relative_step != 0) {
-            return;
+        if (self->animation_step.fields.relative_step == 0) {
+            self->state++;
         }
+    } else {
+        self->state++;
     }
-    self->state++;
 }
 
 void sentry_flash_despawn(struct MiscObj* self)

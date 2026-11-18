@@ -57,13 +57,13 @@ void drop_pillar_land(struct ItemObj* arg0)
     if (arg0->unk2 != 2) {
         apply_tile_effect(
             0xC,
-            (s16)(arg0->x_pos.u.hi - 0x10),
-            (s16)(arg0->y_pos.u.hi - 0x30));
+            (s16)(arg0->x_pos.i.hi - 0x10),
+            (s16)(arg0->y_pos.i.hi - 0x30));
     } else {
         apply_tile_effect(
             0xD,
-            (s16)(arg0->x_pos.u.hi - 0x10),
-            (s16)(arg0->y_pos.u.hi - 0x70));
+            (s16)(arg0->x_pos.i.hi - 0x10),
+            (s16)(arg0->y_pos.i.hi - 0x70));
     }
 
     start_screen_shake_y(0x10, 4, 2);

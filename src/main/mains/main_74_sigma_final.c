@@ -390,8 +390,8 @@ void func_8008D5C8(struct MainObj* arg0)
     arg0->contact_damage = 9;
     engine_obj.boss_ptr = arg0;
     engine_obj.unk25 = 0;
-    arg0->unk5 = 3;
     arg0->state++;
+    arg0->unk5 = 3;
     arg0->unk6 = 0;
     arg0->unk7 = 0;
     arg0->ext.main_74.target = 0;
@@ -412,16 +412,16 @@ void sigma_final_set_target(struct MainObj* self, s32 arg1)
     case 1:
         D_8013B8B0 = &D_80105368;
         MAIN_74_COLLISION_BOUNDS = &D_8010536C;
+        self->attack_box = &D_8010535C;
         self->hp = self->ext.main_74.upper_health;
         self->unk5D = self->ext.main_74.upper_health;
-        self->attack_box = &D_8010535C;
         break;
     case 2:
         D_8013B8B0 = 0;
         MAIN_74_COLLISION_BOUNDS = &D_80105370;
+        self->attack_box = &D_80105360;
         self->hp = self->ext.main_74.lower_health;
         self->unk5D = self->ext.main_74.lower_health;
-        self->attack_box = &D_80105360;
         break;
     }
 
@@ -812,7 +812,7 @@ void sigma_final_hide_upper_start(struct MainObj* self)
 
 void sigma_final_hide_upper_wait(struct MainObj* self)
 {
-    s32 count;
+    u32 count;
     u32 i;
 
     count = 0;
@@ -882,7 +882,7 @@ void sigma_final_hide_lower_start(struct MainObj* self)
 void sigma_final_hide_lower_wait(struct MainObj* self)
 {
     u32 i;
-    s32 count = 0;
+    u32 count = 0;
     for (i = 0; i < COUNT(self->ext.main_74.children); i++) {
         if (((struct Main74Ext*)&self->ext)->children[i]->unk5 == 3) {
             count++;
@@ -957,17 +957,17 @@ void func_8008E748(struct MainObj* self)
 
     if (g_Player.stun_timer != 0) {
         self->unk7C = 0x1E;
-        g_Player.x_pos.u.hi = self->x_pos.u.hi + 0x10;
-        g_Player.y_pos.u.hi = self->y_pos.u.hi + 0x10;
+        g_Player.x_pos.i.hi = self->x_pos.i.hi + 0x10;
+        g_Player.y_pos.i.hi = self->y_pos.i.hi + 0x10;
         set_animation(self, 5);
         self->unk6++;
         return;
     }
 
     if (g_Player.x_pos.i.hi > self->x_pos.i.hi + 0x10) {
-        g_Player.x_pos.u.hi -= 3;
+        g_Player.x_pos.i.hi -= 3;
     } else {
-        g_Player.x_pos.u.hi += 3;
+        g_Player.x_pos.i.hi += 3;
     }
 
     if (self->unk7C != 0) {
@@ -1130,10 +1130,9 @@ void sigma_final_wind_start(struct MainObj* self)
 {
     struct MiscObj* miscObj;
 
-    self->unk7C--;
-    if (self->unk7C == 0) {
-        self->unk7C = 0x3C;
+    if (--self->unk7C == 0) {
         self->unk6++;
+        self->unk7C = 0x3C;
     }
     if ((self->unk7C % 10) == 0) {
         func_8001540C(2, SATURN_SOUND(0xA, 0xEE), self);
@@ -1155,8 +1154,8 @@ void sigma_final_wind_push(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 
     if (--self->unk7C == 0) {
-        self->unk7C = 0x5A;
         self->unk6++;
+        self->unk7C = 0x5A;
     }
     if (self->unk7C % 10 == 0) {
         func_8001540C(2, SATURN_SOUND(10, 0xEE), self);
@@ -1176,8 +1175,8 @@ void sigma_final_wind_push_hard(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 
     if (--self->unk7C == 0) {
-        self->unk7C = 0x5A;
         self->unk6++;
+        self->unk7C = 0x5A;
     }
 
     if (self->unk7C % 10 == 0) {
@@ -1328,12 +1327,10 @@ done:
 
 void sigma_final_death_blink(struct MainObj* self)
 {
-
     if (--self->unk7E == 0) {
         self->unk7C = 0x12C;
         self->unk42 ^= 0x8000;
-        self->invincibility_timer -= 5;
-        if (self->invincibility_timer > 0x19) {
+        if ((self->invincibility_timer -= 5) > 0x19) {
             self->invincibility_timer = 0;
         }
         self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
@@ -1347,12 +1344,11 @@ void sigma_final_death_blink(struct MainObj* self)
 // sigma_final_death_explode
 void func_8008F578(struct MainObj* self)
 {
-    self->unk7C = (u16)(self->unk7C - 1);
-    if (self->unk7C != 0) {
+    if (--self->unk7C != 0) {
         sigma_emit_explosions(self);
         if (self->unk7E-- == 0) {
-            self->unk7E = 5;
             self->unk42 ^= 0x8000;
+            self->unk7E = 5;
         }
         if (self->unk7C == 0x1B) {
             if (self->ext.main_74.target == 2)

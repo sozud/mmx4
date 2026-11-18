@@ -23,8 +23,8 @@ void sigma_beam_despawn(struct QuadObj*);
 void sigma_beam_init(struct QuadObj* arg0)
 {
     struct BaseObj* obj = arg0->unk5C;
-    arg0->state++;
     arg0->active = -0x7D;
+    arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk36 = VISUAL_SATURN_LAYER(6);
     arg0->unk34 = 0x10;
@@ -45,8 +45,8 @@ void sigma_beam_extend(struct QuadObj* arg0)
     arg0->vertices[2].y.i.hi += 4;
     arg0->vertices[3].y.i.hi += 4;
     if (arg0->vertices[2].y.i.hi > 0x40) {
-        arg0->ext.unk_ext4.unk3C = 0x2D;
         arg0->unk5++;
+        arg0->ext.unk_ext4.unk3C = 0x2D;
     }
 }
 
@@ -54,7 +54,7 @@ void sigma_beam_sweep(struct QuadObj* arg0)
 {
     struct ShotObj* obj;
     if (--arg0->ext.unk_ext4.unk3C == 0) {
-        arg0->unk5 = (u8)arg0->unk5 + 1;
+        arg0->unk5++;
         if (engine_obj.cur_character == CHARACTER_X) {
             arg0->ext.unk_ext4.unk3C = 0xD2U;
             return;
@@ -77,15 +77,15 @@ void sigma_beam_sweep(struct QuadObj* arg0)
 
 void sigma_beam_fade(struct QuadObj* arg0)
 {
-    struct ShotObj* temp_v0;
+    struct ShotObj* shot;
 
     if (!(WEAPON_FRAME_COUNTER % 4)) {
-        temp_v0 = find_free_shot_obj();
-        if (temp_v0 != NULL) {
-            temp_v0->active = 0x41;
-            temp_v0->id = 0x2E;
-            temp_v0->unk2 = 8;
-            temp_v0->unk7C = arg0;
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x2E;
+            shot->unk2 = 8;
+            shot->unk7C = arg0;
         }
     }
     if (arg0->ext.unk_ext4.unk3C == 0) {

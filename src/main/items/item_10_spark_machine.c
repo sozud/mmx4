@@ -251,8 +251,8 @@ void func_800C2638(struct ItemObj* self)
                 spark->state = 0;
                 spark->unk5 = 0;
                 spark->unk6 = 0;
-                spark->x_pos.u.hi = self->x_pos.u.hi + spark_machine_spark_offsets[index].x;
-                spark->y_pos.u.hi = self->y_pos.u.hi + spark_machine_spark_offsets[index].y;
+                spark->x_pos.i.hi = self->x_pos.i.hi + spark_machine_spark_offsets[index].x;
+                spark->y_pos.i.hi = self->y_pos.i.hi + spark_machine_spark_offsets[index].y;
                 spark->unk2 = 0xA;
                 spark->ext.misc_9.owner = self;
             }
@@ -286,11 +286,11 @@ void spark_machine_break(struct ItemObj* arg0)
     spawn_debris(5, spark_machine_debris, arg0);
     apply_tile_effect(
         (u8)arg0->unk2,
-        (s16)(arg0->x_pos.u.hi - 0x20),
-        (s16)(arg0->y_pos.u.hi - 0x28));
+        (s16)(arg0->x_pos.i.hi - 0x20),
+        (s16)(arg0->y_pos.i.hi - 0x28));
     set_animation(arg0, 0xC);
     is_on_screen(BASE_OBJECT(arg0));
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
 }
 
 void spark_machine_broken(struct ItemObj* arg0)
@@ -310,8 +310,8 @@ void spark_machine_spawn_spark_a(struct ItemObj* arg0)
             obj->state = 0;
             obj->unk5 = 0;
             obj->unk6 = 0;
-            obj->x_pos.u.hi = arg0->x_pos.u.hi + spark_machine_spark_offsets[get_random() & 3].x;
-            obj->y_pos.u.hi = arg0->y_pos.u.hi + spark_machine_spark_offsets[get_random() & 3].y;
+            obj->x_pos.i.hi = arg0->x_pos.i.hi + spark_machine_spark_offsets[get_random() & 3].x;
+            obj->y_pos.i.hi = arg0->y_pos.i.hi + spark_machine_spark_offsets[get_random() & 3].y;
             obj->unk2 = 0;
             obj->ext.pointer.unk50 = arg0;
         }
@@ -332,8 +332,8 @@ void spark_machine_spawn_spark_b(struct ItemObj* arg0)
             obj->state = 0;
             obj->unk5 = 0;
             obj->unk6 = 0;
-            obj->x_pos.u.hi = arg0->x_pos.u.hi + spark_machine_spark_offsets[(get_random() & 3)].x;
-            obj->y_pos.u.hi = arg0->y_pos.u.hi + spark_machine_spark_offsets[(get_random() & 3)].y;
+            obj->x_pos.i.hi = arg0->x_pos.i.hi + spark_machine_spark_offsets[(get_random() & 3)].x;
+            obj->y_pos.i.hi = arg0->y_pos.i.hi + spark_machine_spark_offsets[(get_random() & 3)].y;
             obj->unk2 = 1;
             obj->ext.pointer.unk50 = arg0;
         }
@@ -354,8 +354,8 @@ void spark_machine_spawn_spark_c(struct ItemObj* arg0)
             obj->state = 0;
             obj->unk5 = 0;
             obj->unk6 = 0;
-            obj->x_pos.u.hi = arg0->x_pos.u.hi + spark_machine_spark_offsets[get_random() & 3].x;
-            obj->y_pos.u.hi = arg0->y_pos.u.hi + spark_machine_spark_offsets[get_random() & 3].y;
+            obj->x_pos.i.hi = arg0->x_pos.i.hi + spark_machine_spark_offsets[get_random() & 3].x;
+            obj->y_pos.i.hi = arg0->y_pos.i.hi + spark_machine_spark_offsets[get_random() & 3].y;
             obj->unk2 = 2;
             obj->ext.pointer.unk50 = arg0;
         }

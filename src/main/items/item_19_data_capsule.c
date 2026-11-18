@@ -126,8 +126,8 @@ void func_800C4778(struct ItemObj* self)
                 child->id = 0x13;
                 child->unk2 = i;
                 j = (self->unk2 - 4) * 4 + i * 2;
-                child->x_pos.u.hi = data_capsule_positions[j];
-                child->y_pos.u.hi = data_capsule_positions[j + 1];
+                child->x_pos.i.hi = data_capsule_positions[j];
+                child->y_pos.i.hi = data_capsule_positions[j + 1];
             }
         }
         despawn_object_permanently(OBJECT_HEADER(self));
@@ -151,7 +151,7 @@ void func_800C49BC(struct ItemObj* self)
             if (self->animation_step.fields.relative_step != 0) {
                 animate_object(ANIMATED_OBJECT(self));
             } else {
-                right_edge = (s16)(background_objects[self->bg_offset].y_pos.u.hi + 0xF0);
+                right_edge = (s16)(background_objects[self->bg_offset].y_pos.i.hi + 0xF0);
                 if (right_edge > self->y_pos.i.hi) {
                     self->unk7C.timer16 = 0x1E;
                     spawned = find_free_main_obj();

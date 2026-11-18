@@ -40,8 +40,8 @@ void func_8005B438(struct MainObj* arg0);
 
 void func_8005B438(struct MainObj* arg0)
 {
-    arg0->unk5 = 2;
     arg0->state++;
+    arg0->unk5 = 2;
     arg0->bg_offset = g_Player.bg_offset;
     if (arg0->unk2 == 0)
         arg0->unk15 = 0;

@@ -296,7 +296,7 @@ void func_8001989C(struct EngineObj* arg0)
         func_8001B644(D_800F1DFC);
         return;
     case 2:
-        arg0->unk1 = (u8)arg0->unk1 + 1;
+        arg0->unk1++;
         return;
     case 3:
         arg0->unk1 = 0xB;
@@ -344,7 +344,7 @@ void func_80019B64(struct EngineObj* arg0)
 
 void func_80019BA0(struct EngineObj* arg0)
 {
-    arg0->unk2 = (u8)arg0->unk2 + 1;
+    arg0->unk2++;
     reset_objects();
     func_8001B644(D_800F1E90);
 #ifndef VERSION_JP
@@ -362,7 +362,7 @@ void func_80019BF4(struct EngineObj* arg0)
     if (controller_input.pressed & PAD_SELECTION_BUTTONS) {
         func_8001540C(0, 0x22, 0);
         if (main_bss_state.transition.selection == 0 && !(controller_input.pressed & PAD_SELECTION_ALT)) {
-            arg0->unk2 = (u8)arg0->unk2 + 1;
+            arg0->unk2++;
             reset_objects();
             func_8001B644(D_800F1EAC);
             func_8001B718(0x40, (memcard_menu.port + 0xB) & 0xFF, 0xFF);
@@ -562,7 +562,7 @@ void func_8001A308(struct EngineObj* arg0)
             return;
         }
 
-        arg0->unk1 = (u8)arg0->unk1 + 1;
+        arg0->unk1++;
         reset_objects();
         func_8001B718(0x40, (memcard_menu.port + 0xB) & 0xFF, 0xFF);
         func_8001B644(D_800F1E0C);
@@ -642,12 +642,9 @@ static inline u8* memcard_menu_timer(struct MemcardMenuState* menu)
 void func_8001A710(struct EngineObj* arg0)
 {
     u8* timer;
-    u8 remaining;
 
     timer = memcard_menu_timer(&memcard_menu);
-    remaining = *timer - 1;
-    *timer = remaining;
-    if (remaining != 0) {
+    if (--*timer != 0) {
         return;
     }
     func_8001C07C();
@@ -677,7 +674,7 @@ void func_8001A7D4(struct EngineObj* arg0)
         } else {
             func_8001540C(0, 0x22, 0);
         }
-        arg0->unk1 = (u8)arg0->unk1 + 1;
+        arg0->unk1++;
     }
 }
 
@@ -874,13 +871,10 @@ void func_8001AE8C(struct EngineObj* arg0)
     u8* timer;
     u8* script;
     s32 status;
-    u8 remaining;
     u8 empty;
 
     timer = memcard_menu_timer(&memcard_menu);
-    remaining = *timer - 1;
-    *timer = remaining;
-    if (remaining != 0) {
+    if (--*timer != 0) {
         return;
     }
 
@@ -1036,7 +1030,7 @@ void func_8001B10C(struct EngineObj* arg0)
         main_bss_state.transition.selection = 0;
 #endif
         reset_objects();
-        arg0->unk1 = (u8)arg0->unk1 + 1;
+        arg0->unk1++;
         func_8001B718(0x30, (*character + memcard_menu.port * 3 + 0x1A) & 0xFF, 0xFF);
         func_8001B644(D_800F1F48);
         func_8001B7C0(0xD0, 0x88, 1);
@@ -1057,7 +1051,7 @@ void func_8001B388(struct EngineObj* arg0)
         func_8001540C(0, 0x22, 0);
         if (main_bss_state.transition.selection != 0 || (controller_input.pressed & PAD_SELECTION_ALT)) {
             reset_objects();
-            arg0->unk1 = (u8)arg0->unk1 - 1;
+            arg0->unk1--;
             main_bss_state.transition.selection = 0;
             memcard_menu.slot = (struct MemcardSaveSlot*)(memcard_menu.buffer + 0x200);
             func_8001B718(0x30, (memcard_menu.port + 0x11) & 0xFF, 0xFF);
@@ -1066,7 +1060,7 @@ void func_8001B388(struct EngineObj* arg0)
             func_8001C008(3, 1);
             return;
         }
-        arg0->unk1 = (u8)arg0->unk1 + 1;
+        arg0->unk1++;
         func_8001C210();
         reset_objects();
         func_800129F0(8);

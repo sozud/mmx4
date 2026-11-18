@@ -32,8 +32,7 @@ void func_800CF300(struct MiscObj* self)
 
     self->unk16 = VISUAL_SATURN_LAYER(5);
     self->unk40 = owner->unk40;
-    owner->unk42 &= 0x7FFF;
-    self->unk42 = owner->unk42;
+    self->unk42 = owner->unk42 &= 0x7FFF;
     self->unk3C = owner->unk3C;
     self->animation_table = owner->animation_table;
     self->bg_offset = owner->bg_offset;
@@ -60,18 +59,22 @@ void func_800CF300(struct MiscObj* self)
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->unk2C = 0;
-    self->state = (u8)self->state + 1;
+    self->state++;
 }
 
 void item_sparkle_move(struct MiscObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    if ((func_8002B160(BASE_OBJECT(self)) == 0) && (self->animation_step.fields.relative_step != 0)) {
-        is_on_screen(BASE_OBJECT(self));
-        return;
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        if (self->animation_step.fields.relative_step != 0) {
+            is_on_screen(BASE_OBJECT(self));
+        } else {
+            self->state++;
+        }
+    } else {
+        self->state++;
     }
-    self->state++;
 }
 
 void item_sparkle_despawn(struct MiscObj* self)

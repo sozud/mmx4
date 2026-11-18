@@ -194,8 +194,8 @@ void func_80088EA4(struct MainObj* self)
         self->ext.main_70.saved_unk5 = self->unk5;
     if (collision < 0) {
         set_animation(self, 3);
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
         self->unk6 = 0;
     } else {
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
@@ -255,7 +255,6 @@ void drone_pod_death_explode(struct MainObj* self)
 void drone_pod_death_alarm(struct MainObj* self)
 {
     s16 countdown;
-    u16 timer;
 
     if ((WEAPON_FRAME_COUNTER & 3) == 0) {
         drone_pod_random_explosion(self);
@@ -268,9 +267,8 @@ void drone_pod_death_alarm(struct MainObj* self)
         self->unk7E = countdown - 1;
     }
 
-    timer = --self->unk7C;
-    if ((timer << 0x10) == 0) {
-        self->unk5 = (u8)self->unk5 + 1;
+    if (--self->unk7C == 0) {
+        self->unk5++;
     }
 }
 
@@ -416,8 +414,8 @@ void func_80089588(struct MainObj* self)
         child->unk15 = part < 3 ? PLAYER_FACING_RIGHT : 0;
         child->unk16 = VISUAL_SATURN_LAYER(5);
         child->bg_offset = self->bg_offset;
-        child->x_pos.u.hi = (u16)D_801049CC[part * 2];
-        child->y_pos.u.hi = (u16)D_801049CC[part * 2 + 1];
+        child->x_pos.i.hi = (u16)D_801049CC[part * 2];
+        child->y_pos.i.hi = (u16)D_801049CC[part * 2 + 1];
     }
     self->ext.main_70.unk84 = start + 2;
     if (D_801049B8[self->ext.main_70.unk84] == 0xFF)
@@ -456,8 +454,8 @@ void func_80089588(struct MainObj* self)
         child->unk15 = part < 3 ? 0x40 : 0;
         child->bg_offset = self->bg_offset;
         child->unk16 = 5;
-        child->x_pos.u.hi = D_801049CC[part * 2];
-        child->y_pos.u.hi = D_801049CC[part * 2 + 1];
+        child->x_pos.i.hi = D_801049CC[part * 2];
+        child->y_pos.i.hi = D_801049CC[part * 2 + 1];
     }
     self->ext.main_70.unk84 += 2;
     if (D_801049B8[self->ext.main_70.unk84] == 0xFF)

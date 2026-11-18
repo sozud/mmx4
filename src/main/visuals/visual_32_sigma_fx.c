@@ -148,8 +148,8 @@ void sigma_fx_glow(struct VisualObj* self)
 void sigma_cloak_piece_wait(struct VisualObj* self)
 {
     if (--self->unk54 == 0) {
-        self->unk54 = 30;
         self->unk5++;
+        self->unk54 = 30;
     }
     is_on_screen(self);
 }
@@ -180,7 +180,7 @@ void sigma_fx_oneshot(struct VisualObj* self)
     }
     if (self->unk2 == 5) {
         self->on_screen = 0;
-        if ((self->unk50->input.buttons.held & 1) != 0) {
+        if (MAIN_OBJECT(self->unk50)->unk7C & 1) {
             is_on_screen(BASE_OBJECT(self));
         }
     } else {
@@ -199,8 +199,7 @@ void sigma_fx_electric(struct VisualObj* self)
     if (state == 0) {
         if (self->animation_step.fields.relative_step == 0) {
             self->unk5 = state + 1;
-            i = 0;
-            do {
+            for (i = 0; i < 2; i++) {
                 shot = find_free_shot_obj();
                 if (shot != 0) {
                     shot->active = 0x41;
@@ -209,8 +208,7 @@ void sigma_fx_electric(struct VisualObj* self)
                     shot->timer = i;
                     shot->unk7C = WEAPON_OBJECT(self);
                 }
-                i += 1;
-            } while (i < 2);
+            }
             self->unk56 = 5;
         }
     } else if (--self->unk56 == 0) {

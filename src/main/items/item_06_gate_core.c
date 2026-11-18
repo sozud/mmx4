@@ -61,7 +61,7 @@ void gate_core_init(struct ItemObj* arg0)
         arg0->unk42 = OBJECT_CLUT(0x7946);
     }
     arg0->animation_table = (const u8* const*)gate_core_animations;
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
 }
 
 void gate_core_main(struct ItemObj* arg0)

@@ -239,9 +239,9 @@ void func_8001F634(struct EngineObj* arg0)
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
         if (arg0->character_state.bytes[2] == 0) {
+            arg0->unk2++;
             arg0->unk3 = 0;
             arg0->unk4 = 0x1E;
-            arg0->unk2++;
             arg0->character_state.bytes[1] = 1;
         } else {
             arg0->unk2 = 4;
@@ -257,17 +257,17 @@ void func_8001F634(struct EngineObj* arg0)
 void func_8001F6E8(struct EngineObj* arg0)
 {
     if (D_801396C0->unk5 == 2 && D_801396C4->unk5 == 2) {
+        arg0->unk2++;
         arg0->unk3 = 0;
         arg0->unk4 = 6;
-        arg0->unk2++;
     } else if (MENU_PAD_PRESSED & MENU_PAD_ANY) {
         D_801396C0->state = 1;
         D_801396C4->state = 1;
         D_801396C0->unk5 = 4;
         D_801396C4->unk5 = 4;
+        arg0->unk2++;
         arg0->unk3 = 0;
         arg0->unk4 = 6;
-        arg0->unk2++;
     }
 }
 
@@ -358,8 +358,8 @@ s32 func_8001F8FC(struct GameInfo* arg0)
 void func_8001F93C(struct EngineObj* arg0)
 {
     if (abc_object.unkC == 0) {
+        arg0->unk2++;
         arg0->unk4 = 0x3C;
-        arg0->unk2 = (u8)arg0->unk2 + 1;
     }
 }
 

@@ -131,18 +131,18 @@ void func_8004DB10(struct MainObj* self)
     }
 
     if (self->unk15 != 0) {
-        x = self->x_pos.u.hi + self->terrain_box->unk0 + self->terrain_box->unk2;
+        x = self->x_pos.i.hi + self->terrain_box->unk0 + self->terrain_box->unk2;
     } else {
-        x = self->x_pos.u.hi - self->terrain_box->unk0 - self->terrain_box->unk2;
+        x = self->x_pos.i.hi - self->terrain_box->unk0 - self->terrain_box->unk2;
     }
-    y = self->terrain_box->unk3 + (self->y_pos.u.hi + self->terrain_box->unk1) + 8;
+    y = self->terrain_box->unk3 + (self->y_pos.i.hi + self->terrain_box->unk1) + 8;
     if (func_8002D724(PLAYER_OBJECT(self), x, y) != 0) {
         return;
     }
 
     if (self->unk2 == 1) {
         self->unk15 = self->unk15 == 0 ? PLAYER_FACING_RIGHT : 0;
-        self->x_speed = -self->x_speed;
+        self->x_speed *= -1;
         return;
     }
     if (self->collision_flags & 3) {
@@ -298,7 +298,7 @@ void shell_crawler_shoot(struct MainObj* self)
         self->unk6 = 0;
         set_animation(self, 1);
         self->ext.main_0.flags[1] = 0x78;
-        self->ext.main_0.background_relative &= 0xFD;
+        self->ext.main_0.background_relative &= ~2;
     }
 }
 
@@ -321,11 +321,11 @@ void shell_crawler_walk(struct MainObj* self)
     if (self->unk15 != 0) {
         if (self->collision_flags & 1) {
             self->unk15 = 0;
-            self->x_speed = -self->x_speed;
+            self->x_speed *= -1;
         }
     } else if (self->collision_flags & 2) {
         self->unk15 = PLAYER_FACING_RIGHT;
-        self->x_speed = -self->x_speed;
+        self->x_speed *= -1;
     }
 }
 

@@ -35,8 +35,8 @@ extern ret_u8 func_8002938C(s32);
 
 void func_800BE9E8(struct ItemObj* self)
 {
-    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->on_screen = 0;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk5C = 1;
     self->unk61 = 0;
     self->animation_table = (const u8* const*)falling_rock_d_animations;
@@ -44,8 +44,8 @@ void func_800BE9E8(struct ItemObj* self)
     self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x9A));
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x9A));
     self->unk50 = NULL;
-    self->unk54 = breakable_wall_hit_box;
     self->unk68 = NULL;
+    self->unk54 = breakable_wall_hit_box;
     self->unk58 = (const u8*)D_80108684;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
@@ -64,8 +64,8 @@ void breakable_wall_main(struct ItemObj* arg0)
         if (arg0->unk2 == 0) {
             var_a0 = 2;
         }
-        apply_tile_effect(var_a0, (s16)(arg0->x_pos.u.hi - 0x20),
-            (s16)(arg0->y_pos.u.hi - 0x18));
+        apply_tile_effect(var_a0, (s16)(arg0->x_pos.i.hi - 0x20),
+            (s16)(arg0->y_pos.i.hi - 0x18));
         arg0->state = 2;
     }
 }

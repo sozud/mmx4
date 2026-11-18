@@ -69,8 +69,8 @@ struct Item17SpawnPosition crumble_trigger_positions[6] = {
 
 void crumble_trigger_init(struct ItemObj* arg0)
 {
-    arg0->active = 1;
     arg0->state = arg0->state + 1;
+    arg0->active = 1;
     arg0->animation_table = 0;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->sprite_frames = 0;

@@ -173,10 +173,7 @@ void flame_jet_erupt(struct MainObj* self)
 
 void flame_jet_pause(struct MainObj* self)
 {
-    s16 timer;
-
-    timer = self->unk7E;
-    if (timer == 0) {
+    if (self->unk7E == 0) {
         if (func_8007BABC(self) == 0) {
             self->unk5--;
             set_animation(self, 2);
@@ -185,7 +182,7 @@ void flame_jet_pause(struct MainObj* self)
             }
         }
     } else {
-        self->unk7E = timer - 1;
+        self->unk7E--;
     }
 }
 

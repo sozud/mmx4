@@ -23,7 +23,7 @@ void func_8005E108(struct MainObj*);
 void spike_sled_bomb_rise(struct MainObj*);
 void func_8005E298(struct MainObj*);
 
-extern u16 D_800FDDA0[14];
+extern s16 D_800FDDA0[14];
 
 extern union AnimationStep* spike_sled_animations[23];
 extern struct Unk_unk68 D_800FDD88;

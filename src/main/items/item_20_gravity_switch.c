@@ -26,6 +26,9 @@ struct Item20BackgroundConfig {
 #include "saturn/game_low.h"
 #endif
 
+void func_800C5210(struct ItemObj* self);
+void gravity_switch_flip_objects(void);
+
 u8 gravity_switch_terrain_box[4] = { 0, 0, 8, 8 };
 u8 gravity_switch_hit_box[4] = { 0xF8, 0xF8, 0x10, 0x10 };
 

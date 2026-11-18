@@ -30,6 +30,15 @@ extern u8 ride_chaser_shot_angles[];
 extern u8 ride_chaser_shot_animations[];
 #endif
 
+void func_8003B98C(struct PlayerObj* arg0);
+void func_8003C6EC(struct RideArmorObj* arg0, u8 kind);
+void func_8003C9A4(struct RideArmorObj* arg0);
+void func_8003CA44(struct RideArmorObj* arg0);
+void func_8003CF6C(struct RideArmorObj* ride_armor);
+void func_8003D01C(struct RideArmorObj* arg0);
+void func_8003D164(struct VisualObj* arg0, s32 arg1);
+void func_8003D3B4(struct PlayerObj* arg0);
+
 extern s32 D_800F9070[2];
 extern s32 D_800F9078[2];
 extern s32 D_800F9080[2];
@@ -61,7 +70,7 @@ void func_8003B3DC(struct RideArmorObj* arg0)
     arg0->unk1C.val = arg0->y_pos.val;
 
     D_800F90D8[arg0->state](arg0);
-    arg0->hp &= ~0x80;
+    arg0->hp &= 0x7F;
 }
 
 void func_8003B458(void* arg0, s8 arg1)
@@ -174,11 +183,11 @@ void func_8003B694(struct RideArmorObj* self)
     s16 y;
 
     if (self->unk15 == 0) {
-        x = self->x_pos.u.hi + self->unk68->unk0;
+        x = self->x_pos.i.hi + self->unk68->unk0;
     } else {
-        x = self->x_pos.u.hi - self->unk68->unk0;
+        x = self->x_pos.i.hi - self->unk68->unk0;
     }
-    y = self->unk68->unk3 + (self->y_pos.u.hi + self->unk68->unk1) - 15;
+    y = self->unk68->unk3 + (self->y_pos.i.hi + self->unk68->unk1) - 15;
     if (func_8002D724(PLAYER_OBJECT(self), x, y) == 0x24) {
         if ((u16)self->saved_x_vel == 0) {
             self->x_pos.i.hi -= 8;
@@ -809,43 +818,43 @@ void func_8003C6EC(struct RideArmorObj* arg0, u8 kind)
     struct VisualObj* visual;
     u8 resource;
 
-    if (!(arg0->unk8C.value & 0x30) || RIDE_U8(arg0, 0x89) != 0 || RIDE_U8(arg0, 0x98) >= 3)
-        return;
-    weapon = find_free_weapon_obj();
-    if (weapon != NULL) {
-        weapon->active = 0x41;
-        weapon->id = 0x38;
-        weapon->unk2 = kind;
-        weapon->x_pos.i.hi = arg0->x_pos.i.hi;
-        weapon->y_pos.i.hi = arg0->y_pos.i.hi;
-        weapon->animation_table = (u32**)arg0->animation_table;
-        weapon->unk40 = arg0->unk40;
-        weapon->unk3C = arg0->unk3C;
-        resource = func_8002938C(0x82);
-        weapon->unk42 = VISUAL_STAGE_PALETTE(resource);
-        weapon->unk16 = arg0->unk16;
-        weapon->owner = (struct PlayerObj*)arg0;
-        weapon->unk15 = arg0->unk15;
+    if ((arg0->unk8C.value & 0x30) && RIDE_U8(arg0, 0x89) == 0 && RIDE_U8(arg0, 0x98) < 3) {
+        weapon = find_free_weapon_obj();
+        if (weapon != NULL) {
+            weapon->active = 0x41;
+            weapon->id = 0x38;
+            weapon->unk2 = kind;
+            weapon->x_pos.i.hi = arg0->x_pos.i.hi;
+            weapon->y_pos.i.hi = arg0->y_pos.i.hi;
+            weapon->animation_table = (u32**)arg0->animation_table;
+            weapon->unk40 = arg0->unk40;
+            weapon->unk3C = arg0->unk3C;
+            resource = func_8002938C(0x82);
+            weapon->unk42 = VISUAL_STAGE_PALETTE(resource);
+            weapon->unk16 = arg0->unk16;
+            weapon->owner = (struct PlayerObj*)arg0;
+            weapon->unk15 = arg0->unk15;
+        }
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0xC;
+            visual->unk2 = kind;
+            visual->x_pos.i.hi = arg0->x_pos.i.hi;
+            visual->y_pos.i.hi = arg0->y_pos.i.hi;
+            visual->animation_table = (u32**)arg0->animation_table;
+            visual->unk40 = arg0->unk40;
+            visual->unk3C = arg0->unk3C;
+            resource = func_8002938C(0x82);
+            visual->unk42 = VISUAL_STAGE_PALETTE(resource);
+            visual->unk16 = arg0->unk16;
+            visual->unk50 = (struct PlayerObj*)arg0;
+            visual->unk15 = arg0->unk15;
+        }
+        RIDE_U8(arg0, 0x89) = 4;
+        RIDE_U8(arg0, 0x98) += 1;
+        func_8001540C(5, SATURN_SOUND(2, 52), arg0);
     }
-    visual = find_free_visual_obj();
-    if (visual != NULL) {
-        visual->active = 0x41;
-        visual->id = 0xC;
-        visual->unk2 = kind;
-        visual->x_pos.i.hi = arg0->x_pos.i.hi;
-        visual->y_pos.i.hi = arg0->y_pos.i.hi;
-        visual->animation_table = (u32**)arg0->animation_table;
-        visual->unk40 = arg0->unk40;
-        visual->unk3C = arg0->unk3C;
-        resource = func_8002938C(0x82);
-        visual->unk42 = VISUAL_STAGE_PALETTE(resource);
-        visual->unk16 = arg0->unk16;
-        visual->unk50 = (struct PlayerObj*)arg0;
-        visual->unk15 = arg0->unk15;
-    }
-    RIDE_U8(arg0, 0x89) = 4;
-    RIDE_U8(arg0, 0x98) += 1;
-    func_8001540C(5, SATURN_SOUND(2, 52), arg0);
 }
 
 void func_8003C8F4(struct RideArmorObj* arg0)

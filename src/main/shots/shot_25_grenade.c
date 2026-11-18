@@ -43,7 +43,7 @@ void func_8009EBA8(struct ShotObj* self)
     s32 pos;
 
     self->on_screen = 1;
-    self->state = (u8)self->state + 1;
+    self->state++;
     if (self->unk2 & 0x80) {
         self->y_vel.val = 0;
         if (((u8)self->unk2 & 0xF) == 1)
@@ -78,7 +78,7 @@ void func_8009EBA8(struct ShotObj* self)
     }
     self->x_pos.i.hi = pos;
 
-    self->y_pos.u.hi += grenade_spawn_offsets[(u8)self->unk2 & 0xF][1];
+    self->y_pos.i.hi += grenade_spawn_offsets[(u8)self->unk2 & 0xF][1];
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk68 = (struct Unk_unk68*)grenade_terrain_box;
     self->unk54 = grenade_hit_box;

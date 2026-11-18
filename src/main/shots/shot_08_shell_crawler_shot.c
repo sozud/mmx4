@@ -24,9 +24,9 @@ void shell_crawler_shot_init(struct ShotObj* self)
     s32 var_a1;
 
     self->on_screen = 1;
-    self->state = (u8)self->state + 1;
+    self->state++;
     var_a1 = self->unk15 != 0 ? FIXED(2.5) : FIXED(-2.5);
-    temp_v1 = *(s16*)&self->x_pos.i.hi;
+    temp_v1 = (s16)self->x_pos.i.hi;
     self->x_vel.val = var_a1;
     self->unk28 = 0;
     self->y_vel.val = 0;

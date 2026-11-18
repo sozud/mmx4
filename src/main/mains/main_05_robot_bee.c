@@ -192,7 +192,7 @@ void robot_bee_main(struct MainObj* self)
 void robot_bee_despawn(struct MainObj* self)
 {
     struct MainObj* target;
-    u8 subtype;
+    s8 subtype;
 #ifdef MMX4_SATURN
     func_8001540C(6, 5, NULL);
 #else
@@ -240,7 +240,7 @@ void robot_bee_wait_for_player(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (ABS(self->x_pos.val, g_Player.x_pos.val) <= FIXED(144)) {
-        self->x_speed = robot_bee_approach_speeds[!(self->unk15 & PLAYER_FACING_RIGHT)];
+        self->x_speed = robot_bee_approach_speeds[(self->unk15 & PLAYER_FACING_RIGHT) == 0];
         self->y_speed = 0;
         self->unk5 = 3;
     }
@@ -259,7 +259,7 @@ void robot_bee_glide(struct MainObj* self)
 void robot_bee_glide_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    self->x_speed = robot_bee_approach_speeds[!(self->unk15 & PLAYER_FACING_RIGHT)];
+    self->x_speed = robot_bee_approach_speeds[(self->unk15 & PLAYER_FACING_RIGHT) == 0];
     self->y_speed = FIXED(1);
     self->unk6++;
 }
@@ -731,9 +731,8 @@ void robot_bee_swarm(struct MainObj* self)
     robot_bee_swarm_funcs[self->unk6](self);
 }
 
-void robot_bee_swarm_start(struct MainObj* arg0)
+void robot_bee_swarm_start(struct MainObj* self)
 {
-    struct MainObj* self = arg0;
     u8 angle;
 
     set_animation(self, 1);
@@ -748,7 +747,7 @@ void robot_bee_swarm_start(struct MainObj* arg0)
     self->unk7C = 0x14;
     if (self->unk15 == 0) {
         if (self->ext.main_5.part_index % 2) {
-            self->unk7C = 0x16;
+            self->unk7C += 2;
         }
     }
     if (self->unk15 != 0) {
@@ -761,24 +760,19 @@ void robot_bee_swarm_start(struct MainObj* arg0)
 
 void robot_bee_swarm_fly(struct MainObj* self)
 {
-    s16 timer;
-    s16 next_delay;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 
-    timer = --self->unk7C;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->x_speed = 0;
         self->y_speed = 0;
         self->x_accel = 0;
         self->gravity = 0;
 
-        next_delay = get_random() & 0x7F;
-        self->unk7C = next_delay;
-        if (next_delay < 0x78) {
-            self->unk7C = next_delay + 0x78;
-        } else if (next_delay > 0xF0) {
+        self->unk7C = get_random() & 0x7F;
+        if (self->unk7C < 0x78) {
+            self->unk7C += 0x78;
+        } else if (self->unk7C > 0xF0) {
             self->unk7C = 0xF0;
         }
         self->unk6++;
@@ -819,7 +813,7 @@ void robot_bee_swarm_return_start(struct MainObj* self)
     self->unk7C = 0x14;
     if (self->unk15 == 0) {
         if (self->ext.main_5.part_index % 2) {
-            self->unk7C = 0x16;
+            self->unk7C += 2;
         }
     }
     if (self->unk15 != 0) {
@@ -832,24 +826,19 @@ void robot_bee_swarm_return_start(struct MainObj* self)
 
 void robot_bee_swarm_return_fly(struct MainObj* self)
 {
-    s16 timer;
-    s16 next_delay;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 
-    timer = --self->unk7C;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->x_speed = 0;
         self->y_speed = 0;
         self->x_accel = 0;
         self->gravity = 0;
 
-        next_delay = get_random() & 0x7F;
-        self->unk7C = next_delay;
-        if (next_delay < 0x78) {
-            self->unk7C = next_delay + 0x78;
-        } else if (next_delay > 0xF0) {
+        self->unk7C = get_random() & 0x7F;
+        if (self->unk7C < 0x78) {
+            self->unk7C += 0x78;
+        } else if (self->unk7C > 0xF0) {
             self->unk7C = 0xF0;
         }
         self->unk6++;

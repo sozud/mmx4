@@ -149,8 +149,8 @@ void spike_sled_run(struct MainObj* self)
 
 extern u8 D_800FDD90[8];
 extern u8 D_800FDF4C[8];
-#define MAIN_33_SLOT_X(index) ((s16)D_800FDDA0[(index)*2])
-#define MAIN_33_SLOT_Y(index) ((s16)D_800FDDA0[(index)*2 + 1])
+#define MAIN_33_SLOT_X(index) (D_800FDDA0[(index)*2])
+#define MAIN_33_SLOT_Y(index) (D_800FDDA0[(index)*2 + 1])
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005D4E0(struct MainObj* arg0);
 void func_8005DC58(struct MainObj* arg0);
@@ -527,7 +527,7 @@ void spike_sled_charge_approach(struct MainObj* self)
 {
     s16 distance;
 
-    distance = (self->ext.main_33.target_x - self->x_pos.i.hi) < 0 ? self->x_pos.i.hi - self->ext.main_33.target_x : self->ext.main_33.target_x - self->x_pos.i.hi;
+    distance = ABS(self->ext.main_33.target_x, self->x_pos.i.hi);
 
     if (distance == 0) {
         set_animation(self, 5);
@@ -724,7 +724,7 @@ u8 D_800FDD98[8] = {
     0x00,
 };
 
-u16 D_800FDDA0[14] = {
+s16 D_800FDDA0[14] = {
     0x1200,
     0x02A0,
     0x1240,

@@ -126,15 +126,16 @@ void rising_fire_draw(struct WeaponObj* arg0)
 
 void rising_fire_charged_update(struct WeaponObj* arg0)
 {
-    s32 should_reset = 0;
+    struct PlayerObj* player = &g_Player;
+    u32 should_reset = 0;
 
-    if (g_Player.input_locked != 0) {
+    if (player->input_locked != 0) {
         should_reset = 1;
     }
-    if (g_Player.capsule_state != 0) {
+    if (player->capsule_state != 0) {
         should_reset = 1;
     }
-    if (g_Player.weapon != 4) {
+    if (player->weapon != 4) {
         should_reset = 1;
     }
     if (should_reset != 0) {

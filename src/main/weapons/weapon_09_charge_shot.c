@@ -46,7 +46,7 @@ void func_80092684(struct WeaponObj* arg0)
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
     set_animation(arg0, arg0->unk2 + 0x1A);
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0x20, 0x14);
 }
 

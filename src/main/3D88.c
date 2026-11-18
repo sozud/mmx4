@@ -1002,7 +1002,6 @@ void func_800148EC()
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #ifndef MMX4_SATURN
-s16 SsVabTransCompleted();
 #endif
 
 extern u8 D_801374B4;
@@ -1056,7 +1055,7 @@ void func_80014A90(s32 arg0, s32 arg1)
             if (D_80137CD8 == 0) {
                 func_80013890(D_80137DD8, D_80137DE0);
             } else {
-                func_80013AD8(D_80137DD8, D_80137DDC, D_80137DE0);
+                func_80013AD8(D_80137DD8, D_80137DDC, (CdLoadAddress)D_80137DE0);
             }
         } else {
             temp_v0 = D_80137DE4 + 1;
@@ -1095,7 +1094,7 @@ void func_80014C70(void)
             if (D_80137CD8 == 0) {
                 func_80013890(D_80137DD8, D_80137DE0);
             } else {
-                func_80013AD8(D_80137DD8, D_80137DDC, D_80137DE0);
+                func_80013AD8(D_80137DD8, D_80137DDC, (CdLoadAddress)D_80137DE0);
             }
         } else {
             temp_v0 = D_80137DE4 + 1;

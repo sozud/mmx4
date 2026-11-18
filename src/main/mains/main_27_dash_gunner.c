@@ -455,11 +455,12 @@ void dash_gunner_wait_for_player(struct MainObj* self)
         self->unk7A = 0;
         if (self->ext.main_27.unk80 == 0) {
             self->unk5 = 2;
+            self->unk6 = 0;
         } else {
             self->unk7C = 1;
             self->unk5 = 7;
+            self->unk6 = 0;
         }
-        self->unk6 = 0;
     }
 }
 
@@ -516,12 +517,13 @@ void func_80059154(struct MainObj* self)
                 self->x_speed = FIXED(1.5);
             }
             self->unk5 = 2;
+            self->unk6 = 0;
         } else {
             self->ext.main_27.unk88 = 0;
             self->ext.main_27.unk89 = 0x14;
             self->unk5 = 6;
+            self->unk6 = 0;
         }
-        self->unk6 = 0;
     }
 }
 
@@ -550,11 +552,11 @@ void dash_gunner_shoot_aim(struct MainObj* self)
         if (self->unk15 == 0) {
             self->x_pos.i.hi -= 6;
         } else {
-            self->x_pos.u.hi += 6;
+            self->x_pos.i.hi += 6;
         }
         self->ext.main_27.collision_direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
         if (self->unk15 == 0) {
-            self->x_pos.u.hi += 6;
+            self->x_pos.i.hi += 6;
         } else {
             self->x_pos.i.hi -= 6;
         }
@@ -646,13 +648,14 @@ void func_80059590(struct MainObj* self)
                 self->x_speed = FIXED(1.5);
             }
             self->unk5 = 2;
+            self->unk6 = 0;
         } else {
             self->ext.main_27.unk88 = 0;
             self->ext.main_27.unk89 = 0x14;
             self->ext.main_27.unk8C = 0x12C;
             self->unk5 = 6;
+            self->unk6 = 0;
         }
-        self->unk6 = 0;
     }
 }
 

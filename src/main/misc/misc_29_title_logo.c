@@ -113,8 +113,8 @@ void title_logo_star_fly(struct MiscObj* self)
         self->x_pos.i.hi = 0xD8;
         self->y_pos.i.hi = 0x48;
         is_on_screen(self);
-        self->unk16 = 2;
         self->state++;
+        self->unk16 = 2;
     } else {
         if (self->ext.title_logo.palette_shift_speed == 0) {
             obj = func_8002AE90(self->ext.title_logo.unk50, 0);

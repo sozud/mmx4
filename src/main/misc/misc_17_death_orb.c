@@ -63,7 +63,7 @@ void func_800CAE38(struct MiscObj* arg0)
     }
     set_animation(arg0, animation);
     move_object(MOVING_OBJECT(arg0));
-    arg0->state = (u8)arg0->state + 1;
+    arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0x80000, 0x80000);
 }
 

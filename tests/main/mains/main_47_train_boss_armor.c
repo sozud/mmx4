@@ -7,7 +7,7 @@ extern u16 train_boss_armor_smoke_offsets[3][2];
 static u32* reflected_word(struct MainObj* obj)
 {
 #ifdef MMX4_PC
-    return &obj->ext.main_47.unk88;
+    return &obj->ext.main_47.unk88.word;
 #else
     return (u32*)((u8*)obj + 0x88);
 #endif
@@ -293,7 +293,7 @@ static const u32 train_armor_smoke_context_cases_expected[] = { 0x3020000u, 0x0u
 #define TEST_ARMOR_OWNER_ADDRESS ((struct Main45Ext*)&owner)
 #define TEST_ARMOR_HP_LINK(object) (object).ext.main_47.boss_hp
 #define TEST_ARMOR_HP_ADDRESS (&hp)
-#define TEST_ARMOR_WORD88(object) (object).ext.main_47.unk88
+#define TEST_ARMOR_WORD88(object) (object).ext.main_47.unk88.word
 #define TEST_ARMOR_WORD8C(object) (object).ext.main_47.unk8C
 #define TEST_ARMOR_WORD90(object) (object).ext.main_47.unk90
 #define TEST_ARMOR_WORD94(object) (object).ext.main_47.unk94
@@ -377,7 +377,7 @@ static struct Main45Ext armor_boss;
 static struct Main45LayerSignals armor_signals;
 static s8 armor_boss_hp;
 #define TBA(st, step, part) (state_reset(step, 0, 0), memset(&armor_boss, 0, sizeof(armor_boss)), memset(&armor_signals, 0, sizeof(armor_signals)), armor_boss.layer_signals = &armor_signals, armor_boss_hp = 0x20, so.state = st, so.unk2 = part, so.hp = so.unk5D = 0x10, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.ext.main_47.train_boss = &armor_boss, so.ext.main_47.boss_hp = &armor_boss_hp)
-#define SEEN() (state_extra = (u8)armor_boss_hp | armor_boss.attack_flags << 8 | armor_signals.unk16 << 16 | (u32)(u8)so.ext.main_47.unk88 << 24)
+#define SEEN() (state_extra = (u8)armor_boss_hp | armor_boss.attack_flags << 8 | armor_signals.unk16 << 16 | (u32)so.ext.main_47.unk88.flag << 24)
 static void tba_init(void)
 {
     TBA(0, 0, 1);
@@ -419,7 +419,7 @@ static void tba_cooldown_reflect(void)
     TBA(1, 2, 0);
     so.unk6 = 1;
     so.invincibility_timer = 2;
-    so.ext.main_47.unk88 = 1;
+    so.ext.main_47.unk88.flag = 1;
     train_boss_armor_update(&so);
     SEEN();
 }

@@ -36,8 +36,8 @@ void stage_block_update(struct ItemObj* arg0)
 
 // stage_block_init
 struct Item01DebrisPosition {
-    s16 x;
-    s16 y;
+    u16 x;
+    u16 y;
 };
 
 extern struct Unk_unk68 D_80108504[];
@@ -59,7 +59,7 @@ void func_800BEBFC(struct ItemObj* arg0)
     arg0->bg_offset = g_Player.bg_offset;
     arg0->x_pos.i.hi = stage_block_entries[arg0->unk2].x;
     arg0->y_pos.i.hi = stage_block_entries[arg0->unk2].y;
-    arg0->animation_step.fields.frame_index = stage_block_entries[arg0->unk2].flags_and_palette & 0x3F;
+    arg0->animation_step.fields.frame_index = stage_block_entries[arg0->unk2].flags & 0x3F;
     if (arg0->unk2 != 9)
         arg0->y_vel.val = 0;
     else
@@ -104,11 +104,11 @@ void stage_block_main(struct ItemObj* arg0)
     update_on_screen(BASE_OBJECT(arg0), stage_block_bounds[arg0->unk2].width, stage_block_bounds[arg0->unk2].height);
     collide_with_players(PLAYER_OBJECT(arg0));
     index = arg0->unk2;
-    if (!((u8)stage_block_entries[index].flags_and_palette & 0x80) && (index != 12 || arg0->unk5 == 3)) {
+    if (!(stage_block_entries[index].flags & 0x80) && (index != 12 || arg0->unk5 == 3)) {
         collision = func_8002DD04(MAIN_OBJECT(arg0));
         if (collision < 0) {
             if (arg0->unk2 == 12) {
-                apply_tile_effect((u8)stage_block_entries[12].sound_id, 0, 0);
+                apply_tile_effect(stage_block_entries[12].sound_id, 0, 0);
             }
             arg0->on_screen = 0;
             arg0->unk7C.timer = 60;
@@ -140,7 +140,7 @@ void stage_block_wait_trigger(struct ItemObj* self)
     }
     start_screen_shake_x(0x18, 3, 1);
     self->ext.timer = 1;
-    self->unk5 = (u8)self->unk5 + 1;
+    self->unk5++;
     if (self->unk2 == 0xD) {
         func_800B10E4(0x21, 0xE10, 0x1E0, 0xF10, 0x1F0, 6);
         func_800B10E4(0x22, 0xE10, 0x1E0, 0xF10, 0x1F0, 6);
@@ -171,8 +171,8 @@ void func_800BEFCC(struct ItemObj* arg0)
             start_screen_shake_y(0x20, 4, 1);
             arg0->tail_ext.unk1.unk88++;
         }
-        if (arg0->y_pos.i.hi >= stage_block_entries[arg0->unk2].trigger_x && !((u8)stage_block_entries[arg0->unk2].flags_and_palette & 0x40)) {
-            apply_tile_effect((u8)stage_block_entries[arg0->unk2].sound_id, 0, 0);
+        if (arg0->y_pos.i.hi >= stage_block_entries[arg0->unk2].trigger_x && !(stage_block_entries[arg0->unk2].flags & 0x40)) {
+            apply_tile_effect(stage_block_entries[arg0->unk2].sound_id, 0, 0);
             arg0->tail_ext.unk1.unk84.previous_value++;
         }
     }
@@ -201,8 +201,8 @@ void func_800BF1FC(struct ItemObj* arg0)
     int last;
     int index;
 
-    if (arg0->y_pos.i.hi == entry->trigger_x && !(entry->flags_and_palette & 0x40)) {
-        apply_tile_effect((u8)entry->sound_id, 0, 0);
+    if (arg0->y_pos.i.hi == entry->trigger_x && !(entry->flags & 0x40)) {
+        apply_tile_effect(entry->sound_id, 0, 0);
         if (kind != 3 && kind != 4)
             arg0->state = 3;
     }
@@ -258,9 +258,9 @@ void func_800BF1FC(struct ItemObj* arg0)
     s8 i;
     s8 last;
 
-    if (arg0->y_pos.i.hi == stage_block_entries[arg0->unk2].trigger_x && !((u8)stage_block_entries[arg0->unk2].flags_and_palette & 0x40)) {
-        apply_tile_effect((u8)stage_block_entries[arg0->unk2].sound_id, 0, 0);
-        if ((u8)arg0->unk2 != 3 && (u8)arg0->unk2 != 4)
+    if (arg0->y_pos.i.hi == stage_block_entries[arg0->unk2].trigger_x && !(stage_block_entries[arg0->unk2].flags & 0x40)) {
+        apply_tile_effect(stage_block_entries[arg0->unk2].sound_id, 0, 0);
+        if (arg0->unk2 != 3 && arg0->unk2 != 4)
             arg0->state = 3;
     }
     if (arg0->unk2 != 13 && arg0->unk2 != 5 && arg0->unk2 != 1 && arg0->unk2 != 11) {
@@ -344,8 +344,8 @@ void stage_block_destroyed(struct ItemObj* arg0)
             func_8001540C(0, stage_block_explosion_sounds[get_random() & 3], arg0);
         }
     } else {
-        arg0->unk5 = 0;
         arg0->state++;
+        arg0->unk5 = 0;
     }
 }
 
@@ -394,21 +394,21 @@ void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3)
 }
 
 struct Item01StageEntry stage_block_entries[15] = {
-    { 0x0240, 0x00E0, 0x0200, 0x0100, 0x0100, 0x0040, 0x0C00, 0x0000 },
-    { 0x02F0, 0x00D8, 0x0250, 0x0130, 0x0130, 0x0081, 0x2C00, 0x0021 },
-    { 0x0390, 0x00E0, 0x02F0, 0x01B0, 0x01B0, 0x0082, 0x1F00, 0x0000 },
-    { 0x0430, 0x0140, 0x046B, 0x0197, 0x0197, 0x0003, 0x3D00, 0x0001 },
-    { 0x04D0, 0x0140, 0x046B, 0x0197, 0x0197, 0x0003, 0x3D00, 0x0002 },
-    { 0x0870, 0x0120, 0x07D0, 0x0230, 0x01C0, 0x0003, 0x2C00, 0x0003 },
-    { 0x0930, 0x00E0, 0x08A0, 0x01B0, 0x01B0, 0x0085, 0x1C00, 0x0004 },
-    { 0x09E0, 0x00E0, 0x0930, 0x01A0, 0x01A0, 0x0086, 0x1C00, 0x0005 },
-    { 0x0AE0, 0x01A8, 0x0A90, 0x0228, 0x0208, 0x0087, 0x0800, 0x0006 },
-    { 0x0BE0, 0x0228, 0x0BA0, 0x0198, 0x0198, 0x0088, 0x0D00, 0x0007 },
-    { 0x0CA0, 0x0090, 0x0BE0, 0x0148, 0x0148, 0x0089, 0x2C00, 0x0008 },
-    { 0x0DB0, 0x00B0, 0x0CE0, 0x0170, 0x0170, 0x008A, 0x1C00, 0x0009 },
-    { 0x0DB0, 0x00A8, 0x0CE0, 0x0168, 0x0168, 0x004F, 0x1C00, 0x000A },
-    { 0x0EA0, 0x01E0, 0x0EA0, 0x03D0, 0x03D0, 0x00D0, 0x5000, 0x0000 },
-    { 0x02F0, 0x0130, 0x0250, 0x0188, 0x0188, 0x0053, 0x2C00, 0x0000 },
+    { 0x0240, 0x00E0, 0x0200, 0x0100, 0x0100, 0x40, 0x00, 0x0C00, 0x00, 0x00 },
+    { 0x02F0, 0x00D8, 0x0250, 0x0130, 0x0130, 0x81, 0x00, 0x2C00, 0x21, 0x00 },
+    { 0x0390, 0x00E0, 0x02F0, 0x01B0, 0x01B0, 0x82, 0x00, 0x1F00, 0x00, 0x00 },
+    { 0x0430, 0x0140, 0x046B, 0x0197, 0x0197, 0x03, 0x00, 0x3D00, 0x01, 0x00 },
+    { 0x04D0, 0x0140, 0x046B, 0x0197, 0x0197, 0x03, 0x00, 0x3D00, 0x02, 0x00 },
+    { 0x0870, 0x0120, 0x07D0, 0x0230, 0x01C0, 0x03, 0x00, 0x2C00, 0x03, 0x00 },
+    { 0x0930, 0x00E0, 0x08A0, 0x01B0, 0x01B0, 0x85, 0x00, 0x1C00, 0x04, 0x00 },
+    { 0x09E0, 0x00E0, 0x0930, 0x01A0, 0x01A0, 0x86, 0x00, 0x1C00, 0x05, 0x00 },
+    { 0x0AE0, 0x01A8, 0x0A90, 0x0228, 0x0208, 0x87, 0x00, 0x0800, 0x06, 0x00 },
+    { 0x0BE0, 0x0228, 0x0BA0, 0x0198, 0x0198, 0x88, 0x00, 0x0D00, 0x07, 0x00 },
+    { 0x0CA0, 0x0090, 0x0BE0, 0x0148, 0x0148, 0x89, 0x00, 0x2C00, 0x08, 0x00 },
+    { 0x0DB0, 0x00B0, 0x0CE0, 0x0170, 0x0170, 0x8A, 0x00, 0x1C00, 0x09, 0x00 },
+    { 0x0DB0, 0x00A8, 0x0CE0, 0x0168, 0x0168, 0x4F, 0x00, 0x1C00, 0x0A, 0x00 },
+    { 0x0EA0, 0x01E0, 0x0EA0, 0x03D0, 0x03D0, 0xD0, 0x00, 0x5000, 0x00, 0x00 },
+    { 0x02F0, 0x0130, 0x0250, 0x0188, 0x0188, 0x53, 0x00, 0x2C00, 0x00, 0x00 },
 };
 
 struct Item01SpriteBounds stage_block_bounds[15] = {

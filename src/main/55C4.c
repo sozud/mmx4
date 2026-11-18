@@ -8,6 +8,16 @@
 #include "main/main_palette_data.h"
 #include "main/movie_hud_data.h"
 
+#ifdef __MWERKS__
+void func_80016420(arg_u8 arg0);
+void func_800179BC(void);
+void func_80018E50(void);
+void func_80018EEC(void);
+void func_80018FD0(u32 arg0);
+void func_80019058(s8 arg0);
+void func_800190F0(s32 arg0);
+#endif
+
 #ifndef MMX4_SATURN
 
 extern s8 D_801307F8;
@@ -266,7 +276,6 @@ void func_800148EC();
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #ifndef MMX4_SATURN
-s16 SsVabTransCompleted();
 #endif
 
 extern u8 D_801374B4;
@@ -783,8 +792,8 @@ s32 set_animation(void* object, s32 animation)
 void set_animation_frame(struct AnimatedObj* arg0, s32 arg1, s32 arg2)
 {
     arg0->animation_cursor = arg0->animation_table[arg1] + arg2;
-    arg0->unk17 = arg1;
     arg0->previous_animation_index = 0xFF;
+    arg0->unk17 = arg1;
     arg0->animation_step.packed = *arg0->animation_cursor;
 }
 
@@ -900,11 +909,9 @@ void func_80016074(void)
 
     var_a1 = D_80141F70;
     var_a0 = SP_PALETTE;
-    var_v1 = 0;
-    do {
+    for (var_v1 = 0; var_v1 < 0x800U; var_v1++) {
         *var_a1++ = *var_a0++;
-        var_v1 += 1;
-    } while (var_v1 < 0x800U);
+    }
 }
 
 void func_800160AC(void)
@@ -2411,9 +2418,9 @@ s32 func_80018AD0(
         func_80013614(arg0, &local),
         arg1,
         arg2,
-        arg3,
+        (u32*)arg3,
         arg4,
-        arg5,
+        (u32*)arg5,
         arg6,
         arg7,
         arg8,

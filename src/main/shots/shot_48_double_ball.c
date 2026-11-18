@@ -80,12 +80,12 @@ void double_ball_travel(struct ShotObj* self)
     s32 temp_v0;
     s32 temp_v1;
 
-    temp_s2 = self->x_pos.val - FIXED((s16)self->unk8C.half);
+    temp_s2 = self->x_pos.val - FIXED(self->unk8C.halves[0]);
     temp_s1 = self->y_pos.val - FIXED(self->unk8C.halves[1]);
     temp_a2 = angle_from_delta(temp_s2, temp_s1);
     if ((s16)self->unk8A == 0) {
         temp_a0 = (u8)self->unk5;
-        temp_v0 = (s16)self->unk8C.half;
+        temp_v0 = self->unk8C.halves[0];
         temp_v1 = self->unk8C.halves[1];
         self->x_pos.val = FIXED(temp_v0);
         self->y_pos.val = FIXED(temp_v1);
@@ -95,7 +95,7 @@ void double_ball_travel(struct ShotObj* self)
     } else {
         self->x_pos.val -= temp_s2 / (s16)self->unk8A;
         self->y_pos.val -= temp_s1 / (s16)self->unk8A;
-        self->unk8A = (u16)self->unk8A - 1;
+        self->unk8A--;
     }
     self->unk84.value = temp_a2 & 0xFF;
     animate_object(ANIMATED_OBJECT(self));

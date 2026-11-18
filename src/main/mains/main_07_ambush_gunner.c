@@ -108,18 +108,18 @@ void func_80047404(struct MainObj* arg0)
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_80106670;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk16 = 6;
-    arg0->animation_table = (const u8* const*)ambush_gunner_animations;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->air_state = 0;
+    arg0->animation_table = (const u8* const*)ambush_gunner_animations;
+    arg0->unk16 = 6;
     arg0->terrain_box = NULL;
     arg0->hurt_box = &ambush_gunner_terrain_box;
     arg0->attack_box = &ambush_gunner_terrain_box;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
     switch ((s8)arg0->unk2) {
     case 1:
         set_animation(arg0, 1);
@@ -214,9 +214,9 @@ void ambush_gunner_main(struct MainObj* self)
             spawn_explosion(BASE_OBJECT(self));
             spawn_debris(5, ambush_gunner_debris, self);
             if (!(self->unk2 & 1)) {
-                func_800BF638(BASE_OBJECT(self), 0xE, self->x_pos.u.hi - 0xA, self->y_pos.i.hi);
+                func_800BF638(BASE_OBJECT(self), 0xE, self->x_pos.i.hi - 0xA, self->y_pos.i.hi);
             } else {
-                func_800BF638(BASE_OBJECT(self), 0xE, self->x_pos.u.hi + 0xA, self->y_pos.i.hi);
+                func_800BF638(BASE_OBJECT(self), 0xE, self->x_pos.i.hi + 0xA, self->y_pos.i.hi);
             }
             self->state = 2;
             return;

@@ -16,6 +16,8 @@
 #include "main/1E1BC.h"
 #endif
 
+void iris_face_player(struct MainObj* self);
+
 void iris_death(struct BarObj* arg0);
 void iris_despawn(struct MainObj*);
 
@@ -294,14 +296,11 @@ void iris_death(struct BarObj* self)
 
 void iris_death_start(struct MainObj* self)
 {
-    struct MainObj* other;
-
     g_Player.stun_timer = 0;
     player_start_script_action(0x14, g_Player.unk15);
     self->unk5 = 1;
-    other = self->ext.main_66.partner;
     self->unk42 &= 0x7FFF;
-    other->unk42 &= 0x7FFF;
+    self->ext.main_66.partner->unk42 &= 0x7FFF;
     set_animation(self->ext.main_66.partner, 8);
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
@@ -351,10 +350,11 @@ void iris_death_wait_explosion(struct MainObj* self)
             if (self->unk7E-- == 0) {
                 linked = self->ext.main_66.partner;
                 linked->unk42 ^= 0x8000;
-                self->unk7E = 5;
                 self->unk42 ^= 0x8000;
+                self->unk7E = 5;
             }
             update_on_screen(BASE_OBJECT(self->ext.main_66.partner), 0x60, 0x60);
+            update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
         } else {
             linked = self->ext.main_66.partner;
             if (linked->active != 0) {
@@ -365,8 +365,8 @@ void iris_death_wait_explosion(struct MainObj* self)
             self->y_pos.i.hi = 0x1CA;
             self->unk16 = 0;
             set_animation(self, 0x23);
+            update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
         }
-        update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
         return;
     }
 
@@ -900,7 +900,7 @@ void iris_crystal_drop_fire(struct MainObj* self)
     struct ShotObj* shot;
 
     animate_object(ANIMATED_OBJECT(self));
-    if ((--self->unk7C << 16) == 0) {
+    if (--self->unk7C == 0) {
         func_8001540C(2, SATURN_SOUND(0xE3, 0xA4), self);
         shot = find_free_shot_obj();
         if (shot != NULL) {

@@ -135,12 +135,12 @@ void iris_laser_init(struct ShotObj* self)
 {
     self->on_screen = 1;
     self->unk58.data = NULL;
+    self->unk42 &= 0x7FFF;
     self->unk61 = 1;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
     self->unk2C = 0;
     self->unk28 = 0;
-    self->unk42 &= 0x7FFF;
     if (self->unk15 == 0) {
         self->x_pos.i.hi = self->x_pos.i.hi - 0xA5;
     } else {

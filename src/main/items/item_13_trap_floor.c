@@ -139,10 +139,10 @@ void trap_floor_opened(struct ItemObj* arg0)
     collide_with_players(PLAYER_OBJECT(arg0));
 
     if (engine_obj.substage != 0) {
-        apply_tile_effect(0x10, (s16)(arg0->x_pos.u.hi - 0x10),
+        apply_tile_effect(0x10, (s16)(arg0->x_pos.i.hi - 0x10),
             arg0->y_pos.i.hi);
     } else {
-        apply_tile_effect(7, (s16)(arg0->x_pos.u.hi - 0x10),
+        apply_tile_effect(7, (s16)(arg0->x_pos.i.hi - 0x10),
             arg0->y_pos.i.hi);
     }
 }

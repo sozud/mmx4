@@ -21,9 +21,8 @@ void jet_drone_bullet_update(struct ShotObj* self)
     jet_drone_bullet_state_funcs[self->state](self);
 }
 
-void jet_drone_bullet_init(struct ShotObj* arg0)
+void jet_drone_bullet_init(struct ShotObj* self)
 {
-    struct ShotObj* self = arg0;
 
     self->state = 1;
     self->on_screen = 1;

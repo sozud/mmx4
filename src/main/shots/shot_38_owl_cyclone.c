@@ -207,8 +207,8 @@ void owl_cyclone_spawn_trail(struct ShotObj* self)
             misc->unk3C = shot->unk3C;
             misc->unk40 = shot->unk40;
             misc->unk15 = shot->unk15;
-            misc->x_pos.u.hi = shot->x_pos.u.hi;
-            misc->y_pos.u.hi = shot->y_pos.u.hi;
+            misc->x_pos.i.hi = shot->x_pos.i.hi;
+            misc->y_pos.i.hi = shot->y_pos.i.hi;
         }
         timer = 5;
     } else {

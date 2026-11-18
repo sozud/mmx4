@@ -52,6 +52,7 @@ void func_800D1A48(struct MiscObj* self)
         }
         animate_object(ANIMATED_OBJECT(self));
         move_with_gravity(ANIMATED_OBJECT(self));
+        is_on_screen(BASE_OBJECT(self));
     } else {
         if (--self->ext.misc_49.timer == 0) {
             self->on_screen = 0;
@@ -59,8 +60,8 @@ void func_800D1A48(struct MiscObj* self)
             return;
         }
         animate_object(ANIMATED_OBJECT(self));
+        is_on_screen(BASE_OBJECT(self));
     }
-    is_on_screen(BASE_OBJECT(self));
 }
 
 void double_afterimage_despawn(struct MiscObj* self)

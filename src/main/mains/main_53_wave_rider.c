@@ -51,7 +51,7 @@ void func_8006B398(struct MainObj* arg0);
 void func_8006B5F8(struct MainObj* arg0);
 void func_8006B6B0(struct MainObj* arg0);
 void wave_rider_move(struct MainObj*);
-s32 wave_rider_check_camera(struct MainObj*);
+u32 wave_rider_check_camera(struct MainObj*);
 #endif
 
 void func_8006AF70(struct MainObj* arg0)
@@ -75,8 +75,8 @@ void func_8006AF70(struct MainObj* arg0)
     case 4:
     default:
         arg0->x_speed = 0x54000;
-        arg0->unk5 = 5;
         arg0->state++;
+        arg0->unk5 = 5;
         break;
     }
     if (arg0->unk2 == 4)
@@ -147,11 +147,11 @@ u8 func_8006B1C4(struct MainObj* self, u8 side)
     u8 tile;
 
     if (self->unk15 == 0) {
-        x = self->x_pos.u.hi + (s8)(u8)self->terrain_box->unk0;
+        x = self->x_pos.i.hi + (s8)(u8)self->terrain_box->unk0;
     } else {
-        x = self->x_pos.u.hi - (s8)(u8)self->terrain_box->unk0;
+        x = self->x_pos.i.hi - (s8)(u8)self->terrain_box->unk0;
     }
-    y = self->terrain_box->unk3 + (self->y_pos.u.hi + (s8)(u8)self->terrain_box->unk1);
+    y = self->terrain_box->unk3 + (self->y_pos.i.hi + (s8)(u8)self->terrain_box->unk1);
     y += 1;
     if (side != 0) {
         y -= 16;
@@ -253,7 +253,7 @@ void wave_rider_move(struct MainObj* self)
     move_with_gravity(self);
 }
 
-s32 wave_rider_check_camera(struct MainObj* self)
+u32 wave_rider_check_camera(struct MainObj* self)
 {
     s32 background_x;
     s32 x;
