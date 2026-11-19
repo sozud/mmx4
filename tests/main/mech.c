@@ -298,7 +298,7 @@ static u32 test_func_8003E0D0(u32 row)
     func_8003E0D0(&obj);
     observed_values[0] = (u32)g_Player.ride_state;
     observed_values[1] = (u32)obj.unk6;
-    observed_values[2] = (u32)obj.unk94.bytes.unk97;
+    observed_values[2] = (u32)(s8)obj.unk94.bytes.unk97;
     return c_test_observe(0, row, observed_values, c->expected, 3);
 }
 
