@@ -295,8 +295,8 @@ void func_800AB170(struct ShotObj* self)
     s32 y;
 
     if (--self->timer == 0) {
-        self->timer = 1;
         self->unk6++;
+        self->timer = 1;
     }
     if (ABS(self->y_pos.i.hi, g_Player.y_pos.i.hi) > 3) {
         y = self->y_pos.i.hi;

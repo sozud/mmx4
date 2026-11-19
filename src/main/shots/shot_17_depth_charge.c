@@ -66,10 +66,10 @@ void func_8009C638(struct ShotObj* self)
         direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF;
         set_velocity_from_angle(MOVING_OBJECT(self), direction);
     }
-    self->unk5 = 2;
     self->x_vel.val *= 2;
     self->y_vel.val *= 2;
     self->state++;
+    self->unk5 = 2;
 }
 
 // depth_charge_launch

@@ -131,16 +131,16 @@ void func_800A3CB4(struct ShotObj* arg0)
     u8 i;
     s32 angle;
 
-    arg0->unk68 = NULL;
+    arg0->state++;
     arg0->on_screen = 1;
+    arg0->unk42 &= 0x7FFF;
+    arg0->unk68 = NULL;
     arg0->unk54 = (u8*)owl_feather_hit_box;
     arg0->unk58.data = (u8*)D_801060F0;
-    arg0->unk60 = 6;
     arg0->unk5C = 0;
+    arg0->unk60 = 6;
     arg0->unk84.value = 0;
     arg0->unk8C.word = 0;
-    arg0->state++;
-    arg0->unk42 &= 0x7FFF;
     set_animation(arg0, 0xD);
     arg0->unk50.data = (u8*)owl_feather_hit_box;
     if (owner->unk15 == 0) {

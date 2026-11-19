@@ -859,7 +859,7 @@ void func_80030C54(struct BarObj* arg0)
 void func_80030C54(struct BarObj* arg0)
 {
     u32 i;
-    s32 refilled;
+    u32 refilled;
     s32 energy;
     u8 next;
 

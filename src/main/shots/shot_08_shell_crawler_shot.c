@@ -21,13 +21,11 @@ void shell_crawler_shot_init(struct ShotObj* self)
 {
     s32 temp_v1;
     s32 var_v0;
-    s32 var_a1;
 
-    self->on_screen = 1;
     self->state++;
-    var_a1 = self->unk15 != 0 ? FIXED(2.5) : FIXED(-2.5);
+    self->on_screen = 1;
+    self->x_vel.val = self->unk15 != 0 ? FIXED(2.5) : FIXED(-2.5);
     temp_v1 = (s16)self->x_pos.i.hi;
-    self->x_vel.val = var_a1;
     self->unk28 = 0;
     self->y_vel.val = 0;
     self->unk2C = 0;
@@ -43,7 +41,7 @@ void shell_crawler_shot_init(struct ShotObj* self)
     self->unk58.data = (u8*)D_80106070;
     self->unk68 = 0;
     self->unk60 = 2;
-    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 3;
+    self->y_pos.i.hi += 3;
     set_animation(self, 8);
 }
 

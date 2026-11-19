@@ -124,8 +124,8 @@ void func_8005FE1C(struct MainObj* arg0)
         arg0->collision_data = (const u16*)D_801060F0;
         arg0->hurt_box = (const u8*)&D_800FE4DC;
         arg0->attack_box = (const u8*)&D_800FE4E0;
-        arg0->y_speed = 0;
         arg0->unk42 += 2;
+        arg0->y_speed = 0;
         if (arg0->x_pos.i.hi >= 0x1799) {
             MAIN_37_S16(arg0, 0x84) = 0x17E0;
             arg0->x_pos.val = 0x18180000;
@@ -172,8 +172,8 @@ void func_8005FE1C(struct MainObj* arg0)
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->state = 1;
-    arg0->unk6 = 0;
     arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk6 = 0;
     arg0->unk1C.val = arg0->y_pos.val;
 }
 
@@ -265,16 +265,17 @@ void rocket_spiker_crawl(struct MainObj* self)
 
 void rocket_spiker_crawl_move(struct MainObj* self)
 {
-    s8 direction_mask;
-
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk15 == 0) {
-        direction_mask = self->collision_flags & 2;
-    } else {
-        direction_mask = self->collision_flags & 1;
-    }
-    if (direction_mask != 0) {
+        if (self->collision_flags & 2) {
+            self->unk6 = 2;
+            self->unk15 ^= PLAYER_FACING_RIGHT;
+            self->x_speed = -self->x_speed;
+            set_animation(self, 2);
+            return;
+        }
+    } else if (self->collision_flags & 1) {
         self->unk6 = 2;
         self->unk15 ^= PLAYER_FACING_RIGHT;
         self->x_speed = -self->x_speed;

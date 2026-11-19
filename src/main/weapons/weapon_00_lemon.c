@@ -61,8 +61,8 @@ void lemon_init(struct WeaponObj* arg0)
     arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
     arg0->animation_table = D_8011BF40;
     arg0->unk40 = WEAPON_TEXTURE_BASE;
-    arg0->unk42 = WEAPON_PALETTE_2;
     arg0->unk16 = 0;
+    arg0->unk42 = WEAPON_PALETTE_2;
     owner = arg0->owner;
     arg0->unk15 = owner->unk15;
     arg0->unk84.word = 0;

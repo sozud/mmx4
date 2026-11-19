@@ -55,14 +55,10 @@ void colonel_fx_init(struct VisualObj* arg0)
     arg0->bg_offset = player->bg_offset;
     arg0->animation_table = player->animation_table;
     arg0->unk15 = player->unk15;
-#ifdef MMX4_SHC
     arg0->unk5 = (s8)arg0->unk2 >> 4;
-#else
-    arg0->unk5 = (s8)((s32)((u8)arg0->unk2 << 24) >> 28);
-#endif
+    arg0->unk2 &= 0xF;
     arg0->unk6 = 0;
     arg0->unk5C.value = 0;
-    arg0->unk2 &= 0xF;
 }
 
 void colonel_fx_despawn(struct VisualObj* arg0)
@@ -90,7 +86,7 @@ void colonel_fx_beam_in_start(struct VisualObj* arg0)
     struct PlayerObj* player = arg0->unk50;
 
     arg0->unk16 = VISUAL_SATURN_LAYER(4);
-    arg0->x_pos.val = player->x_pos.val + ((arg0->unk15 == 0) ? FIXED(-5) : FIXED(5));
+    arg0->x_pos.val = player->x_pos.val + ((arg0->unk15 != 0) ? FIXED(5) : FIXED(-5));
     arg0->y_pos.val = player->y_pos.val + FIXED(-224);
     set_animation(arg0, 0x12);
     arg0->unk6++;
@@ -144,7 +140,7 @@ void colonel_fx_slash_start(struct VisualObj* arg0)
 
     player = arg0->unk50;
     arg0->unk16 = VISUAL_SATURN_LAYER(4);
-    arg0->x_pos.val = player->x_pos.val + (arg0->unk15 == 0 ? FIXED(-7) : FIXED(7));
+    arg0->x_pos.val = player->x_pos.val + (arg0->unk15 != 0 ? FIXED(7) : FIXED(-7));
     arg0->y_pos.val = player->y_pos.val + FIXED(-93);
     set_animation(arg0, 0x11);
     arg0->unk54 = 0x30;

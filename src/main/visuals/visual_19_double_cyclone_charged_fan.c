@@ -16,29 +16,32 @@ extern struct VisualSpawnOffset double_cyclone_charged_fan_offsets[2];
 
 void func_800B2698(struct VisualObj* arg0)
 {
-    s32* player_gfx;
-    s32* sprite_frames;
     s16 dx;
+    s32* sprite_frames;
+    s32* player_gfx;
     struct PlayerObj* player = &g_Player;
     s16 dy;
-    s32 cancel;
+    u32 cancel = 0;
 
-    cancel = g_Player.input_locked != 0;
-    if (g_Player.capsule_state != 0)
+    if (player->input_locked != 0)
         cancel = 1;
-    if (g_Player.weapon != 7)
+    if (player->capsule_state != 0)
         cancel = 1;
-    if (g_Player.actions_reset != 0)
+    if (player->weapon != 7)
         cancel = 1;
-    if (g_Player.hp == 0)
+    if (player->actions_reset != 0)
         cancel = 1;
-    if (cancel)
-        goto zero;
+    if (player->hp == 0)
+        cancel = 1;
+    if (cancel) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
     if (arg0->state == 0) {
         arg0->on_screen = 1;
         player_gfx = SP_PLAYER_GFX;
-        sprite_frames = SP_SPRITE_FRAMES;
         arg0->unk38 = (u8*)player_gfx + player_gfx[8];
+        sprite_frames = SP_SPRITE_FRAMES;
         arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x10];
         arg0->animation_table = D_8011C0F0;
         arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
@@ -58,16 +61,15 @@ void func_800B2698(struct VisualObj* arg0)
         }
         {
             s16 y = player->y_pos.i.hi + dy;
+            arg0->y_pos.i.hi = y;
             arg0->unk5C.value = 0x10;
             arg0->unk49 = 0;
-            arg0->y_pos.i.hi = y;
         }
         set_animation(arg0, 3);
         arg0->state++;
         double_cyclone_charged_fan_draw(arg0);
     } else {
         if (arg0->unk5C.value == 0) {
-        zero:
             ZeroObjectState(OBJECT_HEADER(arg0));
             return;
         }

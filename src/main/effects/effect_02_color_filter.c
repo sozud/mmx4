@@ -25,14 +25,12 @@ void TitleScalingXUpdate(struct EffectObj* self)
 void color_filter_init(struct EffectObj* self)
 {
     u16 color;
-    struct Unk14* temp_v0;
     struct EffectObj* current;
     u8 i;
 
     if (self->unk2 != -1) {
-        temp_v0 = color_filter_scripts[self->unk2];
-        self->ext.scaling_x.unk14 = temp_v0;
-        self->ext.scaling_x.unk18 = temp_v0->unk2;
+        self->ext.scaling_x.unk14 = color_filter_scripts[self->unk2];
+        self->ext.scaling_x.unk18 = self->ext.scaling_x.unk14->unk2;
 #ifdef MMX4_SATURN
         D_8013E188[0] = color_filter_saturn_masks[self->unk2];
 #else

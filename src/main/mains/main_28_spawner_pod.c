@@ -173,9 +173,9 @@ void func_80059F60(struct MainObj* self)
             turn = 1;
         break;
     case 1:
-        if (self->x_speed > 0x4FFFFF && self->unk15 != 0)
+        if (self->x_speed >= 0x500000 && self->unk15 != 0)
             turn = 1;
-        if (self->x_speed <= 0x10000 && self->unk15 == 0)
+        if (self->x_speed < 0x10001 && self->unk15 == 0)
             turn = 1;
         break;
     case 2:
@@ -185,9 +185,9 @@ void func_80059F60(struct MainObj* self)
             turn = 1;
         break;
     case 3:
-        if (self->y_speed > 0x4FFFFF && self->unk15 != 0)
+        if (self->y_speed >= 0x500000 && self->unk15 != 0)
             turn = 1;
-        if (self->y_speed <= 0x10000 && self->unk15 == 0)
+        if (self->y_speed < 0x10001 && self->unk15 == 0)
             turn = 1;
         break;
     }
@@ -220,11 +220,11 @@ void func_80059F60(struct MainObj* self)
             self->ext.main_28.unk84 ^= 8;
             set_animation(self, self->ext.main_28.unk84 + 1);
         }
-        self->unk7C = 0x20;
-        self->unk6 = 4;
         self->x_accel = -self->x_accel;
         self->gravity = -self->gravity;
+        self->unk7C = 0x20;
         self->unk7E = 0;
+        self->unk6 = 4;
         break;
     case 2:
         if (self->animation_step.fields.relative_step == 0) {

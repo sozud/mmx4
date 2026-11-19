@@ -13,6 +13,8 @@ extern struct DialogueGlyphData D_801396C8;
 #define DIALOGUE_TEXTURE(index, high) \
     ((u16)(((((saturn_stage_graphics_offsets_pointer[index] >> 7) + ((high) ? SATURN_DIALOGUE_HIGH_TEXTURE : 0)) << 7) + SATURN_DIALOGUE_TEXTURE_BASE) >> 3))
 #define DIALOGUE_PAD_PRESSED (saturn_pad_pressed & SATURN_DIALOGUE_PAD_MASK)
+#elif defined(MMX4_GAMECUBE)
+#define DIALOGUE_PAD_PRESSED (controller_input.pressed & 0xFF0)
 #else
 #define DIALOGUE_PAD_PRESSED (*(u8*)&controller_input.pressed)
 #endif

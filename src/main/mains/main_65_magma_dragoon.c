@@ -626,11 +626,11 @@ void func_8007E6F8(struct MainObj* arg0)
     if (arg0->animation_step.fields.event == 2) {
         x = arg0->x_pos.i.hi;
         if (g_Player.x_pos.i.hi > x)
-            if (x < magma_dragoon_arena_right - 0x50)
+            if (magma_dragoon_arena_right - 0x50 > x)
                 arg0->unk15 = PLAYER_FACING_RIGHT;
             else
                 arg0->unk15 = 0;
-        else if (x < magma_dragoon_arena_left + 0x50)
+        else if (magma_dragoon_arena_left + 0x50 > x)
             arg0->unk15 = PLAYER_FACING_RIGHT;
         else
             arg0->unk15 = 0;

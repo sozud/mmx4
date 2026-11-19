@@ -24,11 +24,11 @@ void title_init(struct MiscObj* self)
     u8 temp_a1 = self->unk2;
     u8 temp_v1;
 
+    self->state++;
     self->animation_table = title_animations;
     self->bg_offset = -1;
     self->unk15 = 0;
     self->unk16 = 3;
-    self->state++;
 
 #ifdef MMX4_SATURN
     self->unk40 = SATURN_TITLE_TEXTURE;
@@ -53,8 +53,6 @@ void title_init(struct MiscObj* self)
 // g_TitleUpdateFuncs state 1
 void title_draw(struct MiscObj* self)
 {
-    u8 temp_v1;
-
     if (self->unk2 == 0xF) {
         self->unk16 = 2;
         self->y_pos.i.hi = (game_info.unk2 % 3) * 16 + 0x80;
@@ -72,16 +70,15 @@ void title_draw(struct MiscObj* self)
         }
     }
 
-    temp_v1 = self->unk2;
-    if (((temp_v1 >= 4) && (temp_v1 <= 5)) || ((s8)temp_v1 == 6)) {
+    if (self->unk2 == 4 || self->unk2 == 5 || self->unk2 == 6) {
         self->on_screen = 0;
-        if ((BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 0x10) == 0) {
-            return;
+        if (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 0x10) {
+            is_on_screen(self);
         }
     } else {
         self->on_screen = 1;
+        is_on_screen(self);
     }
-    is_on_screen(self);
 }
 
 // g_TitleUpdateFuncs state 2

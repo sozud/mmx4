@@ -43,9 +43,9 @@ void capsule_part_init(struct MiscObj* self)
     self->unk42 = source->unk42;
     self->unk3C = (void*)source->sprite_frames;
     self->animation_table = (u32**)source->animation_table;
-    self->unk6 = 0;
     self->state++;
     self->unk5 = self->unk2 >> 4;
+    self->unk6 = 0;
     self->unk2 &= 0xF;
     capsule_part_main(self);
 }

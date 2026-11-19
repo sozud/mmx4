@@ -313,12 +313,12 @@ void func_8005C0E4(struct MainObj* self)
     const void* saved_bounds;
     s16 x;
 
-    self->collision_data = D_801071F4;
     self->unk65 = self->ext.main_31.unk83;
+    self->collision_data = D_801071F4;
 
     if (func_8002DD04(self) < 0) {
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
         self->unk42 &= 0x7FFF;
         update_on_screen(BASE_OBJECT(self), 0x70, 0x30);
         return;
@@ -442,9 +442,9 @@ void func_8005C474(struct MainObj* self)
 
     health = self->ext.main_31.unk83;
     saved_bounds = self->hurt_box;
+    self->unk65 = health;
     self->collision_data = D_801060F0;
     self->hurt_box = D_800FDA0C;
-    self->unk65 = health;
     func_8002DD04(self);
     self->hurt_box = saved_bounds;
     self->ext.main_31.unk84 = self->unk65;

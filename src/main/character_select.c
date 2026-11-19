@@ -75,7 +75,7 @@ void character_select_state_0(struct EngineObj* arg0)
     arg0->unk37 = 0;
     func_800129A4(8);
     arg0->cur_character = CHARACTER_X;
-    arg0->character_state.bytes[3] = 0; // already cleared above?
+    arg0->character_state.bytes[3] = arg0->cur_character;
     arg0->unk1++;
     arg0->unk2 = 0;
     arg0->unkA = 3;
@@ -102,8 +102,8 @@ void character_select_state_1(struct EngineObj* arg0)
             } while (var_s0 < 2U);
         }
         if (arg0->character_state.bytes[2] != 0) {
-            arg0->unk2 = 0;
             arg0->unk1 = (u8)(arg0->unk1 + 1);
+            arg0->unk2 = 0;
 #ifdef MMX4_SATURN
             D_8013E188[0] = 0x4F;
 #else
@@ -180,8 +180,8 @@ void character_select_spawn_objects(struct EngineObj* arg0)
         obj->id = 0x1C;
         obj->unk2 = 6;
     }
-    arg0->unk2 = 0;
     arg0->unk1++;
+    arg0->unk2 = 0;
 }
 
 void character_select_state_2(struct EngineObj* arg0)

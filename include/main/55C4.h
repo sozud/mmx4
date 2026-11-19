@@ -46,7 +46,11 @@ void func_80016C5C(void);
 void func_80016D0C(void);
 void func_80016DAC(void);
 void func_80016E34(void);
+#ifdef MMX4_GAMECUBE
+s32 func_80016E84(void);
+#else
 void func_80016E84(void);
+#endif
 void func_80016FB4(s32);
 
 #ifdef MMX4_PC

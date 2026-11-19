@@ -34,9 +34,9 @@ void title_quad_init(struct QuadObj* arg0)
 
     entity->bg_offset = -1;
     entity->ext.title_quad.unk42 = 1; // 0x42
+    entity->active |= 0x80;
     entity->x_pos.i.hi = 0;
     entity->y_pos.i.hi = 0;
-    entity->active |= 0x80;
 
     ptr = title_quad_shapes[entity->unk2];
     entity->vertices[0].x.i.hi = *ptr++;
@@ -192,12 +192,12 @@ void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
 #ifdef VERSION_JP
 void title_quad_morph(struct QuadObj* quad)
 {
-    f32* xy_ptr;
     s32 x_diff;
     s32 y_diff;
     s32 i;
     s16* ptr;
     u8 temp_v0;
+    f32* xy_ptr;
 
     xy_ptr = &quad->vertices[0].x;
     for (i = 0; i < 4; ++i) {
@@ -250,7 +250,6 @@ INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", title_quad_morph);
 #else
 void title_quad_morph(struct QuadObj* arg0)
 {
-    f32* xy_ptr;
     s32 x_diff;
     s32 y_diff;
     s32 pos;
@@ -260,6 +259,7 @@ void title_quad_morph(struct QuadObj* arg0)
     u8 temp_v0;
     u8 temp_v0_2;
     u8 temp_v1;
+    f32* xy_ptr;
 
     xy_ptr = &arg0->vertices[0].x;
     pos = 0;
@@ -339,8 +339,8 @@ void func_800D7468(struct QuadObj* quad)
     vertex = quad->vertices;
     for (i = 0; i < 4; i++) {
         point = &title_quad_shapes[quad->unk2][i * 2];
-        dx = vertex->x.val - FIXED(point[0]);
         dy = vertex->y.val - FIXED(point[1]);
+        dx = vertex->x.val - FIXED(point[0]);
         hit = angle_from_delta(dx, dy);
         if ((((((struct TitleQuadExt*)&quad->ext)->unk3E[i] ^ hit) & 0x10) || ((struct TitleQuadExt*)&quad->ext)->unk3A[i] != 0) && quad->ext.title_quad.unk42 == 0) {
             vertex->x.val = FIXED(point[0]);

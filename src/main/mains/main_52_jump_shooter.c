@@ -68,19 +68,19 @@ void func_8006A55C(struct MainObj* self)
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     self->x_speed = 0;
-    self->animation_table = animations;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
-    self->terrain_box = &jump_shooter_terrain_box;
-    self->hurt_box = &jump_shooter_hurt_box;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->animation_table = animations;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->terrain_box = &jump_shooter_terrain_box;
+    self->hurt_box = &jump_shooter_hurt_box;
     self->attack_box = &jump_shooter_attack_box;
     jump_shooter_face_player(ANIMATED_OBJECT(self));
-    self->unk7C = 0x5A;
     self->ext.main_52.unk80 = 0;
     self->ext.main_52.unk8C = 0;
+    self->unk7C = 0x5A;
     self->state = 1;
     self->unk5 = 3;
     self->unk6 = 0;
@@ -310,10 +310,10 @@ void jump_shooter_jump_launch(struct MainObj* self)
         self->gravity = FIXED(0.25);
         direction = self->ext.main_52.unk8C;
         if (direction == 0) {
-            if (self->unk15 != 0) {
-                self->x_speed = FIXED(1.8);
-            } else {
+            if (self->unk15 == 0) {
                 self->x_speed = FIXED(-1.8);
+            } else {
+                self->x_speed = FIXED(1.8);
             }
         } else if (direction == 1) {
             self->x_speed = 0;

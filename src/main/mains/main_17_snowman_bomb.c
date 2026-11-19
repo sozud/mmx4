@@ -51,17 +51,17 @@ void snowman_bomb_init(struct MainObj* self)
     self->invincibility_timer = 0;
     self->collision_data = D_80106AF4;
     self->bg_offset = (u8)g_Player.bg_offset;
-    self->x_speed = 0;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    self->animation_table = (const u8* const*)snowman_bomb_animations;
-    self->terrain_box = &snowman_bomb_terrain_box;
-    self->hurt_box = &snowman_bomb_hurt_box;
+    self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->animation_table = (const u8* const*)snowman_bomb_animations;
     self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->terrain_box = &snowman_bomb_terrain_box;
+    self->hurt_box = &snowman_bomb_hurt_box;
     self->attack_box = &snowman_bomb_attack_box;
     snowman_bomb_face_player(ANIMATED_OBJECT(self));
     set_animation(self, 0);
@@ -69,10 +69,10 @@ void snowman_bomb_init(struct MainObj* self)
     self->ext.main_17.unk84 = 3;
     self->ext.main_17.unk88 = 0xC;
     self->ext.main_17.unk8C = 0;
+    self->ext.main_17.saved_unk5 = self->y_pos.val;
     self->state = 1;
     self->unk5 = 2;
     self->unk6 = 0;
-    self->ext.main_17.saved_unk5 = self->y_pos.val;
 }
 
 void snowman_bomb_main(struct MainObj* self)

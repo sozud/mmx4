@@ -82,18 +82,18 @@ void func_80099D54(struct ShotObj* arg0)
     arg0->state = 1;
     arg0->on_screen = 1;
     arg0->unk58.animation_steps = D_80105FF0;
+    arg0->unk42 &= 0x7FFF;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
-    arg0->unk42 &= 0x7FFF;
     arg0->x_pos.i.hi += gunner_shot_spawn_offsets[arg0->unk2][0];
     arg0->y_pos.i.hi += gunner_shot_spawn_offsets[0][arg0->unk2 * 2 + 1];
     arg0->x_vel.val *= 3;
     arg0->y_vel.val *= 3;
     arg0->unk16 = 0;
     arg0->unk68 = NULL;
-    arg0->unk5C = 1;
     arg0->unk54 = gunner_shot_hit_box;
     arg0->unk50.data = gunner_shot_hit_box;
+    arg0->unk5C = 1;
     arg0->unk60 = 2;
     set_animation(arg0, 8);
 }
@@ -171,11 +171,11 @@ void func_80099F48(struct ShotObj* arg0)
         arg0->y_vel.val *= 8;
     }
 
+    arg0->unk16 = 0;
     arg0->unk68 = (struct Unk_unk68*)eregion_fireball_terrain_box;
+    arg0->unk54 = NULL;
     arg0->unk50.data = eregion_fireball_hit_box;
     arg0->unk5C = 1;
-    arg0->unk16 = 0;
-    arg0->unk54 = NULL;
     arg0->unk60 = 3;
     set_animation(ANIMATED_OBJECT(arg0), 0x17);
 }
@@ -323,15 +323,15 @@ void mech_boulder_update(struct ShotObj* self)
 // mech_boulder_init
 void func_8009A5F4(struct ShotObj* arg0)
 {
-    arg0->unk42 &= 0x7FFF;
     arg0->state = 1;
     arg0->on_screen = 1;
     arg0->unk58.data = (const u8*)D_80105FF0;
+    arg0->unk42 &= 0x7FFF;
     arg0->x_pos.i.hi += arg0->unk15 != 0 ? 0x20 : -0x20;
     arg0->y_pos.i.hi += 0x18;
+    arg0->unk16 = 0;
     arg0->y_vel.val = 0x70000;
     arg0->unk2C = 0x4200;
-    arg0->unk16 = 0;
     if (arg0->unk15 == 0)
         arg0->x_vel.val = -0x2C000;
     else
@@ -387,17 +387,17 @@ void mech_boulder_shockwave_start(struct ShotObj* self)
 {
     self->state = 4;
     self->on_screen = 1;
+    self->unk42 &= 0x7FFF;
     self->unk16 = 0;
     self->unk68 = NULL;
-    self->unk42 &= 0x7FFF;
     if (self->unk15 == 0) {
-        self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x19;
+        self->x_pos.i.hi -= 0x19;
     } else {
-        self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x19;
+        self->x_pos.i.hi += 0x19;
     }
+    self->y_pos.i.hi += 0x21;
     self->unk5C = 1;
     self->unk60 = 2;
-    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x21;
     set_animation(self, 4);
 }
 

@@ -38,8 +38,8 @@ void func_8003D3F8(struct RideArmorObj* arg0)
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 #define RIDE_S8(object, offset) (*(s8*)&RIDE_U8(object, offset))
 s32 func_8003DE08(struct MainObj*);
-s32 func_8003DC8C(struct RideArmorObj*);
-s32 func_8003DC50(struct RideArmorObj*);
+u32 func_8003DC8C(struct RideArmorObj*);
+u32 func_8003DC50(struct RideArmorObj*);
 void func_8003DD14(struct MainObj*);
 void func_8003DD2C(struct MainObj*);
 void func_8003DD54(struct RideArmorObj*);
@@ -65,7 +65,7 @@ extern struct Unk_unk68 D_800F9128;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8003D4C8(struct RideArmorObj* arg0);
 void func_8003D9E0(struct RideArmorObj* arg0);
-s32 func_8003DCD8(struct RideArmorObj* arg0);
+u32 func_8003DCD8(struct RideArmorObj* arg0);
 void func_8003E274(struct RideArmorObj* arg0);
 void func_80040248(struct RideArmorObj* arg0);
 void func_800403DC(struct RideArmorObj* arg0);
@@ -343,7 +343,7 @@ void func_8003DC44(struct BaseObj* arg0, s8 arg1)
     arg0->unk6 = 0;
 }
 
-s32 func_8003DC50(struct RideArmorObj* arg0)
+u32 func_8003DC50(struct RideArmorObj* arg0)
 {
     u16 collision_flags = arg0->collision_flags;
 
@@ -358,7 +358,7 @@ s32 func_8003DC50(struct RideArmorObj* arg0)
     return 0;
 }
 
-s32 func_8003DC8C(struct RideArmorObj* arg0)
+u32 func_8003DC8C(struct RideArmorObj* arg0)
 {
     if (arg0->collision_flags & 4) {
         if (arg0->unk8A & 0x80) {
@@ -370,14 +370,16 @@ s32 func_8003DC8C(struct RideArmorObj* arg0)
     return 0;
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-s32 func_8003DCD8(struct RideArmorObj* arg0)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
+u32 func_8003DCD8(struct RideArmorObj* arg0)
 {
-    if (!(arg0->unk8A & 0x30))
-        return 0;
-    if (arg0->unk2 == 0)
+    if (arg0->unk8A & 0x30) {
+        if (arg0->unk2 != 0 && arg0->unk7E != 0) {
+            return 0;
+        }
         return 1;
-    return arg0->unk7E == 0;
+    }
+    return 0;
 }
 #else
 INCLUDE_ASM("main/nonmatchings/mech", func_8003DCD8);
@@ -543,14 +545,16 @@ s32 func_8003E048(struct PlayerObj* arg0)
 
 s32 func_8003E0B0(struct PlayerObj* arg0)
 {
-    u16 mask;
+    u16 mask = (arg0->unk15 != 0) + 1;
 
-    mask = 1;
-    if (arg0->unk15 != 0) {
-        mask = 2;
-    }
     return arg0->unk88.value & mask;
 }
+
+#ifdef MMX4_BIG_ENDIAN
+#define MECH_GRAB_BLOCKED(self) (((self)->unk94.bytes.unk97 & 0x80) || ((self)->unk94.bytes.unk97 & 2))
+#else
+#define MECH_GRAB_BLOCKED(self) ((self)->unk94.halves[1] & 0x8200)
+#endif
 
 void func_8003E0D0(struct RideArmorObj* self)
 {
@@ -563,7 +567,7 @@ void func_8003E0D0(struct RideArmorObj* self)
         func_8003DC44(BASE_OBJECT(self), 0xC);
     } else if (g_Player.script_state == 0 && engine_obj.unkF == 0
         && (g_Player.unk2 == 0 || g_Player.attacking == 0) && g_Player.spike_immune == 0
-        && g_Player.nova_strike_active == 0 && !(self->unk94.halves[1] & 0x8200)
+        && g_Player.nova_strike_active == 0 && !MECH_GRAB_BLOCKED(self)
         && func_8002C160(COLLISION_OBJECT(&g_Player), COLLISION_OBJECT(self))
         && engine_obj.unkF == 0 && g_Player.hp > 0 && g_Player.hurt_phase == 0
         && g_Player.touching_spikes == 0) {
@@ -634,8 +638,10 @@ void func_8003E368(struct RideArmorObj* self)
         } else if (func_8003DCD8(self)) {
             func_8003DC44(BASE_OBJECT(self), 3);
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003E488(struct RideArmorObj* self)
@@ -773,6 +779,9 @@ void func_8003E8A0(struct RideArmorObj* self)
         } else {
 #ifdef MMX4_SATURN
             func_8001540C(5, 69, NULL);
+#elif defined(MMX4_GAMECUBE)
+            stop_sound(5, 5);
+            func_8001540C(5, 0, NULL);
 #else
             func_8001540C(5, 0, NULL);
             stop_sound(5, 5);
@@ -797,8 +806,10 @@ void func_8003E8A0(struct RideArmorObj* self)
             func_8003DD2C(MAIN_OBJECT(self));
             func_8003DD14(MAIN_OBJECT(self));
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003EA08(struct RideArmorObj* self)
@@ -818,7 +829,7 @@ void func_8003EA08(struct RideArmorObj* self)
         self->x_vel.val = 0;
         self->unk28 = 0;
         func_8003DDA0(self);
-        if (self->y_vel.val >= 0 && ((self->input_flags & 4) || !(self->collision_flags & 0x80))) {
+        if ((self->y_vel.val >= 0 && (self->input_flags & 4)) || (self->y_vel.val >= 0 && !(self->collision_flags & 0x80))) {
             self->y_vel.val = 0;
         }
         if (self->animation_step.fields.relative_step == 0) {
@@ -829,8 +840,10 @@ void func_8003EA08(struct RideArmorObj* self)
             }
             move_with_gravity(ANIMATED_OBJECT(self));
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003EB4C(struct RideArmorObj* self)
@@ -878,8 +891,10 @@ void func_8003EB4C(struct RideArmorObj* self)
                 return;
             }
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003ED00(struct RideArmorObj* self)
@@ -902,13 +917,14 @@ void func_8003ED00(struct RideArmorObj* self)
         } else if (func_8003DCD8(self) != 0 || (self->collision_flags & 3)) {
             func_8003DC44(BASE_OBJECT(self), 3);
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003EDF0(struct RideArmorObj* self)
 {
-    s8 timer;
     u8 input;
 
     func_8003D7A0();
@@ -920,7 +936,7 @@ void func_8003EDF0(struct RideArmorObj* self)
         func_8001540C(5, SATURN_SOUND(0, 56), 0);
     }
 
-    timer = --self->unk90.byte;
+    self->unk90.byte--;
     input = self->input_flags;
     if (!(input & 8)) {
         func_8003DC44(BASE_OBJECT(self), 0xC);
@@ -929,7 +945,7 @@ void func_8003EDF0(struct RideArmorObj* self)
 
     if (!(self->unk94.bytes.unk97 & 2)) {
         if ((input & 3) || (self->animation_step.fields.event & 1)) {
-            if (timer < 0) {
+            if (self->unk90.byte < 0) {
                 func_8003DC44(BASE_OBJECT(self), 8);
             } else {
                 func_8003DD14(MAIN_OBJECT(self));
@@ -1039,8 +1055,10 @@ void func_8003F068(struct RideArmorObj* self)
         if (self->y_vel.val < FIXED(-5.875)) {
             self->y_vel.val = FIXED(-5.875);
         }
+        move_with_gravity(ANIMATED_OBJECT(self));
+    } else {
+        move_with_gravity(ANIMATED_OBJECT(self));
     }
-    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
 void func_8003F204(struct RideArmorObj* arg0)
@@ -1070,8 +1088,10 @@ void func_8003F244(struct RideArmorObj* arg0)
                 func_8003DC1C(PLAYER_OBJECT(arg0), 0x29);
             }
         }
+        animate_object(ANIMATED_OBJECT(arg0));
+    } else {
+        animate_object(ANIMATED_OBJECT(arg0));
     }
-    animate_object(ANIMATED_OBJECT(arg0));
 }
 
 void func_8003F31C(struct RideArmorObj* self)
@@ -1090,9 +1110,9 @@ void func_8003F31C(struct RideArmorObj* self)
                     self->unk6 = 2;
                     self->unk98.packed = 0x420;
                     if (self->unk15 == 0) {
-                        self->x_vel.val = FIXED(-4.125);
+                        self->x_vel.val = -(self->unk98.packed << 8);
                     } else {
-                        self->x_vel.val = FIXED(4.125);
+                        self->x_vel.val = self->unk98.packed << 8;
                     }
                     self->unk90.byte = 0x1E;
                     func_8003D7E4(self, 4, 1);
@@ -1106,14 +1126,16 @@ void func_8003F31C(struct RideArmorObj* self)
                 }
             }
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003F44C(struct RideArmorObj* self)
 {
-    u32 i;
     u8 parts;
+    u32 i;
 
     if (func_8003DC8C(self)) {
         func_8003DC44(BASE_OBJECT(self), 0xB);
@@ -1149,7 +1171,11 @@ void func_8003F570(struct RideArmorObj* arg0)
 {
     if (arg0->unk2 == 0) {
         arg0->unk6 = 1;
+#ifdef MMX4_GAMECUBE
+        set_animation(arg0, 0xD);
+#else
         set_animation(arg0, 0xC);
+#endif
         func_8003DC1C(PLAYER_OBJECT(arg0), 0x34);
         func_8003F31C(arg0);
         func_8001540C(5, SATURN_SOUND(7, 63), NULL);
@@ -1219,7 +1245,7 @@ void func_8003F76C(struct RideArmorObj* self)
         self->x_vel.val = 0;
         self->unk28 = 0;
         func_8003DDA0(self);
-        if (self->y_vel.val >= 0 && ((self->input_flags & 4) || !(self->collision_flags & 0x80))) {
+        if ((self->y_vel.val >= 0 && (self->input_flags & 4)) || (self->y_vel.val >= 0 && !(self->collision_flags & 0x80))) {
             self->y_vel.val = 0;
         }
         if (self->animation_step.fields.relative_step == 0) {
@@ -1233,8 +1259,10 @@ void func_8003F76C(struct RideArmorObj* self)
                 func_8003DC44(BASE_OBJECT(self), 6);
             }
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003F908(struct RideArmorObj* self)
@@ -1275,14 +1303,14 @@ void func_8003F908(struct RideArmorObj* self)
                 return;
             }
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003FA58(struct RideArmorObj* self)
 {
-    s8 timer;
-
     if (self->unk6 == 0) {
         self->unk6 = 1;
         if (self->collision_flags & 8) {
@@ -1294,11 +1322,11 @@ void func_8003FA58(struct RideArmorObj* self)
         }
         func_8001540C(5, SATURN_SOUND(7, 77), NULL);
     }
-    timer = --self->unk90.byte;
+    self->unk90.byte--;
     if (!(self->unk94.bytes.unk97 & 2)) {
         if (self->input_flags & 3) {
             func_8003DC44(BASE_OBJECT(self), 0xC);
-        } else if (timer < 0) {
+        } else if (self->unk90.byte < 0) {
             func_8003DC44(BASE_OBJECT(self), 0xC);
         } else if (self->animation_step.fields.relative_step == 0) {
             func_8003DD14(MAIN_OBJECT(self));
@@ -1317,8 +1345,10 @@ void func_8003FA58(struct RideArmorObj* self)
                 }
             }
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003FBD8(struct RideArmorObj* self)
@@ -1333,6 +1363,9 @@ void func_8003FBD8(struct RideArmorObj* self)
         func_8001540C(5, SATURN_SOUND(5, 75), 0);
     }
     if (func_8003DC8C(self)) {
+#ifdef MMX4_GAMECUBE
+        stop_sound(5, 5);
+#endif
         func_8003DC44(BASE_OBJECT(self), 0xB);
         return;
     }
@@ -1353,8 +1386,10 @@ void func_8003FBD8(struct RideArmorObj* self)
             func_8003DD2C(MAIN_OBJECT(self));
             func_8003DD14(MAIN_OBJECT(self));
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003FD08(struct RideArmorObj* self)
@@ -1407,8 +1442,10 @@ void func_8003FD08(struct RideArmorObj* self)
             func_8003DD2C(MAIN_OBJECT(self));
             func_8003DD14(MAIN_OBJECT(self));
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void func_8003FF14(struct MainObj* arg0)

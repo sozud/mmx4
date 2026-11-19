@@ -45,30 +45,27 @@ extern ret_u8 func_8002938C(s32);
 void func_8005F558(struct MainObj* arg0)
 {
     struct MainObj* current;
-    s32 resource;
 
-    resource = func_8002938C(0x24);
-    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x24));
     arg0->unk42 = OBJECT_STAGE_CLUT(0x24);
-    resource = func_8002938C(0x24);
-    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x24)];
     arg0->bg_offset = g_Player.bg_offset;
     arg0->x_speed = 0;
-    arg0->animation_table = (const u8* const*)latcher_animations;
-    arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->attack_box = &latcher_hurt_box;
-    arg0->unk62 = 3;
-    arg0->hurt_box = &latcher_hurt_box;
-    arg0->collision_data = D_801073F4;
-    arg0->hp = 0x10;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
+    arg0->animation_table = (const u8* const*)latcher_animations;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->air_state = 0;
     arg0->unk15 = 0;
     arg0->contact_damage = 0;
     arg0->terrain_box = NULL;
+    arg0->attack_box = &latcher_hurt_box;
+    arg0->unk62 = 3;
+    arg0->hurt_box = &latcher_hurt_box;
+    arg0->collision_data = D_801073F4;
     arg0->invincibility_timer = 0;
+    arg0->hp = 0x10;
     switch (arg0->unk2) {
     case 0:
         set_animation(arg0, 0);

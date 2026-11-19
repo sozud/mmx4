@@ -217,24 +217,24 @@ short SsUtSetVVol(short vc, short voll, short volr)
     return 1;
 }
 
-long fn_4_D64BC(void)
+short SsIsEos(short access_num, short seq_num)
 {
     return 1;
 }
 
-void fn_4_D64B8(void)
+void SsSepPlay(short access_num, short seq_num, char play_mode, short l_count)
 {
 }
 
-void fn_4_D64B4(void)
+void SsSepStop(short access_num, short seq_num)
 {
 }
 
-void fn_4_D64B0(void)
+void SsSeqPlay(short access_num, char play_mode, short l_count)
 {
 }
 
-void fn_4_D64AC(void)
+void SsSeqStop(short access_num)
 {
 }
 

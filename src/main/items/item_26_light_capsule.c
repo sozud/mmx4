@@ -86,7 +86,7 @@ extern ret_u8 func_8002938C(s32);
 void func_800C63BC(struct ItemObj* arg0)
 {
     struct ItemObj* child;
-    s32 discard;
+    u32 discard;
     u8 resource;
     struct PlayerObj* player = &g_Player;
 
@@ -142,8 +142,8 @@ void func_800C63BC(struct ItemObj* arg0)
     }
 
     light_capsule_spawn_visual(arg0, 0x23, light_capsule_part_visuals[arg0->unk2]);
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     collide_with_players(PLAYER_OBJECT(arg0));
     update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
 }
@@ -364,13 +364,13 @@ void capsule_beam_update(struct VisualObj* self)
     if (self->state == 0) {
         capsule_visual_init(self, owner);
         if (self->unk2 == 1) {
-            self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x58;
+            self->x_pos.i.hi -= 0x58;
         }
         if (self->unk2 == 2) {
+            self->x_pos.i.hi += 0x58;
             self->unk15 = PLAYER_FACING_RIGHT;
-            self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x58;
         }
-        self->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x6A;
+        self->y_pos.i.hi -= 0x6A;
         func_8001540C(2, SATURN_SOUND(0x24, 0x5D), NULL);
     } else if (self->animation_step.fields.relative_step == 0) {
         ZeroObjectState(OBJECT_HEADER(self));
@@ -412,8 +412,8 @@ void capsule_visual_init(struct VisualObj* arg0, struct PlayerObj* arg1)
         }
         break;
     }
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
 }
 
 // capsule_part_update
@@ -439,9 +439,9 @@ void func_800C6EDC(struct VisualObj* arg0)
         arg0->unk42 = (column % 16) | (((resource + 6) / 4 + 0x1E0) << 6);
 #endif
         arg0->unk16 = 0;
-        arg0->unk15 = g_Player.unk15;
-        arg0->x_pos.val = g_Player.x_pos.val;
-        arg0->y_pos.val = g_Player.y_pos.val;
+        arg0->unk15 = player->unk15;
+        arg0->x_pos.val = player->x_pos.val;
+        arg0->y_pos.val = player->y_pos.val;
         if (engine_obj.unk37 != 0)
             set_animation(ANIMATED_OBJECT(arg0), 0x26);
         else
@@ -449,7 +449,7 @@ void func_800C6EDC(struct VisualObj* arg0)
         arg0->state++;
         decompress_player_gfx((struct GraphicsObj*)arg0, 0x140, 0x20);
     } else if (arg0->animation_step.fields.relative_step == 0) {
-        g_Player.item_step = 4;
+        player->item_step = 4;
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     } else {
@@ -457,19 +457,19 @@ void func_800C6EDC(struct VisualObj* arg0)
         if (arg0->animation_step.fields.event != 0) {
             arg0->animation_step.fields.event = 0;
             if (engine_obj.unk37 != 0) {
-                g_Player.armor_parts = 0xF;
-                g_Player.arm_type = 2;
+                player->armor_parts = 0xF;
+                player->arm_type = 2;
                 engine_obj.arm_type = 2;
             } else {
                 u8 bit = light_capsule_part_bits[arg0->unk2];
 
-                g_Player.armor_parts |= bit;
+                player->armor_parts |= bit;
                 if (bit == 4) {
                     if (arg0->unk2 == 2)
-                        g_Player.arm_type = 1;
+                        player->arm_type = 1;
                     if (arg0->unk2 == 3)
-                        g_Player.arm_type = 2;
-                    engine_obj.arm_type = g_Player.arm_type;
+                        player->arm_type = 2;
+                    engine_obj.arm_type = player->arm_type;
                 }
             }
             engine_obj.armor_parts = player->armor_parts;

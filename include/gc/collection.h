@@ -14,6 +14,7 @@ void* gc_get_convert_buffer(void);
 void* gc_get_dvd_buffer(void);
 
 void gc_memcpy(void* dst, const void* src, unsigned long n);
+void gc_memset(void* dst, int c, unsigned long n);
 
 void gc_set_main_flag(unsigned char value);
 

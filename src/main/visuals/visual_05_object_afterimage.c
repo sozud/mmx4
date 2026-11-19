@@ -78,13 +78,11 @@ void object_afterimage_main(struct VisualObj* arg0)
 
 void object_afterimage_trail(struct VisualObj* arg0)
 {
-    s16 temp_v0;
     struct PlayerObj* owner;
 
-    temp_v0 = arg0->unk54;
     owner = arg0->unk5C.owner;
-    if (temp_v0 != 0) {
-        arg0->unk54 = temp_v0 - 1;
+    if (arg0->unk54 != 0) {
+        arg0->unk54--;
     } else {
         arg0->unk54 = 3;
         object_afterimage_follow(arg0);
@@ -97,7 +95,6 @@ void object_afterimage_trail(struct VisualObj* arg0)
 void object_afterimage_linger(struct VisualObj* arg0)
 {
     s16 temp_v0;
-    s16 temp_v0_2;
 
     if (arg0->unk5C.owner->pad4B[0] > 0) {
         object_afterimage_start(arg0);
@@ -106,9 +103,8 @@ void object_afterimage_linger(struct VisualObj* arg0)
 
     temp_v0 = arg0->unk56;
     if (temp_v0 != 0) {
-        temp_v0_2 = temp_v0 - 1;
-        arg0->unk56 = temp_v0_2;
-        if (temp_v0_2 & 1) {
+        arg0->unk56 = temp_v0 - 1;
+        if (arg0->unk56 & 1) {
             object_afterimage_follow(arg0);
         }
     } else {

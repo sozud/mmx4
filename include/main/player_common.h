@@ -44,9 +44,9 @@ s32 player_set_animation(struct PlayerObj*, s32);
 
 void player_set_collision_bounds(struct PlayerObj*);
 
-extern u16 player_stage_3_entry_y[2][4];
-extern u16 player_stage_6_entry_y[6];
-extern u16 player_stage_12_entry_y[20];
+extern s16 player_stage_3_entry_y[2][4];
+extern s16 player_stage_6_entry_y[6];
+extern s16 player_stage_12_entry_y[20];
 
 void player_set_idle_animation(struct PlayerObj*);
 

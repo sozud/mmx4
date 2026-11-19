@@ -68,8 +68,8 @@ void double_mine_dash_start(struct ShotObj* self)
     s32 angle;
     u32 target_x;
 
-    self->timer = 0x3C;
     self->unk5++;
+    self->timer = 0x3C;
     target_x = g_Player.x_pos.u.hi;
     self->unk8C.half = target_x;
     angle = angle_from_delta(self->x_pos.val - (target_x << 16), 0);
@@ -109,7 +109,9 @@ void double_mine_fire(struct ShotObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5++;
         self->timer = 0x3C;
+#ifndef MMX4_GAMECUBE
         set_animation_frame(ANIMATED_OBJECT(self), 0x15, 7);
+#endif
         return;
     }
 

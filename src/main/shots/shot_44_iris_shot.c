@@ -69,25 +69,25 @@ void func_800A7008(struct ShotObj* self)
 {
     self->on_screen = 1;
     self->unk58.data = (u8*)D_80105FF0;
-    self->unk61 = 1;
     self->unk42 &= 0x7FFF;
+    self->unk61 = 1;
 #ifdef MMX4_SATURN
     set_velocity_from_angle(MOVING_OBJECT(self), self->unk84.bytes[3]);
 #else
     set_velocity_from_angle(MOVING_OBJECT(self), self->unk84.bytes[0]);
 #endif
-    self->unk16 = 2;
-    self->unk54 = iris_drone_hurt_box;
-    self->unk50.data = iris_drone_attack_box;
-    self->timer = 0x10;
     self->x_vel.val *= 5;
     self->y_vel.val *= 5;
     self->unk2C = 0;
     self->unk28 = 0;
-    self->unk68 = NULL;
-    self->unk5C = 1;
     self->x_pos.val += self->x_vel.val * 5;
     self->y_pos.val -= self->y_vel.val * 5;
+    self->unk16 = 2;
+    self->unk68 = NULL;
+    self->unk54 = iris_drone_hurt_box;
+    self->unk50.data = iris_drone_attack_box;
+    self->timer = 0x10;
+    self->unk5C = 1;
     self->unk60 = 4;
     set_animation(self, 0xD);
     self->state = 1;
@@ -186,11 +186,13 @@ void func_800A73C4(struct ShotObj* self)
 {
     self->on_screen = 1;
     self->unk58.data = NULL;
+    self->unk42 &= 0x7FFF;
     self->unk61 = 1;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
     self->unk2C = 0;
     self->unk28 = 0;
+    self->y_pos.i.hi -= 0x86;
     self->unk16 = 0;
     self->unk68 = NULL;
     self->unk54 = NULL;
@@ -198,8 +200,6 @@ void func_800A73C4(struct ShotObj* self)
     self->timer = 0x78;
     self->unk5C = 1;
     self->unk60 = 8;
-    self->unk42 &= 0x7FFF;
-    self->y_pos.i.hi -= 0x86;
     set_animation(self, 0x1B);
     self->state = 7;
     self->unk5 = 0;
@@ -239,14 +239,14 @@ void iris_drone_brake(struct ShotObj* self)
     iris_drone_move(self);
     animate_object(ANIMATED_OBJECT(self));
 
-    if (abs(self->x_vel.val) < 0x10000) {
-        if (abs(self->y_vel.val) < 0x10000) {
-            self->unk5 = 2;
+    if ((self->x_vel.val < 0 ? -self->x_vel.val : self->x_vel.val) < 0x10000) {
+        if ((self->y_vel.val < 0 ? -self->y_vel.val : self->y_vel.val) < 0x10000) {
             self->unk61 = 0;
             self->x_vel.val = 0;
             self->y_vel.val = 0;
             self->unk28 = 0;
             self->unk2C = 0;
+            self->unk5 = 2;
             self->timer = 0x3C;
         }
     }

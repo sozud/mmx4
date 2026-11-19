@@ -221,6 +221,10 @@ void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
     arg0->unk5 = 3;
 }
 
+#ifdef MMX4_GAMECUBE
+extern u8 gc_stage_music_opened;
+#endif
+
 void boss_door_walk_through(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
 {
@@ -230,7 +234,13 @@ void boss_door_walk_through(struct ItemObj* arg0, struct EngineObj* arg1,
         player_set_collision_bounds(arg2);
         arg0->unk5 = 4;
         set_animation(arg0, 1);
+#ifdef MMX4_GAMECUBE
+        if (gc_stage_music_opened == 0) {
+            func_8001540C(0, SATURN_SOUND(0x11, 0x13), arg0);
+        }
+#else
         func_8001540C(0, SATURN_SOUND(0x11, 0x13), arg0);
+#endif
     }
 }
 
@@ -240,7 +250,13 @@ void boss_door_close(struct ItemObj* arg0, struct EngineObj* arg1,
     if (arg0->animation_step.fields.event < 2) {
         animate_object(ANIMATED_OBJECT(arg0));
         if (arg0->animation_step.fields.event == 1) {
+#ifdef MMX4_GAMECUBE
+            if (gc_stage_music_opened == 0) {
+                func_8001540C(0, SATURN_SOUND(0x10, 0x12), arg0);
+            }
+#else
             func_8001540C(0, SATURN_SOUND(0x10, 0x12), arg0);
+#endif
             arg0->animation_step.fields.event = 0;
         }
     } else {

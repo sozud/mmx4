@@ -152,13 +152,12 @@ void boss_warning_quad_close(struct QuadObj* arg0)
 void func_800D5144(struct QuadObj* self)
 {
     boss_warning_quad_step_funcs[self->unk5](self);
-    if (self->unk5 == 0 || D_8013B960 == 0 || WEAPON_FRAME_COUNTER % 3 != 0) {
-        QUAD_QUEUE(self);
-        return;
-    }
-    self->unk34 = boss_warning_quad_blink_levels[self->ext.quad_2.x_scale.bytes.fraction];
-    if (++self->ext.quad_2.x_scale.bytes.fraction == 0xE) {
-        self->ext.quad_2.x_scale.bytes.fraction = 0;
+    if (self->unk5 != 0 && D_8013B960 != 0 && WEAPON_FRAME_COUNTER % 3 == 0) {
+        self->unk34 = boss_warning_quad_blink_levels[self->ext.quad_2.x_scale.bytes.fraction];
+        self->ext.quad_2.x_scale.bytes.fraction++;
+        if (self->ext.quad_2.x_scale.bytes.fraction == 0xE) {
+            self->ext.quad_2.x_scale.bytes.fraction = 0;
+        }
     }
     QUAD_QUEUE(self);
 }

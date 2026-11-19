@@ -8,6 +8,14 @@
 #include "saturn/game_low.h"
 #endif
 
+#ifdef MMX4_SATURN
+#define DIALOGUE_SKIP_PRESSED (saturn_pad_pressed & SATURN_PAD_DIALOGUE_SKIP)
+#elif defined(MMX4_GAMECUBE)
+#define DIALOGUE_SKIP_PRESSED (controller_input.pressed & 0xFF0)
+#else
+#define DIALOGUE_SKIP_PRESSED ((u8)controller_input.pressed)
+#endif
+
 // misc obj update #22
 void dialogue_ui_update(struct MiscObj* self)
 {
@@ -18,33 +26,29 @@ void dialogue_ui_update(struct MiscObj* self)
         is_on_screen(self);
         return;
     case 1:
-#ifdef MMX4_SATURN
-        if ((saturn_pad_pressed & SATURN_PAD_DIALOGUE_SKIP) == 0) {
-#else
-        if ((u8)controller_input.pressed == 0) {
-#endif
-            if (--self->ext.unk.unk56.sht == 0) {
-                self->ext.unk.unk56.sht = 0x20;
-                self->ext.unk.unk54 ^= 1;
-            }
-            if (!self->ext.unk.unk54) {
-                is_on_screen(self);
-                return;
-            }
-            self->on_screen = 0;
+        if (DIALOGUE_SKIP_PRESSED != 0) {
+            ZeroObjectState(self);
             return;
         }
-        ZeroObjectState(self);
-        return;
-    case 2:
-        if (abc_object.unkC != 0) {
-            if (abc_object.unkD == 0 || abc_object.unkD == 4) {
-                animate_object(self);
-            }
+        if (--self->ext.unk.unk56.sht == 0) {
+            self->ext.unk.unk54 ^= 1;
+            self->ext.unk.unk56.sht = 0x20;
+        }
+        if (!self->ext.unk.unk54) {
             is_on_screen(self);
             return;
         }
-        ZeroObjectState(self);
+        self->on_screen = 0;
+        return;
+    case 2:
+        if (abc_object.unkC == 0) {
+            ZeroObjectState(self);
+            return;
+        }
+        if (abc_object.unkD == 0 || abc_object.unkD == 4) {
+            animate_object(self);
+        }
+        is_on_screen(self);
         return;
     case 3:
         ptr = abc_object.unkE + &self->ext.unk.unk50->unk0;

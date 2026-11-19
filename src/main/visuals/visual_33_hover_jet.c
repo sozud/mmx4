@@ -92,10 +92,10 @@ void stock_charge_meter_update(struct MiscObj* arg0)
         arg0->on_screen = 0;
         if (engine_obj.unk1F != 0 && player->stock_charge != 0) {
             arg0->on_screen = 1;
-            playerUnkA6 = g_Player.stock_charge;
+            playerUnkA6 = player->stock_charge;
+            arg0->animation_step.fields.frame_index = 0x1F - playerUnkA6;
             arg0->x_pos.i.hi = 0x20;
             arg0->y_pos.i.hi = 0x34;
-            arg0->animation_step.fields.frame_index = 0x1F - playerUnkA6;
         }
 #ifdef MMX4_SATURN
         if (arg0->on_screen)

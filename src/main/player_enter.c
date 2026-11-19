@@ -543,8 +543,8 @@ void player_enter_ladder_down(struct PlayerObj* self)
 void func_80034E2C(struct PlayerObj* player)
 {
 
-    player->unk6 = 0;
     player->unk5 = player->script_action;
+    player->unk6 = 0;
     player_clear_dash_and_attack(player);
     switch ((s8)(player->unk5 - 0x14)) {
     case 0:
@@ -572,10 +572,10 @@ void func_80034E2C(struct PlayerObj* player)
     case 3:
         player_set_animation(player, 0xA);
         player_set_collision_bounds(player);
-        player->y_vel.val = 0x5D000;
-        player->unk2C = 0x4200;
         player->x_vel.val = 0;
         player->unk28 = 0;
+        player->y_vel.val = 0x5D000;
+        player->unk2C = 0x4200;
         player->air_state = 1;
         player->unk15 = player->script_facing;
         break;

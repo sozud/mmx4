@@ -142,12 +142,12 @@ void gravity_switch_despawn(struct ItemObj* arg0)
 
 void gravity_switch_flip_objects(void)
 {
-    u32 i;
     struct MainObj* p1;
     struct MiscObj* p2;
     struct WeaponObj* p3;
     struct ShotObj* p4;
     struct VisualObj* p5;
+    u32 i;
 
     p1 = main_objects;
     for (i = 0; i < COUNT(main_objects); p1++, i++) {

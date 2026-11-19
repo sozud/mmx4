@@ -277,7 +277,7 @@ void func_800A068C(struct ShotObj* self)
         break;
     }
 
-    if ((background_objects[g_Player.bg_offset].y_pos.i.hi + 0x150) < self->y_pos.i.hi) {
+    if (self->y_pos.i.hi > background_objects[g_Player.bg_offset].y_pos.i.hi + 0x150) {
         self->state = 2;
         return;
     }
@@ -490,7 +490,7 @@ void func_800A12EC(struct ShotObj* self)
         CollisionRelated((struct PlayerObj*)self);
         flags = self->unk70;
         if (flags & 4) {
-            if ((engine_obj.substage != 0) && (((u32)(((u16)self->x_pos.i.hi) - 0x61)) < 0x47F)) {
+            if ((engine_obj.substage != 0) && (self->x_pos.i.hi > 0x60 && self->x_pos.i.hi < 0x4E0)) {
                 if (self->unk6 != 0) {
                     self->y_pos.i.hi -= 0x28;
                     if (self->on_screen != 0) {
@@ -561,7 +561,7 @@ void func_800A12EC(struct ShotObj* self)
             self->state = 8;
         }
     }
-    if ((background_objects[g_Player.bg_offset].y_pos.i.hi + 0x150) < self->y_pos.i.hi) {
+    if (self->y_pos.i.hi > background_objects[g_Player.bg_offset].y_pos.i.hi + 0x150) {
         self->state = 8;
         return;
     }

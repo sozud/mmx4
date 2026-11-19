@@ -49,25 +49,25 @@ void func_80058194(struct MainObj* arg0)
     arg0->unk5 = 2;
     arg0->unk2 = 0;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->hp = 9;
+    arg0->unk15 = 0;
     arg0->animation_table = (const u8* const*)ice_wall_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
+    arg0->terrain_box = NULL;
     arg0->collision_data = (const u16*)D_80106F74;
     arg0->hurt_box = (const u8*)ice_wall_hurt_box;
+    arg0->attack_box = NULL;
+    arg0->invincibility_timer = 0;
+    arg0->hp = 9;
     arg0->contact_damage = 3;
     arg0->ext.main_26.last_health = 9;
     arg0->ext.main_26.stage = 2;
-    arg0->unk15 = 0;
-    arg0->terrain_box = NULL;
-    arg0->attack_box = NULL;
-    arg0->invincibility_timer = 0;
     arg0->x_speed = 0;
     arg0->x_accel = 0;
     arg0->y_speed = 0;
     arg0->gravity = 0;
-    arg0->air_state = 0;
     arg0->x_pos.i.hi &= ~0xF;
     arg0->y_pos.i.hi &= ~0xF;
+    arg0->air_state = 0;
 }
 
 void ice_wall_start_idle(struct MainObj* self)

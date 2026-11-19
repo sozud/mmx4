@@ -17,10 +17,10 @@ void func_800AAB74(struct ShotObj*);
 void double_mine_shot_init(struct ShotObj* self)
 {
     self->state = 1;
-    self->on_screen = 1;
     self->unk5 = 0;
     self->unk6 = 0;
     self->unk7 = 0;
+    self->on_screen = 1;
     self->timer = 0;
     self->unk8A = 0;
     self->bg_offset = 0;

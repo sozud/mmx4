@@ -42,14 +42,14 @@ void spike_crawler_init(struct MainObj* self)
     self->hp = 3;
     self->contact_damage = 4;
     self->invincibility_timer = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
     self->animation_table = (const u8* const*)spike_crawler_animations;
     self->hurt_box = spike_crawler_hurt_box;
     self->attack_box = spike_crawler_attack_box;
     self->terrain_box = (struct Unk_unk68*)spike_crawler_terrain_box;
     self->collision_data = D_80108484;
     self->air_state = 0;
-    self->unk18.val = self->x_pos.val;
-    self->unk1C.val = self->y_pos.val;
     self->x_speed = FIXED(2);
     self->y_speed = 0;
     self->x_accel = 0;
@@ -87,7 +87,7 @@ void func_80091B1C(struct MainObj* arg0)
     struct Unk_unk68* bounds;
     s16 x;
     s16 y;
-    s32 reverse;
+    u32 reverse;
 
     if (!(arg0->collision_flags & 8)) {
         s32 velocity = arg0->x_speed;

@@ -19,6 +19,9 @@ extern void (*boss_warning_state_funcs[])(struct EffectObj*);
 void boss_warning_main(struct EffectObj*);
 void boss_warning_despawn(struct EffectObj*);
 #include "weapon_resources.h"
+#ifdef MMX4_GAMECUBE
+extern u8 gc_stage_music_opened;
+#endif
 
 // boss_warning_init
 
@@ -91,6 +94,8 @@ void boss_warning_wait_tiles(struct EffectObj* self)
     spawned = self->ext.effect_24.spawned_effect;
 #ifdef MMX4_SATURN
     if (spawned->id != 4 || *(u16*)spawned == 0x0004) {
+#elif defined(MMX4_BIG_ENDIAN)
+    if (spawned->id != 4 || (spawned->id == 4 && spawned->active == 0)) {
 #else
     if (spawned->id != 4 || *(u16*)spawned == 0x400) {
 #endif
@@ -106,8 +111,8 @@ void boss_warning_wait_tiles(struct EffectObj* self)
             entry++;
         } while (index < 0x16U);
         if (count == 0x16) {
-            self->ext.effect_24.unk1B = 0;
             self->unk5++;
+            self->ext.effect_24.unk1B = 0;
         }
     }
 }
@@ -146,8 +151,15 @@ void boss_warning_main(struct EffectObj* self)
 {
     boss_warning_step_funcs[self->unk5](self);
     if (self->ext.effect_24.unk1A == 0) {
+#ifdef MMX4_GAMECUBE
+        if (gc_stage_music_opened == 0) {
+            func_8001540C(0, SATURN_SOUND(0x13, 0x15), 0);
+            self->ext.effect_24.unk1A = 0x3C;
+        }
+#else
         func_8001540C(0, SATURN_SOUND(0x13, 0x15), 0);
         self->ext.effect_24.unk1A = 0x3C;
+#endif
     } else {
         self->ext.effect_24.unk1A--;
     }

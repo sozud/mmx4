@@ -100,21 +100,21 @@ void func_80088C40(struct MainObj* self)
     x_pos = self->x_pos.val;
     y_pos = self->y_pos.val;
     bg_offset = g_Player.bg_offset;
+    self->bg_offset = bg_offset;
+    self->unk18.val = x_pos;
+    self->unk1C.val = y_pos;
     self->collision_data = D_80108104;
-    self->animation_table = (const u8* const*)D_80104974;
-    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->animation_table = (const u8* const*)D_80104974;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->hurt_box = &D_80104914;
     self->attack_box = NULL;
     self->terrain_box = NULL;
     self->unk15 = 0;
-    self->bg_offset = bg_offset;
-    self->unk18.val = x_pos;
-    self->unk1C.val = y_pos;
     set_animation(self, 0);
     self->ext.raw[0] = 0;
     self->ext.raw[1] = 0;
@@ -160,9 +160,9 @@ void drone_pod_intro_fill_health(struct MainObj* self)
     count = ++self->hp;
     if ((s8)count == 0x30) {
         player_end_script_action();
+        self->state++;
         self->unk5 = 3;
         self->unk6 = 0;
-        self->state++;
         self->unk7C = 0xA;
     }
 }
@@ -254,17 +254,15 @@ void drone_pod_death_explode(struct MainObj* self)
 
 void drone_pod_death_alarm(struct MainObj* self)
 {
-    s16 countdown;
 
     if ((WEAPON_FRAME_COUNTER & 3) == 0) {
         drone_pod_random_explosion(self);
     }
 
-    countdown = self->unk7E;
-    if (countdown == 0) {
+    if (self->unk7E == 0) {
         drone_pod_alarm_flash(self);
     } else {
-        self->unk7E = countdown - 1;
+        self->unk7E--;
     }
 
     if (--self->unk7C == 0) {

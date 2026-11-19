@@ -40,20 +40,15 @@ void cyberspace_guide_update(struct MiscObj* self)
 // cyberspace_guide_init
 void func_800CE8DC(struct MiscObj* self)
 {
-    s32 resource;
-    u16 y_pos;
-
     self->unk16 = 2;
     self->unk15 = 0;
     self->bg_offset = g_Player.bg_offset;
     self->animation_table = (u32**)cyberspace_guide_animations;
-    resource = func_8002938C(0x90);
-    self->unk40 = OBJECT_STAGE_TEXTURE(resource);
-    resource = func_8002938C(0x90);
-    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x90));
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x90)];
     self->unk42 = OBJECT_STAGE_CLUT(0x90);
     self->x_pos.i.hi = g_Player.x_pos.i.hi;
-    y_pos = g_Player.y_pos.i.hi;
+    self->y_pos.i.hi = g_Player.y_pos.i.hi;
     self->state = 1;
     self->unk5 = 0;
     self->unk6 = 0;
@@ -81,7 +76,6 @@ void func_800CE8DC(struct MiscObj* self)
     self->ext.tail.bytes[9] = 0;
     self->ext.tail.bytes[0] = 0x24;
 #endif
-    self->y_pos.i.hi = y_pos;
     set_animation(self, 0);
     func_8001540C(2, SATURN_SOUND(0xE9, 0xAA), self);
 }
@@ -142,23 +136,23 @@ void func_800CEBC0(struct MiscObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     set_velocity_from_angle(MOVING_OBJECT(arg0),
         (u8)angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
     arg0->x_vel.val *= 4;
     arg0->y_vel.val *= 3;
-    if (ABS(g_Player.x_pos.val, arg0->x_pos.val) > 0x1FFFFF) {
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    if (ABS(g_Player.x_pos.val, arg0->x_pos.val) >= 0x200000) {
         if (arg0->x_pos.val > g_Player.x_pos.val)
             arg0->x_pos.i.hi = g_Player.x_pos.i.hi + 0x20;
         else
             arg0->x_pos.i.hi = g_Player.x_pos.i.hi - 0x20;
     }
-    if (ABS(g_Player.y_pos.val, arg0->y_pos.val) > 0x1FFFFF) {
+    if (ABS(g_Player.y_pos.val, arg0->y_pos.val) >= 0x200000) {
         if (arg0->y_pos.val > g_Player.y_pos.val)
             arg0->y_pos.i.hi = g_Player.y_pos.i.hi + 0x20;
         else
             arg0->y_pos.i.hi = g_Player.y_pos.i.hi - 0x20;
     }
-    if (ABS(g_Player.x_pos.val, arg0->x_pos.val) <= 0x20000 && ABS(g_Player.y_pos.val, arg0->y_pos.val) <= 0x20000) {
+    if (ABS(g_Player.x_pos.val, arg0->x_pos.val) < 0x20001 && ABS(g_Player.y_pos.val, arg0->y_pos.val) < 0x20001) {
         arg0->x_pos.val = g_Player.x_pos.val;
         arg0->y_pos.val = g_Player.y_pos.val;
     } else {

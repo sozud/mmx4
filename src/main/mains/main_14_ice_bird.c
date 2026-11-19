@@ -104,14 +104,15 @@ void ice_bird_main(struct MainObj* self)
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(6, ice_bird_debris, self);
         drop_item(BASE_OBJECT(self), 8);
-    } else {
-        if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
-            update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
-            return;
-        }
-        if (self->x_pos.val > g_Player.x_pos.val && self->ext.main_14.unk8C == 0) {
-            self->ext.main_14.unk94 = 1;
-        }
+        self->state = 2;
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
+        return;
+    }
+    if (self->x_pos.val > g_Player.x_pos.val && self->ext.main_14.unk8C == 0) {
+        self->ext.main_14.unk94 = 1;
     }
     self->state = 2;
 }
@@ -319,8 +320,8 @@ void ice_bird_spawn_charge_ring(struct MainObj* self, s8 arg1)
     if (visual != 0) {
         visual->unk50 = PLAYER_OBJECT(self);
         visual->active = 0x41;
-        visual->unk2 = arg1;
         visual->id = 0xB;
+        visual->unk2 = arg1;
         self->ext.main_14.visual_variant = arg1;
         visual->state = 0;
         visual->unk5 = 0;

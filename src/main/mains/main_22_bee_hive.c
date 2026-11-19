@@ -41,18 +41,18 @@ void func_80055024(struct MainObj* self)
     self->contact_damage = 4;
     self->invincibility_timer = 0;
     self->bg_offset = g_Player.bg_offset;
-    self->collision_data = (const u16*)D_80106D74;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
+    self->collision_data = (const u16*)D_80106D74;
     self->unk42 = OBJECT_STAGE_CLUT(5);
-    self->animation_table = (const u8* const*)bee_hive_animations;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
     self->unk15 = 0;
+    self->animation_table = (const u8* const*)bee_hive_animations;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->hurt_box = (const u8*)&bee_hive_hurt_box;
     self->attack_box = &bee_hive_hurt_box;
     self->terrain_box = NULL;
@@ -63,9 +63,9 @@ void func_80055024(struct MainObj* self)
     self->ext.main_22.unk8C = 1;
     self->ext.main_22.unk90 = 0;
     self->ext.main_22.parts_mask = 0;
+    self->state++;
     self->unk5 = 2;
     self->unk6 = 0;
-    self->state++;
 }
 
 // bee_hive_main
@@ -168,7 +168,7 @@ void func_80055358(struct MainObj* self)
                 child->ext.main_5.target_x = self->y_pos.i.hi + D_800FCAB0[self->ext.main_22.unk90].y;
                 child->ext.main_5.owner = self;
                 child->x_pos.i.hi = self->x_pos.i.hi;
-                if (child->ext.main_5.part_index & 1)
+                if (child->ext.main_5.part_index % 2)
                     child->x_pos.i.hi += 0x10;
                 else
                     child->x_pos.i.hi -= 0x10;

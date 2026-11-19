@@ -25,7 +25,8 @@ struct Item05AnimationStep {
 };
 
 struct Item05MotionConfig {
-    u32 collision_mode;
+    u8 collision_mode;
+    u8 pad1[3];
     s32 velocity;
     s16 acceleration;
     s16 unused;
@@ -93,15 +94,15 @@ struct Item05AnimationStep* moving_lift_animations[4] = {
 };
 
 struct Item05MotionConfig moving_lift_motion[9] = {
-    { 0, -0x10000, 0x100, 0 },
-    { 0, -0x10000, 0x100, 0 },
-    { 0, -0x10000, 0x100, 0 },
-    { 1, -0x10000, 0x100, 0 },
-    { 1, -0x10000, 0x100, 0 },
-    { 1, -0x10000, 0x100, 0 },
-    { 0, -0x10000, 0x100, 0 },
-    { 0, -0x10000, 0x100, 0 },
-    { 1, -0x10000, 0x100, 0 },
+    { 0, { 0 }, -0x10000, 0x100, 0 },
+    { 0, { 0 }, -0x10000, 0x100, 0 },
+    { 0, { 0 }, -0x10000, 0x100, 0 },
+    { 1, { 0 }, -0x10000, 0x100, 0 },
+    { 1, { 0 }, -0x10000, 0x100, 0 },
+    { 1, { 0 }, -0x10000, 0x100, 0 },
+    { 0, { 0 }, -0x10000, 0x100, 0 },
+    { 0, { 0 }, -0x10000, 0x100, 0 },
+    { 1, { 0 }, -0x10000, 0x100, 0 },
 };
 
 struct Item05StageConfig moving_lift_placements[9] = {
@@ -148,8 +149,8 @@ void collide_with_players(struct PlayerObj*);
 void func_800C0EBC(struct ItemObj* arg0)
 {
 
-    arg0->active = 0x41;
     arg0->state++;
+    arg0->active = 0x41;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)moving_lift_animations;
     arg0->unk40 = OBJECT_STAGE_TEXTURE(5);
@@ -166,7 +167,7 @@ void func_800C0EBC(struct ItemObj* arg0)
     arg0->unk2C = (u16)moving_lift_motion[arg0->unk2].acceleration;
     arg0->unk75 = 1;
     arg0->unk76 = 0;
-    if ((u8)moving_lift_motion[arg0->unk2].collision_mode != 0)
+    if (moving_lift_motion[arg0->unk2].collision_mode != 0)
         set_animation(arg0, 2);
     else
         set_animation(arg0, 0);
@@ -178,16 +179,16 @@ void func_800C0EBC(struct ItemObj* arg0)
 // moving_lift_move
 void func_800C1050(struct ItemObj* arg0)
 {
-    s32 offset;
-    s32 y;
-    s32 velocity;
     u8 old_flags;
+    s32 velocity;
+    s32 y;
+    s32 offset;
 
     update_on_screen(BASE_OBJECT(arg0), moving_lift_boxes[arg0->unk2][2], moving_lift_boxes[arg0->unk2][3]);
     if (arg0->unk76 == 0) {
         animate_object(ANIMATED_OBJECT(arg0));
         arg0->y_vel.val = moving_lift_motion[arg0->unk2].velocity;
-    } else if ((u8)moving_lift_motion[arg0->unk2].collision_mode != 0) {
+    } else if (moving_lift_motion[arg0->unk2].collision_mode != 0) {
         arg0->y_vel.val = -0x1A000;
     }
 
@@ -209,10 +210,10 @@ void func_800C1050(struct ItemObj* arg0)
         g_Player.unk71 = old_flags;
     }
 
-    if (arg0->y_pos.i.hi >= 0x621) {
+    if (arg0->y_pos.i.hi > 0x620) {
         velocity = moving_lift_motion[arg0->unk2].velocity;
-        arg0->y_pos.i.hi = 0x4E0;
         arg0->y_vel.val = velocity;
+        arg0->y_pos.i.hi = 0x4E0;
     }
 }
 

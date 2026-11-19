@@ -37,9 +37,9 @@ void aimed_bullet_init(struct ShotObj* self)
         MOVING_OBJECT(self),
         angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
 
-    self->unk5C = 1;
     self->x_vel.val *= 2;
     self->y_vel.val *= 2;
+    self->unk5C = 1;
     self->unk60 = 3;
     set_animation(self, 0xC);
 }

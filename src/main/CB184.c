@@ -252,8 +252,8 @@ void refresh_visible_tile_effect(s32 effect_id, s32 x_offset, s32 y_offset)
 
     record = tile_effect_tables[engine_obj.stage * 2 + engine_obj.substage][effect_id & 0xFF];
     while (1) {
-        s16 x = (u16)record->x + origin_x;
-        s16 y = (u16)record->y + origin_y;
+        s16 x = record->x + origin_x;
+        s16 y = record->y + origin_y;
         u8 index = record->layer; /* Reused as the tile index below. */
         u8 horizontal = record->packed_count;
         u32 tile_count = horizontal >> 1;
@@ -344,8 +344,8 @@ void apply_tile_effect(u8 effect_id, s32 x_offset, s32 y_offset)
 
     record = tile_effect_tables[engine_obj.stage * 2 + engine_obj.substage][effect_id & 0xFF];
     while (1) {
-        s16 x = (u16)record->x + origin_x;
-        s16 y = (u16)record->y + origin_y;
+        s16 x = record->x + origin_x;
+        s16 y = record->y + origin_y;
         u8 index = record->layer; /* Reused as the tile index below. */
         s16 bg_x = background_objects[index].x_pos.i.hi;
         u8 horizontal = record->packed_count;

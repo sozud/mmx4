@@ -249,6 +249,10 @@ void func_80012E2C(void)
 }
 #endif
 
+#ifdef MMX4_GAMECUBE
+void fn_4_130(void* dst, void* src, u32 size);
+#endif
+
 void func_80012E38(void)
 {
 #ifdef VERSION_JP
@@ -263,6 +267,9 @@ void func_80012E38(void)
     func_80013890(0x41, WINDOW_ARCHIVE_DATA);
 #endif
     func_80014C70();
+#ifdef MMX4_GAMECUBE
+    fn_4_130(WINDOW_ARCHIVE_DATA, WINDOW_ARCHIVE_DATA, 0x2C9C);
+#endif
 }
 #endif
 
@@ -343,10 +350,10 @@ void func_80012F44(void)
 #else
 void func_80012F44(void)
 {
-    u8* saved_data;
-    s32* dst;
-    s32* src;
     u32 i;
+    s32* src;
+    s32* dst;
+    u8* saved_data;
 
     saved_data = D_8015D9C8;
 #ifdef MMX4_PC

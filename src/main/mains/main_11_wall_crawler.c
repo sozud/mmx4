@@ -48,7 +48,7 @@ void wall_crawler_update(struct MainObj* self)
 }
 
 // wall_crawler_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 ret_s8 func_8002DD04(struct MainObj* object);
 s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1);
 #endif
@@ -57,7 +57,7 @@ extern struct Unk_unk68 wall_crawler_terrain_box;
 extern struct Unk_unk68 D_800FB56C;
 extern u8 wall_crawler_debris[];
 extern void (*wall_crawler_step_funcs[])(struct MainObj*);
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 void func_8004B418(struct MainObj* self);
 void func_8004B0A0(struct MainObj* self);
 void func_8004A78C(struct MainObj* self);
@@ -70,7 +70,7 @@ extern struct Unk_unk68 D_801067F0[];
 extern union AnimationStep* wall_crawler_animations[];
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 void func_8004A78C(struct MainObj* self)
 {
     u16 x;
@@ -79,10 +79,10 @@ void func_8004A78C(struct MainObj* self)
     self->invincibility_timer = 0;
     self->bg_offset = g_Player.bg_offset;
     self->animation_table = (const u8* const*)wall_crawler_animations;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->collision_data = D_801067F0;
-    self->unk18 = self->x_pos;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk1C = self->y_pos;
+    self->unk18 = self->x_pos;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
@@ -114,7 +114,7 @@ void func_8004A78C(struct MainObj* self)
     }
     move_object(MOVING_OBJECT(self));
     x = self->x_pos.i.hi;
-    if (engine_obj.character_state.fields.active != 0 && ((u32)(x - 0xC0F) < 0x1E2 || (u32)(x - 0x100F) < 0x1E2 || (u32)(x - 0x1315) < 0x1DC || (u32)(x - 0x1613) < 0x1BF)) {
+    if (engine_obj.character_state.fields.active != 0 && ((x >= 0xC0F && x < 0xDF1) || (x >= 0x100F && x < 0x11F1) || (x >= 0x1315 && x < 0x14F1) || (x >= 0x1613 && x < 0x17D2))) {
         set_animation(self, 0x16);
         self->state = 2;
         self->hp = 1;

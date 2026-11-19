@@ -80,15 +80,16 @@ void func_800D2CA4(struct MiscObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (abc_object.unkC == 0) {
-        self->y_vel.val = 0x00050000;
+        self->unk5++;
         self->x_vel.val = 0;
         self->unk28 = 0;
-        self->unk5++;
+        self->y_vel.val = 0x00050000;
         self->unk2C = 0x4200;
     }
     if (WEAPON_FRAME_COUNTER % 10 == 0) {
         self->y_pos.i.hi += self->ext.misc_53.x_step;
-        if (--self->ext.misc_53.movement_timer == 0) {
+        self->ext.misc_53.movement_timer--;
+        if (self->ext.misc_53.movement_timer == 0) {
             self->ext.misc_53.movement_timer = 0xA;
             self->ext.misc_53.x_step *= -1;
         }

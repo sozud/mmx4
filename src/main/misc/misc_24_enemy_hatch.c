@@ -46,7 +46,6 @@ void enemy_hatch_update(struct MiscObj* self)
 void func_800CBF14(struct MiscObj* self)
 {
     u8 bg_offset;
-    u8 state;
 
     if (self->x_pos.i.hi - g_Player.x_pos.i.hi <= 0) {
         self->unk15 = PLAYER_FACING_RIGHT;
@@ -57,14 +56,13 @@ void func_800CBF14(struct MiscObj* self)
     self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x8F));
     self->unk42 = OBJECT_STAGE_CLUT(0x8F);
     bg_offset = g_Player.bg_offset;
-    state = self->state;
+    self->bg_offset = bg_offset;
     self->animation_table = (u32**)enemy_hatch_animations;
+    self->state++;
     self->unk5 = 0;
     self->unk16 = VISUAL_SATURN_LAYER(5);
     self->unk6 = 0;
-    self->bg_offset = bg_offset;
     self->ext.misc_24.child_active = 0;
-    self->state = state + 1;
 }
 
 void enemy_hatch_main(struct MiscObj* self)

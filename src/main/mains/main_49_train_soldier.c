@@ -151,7 +151,8 @@ void train_soldier_main(struct MainObj* self)
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(5, train_soldier_debris, self);
         drop_item(BASE_OBJECT(self), 0x12);
-        goto block_12;
+        self->state = 2;
+        return;
     }
     temp_v1 = SP_CUR_MAIN_OBJ->ext.main_49.unk85;
     if (temp_v1 != 2 && temp_v1 < 6U) {
@@ -174,9 +175,6 @@ void train_soldier_main(struct MainObj* self)
     } else {
         self->state = 2;
     }
-    return;
-block_12:
-    self->state = 2;
 }
 
 void train_soldier_despawn(struct MainObj* self)
@@ -234,9 +232,9 @@ void train_soldier_walk(struct MainObj* self)
 // train_soldier_walk_start
 void func_80068B80(struct MainObj* arg0)
 {
+    arg0->unk6++;
     arg0->collision_data = (const u16*)D_801076F8;
     arg0->hurt_box = train_soldier_guard_hurt_box;
-    arg0->unk6++;
     arg0->attack_box = train_soldier_guard_attack_box;
     if (((u8*)&SP_CUR_MAIN_OBJ->ext)[6] == 0) {
         arg0->x_speed = arg0->unk15 != 0 ? FIXED(1.75) : -FIXED(1.75);
@@ -257,11 +255,11 @@ void train_soldier_walk_move(struct MainObj* self)
     if (self->unk15 != 0) {
         if (self->collision_flags & 1) {
             self->unk15 = 0;
-            self->x_speed = -self->x_speed;
+            self->x_speed *= -1;
         }
     } else if (self->collision_flags & 2) {
         self->unk15 = PLAYER_FACING_RIGHT;
-        self->x_speed = -self->x_speed;
+        self->x_speed *= -1;
     }
 }
 
@@ -303,9 +301,9 @@ void func_80068D6C(struct MainObj* self)
         set_animation(self, 0xF);
         SP_CUR_MAIN_OBJ->ext.main_49.unk80 = 5;
         self->unk5 = 3;
-        self->gravity = FIXED(0.2578125);
         self->unk6 = 0;
         self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->x_accel = 0;
         self->air_state = -1;
         return;
@@ -327,7 +325,7 @@ void func_80068D6C(struct MainObj* self)
 
     if (self->unk2 == 0) {
         self->unk15 = self->unk15 == 0 ? PLAYER_FACING_RIGHT : 0;
-        self->x_speed = -self->x_speed;
+        self->x_speed *= -1;
         return;
     }
     if (self->collision_flags & 3) {
@@ -355,7 +353,7 @@ void train_soldier_check_guard(struct MainObj* self)
 
     if (self->unk5 == 2) {
         timer = ++SP_CUR_MAIN_OBJ->ext.main_49.index;
-        if ((timer & 0xFF) == 0x5A) {
+        if (timer == 0x5A) {
             self->unk5 = 5;
             self->unk6 = 0;
             SP_CUR_MAIN_OBJ->ext.main_49.index = 0;

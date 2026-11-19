@@ -14,7 +14,7 @@ void dash_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1);
 
 void dash_dust_update(struct VisualObj* arg0)
 {
-    s32 var_a0;
+    u32 var_a0;
     struct PlayerObj* entity;
 
     entity = g_Player.controlling_clone == 0 ? &g_Player : &g_Entity;

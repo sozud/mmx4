@@ -23,6 +23,9 @@ extern void (*sigma_collapse_state_funcs[])(struct EffectObj*);
 void sigma_collapse_debris(struct EffectObj*);
 void sigma_collapse_rumble(struct EffectObj*);
 #include "weapon_resources.h"
+#ifdef MMX4_GAMECUBE
+extern u8 gc_sigma_music_opened;
+#endif
 
 void sigma_collapse_init(struct EffectObj* self)
 {
@@ -54,7 +57,13 @@ void sigma_collapse_debris_drop(struct EffectObj* self)
                 misc->unk2 = ((u32)get_random() & 0xFF) % 6;
                 misc->unk40 = self->ext.effect_16.saved_background_2A;
             }
+#ifdef MMX4_GAMECUBE
+            if (gc_sigma_music_opened == 0) {
+                func_8001540C(5, SATURN_SOUND(0, 0x64), NULL);
+            }
+#else
             func_8001540C(5, SATURN_SOUND(0, 0x64), NULL);
+#endif
             start_screen_shake_y(5, 2, 1);
             self->ext.effect_9.transition_timer = 5;
         }

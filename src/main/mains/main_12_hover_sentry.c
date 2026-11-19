@@ -151,14 +151,15 @@ void hover_sentry_main(struct MainObj* self)
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(5, hover_sentry_debris, self);
         drop_item(BASE_OBJECT(self), 0xE);
-    } else {
-        if (result > 0) {
-            SP_CUR_MAIN_OBJ->ext.main_12.saved_unk5 = self->unk5;
-        }
-        if (func_8002B160(BASE_OBJECT(self)) == 0) {
-            is_on_screen(BASE_OBJECT(self));
-            return;
-        }
+        self->state++;
+        return;
+    }
+    if (result > 0) {
+        SP_CUR_MAIN_OBJ->ext.main_12.saved_unk5 = self->unk5;
+    }
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
+        return;
     }
     self->state++;
 }
@@ -205,9 +206,9 @@ void func_8004BCFC(struct MainObj* arg0)
         arg0->unk7 = 0;
         arg0->air_state = 1;
         SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.i.hi;
-        arg0->y_speed = 0x80000;
         arg0->x_speed = 0;
         arg0->x_accel = 0;
+        arg0->y_speed = 0x80000;
         if (arg0->unk2 == 2) {
             if ((get_random() & 3) == 0) {
                 SP_CUR_MAIN_OBJ->ext.main_12.unk80 = 0x10;
@@ -392,10 +393,10 @@ void func_8004BF5C(struct MainObj* arg0)
                     direction = 4;
             }
             set_velocity_from_angle(MOVING_OBJECT(arg0), (u8)direction);
-            arg0->x_accel = 0;
-            arg0->gravity = 0;
             arg0->x_speed *= 6;
             arg0->y_speed *= 6;
+            arg0->x_accel = 0;
+            arg0->gravity = 0;
             set_animation(ANIMATED_OBJECT(arg0), 8);
         }
         break;
@@ -522,11 +523,10 @@ void func_8004C394(struct MainObj* self)
         }
         facing = self->unk15;
         if (facing & PLAYER_FACING_RIGHT) {
-            hit = self->collision_flags & 1;
-        } else {
-            hit = self->collision_flags & 2;
-        }
-        if (hit) {
+            if (self->collision_flags & 1) {
+                self->unk15 = facing ^ PLAYER_FACING_RIGHT;
+            }
+        } else if (self->collision_flags & 2) {
             self->unk15 = facing ^ PLAYER_FACING_RIGHT;
         }
     }
@@ -544,8 +544,8 @@ void func_8004C56C(struct MainObj* self)
         move_with_gravity(ANIMATED_OBJECT(self));
         animate_object(ANIMATED_OBJECT(self));
         bounds = self->terrain_box;
-        x = (u16)self->x_pos.i.hi + bounds->unk0;
-        y = (u16)self->y_pos.i.hi + bounds->unk1 + bounds->unk3;
+        x = self->x_pos.i.hi + bounds->unk0;
+        y = self->y_pos.i.hi + bounds->unk1 + bounds->unk3;
         if (self->unk7 == 0 && ((s32(*)(struct PlayerObj*, s16, s16))func_8002D724)(PLAYER_OBJECT(self), x, y) == 0x24) {
             spawn_common_effect(self, 1);
             self->unk7 = 1;

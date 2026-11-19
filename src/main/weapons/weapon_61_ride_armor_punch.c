@@ -47,8 +47,8 @@ void ride_armor_punch_main(struct WeaponObj* self)
     self->animation_step.fields.event = (owner->animation_step.fields.event >> 4) & 0xF;
     if (self->unk2 != 0) {
         if ((--self->unk88.half << 16) == 0) {
-            self->unk88.half = 6;
             self->unk64++;
+            self->unk88.half = 6;
         }
     }
     if ((ride_armor_punch_animations[self->unk2] == owner->unk17) && (ride_armor_punch_steps[self->unk2] == owner->unk5) && (owner->state == 1)) {

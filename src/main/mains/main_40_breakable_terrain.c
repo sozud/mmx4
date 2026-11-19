@@ -50,9 +50,9 @@ void func_80061DFC(struct MainObj* arg0)
 {
     s8** boxes = D_800FEA24;
 
-    arg0->invincibility_timer = 0;
     arg0->ext.main_40.unk80 = arg0->unk2 >> 4;
     arg0->ext.main_40.unk81 = arg0->unk2 & 0xF;
+    arg0->invincibility_timer = 0;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
@@ -100,7 +100,7 @@ void func_80061F2C(struct MainObj* arg0)
             arg0->state++;
             return;
         }
-        if (collision > 0)
+        if (collision >= 1)
             arg0->unk42 |= 0x8000;
         else
             arg0->unk42 &= 0x7FFF;
@@ -120,7 +120,7 @@ void func_80061F2C(struct MainObj* arg0)
     case 6:
         index = arg0->ext.main_40.unk80 - 2;
         collision = ((struct BreakableTerrainOffset*)breakable_terrain_effect_offsets)[index].y << 16;
-        if (arg0->y_pos.val - collision - background_objects[arg0->bg_offset].y_pos.val > 0xA80000) {
+        if (arg0->y_pos.val - collision - background_objects[arg0->bg_offset].y_pos.val >= 0xA80001) {
             arg0->ext.main_40.timer = 0x10;
             arg0->ext.main_40.trigger_time = 8;
             arg0->state++;

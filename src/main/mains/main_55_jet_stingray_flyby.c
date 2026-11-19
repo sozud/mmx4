@@ -108,7 +108,7 @@ void func_8006ED44(struct MainObj* self)
     case 1:
         if (self->ext.main_55.unk85 == 0)
             self->ext.main_55.unk84 = 3;
-        if (self->unk7C == 0xF0 || self->ext.main_55.unk85 < 5) {
+        if (self->unk7C == 0xF0 || self->ext.main_55.unk85 <= 4) {
             self->ext.main_55.unk87 = 1;
             self->ext.main_55.unk84 = 2;
             self->unk7C = 20;
@@ -142,7 +142,7 @@ void func_8006ED44(struct MainObj* self)
     self->x_speed = (s32)background_objects[(s8)self->bg_offset].unk47 * FIXED(1);
     self->y_speed = 0;
     move_object(MOVING_OBJECT(self));
-    if (self->x_pos.i.hi >= 0x1E16) {
+    if (self->x_pos.i.hi > 0x1E15) {
         self->unk5 = 6;
         self->unk6 = 0;
         self->x_speed = FIXED(8);
@@ -163,7 +163,7 @@ void func_8006EF28(struct MainObj* self)
     set_velocity_from_angle(MOVING_OBJECT(self), (u8)angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)));
     self->x_speed = (s32)background_objects[self->bg_offset].unk47 * FIXED(1);
     move_object(MOVING_OBJECT(self));
-    dx = (u16)g_Player.x_pos.i.hi - (u16)self->x_pos.i.hi;
+    dx = g_Player.x_pos.i.hi - (u16)self->x_pos.i.hi;
     dy = g_Player.y_pos.i.hi - self->y_pos.i.hi;
     if (dx < 0x50 && (dy < 0 ? -dy : dy) < 0x20 && (u32)(get_random() & 0xF) < 3) {
         self->unk5 = 3;
@@ -176,7 +176,7 @@ void func_8006EF28(struct MainObj* self)
     } else {
         self->unk7C--;
     }
-    if (self->x_pos.i.hi >= 0x390F) {
+    if (self->x_pos.i.hi > 0x390E) {
         self->x_speed = FIXED(4);
         self->unk5 = 6;
         self->unk6 = 0;
@@ -244,11 +244,10 @@ void jet_stingray_flyby_attack_rise(struct MainObj* self)
 
 void jet_stingray_flyby_attack_fire(struct MainObj* self)
 {
-    s16 timer = self->unk7C;
     u32** animation_table;
     struct ShotObj* shot;
 
-    if (timer == 0) {
+    if (self->unk7C == 0) {
         if (self->animation_step.fields.event == 1) {
             self->animation_step.fields.event = 0;
             shot = find_free_shot_obj();
@@ -276,7 +275,7 @@ void jet_stingray_flyby_attack_fire(struct MainObj* self)
         }
         animate_object(ANIMATED_OBJECT(self));
     } else {
-        self->unk7C = timer - 1;
+        self->unk7C--;
     }
 }
 

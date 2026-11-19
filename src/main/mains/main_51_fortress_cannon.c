@@ -321,8 +321,7 @@ void fortress_cannon_fire_double_shot(struct MainObj* self)
     u8 i;
     struct ShotObj* shot;
 
-    i = 0;
-    do {
+    for (i = 0; i < 2; i++) {
         shot = find_free_shot_obj();
         if (shot != 0) {
             shot->active = 0x41;
@@ -341,8 +340,7 @@ void fortress_cannon_fire_double_shot(struct MainObj* self)
             shot->bg_offset = (s8)(u8)self->bg_offset;
             shot->unk16 = VISUAL_SATURN_LAYER(4);
         }
-        i++;
-    } while (i < 2);
+    }
 }
 
 void fortress_cannon_fire_volley(struct MainObj* self)
@@ -350,8 +348,7 @@ void fortress_cannon_fire_volley(struct MainObj* self)
     u8 i;
     struct ShotObj* shot;
 
-    i = 0;
-    do {
+    for (i = 0; i < 2; i++) {
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -366,8 +363,7 @@ void fortress_cannon_fire_volley(struct MainObj* self)
             shot->bg_offset = self->bg_offset;
             shot->unk16 = VISUAL_SATURN_LAYER(4);
         }
-        i++;
-    } while (i < 2);
+    }
 }
 
 struct Unk_unk68 D_800FFC54 = { -27, -35, 62, 66 };

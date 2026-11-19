@@ -44,8 +44,8 @@ void func_80099B6C(struct ShotObj* self);
 void func_80099B6C(struct ShotObj* self)
 {
     s8(*offsets)[2];
-    self->on_screen = 1;
     self->state++;
+    self->on_screen = 1;
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = 0;

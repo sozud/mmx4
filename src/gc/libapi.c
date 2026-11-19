@@ -54,3 +54,12 @@ long OpenEvent(unsigned long desc, long spec, long mode, long (*func)(void))
 {
     return 1;
 }
+
+long fn_4_D65F8(void)
+{
+    return 1;
+}
+
+void fn_4_D6600(void)
+{
+}

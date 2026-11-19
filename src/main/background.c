@@ -5,6 +5,8 @@
 #ifdef MMX4_SATURN
 #include "saturn/platform.h"
 #include "saturn/game_low.h"
+#endif
+#if defined(MMX4_SATURN) || defined(MMX4_BIG_ENDIAN)
 #define BG_Y_HIGH_OFFSET 0xC
 #define BG_PREVIOUS_Y_HIGH_OFFSET 0x18
 #else
@@ -222,7 +224,7 @@ void func_800279D8(struct BackgroundObj* arg0)
     func_80027AFC(arg0);
     func_80027BE4(arg0);
     scroll_x = background_objects[0].x_pos.i.hi;
-    background_objects[0].y_pos.i.hi = (u16)background_objects[0].unk20 - (scroll_x / 4);
+    background_objects[0].y_pos.i.hi = background_objects[0].unk20 - (scroll_x / 4);
 }
 
 void func_80027A5C(struct BackgroundObj* a0)
@@ -693,7 +695,7 @@ void func_80028658(struct BackgroundObj* arg0)
 void func_80028690(struct BackgroundObj* bg);
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 void func_80028690(struct BackgroundObj* bg)
 {
     s16 target;

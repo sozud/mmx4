@@ -60,19 +60,19 @@ void dragonfly_init(struct MainObj* self)
     self->invincibility_timer = 0;
     self->collision_data = D_80106770;
     self->bg_offset = g_Player.bg_offset;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
-    self->animation_table = dragonfly_animations;
-    self->terrain_box = &dragonfly_terrain_box;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->animation_table = dragonfly_animations;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->terrain_box = &dragonfly_terrain_box;
     self->hurt_box = dragonfly_body_boxes;
     self->attack_box = dragonfly_body_boxes;
     self->unk62 = 0;
-    self->unk18.val = self->x_pos.val;
-    self->unk1C.val = self->y_pos.val;
     set_animation(self, 0);
 
     switch (self->unk2) {
@@ -259,20 +259,14 @@ void dragonfly_hunt(struct MainObj* self)
 
 void dragonfly_hunt_start(struct MainObj* self)
 {
-    s32 velocity = self->unk15;
-    if (velocity == 0) {
-        velocity = FIXED(-4);
-        self->x_speed = velocity;
-        self->ext.main_10.timer = 0xB4;
-        self->unk6 = 1;
-        animate_object(ANIMATED_OBJECT(self));
+    if (self->unk15 == 0) {
+        self->x_speed = FIXED(-4);
     } else {
-        velocity = FIXED(4);
-        self->x_speed = velocity;
-        self->ext.main_10.timer = 0xB4;
-        self->unk6 = 1;
-        animate_object(ANIMATED_OBJECT(self));
+        self->x_speed = FIXED(4);
     }
+    self->ext.main_10.timer = 0xB4;
+    self->unk6 = 1;
+    animate_object(ANIMATED_OBJECT(self));
 }
 // dragonfly_hunt_fly
 
@@ -348,9 +342,14 @@ void dragonfly_hunt_close(struct MainObj* self)
     } else {
         self->ext.main_10.turn_delay--;
     }
-    if (self->y_speed < 0
-            ? (g_Player.y_pos.i.hi - 0x18) < self->y_pos.i.hi
-            : self->x_pos.i.hi < (g_Player.x_pos.i.hi - 0x18)) {
+    if (self->y_speed < 0) {
+        if (self->y_pos.i.hi > g_Player.y_pos.i.hi - 0x18) {
+            dragonfly_face_player(self);
+            set_animation(self, 1);
+            self->unk5 = 4;
+            self->unk6 = 0;
+        }
+    } else if (self->x_pos.i.hi < g_Player.x_pos.i.hi - 0x18) {
         dragonfly_face_player(self);
         set_animation(self, 1);
         self->unk5 = 4;
@@ -392,8 +391,8 @@ void func_8004A178(struct MainObj* arg0)
 
     if (arg0->unk15 == 0) {
         if (arg0->x_pos.val < player->x_pos.val) {
-            arg0->y_speed = FIXED(2);
             arg0->x_speed = 0;
+            arg0->y_speed = FIXED(2);
             arg0->unk62 = 0;
             arg0->attack_box = NULL;
             arg0->unk5 = 5;
@@ -402,8 +401,8 @@ void func_8004A178(struct MainObj* arg0)
         }
     } else {
         if (arg0->x_pos.val > player->x_pos.val) {
-            arg0->y_speed = FIXED(2);
             arg0->x_speed = 0;
+            arg0->y_speed = FIXED(2);
             arg0->unk62 = 0;
             arg0->attack_box = NULL;
             arg0->unk5 = 5;
@@ -413,8 +412,8 @@ void func_8004A178(struct MainObj* arg0)
     }
     if (--arg0->ext.main_10.timer == 0
         || (arg0->ext.main_10.hold_state == 1 && g_Player.stun_timer != 0)) {
-        arg0->y_speed = FIXED(2);
         arg0->x_speed = 0;
+        arg0->y_speed = FIXED(2);
         arg0->unk62 = 0;
         arg0->attack_box = NULL;
         arg0->unk5 = 5;
@@ -425,18 +424,18 @@ void func_8004A178(struct MainObj* arg0)
     saved_x = arg0->x_pos.val;
     saved_y = arg0->y_pos.val;
     if (arg0->unk15 == 0) {
-        arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi - 0x18;
+        arg0->x_pos.i.hi -= 0x18;
     } else {
-        arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi + 0x18;
+        arg0->x_pos.i.hi += 0x18;
     }
-    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x18;
+    arg0->y_pos.i.hi += 0x18;
     set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(player)) & 0xFF);
     x_vel = arg0->x_speed;
     y_vel = arg0->y_speed;
-    arg0->x_pos.val = saved_x;
-    arg0->y_pos.val = saved_y;
     arg0->x_speed = x_vel + (x_vel / 2);
     arg0->y_speed = y_vel + (y_vel / 2);
+    arg0->x_pos.val = saved_x;
+    arg0->y_pos.val = saved_y;
     move_object(MOVING_OBJECT(arg0));
     if (g_Player.stun_timer != 0) {
         set_animation(arg0, 3);
@@ -493,8 +492,6 @@ void dragonfly_carry_rise(struct MainObj* self)
 
 void dragonfly_carry_squeeze(struct MainObj* self)
 {
-    u32 squeeze;
-
     if (--self->unk7E == 0) {
         func_8001540C(2, SATURN_SOUND(0xE, 0x01), self);
         self->unk7E = 0x14;
@@ -515,8 +512,8 @@ void dragonfly_carry_squeeze(struct MainObj* self)
     }
 
     if (self->animation_step.fields.event != 0) {
-        squeeze = --self->ext.main_10.timer;
-        if (squeeze == 9 || squeeze == 4) {
+        self->ext.main_10.timer--;
+        if (self->ext.main_10.timer == 9 || self->ext.main_10.timer == 4) {
             player_damage(2);
         }
         if (self->ext.main_10.timer == 0) {
@@ -530,9 +527,10 @@ void dragonfly_carry_squeeze(struct MainObj* self)
             self->unk6 = 0;
             return;
         }
+        animate_object(self);
+    } else {
+        animate_object(self);
     }
-
-    animate_object(self);
 }
 
 void dragonfly_flee(struct MainObj* self)

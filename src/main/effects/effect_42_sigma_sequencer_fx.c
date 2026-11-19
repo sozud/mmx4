@@ -76,8 +76,8 @@ void func_800BE364(struct EffectObj* self)
             self->unk5++;
         } else {
             self->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 3;
-            self->ext.effect_42.timer = 0xC8;
             self->unk5 += 2;
+            self->ext.effect_42.timer = 0xC8;
         }
     }
 }

@@ -70,7 +70,6 @@ void func_800AE8E4(struct UnkObj* arg0, struct PlayerObj* player)
 void func_800AE95C(struct UnkObj* self, struct PlayerObj* player)
 {
     s16 timer;
-    s16 next_timer;
 
     if (player->afterimage > 0) {
         func_800AEA58(self, player);
@@ -79,9 +78,8 @@ void func_800AE95C(struct UnkObj* self, struct PlayerObj* player)
 
     timer = self->ext.afterimage.blink_timer;
     if (timer != 0) {
-        next_timer = timer - 1;
-        self->ext.afterimage.blink_timer = next_timer;
-        if (next_timer & 1) {
+        self->ext.afterimage.blink_timer = timer - 1;
+        if (self->ext.afterimage.blink_timer & 1) {
             func_800AEAA0(self);
         }
     } else {

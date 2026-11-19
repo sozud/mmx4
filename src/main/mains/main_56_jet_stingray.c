@@ -433,7 +433,7 @@ void jet_stingray_swim_start(struct MainObj* self)
 
 extern u8 jet_stingray_splash_offsets[2][4];
 extern void (*jet_stingray_ambush_funcs[])(struct MainObj*);
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 void func_80070514(struct MainObj* arg0);
 void func_80070A38(struct MainObj* arg0);
 void func_800710D4(struct MainObj* arg0);
@@ -491,7 +491,7 @@ void jet_stingray_swim(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 
-    if (((jet_stingray_check_surface(PLAYER_OBJECT(self), 0, 0) & 0xFF) == 3) && !(self->ext.main_56.flags & 2)) {
+    if (((u8)jet_stingray_check_surface(PLAYER_OBJECT(self), 0, 0) == 3) && !(self->ext.main_56.flags & 2)) {
         jet_stingray_spawn_splash(self);
         self->ext.main_56.flags |= 2;
     }
@@ -529,7 +529,7 @@ void jet_stingray_land(struct MainObj* self)
     CollisionRelated(PLAYER_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    if ((jet_stingray_check_surface(PLAYER_OBJECT(self), 0, 0) & 0xFF) == 3
+    if ((u8)jet_stingray_check_surface(PLAYER_OBJECT(self), 0, 0) == 3
         && !(self->ext.main_56.flags & 2)) {
         jet_stingray_spawn_splash(self);
         self->ext.main_56.flags |= 2;
@@ -579,7 +579,7 @@ void jet_stingray_vortex_spawn(struct MainObj* self)
 }
 
 // jet_stingray_vortex_spin
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 void func_80070A38(struct MainObj* arg0)
 {
     struct MainObj* debris;
@@ -661,9 +661,9 @@ void jet_stingray_ambush_exit(struct MainObj* self)
     }
 
     if (self->on_screen == 0) {
+        self->unk6++;
         self->unk7 = 0;
         self->unk7C = 0x3C;
-        self->unk6++;
     }
 }
 
@@ -689,9 +689,9 @@ void jet_stingray_ambush_drop(struct MainObj* self)
     case 2:
         if (self->on_screen != 0)
             break;
+        self->unk6++;
         self->unk7 = 0;
         self->unk7C = 0x28;
-        self->unk6++;
         break;
     }
 }
@@ -718,9 +718,9 @@ void jet_stingray_ambush_rise(struct MainObj* self)
         break;
     case 2:
         if (self->on_screen == 0) {
+            self->unk6++;
             self->unk7 = 0;
             self->unk7C = 0x5A;
-            self->unk6++;
         }
         break;
     }
@@ -759,7 +759,7 @@ void func_800710D4(struct MainObj* arg0)
     switch (tile) {
     case 1:
     case 2:
-        if (!(arg0->ext.main_56.flags & 1)) {
+        if (!(arg0->ext.main_56.flags % 2)) {
             for (i = 0; i < 4; i++) {
                 debris = func_8006FB20(arg0, (s8)jet_stingray_splash_offsets[0][get_random() & 3], 0);
 #ifdef MMX4_PC
@@ -819,10 +819,10 @@ void jet_stingray_dash_charge(struct MainObj* self)
             func_8001540C(2, SATURN_SOUND(0xAF, 0x1A), self);
         }
     } else if (self->on_screen == 0) {
+        self->unk6++;
         self->unk7 = 0;
         self->unk7C = 0x78;
         self->x_speed = 0;
-        self->unk6++;
         self->y_pos.i.hi = background_objects[self->bg_offset].unk22 - 0x50;
     }
 }
@@ -1107,7 +1107,8 @@ void func_80071D30(struct MainObj* self)
     check = func_8002DD04(self);
 
     if (self->ext.main_56.flash_timer != 0) {
-        if (--self->ext.main_56.flash_timer & 1) {
+        self->ext.main_56.flash_timer--;
+        if (self->ext.main_56.flash_timer & 1) {
             self->unk42 |= 0x8000;
         } else {
             self->unk42 &= 0x7FFF;

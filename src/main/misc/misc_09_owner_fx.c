@@ -44,9 +44,10 @@ void owner_fx_animate(struct MiscObj* self)
         if (self->on_screen != 0) {
             is_on_screen(BASE_OBJECT(self));
         }
-        if (self->animation_step.fields.event != 1) {
-            return;
+        if (self->animation_step.fields.event == 1) {
+            ZeroObjectState(OBJECT_HEADER(self));
         }
+    } else {
+        ZeroObjectState(OBJECT_HEADER(self));
     }
-    ZeroObjectState(OBJECT_HEADER(self));
 }

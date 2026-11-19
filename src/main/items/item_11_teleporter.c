@@ -280,6 +280,9 @@ void teleporter_wait_flash(struct ItemObj* arg0)
         arg0->unk7C.misc->ext.misc_11.active = 1;
         arg0->tail_ext.unk1.unk84.timer = 0;
         player_start_script_action(0x16, g_Player.unk15);
+#ifdef MMX4_GAMECUBE
+        stop_sound(5, 0);
+#endif
         func_8001540C(5, 1, NULL);
         arg0->unk6++;
     }

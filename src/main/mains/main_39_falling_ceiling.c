@@ -260,14 +260,12 @@ void func_80061918(struct MainObj* self)
         }
         if (self->ext.main_39.unk8C > g_Player.y_pos.val && g_Player.y_pos.val > self->y_pos.val) {
             if (!(self->unk2 & 1)) {
-                s32 target_x = g_Player.x_pos.i.hi - 0x10;
-                if (ABS(target_x, self->x_pos.i.hi) <= 0x10) {
+                if (ABS(g_Player.x_pos.i.hi, self->x_pos.i.hi + 0x10) <= 0x10) {
                     self->gravity = 0x8000;
                     self->unk5 = 2;
                 }
             } else {
-                s32 target_x = g_Player.x_pos.i.hi + 0x10;
-                if (ABS(target_x, self->x_pos.i.hi) <= 0x10) {
+                if (ABS(g_Player.x_pos.i.hi, self->x_pos.i.hi - 0x10) <= 0x10) {
                     self->gravity = 0x8000;
                     self->unk5 = 2;
                 }
@@ -310,8 +308,7 @@ void func_80061B58(struct MainObj* self)
         self->y_speed = 0;
         self->gravity = 0;
     }
-    self->unk7E++;
-    if ((self->unk7E & 7) == 0 && (!(background_objects[0].unk34 & 0x10) || (((u8*)&background_objects[0].unk3E)[0] & 7) != 4))
+    if ((++self->unk7E & 7) == 0 && (!(background_objects[0].unk34 & 0x10) || (((u8*)&background_objects[0].unk3E)[0] & 7) != 4))
         start_screen_shake_x(8, 4, 2);
     if ((self->unk7E & 0xF) == 0)
         ((void (*)(s32, s32, s32, s32))spawn_explosion_at)(0, self->x_pos.i.hi, self->y_pos.i.hi + 0x10, 1);

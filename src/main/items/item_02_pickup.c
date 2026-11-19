@@ -372,7 +372,7 @@ void func_800BF76C(struct ItemObj* arg0)
 {
     u16 flags;
     u8 kind;
-    s32 blocked;
+    u32 blocked;
 
     arg0->active = 0x21;
     arg0->state = 1;
@@ -461,7 +461,7 @@ void func_800BF76C(struct ItemObj* arg0)
 #else
 void func_800BF76C(struct ItemObj* arg0)
 {
-    s32 blocked;
+    u32 blocked;
 
     arg0->active = 0x21;
     arg0->state = 1;
@@ -469,9 +469,9 @@ void func_800BF76C(struct ItemObj* arg0)
     arg0->unk15 = 0;
     arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 3);
     arg0->animation_table = (const u8* const*)pickup_animations;
+    arg0->unk40 = WEAPON_TEXTURE_BASE;
     arg0->unk42 = OBJECT_CLUT(0x7807);
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->unk40 = WEAPON_TEXTURE_BASE;
     arg0->bg_offset = 0;
     arg0->active |= 0x20;
     arg0->unk2 &= 0x7F;
@@ -497,10 +497,10 @@ void func_800BF76C(struct ItemObj* arg0)
     arg0->x_vel.val = 0;
     arg0->unk28 = 0;
     if (arg0->backref == NULL) {
-        arg0->y_vel.val = FIXED(8);
-        arg0->unk2C = 0x8000;
         arg0->x_vel.val = 0;
         arg0->unk28 = 0;
+        arg0->y_vel.val = FIXED(8);
+        arg0->unk2C = 0x8000;
         arg0->unk67 = 1;
     } else {
         arg0->y_vel.val = 0;
@@ -582,7 +582,8 @@ void pickup_main(struct ItemObj* arg0)
         animate_object(arg0);
     }
     if (arg0->backref == NULL) {
-        if (--arg0->ext.item_2.unk82 == 0) {
+        arg0->ext.item_2.unk82--;
+        if (arg0->ext.item_2.unk82 == 0) {
             arg0->state = 3;
             return;
         }
@@ -652,14 +653,14 @@ void func_800BFBD0(struct ItemObj* arg0)
 // pickup_collect_weapon_energy
 void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
 {
-    struct PlayerObj* player;
-    s32 charge_step;
-    s32 engine_step;
-    u32 index;
-    u32 selected;
-    u8 buttons;
-    u8 value;
     s8 current;
+    u8 value;
+    u8 buttons;
+    u32 selected;
+    u32 index;
+    s32 engine_step;
+    s32 charge_step;
+    struct PlayerObj* player;
 
     if (arg1 == 2) {
         charge_step = 4;
@@ -693,23 +694,23 @@ void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
             if (selected != 0) {
                 value = (u8)g_Player.weapon_energy[0] + charge_step;
                 g_Player.weapon_energy[0] = value;
-                if ((s8)value >= 0x31) {
+                if ((s8)value > 0x30) {
                     g_Player.weapon_energy[0] = 0x30;
                 }
             }
             value = (u8)player->weapon_energy[selected] + charge_step;
             player->weapon_energy[selected] = value;
-            if ((s8)value >= 0x31) {
+            if ((s8)value > 0x30) {
                 player->weapon_energy[selected] = 0x30;
             }
             goto engine;
         }
         if (((u8)g_Player.boss_flags >> (g_Player.weapon - 1)) & 1) {
             current = player->weapon_energy[g_Player.weapon];
-            if (current < 0x30) {
+            if (current <= 0x2F) {
                 current += charge_step;
                 player->weapon_energy[g_Player.weapon] = current;
-                if (current >= 0x31) {
+                if (current > 0x30) {
                     player->weapon_energy[g_Player.weapon] = 0x30;
                 }
                 func_8001540C(0, 0x16, 0);
@@ -718,10 +719,10 @@ void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
             }
         }
     } else if (g_Player.boss_flags & 1) {
-        if (player->weapon_energy[g_Player.weapon] < 0x30) {
+        if (player->weapon_energy[g_Player.weapon] <= 0x2F) {
             s8 current = player->weapon_energy[g_Player.weapon] + charge_step;
             player->weapon_energy[g_Player.weapon] = current;
-            if (current >= 0x31) {
+            if (current > 0x30) {
                 player->weapon_energy[g_Player.weapon] = 0x30;
             }
             func_8001540C(0, 0x16, 0);
@@ -734,7 +735,7 @@ engine:
     if ((engine_obj.collected_upgrades & 0x4000) != 0) {
         value = (u8)engine_obj.sub_tanks[2] + engine_step;
         engine_obj.sub_tanks[2] = value;
-        if ((s8)value >= 0x21) {
+        if ((s8)value > 0x20) {
             engine_obj.sub_tanks[2] = 0x20;
         }
     }

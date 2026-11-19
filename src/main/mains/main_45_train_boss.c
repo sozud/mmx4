@@ -71,17 +71,17 @@ void train_boss_init(struct MainObj* self)
     self->air_state = 0;
     self->unk75 = 1;
     self->unk76 = 0;
+    self->animation_table = (const u8* const*)train_boss_animations;
+    self->unk16 = VISUAL_SATURN_LAYER(4);
+    self->terrain_box = (struct Unk_unk68*)train_boss_terrain_box;
     self->hurt_box = NULL;
     self->attack_box = NULL;
     self->unk15 = 0;
     self->ext.main_45.attack_flags = 0;
     self->ext.main_45.unk81 = 0;
     self->ext.main_45.unk82 = 0;
-    self->ext.main_45.unk83 = 0;
-    self->animation_table = (const u8* const*)train_boss_animations;
-    self->unk16 = VISUAL_SATURN_LAYER(4);
-    self->terrain_box = (struct Unk_unk68*)train_boss_terrain_box;
     self->ext.main_45.unk84 = 0x320;
+    self->ext.main_45.unk83 = 0;
     self->ext.main_45.projectile_command = 0x80;
     self->ext.main_45.unk89 = 0;
     self->ext.main_45.unk86 = train_boss_attack_timers[0];
@@ -114,8 +114,10 @@ void train_boss_main(struct MainObj* self)
         } else {
             self->unk6 = 0;
         }
+        update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
+    } else {
+        update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
     }
-    update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
 }
 
 void train_boss_defeated(struct MainObj* self)
@@ -354,8 +356,8 @@ void func_800665BC(struct MainObj* self)
         floor->animation_step.fields.frame_index = 7;
         floor->x_pos = self->x_pos;
         floor->y_pos = self->y_pos;
-        floor->unk7C.train_boss = &self->ext.main_45;
         floor->unk15 = 0;
+        floor->unk7C.train_boss = &self->ext.main_45;
         floor->ext.train_layer_parameter = &layer->unk15;
         floor->state = 0;
     }
@@ -391,8 +393,8 @@ void func_800665BC(struct MainObj* self)
         part->animation_step.fields.frame_index = index + 0x13;
         part->x_pos = self->x_pos;
         part->y_pos = self->y_pos;
-        part->ext.main_47.train_boss = &self->ext.main_45;
         part->unk15 = 0;
+        part->ext.main_47.train_boss = &self->ext.main_45;
         part->ext.main_47.boss_hp = &self->hp;
         part->state = 0;
     }

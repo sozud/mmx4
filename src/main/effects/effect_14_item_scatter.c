@@ -24,18 +24,16 @@ void item_scatter_spawn(struct EffectObj* self)
     struct ItemObj* item;
     entry = edge_spawner_items;
 
-    if (entry->id != 0xFF) {
-        do {
-            item = find_free_item_obj();
-            if (item != NULL) {
-                item->active = 0x41;
-                item->id = 7;
-                item->unk2 = entry->id;
-                item->x_pos.i.hi = entry->x;
-                item->y_pos.i.hi = entry->y;
-            }
-            entry++;
-        } while (entry->id != 0xFF);
+    while (entry->id != 0xFF) {
+        item = find_free_item_obj();
+        if (item != NULL) {
+            item->active = 0x41;
+            item->id = 7;
+            item->unk2 = entry->id;
+            item->x_pos.i.hi = entry->x;
+            item->y_pos.i.hi = entry->y;
+        }
+        entry++;
     }
     self->state++;
 }

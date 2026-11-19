@@ -301,6 +301,13 @@ void func_8001FF8C(struct EngineObj* arg0)
     func_80023D68();
 }
 #else
+#ifdef MMX4_GAMECUBE
+s32 fn_8005212C(s32);
+#define PAUSE_PORT_IDLE() (fn_8005212C(0) == 0)
+#else
+#define PAUSE_PORT_IDLE() 1
+#endif
+
 void func_8001FF8C(struct EngineObj* arg0)
 {
     if (!arg0->gameplay_locked && !main_bss_state.transition.active &&
@@ -314,16 +321,17 @@ void func_8001FF8C(struct EngineObj* arg0)
             )
         &&
 #endif
-        !arg0->unk10 && !arg0->unkF) {
+        PAUSE_PORT_IDLE() && !arg0->unk10 && !arg0->unkF) {
         arg0->unk1 = 2;
-    } else {
-        if (g_Player.state == 3) {
-            arg0->unk1++;
-            func_800129F0(8);
-        }
-        get_random(); // ???
-        func_80021158();
+        func_80023D68();
+        return;
     }
+    if (g_Player.state == 3) {
+        arg0->unk1++;
+        func_800129F0(8);
+    }
+    get_random(); // ???
+    func_80021158();
     func_80023D68();
 }
 #endif

@@ -153,7 +153,7 @@ struct Main58Ext {
     u32 saved_unk5, unk84, unk88, unk8C, unk90, unk94;
 };
 struct Main10Ext {
-    u32 timer;
+    s32 timer;
     s32 turn_delay;
     s32 struggle;
     s32 hold_state;
@@ -170,7 +170,7 @@ struct Main14Ext {
     u32 unk80;
     u32 unk84;
     s32 visual_variant;
-    u32 unk8C;
+    s32 unk8C;
     u32 saved_unk5;
     s32 unk94;
 };
@@ -179,7 +179,7 @@ struct Main16Ext {
     s32 unk80;
     s32 unk84;
     s32 unk88;
-    u32 unk8C;
+    s32 unk8C;
     u32 unk90;
     u32 shot_09_active;
     u32 unk98;
@@ -354,7 +354,7 @@ struct Main12Ext {
 struct Main22Ext {
     u32 saved_unk5;
     u32 unk84;
-    u32 destroyed;
+    s32 destroyed;
     s32 unk8C;
     u32 unk90;
     u32 parts_mask;
@@ -704,7 +704,7 @@ struct Main61Ext {
     u8 flash_timer;
     u8 split;
     u8 blink_timer;
-    u8 combo_count;
+    s8 combo_count;
     u8 stunned;
     u8 split_hits;
     u8 merge;
@@ -1127,10 +1127,10 @@ struct BackgroundObj {
     s16 unk26;
     s16 unk28;
     s16 unk2A;
-    s16 unk2C;
-    s16 unk2E;
-    s16 unk30;
-    s16 unk32;
+    u16 unk2C;
+    u16 unk2E;
+    u16 unk30;
+    u16 unk32;
     u16 unk34;
     s8 unk36;
     s8 unk37;
@@ -2180,7 +2180,7 @@ union RideArmorUnk94 {
     u16 halves[2];
     struct {
         u8 pad94[3];
-        s8 unk97;
+        u8 unk97;
     } bytes;
 };
 
@@ -2912,8 +2912,8 @@ struct Effect12Ext {
 
 struct Effect16Ext {
     u8 pad14[4];
-    u16 saved_background_2A;
-    u16 saved_background_28;
+    s16 saved_background_2A;
+    s16 saved_background_28;
 };
 
 struct Effect38Ext {

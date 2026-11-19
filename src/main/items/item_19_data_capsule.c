@@ -76,12 +76,12 @@ void func_800C4778(struct ItemObj* self)
     s32 j;
 
     if (self->unk2 < 4) {
+        self->active |= 0x40;
         self->state = 1;
-        self->on_screen = 1;
         self->unk5 = 0;
         self->unk6 = 0;
         self->unk7 = 0;
-        self->active |= 0x40;
+        self->on_screen = 1;
         self->unk18 = self->x_pos;
         self->unk1C = self->y_pos;
         index = func_8002938C(0x29);
@@ -96,14 +96,14 @@ void func_800C4778(struct ItemObj* self)
         } else {
             self->unk68 = (struct Unk_unk68*)data_capsule_box_1;
         }
+        self->unk67 = 0;
         self->unk76 = -1;
         self->unk75 = 1;
-        self->unk16 = VISUAL_SATURN_LAYER(6);
-        self->unk67 = 0;
         self->x_vel.val = 0;
         self->y_vel.val = 0;
         self->unk28 = 0;
         self->unk2C = 0;
+        self->unk16 = VISUAL_SATURN_LAYER(6);
         self->unk7C.timer16 = 0xA;
         ((u16*)&self->unk7C)[1] = 0;
         self->unk7 = engine_obj.character_state.fields.active;
@@ -148,9 +148,7 @@ void func_800C49BC(struct ItemObj* self)
 
     if (self->unk2 == 0) {
         if (self->unk7C.timer16 == 0) {
-            if (self->animation_step.fields.relative_step != 0) {
-                animate_object(ANIMATED_OBJECT(self));
-            } else {
+            if (self->animation_step.fields.relative_step == 0) {
                 right_edge = (s16)(background_objects[self->bg_offset].y_pos.i.hi + 0xF0);
                 if (right_edge > self->y_pos.i.hi) {
                     self->unk7C.timer16 = 0x1E;
@@ -166,11 +164,16 @@ void func_800C49BC(struct ItemObj* self)
                         spawned->x_pos = self->x_pos;
                         spawned->y_pos.val = self->y_pos.val + 0x280000;
                         spawned->unk15 = 0;
-                        set_animation(self, self->unk2 < 2 ? self->unk2 + 0xF : self->unk2 + 0xF);
+                        if (self->unk2 < 2)
+                            set_animation(self, self->unk2 + 0xF);
+                        else
+                            set_animation(self, self->unk2 + 0xF);
                         if (self->on_screen)
                             func_8001540C(2, 0xEA, spawned);
                     }
                 }
+            } else {
+                animate_object(ANIMATED_OBJECT(self));
             }
         } else {
             self->unk7C.timer16--;

@@ -211,8 +211,13 @@ void func_80089C7C(struct MainObj* self)
     } else {
         self->ext.main_71.unk8A = 0;
     }
+#ifdef MMX4_BIG_ENDIAN
+    if (self->air_state != 0 || self->ext.main_71.unk86 != 0 || self->ext.main_71.unk87 != 0 || (self->ext.main_71.unk8D & 8))
+        return;
+#else
     if (self->air_state != 0 || (*(u32*)&self->ext.main_71.unk84 & 0xFFFF0000) || (self->ext.main_71.unk8D & 8))
         return;
+#endif
     y = self->y_pos.i.hi + self->terrain_box->unk3;
     if (self->collision_flags & self->ext.main_71.unk8A) {
         if (self->unk15 == 0)
@@ -360,9 +365,10 @@ void func_8008A064(struct MainObj* self)
                 return;
             }
         }
-    } else {
-        self->ext.main_71.unk8C--;
+        animate_object(ANIMATED_OBJECT(self));
+        return;
     }
+    self->ext.main_71.unk8C--;
     animate_object(ANIMATED_OBJECT(self));
 }
 
@@ -567,9 +573,9 @@ void func_8008A778(struct MainObj* self)
         self->ext.main_71.unk84 = 0x420;
 
         if (self->unk15 != 0) {
-            self->x_speed = FIXED(4.125);
+            self->x_speed = self->ext.main_71.unk84 << 8;
         } else {
-            self->x_speed = FIXED(-4.125);
+            self->x_speed = -(self->ext.main_71.unk84 << 8);
         }
 
         self->ext.main_71.unk8E = 0x1E;
@@ -643,8 +649,8 @@ void func_8008A9F4(struct MainObj* self)
     if (self->unk6 == 0) {
         self->unk6 = 1;
         set_animation(self, 8);
-        self->attack_box = &ride_armor_pilot_guard_box;
         self->ext.main_71.unk8D |= 8;
+        self->attack_box = &ride_armor_pilot_guard_box;
         self->contact_damage = 6;
         func_8001540C(2, SATURN_SOUND(0x3C, 0x13F), self);
     }
@@ -663,8 +669,10 @@ void func_8008A9F4(struct MainObj* self)
                 ride_armor_pilot_apply_x_speed(self);
             }
         }
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 // ride_armor_pilot_fall

@@ -634,13 +634,11 @@ void func_8001DE54(struct GameInfo* arg0)
         }
         var_a1 = D_800F2204;
         var_a0 = D_80169498.sector;
-        var_a2 = 0;
-        do {
+        for (var_a2 = 0; var_a2 < 0x24; var_a2++) {
             *var_a0 = *var_a1 * 0x10000;
             var_a0++;
             var_a1 += 1;
-            var_a2 += 1;
-        } while (var_a2 < 0x24);
+        }
         D_80169498.title.settled = 1;
 #ifdef MMX4_SATURN
         saturn_display_mode = 3;
@@ -746,15 +744,15 @@ void func_8001E000(struct GameInfo* arg0)
 
 void func_8001E130(struct GameInfo* game)
 {
-    s32 i;
-    f32* x;
-    f32* reset;
-    struct TitlePointState* title;
-    s16* target;
-    s32 dx;
-    s32 dy;
-    u8 angle;
     struct MiscObj* effect;
+    u8 angle;
+    s32 dy;
+    s32 dx;
+    s16* target;
+    struct TitlePointState* title;
+    f32* reset;
+    f32* x;
+    s32 i;
 
     title = &D_80169498.title;
     x = title->coordinates;
@@ -985,10 +983,10 @@ void func_8001E708(struct GameInfo* arg0)
         D_8013E188[1] = 0;
         D_8013E188[2] = 0;
         D_8013E188[3] = 0;
+        need_palette_load |= 1;
         background_objects[0].unk3 = 0;
         background_objects[1].unk3 = 1;
         background_objects[2].unk3 = 0;
-        need_palette_load |= 1;
         reset_objects();
         background_objects[1].x_pos.i.hi = 0x400;
         background_objects[1].unk4C = 1;
@@ -1032,7 +1030,8 @@ u8 func_8001E850(u8* arg0, u8 arg1)
 #ifdef VERSION_JP
             misc->y_pos.i.hi = arg0[0];
 #else
-            misc->y_pos.i.hi = arg0[0] & 0xF0;
+            misc->y_pos.i.hi = arg0[0];
+            misc->y_pos.i.hi &= 0xF0;
 #endif
             misc->ext.title_logo.palette_shift_value = arg1;
             arg0++;
@@ -1049,6 +1048,10 @@ void func_8001E954(struct GameInfo* arg0)
 }
 
 #ifdef MMX4_SATURN
+#ifdef MMX4_GAMECUBE
+void fn_4_DABD0(s32 mode);
+#endif
+
 void func_8001E980(u8 arg0)
 {
     s32 i;
@@ -1307,6 +1310,9 @@ void func_8001E980(u8 arg0)
     if (arg0 == 0) {
         LoadImage(&D_800F2388,
             (u_long*)(WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[1]));
+#ifdef MMX4_GAMECUBE
+        fn_4_DABD0(1);
+#endif
     } else {
         need_palette_load |= 1;
     }
@@ -1413,6 +1419,17 @@ void func_8001EC90(struct GameInfo* arg0)
 void func_8001ED44(struct GameInfo* arg0)
 {
     if (main_bss_state.transition.active == 0) {
+#ifdef MMX4_GAMECUBE
+        if (controller_input.pressed & (PADstart | PADRup)) {
+            func_800129F0(8);
+            main_bss_state.transition.selection = 1;
+            arg0->mode++;
+        } else if (controller_input.pressed & PADRdown) {
+            func_8001540C(0, 0x22, 0);
+            func_800129F0(8);
+            arg0->mode++;
+        } else {
+#else
         if (controller_input.pressed & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
             if (main_bss_state.transition.selection != 1) {
@@ -1424,6 +1441,7 @@ void func_8001ED44(struct GameInfo* arg0)
             main_bss_state.transition.selection = 2;
             arg0->mode++;
         } else {
+#endif
             func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
         }
     }

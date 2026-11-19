@@ -43,15 +43,15 @@ void func_8009C12C(struct ShotObj* self)
     self->state++;
     self->unk5 = 2;
     set_velocity_from_angle(MOVING_OBJECT(self), angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
+    self->x_vel.val *= 2;
+    self->y_vel.val *= 2;
+    self->unk16 = 0;
+    self->unk68 = NULL;
     self->unk58.data = (const u8*)D_80106070;
     self->unk54 = turret_laser_hit_box;
     self->unk50.data = turret_laser_hit_box;
     self->unk5C = 1;
     self->unk60 = 3;
-    self->unk16 = 0;
-    self->unk68 = NULL;
-    self->x_vel.val *= 2;
-    self->y_vel.val *= 2;
     set_animation(self, 4);
 }
 

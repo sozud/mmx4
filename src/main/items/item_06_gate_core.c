@@ -39,11 +39,11 @@ void gate_core_init(struct ItemObj* arg0)
     arg0->active = 0x41;
     arg0->unk75 = 1;
     bg_offset = g_Player.bg_offset;
+    arg0->bg_offset = bg_offset;
     arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->unk5C = 0x20;
     arg0->unk15 = 0;
     arg0->unk61 = 0;
-    arg0->bg_offset = bg_offset;
     arg0->unk68 = (struct Unk_unk68*)gate_core_terrain_boxes[arg0->unk2];
     arg0->unk54 = gate_core_hurt_boxes[arg0->unk2];
     arg0->unk58 = (u8*)D_80108504;

@@ -127,8 +127,8 @@ void lightning_web_init(struct WeaponObj* arg0)
     ext->timer = 0x10;
     set_animation(arg0, 0);
     func_8001540C(1, 8, arg0);
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     lightning_web_draw(arg0);
 }
 
@@ -150,7 +150,7 @@ void lightning_web_fly(struct WeaponObj* arg0)
 
 void lightning_web_main(struct WeaponObj* arg0)
 {
-    s32 expired;
+    u32 expired;
 
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x18, 0x28) == 0) {
         expired = 0;
@@ -331,8 +331,8 @@ void lightning_web_charged_init(struct WeaponObj* arg0)
     ext->unk8F = 0;
     set_animation(arg0, 0);
     func_8001540C(1, 8, arg0);
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     lightning_web_charged_draw(arg0);
 }
 
@@ -419,9 +419,9 @@ void func_80093930(struct WeaponObj* self)
     self->unk16 = 1;
     self->unk15 = 0;
     set_velocity_from_angle(MOVING_OBJECT(self), ((self->unk2 - 1) * 4) & 0xFC);
-    self->unk49 = 2;
     self->x_vel.val *= 4;
     self->y_vel.val *= 4;
+    self->unk49 = 2;
     set_animation(self, 6);
     self->state++;
 }

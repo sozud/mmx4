@@ -207,30 +207,30 @@ void func_800751AC(struct MainObj* self)
         self->unk42 = OBJECT_CLUT(0x7888);
     }
     self->bg_offset = g_Player.bg_offset;
-    self->collision_data = D_80107B78;
-    self->animation_table = (const u8* const*)storm_owl_animations;
-    self->unk16 = VISUAL_SATURN_LAYER(5);
-    self->terrain_box = &storm_owl_slam_terrain_box;
-    self->hurt_box = &storm_owl_hurt_box;
     self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->collision_data = D_80107B78;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->animation_table = (const u8* const*)storm_owl_animations;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
+    self->terrain_box = &storm_owl_slam_terrain_box;
+    self->hurt_box = &storm_owl_hurt_box;
     self->attack_box = &storm_owl_attack_box;
-    self->unk1C.val = self->y_pos.val;
     x = self->x_pos.val;
-    self->unk15 = (g_Player.x_pos.val >= x) << PLAYER_FACING_SHIFT;
+    self->unk15 = (g_Player.x_pos.val >= x) ? PLAYER_FACING_RIGHT : 0;
     set_animation(self, 1);
-    self->state = 1;
-    self->unk5 = 2;
     self->ext.raw[0] = 0;
     self->ext.raw[1] = 0;
     self->ext.raw[2] = 0;
     self->ext.raw[3] = 0;
     self->ext.raw[4] = 0;
     self->ext.raw[5] = 0;
+    self->state = 1;
+    self->unk5 = 2;
     self->unk6 = 0;
     self->unk7 = 0x28;
 }
@@ -662,9 +662,9 @@ void storm_owl_intro_rise(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     self->ext.main_60.corner = (engine_obj.stage != 7) * 2;
     if ((s16)(background_objects[0].y_pos.i.hi + (u16)storm_owl_waypoints[self->ext.main_60.corner & 0xFF].y) > self->y_pos.i.hi) {
-        self->unk5 = 3;
         self->x_speed = 0;
         self->y_speed = 0;
+        self->unk5 = 3;
         self->unk6 = 2;
     }
 }
@@ -809,9 +809,9 @@ void func_80076364(struct MainObj* arg0)
         set_animation(arg0, 1);
         g_Player.stun_timer = 0;
         arg0->contact_damage = 6;
+        arg0->unk62 = 0;
         arg0->terrain_box = &storm_owl_slam_terrain_box;
         arg0->attack_box = &storm_owl_attack_box;
-        arg0->unk62 = 0;
         arg0->unk16 = VISUAL_SATURN_LAYER(5);
         arg0->unk6 = 5;
         return;
@@ -833,10 +833,10 @@ void func_80076364(struct MainObj* arg0)
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 1) {
         storm_owl_choose_corner(arg0);
         g_Player.stun_timer = 0;
+        arg0->unk62 = 0;
         arg0->contact_damage = 6;
         arg0->terrain_box = &storm_owl_slam_terrain_box;
         arg0->attack_box = &storm_owl_attack_box;
-        arg0->unk62 = 0;
         arg0->unk16 = VISUAL_SATURN_LAYER(5);
         arg0->unk5 = 5;
         arg0->unk6 = 0;
@@ -1141,8 +1141,8 @@ void storm_owl_cyclone_start(struct MainObj* self)
     } else {
         set_animation(self, 5);
     }
-    self->unk7C = 0x63;
     self->unk15 = (self->ext.main_60.corner >> 1) == 0 ? PLAYER_FACING_RIGHT : 0;
+    self->unk7C = 0x63;
     self->unk6++;
 }
 
@@ -1224,7 +1224,7 @@ void storm_owl_storm_start(struct MainObj* self)
     self->x_speed = velocity_x;
     self->y_speed = velocity_y;
 
-    if (velocity_y > 0) {
+    if (velocity_y >= 1) {
         set_animation(self, 1);
     } else {
         set_animation(self, 0);
@@ -1719,8 +1719,8 @@ void func_80078314(struct MainObj* arg0)
                 break;
             }
             base_y = background_objects[0].y_pos.i.hi;
-            visual->unk5C.fields.mode = i;
             visual->y_pos.i.hi = base_y + 0x60;
+            visual->unk5C.fields.mode = i;
         }
     }
     for (i = 0; i < 3; i++) {
@@ -1740,18 +1740,18 @@ void func_80078314(struct MainObj* arg0)
             switch (i) {
             case 0:
                 x = g_Player.x_pos.i.hi;
-                shot->timer = 0x20;
                 shot->x_pos.i.hi = x;
+                shot->timer = 0x20;
                 break;
             case 1:
                 side_x = g_Player.x_pos.i.hi - 0x30;
-                shot->timer = 0x28;
                 shot->x_pos.i.hi = side_x;
+                shot->timer = 0x28;
                 break;
             case 2:
                 side_x = g_Player.x_pos.i.hi + 0x30;
-                shot->timer = 0x28;
                 shot->x_pos.i.hi = side_x;
+                shot->timer = 0x28;
                 break;
             }
             shot->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x150;

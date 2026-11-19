@@ -10,7 +10,7 @@
 #include "main/stage_objects.h"
 #include "main/visuals/visual_04_blast.h"
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 #include "main/1E1BC.h"
 #include "main/visuals/visual_04_blast.h"
 #endif
@@ -49,14 +49,14 @@ void background_dragon_update(struct MainObj* self)
 
 // background_dragon_init
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 ret_s8 func_8002DD04(struct MainObj* object);
 #endif
 
 extern union AnimationStep* D_800F9934[16];
 extern struct Unk_unk68 D_801062F0[32];
 extern s16 D_800F98EC[18][2];
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 void func_80040644(struct MainObj* arg0);
 void func_80040838(struct MainObj* arg0);
 void func_800419B8(struct MainObj* arg0);
@@ -73,14 +73,14 @@ extern u8 background_dragon_attack_map[128];
 void func_80040644(struct MainObj* arg0)
 {
     arg0->on_screen = 1;
+    arg0->unk15 = 0;
+    arg0->bg_offset = 0;
     arg0->hp = 0x30;
+    arg0->contact_damage = 1;
+    arg0->invincibility_timer = 0;
     arg0->animation_table = (const u8* const*)D_800F9934;
     arg0->unk16 = 0x22;
     arg0->collision_data = (const u16*)D_801062F0;
-    arg0->unk15 = 0;
-    arg0->bg_offset = 0;
-    arg0->contact_damage = 1;
-    arg0->invincibility_timer = 0;
     arg0->attack_box = NULL;
     arg0->hurt_box = NULL;
     engine_obj.enable_boss = 1;
@@ -92,11 +92,12 @@ void func_80040644(struct MainObj* arg0)
     background_dragon_spawn_trail(PLAYER_OBJECT(arg0), 1);
     set_animation(arg0, 0);
 
+    arg0->state++;
     arg0->unk5 = 6;
     arg0->x_pos.val = 0x06200000;
-    arg0->y_speed = 0x18000;
     arg0->y_pos.val = 0;
     arg0->x_speed = 0;
+    arg0->y_speed = 0x18000;
     ((u8*)&arg0->ext)[0] = 1;
     ((u8*)&arg0->ext)[2] = 0;
     ((u8*)&arg0->ext)[3] = 0;
@@ -106,7 +107,6 @@ void func_80040644(struct MainObj* arg0)
     ((u8*)&arg0->ext)[6] = 0;
     ((u8*)&arg0->ext)[5] = 0;
     ((u8*)&arg0->ext)[1] = 0;
-    arg0->state++;
     update_on_screen(BASE_OBJECT(arg0), 0xA0, 0xA0);
 }
 
@@ -164,8 +164,8 @@ void func_80040838(struct MainObj* arg0)
         arg0->ext.main_0.exit_mode = 2;
         arg0->unk5 = saved_step;
         arg0->unk6 = saved_substep;
-        arg0->invincibility_timer = 0x1E;
         arg0->unk42 &= 0x7FFF;
+        arg0->invincibility_timer = 0x1E;
         update_on_screen(BASE_OBJECT(arg0), 0xA0, 0xA0);
         return;
     }
@@ -404,7 +404,7 @@ void background_dragon_fireball(struct MainObj* self)
 }
 
 // background_dragon_projectile_attack_begin
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 void func_80041060(struct MainObj* arg0)
 {
     s32 velocity;
@@ -661,7 +661,8 @@ void background_dragon_sequence_bob(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step < 0) {
         set_animation(self, 0);
-        if (++self->unk7E > 2) {
+        self->unk7E++;
+        if (self->unk7E > 2) {
             self->unk7E = 0;
             if (self->ext.main_0.exit_mode != 0) {
                 self->unk5 = 8;
@@ -778,8 +779,6 @@ void func_800419B8(struct MainObj* arg0)
 
 void background_dragon_fly_to_route_start(struct MainObj* self)
 {
-    s32 temp_a0;
-
     set_velocity_from_angle(
         MOVING_OBJECT(self),
         angle_to_point(
@@ -791,29 +790,10 @@ void background_dragon_fly_to_route_start(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
 
-    temp_a0 = self->x_pos.val - background_dragon_perch_points[self->unk2 >> 1][0];
-    if (0 <= temp_a0) {
-        if (temp_a0 >= 0x20000) {
-            update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
-            return;
-        }
-    } else if (background_dragon_perch_points[self->unk2 >> 1][0] - self->x_pos.val >= 0x20000) {
-        update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
-        return;
+    if (ABS(self->x_pos.val, background_dragon_perch_points[self->unk2 >> 1][0]) < 0x20000
+        && ABS(self->y_pos.val, background_dragon_perch_points[self->unk2 >> 1][1]) < 0x20000) {
+        self->unk5 = 1;
     }
-
-    temp_a0 = self->y_pos.val - background_dragon_perch_points[self->unk2 >> 1][1];
-    if (temp_a0 >= 0) {
-        if (temp_a0 > 0x1FFFF) {
-            update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
-            return;
-        }
-    } else if (background_dragon_perch_points[self->unk2 >> 1][1] - self->y_pos.val >= 0x20000) {
-        update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
-        return;
-    }
-    self->unk5 = 1;
-
     update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
 }
 

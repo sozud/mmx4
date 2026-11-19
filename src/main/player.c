@@ -301,8 +301,6 @@ void player_land(struct PlayerObj* self)
 
 void player_wall_cling(struct PlayerObj* self)
 {
-    s8 timer;
-
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
         player_enter_land(self);
         return;
@@ -332,9 +330,7 @@ void player_wall_cling(struct PlayerObj* self)
         self->animation_step.fields.event &= 0x3F;
     }
 
-    timer = self->unk8A.bytes.low - 1;
-    self->unk8A.bytes.low = timer;
-    if (timer == 0) {
+    if (--self->unk8A.bytes.low == 0) {
         player_enter_wall_slide(self);
         return;
     }
@@ -352,10 +348,8 @@ void player_wall_jump(struct PlayerObj* self)
 
 void player_wall_jump_push(struct PlayerObj* self)
 {
-    s32 should_end_state;
-    s32 direction_mask;
+    u32 should_end_state;
     s32 vertical_mask;
-    s8 timer;
 
     if (self->input_locked != 0) {
         player_enter_fall(self);
@@ -371,11 +365,10 @@ void player_wall_jump_push(struct PlayerObj* self)
         should_end_state = 1;
     }
     if (self->unk15 != 0) {
-        direction_mask = self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT;
-    } else {
-        direction_mask = self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT;
-    }
-    if (direction_mask != 0) {
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT) {
+            should_end_state = 1;
+        }
+    } else if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
         should_end_state = 1;
     }
 
@@ -388,9 +381,7 @@ void player_wall_jump_push(struct PlayerObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     player_check_splash(self);
 
-    timer = self->unk8A.bytes.low - 1;
-    self->unk8A.bytes.low = timer;
-    if (timer == 0) {
+    if (--self->unk8A.bytes.low == 0) {
         self->x_vel.val = 0;
         self->unk6++;
         return;
@@ -475,8 +466,6 @@ void player_wall_slide_down(struct PlayerObj* self)
 
 void player_wall_slide_release(struct PlayerObj* self)
 {
-    s8 timer;
-
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
         player_enter_land(self);
         return;
@@ -489,9 +478,7 @@ void player_wall_slide_release(struct PlayerObj* self)
         animate_object(ANIMATED_OBJECT(self));
         move_with_gravity(ANIMATED_OBJECT(self));
         player_check_splash(self);
-        timer = self->unk8A.bytes.low - 1;
-        self->unk8A.bytes.low = timer;
-        if (timer == 0) {
+        if (--self->unk8A.bytes.low == 0) {
             self->x_vel.val = 0;
             self->unk5 = PLAYER_FALL;
             self->unk6 = 0;
@@ -1105,11 +1092,19 @@ void player_script_victory(struct PlayerObj* self)
     }
 }
 
+#ifdef MMX4_GAMECUBE
+s32 fn_4_9E0E8(void);
+#endif
+
 void player_stage_clear(struct PlayerObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk6 == 0) {
+#ifdef MMX4_GAMECUBE
+        if (fn_4_9E0E8() == 0) {
+#else
         if (D_80173C84 == 0) {
+#endif
             player_set_animation(self, 0x27);
             self->unk6++;
         }

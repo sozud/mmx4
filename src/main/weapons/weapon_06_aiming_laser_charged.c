@@ -301,7 +301,7 @@ void aiming_laser_marker_despawn(struct WeaponObj* arg0, struct PlayerObj* arg1)
 
 void aiming_laser_charged_update(struct WeaponObj* arg0)
 {
-    s32 var_a1;
+    u32 var_a1;
 
     var_a1 = 0;
     if (g_Player.input_locked != 0) {
@@ -351,8 +351,8 @@ void aiming_laser_charged_init(struct WeaponObj* arg0)
 
     aiming_laser_charged_aim(arg0, &g_Player);
     func_8001540C(0, WEAPON_SOUND_LASER_CHARGE, arg0);
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
 }
 
 // aiming_laser_charged_main

@@ -98,8 +98,8 @@ void func_800D802C(struct QuadObj* self)
         self->unk34 = 0x12;
     } else {
         kind &= 1;
-        self->ext.unk38 = 15;
         self->unk2 = kind;
+        self->ext.unk38 = 15;
         self->state = 3;
         offsets = sigma_laser_start_offsets[(s8)kind * 4];
         self->unk34 = 0x13;

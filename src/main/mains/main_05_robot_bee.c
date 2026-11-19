@@ -135,15 +135,15 @@ void func_80044F88(struct MainObj* arg0)
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->unk15 = (g_Player.x_pos.val >= arg0->x_pos.val) << PLAYER_FACING_SHIFT;
+    arg0->unk15 = (g_Player.x_pos.val >= arg0->x_pos.val) ? PLAYER_FACING_RIGHT : 0;
     arg0->animation_table = (const u8* const*)robot_bee_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(5);
+    arg0->terrain_box = NULL;
     arg0->hurt_box = (const u8*)&D_800FA100;
     arg0->attack_box = (const u8*)&D_800FA104;
     arg0->collision_data = D_80106570;
-    arg0->contact_damage = 3;
-    arg0->terrain_box = NULL;
     arg0->hp = 2;
+    arg0->contact_damage = 3;
     arg0->invincibility_timer = 0;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
@@ -607,19 +607,19 @@ void func_80046220(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0x1E) {
         self->ext.main_5.unk81 = self->ext.main_5.unk81 == 0;
-        self->gravity = -self->gravity;
+        self->gravity *= -1;
         self->y_speed = D_800FA130[self->ext.main_5.unk81 ? 1 : 0];
     }
     if (self->unk7C == 0) {
         self->ext.main_5.unk80 = self->ext.main_5.unk80 == 0;
-        self->x_speed = 0;
         self->ext.main_5.unk81 = self->ext.main_5.unk81 == 0;
-        self->x_accel = -self->x_accel;
-        self->gravity = -self->gravity;
+        self->x_speed = 0;
+        self->x_accel *= -1;
+        self->gravity *= -1;
         self->y_speed = D_800FA130[self->ext.main_5.unk81 ? 1 : 0];
         self->unk7C = 0x3C;
     }
-    if ((g_Player.x_pos.val - self->x_pos.val >= 0 ? g_Player.x_pos.val - self->x_pos.val : self->x_pos.val - g_Player.x_pos.val) <= 0x6FFFFF) {
+    if ((g_Player.x_pos.val - self->x_pos.val >= 0 ? g_Player.x_pos.val - self->x_pos.val : self->x_pos.val - g_Player.x_pos.val) < 0x700000) {
         set_animation(self, 2);
         self->unk5 = 7;
         self->unk6 = 0;

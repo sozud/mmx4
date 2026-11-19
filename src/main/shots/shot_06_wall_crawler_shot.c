@@ -48,19 +48,19 @@ void wall_crawler_shot_update(struct ShotObj* self)
 // wall_crawler_shot_init
 void func_8009A9E4(struct ShotObj* shot)
 {
+    shot->state++;
+    shot->on_screen = 1;
+    shot->unk28 = 0;
+    shot->unk2C = 0;
+    shot->unk42 &= 0x7FFF;
+    shot->unk67 = 0;
+    shot->unk16 = 0;
     shot->unk68 = (struct Unk_unk68*)wall_crawler_shot_terrain_box;
     shot->unk54 = wall_crawler_shot_hit_boxes;
     shot->unk50.data = wall_crawler_shot_hit_boxes;
-    shot->on_screen = 1;
     shot->unk58.data = (u8*)D_80105FF0;
-    shot->state++;
-    shot->unk28 = 0;
     shot->unk5C = 1;
-    shot->unk2C = 0;
-    shot->unk67 = 0;
-    shot->unk16 = 0;
     shot->unk60 = 2;
-    shot->unk42 &= 0x7FFF;
     shot->x_vel.val *= 3;
     shot->y_vel.val *= 3;
     switch (shot->unk2 & 0xFE) {

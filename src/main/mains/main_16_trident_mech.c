@@ -89,18 +89,18 @@ void func_8004E8E0(struct MainObj* arg0)
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_80106A74;
     arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->x_speed = 0;
-    arg0->animation_table = (const u8* const*)trident_mech_animations;
-    arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->terrain_box = &D_800FBBC8;
-    arg0->hurt_box = &trident_mech_stunned_hurt_box;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->air_state = 0;
+    arg0->animation_table = (const u8* const*)trident_mech_animations;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
+    arg0->terrain_box = &D_800FBBC8;
+    arg0->hurt_box = &trident_mech_stunned_hurt_box;
     arg0->attack_box = &trident_mech_attack_box;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
     trident_mech_face_player(ANIMATED_OBJECT(arg0));
 
     arg0->ext.main_16.unk80 = 0;
@@ -130,14 +130,14 @@ void func_8004E8E0(struct MainObj* arg0)
     case 4:
         set_animation(ANIMATED_OBJECT(arg0), 0x11);
         arg0->unk7E = 3;
-        arg0->unk5 = 8;
         arg0->unk42 += 2;
+        arg0->unk5 = 8;
         break;
     case 5:
         set_animation(ANIMATED_OBJECT(arg0), 2);
         arg0->unk7E = 3;
-        arg0->unk5 = 2;
         arg0->unk42 += 2;
+        arg0->unk5 = 2;
         break;
     }
 
@@ -491,7 +491,7 @@ void trident_mech_charge_wind_up(struct MainObj* self)
 void trident_mech_charge_attack(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    self->unk7C = (u16)self->unk7C ^ self->ext.main_16.unk88;
+    self->unk7C ^= self->ext.main_16.unk88;
     if (self->unk7C == 0) {
         self->contact_damage = 3;
         self->attack_box = &trident_mech_attack_box;
@@ -688,10 +688,11 @@ void trident_mech_double_shot_recover(struct MainObj* self)
         self->ext.main_16.unk80 = 1;
         self->ext.main_16.unk90 = 1;
         self->unk5 = 4;
-    } else {
-        set_animation(self, 0);
-        self->unk5 = 2;
+        self->unk6 = 0;
+        return;
     }
+    set_animation(self, 0);
+    self->unk5 = 2;
     self->unk6 = 0;
 }
 

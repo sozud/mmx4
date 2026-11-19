@@ -98,8 +98,8 @@ void linked_spark_despawn(struct ShotObj* self)
 
     weapon = self->unk7C;
     if ((weapon->active != 0) && (weapon->id == 0x1D) && (weapon->unk2 >= 0)) {
-        weapon->ext.weapon_29.unk90 = 0;
         weapon->unk80.bytes[1] &= 0xFE;
+        weapon->ext.weapon_29.unk90 = 0;
     }
     ZeroObjectState(OBJECT_HEADER(self));
 }

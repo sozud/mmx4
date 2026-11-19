@@ -92,8 +92,8 @@ void func_800ABE08(struct ShotObj* self)
         self->y_vel.val = sigma_final_shot_offsets[self->unk7] << 16;
         self->timer = 0x19;
         self->unk50.data = sigma_final_shot_box_0;
-        self->unk15 = PLAYER_FACING_RIGHT;
         self->unk68 = NULL;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->x_pos.i.hi += 0x18;
         self->y_pos.i.hi += 0x10;
         self->unk5C = 1;
@@ -106,8 +106,8 @@ void func_800ABE08(struct ShotObj* self)
         self->unk5 = 3;
         self->unk50.data = sigma_final_shot_box_1;
         self->unk68 = (struct Unk_unk68*)sigma_final_shot_terrain_box_0;
-        self->unk5C = 1;
         self->unk15 = 0;
+        self->unk5C = 1;
         self->unk60 = 6;
         break;
     case 2:
@@ -116,15 +116,15 @@ void func_800ABE08(struct ShotObj* self)
         self->unk5 = 4;
         self->x_vel.val = 0xFFFD0000;
         self->y_vel.val = 0x10000;
+        self->unk28 = 0;
         self->unk2C = 0x8000;
         self->unk50.data = sigma_final_shot_box_2;
         self->unk68 = (struct Unk_unk68*)sigma_final_shot_terrain_box_1;
         self->unk5C = 1;
         self->unk60 = 9;
-        self->unk28 = 0;
-        self->unk70 = 0;
         self->x_pos.i.hi -= 0x18;
         self->y_pos.i.hi += 0x10;
+        self->unk70 = 0;
         break;
     case 3:
     case 4:
@@ -140,7 +140,7 @@ void func_800ABE08(struct ShotObj* self)
         self->y_vel.val = (self->unk2 & 1) ? 0x40000 : 0xFFFC0000;
         self->unk50.data = sigma_final_shot_tall_box;
     facing:
-        self->unk15 = ((self->unk2 & 1) == 0) << PLAYER_FACING_SHIFT;
+        self->unk15 = (self->unk2 & 1) ? 0 : PLAYER_FACING_RIGHT;
         self->unk42 = (parent->unk42 + 2) & 0x7FFF;
         self->unk5 = 6;
         self->unk5C = 1;
@@ -150,10 +150,10 @@ void func_800ABE08(struct ShotObj* self)
         set_animation(self, 0x14);
         self->unk42 = (parent->unk42 + 4) & 0x7FFF;
         self->unk15 = PLAYER_FACING_RIGHT;
+        self->unk50.data = NULL;
         self->unk5 = 5;
         self->unk5C = 1;
         self->unk60 = 0x18;
-        self->unk50.data = NULL;
         self->timer = 0x3C;
         break;
     }
@@ -193,8 +193,8 @@ void sigma_lightning_fly(struct ShotObj* self)
     struct ShotObj* shot;
 
     if (self->unk70 & 0xF) {
-        self->timer = 10;
         self->unk6++;
+        self->timer = 10;
         if (self->unk70 & 0xC) {
             shot_type = 3;
         }

@@ -53,12 +53,12 @@ void search_light_init(struct QuadObj* arg0)
     if (!(get_random() & 3)) {
         arg0->ext.search_light.velocity += 0x4000;
     }
+    arg0->runtime.search_light.base_speed = arg0->ext.search_light.velocity;
     arg0->ext.search_light.vertical_velocity = 0;
     arg0->ext.search_light.acceleration = 0;
     arg0->ext.search_light.vertical_acceleration = 0;
     arg0->runtime.search_light.pause_timer = 0;
     arg0->link.direction = 0;
-    arg0->runtime.search_light.base_speed = arg0->ext.search_light.velocity;
 }
 
 // SearchLight state 1
@@ -91,15 +91,15 @@ void func_800D3C58(struct QuadObj* arg0)
         switch (arg0->unk5) {
         case 0:
             if ((!direction && arg0->vertices[0].x.i.hi >= (s16)(arg0->runtime.search_light.extent + origin - 0x20)) || (direction && arg0->vertices[0].x.i.hi <= (s16)(origin + 0x20 - arg0->runtime.search_light.extent))) {
-                arg0->unk5 = 1;
                 arg0->ext.search_light.acceleration = direction
                     ? search_light_accels[(u8)arg0->unk2 >> 1]
                     : -search_light_accels[(u8)arg0->unk2 >> 1];
+                arg0->unk5 = 1;
             }
             break;
         case 1:
             if (!direction) {
-                if (arg0->ext.search_light.velocity <= 0x7FFF) {
+                if (arg0->ext.search_light.velocity < 0x8000) {
                     arg0->ext.search_light.velocity = 0x8000;
                     arg0->ext.search_light.acceleration = 0;
                 }
@@ -136,14 +136,14 @@ void func_800D3C58(struct QuadObj* arg0)
             arg0->ext.search_light.acceleration = direction
                 ? -search_light_accels[(u8)arg0->unk2 >> 1]
                 : search_light_accels[(u8)arg0->unk2 >> 1];
-            arg0->unk5 = 3;
             arg0->runtime.search_light.base_speed = -arg0->runtime.search_light.base_speed;
+            arg0->unk5 = 3;
             break;
         case 3:
             if ((!direction && arg0->vertices[0].x.i.hi >= (s16)(origin + 0x20 - arg0->runtime.search_light.extent)) || (direction && arg0->vertices[0].x.i.hi <= (s16)(arg0->runtime.search_light.extent + origin - 0x20))) {
                 arg0->ext.search_light.acceleration = 0;
-                arg0->unk5 = 0;
                 arg0->ext.search_light.velocity = arg0->runtime.search_light.base_speed;
+                arg0->unk5 = 0;
             }
             break;
         }
@@ -192,7 +192,7 @@ void func_800D3C58(struct QuadObj* arg0)
             break;
         case 1:
             if (!arg0->link.direction) {
-                if (arg0->ext.search_light.velocity <= 0x7FFF) {
+                if (arg0->ext.search_light.velocity < 0x8000) {
                     arg0->ext.search_light.velocity = 0x8000;
                     arg0->ext.search_light.acceleration = 0;
                 }
@@ -231,20 +231,20 @@ void func_800D3C58(struct QuadObj* arg0)
             } else {
                 arg0->ext.search_light.acceleration = -search_light_accels[idx >> 1];
             }
-            arg0->unk5 = 3;
             arg0->runtime.search_light.base_speed = -arg0->runtime.search_light.base_speed;
+            arg0->unk5 = 3;
             break;
         case 3:
             if (!arg0->link.direction) {
                 if (arg0->vertices[0].x.i.hi >= (s16)(origin + margin - arg0->runtime.search_light.extent)) {
                     arg0->ext.search_light.acceleration = 0;
-                    arg0->unk5 = 0;
                     arg0->ext.search_light.velocity = arg0->runtime.search_light.base_speed;
+                    arg0->unk5 = 0;
                 }
             } else if ((s16)(arg0->runtime.search_light.extent + (origin - margin)) >= arg0->vertices[0].x.i.hi) {
                 arg0->ext.search_light.acceleration = 0;
-                arg0->unk5 = 0;
                 arg0->ext.search_light.velocity = arg0->runtime.search_light.base_speed;
+                arg0->unk5 = 0;
             }
             break;
         }
@@ -283,7 +283,7 @@ s32 search_light_is_visible(struct QuadObj* arg0)
     u16 x, y, x2, y2;
     u16 width, height;
     s32 x_p, y_p;
-    s32 visible;
+    u32 visible;
 
     visible = 0;
     x = arg0->x_pos.u.hi - background_objects[arg0->bg_offset].x_pos.u.hi;

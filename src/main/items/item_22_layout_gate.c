@@ -147,8 +147,8 @@ void layout_gate_wait_hit(struct ItemObj* arg0)
 
     hit = func_8002DD04(MAIN_OBJECT(arg0));
     if (hit < 0) {
-        arg0->ext.item_22.collision_side = 1;
         arg0->unk5++;
+        arg0->ext.item_22.collision_side = 1;
         layout_gate_spawn_alarm(arg0);
         return;
     }
@@ -180,8 +180,8 @@ void func_800C580C(struct ItemObj* self)
             layout_gate_apply_layout(self);
         }
     } else {
-        self->state = 3;
         self->unk2 = self->tail_ext.unk1.unk84.bytes[0];
+        self->state = 3;
         self->unk5 = 0;
     }
 }

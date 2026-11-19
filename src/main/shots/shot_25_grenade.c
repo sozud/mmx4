@@ -42,8 +42,8 @@ void func_8009EBA8(struct ShotObj* self)
     s32 x;
     s32 pos;
 
-    self->on_screen = 1;
     self->state++;
+    self->on_screen = 1;
     if (self->unk2 & 0x80) {
         self->y_vel.val = 0;
         if (((u8)self->unk2 & 0xF) == 1)
@@ -62,9 +62,9 @@ void func_8009EBA8(struct ShotObj* self)
         self->unk60 = 2;
     } else {
         velocity = self->unk15 != 0 ? FIXED(3) : -FIXED(3);
-        self->y_vel.val = FIXED(1.5);
         self->x_vel.val = velocity;
         self->unk28 = 0;
+        self->y_vel.val = FIXED(1.5);
         self->unk2C = 0x4000;
         set_animation(self, 0x16);
         self->unk60 = 5;
@@ -79,11 +79,11 @@ void func_8009EBA8(struct ShotObj* self)
     self->x_pos.i.hi = pos;
 
     self->y_pos.i.hi += grenade_spawn_offsets[(u8)self->unk2 & 0xF][1];
+    self->unk67 = 0;
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk68 = (struct Unk_unk68*)grenade_terrain_box;
     self->unk54 = grenade_hit_box;
     self->unk50.data = grenade_hit_box;
-    self->unk67 = 0;
 }
 
 void grenade_fly(struct ShotObj* self)

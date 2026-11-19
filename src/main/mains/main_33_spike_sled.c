@@ -71,19 +71,19 @@ void spike_sled_init(struct MainObj* self)
     self->y_pos.i.hi = 0x2E8;
     self->unk16 = VISUAL_SATURN_LAYER(6);
     y_pos = self->y_pos.val;
-    self->animation_table = (const u8* const*)spike_sled_animations;
-    self->hurt_box = &D_800FDD88;
-    self->attack_box = &D_800FDD8C;
+    self->bg_offset = bg_offset;
+    self->unk18.val = x_pos;
+    self->unk1C.val = y_pos;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->animation_table = (const u8* const*)spike_sled_animations;
     self->terrain_box = NULL;
+    self->hurt_box = &D_800FDD88;
+    self->attack_box = &D_800FDD8C;
     self->unk15 = PLAYER_FACING_RIGHT;
-    self->bg_offset = bg_offset;
-    self->unk18.val = x_pos;
-    self->unk1C.val = y_pos;
     set_animation(self, 0);
     self->ext.main_33.unk80 = 0x7F;
     unk42 = self->unk42;
@@ -185,7 +185,8 @@ void func_8005D4E0(struct MainObj* arg0)
             arg0->unk5 = 1;
             return;
         }
-        if (!(--arg0->unk7E & 1)) {
+        arg0->unk7E--;
+        if (!(arg0->unk7E & 1)) {
             x = arg0->x_pos.val;
             y = arg0->y_pos.val;
             arg0->x_pos.i.hi = 0x12A0;

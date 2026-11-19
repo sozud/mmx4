@@ -88,8 +88,8 @@ void func_800978DC(struct WeaponObj* arg0)
     ext->timer = 0x18;
     set_animation(arg0, arg0->unk2);
     move_object(MOVING_OBJECT(arg0));
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
 }
 
@@ -154,8 +154,8 @@ void func_80097BA4(struct WeaponObj* arg0)
     s32 level = arg0->unk2 >> 1;
 
     arg0->on_screen = 1;
-    arg0->unk64 = 1;
     arg0->unk50 = &twin_slasher_charged_hit_boxes[level];
+    arg0->unk64 = 1;
     arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[9];
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x11];
     arg0->animation_table = D_8011C104;
@@ -166,10 +166,10 @@ void func_80097BA4(struct WeaponObj* arg0)
     arg0->unk15 = g_Player.unk15;
     buster_shot_place_at_muzzle((struct VisualObj*)arg0, player, arg0->id);
     set_velocity_from_angle(MOVING_OBJECT(arg0), twin_slasher_charged_angles[arg0->unk2]);
-    arg0->unk28.val = 0;
-    arg0->unk2C = 0;
     arg0->x_vel.val *= 9;
+    arg0->unk28.val = 0;
     arg0->y_vel.val *= 9;
+    arg0->unk2C = 0;
     if (arg0->unk15 == 0)
         arg0->x_vel.val = -arg0->x_vel.val;
     set_animation(arg0, level + 2);
@@ -214,8 +214,8 @@ void twin_slasher_charged_main(struct WeaponObj* arg0)
 // twin_slasher_trail_update
 void func_80097DD8(struct MiscObj* self)
 {
-    s32* player_gfx;
     s32* sprite_frames;
+    s32* player_gfx;
     s32 should_reset = g_Player.input_locked != 0;
 
     if (g_Player.capsule_state != 0) {
@@ -237,8 +237,8 @@ void func_80097DD8(struct MiscObj* self)
     } else {
         self->on_screen = 1;
         player_gfx = SP_PLAYER_GFX;
-        sprite_frames = SP_SPRITE_FRAMES;
         self->unk38 = (u8*)player_gfx + player_gfx[9];
+        sprite_frames = SP_SPRITE_FRAMES;
         self->unk3C = (u8*)sprite_frames + sprite_frames[0x11];
         self->animation_table = D_8011C104;
         self->unk40 = WEAPON_TEXTURE_SPECIAL_0;

@@ -43,17 +43,14 @@ void dash_gunner_shot_init(struct ShotObj* self)
 
 void dash_gunner_shot_fly(struct ShotObj* self)
 {
-    s32 in_range;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     if (engine_obj.stage == 3) {
-        if ((u8)self->unk2 < 4) {
-            in_range = g_Player.x_pos.i.hi <= 0x7B6;
-        } else {
-            in_range = g_Player.x_pos.i.hi <= 0x9B6;
-        }
-        if (in_range != 0) {
+        if ((u8)self->unk2 <= 3) {
+            if (g_Player.x_pos.i.hi <= 0x7B6) {
+                func_8002D9BC(self);
+            }
+        } else if (g_Player.x_pos.i.hi <= 0x9B6) {
             func_8002D9BC(self);
         }
     } else {

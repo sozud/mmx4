@@ -60,8 +60,8 @@ void func_800CFC6C(struct MiscObj* arg0)
     arg0->x_pos.i.hi = background_objects[1].x_pos.i.hi + 0x14A;
     arg0->y_pos.i.hi = background_objects[1].y_pos.i.hi + ambient_bubble_positions[get_random() & 7];
     set_animation(arg0, 1);
-    arg0->y_vel.val = 0;
     arg0->unk5++;
+    arg0->y_vel.val = 0;
     arg0->unk28 = 0;
     arg0->x_vel.val = ambient_bubble_speeds[arg0->unk2];
     arg0->unk2C = ambient_bubble_accels[arg0->unk2];

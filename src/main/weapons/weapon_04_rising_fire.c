@@ -32,7 +32,7 @@ void rising_fire_draw(struct WeaponObj* arg0);
 
 void rising_fire_update(struct WeaponObj* arg0)
 {
-    s32 disabled;
+    u32 disabled;
 
     disabled = 0;
     if (g_Player.input_locked != 0) {
@@ -90,8 +90,8 @@ void func_80095254(struct WeaponObj* arg0)
     arg0->unk49 = 0;
     set_animation(arg0, 1);
     func_8001540C(0, WEAPON_SOUND_FIRE, arg0);
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     rising_fire_draw(arg0);
 }
 
@@ -170,8 +170,8 @@ void func_80095538(struct WeaponObj* arg0)
     else
         set_animation(arg0, 5);
     func_8001540C(0, WEAPON_SOUND_FIRE, arg0);
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     rising_fire_charged_draw(arg0);
 }
 

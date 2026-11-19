@@ -119,17 +119,17 @@ void func_80043390(struct MainObj* arg0)
         arg0->collision_data = D_80106470;
         set_animation(arg0, 1);
         arg0->contact_damage = 3;
-        arg0->ext.main_3.turn_timer = 0x78;
         arg0->ext.main_3.alerted = 0;
         arg0->ext.main_3.player_ahead = 0;
+        arg0->ext.main_3.turn_timer = 0x78;
         arg0->unk5 = 2;
         break;
     case 1:
         arg0->collision_data = (const u16*)D_801060F0;
-        arg0->ext.main_3.turn_timer = 0x78;
         arg0->contact_damage = 4;
         arg0->ext.main_3.alerted = 1;
         arg0->ext.main_3.player_ahead = 0;
+        arg0->ext.main_3.turn_timer = 0x78;
         arg0->unk5 = 5;
         break;
     default:
@@ -171,7 +171,10 @@ void spike_marl_run(struct MainObj* self)
         spawn_explosion((struct BaseObj*)self);
         spawn_debris(7, &spike_marl_debris, self);
         drop_item(BASE_OBJECT(self), 0x11);
-    } else if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+        self->state = 2;
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
         update_on_screen((struct BaseObj*)self, 0x20, 0x20);
         return;
     }
@@ -180,15 +183,12 @@ void spike_marl_run(struct MainObj* self)
 
 void spike_marl_cleanup(struct MainObj* self)
 {
-    u32 subtype;
-
-    subtype = (u8)self->unk2;
     self->ext.main_3.alerted = 0;
     self->ext.main_3.roll_timer = 0;
     self->ext.main_3.player_ahead = 0;
     self->ext.main_3.turn_timer = 0;
     self->ext.main_3.saved_step = 0;
-    if (subtype < 2U) {
+    if (self->unk2 == 0 || self->unk2 == 1) {
         despawn_object(OBJECT_HEADER(self));
         return;
     }
@@ -313,12 +313,10 @@ void spike_marl_roll_begin(struct MainObj* self)
 
 void spike_marl_roll_update(struct MainObj* self)
 {
-    s32 timer;
     u8 flags;
 
-    timer = self->ext.main_3.roll_timer + 4;
-    self->ext.main_3.roll_timer = timer;
-    if (timer < 0 || (self->unk15 == 0 ? g_Player.x_pos.val > self->x_pos.val : g_Player.x_pos.val < self->x_pos.val)) {
+    self->ext.main_3.roll_timer = self->ext.main_3.roll_timer + 4;
+    if (self->ext.main_3.roll_timer < 0 || (self->unk15 == 0 && g_Player.x_pos.val > self->x_pos.val) || (self->unk15 != 0 && g_Player.x_pos.val < self->x_pos.val)) {
         self->x_accel = FIXED(-0.09375);
         self->unk6 = 2;
     }
@@ -443,14 +441,12 @@ void spike_marl_roll_entry_update(struct MainObj* self)
 
 void spike_marl_check_patrol_path(struct MainObj* self)
 {
-    s16 temp_v0;
     s16 var_v1;
     s32 temp_v0_2;
 
     if (self->unk5 == 2) {
-        temp_v0 = self->unk7C;
-        if (temp_v0 != 0) {
-            self->unk7C = temp_v0 - 1;
+        if (self->unk7C != 0) {
+            self->unk7C--;
             return;
         }
 

@@ -33,9 +33,9 @@ void enemy_charge_glow_init(struct VisualObj* arg0)
         arg0->unk15 = arg0->unk50->unk15;
         set_animation(arg0, 0xD);
     }
+    arg0->unk42 &= 0x7FFF;
     arg0->on_screen = 1;
     arg0->state = 1;
-    arg0->unk42 &= 0x7FFF;
 }
 
 // enemy_charge_glow_main

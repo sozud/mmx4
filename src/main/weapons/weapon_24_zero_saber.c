@@ -25,20 +25,20 @@ extern u8 ryuenjin_flame_animations[];
 
 void zero_saber_update(struct WeaponObj* arg0)
 {
-    s32 var_a0;
+    u32 var_a0;
     struct PlayerObj* ptr = &g_Player;
 
     var_a0 = 0;
-    if (g_Player.hp == 0) {
+    if (ptr->hp == 0) {
         var_a0 = 1;
     }
-    if (g_Player.input_locked != 0) {
+    if (ptr->input_locked != 0) {
         var_a0 = 1;
     }
-    if (g_Player.actions_reset != 0) {
+    if (ptr->actions_reset != 0) {
         var_a0 = 1;
     }
-    if (arg0->unk84.word != g_Player.unk17) {
+    if (arg0->unk84.word != ptr->unk17) {
         var_a0 = 1;
     }
     if (var_a0) {
@@ -46,17 +46,16 @@ void zero_saber_update(struct WeaponObj* arg0)
         return;
     }
 
-    if (arg0->state != 0) {
+    if (arg0->state == 0) {
+        func_80097FC4(arg0, ptr);
+    } else {
         animate_object(ANIMATED_OBJECT(arg0));
         if (arg0->animation_step.fields.relative_step == 0) {
             ZeroObjectState(OBJECT_HEADER(arg0));
-        } else {
-            zero_saber_follow(arg0, ptr);
+            return;
         }
-    } else {
-        func_80097FC4(arg0, ptr);
-        zero_saber_follow(arg0, ptr);
     }
+    zero_saber_follow(arg0, ptr);
 }
 
 // zero_saber_init
@@ -142,13 +141,13 @@ void func_800981CC(struct WeaponObj* self)
         self->unk50 = rakuhouha_orb_box;
         self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[6];
         self->animation_table = D_8011C018;
-        self->unk42 = WEAPON_PALETTE_3;
         self->unk40 = WEAPON_TEXTURE_BASE;
+        self->unk42 = WEAPON_PALETTE_3;
         self->unk16 = 1;
         self->x_pos.i.hi = player->x_pos.i.hi;
         self->y_pos.i.hi = player->y_pos.i.hi + 0x15;
         self->unk15 = 0;
-        set_velocity_from_angle(MOVING_OBJECT(self), (0x10 - self->unk2 * 2) & 0xFE);
+        set_velocity_from_angle(MOVING_OBJECT(self), (u8)(0x10 - self->unk2 * 2));
         self->x_vel.val *= 7;
         self->y_vel.val *= 7;
         set_animation(self, self->unk2 + 0xA);
@@ -156,7 +155,11 @@ void func_800981CC(struct WeaponObj* self)
         move_object(MOVING_OBJECT(self));
         move_object(MOVING_OBJECT(self));
         self->state++;
-    } else if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0 && self->unk98 == 0) {
+    } else if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        if (self->unk98 != 0) {
+            ZeroObjectState(OBJECT_HEADER(self));
+            return;
+        }
         animate_object(ANIMATED_OBJECT(self));
         move_object(MOVING_OBJECT(self));
     } else {
@@ -219,10 +222,10 @@ void func_80098474(struct MiscObj* self)
         self->unk40 = WEAPON_TEXTURE_BASE;
         self->unk42 = WEAPON_PALETTE_4;
         self->unk16 = 1;
-        if (g_Player.unk15 == 0)
-            self->x_pos.i.hi = g_Player.x_pos.i.hi + ryuenjin_flame_offsets[get_random() & 3][0];
+        if (player->unk15 == 0)
+            self->x_pos.i.hi = player->x_pos.i.hi + ryuenjin_flame_offsets[get_random() & 3][0];
         else
-            self->x_pos.i.hi = g_Player.x_pos.i.hi - ryuenjin_flame_offsets[get_random() & 3][0];
+            self->x_pos.i.hi = player->x_pos.i.hi - ryuenjin_flame_offsets[get_random() & 3][0];
         self->y_pos.i.hi = player->y_pos.i.hi + ryuenjin_flame_offsets[get_random() & 3][1];
         self->unk15 = player->unk15;
         set_animation(self, ryuenjin_flame_animations[get_random() & 3]);

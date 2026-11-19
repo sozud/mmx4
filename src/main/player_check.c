@@ -698,7 +698,7 @@ s32 player_check_script(struct PlayerObj* self)
 void player_script_walk_to_mark(struct PlayerObj* self)
 {
     s16 distance;
-    s32 arrived;
+    u32 arrived;
 
     distance = (self->x_pos.u.hi - 0x40) - SCRIPT_BACKGROUND(self)->x_pos.u.hi;
     arrived = 0;

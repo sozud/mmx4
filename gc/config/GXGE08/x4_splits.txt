@@ -1103,7 +1103,7 @@ main/image_load.c:
 	.text       start:0x0009D1B0 end:0x0009D410
 
 main/pause_bar_draw.c:
-	.text       start:0x0009DCF8 end:0x0009E0E8
+	.text       start:0x0009D410 end:0x0009E0E8
 
 main/cd_music.c:
 	.text       start:0x0009E130 end:0x0009E68C
@@ -1244,7 +1244,7 @@ main/quads/quad_10_aiming_laser_charged_beam.c:
 	.text       start:0x000B84AC end:0x000B8E14
 
 main/quads/quad_09_aiming_laser_beam.c:
-	.text       start:0x000B8F50 end:0x000B90A8
+	.text       start:0x000B8E14 end:0x000B90A8
 
 main/quads/quad_11_title_quad.c:
 	.text       start:0x000B90A8 end:0x000B96A8
@@ -1283,7 +1283,7 @@ main/stage_objects.c:
 	.text       start:0x000BF1DC end:0x000BF234
 
 main/background.c:
-	.text       start:0x000BF50C end:0x000C0908
+	.text       start:0x000BF234 end:0x000C0908
 	.data       start:0x00023E00 end:0x00023FE0
 
 main/layers/layer_00_train_scroll.c:
@@ -1447,4 +1447,4 @@ gc/libapi.c:
 	.bss        start:0x00182EC8 end:0x00182F00
 
 gc/gcGPU.c:
-	.text       start:0x000D7550 end:0x000DAB90
+	.text       start:0x000D676C end:0x000DAB90

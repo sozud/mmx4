@@ -71,18 +71,14 @@ void frost_walrus_fx_init(struct VisualObj* self)
     }
     self->unk16 = VISUAL_SATURN_LAYER(3);
     self->bg_offset = (s8)(u8)g_Player.bg_offset;
-    self->state++;
-#ifdef MMX4_SHC
-    state = (s8)self->unk2 >> 4;
-#else
-    state = (s32)((u8)self->unk2 << 24) >> 28;
-#endif
     self->x_vel.val = 0;
     self->y_vel.val = 0;
     self->unk28 = 0;
     self->unk2C = 0;
+    self->state++;
+    state = (s8)self->unk2 >> 4;
     self->unk5 = (s8)state;
-    if (state == 2) {
+    if (self->unk5 == 2) {
         set_animation(self, 0x18);
     } else {
         set_animation(self, 0x1D);

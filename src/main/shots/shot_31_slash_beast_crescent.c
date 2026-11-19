@@ -40,9 +40,9 @@ void func_8009FF4C(struct ShotObj* self)
     self->state = 1;
     self->on_screen = 1;
     self->unk58.collision_data = D_80106070;
+    self->unk42 &= 0x7FFF;
     self->unk28 = 0;
     self->unk2C = 0;
-    self->unk42 &= 0x7FFF;
     if (self->unk15 == 0)
         self->x_pos.i.hi += slash_beast_crescent_offsets[self->unk2 * 2];
     else

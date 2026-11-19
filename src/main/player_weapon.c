@@ -680,22 +680,22 @@ s32 player_check_shoot_ladder(struct PlayerObj* self)
 // player_enter_weapon_pose
 void func_80037484(struct PlayerObj* arg0, s32 arg1)
 {
-    switch ((s8)(arg0->shot_type - 2)) {
-    case 0:
-    case 9:
+    switch (arg0->shot_type) {
+    case 2:
+    case 11:
         player_enter_frost_tower_pose(arg0);
         break;
-    case 10:
+    case 12:
         player_enter_soul_body(arg0);
         break;
-    case 2:
+    case 4:
         player_enter_rising_fire(arg0, arg1);
         break;
-    case 11:
+    case 13:
         player_enter_rising_fire_charged(arg0, arg1);
         break;
-    case 5:
-    case 14:
+    case 7:
+    case 16:
         player_enter_double_cyclone_pose(arg0);
         break;
     }
@@ -803,7 +803,8 @@ void player_update_shooting(struct PlayerObj* self)
                     if (player_shot_counts_as_special[shot_type] != 0) {
                         self->special_shot_count++;
                     }
-                    if (++self->shot_cycle == 3) {
+                    self->shot_cycle++;
+                    if (self->shot_cycle == 3) {
                         self->shot_cycle = 0;
                     }
                     if (shot_type == 0x13) {
@@ -932,12 +933,11 @@ void func_80037C28(struct PlayerObj* arg0)
 }
 void player_fire_lightning_web_charged(struct PlayerObj* self)
 {
-    s8 i;
     struct WeaponObj* weapon;
     struct WeaponObj* first_weapon;
+    s8 i;
 
-    i = 0;
-    do {
+    for (i = 0; i < 9; i++) {
         weapon = find_free_weapon_obj();
         if (weapon != 0) {
             weapon->active = 1;
@@ -950,8 +950,7 @@ void player_fire_lightning_web_charged(struct PlayerObj* self)
                 weapon->owner = (struct PlayerObj*)first_weapon;
             }
         }
-        i++;
-    } while (i < 9);
+    }
 }
 
 void player_enter_frost_tower_pose(struct PlayerObj* self)

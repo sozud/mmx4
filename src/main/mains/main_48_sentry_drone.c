@@ -75,11 +75,11 @@ void func_8006738C(struct MainObj* self)
     self->unk42 = OBJECT_STAGE_CLUT(0x30);
     self->animation_table = (const u8* const*)sentry_drone_animations;
     self->unk16 = VISUAL_SATURN_LAYER(4);
+    self->air_state = 0;
     self->terrain_box = (struct Unk_unk68*)D_800FFAD0;
     self->attack_box = D_800FFAD4;
     self->hurt_box = D_800FFACC;
     self->collision_data = D_801076F8;
-    self->air_state = 0;
     self->invincibility_timer = 0;
     self->hp = 5;
     self->contact_damage = 3;

@@ -47,7 +47,8 @@ void func_800CC4E0(struct MiscObj* misc)
     misc->unk2C = 0;
     misc->unk16 = 0;
     misc->unk40 = ext->owner->unk40;
-    misc->unk42 = ext->owner->unk42 & 0x7FFF;
+    misc->unk42 = ext->owner->unk42;
+    misc->unk42 &= 0x7FFF;
     misc->animation_table = (u32**)ext->owner->animation_table;
     misc->unk3C = ext->owner->sprite_frames;
     misc->unk15 = ext->owner->unk15;

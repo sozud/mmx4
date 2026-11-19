@@ -32,12 +32,14 @@ void owner_aura_follow(struct MiscObj* self)
     }
     if (self->unk6 == 0) {
         timer = ++self->unk7;
-        if (timer & 1) {
+        if (!(timer & 1)) {
+            update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
+        } else {
             self->on_screen = 0;
-            return;
         }
+    } else {
+        update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
-    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 void owner_aura_despawn(struct MiscObj* self)

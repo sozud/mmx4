@@ -181,10 +181,8 @@ ret_u8 func_8002D9BC(void* object)
     s8 ride_hp;
     s8 damage_type;
     s8 remaining_hp;
-    s8 hp_flags;
     u32 damage;
     u8 contact_damage;
-    u8 energy;
     shot = object;
     player = &g_Player;
     if (g_Player.spike_immune != 0) {
@@ -203,16 +201,18 @@ ret_u8 func_8002D9BC(void* object)
         }
         ride->unk63 = 0;
         ride->unk86 = 0;
-        ride_hp = shot->unk60;
-        ride->unk63 = ride_hp >= 5 ? 2 : 1;
+        if (shot->unk60 < 5) {
+            ride->unk63 = 1;
+        } else {
+            ride->unk63 = 2;
+        }
         ride_hp = ride->hp - shot->unk60;
         ride->hp = ride_hp;
         if (ride_hp > 0) {
-            ride_hp |= 0x80;
+            ride->hp = ride_hp | 0x80;
         } else {
-            ride_hp = -0x80;
+            ride->hp = -0x80;
         }
-        ride->hp = ride_hp;
         if (ride->x_pos.i.hi >= shot->x_pos.i.hi) {
             ride->unk84 = 0;
         } else {
@@ -264,11 +264,10 @@ ret_u8 func_8002D9BC(void* object)
         player->hp = remaining_hp;
     }
     if (player->hp > 0) {
-        hp_flags = player->hp | 0x80;
+        player->hp = player->hp | 0x80;
     } else {
-        hp_flags = -0x80;
+        player->hp = -0x80;
     }
-    player->hp = hp_flags;
     if (((s8)shot->unk62) != 3) {
         if (player->x_pos.i.hi >= shot->x_pos.i.hi) {
             player->hit_facing = 0;
@@ -284,9 +283,8 @@ ret_u8 func_8002D9BC(void* object)
         return 1;
     }
     if (player->weapon_energy[0] != 0x30) {
-        energy = ((s8)player->weapon_energy[0]) + 6;
-        player->weapon_energy[0] = energy;
-        if (((s8)energy) >= 0x31) {
+        player->weapon_energy[0] = ((s8)player->weapon_energy[0]) + 6;
+        if (((s8)player->weapon_energy[0]) >= 0x31) {
             player->weapon_energy[0] = 0x30;
         }
     }
@@ -345,7 +343,6 @@ s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
     const u8* table;
     s8 hit;
     u8 id;
-    u8 kind;
 
     hit = arg1->unk64;
     id = arg1->id;
@@ -359,9 +356,8 @@ s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
     }
 
     table = (const u8*)arg0->collision_data;
-    kind = table[(s8)id * 2];
-    arg0->unk63 = kind;
-    if ((s8)kind == 2) {
+    arg0->unk63 = table[(s8)id * 2];
+    if ((s8)arg0->unk63 == 2) {
         return 0;
     }
     switch ((s8)id) {

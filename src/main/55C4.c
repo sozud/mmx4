@@ -404,7 +404,7 @@ void stop_sound(u8 arg0, u8 arg1)
     u8* entry;
     u8 var_s1;
     s8 var_s2;
-    s8 temp_v0;
+    u8 temp_v0;
 
     if (arg0 == 0xFF) {
         for (var_s1 = 0; var_s1 < 0x18; var_s1++) {
@@ -434,6 +434,8 @@ s32 is_sound_finished(s32 arg0, struct MainObj* owner)
 {
 #ifdef MMX4_WIN32
     return pc_spu_key_status(D_80141F50[2][(arg0 & 0xFF) * 4 + 3] & 0x1F) == 0;
+#elif defined(MMX4_GAMECUBE)
+    return 0;
 #else
     u8* entry = D_80141F50[2];
 

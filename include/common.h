@@ -430,7 +430,7 @@ union AnimationStep {
 union PlayerUnk8A {
     u16 packed;
     struct {
-        u8 low;
+        s8 low;
         s8 high;
     } bytes;
 };
@@ -894,7 +894,7 @@ void snowman_bomb_face_player(struct AnimatedObj*);
 void jump_shooter_face_player(struct AnimatedObj*);
 void func_8006B2A4(struct MainObj*);
 void func_8006B398(struct MainObj*);
-void func_8006E920(struct MainObj*, s32);
+void func_8006E920(struct MainObj*, u32);
 void colonel_face_center(struct BaseObj*);
 void func_800889DC(struct MainObj*);
 void buster_shot_place_at_muzzle(struct VisualObj*, struct PlayerObj*, arg_u8);

@@ -91,15 +91,14 @@ void destructible_core_main(struct ItemObj* arg0)
     u8 state;
 
     temp_s1 = func_8002DD04(MAIN_OBJECT(arg0));
-    if (((arg0->unk5C < arg0->tail_ext.unk1.unk84.previous_value) && (arg0->unk5C != 0)) || (arg0->tail_ext.unk1.unk88 != 0)) {
+    if (((arg0->tail_ext.unk1.unk84.previous_value > arg0->unk5C) && (arg0->unk5C != 0)) || (arg0->tail_ext.unk1.unk88 != 0)) {
         destructible_core_flash_palette(arg0);
         arg0->tail_ext.unk1.unk88 ^= 1;
     }
 
     arg0->tail_ext.unk1.unk84.previous_value = arg0->unk5C;
     if (arg0->unk2 == 0) {
-        arg0->ext.timer = arg0->ext.timer - 1;
-        if (arg0->ext.timer == 0) {
+        if (--arg0->ext.timer == 0) {
             arg0->ext.timer = 5;
             if (arg0->unk5C < 0x50) {
                 func_800B10E4(0x11, 0xCA8, 0x198, 0xCB8, 0x1A8, 1);
@@ -144,11 +143,9 @@ void destructible_core_main(struct ItemObj* arg0)
         if (engine_obj.character_state.bytes[2] != 0 && arg0->unk2 == 2) {
             arg0->state += 2;
         }
-        if (engine_obj.character_state.bytes[3] == 0 || arg0->unk2 != 3) {
-            return;
+        if (engine_obj.character_state.bytes[3] != 0 && arg0->unk2 == 3) {
+            arg0->state += 2;
         }
-        state = arg0->state;
-        arg0->state = state + 2;
     }
 }
 
@@ -217,11 +214,9 @@ void destructible_core_flash_palette(struct ItemObj* arg0)
         source = SP_ARC_30 + 0x2A0;
     }
 #endif
-    i = 0;
-    do {
+    for (i = 0; i < 0x38; i++) {
         *destination++ = *source++;
-        i++;
-    } while (i < 0x38);
+    }
     need_palette_load |= 1;
 }
 

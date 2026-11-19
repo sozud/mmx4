@@ -140,9 +140,9 @@ s32 set_animation(void* object, s32 animation)
     struct AnimatedObj* arg0 = object;
 
     arg0->animation_cursor = arg0->animation_table[animation];
-    arg0->unk17 = animation;
     arg0->previous_animation_index = 0xFF;
-    __builtin_memcpy(&arg0->animation_step, arg0->animation_cursor, sizeof(arg0->animation_step));
+    arg0->unk17 = animation;
+    arg0->animation_step.packed = *arg0->animation_cursor;
 }
 
 void set_animation_frame(struct AnimatedObj* arg0, s32 arg1, s32 arg2)
@@ -157,7 +157,7 @@ void animate_object(struct AnimatedObj* arg0)
 {
     if (--arg0->animation_step.fields.duration == 0) {
         arg0->animation_cursor = &arg0->animation_cursor[arg0->animation_step.fields.relative_step];
-        __builtin_memcpy(&arg0->animation_step, arg0->animation_cursor, sizeof(arg0->animation_step));
+        arg0->animation_step.packed = *arg0->animation_cursor;
     }
 }
 

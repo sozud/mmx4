@@ -33,13 +33,13 @@ void func_800A0170(struct ShotObj* arg0)
 
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk60 = 6;
     arg0->unk15 = 0;
     arg0->unk16 = 1;
     arg0->unk68 = NULL;
     arg0->unk58.data = NULL;
     arg0->unk61 = 0;
     arg0->unk5C = 1;
+    arg0->unk60 = 6;
     arg0->animation_table = (u32**)ice_block_animations;
     arg0->unk42 = OBJECT_STAGE_CLUT(0x14);
     resource = func_8002938C(0x14);

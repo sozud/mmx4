@@ -43,19 +43,19 @@ void func_8009F674(struct ShotObj* arg0)
 {
     struct MainObj* owner;
 
+    arg0->state++;
     arg0->on_screen = 1;
+    arg0->unk42 &= 0x7FFF;
     arg0->unk5C = 1;
     arg0->unk60 = 5;
-    arg0->state++;
-    arg0->unk50.data = cannon_missile_boxes;
-    arg0->unk58.animation_steps = D_80105FF0;
-    arg0->unk54 = cannon_missile_boxes;
     arg0->x_vel.val = 0;
     arg0->unk28 = 0;
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
+    arg0->unk50.data = cannon_missile_boxes;
+    arg0->unk58.animation_steps = D_80105FF0;
     arg0->unk68 = NULL;
-    arg0->unk42 &= 0x7FFF;
+    arg0->unk54 = cannon_missile_boxes;
     owner = (struct MainObj*)arg0->unk7C;
     if (arg0->unk2 == 0) {
         if (arg0->unk15 == 0)
@@ -71,14 +71,14 @@ void func_8009F674(struct ShotObj* arg0)
         arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x10;
     }
     set_animation(arg0, 7);
-    arg0->unk8C.bytes[3] = 0x20;
     arg0->unk5 = 0;
+    arg0->unk8C.bytes[0] = arg0->unk2 * 20 + 0x1E;
     arg0->unk8C.bytes[1] = 0;
     arg0->unk8C.bytes[2] = 0;
+    arg0->unk8C.bytes[3] = 0x20;
     arg0->unk90.bytes[2] = 0;
     arg0->unk90.bytes[0] = 2;
     arg0->unk90.bytes[1] = 0;
-    arg0->unk8C.bytes[0] = arg0->unk2 * 20 + 0x1E;
 }
 
 // cannon_missile_main
@@ -142,12 +142,12 @@ void cannon_missile_slow(struct ShotObj* self)
 
 void cannon_missile_track(struct ShotObj* self)
 {
-    struct ShotObj* shot;
-    u8 verticalTimer;
-    u8 spawnTimer;
-    s32 targetY;
-    s32 delta;
     struct MiscObj* effect;
+    s32 delta;
+    s32 targetY;
+    u8 spawnTimer;
+    u8 verticalTimer;
+    struct ShotObj* shot;
 
     shot = self;
     verticalTimer = shot->unk8C.bytes[1];
@@ -184,9 +184,9 @@ vertical_done:
                 effect->unk15 = get_random() & PLAYER_FACING_RIGHT;
                 effect->ext.misc_5.animation = 0;
                 if (shot->unk15 == 0) {
-                    effect->x_pos.i.hi = (u16)shot->x_pos.i.hi + 0x10;
+                    effect->x_pos.i.hi = shot->x_pos.i.hi + 0x10;
                 } else {
-                    effect->x_pos.i.hi = (u16)shot->x_pos.i.hi - 0x10;
+                    effect->x_pos.i.hi = shot->x_pos.i.hi - 0x10;
                 }
                 effect->y_pos.i.hi = (u16)shot->y_pos.i.hi;
                 effect->x_vel.val = 0;

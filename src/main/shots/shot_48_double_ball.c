@@ -73,12 +73,12 @@ void func_800A9964(struct ShotObj* self)
 
 void double_ball_travel(struct ShotObj* self)
 {
-    s8 temp_a0;
-    s8 temp_a2;
-    s32 temp_s1;
-    s32 temp_s2;
-    s32 temp_v0;
     s32 temp_v1;
+    s32 temp_v0;
+    s32 temp_s2;
+    s32 temp_s1;
+    s8 temp_a2;
+    s8 temp_a0;
 
     temp_s2 = self->x_pos.val - FIXED(self->unk8C.halves[0]);
     temp_s1 = self->y_pos.val - FIXED(self->unk8C.halves[1]);

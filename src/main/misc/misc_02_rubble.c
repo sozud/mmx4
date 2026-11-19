@@ -16,35 +16,30 @@ void spawn_rubble(arg_u8 count, u8* variants, void* source, s32 x_velocity)
     struct BaseObj* source_obj;
     struct MiscObj* obj;
     s32 remaining;
-    u8* variant;
-    s32 velocity;
 
     remaining = count;
-    velocity = x_velocity;
     source_obj = source;
-    if (remaining & 0xFF) {
-        do {
-            obj = find_free_misc_obj();
-            if (obj != NULL) {
-                obj->active = 0x41;
-                obj->id = 2;
-                obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
-                obj->state = 0;
-                obj->unk5 = 0;
-                obj->unk6 = 0;
-                if (velocity != -1) {
-                    obj->x_vel.val = velocity;
-                    obj->unk2 = 0;
-                } else {
-                    obj->x_vel.val = 0;
-                    obj->unk2 = 1;
-                }
-                obj->x_pos.val = source_obj->x_pos.val + rubble_x_offsets[get_random() & 7];
-                obj->y_pos.val = source_obj->y_pos.val + rubble_y_offsets[get_random() & 7];
-                obj->ext.unk.unk54 = *variants++;
+    while (remaining & 0xFF) {
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->active = 0x41;
+            obj->id = 2;
+            obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
+            obj->state = 0;
+            obj->unk5 = 0;
+            obj->unk6 = 0;
+            if (x_velocity != -1) {
+                obj->x_vel.val = x_velocity;
+                obj->unk2 = 0;
+            } else {
+                obj->x_vel.val = 0;
+                obj->unk2 = 1;
             }
-            remaining--;
-        } while (remaining & 0xFF);
+            obj->x_pos.val = source_obj->x_pos.val + rubble_x_offsets[get_random() & 7];
+            obj->y_pos.val = source_obj->y_pos.val + rubble_y_offsets[get_random() & 7];
+            obj->ext.unk.unk54 = *variants++;
+        }
+        remaining--;
     }
 }
 
@@ -68,21 +63,15 @@ extern ret_u8 func_8002938C(s32);
 
 void func_800C7F1C(struct MiscObj* arg0)
 {
-    s32 index;
-
     arg0->on_screen = 1;
     arg0->animation_step.fields.frame_index = arg0->ext.unk.unk54;
     if (engine_obj.stage == 3) {
-        index = func_8002938C(0x8A);
-        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
-        index = func_8002938C(0x8A);
-        arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(index));
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x8A));
+        arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(func_8002938C(0x8A)));
         arg0->unk42 = OBJECT_CLUT(0x7987);
     } else {
-        index = func_8002938C(0x83);
-        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
-        index = func_8002938C(0x83);
-        arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(index));
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x83));
+        arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(func_8002938C(0x83)));
         if (arg0->unk2 == 0)
             arg0->unk42 = OBJECT_CLUT(0x7983);
         else

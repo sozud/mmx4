@@ -49,10 +49,10 @@ extern u8 crumbling_tile_debris_10[];
 // crumbling_tile_init
 void func_800C9510(struct MiscObj* self)
 {
-    self->animation_table = (u32**)D_8010DF48;
     self->ext.misc_8.alternate = (u8)self->unk2 >> 7;
     self->unk2 &= 0x7F;
     self->state++;
+    self->animation_table = (u32**)D_8010DF48;
     self->bg_offset = g_Player.bg_offset;
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x99)];
     self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x99));

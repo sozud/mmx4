@@ -420,6 +420,10 @@ void func_8001D294(struct GameInfo* arg0)
     D_800F2170[arg0->mode](arg0);
 }
 
+#ifdef MMX4_GAMECUBE
+void fn_4_0(void* dst, void* src, u32 size);
+#endif
+
 void func_8001D2D0(struct GameInfo* arg0)
 {
     arg0->unkD = 1;
@@ -439,6 +443,10 @@ void func_8001D2D0(struct GameInfo* arg0)
 #else
     func_80013890(D_800F2180[arg0->unkC], REPLAY_DATA);
     func_80014C70();
+#ifdef MMX4_GAMECUBE
+    fn_4_0(REPLAY_DATA, REPLAY_DATA, 0x2000);
+    func_80014C70();
+#endif
     func_80021E3C();
     func_80012EB8();
 #endif
@@ -616,6 +624,10 @@ void func_8001D6DC(struct GameInfo* arg0)
 #endif
 }
 
+#ifdef MMX4_GAMECUBE
+void fn_4_DABD0(s32 mode);
+#endif
+
 void func_8001D77C(struct GameInfo* arg0)
 {
     D_800F2194[arg0->mode](arg0);
@@ -624,6 +636,9 @@ void func_8001D77C(struct GameInfo* arg0)
     update_misc_objects();
     saturn_sprite_draw_passes();
 #else
+#ifdef MMX4_GAMECUBE
+    fn_4_DABD0(0);
+#endif
     update_misc_objects();
     func_8002A484();
     func_80023D68();
@@ -813,7 +828,45 @@ void func_8001DAF8(void)
         func_800127C8(1);
     }
 }
-#else
+#endif
+
+#ifdef MMX4_GAMECUBE
+void game_info_loop_frame(void)
+{
+    struct GameInfo* info = &game_info;
+    u16 mask;
+
+    D_800F21B0[info->unk0](info);
+    if (info->unkD == 0) {
+        mask = info->unk0 != 1 ? 0x8330 : 0x8000;
+        if (controller_input.pressed & mask) {
+            func_8001540C(0, 0x22, 0);
+            info->unkD = 1;
+            info->unkE = info->unk0;
+            func_80012854(1);
+            if (main_bss_state.transition.active == 0) {
+                func_800129F0(8);
+            }
+            info->unk0 = 5;
+            info->mode = 0;
+            info->unk2 = 0;
+            info->unk3 = 0;
+        }
+    }
+    func_800127C8(1);
+}
+
+void func_8001DAF8(void)
+{
+    game_info.unkD = 1;
+    main_bss_state.transition.suspended = 0;
+    main_bss_state.character_mode = 1;
+    func_8001D134();
+    func_800128B8(game_info_loop_frame);
+}
+#endif
+
+#if !defined(MMX4_SATURN) && !defined(MMX4_GAMECUBE)
 void func_8001DAF8(void)
 {
     s16 var_v1;

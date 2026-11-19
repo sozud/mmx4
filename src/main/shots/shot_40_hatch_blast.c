@@ -116,7 +116,8 @@ void hatch_blast_main(struct ShotObj* self)
                 x_offset = get_random() & 0x30;
                 spawn_debris_offset(7, hatch_blast_debris, (struct MiscObj*)self, x_offset, get_random() & 0x30);
             }
-            if (--self->unk8A == 0) {
+            self->unk8A--;
+            if (self->unk8A == 0) {
                 apply_tile_effect(0, hatch_blast_tile_x[self->unk2], 0x150);
                 spawn_debris(0xE, hatch_blast_break_debris, self);
             }
