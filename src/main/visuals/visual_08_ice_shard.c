@@ -42,12 +42,12 @@ void func_800B08CC(struct VisualObj* self)
 {
     s32 kind = self->unk2;
 
+    self->state++;
     self->on_screen = 1;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
     self->unk28 = 0;
     self->unk2C = 0;
-    self->state++;
     switch ((s8)(kind % 4)) {
     case 0:
         self->x_pos.i.hi += ice_shard_offsets[0][0] + get_random_nonzero() % 32;
@@ -82,22 +82,22 @@ void func_800B0B48(struct VisualObj* self)
     switch (direction / 8) {
     case 0:
         direction = self->x_vel.val;
-        self->x_vel.val = -(self->y_vel.val * 24);
+        self->x_vel.val = self->y_vel.val * -24;
         self->y_vel.val = direction * 24;
         break;
     case 1:
         direction = self->x_vel.val;
-        self->x_vel.val = -(self->y_vel.val * 24);
+        self->x_vel.val = self->y_vel.val * -24;
         self->y_vel.val = direction * 24;
         break;
     case 2:
         direction = self->x_vel.val;
-        self->x_vel.val = -(self->y_vel.val * 24);
+        self->x_vel.val = self->y_vel.val * -24;
         self->y_vel.val = direction * 24;
         break;
     case 3:
         direction = self->x_vel.val;
-        self->x_vel.val = -(self->y_vel.val * 24);
+        self->x_vel.val = self->y_vel.val * -24;
         self->y_vel.val = direction * 24;
         break;
     }

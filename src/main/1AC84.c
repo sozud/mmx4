@@ -18,8 +18,8 @@ static u16 color_filter_offset(u16 scaled, u8 subtract)
 void func_8002A484(void)
 {
     u16 red;
-    u16 green;
     u16 blue;
+    u16 green;
 
     if (saturn_fade_state != 0) {
         return;
@@ -35,16 +35,16 @@ void func_8002A484(void)
 #else
 void func_8002A484(void)
 {
-    u32 mask;
-    u32 color;
-    u16* dst;
-    u16* src;
-    u32 component;
-    u32 blue;
-    u32 green;
     u32 color_index;
-    u32 red;
+    u32 green;
+    u32 blue;
+    u32 component;
+    u16* src;
+    u16* dst;
+    u32 color;
+    u32 mask;
     u32 palette_index;
+    u32 red;
 
     if (((g_FilterAmountR | g_FilterAmountG | g_FilterAmountB) != 0) || (need_palette_load & 4)) {
         if ((lastFilterAmountR != g_FilterAmountR) || (lastFilterAmountG != g_FilterAmountG) || (lastFilterAmountB != g_FilterAmountB) || (need_palette_load != 0)) {

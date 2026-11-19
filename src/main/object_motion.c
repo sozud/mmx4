@@ -32,9 +32,9 @@ struct ItemObj* find_free_item_obj(void);
 
 struct MiscObj* find_free_misc_obj(void);
 
-struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1);
+struct MiscObj* func_8002AE90(struct MiscObj* arg0, u32 arg1);
 
-struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1);
+struct VisualObj* func_8002AF4C(struct VisualObj* arg0, u32 arg1);
 
 struct QuadObj* find_free_quad_obj(void);
 

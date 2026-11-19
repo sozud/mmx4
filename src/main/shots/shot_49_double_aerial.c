@@ -151,10 +151,10 @@ void double_toss_init(struct ShotObj* self)
     s32 x_vel;
 
     self->state = 1;
-    self->on_screen = 1;
     self->unk5 = 0;
     self->unk6 = 0;
     self->unk7 = 0;
+    self->on_screen = 1;
     self->timer = 0;
     self->unk8A = 0;
     self->bg_offset = 0;
@@ -172,8 +172,8 @@ void double_toss_init(struct ShotObj* self)
 
     self->timer = 0x14;
     x_vel = self->unk2 != 0 ? FIXED(3) : FIXED(-3);
-    self->y_vel.val = FIXED(4.5);
     self->x_vel.val = x_vel;
+    self->y_vel.val = FIXED(4.5);
     self->unk28 = 0;
     self->unk2C = FIXED(0.34375);
 }

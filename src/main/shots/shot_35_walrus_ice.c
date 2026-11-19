@@ -529,19 +529,20 @@ void walrus_ice_shard_fly(struct ShotObj* self)
         if (flags & 2) {
             func_8001540C(2, SATURN_SOUND(0x9A, 0x6A), self);
             set_animation(self, 0x22);
+            self->timer = 0x100;
+            self->unk6++;
         } else if (flags & 1) {
             func_8001540C(2, SATURN_SOUND(0x9A, 0x6A), self);
             set_animation(self, 0x22);
             self->unk15 = PLAYER_FACING_RIGHT;
+            self->timer = 0x100;
+            self->unk6++;
         } else if (flags & 8) {
             func_8001540C(2, SATURN_SOUND(0x9A, 0x6A), self);
             set_animation(self, 0x21);
-        } else {
-            is_on_screen(BASE_OBJECT(self));
-            return;
+            self->timer = 0x100;
+            self->unk6++;
         }
-        self->timer = 0x100;
-        self->unk6++;
     }
     is_on_screen(BASE_OBJECT(self));
 }

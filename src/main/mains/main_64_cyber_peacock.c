@@ -78,31 +78,31 @@ void func_8007C30C(struct MainObj* arg0)
 
     arg0->state = 0;
     arg0->unk5 = 1;
-    arg0->unk7C = 0x80;
-    arg0->contact_damage = 5;
     arg0->unk6 = 0;
     arg0->unk7 = 0;
+    arg0->unk7C = 0x80;
     arg0->on_screen = 0;
     arg0->unk2 = 0;
     arg0->hp = 0;
+    arg0->contact_damage = 5;
     arg0->invincibility_timer = 0;
     ext->saved_health = 0;
     ext->flash_timer = 0;
     ext->force_laser = 0;
+    arg0->ext.main_64.hit_count = 0;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->animation_table = (const u8* const*)cyber_peacock_animations;
     arg0->hurt_box = &cyber_peacock_intro_hurt_box;
     arg0->attack_box = &cyber_peacock_hit_box;
-    arg0->collision_data = D_80107CFC;
-    arg0->ext.main_64.hit_count = 0;
     arg0->terrain_box = NULL;
+    arg0->collision_data = D_80107CFC;
     arg0->air_state = 0;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->unk16 = 3;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
     ext->shot_count = 0;
     arg0->ext.main_64.unk8A = 0;
     arg0->ext.main_64.skip_attack = 1;
@@ -326,11 +326,11 @@ void func_8007CA68(struct MainObj* arg0)
     s16 base;
     s16 y;
 
-    timer = (u16)arg0->unk7C - 1;
+    timer = arg0->unk7C - 1;
     arg0->unk7C = timer;
     if (timer == 0) {
-        arg0->unk7 = 0;
         arg0->unk6++;
+        arg0->unk7 = 0;
         arg0->x_pos.i.hi = arg0->ext.main_64.target_x;
         arg0->y_pos.i.hi = arg0->ext.main_64.target_y;
         cyber_peacock_face_player(arg0);
@@ -499,23 +499,24 @@ void cyber_peacock_slash_start(struct MainObj* self)
 
 void cyber_peacock_slash_swing(struct MainObj* self)
 {
-    u16 counter;
-
     if (self->animation_step.fields.relative_step < 0) {
-        counter = ++self->unk7C;
-        if ((s16)counter > 3) {
+        self->unk7C++;
+        if (self->unk7C > 3) {
             self->unk6 += 1;
             set_animation(self, 7);
             self->hurt_box = (const u8*)&cyber_peacock_slash_hurt_box;
             self->attack_box = (const u8*)&cyber_peacock_slash_attack_box;
-            return;
+        } else {
+            animate_object(ANIMATED_OBJECT(self));
         }
-    } else if (self->animation_step.fields.event != 0) {
-        self->animation_step.fields.event = 0;
-        self->hurt_box = (const u8*)&cyber_peacock_slash_swing_hurt_box;
-        self->attack_box = (const u8*)&cyber_peacock_slash_swing_attack_box;
+    } else {
+        if (self->animation_step.fields.event != 0) {
+            self->animation_step.fields.event = 0;
+            self->hurt_box = (const u8*)&cyber_peacock_slash_swing_hurt_box;
+            self->attack_box = (const u8*)&cyber_peacock_slash_swing_attack_box;
+        }
+        animate_object(ANIMATED_OBJECT(self));
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 void cyber_peacock_slash_finish(struct MainObj* self)

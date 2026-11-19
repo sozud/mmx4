@@ -131,6 +131,9 @@ void func_800C05FC(struct ItemObj* pillar)
 void falling_pillar_finish(struct ItemObj* arg0)
 {
     if (arg0->unk2 == 0) {
+#ifdef MMX4_GAMECUBE
+        stop_sound(5, 2);
+#endif
         func_8001540C(5, SATURN_SOUND(0, 0x09), NULL);
         start_screen_shake_y(0x20, 2, 1);
     }

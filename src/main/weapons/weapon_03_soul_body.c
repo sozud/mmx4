@@ -26,7 +26,7 @@ void soul_body_load_palette(s16);
 
 void soul_body_update(struct WeaponObj* arg0)
 {
-    s32 var_a1;
+    u32 var_a1;
 
     var_a1 = 0;
     if (g_Player.input_locked != 0) {
@@ -168,9 +168,9 @@ void soul_body_retract(struct WeaponObj* arg0)
     arg0->on_screen = 1;
     field_8c = &arg0->ext.weapon_3.offset;
     if (arg0->unk15 != 0) {
-        arg0->x_pos.i.hi = (u16)g_Player.x_pos.i.hi + *field_8c;
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + *field_8c;
     } else {
-        arg0->x_pos.i.hi = (u16)g_Player.x_pos.i.hi - *field_8c;
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - *field_8c;
     }
 
     temp_v0 = (s16)*field_8c;
@@ -207,10 +207,10 @@ void soul_body_load_palette(s16 arg0)
 
 void soul_body_clone_update(void)
 {
-    s32 var_a0;
+    u32 var_a0;
     struct PlayerObj* player = &g_Player;
-    struct BackgroundObj* obj;
     struct PlayerObj* entity = &g_Entity;
+    struct BackgroundObj* obj;
 
     obj = &background_objects[player->bg_offset];
     if (entity->active != 0) {

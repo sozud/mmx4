@@ -98,7 +98,8 @@ void func_800B8114(struct EffectObj* self)
                             child->unk40 = (u16)(OBJECT_STAGE_TEXTURE(func_8002938C((u8)child->id) & 0xFF));
                             child->unk42 = VISUAL_STAGE_PALETTE(func_8002938C((u8)child->id) & 0xFF);
                             child->sprite_frames = (const u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C((u8)child->id) & 0xFF];
-                            if (++self->ext.effect_12.spawned >= self->ext.effect_12.child_count) {
+                            self->ext.effect_12.spawned++;
+                            if (self->ext.effect_12.spawned >= self->ext.effect_12.child_count) {
                                 self->unk5 = 2;
                             }
                         }

@@ -55,8 +55,8 @@ void dragon_rubble_init(struct MiscObj* self)
     resource_index = func_8002938C(0x85);
     menu_frame_offsets = SP_MENU_FRAMES;
     resource_index = menu_frame_offsets[resource_index];
-    self->bg_offset = 0;
     self->unk3C = (u8*)menu_frame_offsets + resource_index;
+    self->bg_offset = 0;
     self->unk15 = get_random() & PLAYER_FACING_RIGHT;
     self->unk16 = VISUAL_SATURN_LAYER(7);
     self->x_vel.val = 0;
@@ -97,8 +97,8 @@ void func_800C899C(struct MiscObj* self)
     struct MainObj* owner;
 
     owner = self->ext.misc_4.owner;
-    self->animation_table = (const u8* const*)dragon_rubble_animations;
     self->state++;
+    self->animation_table = (const u8* const*)dragon_rubble_animations;
 
     self->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x85));
     self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x85));
@@ -173,8 +173,8 @@ void func_800C8BDC(struct MiscObj* arg0)
 {
     struct MainObj* owner = arg0->ext.misc_4.owner;
 
-    arg0->unk5 = 0x10;
     arg0->state++;
+    arg0->unk5 = 0x10;
     arg0->animation_table = (u32**)dragon_rubble_animations;
 
     arg0->unk42 = OBJECT_STAGE_CLUT(0x85);

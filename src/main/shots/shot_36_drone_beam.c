@@ -40,11 +40,11 @@ void drone_beam_init(struct ShotObj* self)
     self->unk60 = 6;
     self->unk84.value = 0x6E;
     owner = self->unk7C;
+    self->state++;
+    self->unk42 &= 0x7FFF;
     self->unk68 = NULL;
     self->unk54 = NULL;
     self->unk5C = 0;
-    self->state++;
-    self->unk42 &= 0x7FFF;
 
     if (self->unk2 != 0) {
         set_animation(self, 4);
@@ -78,7 +78,7 @@ void func_800A3A4C(struct ShotObj* self)
     owner = self->unk7C;
     animate_object(ANIMATED_OBJECT(self));
 
-    if ((u32)(self->unk84.value - 0x1A) < 0x4A) {
+    if (self->unk84.value < 0x64 && self->unk84.value > 0x19) {
         func_8002D9BC(self);
     }
 

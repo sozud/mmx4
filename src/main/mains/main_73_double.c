@@ -106,9 +106,9 @@ void func_8008BA38(struct MainObj* self)
     {
         struct MainObj* o = self;
         u32 tex = OBJECT_STAGE_TEXTURE(index);
+        o->unk40 = tex;
         o->animation_table = (const u8* const*)double_animations;
         o->unk16 = VISUAL_SATURN_LAYER(4);
-        o->unk40 = tex;
         set_animation(o, 0);
     }
 }
@@ -287,8 +287,8 @@ void double_spawn_afterimage(struct MainObj* self, s8 arg1)
 
 void double_wait_start(struct MainObj* self)
 {
-    self->unk7 = 0;
     self->unk6++;
+    self->unk7 = 0;
     self->unk7C = 0x3C;
     double_face_player(self);
     set_animation(self, 1);
@@ -297,7 +297,6 @@ void double_wait_start(struct MainObj* self)
 // double_pick_attack
 void func_8008C10C(struct MainObj* self)
 {
-    u8 frame;
     u8* script;
 
     if (self->unk7C == 0) {
@@ -310,9 +309,8 @@ void func_8008C10C(struct MainObj* self)
         }
         self->ext.main_73.cycle_step++;
         script = self->ext.main_73.cycle_script;
-        frame = script[self->ext.main_73.cycle_step];
-        self->unk5 = frame;
-        if ((s8)frame == -1) {
+        self->unk5 = script[self->ext.main_73.cycle_step];
+        if ((s8)self->unk5 == -1) {
             self->ext.main_73.cycle_step = 0;
             self->unk5 = 2;
         }
@@ -498,10 +496,10 @@ void func_8008C664(struct MainObj* self)
                 direction = 16;
         }
         set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
-        self->gravity = 0;
-        self->x_accel = 0;
         self->x_speed *= 8;
         self->y_speed *= 8;
+        self->gravity = 0;
+        self->x_accel = 0;
         move_with_gravity(ANIMATED_OBJECT(self));
         set_animation(self, 7);
         self->hurt_box = &double_slide_hurt_box;

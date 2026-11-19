@@ -131,8 +131,8 @@ void func_800BB364(struct EffectObj* arg0)
         arg0->ext.effect_26.timer--;
         spawn_explosion(BASE_OBJECT(arg0));
     } else {
-        arg0->ext.effect_26.timer = 0x64;
         arg0->state++;
+        arg0->ext.effect_26.timer = 0x64;
         g_FilterModeR = 0;
         g_FilterModeG = 0;
         g_FilterModeB = 0;

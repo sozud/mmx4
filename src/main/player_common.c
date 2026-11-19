@@ -16,7 +16,7 @@
 #include "main/player_special.h"
 
 struct PlayerDashEffectOffset {
-    u16 x, y;
+    s16 x, y;
 };
 
 extern u8 player_death_orb_directions[4][8];
@@ -281,12 +281,12 @@ void (*player_entry_funcs[])(struct PlayerObj*) = {
     player_entry_ride,
 };
 
-u16 player_stage_3_entry_y[2][4] = {
+s16 player_stage_3_entry_y[2][4] = {
     { 0x0000, 0x00AB, 0x09CB, 0x025B },
     { 0x0000, 0x01AB, 0x08AB, 0x0000 },
 };
 
-u16 player_stage_6_entry_y[6] = {
+s16 player_stage_6_entry_y[6] = {
     0x00CB,
     0x03BB,
     0x02CB,
@@ -295,7 +295,7 @@ u16 player_stage_6_entry_y[6] = {
     0x03BB,
 };
 
-u16 player_stage_12_entry_y[20] = {
+s16 player_stage_12_entry_y[20] = {
     0x0000,
     0x0000,
     0x069B,
@@ -533,14 +533,14 @@ void player_init_clone(void)
     struct PlayerObj* entity = &g_Entity;
 
     reset_entity(entity);
-    entity->hp = engine_obj.max_hp;
     entity->is_clone = 1;
+    entity->hp = engine_obj.max_hp;
+    entity->hud_hp = engine_obj.max_hp;
+    entity->spawn_hp = engine_obj.max_hp;
     entity->animation_table = D_80119DF0;
     entity->unk50 = 0;
     entity->unk54 = 0;
     entity->unk68 = NULL;
-    entity->hud_hp = engine_obj.max_hp;
-    entity->spawn_hp = engine_obj.max_hp;
     entity->unk38 = (s32*)((u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
     entity->unk3C = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0];
     entity->unk40 = PLAYER_CLONE_TEXTURE_BASE;
@@ -551,7 +551,7 @@ void player_init_clone(void)
 
 void player_update_init(struct PlayerObj* self)
 {
-    s32 entry;
+    u32 entry;
 
     if (self->is_clone != 0) {
         self->on_screen = 1;
@@ -976,55 +976,53 @@ void player_reset_palette(struct PlayerObj* self)
     u32 a2;
 
     if (self->unk2 == 0) {
-        if (self->is_clone == 0) {
-            if (self->weapon == 0) {
-                player_set_palette(self, 0);
-            } else {
-                src = (u16*)SP_PALETTE_BANK + 0x30 + (((self->weapon - 1) << 6));
-                dst = SP_PALETTE;
-                for (a2 = 0; a2 < 0x20; a2++) {
-                    *dst++ = *src++;
-                }
-                dst = SP_PALETTE + 0x130;
-                for (a2 = 0; a2 < 0x20; a2++) {
-                    *dst++ = *src++;
-                }
-            }
-            need_palette_load |= 1;
+        if (self->is_clone != 0) {
+            return;
         }
-    } else {
-        if (engine_obj.unk37) {
-            player_copy_palette(self, 0xD, 0);
+        if (self->weapon == 0) {
+            player_set_palette(self, 0);
         } else {
-            player_copy_palette(self, 0, 0);
+            src = (u16*)SP_PALETTE_BANK + (((self->weapon - 1) << 6) + 0x30);
+            dst = SP_PALETTE;
+            for (a2 = 0; a2 < 0x20; a2++) {
+                *dst++ = *src++;
+            }
+            dst = SP_PALETTE + 0x130;
+            for (a2 = 0; a2 < 0x20; a2++) {
+                *dst++ = *src++;
+            }
         }
-        need_palette_load |= 1;
+    } else if (engine_obj.unk37) {
+        player_copy_palette(self, 0xD, 0);
+    } else {
+        player_copy_palette(self, 0, 0);
     }
+    need_palette_load |= 1;
 }
 
 void player_set_palette(struct PlayerObj* self, s32 palette)
 {
-    u16* dst;
     u16* src;
     u32 i;
+    u16* dst;
 
     if (self->unk2 == 0) {
-        if (self->is_clone == 0) {
-            src = SP_PALETTE_BANK[palette];
-            dst = SP_PALETTE;
-            for (i = 0; i < 0x10; i++) {
-                *dst++ = *src++;
-            }
-            dst = SP_PALETTE + 0x130;
-            for (i = 0; i < 0x20; i++) {
-                *dst++ = *src++;
-            }
-            need_palette_load |= 1;
+        if (self->is_clone != 0) {
+            return;
+        }
+        src = SP_PALETTE_BANK[palette];
+        dst = SP_PALETTE;
+        for (i = 0; i < 0x10; i++) {
+            *dst++ = *src++;
+        }
+        dst = SP_PALETTE + 0x130;
+        for (i = 0; i < 0x20; i++) {
+            *dst++ = *src++;
         }
     } else {
         player_copy_palette(self, palette, 0);
-        need_palette_load |= 1;
     }
+    need_palette_load |= 1;
 }
 
 void player_play_voice(struct PlayerObj* self, u8 voice)
@@ -1102,28 +1100,29 @@ void player_set_idle_animation(struct PlayerObj* self)
 
 void player_air_steer(struct PlayerObj* self)
 {
-    if (!self->input_locked && (self->input.buttons.held & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT))) {
+    if (self->input_locked) {
+        self->x_vel.val = 0;
+        move_with_gravity(ANIMATED_OBJECT(self));
+        return;
+    }
+    if (self->input.buttons.held & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT)) {
         if (self->input.buttons.held & PLAYER_INPUT_RIGHT) {
             self->unk15 = PLAYER_FACING_RIGHT;
-            if (!(self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT)) {
-                if (self->dash_momentum != 0) {
-                    self->x_vel.val = FIXED(4.125);
-                } else {
-                    self->x_vel.val = FIXED(2);
-                }
-            } else {
+            if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
                 self->x_vel.val = 0;
+            } else if (self->dash_momentum != 0) {
+                self->x_vel.val = FIXED(4.125);
+            } else {
+                self->x_vel.val = FIXED(2);
             }
         } else {
             self->unk15 = 0;
-            if (!(self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT)) {
-                if (self->dash_momentum != 0) {
-                    self->x_vel.val = FIXED(-4.125);
-                } else {
-                    self->x_vel.val = FIXED(-2);
-                }
-            } else {
+            if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT) {
                 self->x_vel.val = 0;
+            } else if (self->dash_momentum != 0) {
+                self->x_vel.val = FIXED(-4.125);
+            } else {
+                self->x_vel.val = FIXED(-2);
             }
         }
     } else {
@@ -1151,7 +1150,6 @@ void player_spawn_dash_dust(struct PlayerObj* self)
 
 void player_spawn_dash_spark(struct PlayerObj* self)
 {
-    u8 facing;
     struct VisualObj* visual_obj;
     s32* sprite_frames;
 
@@ -1178,9 +1176,8 @@ void player_spawn_dash_spark(struct PlayerObj* self)
     visual_obj->unk40 = PLAYER_EFFECT_TEXTURE_BASE;
     visual_obj->unk42 = PLAYER_PALETTE_BASE + 4;
     visual_obj->unk16 = 1;
-    facing = self->unk15;
-    visual_obj->unk15 = facing;
-    if (facing == 0) {
+    visual_obj->unk15 = self->unk15;
+    if (visual_obj->unk15 == 0) {
         visual_obj->x_pos.i.hi = self->x_pos.i.hi + player_dash_spark_offsets[self->unk2].x;
     } else {
         visual_obj->x_pos.i.hi = self->x_pos.i.hi - player_dash_spark_offsets[self->unk2].x;
@@ -1220,7 +1217,6 @@ void player_spawn_dash_splash(struct PlayerObj* self)
 
 void player_spawn_wall_kick_spark(struct PlayerObj* self)
 {
-    u8 facing;
     struct VisualObj* visual_obj;
     s32* sprite_frames;
 
@@ -1240,9 +1236,8 @@ void player_spawn_wall_kick_spark(struct PlayerObj* self)
         visual_obj->unk40 = PLAYER_EFFECT_TEXTURE_BASE;
         visual_obj->unk42 = PLAYER_PALETTE_BASE + 2;
         visual_obj->unk16 = 0;
-        facing = self->unk15;
-        visual_obj->unk15 = facing;
-        if (facing == 0) {
+        visual_obj->unk15 = self->unk15;
+        if (visual_obj->unk15 == 0) {
             visual_obj->x_pos.i.hi = self->x_pos.i.hi + PLAYER_WALL_KICK_X(self->unk2);
         } else {
             visual_obj->x_pos.i.hi = self->x_pos.i.hi - PLAYER_WALL_KICK_X(self->unk2);
@@ -1292,6 +1287,11 @@ void player_check_splash_tile(struct PlayerObj* self)
 
 void player_check_splash(struct PlayerObj* self)
 {
+#ifdef MMX4_GAMECUBE
+    if (self->unk68 == NULL) {
+        return;
+    }
+#endif
     if (func_8002D900(self) == 0x24) {
 #ifdef MMX4_PC
         s16 temp = self->y_pos.i.hi;

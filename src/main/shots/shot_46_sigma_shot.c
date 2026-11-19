@@ -397,6 +397,20 @@ void sigma_shot_bolt(struct ShotObj* self)
     }
 }
 
+#ifdef MMX4_SATURN
+#define SIGMA_SHOT_IMPACT_SOUND(self)                    \
+    do {                                                 \
+        func_8001540C(6, 6, NULL);                       \
+        func_8001540C(2, SATURN_SOUND(6, 0xC5), (self)); \
+    } while (0)
+#else
+#define SIGMA_SHOT_IMPACT_SOUND(self)                    \
+    do {                                                 \
+        stop_sound(2, 5);                                \
+        func_8001540C(2, SATURN_SOUND(6, 0xC5), (self)); \
+    } while (0)
+#endif
+
 // sigma_planted_scythe_fly
 void func_800A8E50(struct ShotObj* self)
 {
@@ -409,10 +423,11 @@ void func_800A8E50(struct ShotObj* self)
         self->unk5++;
         start_screen_shake_x(0x14, 4, 2);
         set_animation(self, 0x1F);
+        self->unk15 = (self->unk70 & 2) ? 0 : PLAYER_FACING_RIGHT;
         self->timer = 0x18;
-        self->unk15 = ((self->unk70 & 2) == 0) << PLAYER_FACING_SHIFT;
         self->unk95 = 3;
         spawn_debris_offset(6, sigma_shot_debris, MAIN_OBJECT(self), self->unk15 != 0 ? 0xFFED0000 : 0x130000, 0xFFEA0000);
+        SIGMA_SHOT_IMPACT_SOUND(self);
     } else if (self->unk70 & 8) {
         self->unk5++;
         self->unk15 ^= PLAYER_FACING_RIGHT;
@@ -421,15 +436,8 @@ void func_800A8E50(struct ShotObj* self)
         self->timer = 0x24;
         self->unk95 = 4;
         spawn_debris_offset(6, sigma_shot_debris, MAIN_OBJECT(self), self->unk15 != 0 ? 0xFFF10000 : 0xF0000, 0);
-    } else {
-        return;
+        SIGMA_SHOT_IMPACT_SOUND(self);
     }
-#ifdef MMX4_SATURN
-    func_8001540C(6, 6, NULL);
-#else
-    stop_sound(2, 5);
-#endif
-    func_8001540C(2, SATURN_SOUND(6, 0xC5), self);
 }
 
 void sigma_planted_scythe_stuck(struct ShotObj* self)
@@ -459,10 +467,10 @@ void sigma_planted_scythe_recall(struct ShotObj* self)
     self->unk5++;
     weapon = self->unk7C;
     x = weapon->x_pos.i.hi;
-    if (weapon->unk15 == 0) {
-        target_x = x - 0x21;
-    } else {
+    if (weapon->unk15 != 0) {
         target_x = x + 0x21;
+    } else {
+        target_x = x - 0x21;
     }
     self->unk90.i.lo = target_x;
     self->unk90.i.hi = weapon->y_pos.i.hi - 0x15;
@@ -540,8 +548,8 @@ void sigma_dart_strike(struct ShotObj* self)
              self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10)
             & 0xFF)
         || (self->unk98 != 0)) {
-        self->unk5++;
         self->timer = 0xF0;
+        self->unk5++;
     }
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));

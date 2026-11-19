@@ -70,26 +70,26 @@ u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y,
 // stage_select_panel_init
 void func_800D4334(struct QuadObj* self)
 {
+    self->active |= 0x92;
+    self->unk34 = 0;
     self->unk36 = 0x13;
     self->bg_offset = -1;
-    self->vertices[2].y.val = 0x900000;
-    self->vertices[3].y.val = 0x900000;
-    self->vertices[0].y.val = 0x900000;
-    self->vertices[1].y.val = 0x900000;
     self->vertices[2].x.val = 0xA00000;
-    self->ext.quad_1.steps = 0x1E;
+    self->vertices[2].y.val = 0x900000;
     self->vertices[3].x.val = 0xA00000;
+    self->vertices[3].y.val = 0x900000;
     self->vertices[0].x.val = 0xA00000;
+    self->vertices[0].y.val = 0x900000;
     self->vertices[1].x.val = 0xA00000;
-    self->unk34 = 0;
+    self->vertices[1].y.val = 0x900000;
     self->x_pos.val = 0;
     self->y_pos.val = 0;
+    self->ext.quad_1.steps = 0x1E;
     self->ext.quad_1.settled[0] = 0;
     self->ext.quad_1.settled[1] = 0;
     self->ext.quad_1.settled[2] = 0;
     self->ext.quad_1.settled[3] = 0;
     self->ext.quad_1.unk42 = 1;
-    self->active |= 0x92;
     if (!(self->unk2 & 0x10)) {
         self->ext.quad_1.delay = self->unk2 << 3;
     } else {
@@ -103,7 +103,6 @@ void func_800D4334(struct QuadObj* self)
 // stage_select_panel_main
 void func_800D43F4(struct QuadObj* self)
 {
-    struct QuadVertex* vertex;
     struct MiscObj* misc;
     struct EffectObj* effect;
     s16* target;
@@ -111,6 +110,7 @@ void func_800D43F4(struct QuadObj* self)
     s32 dy;
     s32 i;
     s32 region;
+    struct QuadVertex* vertex;
 
     if (self->ext.quad_1.delay != 0) {
         self->ext.quad_1.delay--;

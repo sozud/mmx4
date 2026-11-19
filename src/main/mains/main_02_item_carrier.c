@@ -110,19 +110,19 @@ void func_80042950(struct MainObj* arg0)
 // item_carrier_init
 void func_80042A48(struct MainObj* self)
 {
+    self->state++;
     self->unk5 = 0;
     self->unk2 = 0;
-    self->state++;
     self->bg_offset = g_Player.bg_offset;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << PLAYER_FACING_SHIFT;
     self->animation_table = (const u8* const*)item_carrier_animations;
+    self->attack_box = NULL;
     self->unk16 = VISUAL_SATURN_LAYER(4);
+    self->terrain_box = NULL;
     self->hp = 1;
     self->contact_damage = 1;
-    self->attack_box = NULL;
-    self->terrain_box = NULL;
     self->collision_data = (const u16*)D_801063F0;
     self->air_state = 0;
     self->x_speed = 0;
@@ -254,8 +254,8 @@ void item_carrier_hover_start(struct MainObj* self)
 void item_carrier_hover_bob(struct MainObj* self)
 {
     if (self->unk7E == 0) {
+        self->y_speed *= -1;
         self->unk7E = 0x14;
-        self->y_speed = -self->y_speed;
     } else {
         self->unk7E--;
     }
@@ -386,8 +386,8 @@ void item_carrier_leave_side_turn(struct MainObj* self)
         if (self->unk15 != 0) {
             velocity = FIXED(2);
         }
-        self->y_speed = FIXED(0.14453125);
         self->x_speed = velocity;
+        self->y_speed = FIXED(0.14453125);
         set_animation(self, 0);
         self->unk7C = 0x258;
     }

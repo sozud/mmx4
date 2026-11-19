@@ -61,23 +61,23 @@ void func_8005ECA8(struct MainObj* arg0)
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_80107374;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->x_speed = 0;
-    arg0->animation_table = (const u8* const*)wheel_charger_animations;
-    arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->terrain_box = &D_800FE1B8;
-    arg0->hurt_box = &D_800FE1B0;
     arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->air_state = 0;
+    arg0->animation_table = (const u8* const*)wheel_charger_animations;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
+    arg0->terrain_box = &D_800FE1B8;
+    arg0->hurt_box = &D_800FE1B0;
     arg0->attack_box = &D_800FE1B4;
-    arg0->unk1C.val = arg0->y_pos.val;
     switch (arg0->unk2) {
     case 0:
-        arg0->x_speed = -0x28000;
         arg0->unk15 = 0;
         arg0->ext.main_35.unk80 = 0;
+        arg0->x_speed = -0x28000;
         arg0->unk5 = 2;
         break;
     case 1:
@@ -117,7 +117,11 @@ void wheel_charger_main(struct MainObj* self)
     if (self->unk5 == 4) {
         return;
     }
-    if (engine_obj.stage != 3 || g_Player.x_pos.i.hi <= 0x9B6) {
+    if (engine_obj.stage == 3) {
+        if (g_Player.x_pos.i.hi <= 0x9B6) {
+            func_8002D9BC(self);
+        }
+    } else {
         func_8002D9BC(self);
     }
     self->ext.main_35.saved_unk5 = self->unk5;
@@ -251,11 +255,13 @@ void wheel_charger_charge_spin(struct MainObj* self)
     if (self->animation_step.fields.event != 0) {
         if (self->unk15 == 0) {
             self->x_speed = FIXED(-4);
-            self->unk6 = 3;
         } else {
             self->x_speed = FIXED(4);
-            self->unk6 = 3;
         }
+#ifdef MMX4_GAMECUBE
+        set_animation(self, 3);
+#endif
+        self->unk6 = 3;
     }
 }
 

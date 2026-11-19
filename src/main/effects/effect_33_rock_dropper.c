@@ -156,14 +156,14 @@ void func_800BC92C(struct EffectObj* arg0)
                 arg0->state = 2;
                 return;
             }
-        } else if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi < 0x181) {
+        } else if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi <= 0x180) {
             arg0->state = 3;
             return;
         }
         switch (arg0->unk5) {
         case 0:
             if (ext->variant == 0) {
-                if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi < 0x181)
+                if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi <= 0x180)
                     return;
                 shot = find_free_shot_obj();
                 if (shot != NULL) {
@@ -172,7 +172,7 @@ void func_800BC92C(struct EffectObj* arg0)
                     shot->unk15 = 0;
                 }
             } else {
-                if ((u32)(arg0->x_pos.i.hi - g_Player.x_pos.i.hi - 0x181) >= 0x23F)
+                if ((u32)(arg0->x_pos.i.hi - g_Player.x_pos.i.hi - 0x181) > 0x23E)
                     return;
                 shot = find_free_shot_obj();
                 if (shot != NULL) {
@@ -228,7 +228,7 @@ void func_800BC92C(struct EffectObj* arg0)
         distance = player_x - x;
         if (distance < 0)
             distance = x - player_x;
-        if (distance >= 0x20) {
+        if (distance > 0x1F) {
             ext->timer = ext->period;
             return;
         }
@@ -271,14 +271,14 @@ void func_800BC92C(struct EffectObj* arg0)
                 arg0->state = 2;
                 return;
             }
-        } else if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi < 0x181) {
+        } else if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi <= 0x180) {
             arg0->state = 3;
             return;
         }
         switch (arg0->unk5) {
         case 0:
             if (arg0->ext.effect_33.variant == 0) {
-                if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi < 0x181)
+                if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi <= 0x180)
                     return;
                 shot = find_free_shot_obj();
                 if (shot != NULL) {
@@ -292,7 +292,7 @@ void func_800BC92C(struct EffectObj* arg0)
                 }
                 arg0->unk5 = 1;
             } else {
-                if ((u32)(arg0->x_pos.i.hi - g_Player.x_pos.i.hi - 0x181) >= 0x23F)
+                if ((u32)(arg0->x_pos.i.hi - g_Player.x_pos.i.hi - 0x181) > 0x23E)
                     return;
                 shot = find_free_shot_obj();
                 if (shot != NULL) {
@@ -351,7 +351,7 @@ void func_800BC92C(struct EffectObj* arg0)
             }
             player_x = g_Player.x_pos.i.hi;
             distance = player_x - x;
-            if (distance >= 0 ? distance < 0x20 : x - player_x < 0x20) {
+            if (distance >= 0 ? distance < 0x20 : x - player_x <= 0x1F) {
                 if (--arg0->ext.effect_33.timer != 0)
                     return;
                 shot = find_free_shot_obj();

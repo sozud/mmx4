@@ -47,8 +47,8 @@ void stock_shot_init(struct WeaponObj* arg0)
     arg0->unk2C = 0;
     set_animation(arg0, 0x18);
     func_8001540C(1, 9, arg0);
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     update_on_screen(BASE_OBJECT(arg0), 0x1A, 0x12);
 }
 

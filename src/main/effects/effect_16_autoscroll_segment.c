@@ -5,8 +5,8 @@
 #include "main/objects.h"
 
 struct Effect16Coordinate {
-    u16 primary;
-    u16 secondary;
+    s16 primary;
+    s16 secondary;
 };
 
 // autoscroll_segment_state_funcs
@@ -36,14 +36,14 @@ void autoscroll_segment_start(struct EffectObj* self)
 
 void autoscroll_segment_wait(struct EffectObj* self)
 {
-    if (background_objects[0].x_pos.i.hi >= *(s16*)&autoscroll_segment_bounds[self->unk2].primary) {
+    if (background_objects[0].x_pos.i.hi >= autoscroll_segment_bounds[self->unk2].primary) {
         self->state++;
     }
 }
 
 void autoscroll_segment_end(struct EffectObj* self)
 {
-    u16 unk6;
+    s16 unk6;
 
     background_objects[0].unk24 = autoscroll_segment_bounds[self->unk2].secondary;
     background_objects[0].unk2A = self->ext.effect_16.saved_background_2A;

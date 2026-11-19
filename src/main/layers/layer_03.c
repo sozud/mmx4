@@ -26,7 +26,7 @@ void func_800D9C84(struct LayerObj* self)
     if (self->unk2 == 0) {
         struct MainObj* boss;
 
-        if (g_Player.x_pos.i.hi < 0x1B61) {
+        if (g_Player.x_pos.i.hi <= 0x1B60) {
             return;
         }
         player_start_script_action(0x14, 0);
@@ -120,7 +120,7 @@ void func_800D9C84(struct LayerObj* self)
     struct ItemObj* item;
 
     if (self->unk2 == 0) {
-        if (g_Player.x_pos.i.hi < 0x1B61) {
+        if (g_Player.x_pos.i.hi <= 0x1B60) {
             return;
         }
         player_start_script_action(0x14, 0);

@@ -51,11 +51,11 @@ void func_8003FD08(struct RideArmorObj*);
 #ifdef MMX4_PC
 extern void func_8003DC44 (struct BaseObj *arg0, s8 arg1);
 
-extern s32 func_8003DC50 (struct RideArmorObj *arg0);
+extern u32 func_8003DC50 (struct RideArmorObj *arg0);
 #endif
 
 s32 func_8003D8A8(struct RideArmorObj*, s32, s32);
-s32 func_8003DCD8(struct RideArmorObj*);
+u32 func_8003DCD8(struct RideArmorObj*);
 
 void func_8003D6EC(struct AnimatedObj*, s32);
 

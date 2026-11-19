@@ -49,6 +49,17 @@ void func_800CA228(struct MiscObj* self)
     self->bg_offset = 0;
     self->unk15 = 0;
     if (self->unk2 < 0) {
+#ifdef MMX4_GAMECUBE
+        if (self->unk2 == 0x88) {
+            self->unk42 = OBJECT_CLUT(0x780A);
+            self->unk16 = 0x10;
+            self->unk2 = 8;
+            set_animation_frame(ANIMATED_OBJECT(self), 0, self->unk2);
+            self->x_pos.i.hi = 0x60;
+            self->y_pos.i.hi = 0x180;
+            self->state = 4;
+        }
+#endif
         index = self->unk2 & 0x7F;
         self->unk42 = OBJECT_CLUT((s8)(index % 16) | (((index / 16) | 0x1E0) << 6));
         self->unk16 = 0x12;
@@ -57,7 +68,7 @@ void func_800CA228(struct MiscObj* self)
     } else {
         self->unk42 = OBJECT_CLUT(0x780A);
         self->unk16 = 0x10;
-        if ((u8)(self->unk2 - 8) < 2) {
+        if (self->unk2 == 8 || self->unk2 == 9) {
             if (self->unk2 == 8) {
                 self->x_pos.i.hi = 0x60;
                 self->y_pos.i.hi = 0x180;

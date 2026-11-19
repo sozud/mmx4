@@ -19,6 +19,9 @@
 #include "main/1E1BC.h"
 #include "main/collision_bounds.h"
 #endif
+#ifdef MMX4_GAMECUBE
+extern u8 gc_sigma_music_opened;
+#endif
 
 extern struct Unk_unk68 D_80105374;
 
@@ -255,8 +258,12 @@ void sigma_final_intro_lock_camera(struct MainObj* self)
     self->unk5++;
     D_80141BD0 = 1;
 #else
-    self->ext.main_74.timer = 0x64;
     self->unk5++;
+    self->ext.main_74.timer = 0x64;
+#ifdef MMX4_GAMECUBE
+    gc_sigma_music_opened = 0;
+    self->unk7 = 0;
+#endif
     func_80016FB4(3);
 #endif
 }
@@ -281,6 +288,56 @@ void sigma_final_intro_wait_load(struct MainObj* self)
     }
 }
 #else
+#ifdef MMX4_GAMECUBE
+s32 fn_4_12B4(s32 index);
+s32 fn_4_1290(s32 index, u8 arg1, CdLoadAddress dest);
+s32 fn_4_1288(void);
+void fn_4_1284(void);
+extern u8 gc_sigma_music_opened;
+extern s32 gc_sigma_music_timer;
+
+void sigma_final_intro_start_music(struct MainObj* self)
+{
+    s32 status;
+
+    switch (self->unk7) {
+    case 0:
+        if (--self->ext.main_74.timer == 0) {
+            gc_sigma_music_opened = 1;
+            self->unk7 = 1;
+        }
+        break;
+    case 1:
+        if (fn_4_12B4(0x81) != 0) {
+            self->unk7 = 2;
+        }
+        break;
+    case 2:
+        if (fn_4_1290(0x81, 4, D_80141F30[2]) != 0) {
+            self->unk7 = 3;
+            gc_sigma_music_timer = 0x708;
+        }
+        break;
+    case 3:
+        gc_disc_error_screen();
+        status = fn_4_1288();
+        if (status == 0) {
+            if (gc_sigma_music_timer <= 0) {
+                self->unk7 = 1;
+            }
+            gc_sigma_music_timer--;
+        } else if (status == 1) {
+            self->unk7 = 4;
+            fn_4_1284();
+        }
+        break;
+    case 4:
+        self->unk5++;
+        self->unk7 = 0;
+        break;
+    }
+}
+#else
 void sigma_final_intro_start_music(struct MainObj* self)
 {
     if (--self->ext.main_74.timer == 0) {
@@ -296,6 +353,7 @@ void sigma_final_intro_start_music(struct MainObj* self)
         self->unk5++;
     }
 }
+#endif
 
 void sigma_final_intro_wait_load(struct MainObj* self)
 {
@@ -312,6 +370,9 @@ void sigma_final_intro_load(struct MainObj* self)
     saturn_music_request(14, 0, 0, 0);
 #else
     func_8001653C();
+#ifdef MMX4_GAMECUBE
+    gc_sigma_music_opened = 0;
+#endif
 #endif
     self->unk5++;
 }
@@ -484,6 +545,7 @@ void sigma_final_appear_fill_health(struct MainObj* self)
             }
             self->hp++;
         }
+        update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     } else {
         set_animation(self, 0);
         self->unk5 = 2;
@@ -492,8 +554,8 @@ void sigma_final_appear_fill_health(struct MainObj* self)
         D_8013B8B0 = &D_80105368;
         MAIN_74_COLLISION_BOUNDS = &D_8010536C;
         player_end_script_action();
+        update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
-    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 void sigma_final_appear(struct MainObj* self)
@@ -749,6 +811,9 @@ void sigma_final_big_beam_charge(struct MainObj* self)
             shotObj->unk2 = self->ext.main_74.animation_index + 4;
             shotObj->unk7C = WEAPON_OBJECT(self);
         }
+#ifdef MMX4_GAMECUBE
+        func_8001540C(2, 1, self);
+#endif
         self->unk6++;
         D_8013B8A8 = OBJECT_HEADER(miscObj);
     }
@@ -989,8 +1054,8 @@ void func_8008E748(struct MainObj* self)
             }
         }
         if (!found) {
-            self->contact_damage = 9;
             self->unk62 = 0;
+            self->contact_damage = 9;
             self->unk5 = 0xB;
             self->unk6 = 0;
             STOP_SOUND(2, 0xB, 0x5);
@@ -1003,11 +1068,9 @@ void sigma_final_grab_release(struct MainObj* self)
 {
     struct ShotObj* current;
     s32 found;
-    s16 timer;
 
-    timer = self->unk7C;
-    if (timer != 0) {
-        self->unk7C = timer - 1;
+    if (self->unk7C != 0) {
+        self->unk7C--;
         return;
     }
 
@@ -1085,8 +1148,8 @@ void sigma_final_spit_fire(struct MainObj* self)
             shot->active = 0x41;
             shot->id = 0x38;
             shot->unk2 = 1;
-            shot->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x10;
-            shot->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x10;
+            shot->x_pos.i.hi = self->x_pos.i.hi + 0x10;
+            shot->y_pos.i.hi = self->y_pos.i.hi + 0x10;
             shot->unk7C = WEAPON_OBJECT(self);
         }
     }
@@ -1245,8 +1308,8 @@ void func_8008F1A8(struct MainObj* self)
 
     sigma_final_step_funcs[self->unk5](self);
     if (self->ext.main_74.target != 0) {
-        self->unk65 = D_8013B89C;
         self->collision_data = D_801060F0;
+        self->unk65 = D_8013B89C;
         self->hurt_box = D_8013B8B4;
         func_8002DD04(self);
         D_8013B89C = self->unk65;
@@ -1261,11 +1324,11 @@ void func_8008F1A8(struct MainObj* self)
         D_8013B898 = self->unk65;
         if (hit < 0) {
             STOP_SOUND(2, 1, 0x5);
+            self->state++;
             self->unk5 = 0;
             self->unk6 = 0;
-            self->unk62 = 0;
-            self->state++;
             self->unk42 &= 0x7FFF;
+            self->unk62 = 0;
             if (D_8013B8B8 != 0) {
                 self->ext.main_74.death_kind = 2;
                 player_start_script_action(0x14, g_Player.unk15);

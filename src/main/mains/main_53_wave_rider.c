@@ -247,9 +247,10 @@ void wave_rider_move(struct MainObj* self)
 {
     if (self->unk6 == 0) {
         func_8006B2A4(self);
-    } else {
-        func_8006B398(self);
+        move_with_gravity(self);
+        return;
     }
+    func_8006B398(self);
     move_with_gravity(self);
 }
 
@@ -301,7 +302,6 @@ void func_8006B5F8(struct MainObj* arg0)
 // wave_rider_ride_back
 void func_8006B6B0(struct MainObj* arg0)
 {
-    u8 tile;
 
     arg0->ext.main_53.unk84 = 0;
     wave_rider_move(arg0);
@@ -314,9 +314,8 @@ void func_8006B6B0(struct MainObj* arg0)
         update_on_screen(BASE_OBJECT(arg0), 0x30, 0x20);
         return;
     }
-    tile = func_8006B1C4(arg0, 0);
-    arg0->ext.main_53.unk81 = tile;
-    switch (tile) {
+    arg0->ext.main_53.unk81 = func_8006B1C4(arg0, 0);
+    switch (arg0->ext.main_53.unk81) {
     case 5:
     case 6:
     case 7:
@@ -390,8 +389,8 @@ void wave_rider_main(struct MainObj* self)
         destroyed = func_8002DD04(self) < 0;
     }
     if (destroyed) {
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
         self->unk42 &= 0x7FFF;
         spawn_debris(8, wave_rider_debris, self);
         spawn_debris(7, wave_rider_rider_debris, self);
@@ -405,9 +404,9 @@ void wave_rider_main(struct MainObj* self)
             self->x_pos.i.hi -= 8;
             self->y_pos.i.hi += 0x10;
             spawn_common_effect(self, 4);
-            self->ext.main_53.unk85 = 2;
             self->x_pos.i.hi += 8;
             self->y_pos.i.hi -= 0x10;
+            self->ext.main_53.unk85 = 2;
         } else {
             self->ext.main_53.unk85--;
         }
@@ -417,8 +416,8 @@ void wave_rider_main(struct MainObj* self)
     CollisionRelated(PLAYER_OBJECT(self));
     func_8002D9BC(self);
     if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80) != 0) {
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
     }
 }
 

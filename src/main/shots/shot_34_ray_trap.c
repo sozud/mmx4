@@ -186,8 +186,8 @@ void func_800A19A8(struct ShotObj* arg0)
     switch (arg0->unk7) {
     case 0:
         arg0->unk7++;
-        arg0->y_vel.val = 0xA0000;
         arg0->x_vel.val = 0;
+        arg0->y_vel.val = 0xA0000;
         arg0->unk8C.bytes[1] = 2;
     case 1:
         if (arg0->unk8C.bytes[1] == 0) {
@@ -200,16 +200,16 @@ void func_800A19A8(struct ShotObj* arg0)
         break;
     case 2:
         if (owner->ext.main_55.unk87 != 0) {
-            arg0->unk7 = 0;
             arg0->unk6++;
+            arg0->unk7 = 0;
             break;
         }
         arg0->unk84.halves[0] = 0x20;
         arg0->unk84.halves[1] = 0x20;
         func_80021DBC((s16*)&arg0->unk84.halves[0], (s16*)&arg0->unk84.halves[1], arg0->unk8C.bytes[0]);
         if (arg0->timer == 0) {
-            arg0->timer = 3;
             arg0->unk8C.bytes[0] = (arg0->unk8C.bytes[0] - 1) & 0xF;
+            arg0->timer = 3;
         } else {
             arg0->timer--;
         }
@@ -229,8 +229,8 @@ void func_800A1B1C(struct ShotObj* arg0)
 
     if (!((owner->ext.main_55.unk88 >> arg0->unk8A) & 1)) {
         arg0->unk15 = arg0->x_pos.val <= g_Player.x_pos.val ? PLAYER_FACING_RIGHT : 0;
-        arg0->unk7 = 0;
         arg0->unk6++;
+        arg0->unk7 = 0;
     }
     arg0->unk84.halves[0] = 0x20;
     arg0->unk84.halves[1] = 0x20;
@@ -292,7 +292,7 @@ void func_800A1CCC(struct ShotObj* arg0)
             set_animation(arg0, ray_trap_crawl_boxes[0][arg0->unk2]);
         } else if (reverse) {
             arg0->unk15 ^= PLAYER_FACING_RIGHT;
-            arg0->x_vel.val = -arg0->x_vel.val;
+            arg0->x_vel.val *= -1;
         }
         return;
     }
@@ -334,8 +334,8 @@ void func_800A1E3C(struct ShotObj* arg0)
     else
         arg0->x_vel.val = arg0->unk15 != 0 ? 0x30000 : -0x30000;
     set_animation(arg0, ray_trap_drop_boxes[1][arg0->unk2]);
-    arg0->y_pos.i.hi += 0x10;
     arg0->unk68 = &ray_trap_box2;
+    arg0->y_pos.i.hi += 0x10;
     arg0->unk67 = 0;
 }
 

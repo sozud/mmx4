@@ -127,8 +127,8 @@ void func_80093D78(struct WeaponObj* arg0)
     ext->lifetime = 0x96;
     ext->timer = 8;
     set_animation(arg0, 0);
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
     update_on_screen(BASE_OBJECT(arg0), 0x28, 0x38);
 }
@@ -362,8 +362,8 @@ void func_800944B8(struct WeaponObj* arg0)
     arg0->y_vel.val = -0x80000;
     arg0->unk2C = 0;
     set_animation(arg0, 6);
-    arg0->unk5 = 0;
     arg0->state++;
+    arg0->unk5 = 0;
     update_on_screen(BASE_OBJECT(arg0), 0x28, 0x38);
 }
 
@@ -392,7 +392,7 @@ void frost_tower_charged_part_main(struct WeaponObj* arg0)
 
 void frost_shard_update(struct MiscObj* arg0)
 {
-    s32 var_a1;
+    u32 var_a1;
 
     var_a1 = 0;
     if (g_Player.input_locked != 0) {

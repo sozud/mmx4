@@ -65,16 +65,16 @@ void func_80098F88(struct WeaponObj* self)
     }
     self->ext.weapon_60.direction = direction;
     set_velocity_from_angle(MOVING_OBJECT(self), direction);
+    self->x_vel.val *= 6;
+    self->y_vel.val *= 6;
+    self->unk28.val = 0;
+    self->unk2C = 0;
     self->unk5C = 1;
     self->unk60 = 3;
     self->unk88.half = 8;
-    self->unk28.val = 0;
-    self->unk2C = 0;
     self->unk8A = 1;
     self->ext.target = NULL;
     self->unk84.word = 0;
-    self->x_vel.val *= 6;
-    self->y_vel.val *= 6;
     set_animation(self, 0x21);
 }
 

@@ -44,27 +44,24 @@ extern ret_u8 func_8002938C(s32);
 
 void func_80069748(struct MainObj* arg0)
 {
-    s32 resource;
 
     arg0->on_screen = 0;
     arg0->contact_damage = 0;
     arg0->invincibility_timer = 0;
-    resource = func_8002938C(0x28);
-    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x28));
     arg0->unk42 = OBJECT_STAGE_CLUT(0x28);
-    resource = func_8002938C(0x28);
-    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x28)];
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->hurt_box = train_crate_hurt_box;
-    arg0->animation_table = (const u8* const*)train_crate_animations;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->air_state = 0;
+    arg0->hurt_box = train_crate_hurt_box;
+    arg0->animation_table = (const u8* const*)train_crate_animations;
     arg0->attack_box = NULL;
     arg0->terrain_box = NULL;
     arg0->ext.main_50.unk84 = (u8)arg0->unk2 >> 4;
@@ -73,8 +70,8 @@ void func_80069748(struct MainObj* arg0)
         arg0->collision_data = D_80108504;
     else
         arg0->collision_data = D_80108584;
-    arg0->hp = 3;
     arg0->unk15 = 0;
+    arg0->hp = 3;
     arg0->state = 1;
     arg0->unk5 = 1;
 }

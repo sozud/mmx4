@@ -839,8 +839,8 @@ void colonel_guard_pick(struct MainObj* self)
     value = *self->ext.main_69.script;
     if (value == 3) {
         set_animation(self, 2);
-        self->unk7C = 0x3C;
         self->unk6++;
+        self->unk7C = 0x3C;
     } else {
         self->unk5 = value;
         self->unk6 = 0;
@@ -1519,9 +1519,9 @@ void func_800889DC(struct MainObj* arg0)
 
 void colonel_spawn_afterimages(struct MainObj* self)
 {
-    u8 i;
-    struct VisualObj* visual_obj;
     struct VisualObj* previous;
+    struct VisualObj* visual_obj;
+    u8 i;
 
     for (i = 0; i < 3; i++) {
         visual_obj = func_8002AF4C(NULL, 1);

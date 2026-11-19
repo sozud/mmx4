@@ -38,9 +38,9 @@ void despawn_object(struct ObjectHeader* arg0);
 void despawn_object_permanently(struct ObjectHeader* arg0);
 s32 func_8002B560(s8, s8);
 
-struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1);
+struct MiscObj* func_8002AE90(struct MiscObj* arg0, u32 arg1);
 struct UnkObj* find_free_unk_obj(void);
-struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1);
+struct VisualObj* func_8002AF4C(struct VisualObj* arg0, u32 arg1);
 
 void func_8002B3C0(struct BaseObj* arg0);
 void func_8002B458(struct QuadObj* arg0);

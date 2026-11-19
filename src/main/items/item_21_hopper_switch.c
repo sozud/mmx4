@@ -43,7 +43,7 @@ void func_800C52CC(struct ItemObj* self)
     self->state = 1;
 }
 
-s32 hopper_switch_hopper_touching(struct ItemObj* arg0)
+u32 hopper_switch_hopper_touching(struct ItemObj* arg0)
 {
     struct MainObj* object;
 
@@ -62,21 +62,19 @@ s32 hopper_switch_hopper_touching(struct ItemObj* arg0)
 void hopper_switch_main(struct ItemObj* arg0)
 {
     if (arg0->unk5 == 0) {
-        if (hopper_switch_hopper_touching(arg0) == 0) {
-            return;
+        if (hopper_switch_hopper_touching(arg0) != 0) {
+            apply_tile_effect(arg0->unk2, 0, 0);
+            arg0->unk5 = 1;
+            set_animation(arg0, 0xE);
+            is_on_screen(BASE_OBJECT(arg0));
         }
-        apply_tile_effect(arg0->unk2, 0, 0);
-        arg0->unk5 = 1;
-        set_animation(arg0, 0xE);
+    } else if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->on_screen = 0;
+        arg0->state = 2;
     } else {
-        if (arg0->animation_step.fields.relative_step == 0) {
-            arg0->on_screen = 0;
-            arg0->state = 2;
-            return;
-        }
         animate_object(ANIMATED_OBJECT(arg0));
+        is_on_screen(BASE_OBJECT(arg0));
     }
-    is_on_screen(BASE_OBJECT(arg0));
 }
 
 void hopper_switch_despawn(struct ItemObj* arg0)

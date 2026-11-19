@@ -46,8 +46,8 @@ void teleport_intro_spawn_quads(struct EffectObj* self)
             quad->unk2 = 0;
             quad->link.owner = self;
         }
-        self->unk5 = 1;
         self->ext.effect_27.unk14++;
+        self->unk5 = 1;
         return;
     case 1:
         var_i = 0;

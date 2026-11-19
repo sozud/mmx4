@@ -79,9 +79,9 @@ void func_8001F5D8(struct EngineObj*);
 
 void func_8001F198(struct EngineObj* arg0)
 {
-    s32* dst;
-    s32* src;
     u32 i;
+    s32* src;
+    s32* dst;
 
     for (i = 0; i < 0x10; i++)
         arg0->character_state.bytes[i] = 0;
@@ -133,8 +133,8 @@ void func_8001F2BC(struct EngineObj* arg0)
     func_800129A4(8);
     func_8001663C(0x17, 0x70);
 #endif
-    arg0->unk2 = 0;
     arg0->unk1++;
+    arg0->unk2 = 0;
     if (arg0->cur_character == 0) {
         D_801396B8 = 0x100000;
         background_objects[0].x_pos.val = 0;
@@ -168,7 +168,12 @@ void func_8001F3D4(struct MainObj* obj)
     s32 background_index;
     u32 i;
 
+#ifdef MMX4_BIG_ENDIAN
+    obj->state = 6;
+    obj->unk5 = 0;
+#else
     *(s16*)&obj->state = 6;
+#endif
     obj->on_screen = 0;
     obj->unk2++;
     background_index = ((struct EngineObj*)obj)->cur_character;
@@ -282,8 +287,8 @@ void func_8001F798(struct EngineObj* arg0)
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
-        arg0->unk3 = 0;
         arg0->unk2++;
+        arg0->unk3 = 0;
 
 #ifdef MMX4_SATURN
         if (arg0->cur_character != 0) {
@@ -388,12 +393,10 @@ void func_8001F9DC(struct EngineObj* arg0)
 
 void func_8001FA24(struct EngineObj* arg0)
 {
-    s32 flags;
     u32 i;
 
-    flags = (u8)arg0->palette_flags | (1 << (arg0->character_state.bytes[0] - 1));
-    arg0->palette_flags = flags;
-    if ((u8)g_Player.boss_flags != 0xFF && (u8)flags == 0xFF)
+    arg0->palette_flags |= 1 << (arg0->character_state.bytes[0] - 1);
+    if ((u8)g_Player.boss_flags != 0xFF && (u8)arg0->palette_flags == 0xFF)
         arg0->unk5F = 5;
     g_Player.boss_flags |= 1 << (arg0->character_state.bytes[0] - 1);
     arg0->state = 9;

@@ -44,25 +44,25 @@ void data_hopper_init(struct MainObj* self)
         mode = 6;
     }
     self->unk5 = mode;
-    self->hp = 3;
-    self->contact_damage = 3;
-    self->animation_table = (const u8* const*)data_hopper_animations;
-    self->attack_box = &data_hopper_attack_box;
-    self->terrain_box = &data_hopper_terrain_box;
-    self->collision_data = D_801060F0;
-    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->unk6 = 0;
     self->unk7C = 0;
     self->bg_offset = 0;
+    self->hp = 3;
+    self->contact_damage = 3;
     self->invincibility_timer = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->animation_table = (const u8* const*)data_hopper_animations;
     self->hurt_box = NULL;
+    self->attack_box = &data_hopper_attack_box;
+    self->terrain_box = &data_hopper_terrain_box;
+    self->collision_data = D_801060F0;
     self->air_state = 0;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->unk18.val = self->x_pos.val;
-    self->unk1C.val = self->y_pos.val;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     ext = &self->ext.main_41;
     ext->unk84 = 0;
     ext->unk83 = 0;
@@ -236,7 +236,7 @@ void func_80062778(struct MainObj* self)
     if (self->ext.main_41.unk80 == direction)
         goto selected;
     animate_object(ANIMATED_OBJECT(self));
-    if ((self->x_speed >= 0 ? self->x_speed : -self->x_speed) >= 0x42000) {
+    if ((self->x_speed < 0 ? -self->x_speed : self->x_speed) >= 0x42000) {
         if (self->ext.main_41.unk80 == 1)
             self->x_speed = 0x42000;
         if (self->ext.main_41.unk80 == 2)
@@ -309,6 +309,7 @@ void data_hopper_vanish(struct MainObj* self)
         if (self->animation_step.fields.relative_step < 0) {
             self->unk7C = animation_count + 1;
         }
+        animate_object(ANIMATED_OBJECT(self));
         break;
     case 2:
         if (self->animation_step.fields.relative_step < 0) {
@@ -317,11 +318,9 @@ void data_hopper_vanish(struct MainObj* self)
             self->unk6 = 0;
             return;
         }
+        animate_object(ANIMATED_OBJECT(self));
         break;
-    default:
-        return;
     }
-    animate_object(ANIMATED_OBJECT(self));
 }
 
 // data_hopper_check_player
@@ -346,8 +345,8 @@ void func_80062BBC(struct MainObj* self)
 {
     s32 status;
 
-    self->unk18 = self->x_pos;
     self->on_screen = 0;
+    self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     if (self->unk5 != 7)
         func_80062AEC(self);

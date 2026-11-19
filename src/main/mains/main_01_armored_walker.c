@@ -92,13 +92,14 @@ void armored_walker_main(struct MainObj* obj)
         spawn_explosion(obj);
         spawn_debris(5, armored_walker_debris, obj);
         drop_item(BASE_OBJECT(obj), 9);
-    } else {
-        armored_walker_step_funcs[obj->unk5](obj);
-        func_8002D9BC(obj);
-        if (func_8002B1E8(BASE_OBJECT(obj), 0x40, 0x40) == 0) {
-            update_on_screen(BASE_OBJECT(obj), 0x20, 0x20);
-            return;
-        }
+        obj->state++;
+        return;
+    }
+    armored_walker_step_funcs[obj->unk5](obj);
+    func_8002D9BC(obj);
+    if (func_8002B1E8(BASE_OBJECT(obj), 0x40, 0x40) == 0) {
+        update_on_screen(BASE_OBJECT(obj), 0x20, 0x20);
+        return;
     }
     obj->state++;
 }
@@ -302,7 +303,9 @@ void armored_walker_check_wall(struct MainObj* self)
     if (self->air_state == 0 && self->unk5 == 2) {
         blocked = 0;
         if (self->unk15 != 0) {
-            blocked = self->collision_flags & 1;
+            if (self->collision_flags & 1) {
+                blocked = 1;
+            }
         } else if (self->collision_flags & 2) {
             blocked = 1;
         }

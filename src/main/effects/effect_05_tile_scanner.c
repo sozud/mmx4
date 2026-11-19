@@ -144,9 +144,14 @@ void func_800B60BC(struct EffectObj* arg0)
     s32 step;
     s32 tile;
 
+#ifdef MMX4_GAMECUBE
+    if (g_Player.unk68 == NULL) {
+        return;
+    }
+#endif
     arg0->ext.effect_5.unk21 = arg0->ext.effect_5.unk20;
     arg0->ext.effect_5.unk20 = func_8002D724(&g_Player, g_Player.x_pos.i.hi,
-        g_Player.unk68->unk1 + ((u16)g_Player.y_pos.i.hi + g_Player.unk68->unk3));
+        g_Player.unk68->unk1 + (g_Player.y_pos.i.hi + g_Player.unk68->unk3));
     delta = g_Player.x_pos.val - g_Player.unk18.val;
     if (g_Player.state != 1)
         goto facing;
@@ -206,7 +211,7 @@ loop:
         break;
     case 16:
         arg0->ext.effect_5.unk20 = func_8002D724(&g_Player, g_Player.x_pos.i.hi,
-            g_Player.unk68->unk1 + ((u16)g_Player.y_pos.i.hi + g_Player.unk68->unk3) - 0x10);
+            g_Player.unk68->unk1 + (g_Player.y_pos.i.hi + g_Player.unk68->unk3) - 0x10);
         goto loop;
     case 0:
         if (arg0->state == 2)
@@ -220,7 +225,7 @@ loop:
     }
 
     arg0->ext.effect_5.unk20 = func_8002D724(&g_Player, g_Player.x_pos.i.hi,
-        g_Player.unk68->unk1 + ((u16)g_Player.y_pos.i.hi + g_Player.unk68->unk3));
+        g_Player.unk68->unk1 + (g_Player.y_pos.i.hi + g_Player.unk68->unk3));
     tile = arg0->ext.effect_5.unk20;
     if (tile < 0x1D) {
         if (tile >= 0x10)

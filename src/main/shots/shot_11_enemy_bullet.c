@@ -35,15 +35,15 @@ void func_8009B6B8(struct ShotObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
     arg0->unk54 = enemy_bullet_hit_box;
     arg0->unk50.data = enemy_bullet_hit_box;
     arg0->unk58.collision_data = D_80106070;
-    arg0->unk16 = 0;
-    arg0->unk68 = NULL;
-    arg0->unk60 = 3;
     arg0->x_vel.val *= 3;
     arg0->y_vel.val *= 3;
     arg0->unk5C = 1;
+    arg0->unk60 = 3;
     set_animation(ANIMATED_OBJECT(arg0), 0x11);
 }
 

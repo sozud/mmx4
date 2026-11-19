@@ -101,15 +101,15 @@ void func_8009BA6C(struct ShotObj* arg0)
     arg0->state = 4;
     arg0->on_screen = 1;
     arg0->unk58.data = (const u8*)D_80105FF0;
-    arg0->unk68 = (struct Unk_unk68*)ice_core_shard_terrain_box;
-    arg0->unk5C = 1;
-    arg0->unk54 = ice_core_shard_hit_box;
-    arg0->unk50.data = ice_core_shard_hit_box;
+    arg0->unk42 &= 0x7FFF;
     arg0->unk16 = 0;
     arg0->x_vel.val = 0;
     arg0->y_vel.val = 0;
+    arg0->unk68 = (struct Unk_unk68*)ice_core_shard_terrain_box;
+    arg0->unk54 = ice_core_shard_hit_box;
+    arg0->unk50.data = ice_core_shard_hit_box;
+    arg0->unk5C = 1;
     arg0->unk60 = 3;
-    arg0->unk42 &= 0x7FFF;
     set_animation(arg0, 0x1D);
 }
 
@@ -120,7 +120,15 @@ void ice_core_shard_hold(struct ShotObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     func_8002D9BC(self);
-    if (func_8002DD04(MAIN_OBJECT(self)) < 0 || func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) != 0) {
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        flags = (u16*)self->unk7C;
+        *flags ^= ice_core_shard_data.masks[self->unk2];
+        func_8001540C(5, SATURN_SOUND(2, 0x24), NULL);
+        spawn_debris(4, ice_core_shard_debris, self);
+        self->state = 6;
+        return;
+    }
+    if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) != 0) {
         flags = (u16*)self->unk7C;
         *flags ^= ice_core_shard_data.masks[self->unk2];
         func_8001540C(5, SATURN_SOUND(2, 0x24), NULL);

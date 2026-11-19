@@ -73,11 +73,11 @@ void func_800A56E4(struct ShotObj* arg0)
         arg0->y_pos.val = owner->y_pos.val + 0x100000;
         arg0->x_vel.val = arg0->unk15 != 0 ? 0x60000 : -0x60000;
         arg0->y_vel.val = 0x20000;
+        arg0->state++;
         arg0->unk5 = 2;
         arg0->timer = 7;
         arg0->unk50.data = magma_fire_wave_hit_box;
         arg0->unk68 = NULL;
-        arg0->state++;
         set_animation(arg0, 0x1C);
         break;
     case 1:
@@ -99,10 +99,10 @@ void func_800A56E4(struct ShotObj* arg0)
 #endif
         arg0->x_vel.val = vel;
         arg0->y_vel.val = 0x50000;
+        arg0->state++;
         arg0->unk5 = 3;
         arg0->unk50.data = (u8*)magma_fire_pillar_hit_boxes;
         arg0->unk68 = NULL;
-        arg0->state++;
         set_animation(arg0, 0x1D);
         break;
     case 2:
@@ -125,13 +125,13 @@ void func_800A56E4(struct ShotObj* arg0)
     case 3:
         arg0->unk15 = owner->unk15;
         arg0->unk58.data = (u8*)D_801060F0;
+        arg0->unk54 = NULL;
         arg0->unk50.data = magma_fire_burst_hit_box;
         arg0->unk68 = (struct Unk_unk68*)magma_fire_burst_terrain_box;
         arg0->unk60 = 6;
-        arg0->unk54 = NULL;
+        arg0->state++;
         arg0->unk5 = 5;
         arg0->timer = 3;
-        arg0->state++;
         set_animation(arg0, 0x1B);
         break;
     }

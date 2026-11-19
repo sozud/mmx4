@@ -28,8 +28,8 @@ void func_800D3388(struct MiscObj* self)
     self->unk15 = 0;
     self->unk16 = 0x10;
     set_animation_frame(ANIMATED_OBJECT(self), 0, self->unk2);
-    self->y_vel.val = 0xFFFE0000;
     self->x_vel.val = 0;
+    self->y_vel.val = 0xFFFE0000;
     self->unk28 = 0;
     self->unk2C = 0x4200;
     self->state++;

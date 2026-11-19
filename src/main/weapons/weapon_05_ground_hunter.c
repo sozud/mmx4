@@ -54,7 +54,7 @@ void ground_hunter_start_rise(struct WeaponObj* arg0);
 
 void ground_hunter_update(struct WeaponObj* arg0)
 {
-    s32 shouldSetState;
+    u32 shouldSetState;
 
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
@@ -108,8 +108,8 @@ void func_80095854(struct WeaponObj* self)
 
     set_animation(self, 0);
     func_8001540C(1, 8, self);
-    self->unk5 = 0;
     self->state++;
+    self->unk5 = 0;
     update_on_screen(BASE_OBJECT(self), 0x2C, 0x20);
 }
 
@@ -372,7 +372,7 @@ void func_80096060(struct WeaponObj* self)
             shot->x_pos.val = self->x_pos.val;
             shot->y_pos.val = self->y_pos.val;
         }
-        g_Player.shot_count += 2;
+        player->shot_count += 2;
         player->special_shot_count += 2;
         if (--*(u8*)&ext->unk8D == 0)
             ground_hunter_start_burst(self);

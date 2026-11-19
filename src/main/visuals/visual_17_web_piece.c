@@ -110,10 +110,10 @@ void func_800B20CC(struct VisualObj* arg0)
     direction = angle_from_delta(arg0->x_pos.val - target_x, arg0->y_pos.val - target_y);
     set_velocity_from_angle(MOVING_OBJECT(arg0), direction);
     arg0->unk54 = direction;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
     arg0->x_vel.val *= 2;
     arg0->y_vel.val *= 2;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
     quad = find_free_quad_obj();
     if (quad != NULL) {
         quad->active = -0x7F;

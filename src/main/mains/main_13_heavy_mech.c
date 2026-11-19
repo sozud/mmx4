@@ -50,23 +50,23 @@ void heavy_mech_init(struct MainObj* self)
     self->invincibility_timer = 0;
     self->collision_data = D_801068F0;
     self->bg_offset = g_Player.bg_offset;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
     self->x_speed = 0;
-    self->animation_table = (const u8* const*)heavy_mech_animations;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->animation_table = (const u8* const*)heavy_mech_animations;
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->terrain_box = &heavy_mech_terrain_box;
     self->hurt_box = &heavy_mech_hurt_box;
     self->attack_box = &heavy_mech_attack_box;
-    self->unk18.val = self->x_pos.val;
-    self->unk1C.val = self->y_pos.val;
     heavy_mech_face_player(ANIMATED_OBJECT(self));
     set_animation(self, 0);
     self->ext.main_13.unk80 = 0x8000;
-    self->state = 1;
     self->ext.main_13.unk84 = 0;
+    self->state = 1;
     self->unk5 = 2;
     self->unk6 = 0;
 }

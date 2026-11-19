@@ -121,13 +121,13 @@ extern void (*D_800F1AB0[])(void);
 #ifndef MMX4_SATURN
 void decompress_gfx(u16* src, u16* dest)
 {
-    s32 var_a3;
-    u32 upper_bits;
-    u32 var_t0;
-    u32 var_t1;
-    u32 var_v1;
-    s32 arg2;
     u16* copy_src;
+    s32 arg2;
+    u32 var_v1;
+    u32 var_t1;
+    u32 var_t0;
+    u32 upper_bits;
+    s32 var_a3;
 start:
     var_t1 = *(src++);
 

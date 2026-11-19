@@ -81,8 +81,8 @@ void func_800CF950(struct MiscObj* self);
 
 void func_800CF950(struct MiscObj* self)
 {
-    struct MiscObj* piece;
     s32 i;
+    struct MiscObj* piece;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 0) {

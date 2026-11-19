@@ -46,10 +46,10 @@ void func_800A42C8(struct ShotObj* arg0)
 #endif
     arg0->state++;
     arg0->on_screen = 1;
+    arg0->unk42 &= 0x7FFF;
     arg0->unk68 = NULL;
     arg0->unk54 = owl_cyclone_hit_box;
     arg0->unk58.data = (u8*)D_80105FF0;
-    arg0->unk42 &= 0x7FFF;
     arg0->unk50.data = owl_cyclone_hit_box;
     arg0->unk5C = 1;
     arg0->unk60 = 6;
@@ -114,7 +114,7 @@ void func_800A42C8(struct ShotObj* arg0)
         return;
     if (owner->unk15 == 0) {
         arg0->x_pos.i.hi = owner->x_pos.i.hi - dx;
-        arg0->x_vel.val = -arg0->x_vel.val;
+        arg0->x_vel.val *= -1;
     } else {
         arg0->x_pos.i.hi = owner->x_pos.i.hi + dx;
     }

@@ -45,13 +45,9 @@ void func_800CA86C(struct MiscObj* self)
 
 void vent_animate(struct MiscObj* self)
 {
-    u8 value;
-
     self->on_screen = 0;
     if (self->unk2 == 0) {
-        value = self->unk6;
-        self->unk6 = value + 1;
-        if (!(value & 1)) {
+        if (!(self->unk6++ & 1)) {
             return;
         }
     }

@@ -188,21 +188,25 @@ void func_80057308(struct MainObj* self)
         self->hurt_box = D_800FD018[self->ext.main_25.unk84 * 2];
         result = func_8002DD04(self);
         if (result < 0) {
-        die:
             spawn_explosion(BASE_OBJECT(self));
             spawn_debris(4, caterkiller_debris, self);
             drop_item(BASE_OBJECT(self), 0xC);
-            goto done;
+            self->state = 2;
+            return;
         }
         self->hurt_box = D_800FD018[self->ext.main_25.unk84 * 2 + 1];
         result = func_8002DD04(self);
-        if (result < 0)
-            goto die;
+        if (result < 0) {
+            spawn_explosion(BASE_OBJECT(self));
+            spawn_debris(4, caterkiller_debris, self);
+            drop_item(BASE_OBJECT(self), 0xC);
+            self->state = 2;
+            return;
+        }
         if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x28) == 0) {
             update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
             return;
         }
-    done:
         self->state = 2;
     }
 }
@@ -331,7 +335,7 @@ void func_80057874(struct MainObj* self)
     if (self->animation_step.fields.event == 1)
         self->ext.main_25.unk84 = 0;
     move_object(MOVING_OBJECT(self));
-    if ((g_Player.y_pos.i.hi - self->y_pos.i.hi >= 0 ? g_Player.y_pos.i.hi - self->y_pos.i.hi : self->y_pos.i.hi - g_Player.y_pos.i.hi) > 0x19) {
+    if (ABS(g_Player.y_pos.i.hi, self->y_pos.i.hi) > 0x19) {
         set_animation(self, 0);
         self->unk5 = 2;
         self->unk6 = 0;
@@ -430,8 +434,8 @@ void func_80057C00(struct MainObj* self)
         break;
     case 4:
         self->ext.main_25.unk84 = 4;
-        self->y_speed = -0x50000;
         self->y_pos.i.hi += 0xC;
+        self->y_speed = -0x50000;
         break;
     case 5:
         if (self->collision_flags & 8) {
@@ -445,7 +449,7 @@ void func_80057C00(struct MainObj* self)
         self->ext.main_25.unk84 = 5;
         break;
     case 1:
-        if ((g_Player.y_pos.i.hi - self->y_pos.i.hi >= 0 ? g_Player.y_pos.i.hi - self->y_pos.i.hi : self->y_pos.i.hi - g_Player.y_pos.i.hi) < 0x1A) {
+        if ((g_Player.y_pos.i.hi - self->y_pos.i.hi >= 0 ? g_Player.y_pos.i.hi - self->y_pos.i.hi : self->y_pos.i.hi - g_Player.y_pos.i.hi) <= 0x19) {
             set_animation(self, 1);
             self->unk5 = 3;
             self->unk6 = 0;

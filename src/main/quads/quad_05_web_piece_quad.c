@@ -88,7 +88,7 @@ s32 web_piece_quad_is_visible(struct QuadObj* arg0)
     u16 x, y, x2, y2;
     u16 width, height;
     s32 x_p, y_p;
-    s32 result;
+    u32 result;
 
     result = 0;
     x = arg0->x_pos.u.hi - background_objects[arg0->bg_offset].x_pos.u.hi;

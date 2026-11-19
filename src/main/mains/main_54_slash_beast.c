@@ -20,7 +20,7 @@
 #include "main/collision_bounds.h"
 #endif
 
-void func_8006E920(struct MainObj* arg0, s32 value);
+void func_8006E920(struct MainObj* arg0, u32 value);
 
 extern struct Unk_unk68 D_80100200;
 extern struct Unk_unk68 D_80100204;
@@ -150,7 +150,7 @@ extern struct Unk_unk68 D_8010023C;
 extern u16 D_801005B8[];
 extern u16 D_801005C8[];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_8006E920(struct MainObj* arg0, s32 value);
+void func_8006E920(struct MainObj* arg0, u32 value);
 void func_8006BB70(struct MainObj* arg0);
 void func_8006BD1C(struct MainObj* arg0);
 static void main54_spawn_shot(struct MainObj* arg0, s8 subtype);
@@ -202,8 +202,8 @@ static void main54_face_anim(struct MainObj* arg0, s32 anim)
 
 void func_8006BB70(struct MainObj* arg0)
 {
-    arg0->contact_damage = 6;
     arg0->hp = 0;
+    arg0->contact_damage = 6;
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_801078F8;
     if (engine_obj.stage != 0xC) {
@@ -215,17 +215,19 @@ void func_8006BB70(struct MainObj* arg0)
         arg0->y_pos.val = background_objects[g_Player.bg_offset].y_pos.val + (s32)0xFFD00000;
     }
     arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->x_speed = 0;
-    arg0->animation_table = (const u8* const*)slash_beast_animations;
-    arg0->unk16 = VISUAL_SATURN_LAYER(6);
-    arg0->hurt_box = D_801001FC;
-    arg0->attack_box = D_801001F8;
-    arg0->unk15 = PLAYER_FACING_RIGHT;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->air_state = 0;
+    arg0->animation_table = (const u8* const*)slash_beast_animations;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = NULL;
+    arg0->hurt_box = D_801001FC;
+    arg0->attack_box = D_801001F8;
+    arg0->unk15 = PLAYER_FACING_RIGHT;
     M54_FLASH(arg0) = 0;
     M54_81(arg0) = 1;
     M54_82(arg0) = 0;
@@ -236,8 +238,6 @@ void func_8006BB70(struct MainObj* arg0)
     arg0->ext.main_54.power_hits = 1;
     arg0->ext.main_54.fight_started = 0;
     arg0->ext.main_54.high_jump = 0;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
     func_8006E920(arg0, TILE_ATTR_VALUE(0x38));
     set_animation(arg0, 0);
     arg0->state = 1;
@@ -1025,9 +1025,9 @@ void func_8006CFB8(struct MainObj* self)
         start_screen_shake_x(0x1E, 8, 2);
         self->contact_damage = 6;
         set_animation(self, 0xF);
-        self->unk6 = 3;
         self->hurt_box = NULL;
         self->attack_box = NULL;
+        self->unk6 = 3;
         self->ext.main_54.crash_timer = 0x1E;
         func_8001540C(2, SATURN_SOUND(0x88, 0x59), self);
         func_8006E920(self, TILE_ATTR_VALUE(0x39));
@@ -1038,9 +1038,9 @@ void func_8006CFB8(struct MainObj* self)
         start_screen_shake_x(0x1E, 8, 2);
         set_animation(self, 0xF);
         self->contact_damage = 6;
-        self->unk6 = 3;
         self->hurt_box = NULL;
         self->attack_box = NULL;
+        self->unk6 = 3;
         self->ext.main_54.crash_timer = 0x1E;
         func_8001540C(2, SATURN_SOUND(0x88, 0x59), self);
         func_8006E920(self, TILE_ATTR_VALUE(0x39));
@@ -1565,8 +1565,8 @@ void slash_beast_intro_fill_health(struct MainObj* self)
             self->ext.main_54.pattern_set = 0;
             self->ext.main_54.fight_started = 1;
             slash_beast_pick_pattern(self);
-            self->unk5 = 3;
             self->ext.main_54.pattern--;
+            self->unk5 = 3;
             self->unk6 = 0;
             player_end_script_action();
         }
@@ -1689,11 +1689,8 @@ void slash_beast_high_leap_land(struct MainObj* self)
 {
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
-    if ((func_8002D724(
-             PLAYER_OBJECT(self),
-             (s16)((u16)self->x_pos.i.hi + self->terrain_box->unk0),
-             (s16)(self->terrain_box->unk3 + ((u16)self->y_pos.i.hi + self->terrain_box->unk1) + 0x10))
-            & 0xFF)
+    if ((u8)func_8002D724(PLAYER_OBJECT(self), (s16)(self->x_pos.i.hi + self->terrain_box->unk0),
+            (s16)(self->terrain_box->unk3 + (self->y_pos.i.hi + self->terrain_box->unk1) + 0x10))
         == 0x38) {
         func_8001540C(2, SATURN_SOUND(0x88, 0x59), self);
         start_screen_shake_y(0x10, 4, 2);
@@ -1723,7 +1720,7 @@ void slash_beast_high_leap_recover(struct MainObj* self)
 
 // slash_beast_set_floor_palette
 #ifdef MMX4_SATURN
-void func_8006E920(struct MainObj* arg0, s32 value)
+void func_8006E920(struct MainObj* arg0, u32 value)
 {
     s32 start = 0;
     s32 end;
@@ -1757,15 +1754,20 @@ void func_8006E920(struct MainObj* arg0, s32 value)
     }
 }
 #else
-void func_8006E920(struct MainObj* arg0, s32 value)
+void func_8006E920(struct MainObj* arg0, u32 value)
 {
-    s16 start = 0;
+    s16 start;
     s16 end;
     s32 i;
     u32* attrs;
 
     if (value == TILE_ATTR_VALUE(0x38)) {
-        end = engine_obj.stage != 0xC ? 8 : 0xE;
+        start = 0;
+        if (engine_obj.stage != 0xC) {
+            end = 8;
+        } else {
+            end = 0xE;
+        }
     } else if (arg0->unk15 == 0) {
         if (engine_obj.stage != 0xC) {
             start = 4;
@@ -1775,7 +1777,12 @@ void func_8006E920(struct MainObj* arg0, s32 value)
             end = 0xE;
         }
     } else {
-        end = engine_obj.stage != 0xC ? 4 : 7;
+        start = 0;
+        if (engine_obj.stage != 0xC) {
+            end = 4;
+        } else {
+            end = 7;
+        }
     }
     for (i = start; i < end; i++) {
         if (engine_obj.stage != 0xC) {

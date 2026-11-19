@@ -143,8 +143,8 @@ void flame_jet_wait_sync(struct MainObj* self)
         if ((self->ext.main_62.unk80->animation_step.fields.event != 0) || (self->unk2 > 3)) {
 #endif
             set_animation(self, 2);
-            self->unk5 = 2;
             self->state++;
+            self->unk5 = 2;
         }
     }
 }
@@ -200,10 +200,10 @@ void flame_jet_main(struct MainObj* self)
     }
     result = func_8002DD04(self);
     if ((result == 3) || (result == 0xC) || (result == 0x22)) {
-        self->unk5 = 0;
-        self->unk7E = 0x14;
         self->state++;
+        self->unk5 = 0;
         self->unk42 = (self->unk42 & 0x7FFF) + 2;
+        self->unk7E = 0x14;
     } else {
         func_8002D9BC(self);
     }
@@ -223,9 +223,9 @@ void func_8007BE40(struct MainObj* arg0)
             flame_jet_smoke_offsets[arg0->animation_step.fields.frame_index - 3][1] << 16);
         arg0->state = 1;
         arg0->unk5 = 3;
+        arg0->unk42 -= 2;
         arg0->unk7E = 0xC8;
         arg0->hp = 0x7F;
-        arg0->unk42 -= 2;
         set_animation(arg0, 2);
         return;
     }

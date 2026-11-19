@@ -150,18 +150,18 @@ void train_boss_arm_init(struct ShotObj* self)
     self->unk5 = 2;
     self->on_screen = 1;
     self->unk58.animation_steps = D_80105FF0;
+    self->unk42 &= 0x7FFF;
     self->unk28 = 0;
     self->unk2C = 0;
     self->x_vel.val = FIXED(1);
     self->y_vel.val = 0;
-    self->unk42 &= 0x7FFF;
     self->x_pos.i.hi += train_boss_arm_offsets[0][self->unk2 * 2];
     y_offset = train_boss_arm_offsets[0][self->unk2 * 2 + 1];
+    self->y_pos.i.hi += y_offset;
     self->unk16 = VISUAL_SATURN_LAYER(5);
     self->unk68 = NULL;
     self->unk54 = train_boss_arm_attack_box;
     self->unk50.data = train_boss_arm_hurt_boxes[0];
-    self->y_pos.i.hi += y_offset;
     set_animation(self, 1);
     self->unk5C = 0x1A;
     self->unk60 = 6;
@@ -345,8 +345,8 @@ void func_8009E8E0(struct ShotObj* self)
     self->x_pos.i.hi = ((struct Main45Ext*)self->unk7C)->unk8A + train_boss_arm_offsets[self->unk2][0] - 0x70;
     self->unk5C = 0x1A;
     self->unk42 &= 0x7FFF;
-    self->unk28 = 0;
     self->x_vel.val = FIXED(1);
+    self->unk28 = 0;
     self->unk61 = 1;
     self->unk5 = 9;
 }

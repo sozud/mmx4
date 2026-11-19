@@ -12,33 +12,31 @@ void debris_fall(struct MiscObj* arg0);
 
 void spawn_debris(arg_u8 arg0, void* arg1, void* arg2)
 {
-    s32 var_s1;
-    u8* var_s3;
-    struct MainObj* var_s2;
     struct MiscObj* misc;
+    struct MainObj* var_s2;
+    u8* var_s3;
+    s32 var_s1;
 
     var_s3 = arg1;
     var_s1 = arg0;
     var_s2 = arg2;
-    if (var_s1 & 0xFF) {
-        do {
-            misc = find_free_misc_obj();
-            if (misc != NULL) {
-                misc->active = 0x41;
-                misc->id = 3;
-                misc->unk2 = 0;
-                misc->unk15 = get_random() & PLAYER_FACING_RIGHT;
-                misc->state = 0;
-                misc->unk5 = 0;
-                misc->unk6 = 0;
-                misc->x_pos.val = var_s2->x_pos.val + ((get_random() & 3) << 16);
-                misc->y_pos.val = var_s2->y_pos.val + ((get_random() & 3) << 16);
-                misc->ext.misc_2.unk58 = *var_s3;
-                var_s3 += 1;
-                misc->ext.misc_2.owner = var_s2;
-            }
-            var_s1 -= 1;
-        } while (var_s1 & 0xFF);
+    while (var_s1 & 0xFF) {
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 0x41;
+            misc->id = 3;
+            misc->unk2 = 0;
+            misc->unk15 = get_random() & PLAYER_FACING_RIGHT;
+            misc->state = 0;
+            misc->unk5 = 0;
+            misc->unk6 = 0;
+            misc->x_pos.val = var_s2->x_pos.val + ((get_random() & 3) << 16);
+            misc->y_pos.val = var_s2->y_pos.val + ((get_random() & 3) << 16);
+            misc->ext.misc_2.unk58 = *var_s3;
+            var_s3 += 1;
+            misc->ext.misc_2.owner = var_s2;
+        }
+        var_s1 -= 1;
     }
 }
 
@@ -55,30 +53,28 @@ void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
     var_s1 = arg0;
     var_s4 = arg3;
     var_s2 = arg2;
-    if (var_s1 & 0xFF) {
-        do {
-            misc = find_free_misc_obj();
-            if (misc != NULL) {
-                obj = misc;
-                obj->active = 0x41;
-                obj->id = 3;
-                obj->unk2 = 1;
-                obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
-                obj->state = 0;
-                obj->unk5 = 0;
-                obj->unk6 = 0;
-                obj->x_pos.val = var_s2->x_pos.val + (get_random() & 3) + arg4;
-                obj->y_pos.val = var_s2->y_pos.val + (get_random() & 3) + arg5;
-                obj->ext.misc_2.unk58 = (*var_s3);
-                obj->ext.misc_2.owner = var_s2;
-                obj->unk42 = var_s4;
-                obj->unk3C = ANIMATED_OBJECT(obj->ext.misc_2.owner)->unk3C;
-                obj->animation_table = ANIMATED_OBJECT(obj->ext.misc_2.owner)->animation_table;
-                var_s3 += 1;
-                obj->unk40 = obj->ext.misc_2.owner->unk40;
-            }
-            var_s1 -= 1;
-        } while (var_s1 & 0xFF);
+    while (var_s1 & 0xFF) {
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            obj = misc;
+            obj->active = 0x41;
+            obj->id = 3;
+            obj->unk2 = 1;
+            obj->unk15 = get_random() & PLAYER_FACING_RIGHT;
+            obj->state = 0;
+            obj->unk5 = 0;
+            obj->unk6 = 0;
+            obj->x_pos.val = var_s2->x_pos.val + (get_random() & 3) + arg4;
+            obj->y_pos.val = var_s2->y_pos.val + (get_random() & 3) + arg5;
+            obj->ext.misc_2.unk58 = (*var_s3);
+            obj->ext.misc_2.owner = var_s2;
+            obj->unk42 = var_s4;
+            obj->unk3C = ANIMATED_OBJECT(obj->ext.misc_2.owner)->unk3C;
+            obj->animation_table = ANIMATED_OBJECT(obj->ext.misc_2.owner)->animation_table;
+            var_s3 += 1;
+            obj->unk40 = obj->ext.misc_2.owner->unk40;
+        }
+        var_s1 -= 1;
     }
 }
 
@@ -111,8 +107,6 @@ void func_800C842C(u8 count, u8* variants, void* owner, s32 id, void* animation_
     struct MainObj* parent = owner;
     struct MiscObj* obj;
     s32 clut_x;
-    s32 clut_y;
-    s32 resource;
     u8 variant;
 
     for (; count != 0; count--) {
@@ -129,16 +123,13 @@ void func_800C842C(u8 count, u8* variants, void* owner, s32 id, void* animation_
         obj->x_pos.val = parent->x_pos.val + ((get_random() & 3) << 16);
         obj->y_pos.val = parent->y_pos.val + ((get_random() & 3) << 16);
         variant = *variants++;
+        obj->ext.misc_2.unk58 = variant;
         obj->ext.misc_2.owner = parent;
         obj->animation_table = animation_table;
-        obj->ext.misc_2.unk58 = variant;
         clut_x = func_8002938C(id);
-        clut_y = func_8002938C(id);
-        obj->unk42 = OBJECT_CLUT(((clut_x * 4 + 0x18) % 16) | (((clut_y + 6) / 4 + 0x1E0) << 6));
-        resource = func_8002938C(id);
-        obj->unk40 = OBJECT_STAGE_TEXTURE(resource);
-        resource = func_8002938C(id);
-        obj->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+        obj->unk42 = OBJECT_CLUT(((clut_x * 4 + 0x18) % 16) | (((func_8002938C(id) + 6) / 4 + 0x1E0) << 6));
+        obj->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(id));
+        obj->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(id)];
     }
 }
 

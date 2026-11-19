@@ -240,6 +240,14 @@ void func_80012560(void)
 {
 #ifdef MMX4_PC
     mmx4_pc_threads_init();
+#elif defined(MMX4_GAMECUBE)
+    s32 i;
+
+    memset(GAME_THREADS, 0, 4 * sizeof(struct GameThread));
+    for (i = 0; i < 4; i++) {
+        GAME_THREADS[i].state = 0;
+        GAME_THREADS[i].pad48[0x70 - 0x48] = 0;
+    }
 #else
     s32* ptr = (s32*)0x100;
     s16* var_a0;
@@ -359,7 +367,11 @@ void func_80012740(s32 arg0, void* arg1)
 }
 #endif
 
-#ifndef MMX4_SATURN
+#ifdef MMX4_GAMECUBE
+void func_800127C8(s32 arg0)
+{
+}
+#elif !defined(MMX4_SATURN)
 void func_800127C8(s32 arg0)
 {
 #ifdef MMX4_PC

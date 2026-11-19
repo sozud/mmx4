@@ -72,8 +72,8 @@ void title_facet_follow(struct QuadObj* arg0)
     arg0->vertices[3].x.i.hi = vertex[0];
     arg0->vertices[3].y.i.hi = vertex[2];
     if (game_info.unk6 == 0) {
-        arg0->state++;
         arg0->ext.unk_ext.unk38 = 5;
+        arg0->state++;
     }
     QUAD_SET_ON_SCREEN(arg0);
 }

@@ -25,9 +25,9 @@ void func_800989CC(struct WeaponObj* arg0)
 {
     struct PlayerObj* owner = arg0->owner;
 
+    arg0->state++;
     arg0->unk68 = NULL;
     arg0->unk54 = NULL;
-    arg0->state++;
     switch (arg0->unk2) {
     case 1:
         arg0->unk50 = ice_block_hitbox_box_2;

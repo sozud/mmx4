@@ -44,9 +44,9 @@ void cyberspace_trial_init(struct EffectObj* self)
         return;
     }
 
+    self->state++;
     self->unk5 = 0;
     self->unk6 = 0;
-    self->state++;
     self->ext.effect_38.timer = 0;
 }
 
@@ -237,8 +237,8 @@ void cyberspace_trial_delete_unused_items(void)
 
 void cyberspace_trial_clear_objects(struct EffectObj* self)
 {
-    u32 i;
     s32 count;
+    u32 i;
     s8 fill = 0;
     s8* ptr;
 

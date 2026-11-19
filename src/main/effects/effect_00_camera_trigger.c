@@ -26,8 +26,8 @@ void camera_trigger_update(struct EffectObj* self)
 
 void camera_trigger_init(struct EffectObj* self)
 {
-    self->ext.unk_effect.unk14 = 0;
     self->state++;
+    self->ext.unk_effect.unk14 = 0;
     self->ext.unk_effect.unk18 = *(camera_trigger_stage_scripts[((engine_obj.stage * 2) + engine_obj.substage)] + self->unk2);
     func_800B5798(self);
 }

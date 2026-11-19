@@ -31,12 +31,13 @@ void func_800B96E0(struct EffectObj* self);
 void func_800B96E0(struct EffectObj* self)
 {
     (void)self;
+#ifdef MMX4_GAMECUBE
+    if (g_Player.pressed_input & 0x200) {
+#else
     if (g_Player.pressed_input & 0x20) {
+#endif
         s32 bg_y = background_objects[0].y_pos.val;
 
-        background_objects[0].unk4C = 1;
-        background_objects[1].unk4C = 1;
-        background_objects[2].unk4C = 1;
         g_Player.y_pos.val = 0x08000000 - g_Player.y_pos.val;
         background_objects[0].y_pos.val = 0x07000000 - bg_y;
         background_objects[0].unk18.val = 0x07000000 - background_objects[0].unk18.val;
@@ -44,6 +45,9 @@ void func_800B96E0(struct EffectObj* self)
         background_objects[1].unk18.val = background_objects[0].unk18.val >> 2;
         background_objects[2].y_pos.val = background_objects[0].y_pos.val >> 2;
         background_objects[2].unk18.val = background_objects[0].unk18.val >> 2;
+        background_objects[0].unk4C = 1;
+        background_objects[1].unk4C = 1;
+        background_objects[2].unk4C = 1;
         world_flip_objects();
         engine_obj.character_state.bytes[0] = (u8)(1 - engine_obj.character_state.bytes[0]);
     }
@@ -56,12 +60,12 @@ void world_flip_despawn(struct EffectObj* self)
 
 void world_flip_objects(void)
 {
-    u32 i;
     struct MainObj* p1;
     struct MiscObj* p2;
     struct WeaponObj* p3;
     struct ShotObj* p4;
     struct VisualObj* p5;
+    u32 i;
 
     p1 = main_objects;
     for (i = 0; i < COUNT(main_objects); p1++, i++) {

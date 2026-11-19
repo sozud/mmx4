@@ -125,14 +125,14 @@ extern u16 D_800FBEDC[12];
 
 void func_8005077C(struct MainObj* arg0)
 {
+    arg0->hp = 0;
     arg0->contact_damage = 4;
     arg0->invincibility_timer = -0x80;
-    arg0->hp = 0;
     arg0->collision_data = (const u16*)D_80106B74;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->air_state = 0;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
+    arg0->air_state = 0;
     arg0->animation_table = (const u8* const*)D_800FC2B4;
     arg0->unk16 = 0x22;
     arg0->terrain_box = &D_800FBF0C;
@@ -149,10 +149,10 @@ void func_8005077C(struct MainObj* arg0)
     arg0->ext.main_18.state.runtime.unk86 = 0;
     arg0->ext.main_18.state.runtime.unk87 = 0;
     arg0->ext.main_18.unk88 = 1;
-    arg0->ext.main_18.ice_pieces = 0x8000;
-    *(u8*)&arg0->unk7E = 0xFF;
     arg0->ext.main_18.shed_timer = 0;
+    arg0->ext.main_18.ice_pieces = 0x8000;
     arg0->ext.main_18.state.runtime.unk82 = 1;
+    *(u8*)&arg0->unk7E = 0xFF;
     arg0->ext.main_18.ice_pieces = 0;
     arg0->ext.main_18.unk8C = 0;
     arg0->ext.main_18.unk90 = 0;
@@ -190,8 +190,8 @@ void func_80050874(struct MainObj* arg0)
             arg0->terrain_box = NULL;
             arg0->unk7C = 4;
             arg0->unk7E = 8;
-            arg0->state = 2;
             arg0->unk42 &= 0x7FFF;
+            arg0->state = 2;
             return;
         }
         if (hit != 0 && hit != 0x7F) {
@@ -199,8 +199,8 @@ void func_80050874(struct MainObj* arg0)
                 arg0->invincibility_timer = 6;
             else
                 arg0->invincibility_timer = 1;
-            arg0->ext.main_18.state.runtime.unk87 = 1;
             arg0->unk42 |= 0x8000;
+            arg0->ext.main_18.state.runtime.unk87 = 1;
             if (!(arg0->ext.main_18.state.runtime.unk80 & 0xC0))
                 arg0->ext.main_18.state.runtime.unk80 = (arg0->ext.main_18.state.runtime.unk80 | 0x40) + 1;
             if (arg0->ext.main_18.state.runtime.unk81 != 0) {
@@ -233,7 +233,6 @@ void func_80050874(struct MainObj* arg0)
 
 void ice_core_death_sink(struct MainObj* self)
 {
-
     self->y_pos.i.hi++;
     if (self->y_pos.i.hi > 0x930) {
         apply_tile_effect(0x17, 0, 0);
@@ -466,8 +465,6 @@ void ice_core_charge_start(struct MainObj* self)
 
 void ice_core_charge_run(struct MainObj* self)
 {
-    s32 blocked;
-
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
         self->hurt_box = &D_800FBEFC;
@@ -478,11 +475,13 @@ void ice_core_charge_run(struct MainObj* self)
         self->unk6 = 5;
     }
     if (self->unk15 == 0) {
-        blocked = self->collision_flags & 2;
-    } else {
-        blocked = self->collision_flags & 1;
-    }
-    if (blocked != 0) {
+        if (self->collision_flags & 2) {
+            func_8001540C(2, SATURN_SOUND(0x37, 0x39), self);
+            start_screen_shake_x(0x10, 8, 2);
+            set_animation(self, 0xC);
+            self->unk6 = 5;
+        }
+    } else if (self->collision_flags & 1) {
         func_8001540C(2, SATURN_SOUND(0x37, 0x39), self);
         start_screen_shake_x(0x10, 8, 2);
         set_animation(self, 0xC);
@@ -724,9 +723,8 @@ void func_800517D0(struct MainObj* arg0)
 
 void ice_core_build_grow(struct MainObj* self)
 {
-
     animate_object(ANIMATED_OBJECT(self));
-    if ((u8)self->unk7E == 0xFF && self->hp < 0x30) {
+    if (*(u8*)&self->unk7E == 0xFF && self->hp < 0x30) {
         if (--self->ext.main_18.state.runtime.unk85 == 0) {
             func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
             self->ext.main_18.state.runtime.unk85 = 3;
@@ -756,8 +754,7 @@ void ice_core_build_grow(struct MainObj* self)
 
 void ice_core_build_wait(struct MainObj* self)
 {
-
-    if ((u8)self->unk7E == 0xFF && self->hp < 0x30) {
+    if (*(u8*)&self->unk7E == 0xFF && self->hp < 0x30) {
         if (--self->ext.main_18.state.runtime.unk85 == 0) {
             func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
             self->ext.main_18.state.runtime.unk85 = 3;
@@ -771,7 +768,7 @@ void ice_core_build_wait(struct MainObj* self)
                 self->ext.main_18.state.runtime.unk85 = 0;
                 self->ext.main_18.state.runtime.unk80 = 0;
                 func_800527F0(self);
-                if ((u8)self->unk7E == 0xFF) {
+                if (*(u8*)&self->unk7E == 0xFF) {
                     *(u8*)&self->unk7E = get_random() & 1;
                     player_end_script_action();
                 }
@@ -815,8 +812,6 @@ void ice_core_bounce_start(struct MainObj* self)
 
 void ice_core_bounce_move(struct MainObj* self)
 {
-    s32 hit;
-
     if (0 > self->x_speed) {
         if (self->collision_flags & 2) {
             spawn_debris(2, D_800FC340, self);
@@ -834,11 +829,14 @@ void ice_core_bounce_move(struct MainObj* self)
     }
 
     if (self->y_speed < 0) {
-        hit = self->collision_flags & 8;
-    } else {
-        hit = self->collision_flags & 4;
-    }
-    if (hit != 0) {
+        if (self->collision_flags & 8) {
+            func_8001540C(5, SATURN_SOUND(2, 0x24), NULL);
+            spawn_debris(2, D_800FC340, self);
+            func_8001540C(2, SATURN_SOUND(0x37, 0x39), self);
+            start_screen_shake_y(8, 4, 2);
+            self->y_speed = -self->y_speed;
+        }
+    } else if (self->collision_flags & 4) {
         func_8001540C(5, SATURN_SOUND(2, 0x24), NULL);
         spawn_debris(2, D_800FC340, self);
         func_8001540C(2, SATURN_SOUND(0x37, 0x39), self);
@@ -1064,7 +1062,7 @@ void ice_core_pick_attack(struct MainObj* self)
             self->unk6 = 0;
             return;
         }
-        phase_value = (u8)self->unk7E;
+        phase_value = *(u8*)&self->unk7E;
         switch (phase_value) {
         case 0:
             self->terrain_box = &D_800FBF0C;

@@ -71,10 +71,10 @@ void func_80098AF8(struct WeaponObj* arg0)
     else
         direction = arg0->unk15 == 0 ? 0x14 : 0x1C;
     set_velocity_from_angle(MOVING_OBJECT(arg0), direction);
-    arg0->unk5C = 1;
-    arg0->unk60 = 3;
     arg0->x_vel.val *= 8;
     arg0->y_vel.val *= 8;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
     set_animation(arg0, arg0->unk2 + 0x1F);
 }
 

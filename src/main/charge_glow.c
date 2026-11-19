@@ -11,8 +11,8 @@ void func_800AE790(struct BazObj* arg0, struct PlayerObj* arg1);
 void func_800AE6B4(struct BazObj* arg0)
 {
     struct PlayerObj* ptr = &g_Player;
-    arg0->x_pos.val = g_Player.x_pos.val;
-    arg0->y_pos.val = g_Player.y_pos.val;
+    arg0->x_pos.val = ptr->x_pos.val;
+    arg0->y_pos.val = ptr->y_pos.val;
 
     if (arg0->state == 0) {
         func_800AE714(arg0, ptr);

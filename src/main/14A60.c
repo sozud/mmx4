@@ -1033,13 +1033,13 @@ void func_80024920(struct QuadObj* quad)
 #ifndef MMX4_SATURN
 void func_80024B9C(struct QuadObj* quad)
 {
-    POLY_G4* primitive;
-    DR_TPAGE* draw_mode;
-    u8* color;
-    u16 x;
-    u16 y;
-    u8 ordering;
     u32 buffer;
+    u8 ordering;
+    u16 y;
+    u16 x;
+    u8* color;
+    DR_TPAGE* draw_mode;
+    POLY_G4* primitive;
 
     if (SP_SPRITE_COUNT >= 1000) {
         return;

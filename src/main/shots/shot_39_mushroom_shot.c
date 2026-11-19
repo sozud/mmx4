@@ -51,10 +51,10 @@ void mushroom_shot_spore_init(struct ShotObj* self)
     self->state = 1;
     self->on_screen = 1;
     self->unk58.data = NULL;
+    self->unk42 &= 0x7FFF;
     self->unk61 = 1;
     self->y_vel.val = FIXED(4.5);
     self->unk2C = FIXED(0.125);
-    self->unk42 &= 0x7FFF;
     self->unk28 = mushroom_shot_spore_x_accels[self->unk2];
     if (self->unk15 == 0) {
         self->x_pos.i.hi += (s8)mushroom_shot_spore_offsets[self->unk2 * 2];
@@ -196,11 +196,11 @@ void func_800A4D20(struct ShotObj* self)
     self->state = 8;
     self->on_screen = 1;
     self->unk58.data = NULL;
+    self->unk42 &= 0x7FFF;
     self->unk61 = 1;
     self->y_vel.val = FIXED(1.5);
     self->x_vel.val = 0;
     self->unk2C = 0;
-    self->unk42 &= 0x7FFF;
     if (self->unk15 == 0) {
         self->x_pos.i.hi += (s8)mushroom_shot_spray_offsets[self->unk2 * 2];
     } else {
@@ -247,8 +247,8 @@ void mushroom_shot_spray_despawn(struct ShotObj* self)
 
 void mushroom_shot_sprout_grow(struct ShotObj* self)
 {
-    u32 var_v0;
     u8 var_v1;
+    u32 var_v0;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
@@ -335,11 +335,11 @@ void func_800A5194(struct ShotObj* arg0);
 
 void func_800A5194(struct ShotObj* arg0)
 {
-    s32 dx;
     s32 player_x;
     s32 shot_x;
     s32 steps;
     s16 divisor;
+    s32 dx;
 
     animate_object(ANIMATED_OBJECT(arg0));
     if (--arg0->timer == 0) {

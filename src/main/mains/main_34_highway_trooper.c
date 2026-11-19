@@ -48,10 +48,8 @@ extern ret_u8 func_8002938C(s32);
 
 void func_8005E5C0(struct MainObj* arg0)
 {
-    s32 resource;
 
-    resource = func_8002938C(0x22);
-    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x22));
 #ifdef MMX4_SATURN
     arg0->unk42 = func_8002938C(0x22) * 4 + 0x1A;
     func_8002938C(0x22);
@@ -59,17 +57,18 @@ void func_8005E5C0(struct MainObj* arg0)
     arg0->unk42 = ((func_8002938C(0x22) * 4 + 0x1A) % 16)
         | (((func_8002938C(0x22) + 6) / 4 + 0x1E0) << 6);
 #endif
-    resource = func_8002938C(0x22);
-    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x22));
     arg0->bg_offset = g_Player.bg_offset;
     arg0->x_pos.i.hi = D_800FE18C[arg0->unk2][0];
     arg0->y_pos.i.hi = D_800FE18C[arg0->unk2][1];
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->x_speed = -0x1C000;
-    arg0->animation_table = (const u8* const*)highway_trooper_animations;
-    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
+    arg0->animation_table = (const u8* const*)highway_trooper_animations;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->air_state = 0;
     arg0->unk15 = 0;
     arg0->attack_box = NULL;
@@ -77,8 +76,6 @@ void func_8005E5C0(struct MainObj* arg0)
     arg0->collision_data = NULL;
     arg0->invincibility_timer = 0;
     arg0->hp = 1;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
     if (arg0->unk2 != 2)
         arg0->terrain_box = &highway_trooper_terrain_box;
     set_animation(arg0, 1);

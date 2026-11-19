@@ -514,13 +514,13 @@ void func_8005368C(struct MainObj* arg0)
 // surface_hopper_pick_surface
 u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical)
 {
-    s32 first;
-    s32 second;
-    s16 probe;
-    s16 edge;
-    s16 tile_x;
-    s16 x_off;
     u16 result;
+    s16 x_off;
+    s16 tile_x;
+    s16 edge;
+    s16 probe;
+    s32 second;
+    s32 first;
 
     if (vertical == 0) {
         if (direction == 0) {
@@ -623,7 +623,7 @@ u8 func_80053B54(struct MainObj* arg0)
 {
     s16 dx;
     s16 dy;
-    s32 selected;
+    u32 selected;
     s32 direction;
 
     selected = 0;
@@ -674,10 +674,10 @@ void func_80053D24(struct MainObj* self)
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk6 = 0;
     self->unk7C = 0;
+    self->unk42++;
     self->on_screen = 1;
     self->invincibility_timer = 0;
     self->air_state = 0;
-    self->unk42++;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     SP_CUR_MAIN_OBJ->ext.main_19.unk82 = 0x38;
@@ -768,22 +768,22 @@ void func_80053EB8(struct MainObj* self)
 // surface_hopper_launched_crawl
 void func_8005402C(struct MainObj* self)
 {
-    struct Main19Ext* ext;
-    struct MainObj* cur;
-    u16 x;
-    u16 y;
-    u8 result;
-    u8 orientation;
     u8 mask;
+    u8 orientation;
+    u8 result;
+    u16 y;
+    u16 x;
+    struct MainObj* cur;
+    struct Main19Ext* ext;
 
     if (self->unk6 == 0) {
         surface_hopper_set_launch(self);
         self->unk6 = 1;
         return;
     }
-    ext = &SP_CUR_MAIN_OBJ->ext.main_19;
     x = self->x_pos.i.hi;
     y = self->y_pos.i.hi;
+    ext = &SP_CUR_MAIN_OBJ->ext.main_19;
     if (ext->animation_index == 0) {
         if (ext->unk80 == 2)
             y -= 2;

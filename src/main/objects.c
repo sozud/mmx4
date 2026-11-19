@@ -355,7 +355,7 @@ struct MiscObj* find_free_misc_obj(void)
     return NULL;
 }
 
-struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1)
+struct MiscObj* func_8002AE90(struct MiscObj* arg0, u32 arg1)
 {
     if (arg1 == 0) {
         if (arg0 == 0) {
@@ -372,10 +372,10 @@ struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1)
     } else {
         if (arg0 == 0) {
             arg0 = &misc_objects[COUNT(misc_objects)] - 1;
-        } else if (arg0 != misc_objects) {
-            arg0--;
-        } else {
+        } else if (arg0 == misc_objects) {
             return NULL;
+        } else {
+            arg0--;
         }
         while (arg0 >= misc_objects) {
             if (arg0->active == 0) {
@@ -387,7 +387,7 @@ struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1)
     return NULL;
 }
 
-struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1)
+struct VisualObj* func_8002AF4C(struct VisualObj* arg0, u32 arg1)
 {
     if (arg1 == 0) {
         if (arg0 == 0) {
@@ -404,10 +404,10 @@ struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1)
     } else {
         if (arg0 == 0) {
             arg0 = &visual_objects[COUNT(visual_objects)] - 1;
-        } else if (arg0 != visual_objects) {
-            arg0--;
-        } else {
+        } else if (arg0 == visual_objects) {
             return NULL;
+        } else {
+            arg0--;
         }
         while (arg0 >= visual_objects) {
             if (arg0->active == 0) {

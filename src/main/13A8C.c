@@ -574,14 +574,60 @@ void func_800238F0(struct EngineObj* arg0)
         arg0->unk4--;
     }
 }
+#ifdef MMX4_GAMECUBE
+void fn_4_D1CEC(void);
+void fn_8001C364(s32);
+#endif
+
 void func_80023970(struct EngineObj* arg0)
 {
     background_objects[1].y_pos.val += FIXED(0.5);
     if (background_objects[1].y_pos.i.hi == D_800F2FDC[arg0->cur_character]) {
         arg0->unk1++;
         func_800129F0(8);
+#ifdef MMX4_GAMECUBE
+        fn_4_D1CEC();
+        fn_8001C364(1);
+#endif
     }
 }
+#ifdef MMX4_GAMECUBE
+s32 fn_8001CE98(void);
+void fn_80015814(s32);
+void fn_8001C364(s32);
+
+void func_800239E0(struct EngineObj* arg0)
+{
+    s32 ready;
+    s32 status;
+
+    if (main_bss_state.transition.active == 0) {
+        ready = 0;
+        if (main_bss_state.transition.active == 0) {
+            status = fn_8001CE98();
+            if (status >= 0) {
+                if (status == 0 || status == 1) {
+                    ready = 1;
+                } else if (status == 2) {
+                    ready = 1;
+                    fn_80015814(0);
+                }
+                fn_8001C364(0);
+            }
+            if (ready) {
+                game_info.unk0 = 3;
+                game_info.mode = 0;
+                game_info.unk2 = 0;
+                game_info.unk3 = 0;
+                D_8013E1C4 = 1;
+                D_8013BD44 = 0;
+                func_80012740(0, &func_8001DAF8);
+                func_800127FC();
+            }
+        }
+    }
+}
+#else
 void func_800239E0(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -595,6 +641,7 @@ void func_800239E0(struct EngineObj* arg0)
         func_800127FC();
     }
 }
+#endif
 
 #endif
 

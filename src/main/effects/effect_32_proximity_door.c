@@ -90,7 +90,7 @@ void proximity_door_check_player(struct EffectObj* self)
     s16 x_pos;
 
     x_pos = self->x_pos.i.hi;
-    if (((g_Player.x_pos.i.hi - x_pos) < 0 ? x_pos - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - x_pos) < 0x30) {
+    if (ABS(g_Player.x_pos.i.hi, x_pos) < 0x30) {
         if (self->ext.effect_32.unk15 != 1) {
             if (self->ext.effect_32.palette.fields.step == 0) {
                 proximity_door_start_script(self, 0);

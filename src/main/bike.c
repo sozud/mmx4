@@ -121,8 +121,8 @@ void func_8003B470(struct RideArmorObj* arg0)
     arg0->state = 1;
     arg0->unk5 = 0;
     arg0->unk6 = 0;
-    arg0->on_screen = 1;
     arg0->active |= 0x40;
+    arg0->on_screen = 1;
     arg0->x_pos.val = g_Player.x_pos.val;
     arg0->y_pos.val = g_Player.y_pos.val;
     arg0->unk15 = PLAYER_FACING_RIGHT;
@@ -134,8 +134,6 @@ void func_8003B470(struct RideArmorObj* arg0)
     if (g_Player.unk2 != 0)
         arg0->unk42 += 2;
     arg0->hp = g_Player.hp;
-    arg0->unk16 = VISUAL_SATURN_LAYER(4);
-    arg0->unk54 = D_800F906C;
     arg0->unk60 = 0;
     arg0->unk61 = 0;
     arg0->unk67 = 0;
@@ -143,6 +141,8 @@ void func_8003B470(struct RideArmorObj* arg0)
     arg0->y_vel.val = 0;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
+    arg0->unk54 = D_800F906C;
     arg0->unk50 = NULL;
     arg0->unk68 = (struct Unk_unk68*)D_800F9068;
     arg0->unk58 = NULL;
@@ -418,7 +418,7 @@ void func_8003BE28(struct RideArmorObj* self)
     }
     self->unk67 = 1;
     func_8003C6EC(self, 4);
-#ifdef MMX4_SATURN
+#ifdef MMX4_BIG_ENDIAN
     if ((self->unk70 & 5) != 5) {
 #else
     if ((*(u32*)&self->unk70 & 5) != 5) {
@@ -983,8 +983,12 @@ void func_8003CCBC(struct RideArmorObj* arg0)
         arg0->unk7D = 1;
         arg0->unk5 = 5;
         arg0->unk6 = 0;
-        arg0->unk80.bytes.unk80 |= 3;
+        arg0->unk80.bytes.unk80 |= 1;
+        arg0->unk80.bytes.unk80 |= 2;
         arg0->unk98.bytes.high = 0;
+#ifdef MMX4_GAMECUBE
+        stop_sound(5, 0);
+#endif
         func_8001540C(5, SATURN_SOUND(1, 51), NULL);
     }
 }

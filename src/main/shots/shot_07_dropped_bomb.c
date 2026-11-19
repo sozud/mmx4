@@ -36,19 +36,19 @@ void func_8009AD6C(struct ShotObj* arg0);
 
 void func_8009AD6C(struct ShotObj* arg0)
 {
+    arg0->state++;
+    arg0->on_screen = 1;
+    arg0->x_vel.val = 0;
     arg0->y_vel.val = -0x10000;
+    arg0->unk28 = 0;
     arg0->unk2C = 0x3000;
+    arg0->unk42 &= 0x7FFF;
     arg0->unk68 = (struct Unk_unk68*)dropped_bomb_hit_box;
     arg0->unk54 = dropped_bomb_terrain_box;
     arg0->unk50.data = dropped_bomb_terrain_box;
     arg0->unk58.data = (const u8*)D_80105FF0;
-    arg0->on_screen = 1;
-    arg0->unk60 = 5;
     arg0->unk5C = 1;
-    arg0->x_vel.val = 0;
-    arg0->unk28 = 0;
-    arg0->state++;
-    arg0->unk42 &= 0x7FFF;
+    arg0->unk60 = 5;
     set_animation(arg0, 2);
 }
 

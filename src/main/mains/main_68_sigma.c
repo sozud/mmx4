@@ -377,15 +377,16 @@ void func_800837FC(struct MainObj* self)
                     self->ext.main_68.active_shots++;
                 }
             }
-            if (++self->ext.main_68.count == 3) {
-                self->unk7C = 0x14;
+            self->ext.main_68.count++;
+            if (self->ext.main_68.count == 3) {
                 self->unk7++;
+                self->unk7C = 0x14;
             }
         }
     } else if (--self->unk7C == 0) {
         self->ext.main_68.visual->state++;
-        self->unk7 = 0;
         self->unk6++;
+        self->unk7 = 0;
     }
     is_on_screen(BASE_OBJECT(self));
 }
@@ -570,8 +571,8 @@ void sigma_scythe_spin_rise(struct MainObj* self)
     self->x_speed *= 4;
     self->y_speed *= 4;
     if (gunship_is_within(self, FIXED(1232), FIXED(336)) & 0xFF) {
-        self->unk7C = 0x28;
         self->unk6++;
+        self->unk7C = 0x28;
     }
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
@@ -772,15 +773,14 @@ void sigma_darts_start(struct MainObj* self)
 
 void sigma_darts_spawn(struct MainObj* self)
 {
-    u8 var_s1;
     struct ShotObj* shot;
+    u8 var_s1;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        self->animation_step.fields.event = 0;
         self->unk6++;
-        var_s1 = 0;
-        do {
+        self->animation_step.fields.event = 0;
+        for (var_s1 = 0; var_s1 < 4; var_s1++) {
             shot = find_free_shot_obj();
             if (shot != 0) {
                 shot->active = 0x41;
@@ -791,8 +791,7 @@ void sigma_darts_spawn(struct MainObj* self)
                 self->ext.main_68.count += 1;
                 func_8001540C(2, SATURN_SOUND(0xA, 0xC9), self);
             }
-            var_s1 += 1;
-        } while (var_s1 < 4);
+        }
     }
 }
 
@@ -1103,7 +1102,8 @@ void func_8008502C(struct MainObj* self)
     collision_result = func_8002DD04(self);
 
     if (self->ext.main_68.flash_timer != 0) {
-        if (--self->ext.main_68.flash_timer & 1) {
+        self->ext.main_68.flash_timer--;
+        if (self->ext.main_68.flash_timer & 1) {
             self->unk42 |= 0x8000;
         } else {
             self->unk42 &= 0x7FFF;
@@ -1375,8 +1375,8 @@ void sigma_reveal_start(struct MainObj* self)
 
     self->unk4B = -1;
     self->terrain_box = &D_80103EF0;
-    self->y_speed = FIXED(-1);
     self->hurt_box = 0;
+    self->y_speed = FIXED(-1);
     self->ext.main_68.count = 0;
     self->x_speed = 0;
     state++;
@@ -1473,7 +1473,7 @@ void sigma_reveal_dialogue(struct MainObj* self)
     if (self->unk6 == 0) {
         if (self->animation_step.fields.relative_step == 0) {
             self->unk15 = g_Player.x_pos.i.hi < self->x_pos.i.hi ? 0 : PLAYER_FACING_RIGHT;
-            player_start_script_action(0x14, (self->x_pos.i.hi >= g_Player.x_pos.i.hi) << PLAYER_FACING_SHIFT);
+            player_start_script_action(0x14, (self->x_pos.i.hi >= g_Player.x_pos.i.hi) ? PLAYER_FACING_RIGHT : 0);
             self->unk6++;
             if (engine_obj.cur_character == CHARACTER_X) {
                 func_8002217C(
@@ -1485,9 +1485,9 @@ void sigma_reveal_dialogue(struct MainObj* self)
             engine_obj.character_state.bytes[9] = 1;
         }
     } else if (abc_object.unkC == 0) {
+        self->unk5++;
         self->unk6 = 0;
         self->unk7C = 1;
-        self->unk5++;
     }
     is_on_screen(BASE_OBJECT(self));
 }

@@ -199,14 +199,14 @@ void func_800AC8C4(struct ShotObj* self)
     self->unk16 = parent->unk16;
     self->x_pos.val = parent->x_pos.val;
     self->y_pos.val = parent->y_pos.val;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
     self->unk58.data = NULL;
     self->unk50.data = NULL;
     self->unk54 = NULL;
     self->unk68 = NULL;
     self->unk75 = 0;
     self->unk60 = 3;
-    self->unk18.val = self->x_pos.val;
-    self->unk1C.val = self->y_pos.val;
     switch (self->unk2) {
     case 1:
         self->unk16 = VISUAL_SATURN_LAYER(7);
@@ -226,25 +226,25 @@ void func_800AC8C4(struct ShotObj* self)
         self->unk8A = 0;
         x = self->x_pos.i.hi;
         self->x_pos.i.hi = self->unk15 != 0 ? x + 0x50 : x - 0x50;
+        self->y_pos.i.hi -= 0x28;
+        self->unk84.shot_55.x = self->x_pos.i.hi;
+        self->unk84.shot_55.y = self->y_pos.i.hi;
         self->unk75 = 1;
         self->unk50.data = (u8*)general_shot_attack_box;
         self->unk54 = (u8*)general_shot_guard_box;
-        self->y_pos.i.hi -= 0x28;
         self->unk58.collision_bounds = D_801060F0;
-        self->unk84.shot_55.x = self->x_pos.i.hi;
-        self->unk84.shot_55.y = self->y_pos.i.hi;
         set_animation(self, 0xD);
         self->unk60 = 6;
         break;
     }
     case 3:
         self->unk16 = VISUAL_SATURN_LAYER(5);
-        self->y_pos.i.hi -= 0x28;
         self->timer = 0;
         self->unk8A = 0;
-        self->unk75 = 1;
+        self->y_pos.i.hi -= 0x28;
         self->unk84.shot_55.x = self->x_pos.i.hi;
         self->unk84.shot_55.y = self->y_pos.i.hi;
+        self->unk75 = 1;
         set_animation(self, 0x12);
         self->unk50.data = (u8*)general_shot_attack_box;
         self->unk54 = (u8*)general_shot_guard_box;
@@ -391,8 +391,8 @@ void general_fist_fly_to_row(struct ShotObj* self)
     self->y_vel.val *= 4;
     if (sigma_final_shot_at_position(self, 0xE20, general_fist_rows[self->timer]) & 0xFF) {
         velocity = FIXED(-1.5);
-        self->unk5++;
         self->y_vel.val = 0;
+        self->unk5++;
         if (self->unk15 != 0) {
             velocity = FIXED(1.5);
         }
@@ -421,8 +421,8 @@ void func_800ACF60(struct ShotObj* self)
     D_8013B8CC = probe_y;
     *tile_slot = func_8002D724(PLAYER_OBJECT(self), D_8013B8C8, probe_y);
     if (*tile_slot == 0x38) {
-        self->x_vel.val = 0;
         self->unk5++;
+        self->x_vel.val = 0;
         self->unk90.u.lo = 0x3C;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -445,8 +445,8 @@ void func_800ACF60(struct ShotObj* self)
     tile = func_8002D724(PLAYER_OBJECT(self), probe_x, probe_y);
     D_8013B8D0[0] = tile;
     if (tile == 0x38) {
-        self->x_vel.val = 0;
         self->unk5++;
+        self->x_vel.val = 0;
         self->unk90.u.lo = 0x3C;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -613,8 +613,8 @@ void general_fist_follower_fly_to_row(struct ShotObj* self)
             self, 0xE20,
             general_fist_rows[general_fist_row_order[SHOT_OBJECT(self->unk8C.object)->timer]])
         & 0xFF) {
-        self->unk5++;
         self->y_vel.val = 0;
+        self->unk5++;
         velocity = self->unk15 != 0 ? FIXED(1.5) : FIXED(-1.5);
         self->x_vel.val = velocity;
     }
@@ -738,17 +738,16 @@ void general_shot_hit_flash(struct ShotObj* self)
 
 void general_shot_orb_launcher(struct ShotObj* self)
 {
-    u8 i;
     struct ShotObj* shot;
     struct WeaponObj* owner;
+    u8 i;
 
     if (self->unk5 == 0) {
         animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.relative_step == 0) {
-            owner = self->unk7C;
             self->unk5++;
-            i = 0;
-            do {
+            owner = self->unk7C;
+            for (i = 0; i < 2; i++) {
                 shot = find_free_shot_obj();
                 if (shot != NULL) {
                     shot->active = 0x41;
@@ -760,8 +759,7 @@ void general_shot_orb_launcher(struct ShotObj* self)
                     shot->unk84.halves[1] = self->y_pos.i.hi - owner->y_pos.i.hi;
                     func_8001540C(2, SATURN_SOUND(4, 0xDE), self);
                 }
-                i++;
-            } while (i < 2);
+            }
         }
     } else {
         self->state++;

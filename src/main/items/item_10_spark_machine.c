@@ -239,9 +239,9 @@ void func_800C2638(struct ItemObj* self)
 
         self->unk42 = OBJECT_STAGE_CLUT(0x9D);
         set_animation(self, 0);
-        self->tail_ext.unk1.unk84.bytes[3] = 0x78;
         self->state++;
         self->unk42 &= 0x7FFF;
+        self->tail_ext.unk1.unk84.bytes[3] = 0x78;
         for (index = 0; index < 3; index++) {
             struct MiscObj* spark = find_free_misc_obj();
             if (spark != NULL) {
@@ -281,8 +281,8 @@ void spark_machine_sparking(struct ItemObj* arg0)
 
 void spark_machine_break(struct ItemObj* arg0)
 {
-    arg0->ext.timer = 1;
     arg0->unk42 &= 0x7FFF;
+    arg0->ext.timer = 1;
     spawn_debris(5, spark_machine_debris, arg0);
     apply_tile_effect(
         (u8)arg0->unk2,

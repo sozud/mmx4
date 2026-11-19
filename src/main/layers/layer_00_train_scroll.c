@@ -32,8 +32,8 @@ void train_scroll_update(struct LayerObj* arg0)
 
 void train_scroll_init(struct LayerObj* arg0)
 {
-    arg0->unk5 = 4;
     arg0->state++;
+    arg0->unk5 = 4;
     arg0->bg_offset = 5;
     arg0->unk18.val = FIXED(8);
     arg0->unk16 = 0x78;
@@ -97,8 +97,8 @@ void train_scroll_section_1_lock(struct LayerObj* arg0)
         background_objects[0].unk24 = 0x8D0;
         background_objects[0].unk26 = 0x8D0;
         player_start_script_action(0x14, PLAYER_FACING_RIGHT);
-        arg0->unk7 = 0;
         arg0->unk6++;
+        arg0->unk7 = 0;
     }
 }
 
@@ -124,8 +124,8 @@ void train_scroll_section_2_lock(struct LayerObj* arg0)
         background_objects[0].unk24 = 0xD30;
         background_objects[0].unk26 = 0xD30;
         player_start_script_action(0x14, PLAYER_FACING_RIGHT);
-        arg0->unk7 = 0;
         arg0->unk6++;
+        arg0->unk7 = 0;
     }
 }
 
@@ -171,8 +171,8 @@ void train_scroll_section_4_lock(struct LayerObj* arg0)
         background_objects[0].unk24 = 0x1A50;
         background_objects[0].unk26 = 0x1A50;
         player_start_script_action(0x14, PLAYER_FACING_RIGHT);
-        arg0->unk7 = 0;
         arg0->unk6++;
+        arg0->unk7 = 0;
     }
 }
 

@@ -195,28 +195,28 @@ void func_80023D90(void)
 // some kind of init?
 void init_objects(void)
 {
-    struct UnkObj* var_s0;
-    struct MainObj* var_s0_2;
-    struct WeaponObj* var_s0_3;
-    struct ShotObj* var_s0_4;
-    struct VisualObj* var_s0_5;
-    struct ItemObj* var_s0_6;
-    struct MiscObj* var_s0_7;
-    struct UnkObj* var_s0_8;
-    struct QuadObj* var_s0_9;
-    void* temp_v1;
-    void* temp_v1_2;
-    void* temp_v1_3;
-    void* temp_v1_4;
-    void* temp_v1_5;
-    void* temp_v1_6;
-    void* temp_v1_7;
-    void* temp_v1_8;
-    void* temp_v1_9;
-    struct PlayerObj* ptr;
-    struct BazObj* ptr2;
-    struct PlayerObj* ptr3;
     struct RideArmorObj* ptr4;
+    struct PlayerObj* ptr3;
+    struct BazObj* ptr2;
+    struct PlayerObj* ptr;
+    void* temp_v1_9;
+    void* temp_v1_8;
+    void* temp_v1_7;
+    void* temp_v1_6;
+    void* temp_v1_5;
+    void* temp_v1_4;
+    void* temp_v1_3;
+    void* temp_v1_2;
+    void* temp_v1;
+    struct QuadObj* var_s0_9;
+    struct UnkObj* var_s0_8;
+    struct MiscObj* var_s0_7;
+    struct ItemObj* var_s0_6;
+    struct VisualObj* var_s0_5;
+    struct ShotObj* var_s0_4;
+    struct WeaponObj* var_s0_3;
+    struct MainObj* var_s0_2;
+    struct UnkObj* var_s0;
 
     SP_SPRITE_COUNT = 0;
     SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;

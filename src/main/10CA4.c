@@ -188,10 +188,11 @@ void func_80020580(struct EngineObj* arg0)
     if (arg0->stage == 0) {
         arg0->unk8 = func_8001E850(D_800F231C, 1);
         next_state = arg0->unk1 + 5;
-    } else {
-        arg0->unk8 = func_8001E850(D_800F2328, 1);
-        next_state = arg0->unk1 + 1;
+        arg0->unk1 = next_state;
+        return;
     }
+    arg0->unk8 = func_8001E850(D_800F2328, 1);
+    next_state = arg0->unk1 + 1;
     arg0->unk1 = next_state;
 }
 #endif

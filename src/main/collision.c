@@ -124,7 +124,13 @@ s32 func_8002BD58(struct MainObj* arg0, struct MainObj* arg1, s16* arg2, s16* ar
     u8 temp_t1;
     u8 temp_t2;
 
-    if (arg1->invincibility_timer != 0 || arg0->attack_box == 0 || arg1->hurt_box == 0) {
+    if (arg1->invincibility_timer != 0) {
+        return 0;
+    }
+    if (arg0->attack_box == 0) {
+        return 0;
+    }
+    if (arg1->hurt_box == 0) {
         return 0;
     }
 
@@ -422,6 +428,11 @@ void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
             arg0->unk74 = 0;
             arg0->unk78 = 0;
         }
+        return;
+    }
+#endif
+#ifdef MMX4_GAMECUBE
+    if (arg1->unk68 == NULL) {
         return;
     }
 #endif

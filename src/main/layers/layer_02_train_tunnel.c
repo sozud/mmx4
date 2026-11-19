@@ -52,6 +52,7 @@ void train_tunnel_update(struct LayerObj* arg0)
 // train_tunnel_init
 void func_800D9268(struct LayerObj* self)
 {
+    self->state++;
     self->unk5 = 2;
     self->bg_offset = 5;
     self->unk18.val = FIXED(8);
@@ -59,15 +60,14 @@ void func_800D9268(struct LayerObj* self)
     self->unk17 = 1;
     self->private_state.bytes[0] = 0xFF;
     self->private_state.bytes[1] = 0;
-    self->state++;
     engine_obj.character_state.fields.flags = 0;
     engine_obj.character_state.fields.active = 0;
-    background_objects[1].unk4E = 0xD;
-    background_objects[0].unk2E = 0xA0;
-    background_objects[0].unk2C = 0x30;
     background_objects[1].unk4D = 2;
+    background_objects[1].unk4E = 0xD;
     background_objects[2].unk4D = 2;
     background_objects[2].unk4E = 5;
+    background_objects[0].unk2E = 0xA0;
+    background_objects[0].unk2C = 0x30;
     func_8001540C(5, SATURN_SOUND(9, 0x42), NULL);
     train_tunnel_main(self);
 }
@@ -150,8 +150,8 @@ void train_tunnel_wait_stop_point(struct LayerObj* arg0)
         break;
     case 2:
         if (get_layout_screen(1, 0x40, 0x40) == 0x18) {
-            arg0->unk7 = 0;
             arg0->unk6++;
+            arg0->unk7 = 0;
         }
         break;
     }
@@ -162,8 +162,8 @@ void train_tunnel_start_braking(struct LayerObj* arg0)
     arg0->unk17 = 2;
     engine_obj.character_state.bytes[0] = 1;
     func_8001540C(5, SATURN_SOUND(0xA, 0x43), NULL);
-    arg0->unk7 = 0;
     arg0->unk6++;
+    arg0->unk7 = 0;
 }
 
 void train_tunnel_brake(struct LayerObj* arg0)
@@ -212,8 +212,8 @@ void train_tunnel_start_departure(struct LayerObj* arg0)
 
     arg0->unk17 = 1;
     engine_obj.character_state.bytes[0] = 0;
-    arg0->unk7 = 0;
     arg0->unk6++;
+    arg0->unk7 = 0;
 }
 
 void train_tunnel_accelerate(struct LayerObj* arg0)
@@ -240,8 +240,8 @@ void train_tunnel_section_3(struct LayerObj* arg0)
 
 void train_tunnel_section_3_wait(struct LayerObj* arg0)
 {
-    arg0->unk7 = 0;
     arg0->unk6++;
+    arg0->unk7 = 0;
 }
 
 void train_tunnel_section_3_skip(struct LayerObj* arg0)
@@ -261,8 +261,8 @@ void train_tunnel_section_4(struct LayerObj* arg0)
 
 void train_tunnel_section_4_wait(struct LayerObj* arg0)
 {
-    arg0->unk7 = 0;
     arg0->unk6++;
+    arg0->unk7 = 0;
 }
 
 void train_tunnel_section_4_skip(struct LayerObj* arg0)

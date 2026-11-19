@@ -71,11 +71,9 @@ void func_8002E420(struct EngineObj* arg0)
     arg0->substage = 0;
     arg0->checkpoint = 0;
     main_bss_state.character_mode = 0;
-    i = 0;
-    do {
+    for (i = 0; i < 0x10; i++) {
         arg0->character_state.bytes[i] = 0;
-        i++;
-    } while (i < 0x10);
+    }
     arg0->unk1F = 0;
     arg0->enable_boss = 0;
     arg0->unk8 = 0;
@@ -99,8 +97,8 @@ void func_8002E420(struct EngineObj* arg0)
 
     switch (arg0->unk5F) {
     case 0:
-        arg0->unk1 = 8;
         arg0->unkE = arg0->cur_character;
+        arg0->unk1 = 8;
         break;
     case 1:
     case 2:
@@ -252,8 +250,8 @@ void func_8002E7BC(struct EngineObj* arg0)
         return;
     }
 
-    arg0->unk2 = 0;
     arg0->unk1++;
+    arg0->unk2 = 0;
     misc = find_free_misc_obj();
     if (misc != NULL) {
         misc->active = 0x41;
@@ -314,7 +312,9 @@ void func_8002E994(struct EngineObj* arg0)
             break;
         }
 
-        if (arg0->unk8 == 0) {
+        if (arg0->unk8 != 0) {
+            arg0->unk8--;
+        } else {
             if (arg0->unkA++ < 3) {
                 arg0->unk8 = 0x1E;
             } else {
@@ -334,8 +334,6 @@ void func_8002E994(struct EngineObj* arg0)
                     BRIEFING_CURSOR_SOUND();
                 }
             }
-        } else {
-            arg0->unk8--;
         }
         break;
     case BRIEFING_PAD_DOWN:
@@ -343,7 +341,9 @@ void func_8002E994(struct EngineObj* arg0)
             break;
         }
 
-        if (arg0->unk8 == 0) {
+        if (arg0->unk8 != 0) {
+            arg0->unk8--;
+        } else {
             if (arg0->unkA++ < 3) {
                 arg0->unk8 = 0x1E;
             } else {
@@ -363,8 +363,6 @@ void func_8002E994(struct EngineObj* arg0)
                     BRIEFING_CURSOR_SOUND();
                 }
             }
-        } else {
-            arg0->unk8--;
         }
         break;
     case BRIEFING_PAD_RIGHT:
@@ -444,8 +442,8 @@ void func_8002E994(struct EngineObj* arg0)
             arg0->substage = D_8013B814;
         }
         BRIEFING_SELECT_SOUND();
-        arg0->unk2 = 0;
         arg0->unk1++;
+        arg0->unk2 = 0;
     }
 }
 
@@ -509,8 +507,8 @@ void func_8002EDD4(struct EngineObj* arg0)
         } else {
         block_12:
             if ((arg0->stage > 8) || (arg0->stage == 0) || ((((u8)arg0->palette_flags >> (arg0->stage - 1)) & 1) != 0)) {
-                arg0->unk1 = 0;
                 arg0->state++;
+                arg0->unk1 = 0;
             } else {
                 arg0->unk1 = 0xB;
             }

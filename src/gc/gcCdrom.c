@@ -128,6 +128,26 @@ void func_80013AD8(s32 index, u8 arg1, CdLoadAddress dest)
     }
 }
 
+s32 fn_4_12B4(s32 index)
+{
+    return 1;
+}
+
+s32 fn_4_1290(s32 index, u8 arg1, CdLoadAddress dest)
+{
+    func_80013AD8(index, arg1, dest);
+    return 1;
+}
+
+s32 fn_4_1288(void)
+{
+    return 1;
+}
+
+void fn_4_1284(void)
+{
+}
+
 void func_80014A90(s32 arg0, s32 arg1)
 {
     int state;

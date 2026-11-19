@@ -122,9 +122,9 @@ void func_8004DB10(struct MainObj* self)
     if (!(self->collision_flags & 8)) {
         set_animation(self, 3);
         self->unk5 = 2;
-        self->gravity = FIXED(0.2578125);
         self->unk6 = 0;
         self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->x_accel = 0;
         self->air_state = -1;
         return;
@@ -151,8 +151,8 @@ void func_8004DB10(struct MainObj* self)
 
     set_animation(self, 2);
     self->unk5 = 5;
-    self->y_speed = FIXED(3.5);
     self->unk6 = 0;
+    self->y_speed = FIXED(3.5);
     self->gravity = FIXED(0.2578125);
     self->x_speed = self->unk15 != 0 ? FIXED(1) : FIXED(-1);
     self->air_state = 1;
@@ -177,7 +177,7 @@ void func_8004DCB0(struct MainObj* arg0)
                         arg0->ext.main_0.background_relative |= 1;
                 } else if (g_Player.unk15 != 0 && arg0->x_pos.val > g_Player.x_pos.val
                     && ABS(weapon->y_pos.i.hi, arg0->y_pos.i.hi) < 0x18
-                    && arg0->x_pos.i.hi - 0x80 < weapon->x_pos.i.hi) {
+                    && weapon->x_pos.i.hi > arg0->x_pos.i.hi - 0x80) {
                     arg0->ext.main_0.background_relative |= 1;
                 }
                 if (arg0->ext.main_0.background_relative & 1) {
@@ -251,7 +251,8 @@ void shell_crawler_shell(struct MainObj* self)
             self->hurt_box = &shell_crawler_shell_box;
             self->attack_box = &shell_crawler_shell_box;
         }
-        if (--self->unk7C == 0) {
+        self->unk7C--;
+        if (self->unk7C == 0) {
             self->unk6++;
             set_animation(self, 6);
         }
@@ -259,9 +260,9 @@ void shell_crawler_shell(struct MainObj* self)
     case 2:
         if (self->animation_step.fields.relative_step == 0) {
             set_animation(self, 1);
-            self->ext.main_0.background_relative &= 0xFE;
             self->unk5 = 1;
             self->unk6 = 0;
+            self->ext.main_0.background_relative &= 0xFE;
             self->collision_data = D_801069F4;
             self->hurt_box = &shell_crawler_body_box;
             self->attack_box = &shell_crawler_body_box;
@@ -407,22 +408,22 @@ void func_8004E490(struct MainObj* arg0)
 // shell_crawler_init
 void func_8004E55C(struct MainObj* arg0)
 {
-    arg0->unk5 = 1;
     arg0->state++;
+    arg0->unk5 = 1;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     arg0->animation_table = (const u8* const*)shell_crawler_animations;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
+    arg0->invincibility_timer = 0;
+    arg0->air_state = 0;
     arg0->terrain_box = &shell_crawler_terrain_box;
     arg0->hurt_box = &shell_crawler_body_box;
     arg0->attack_box = &shell_crawler_body_box;
     arg0->hp = 3;
-    arg0->collision_data = D_801069F4;
-    arg0->invincibility_timer = 0;
-    arg0->air_state = 0;
     arg0->contact_damage = 1;
+    arg0->collision_data = D_801069F4;
     arg0->x_speed = 0;
     arg0->x_accel = 0;
     arg0->y_speed = 0;
@@ -431,14 +432,14 @@ void func_8004E55C(struct MainObj* arg0)
     arg0->ext.main_0.flags[0] = 0;
     arg0->ext.main_0.index = 0;
     arg0->ext.main_0.flags[1] = 0;
-    if ((u8)(arg0->unk2 - 2) < 2) {
+    if (arg0->unk2 >= 2 && arg0->unk2 < 4) {
         arg0->state = 5;
-        arg0->hurt_box = NULL;
-        arg0->attack_box = NULL;
         arg0->x_pos.i.hi &= ~0xF;
         arg0->y_pos.i.hi &= ~0xF;
         arg0->x_pos.i.hi += 8;
         arg0->y_pos.i.hi += 0x14;
+        arg0->hurt_box = NULL;
+        arg0->attack_box = NULL;
         set_animation(arg0, 0);
     } else {
         set_animation(arg0, 1);
@@ -449,13 +450,13 @@ void shell_crawler_main(struct MainObj* self)
 {
     s32 hit;
 
-#ifdef MMX4_SATURN
+#ifdef MMX4_BIG_ENDIAN
     if (*(u16*)&engine_obj.stage == 0x201 && engine_obj.character_state.bytes[0] != 0) {
 #else
     if (*(u16*)&engine_obj.stage == 0x102 && engine_obj.character_state.bytes[0] != 0) {
 #endif
-        if ((self->x_pos.i.hi >= 0xC0F && self->x_pos.i.hi <= 0xDF0) || (u16)(self->x_pos.i.hi - 0x100F) < 0x1E2
-            || (u16)(self->x_pos.i.hi - 0x1315) < 0x1DC || (self->x_pos.i.hi >= 0x1613 && self->x_pos.i.hi <= 0x17D1)) {
+        if ((self->x_pos.i.hi >= 0xC0F && self->x_pos.i.hi <= 0xDF0) || (self->x_pos.i.hi >= 0x100F && self->x_pos.i.hi < 0x11F1)
+            || (self->x_pos.i.hi >= 0x1315 && self->x_pos.i.hi < 0x14F1) || (self->x_pos.i.hi >= 0x1613 && self->x_pos.i.hi <= 0x17D1)) {
             self->state = 3;
             self->unk6 = 0;
             return;

@@ -412,10 +412,24 @@ void SelectACharacterUpdate(struct MiscObj*);
 void TitleLogoUpdate(struct MiscObj*);
 void TitleUpdate2(struct QuadObj*);
 
+#ifdef MMX4_GAMECUBE
+void fn_80052270(s32);
+s32 fn_8005212C(s32);
+#endif
+
 void func_80021158(void)
 {
 #ifdef MMX4_SATURN
     saturn_gameplay_prepare();
+#endif
+#ifdef MMX4_GAMECUBE
+    if (engine_obj.gameplay_locked == 0 && main_bss_state.transition.active == 0 && engine_obj.unk10 == 0
+        && engine_obj.unkF == 0) {
+        fn_80052270(0);
+        if (fn_8005212C(0) != 0) {
+            return;
+        }
+    }
 #endif
     player_read_input();
     func_80021C14();
@@ -506,8 +520,10 @@ void update_visual_objects(void)
 {
 #define current SP_CUR_VISUAL_OBJ
     for (current = visual_objects; current < &visual_objects[COUNT(visual_objects)]; current++) {
-        if (engine_obj.unk14 == 0 && current->active != 0) {
-            visual_object_update_funcs[current->id](current);
+        if (engine_obj.unk14 == 0) {
+            if (current->active != 0) {
+                visual_object_update_funcs[current->id](current);
+            }
         } else if (current->active != 0) {
             if (current->active & 8) {
                 visual_object_update_funcs[current->id](current);
@@ -555,8 +571,10 @@ void update_misc_objects(void)
 {
 #define current SP_CUR_MISC_OBJ
     for (current = misc_objects; current < &misc_objects[COUNT(misc_objects)]; current++) {
-        if (engine_obj.unk17 == 0 && current->active != 0) {
-            misc_object_update_funcs[current->id](current);
+        if (engine_obj.unk17 == 0) {
+            if (current->active != 0) {
+                misc_object_update_funcs[current->id](current);
+            }
         } else if (current->active != 0) {
             if (current->active & 8) {
                 misc_object_update_funcs[current->id](current);
@@ -583,8 +601,10 @@ void update_quad_objects(void)
 {
 #define current SP_CUR_QUAD_OBJ
     for (current = g_QuadObjects; current < &g_QuadObjects[COUNT(g_QuadObjects)]; current++) {
-        if (engine_obj.unk18 == 0 && current->active != 0) {
-            quad_object_update_funcs[current->id](current);
+        if (engine_obj.unk18 == 0) {
+            if (current->active != 0) {
+                quad_object_update_funcs[current->id](current);
+            }
         } else if (current->active != 0) {
             if (current->active & 8) {
                 quad_object_update_funcs[current->id](current);

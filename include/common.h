@@ -430,7 +430,7 @@ union AnimationStep {
 union PlayerUnk8A {
     u16 packed;
     struct {
-        u8 low;
+        s8 low;
         s8 high;
     } bytes;
 };

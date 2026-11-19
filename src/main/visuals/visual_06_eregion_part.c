@@ -212,11 +212,11 @@ void func_800AFF78(struct VisualObj* arg0)
     switch (arg0->unk2) {
     case 0:
         if (arg0->unk50->unk15 == 0) {
-            arg0->x_pos.i.hi += (u8)eregion_part_offsets_center[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+            arg0->x_pos.i.hi += (u8)eregion_part_offsets_center[arg0->unk50->animation_step.fields.frame_index][0];
         } else {
-            arg0->x_pos.i.hi -= (u8)eregion_part_offsets_center[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+            arg0->x_pos.i.hi -= (u8)eregion_part_offsets_center[arg0->unk50->animation_step.fields.frame_index][0];
         }
-        arg0->y_pos.i.hi -= eregion_part_offsets_center[(u8)arg0->unk50->animation_step.fields.frame_index][1];
+        arg0->y_pos.i.hi -= eregion_part_offsets_center[arg0->unk50->animation_step.fields.frame_index][1];
         arg0->unk42 = arg0->unk50->unk42;
         eregion_part_funcs[arg0->state](arg0);
         return;
@@ -231,22 +231,22 @@ void func_800AFF78(struct VisualObj* arg0)
         break;
     case 3:
         if (arg0->unk50->unk15 == 0) {
-            arg0->x_pos.i.hi += eregion_part_offsets_left[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+            arg0->x_pos.i.hi += eregion_part_offsets_left[arg0->unk50->animation_step.fields.frame_index][0];
         } else {
-            arg0->x_pos.i.hi -= eregion_part_offsets_left[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+            arg0->x_pos.i.hi -= eregion_part_offsets_left[arg0->unk50->animation_step.fields.frame_index][0];
         }
-        arg0->y_pos.i.hi += eregion_part_offsets_left[(u8)arg0->unk50->animation_step.fields.frame_index][1];
+        arg0->y_pos.i.hi += eregion_part_offsets_left[arg0->unk50->animation_step.fields.frame_index][1];
         arg0->unk42 &= ~0x8000;
         arg0->unk42 |= arg0->unk50->unk42 & 0x8000;
         eregion_part_funcs[arg0->state](arg0);
         return;
     case 4:
         if (arg0->unk50->unk15 == 0) {
-            arg0->x_pos.i.hi += eregion_part_offsets_right[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+            arg0->x_pos.i.hi += eregion_part_offsets_right[arg0->unk50->animation_step.fields.frame_index][0];
         } else {
-            arg0->x_pos.i.hi -= eregion_part_offsets_right[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+            arg0->x_pos.i.hi -= eregion_part_offsets_right[arg0->unk50->animation_step.fields.frame_index][0];
         }
-        arg0->y_pos.i.hi = arg0->y_pos.i.hi + eregion_part_offsets_right[(u8)arg0->unk50->animation_step.fields.frame_index][1];
+        arg0->y_pos.i.hi = arg0->y_pos.i.hi + eregion_part_offsets_right[arg0->unk50->animation_step.fields.frame_index][1];
         arg0->unk42 &= ~0x8000;
         arg0->unk42 |= arg0->unk50->unk42 & 0x8000;
         eregion_part_funcs[arg0->state](arg0);
@@ -337,7 +337,11 @@ void eregion_part_slash(struct VisualObj* arg0)
     if (arg0->animation_step.fields.event == 2) {
         MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = VISUAL_SOUND_EREGION_SLASH;
     }
-    if (arg0->animation_step.fields.event == 1 || (arg0->unk2 == 1 && (arg0->unk50->state != 1 || arg0->unk50->unk5 != 5))) {
+    if (arg0->animation_step.fields.event == 1) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    if ((arg0->unk2 == 1 && (arg0->unk50->state != 1 || arg0->unk50->unk5 != 5))) {
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
@@ -382,6 +386,7 @@ void eregion_part_legs(struct VisualObj* arg0)
         if (arg0->unk50->unk7 < 0) {
             return;
         }
+        update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
     } else {
         if (arg0->unk2 == 3) {
             if (arg0->unk17 != arg0->unk50->unk17) {
@@ -390,7 +395,7 @@ void eregion_part_legs(struct VisualObj* arg0)
                 animate_object(ANIMATED_OBJECT(arg0));
             }
         } else {
-            if ((u8)arg0->unk50->animation_step.fields.frame_index == 0x18 || (u8)arg0->unk50->animation_step.fields.frame_index == 0x1B || (u8)arg0->unk50->animation_step.fields.frame_index == 0x1C || (u8)arg0->unk50->animation_step.fields.frame_index == 0x1D) {
+            if (arg0->unk50->animation_step.fields.frame_index == 0x18 || arg0->unk50->animation_step.fields.frame_index == 0x1B || arg0->unk50->animation_step.fields.frame_index == 0x1C || arg0->unk50->animation_step.fields.frame_index == 0x1D) {
                 arg0->unk16 = VISUAL_SATURN_LAYER(7);
             } else {
                 arg0->unk16 = VISUAL_SATURN_LAYER(5);
@@ -408,11 +413,11 @@ void eregion_part_legs(struct VisualObj* arg0)
             } else {
                 MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = SATURN_SOUND(0x1B, 6);
             }
-            arg0->animation_step.fields.event = 0;
             arg0->unk54 ^= 1;
+            arg0->animation_step.fields.event = 0;
         }
+        update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
     }
-    update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 }
 
 void eregion_part_mirror(struct VisualObj* arg0)

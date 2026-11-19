@@ -25,11 +25,12 @@ void func_800CF184(struct MiscObj* arg0);
 
 void func_800CF184(struct MiscObj* arg0)
 {
-    struct BaseObj* source = arg0->ext.pointer.unk50;
+    struct BaseObj* source;
 
     arg0->on_screen = 1;
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->state++;
+    source = arg0->ext.pointer.unk50;
     switch (arg0->unk2) {
     case 0:
         set_animation(arg0, 0x14);

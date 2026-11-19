@@ -76,14 +76,14 @@ void func_8009D23C(struct ShotObj* arg0)
         half -= arg0->unk2 << 21;
     distance = arg0->x_vel.val;
     if (distance < 0)
-        distance = -distance;
+        distance *= -1;
     steps = half / (u32)distance;
     if (steps == 0)
         steps = 1;
+    arg0->unk2C = (u32)arg0->y_vel.val / steps;
     arg0->unk84.value = 0;
     arg0->unk70 = 0;
     arg0->unk7 = 1;
-    arg0->unk2C = (u32)arg0->y_vel.val / steps;
     set_animation(arg0, 7);
 }
 

@@ -39,8 +39,8 @@ void bg_zone_controller_e_update(struct EffectObj* self)
 void bg_zone_controller_e_init(struct EffectObj* self)
 {
     self->unk5 = 2;
-    self->ext.effect_22.unk14 = 5;
     self->state++;
+    self->ext.effect_22.unk14 = 5;
     bg_zone_controller_e_main(self);
 }
 

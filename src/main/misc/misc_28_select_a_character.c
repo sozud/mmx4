@@ -166,15 +166,15 @@ void select_char_portrait_bounce(struct MiscObj* self)
     case 1:
         move_object((struct MovingObj*)self);
         if (self->on_screen == 0) {
-            self->ext.sel_char.blast_timer = 20;
             self->unk7++;
+            self->ext.sel_char.blast_timer = 20;
             return;
         }
         return;
     case 2:
         if (--self->ext.sel_char.blast_timer == 0) {
-            self->x_vel.val = FIXED(-16);
             self->unk7++;
+            self->x_vel.val = FIXED(-16);
             return;
         }
         break;

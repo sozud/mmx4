@@ -304,10 +304,10 @@ void func_800C71C0(struct ItemObj* arg0)
         row = func_8002938C(0x88);
         arg0->unk42 = OBJECT_CLUT(((resource * 4 + 0x1A) % 16) | ((((row + 6) / 4) + 0x1E0) << 6));
         set_animation(ANIMATED_OBJECT(arg0), 6);
+        arg0->unk2 &= 0xF;
         arg0->state = 1;
         arg0->unk5 = 4;
         arg0->unk6 = 0;
-        arg0->unk2 &= 0xF;
         return;
     }
     switch (engine_obj.character_state.bytes[6 + arg0->unk2]) {
@@ -455,6 +455,9 @@ void boss_teleporter_warp_leave(struct ItemObj* arg0)
 {
     if (--arg0->tail_ext.unk1.unk84.timer == 0) {
         player_start_script_action(0x16, g_Player.unk15);
+#ifdef MMX4_GAMECUBE
+        stop_sound(5, 0);
+#endif
         func_8001540C(5, SATURN_SOUND(1, 0x2A), NULL);
         arg0->tail_ext.unk1.unk84.timer = 0x28;
         arg0->unk6++;

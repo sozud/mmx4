@@ -26,20 +26,20 @@ void aiming_laser_charged_beam_update(struct QuadObj* arg0)
 {
     struct PlayerObj* ptr = &g_Player;
     struct PlayerObj* temp_a2 = arg0->unk5C;
-    s32 var_a1 = 0;
-    if (g_Player.input_locked != 0) {
+    u32 var_a1 = 0;
+    if (ptr->input_locked != 0) {
         var_a1 = 1;
     }
-    if (g_Player.capsule_state != 0) {
+    if (ptr->capsule_state != 0) {
         var_a1 = 1;
     }
-    if (g_Player.weapon != 6) {
+    if (ptr->weapon != 6) {
         var_a1 = 1;
     }
-    if (g_Player.hp == 0) {
+    if (ptr->hp == 0) {
         var_a1 = 1;
     }
-    if (g_Player.actions_reset != 0) {
+    if (ptr->actions_reset != 0) {
         var_a1 = 1;
     }
     if (var_a1 != 0) {

@@ -45,16 +45,13 @@ extern ret_u8 func_8002938C(s32);
 #ifdef MMX4_SATURN
 void func_800CE388(struct MiscObj* arg0)
 {
-    s32 resource;
 
     arg0->unk16 = 2;
     arg0->unk15 = 0;
     arg0->animation_table = (u32**)cyberspace_warp_animations;
     arg0->bg_offset = g_Player.bg_offset;
-    resource = func_8002938C(0x9B);
-    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
-    resource = func_8002938C(0x9B);
-    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x9B));
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x9B)];
     arg0->unk42 = OBJECT_STAGE_CLUT(0x9B);
     arg0->x_pos.i.hi = g_Player.x_pos.i.hi;
     arg0->y_pos.i.hi = g_Player.y_pos.i.hi;
@@ -95,30 +92,27 @@ void func_800CE388(struct MiscObj* arg0)
 #else
 void func_800CE388(struct MiscObj* arg0)
 {
-    s32 resource;
 
     arg0->unk16 = 2;
     arg0->unk15 = 0;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (u32**)cyberspace_warp_animations;
-    resource = func_8002938C(0x9B);
-    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
-    resource = func_8002938C(0x9B);
-    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x9B));
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x9B)];
     arg0->unk42 = OBJECT_STAGE_CLUT(0x9B);
     arg0->x_pos.i.hi = g_Player.x_pos.i.hi;
     arg0->y_pos.i.hi = g_Player.y_pos.i.hi;
     switch (arg0->unk2) {
     case 0:
         set_animation(arg0, 0);
-        arg0->ext.misc_33.timer = 0x48;
         arg0->unk5 = 0;
+        arg0->ext.misc_33.timer = 0x48;
         arg0->unk16 = 6;
         break;
     case 1:
         set_animation(arg0, 1);
-        arg0->ext.misc_33.timer = 0x48;
         arg0->unk5 = 0;
+        arg0->ext.misc_33.timer = 0x48;
         arg0->unk16 = 0x11;
         break;
     case 2:

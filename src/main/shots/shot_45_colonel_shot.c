@@ -193,15 +193,15 @@ void colonel_streak_start(struct ShotObj* self)
         self->x_vel.val = FIXED(-6);
         self->unk15 = 0;
     }
-    self->unk50.data = (u8*)colonel_shot_box_9;
-    self->timer = 5;
-    self->unk8A = 0x32;
     self->y_vel.val = 0;
     self->unk28 = 0;
     self->unk2C = 0;
+    self->y_pos.i.hi += 0x20;
     self->unk58.data = 0;
     self->unk54 = 0;
-    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x20;
+    self->unk50.data = (u8*)colonel_shot_box_9;
+    self->timer = 5;
+    self->unk8A = 0x32;
     self->unk6++;
 }
 

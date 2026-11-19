@@ -60,23 +60,23 @@ void func_800A63B0(struct ShotObj* arg0)
     s16 dx;
 
     arg0->state = 1;
-    arg0->on_screen = 1;
-    arg0->timer = 0xA;
-    arg0->unk16 = VISUAL_SATURN_LAYER(4);
-    arg0->unk68 = (struct Unk_unk68*)peacock_missile_terrain_box;
-    arg0->unk50.data = peacock_missile_hit_box;
-    arg0->unk5C = 3;
-    arg0->unk60 = 6;
-    arg0->unk90.val = 0x6E;
     arg0->unk5 = 0;
     arg0->unk6 = 0;
     arg0->unk7 = 0;
+    arg0->on_screen = 1;
+    arg0->timer = 0xA;
     arg0->unk8A = 0;
     arg0->unk84.value = 0;
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
+    arg0->unk68 = (struct Unk_unk68*)peacock_missile_terrain_box;
     arg0->unk54 = NULL;
+    arg0->unk50.data = peacock_missile_hit_box;
     arg0->unk58.data = NULL;
+    arg0->unk5C = 3;
+    arg0->unk60 = 6;
     arg0->unk61 = 0;
     arg0->unk8C.word = 0;
+    arg0->unk90.val = 0x6E;
     dx = ((s16*)peacock_missile_launch_offsets)[index];
     if (((struct MainObj*)arg0->backref)->unk15 != 0) {
         arg0->x_pos.i.hi -= dx;
@@ -88,25 +88,23 @@ void func_800A63B0(struct ShotObj* arg0)
     arg0->y_pos.i.hi += ((s16*)peacock_missile_launch_offsets)[index + 1];
     set_animation(arg0, (arg0->unk84.value >> 1) + 0xD);
     set_velocity_from_angle(MOVING_OBJECT(arg0), (u8)arg0->unk84.value);
-    arg0->unk2C = 0;
-    arg0->unk28 = 0;
     arg0->x_vel.val *= 4;
     arg0->y_vel.val *= 4;
+    arg0->unk2C = 0;
+    arg0->unk28 = 0;
 }
 #endif
 
 // peacock_missile_home
 void func_800A6510(struct ShotObj* arg0)
 {
-    s16 timer;
     s32 target;
     s32 direction;
     s32 next;
     struct ObjectHeader* object;
 
-    timer = arg0->timer;
     object = OBJECT_HEADER(arg0->unk7C);
-    if (timer == 0) {
+    if (arg0->timer == 0) {
         if (!(WEAPON_FRAME_COUNTER & 1)) {
             target = angle_to_object(OBJECT_HEADER(arg0), object);
             direction = arg0->unk84.value;
@@ -134,7 +132,7 @@ void func_800A6510(struct ShotObj* arg0)
             }
         }
     } else {
-        arg0->timer = timer - 1;
+        arg0->timer--;
     }
     move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
@@ -200,7 +198,7 @@ void peacock_missile_explode(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
-s32 peacock_missile_hit_target(struct ShotObj* self)
+u32 peacock_missile_hit_target(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
@@ -229,7 +227,11 @@ void peacock_missile_main(struct ShotObj* self)
             return;
         }
 
-        if (func_8002BB80(self, &g_Player) != 0 || peacock_missile_hit_target(self) != 0) {
+        if (func_8002BB80(self, &g_Player) != 0) {
+            self->unk5 = 1;
+            return;
+        }
+        if (peacock_missile_hit_target(self) != 0) {
             self->unk5 = 1;
             return;
         }

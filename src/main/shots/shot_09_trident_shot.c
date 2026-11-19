@@ -64,17 +64,15 @@ void func_8009B0B8(struct ShotObj* arg0)
 void trident_shot_flash(struct ShotObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    if (--self->unk84.value != 0) {
-        if (*(u32*)self->unk7C == 0) {
-            self->state = 2;
-            return;
-        }
-        func_8002D9BC(self);
-        func_8002DD04(MAIN_OBJECT(self));
-        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
-            update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
-            return;
-        }
+    if (--self->unk84.value == 0 || *(u32*)self->unk7C == 0) {
+        self->state = 2;
+        return;
+    }
+    func_8002D9BC(self);
+    func_8002DD04(MAIN_OBJECT(self));
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
+        return;
     }
     self->state = 2;
 }
@@ -95,9 +93,9 @@ void func_8009B1E8(struct ShotObj* arg0)
     arg0->unk58.collision_data = D_80106070;
     arg0->unk54 = trident_shot_hit_box;
     arg0->unk50.data = trident_shot_hit_box;
-    arg0->unk42 &= 0x7FFF;
     arg0->unk16 = 0;
     arg0->unk68 = NULL;
+    arg0->unk42 &= 0x7FFF;
     if (arg0->unk15 == 0)
         arg0->x_pos.i.hi += trident_shot_muzzle_offsets[index][0];
     else
@@ -118,11 +116,11 @@ void func_8009B1E8(struct ShotObj* arg0)
     arg0->state = 4;
     arg0->on_screen = 1;
     arg0->unk58.collision_data = D_80106070;
+    arg0->unk42 &= 0x7FFF;
     arg0->unk16 = 0;
     arg0->unk68 = NULL;
     arg0->unk54 = trident_shot_hit_box;
     arg0->unk50.data = trident_shot_hit_box;
-    arg0->unk42 &= 0x7FFF;
     x = arg0->x_pos.i.hi;
     if (arg0->unk15 == 0)
         new_x = x + trident_shot_muzzle_offsets[arg0->unk2][0];

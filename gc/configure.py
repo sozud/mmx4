@@ -193,6 +193,7 @@ cflags_game = [
     "-i sysinc",
     "-DSKIP_ASM",
     "-DMMX4_BIG_ENDIAN",
+    "-DMMX4_GAMECUBE",
 ]
 
 config.linker_version = "GC/2.6"

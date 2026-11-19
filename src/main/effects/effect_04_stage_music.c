@@ -12,6 +12,15 @@ void stage_music_init(struct EffectObj*);
 void stage_music_load(struct EffectObj*);
 void stage_music_despawn(struct EffectObj*);
 
+#ifdef MMX4_GAMECUBE
+s32 fn_4_12B4(s32 index);
+s32 fn_4_1290(s32 index, u8 arg1, CdLoadAddress dest);
+s32 fn_4_1288(void);
+void fn_4_1284(void);
+extern u8 gc_stage_music_opened;
+extern s32 gc_stage_music_timer;
+#endif
+
 #ifdef MMX4_SATURN
 #define STAGE_MUSIC_SOUND_KIND 4
 #define STAGE_ARCHIVE_STAGE_DIGIT 2
@@ -39,10 +48,22 @@ void stage_music_init(struct EffectObj* self)
 #else
 void stage_music_init(struct EffectObj* self)
 {
+#ifdef MMX4_GAMECUBE
+    self->state++;
     self->ext.effect_4.unk16 = -1;
     self->ext.effect_4.timer = 0x64;
+    if (engine_obj.stage == 0xC) {
+        func_80016F0C();
+    } else {
+        func_80016FB4(3);
+    }
+    gc_stage_music_opened = 0;
+#else
+    self->ext.effect_4.unk16 = -1;
     self->state++;
+    self->ext.effect_4.timer = 0x64;
     func_80016FB4(3);
+#endif
 }
 #endif
 u8 stage_music_tracks[16] = {
@@ -136,6 +157,69 @@ void stage_music_load(struct EffectObj* self)
         break;
     }
 }
+#elif defined(MMX4_GAMECUBE)
+
+void stage_music_load(struct EffectObj* self)
+{
+    switch (self->unk5) {
+    case 0:
+        if (D_80173C84 != 0) {
+            break;
+        }
+        gc_stage_music_timer = 10;
+        if (engine_obj.stage == 0xA && engine_obj.substage == 0) {
+            if (D_80171EA8 == 0) {
+                self->unk5 = 1;
+            } else {
+                self->unk5 = 5;
+            }
+        } else if (engine_obj.stage == 0xC && engine_obj.substage == 1) {
+            self->unk5 = 5;
+        } else if (D_80171EA8 == 0 && engine_obj.substage != 0) {
+            self->unk5 = 1;
+        } else {
+            self->unk5 = 5;
+        }
+        break;
+    case 1:
+        if (gc_stage_music_timer != 0) {
+            gc_stage_music_timer--;
+        } else {
+            self->unk5 = 2;
+        }
+        break;
+    case 2:
+        if (fn_4_12B4(stage_music_tracks[engine_obj.stage]) != 0) {
+            gc_stage_music_opened = 1;
+            self->unk5 = 3;
+        }
+        break;
+    case 3:
+        if (fn_4_1290(stage_music_tracks[engine_obj.stage], 4, D_80141F30[2]) != 0) {
+            self->unk5 = 4;
+        }
+        break;
+    case 4:
+        gc_disc_error_screen();
+        if (fn_4_1288() == 0) {
+            if (++gc_stage_music_timer > 0x4B0) {
+                self->unk5 = 2;
+            }
+        } else if (D_801406AC == 2 && D_8013BD40 == 0) {
+            fn_4_1284();
+            D_80171EA8 = 1;
+            gc_stage_music_timer = 0;
+            self->unk5 = 5;
+        }
+        break;
+    case 5:
+        if (++gc_stage_music_timer <= 0x1E) {
+            gc_stage_music_timer = 0;
+            self->state++;
+        }
+        break;
+    }
+}
 #else
 void stage_music_load(struct EffectObj* self)
 {
@@ -178,6 +262,10 @@ void stage_music_load(struct EffectObj* self)
 
 void stage_music_despawn(struct EffectObj* self)
 {
+#ifdef MMX4_GAMECUBE
+    gc_stage_music_opened = 0;
+    gc_set_main_flag(1);
+#endif
     ZeroObjectState(OBJECT_HEADER(self));
 }
 

@@ -164,30 +164,30 @@ void func_8008FBCC(struct MainObj* self)
     u8 bg_offset;
 
     if (self->ext.main_75.object.shot == NULL || self->ext.main_75.object.shot->active == 0) {
+        self->unk5++;
         self->hp = 0;
         self->contact_damage = 5;
         self->invincibility_timer = 0;
-        self->unk5++;
         self->x_pos.i.hi = 0xE98;
         self->y_pos.i.hi = 0x27B;
         self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
         bg_offset = g_Player.bg_offset;
+        self->bg_offset = bg_offset;
         self->unk18.val = self->x_pos.val;
         self->unk1C.val = self->y_pos.val;
-        self->unk16 = VISUAL_SATURN_LAYER(5);
+        self->collision_data = D_80107B78;
         self->x_speed = 0;
         self->y_speed = 0;
         self->x_accel = 0;
         self->gravity = 0;
         self->air_state = 0;
-        self->terrain_box = NULL;
-        self->collision_data = D_80107B78;
         self->contact_damage = 9;
         self->animation_table = (const u8* const*)general_animations;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
+        self->terrain_box = NULL;
         self->hurt_box = D_801059C4;
         self->attack_box = &D_801059BC;
-        self->bg_offset = bg_offset;
-        self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << PLAYER_FACING_SHIFT;
+        self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) ? PLAYER_FACING_RIGHT : 0;
         self->ext.main_75.script = NULL;
         self->ext.main_75.hit_active = 0;
         set_animation(self, 0);
@@ -423,28 +423,26 @@ void general_fly_descend(struct MainObj* self)
 
 void general_fly_start(struct MainObj* self)
 {
-    s16 temp_v0;
     s16 var_a0;
     struct WeaponObj* weapon;
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    temp_v0 = self->unk7C;
-    if (temp_v0 == 0) {
+    if (self->unk7C == 0) {
         self->unk6++;
         STOP_SOUND(2, 2, 0x6);
         set_animation(self->ext.main_75.thruster, 5);
         func_8001540C(2, SATURN_SOUND(1, 0xDB), self);
         self->x_speed = self->unk15 != 0 ? FIXED(2) : FIXED(-2);
         weapon = (struct WeaponObj*)self->ext.main_75.thruster;
-        self->y_speed = 0;
         self->terrain_box = &D_801059D8;
+        self->y_speed = 0;
         var_a0 = self->unk15 != 0 ? -0x18 : 0x18;
         ((u16*)&weapon->unk84)[0] = var_a0;
         ((u16*)&self->ext.main_75.thruster->unk84)[1] = 4;
         return;
     }
-    self->unk7C = temp_v0 - 1;
+    self->unk7C--;
 }
 
 // general_fly_cross
@@ -697,6 +695,9 @@ void general_slam_windup(struct MainObj* self)
             self->unk7++;
             set_animation(self, 9);
             set_animation(self->ext.main_75.thruster, 6);
+#ifdef MMX4_GAMECUBE
+            stop_sound(2, 1);
+#endif
             func_8001540C(2, SATURN_SOUND(2, 0xDC), 0);
             self->ext.main_75.thruster->unk84.shot_55.x = (self->unk15 != 0 ? -0x18 : 0x18);
             self->ext.main_75.thruster->unk84.shot_55.y = -0x10;
@@ -704,8 +705,8 @@ void general_slam_windup(struct MainObj* self)
         }
     } else if (self->animation_step.fields.event != 0) {
         self->x_speed = 0;
-        self->unk6++;
         self->y_speed = FIXED(-5);
+        self->unk6++;
         self->unk7 = 0;
     }
 }
@@ -808,6 +809,9 @@ void general_slam_leave(struct MainObj* self)
             self->unk7 = 0;
             self->unk15 ^= PLAYER_FACING_RIGHT;
             self->x_speed = 0;
+#ifdef MMX4_GAMECUBE
+            stop_sound(2, 1);
+#endif
         }
     }
 }

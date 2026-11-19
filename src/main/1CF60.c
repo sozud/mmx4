@@ -206,7 +206,7 @@ void func_8002CDD4(struct PlayerObj* arg0)
     u8 temp_s4;
     u8 temp_s5;
     u8 temp_v0_4;
-    s32 var_s0;
+    u32 var_s0;
     s16 temp_v0 = D_8013B7FC + D_8013B7E4;
 
     temp_s3 = func_8002D7E4(arg0, D_8013B7F8 - D_8013B7E0, temp_v0);
@@ -388,12 +388,12 @@ s32 func_8002D25C(struct PlayerObj* arg0)
         arg1 = D_8013B7F4 + D_8013B804 + D_8013B7EC + D_8013B7E4 - 1;
     }
 
-    if (func_8002D32C(arg0, arg1, arg2) == 0) {
-        arg0->y_pos.i.lo = 0;
-        arg0->y_pos.i.hi += D_8013B804;
-        return 0;
-    } else {
+    if (func_8002D32C(arg0, arg1, arg2) != 0) {
         return -1;
+    } else {
+        arg0->y_pos.i.hi += D_8013B804;
+        arg0->y_pos.i.lo = 0;
+        return 0;
     }
 }
 
@@ -465,8 +465,8 @@ s32 func_8002D490(struct PlayerObj* arg0)
     if (func_8002D5E4(arg0, var_v0_2) != 0) {
         return -1;
     }
-    arg0->x_pos.i.lo = 0;
     arg0->x_pos.i.hi += D_8013B800;
+    arg0->x_pos.i.lo = 0;
     return 0;
 }
 
@@ -569,15 +569,23 @@ u8 func_8002D8B8(struct PlayerObj* arg0)
 
 u8 func_8002D900(struct PlayerObj* arg0)
 {
-    s16 x = arg0->x_pos.i.hi;
+    s16 x;
+    s16 y;
+
+#ifdef MMX4_GAMECUBE
+    if (arg0->unk68 == NULL) {
+        return 0;
+    }
+#endif
+    x = arg0->x_pos.i.hi;
 #ifdef MMX4_PC
-    s16 y = arg0->y_pos.i.hi - 1;
+    y = arg0->y_pos.i.hi - 1;
 
     if (arg0->unk68 != NULL) {
         y += arg0->unk68->unk1 + arg0->unk68->unk3;
     }
 #else
-    s16 y = arg0->y_pos.i.hi + arg0->unk68->unk1 + arg0->unk68->unk3 - 1;
+    y = arg0->y_pos.i.hi + arg0->unk68->unk1 + arg0->unk68->unk3 - 1;
 #endif
 
     return func_8002D724(arg0, x, y);
@@ -586,6 +594,12 @@ u8 func_8002D900(struct PlayerObj* arg0)
 u8 func_8002D94C(struct PlayerObj* arg0)
 {
     struct Unk_unk68* temp_v1 = arg0->unk68;
+
+#ifdef MMX4_GAMECUBE
+    if (temp_v1 == NULL) {
+        return 0;
+    }
+#endif
     return func_8002D724(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi + temp_v1->unk1 + temp_v1->unk3);
 }
 

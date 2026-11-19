@@ -24,9 +24,9 @@ void spike_crawler_hit_flash(struct MainObj* self)
         self->unk42 |= 0x8000;
     }
     if (--self->invincibility_timer == 0) {
+        self->unk42 &= 0x7FFF;
         self->unk5 = 1;
         self->unk6 = 0;
-        self->unk42 &= 0x7FFF;
     }
 }
 
@@ -50,9 +50,9 @@ void func_80091EC4(struct MainObj* self)
     else
         self->unk42 |= 0x8000;
     if ((s8)--self->invincibility_timer == 0) {
+        self->unk42 &= 0x7FFF;
         self->unk5 = 1;
         self->unk6 = 0;
-        self->unk42 &= 0x7FFF;
     }
 }
 
@@ -80,7 +80,7 @@ void spike_crawler_hit_knockback(struct MainObj* self)
 
     speed = self->x_speed;
     if (speed < 0) {
-        speed = -speed;
+        speed *= -1;
     }
     if (speed < 0x6000) {
         self->x_speed = 0;
@@ -98,11 +98,11 @@ void spike_crawler_hit_knockback(struct MainObj* self)
     }
 
     if (--self->invincibility_timer == 0) {
+        self->unk42 &= 0x7FFF;
         self->unk5 = 1;
         self->unk6 = 0;
         self->x_speed = 0;
         self->x_accel = 0;
-        self->unk42 &= 0x7FFF;
     }
 }
 

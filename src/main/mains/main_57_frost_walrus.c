@@ -178,23 +178,23 @@ void func_800722A0(struct MainObj* arg0)
     if (((struct BaseObj*)arg0->ext.main_57.effect)->active != 0)
         return;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk16 = VISUAL_SATURN_LAYER(5);
-    arg0->contact_damage = 6;
-    arg0->terrain_box = &frost_walrus_terrain_box;
-    arg0->hurt_box = &frost_walrus_hurt_box;
-    arg0->attack_box = &frost_walrus_attack_box;
-    arg0->collision_data = D_80107A78;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->air_state = 0;
     arg0->unk15 = 0;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->hp = 0;
+    arg0->contact_damage = 6;
     arg0->invincibility_timer = 0;
+    arg0->terrain_box = &frost_walrus_terrain_box;
+    arg0->hurt_box = &frost_walrus_hurt_box;
+    arg0->attack_box = &frost_walrus_attack_box;
+    arg0->collision_data = D_80107A78;
     arg0->animation_table = (const u8* const*)frost_walrus_animations;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
     if (engine_obj.stage != 0xC) {
         arg0->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
     } else {
@@ -250,7 +250,7 @@ void func_80072418(struct MainObj* arg0)
             }
             if (hit == 0x23)
                 goto flash;
-            if (hit < 0x24)
+            if (hit <= 0x23)
                 goto flash;
             if (hit == 0x24)
                 goto check_staggered;
@@ -379,13 +379,8 @@ void frost_walrus_intro(struct MainObj* self)
 
 void frost_walrus_intro_walk(struct MainObj* self)
 {
-    s32 x_vel = FIXED(-0.75);
-
     self->unk6++;
-    if (self->unk15 != 0) {
-        x_vel = FIXED(0.75);
-    }
-    self->x_speed = x_vel;
+    self->x_speed = (self->unk15 != 0) ? FIXED(0.75) : FIXED(-0.75);
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
@@ -498,8 +493,8 @@ void frost_walrus_think_next(struct MainObj* self)
     value = *self->ext.main_57.script;
     if ((value & 0xFF) == 3) {
         set_animation(self, 0x1A);
-        self->unk7C = 0x1E;
         self->unk6++;
+        self->unk7C = 0x1E;
     } else {
         self->unk5 = value;
         self->unk6 = 0;
@@ -777,8 +772,7 @@ void frost_walrus_shards_fire(struct MainObj* self)
     u8 i;
     struct ShotObj* shot;
 
-    i = 0;
-    do {
+    for (i = 0; i < 2; i++) {
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -788,11 +782,10 @@ void frost_walrus_shards_fire(struct MainObj* self)
             shot->unk7 = self->ext.main_57.shard_count;
             self->ext.main_57.shot = shot;
         }
-        i++;
-    } while (i < 2);
+    }
 
-    self->unk7E = 0x20;
     self->unk7C += 2;
+    self->unk7E = 0x20;
     self->unk6++;
 }
 

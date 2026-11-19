@@ -49,10 +49,10 @@ void func_8009D788(struct ShotObj* arg0)
     arg0->unk58.data = (u8*)D_80106070;
     arg0->unk84.value = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
     set_velocity_from_angle(MOVING_OBJECT(arg0), arg0->unk84.value);
-    arg0->timer = 0x14;
-    arg0->unk8A = 0;
     arg0->x_vel.val *= 3;
     arg0->y_vel.val *= 3;
+    arg0->timer = 0x14;
+    arg0->unk8A = 0;
     arg0->unk5C = 1;
     arg0->unk60 = 0;
     arg0->unk8C.word = 1;
@@ -137,8 +137,8 @@ void web_shot_hold(struct ShotObj* self)
     web_shot_pin_player(self);
     self->timer -= func_8002BAA4();
     if (self->timer < 0) {
-        self->timer = 0x1E;
         self->unk5++;
+        self->timer = 0x1E;
         g_Player.stun_timer = 0;
         self->unk50.data = 0;
         self->unk54 = 0;

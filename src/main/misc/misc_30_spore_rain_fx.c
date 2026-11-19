@@ -27,17 +27,16 @@ void spore_rain_fx_animate(struct MiscObj* self)
     if (self->unk2 == 0) {
         if (--self->ext.misc_30.unk56 == 0) {
             self->state = 1;
-            update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
-            return;
-        }
-        if (self->ext.misc_30.unk54 == 0) {
-            self->x_pos.i.hi += 0x20;
         } else {
-            self->x_pos.i.hi -= 0x20;
+            if (self->ext.misc_30.unk54 == 0) {
+                self->x_pos.i.hi += 0x20;
+            } else {
+                self->x_pos.i.hi -= 0x20;
+            }
+            self->y_pos.i.hi++;
+            self->ext.misc_30.unk54 ^= 0x20;
+            animate_object(ANIMATED_OBJECT(self));
         }
-        self->y_pos.i.hi++;
-        self->ext.misc_30.unk54 ^= 0x20;
-        animate_object(ANIMATED_OBJECT(self));
     } else {
         if (--self->ext.misc_30.unk54 == 0) {
             self->state = 1;

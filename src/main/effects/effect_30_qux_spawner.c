@@ -41,7 +41,8 @@ void floor_trap_explode(struct EffectObj* self)
     struct ShotObj* shot;
     struct ShotObj* temp_v0_3;
 
-    if (--self->unk5 == 0) {
+    self->unk5--;
+    if (self->unk5 == 0) {
         shot = find_free_shot_obj();
         if (shot != 0) {
             shot->active = 0x41;

@@ -265,7 +265,7 @@ void func_8001653C(void)
     s32 track;
     s16 volume;
 
-    if ((u32)((u8)engine_obj.stage - 0xB) < 2U) {
+    if (engine_obj.stage >= 0xB && engine_obj.stage < 0xD) {
         if (engine_obj.stage == 0xB) {
             if (engine_obj.substage == 0) {
                 if (engine_obj.cur_character == 0) {
@@ -303,6 +303,34 @@ extern s32 D_80139538, D_80139540, D_80139544;
 extern s16 D_80139560;
 extern s32 D_80139530, D_80141BD4;
 
+#ifdef MMX4_GAMECUBE
+s32 fn_800158E4(void* player);
+void fn_8001586C(void* player, s32 volume);
+void fn_800159B4(void* player, u8 track, s32 flags);
+extern u8 gc_music_player[0x18];
+extern s32 gc_music_pending_volume;
+extern s32 gc_music_fade;
+extern s32 gc_music_volume;
+extern s32 gc_music_target_volume;
+
+void func_8001663C(u8 selection, u8 volume)
+{
+    if (fn_800158E4(gc_music_player) == 0x30001) {
+        gc_music_target_volume = volume;
+        gc_music_volume = volume;
+        fn_8001586C(gc_music_player, volume * 100 / 128);
+    } else {
+        gc_music_pending_volume = volume;
+    }
+    gc_music_fade = 0;
+    D_80173C84 = 1;
+    if (selection != 0 && selection < 0x20) {
+        fn_800159B4(gc_music_player, selection, 0x10);
+    } else {
+        fn_800159B4(gc_music_player, selection, 0);
+    }
+}
+#else
 void func_8001663C(u8 selection, u8 volume)
 {
     u16 base;
@@ -419,6 +447,7 @@ void func_8001663C(u8 selection, u8 volume)
     D_80173C84 = 1;
     D_80139530 = 7;
 }
+#endif
 
 void func_80016F0C();
 
@@ -686,6 +715,53 @@ extern s32 D_80139530;
 
 extern u8 D_80139554[];
 
+#ifdef MMX4_GAMECUBE
+void fn_80015978(void* player);
+void fn_80015934(void* player);
+
+s32 func_80016E84(void)
+{
+    if (fn_800158E4(gc_music_player) == 0x30000) {
+        D_80173C84 = 2;
+        if (gc_music_fade != 0) {
+            gc_music_volume -= gc_music_fade;
+            if (gc_music_volume < 0) {
+                gc_music_volume = 0;
+                gc_music_fade = 0;
+                fn_80015978(gc_music_player);
+            } else {
+                fn_8001586C(gc_music_player, gc_music_volume * 100 / 128);
+            }
+        }
+    } else {
+        D_80173C84 = 0;
+    }
+    return 0;
+}
+
+void gc_music_update(void)
+{
+    if (gc_music_pending_volume != -1 && fn_800158E4(gc_music_player) == 0x30001) {
+        gc_music_target_volume = (u8)gc_music_pending_volume;
+        gc_music_volume = (u8)gc_music_pending_volume;
+        fn_8001586C(gc_music_player, (u8)gc_music_pending_volume * 100 / 128);
+        gc_music_pending_volume = -1;
+    }
+    fn_80015934(gc_music_player);
+}
+
+void func_80016F0C()
+{
+    fn_80015978(gc_music_player);
+}
+
+void func_80016FB4(s32 arg0)
+{
+    if (fn_800158E4(gc_music_player) == 0x30000) {
+        gc_music_fade = arg0;
+    }
+}
+#else
 void func_80016E84(void)
 {
 #ifdef MMX4_WIN32
@@ -750,4 +826,5 @@ void func_80016FB4(s32 arg0)
         D_80141BD0 = 1;
     }
 }
+#endif
 #endif
