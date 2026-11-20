@@ -1290,37 +1290,6 @@ static int misc_32_cancelled(s8 mode)
     return (controller_input.pressed & PAD_SELECTION_ALT) || ((controller_input.pressed & 0x800) && game_info.unk0 == mode);
 }
 
-extern u16* D_80139578;
-extern SPRT_16* D_8013957C;
-
-void func_80017268(s16 x_start)
-{
-    SPRT_16* sprite = D_8013957C;
-    u32 row;
-    u32 column;
-    s16 x;
-    s16 y = 0;
-    u16 tile;
-
-    for (row = 0; row < 16; row++, y += 16) {
-        x = x_start;
-        for (column = 0; column < 16; column++, x += 16) {
-            tile = *D_80139578++;
-            if (x >= 0x140)
-                continue;
-            sprite->clut = (tile >> 12) | 0x7900;
-            sprite->u0 = (tile & 0xF) << 4;
-            sprite->v0 = tile & 0xF0;
-            sprite->x0 = x;
-            sprite->y0 = y;
-            sprite->code &= 0xFD;
-            setaddr(sprite, sprite + 1);
-            sprite++;
-        }
-    }
-    D_8013957C = sprite;
-}
-
 extern struct HudLayoutData {
     s16 x;
     s16 y;

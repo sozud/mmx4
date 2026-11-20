@@ -438,8 +438,8 @@ void func_80070514(struct MainObj* arg0);
 void func_80070A38(struct MainObj* arg0);
 void func_800710D4(struct MainObj* arg0);
 void func_80071740(struct MainObj* arg0);
-extern s16 jet_stingray_vortex_debris_offsets[24];
 #endif
+extern s16 jet_stingray_vortex_debris_offsets[24];
 
 void func_80070514(struct MainObj* arg0)
 {
@@ -620,8 +620,56 @@ void func_80070A38(struct MainObj* arg0)
     debris->x_speed = arg0->unk15 != 0 ? -0x38000 : 0x38000;
     debris->y_speed = arg0->y_pos.i.hi < debris->y_pos.i.hi ? 0x10000 : -0x10000;
 }
-#else
+#elif defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80070A38);
+#else
+void func_80070A38(struct MainObj* arg0)
+{
+    struct MainObj* debris;
+    s16* offsets;
+    s16* row;
+    s16* col;
+    u32 roll;
+
+    if (g_Player.x_pos.i.hi < arg0->x_pos.i.hi)
+        g_Player.x_pos.i.hi += 3;
+    else
+        g_Player.x_pos.i.hi -= 3;
+    if (arg0->y_pos.i.hi < g_Player.y_pos.i.hi)
+        g_Player.y_pos.i.hi -= 1;
+    else
+        g_Player.y_pos.i.hi += 1;
+    g_Player.y_pos.i.hi++;
+    if (ABS(g_Player.y_pos.i.hi, arg0->y_pos.i.hi) < 0x30 && ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 0x20) {
+        arg0->ext.main_56.vortex_result = 2;
+        arg0->unk6++;
+        return;
+    }
+    if (--arg0->unk7C == 0) {
+        arg0->ext.main_56.vortex_result = 1;
+        arg0->unk6++;
+    }
+    if (WEAPON_FRAME_COUNTER % 5 == 0) {
+        debris = func_8006FB20(arg0, 0, 0);
+        offsets = jet_stingray_vortex_debris_offsets;
+        roll = get_random();
+        do {
+        } while (0);
+        if (arg0->unk15 != 0)
+            row = offsets + 8;
+        else
+            row = offsets;
+        debris->x_pos.i.hi = background_objects[0].unk1E + row[roll & 7];
+        roll = get_random();
+        col = offsets + 0x10;
+        debris->y_pos.i.hi = background_objects[0].unk22 + col[roll & 7];
+        debris->x_speed = arg0->unk15 != 0 ? -0x38000 : 0x38000;
+        if (debris->y_pos.i.hi > arg0->y_pos.i.hi)
+            debris->y_speed = 0x10000;
+        else
+            debris->y_speed = -0x10000;
+    }
+}
 #endif
 
 void jet_stingray_vortex_wait(struct MainObj* self)

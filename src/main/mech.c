@@ -370,7 +370,6 @@ u32 func_8003DC8C(struct RideArmorObj* arg0)
     return 0;
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 u32 func_8003DCD8(struct RideArmorObj* arg0)
 {
     if (arg0->unk8A & 0x30) {
@@ -381,9 +380,6 @@ u32 func_8003DCD8(struct RideArmorObj* arg0)
     }
     return 0;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mech", func_8003DCD8);
-#endif
 
 void func_8003DD14(struct MainObj* arg0)
 {
