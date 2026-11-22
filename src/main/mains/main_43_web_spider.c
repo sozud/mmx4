@@ -176,6 +176,10 @@ void web_spider_intro_setup(struct MainObj* self)
 extern void (*web_spider_step_funcs[7])();
 extern RECT* web_spider_swing_paths[6];
 extern u8 D_800FF724[16];
+extern struct FixedPointPosition spiderling_velocities[8];
+extern struct Unk_unk68 D_800FF5B4;
+extern struct Unk_unk68 D_800FF5B8;
+extern struct Unk_unk68 D_800FF5BC;
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 static u8 main43_column(s16 index);
 void func_8006346C(struct MainObj* arg0);
@@ -188,10 +192,6 @@ void func_80065574(struct MainObj* arg0);
 void web_spider_check_big_web(struct MainObj* arg0);
 extern u16 web_spider_arena_y;
 u8 angle_from_delta(s32 arg0, s32 arg1);
-extern struct FixedPointPosition spiderling_velocities[8];
-extern struct Unk_unk68 D_800FF5B4;
-extern struct Unk_unk68 D_800FF5B8;
-extern struct Unk_unk68 D_800FF5BC;
 static u8 main43_column(s16 index)
 {
 #ifdef MMX4_SATURN
@@ -1203,39 +1203,36 @@ void web_spider_death(struct MainObj* self)
 }
 
 // spiderling_init
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80065574(struct MainObj* arg0)
 {
-    const s32* velocity = (const s32*)&spiderling_velocities[((arg0->unk2 - 1) & 3) * 2];
+    s32* velocity;
 
-    arg0->unk5 = 2;
     arg0->state = 1;
-    arg0->on_screen = 1;
-    arg0->unk63 = 1;
-    arg0->contact_damage = 4;
+    arg0->unk5 = 2;
     arg0->unk6 = 0;
     arg0->unk7C = 0;
+    arg0->on_screen = 1;
     arg0->hp = 3;
+    arg0->contact_damage = 4;
     arg0->invincibility_timer = 0;
     arg0->unk62 = 0;
-    arg0->air_state = 0;
+    arg0->unk63 = 1;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->x_speed = velocity[0];
-    arg0->x_accel = velocity[1];
-    arg0->y_speed = velocity[2];
-    arg0->gravity = velocity[3];
+    arg0->air_state = 0;
+    velocity = (s32*)&spiderling_velocities[((arg0->unk2 - 1) & 3) * 2];
+    arg0->x_speed = *velocity++;
+    arg0->x_accel = *velocity++;
+    arg0->y_speed = *velocity++;
+    arg0->gravity = *velocity++;
+    arg0->unk16 = 3;
+    arg0->collision_flags = 0;
     arg0->hurt_box = &D_800FF5B8;
     arg0->attack_box = &D_800FF5B4;
     arg0->terrain_box = &D_800FF5BC;
-    arg0->unk16 = 3;
-    arg0->collision_flags = 0;
     arg0->collision_data = D_801075F4;
     set_animation(arg0, 0x1B);
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80065574);
-#endif
 
 void spiderling_run(struct MainObj* self)
 {
