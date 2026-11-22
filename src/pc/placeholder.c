@@ -776,48 +776,6 @@ void func_800253F0(struct MainObj* player, s32 gauge)
         player->unk5D--;
 }
 
-void func_800262B8(u8 layer)
-{
-    struct BackgroundObj* background = &background_objects[layer];
-    s32 source_tile_x = background->x_pos.i.hi / 16;
-    s32 source_tile_y = background->y_pos.i.hi / 16;
-    s32 block_x = source_tile_x / 16;
-    s32 block_y = source_tile_y / 16;
-    s32 tile_y = source_tile_y & 31;
-    s32 inner_y = source_tile_y & 15;
-    s32 layer_offset = layer * layout_size;
-    s32 row_offset = block_y * layout_width;
-    s32 row;
-
-    for (row = 0; row < 17; row++) {
-        s32 current_block_x = block_x;
-        s32 tile_x = source_tile_x & 31;
-        s32 inner_x = source_tile_x & 15;
-        u8 block = SP_BG_TILEMAP[layer_offset + row_offset + current_block_x];
-        s32 column;
-
-        for (column = 0; column < 22; column++) {
-            D_801441C8[layer][tile_y][tile_x] = SP_BG_TILE_PIXELS[block * 256 + inner_y * 16 + inner_x];
-            tile_x = (tile_x + 1) & 31;
-            inner_x++;
-            if (inner_x == 16) {
-                inner_x = 0;
-                current_block_x++;
-                block = SP_BG_TILEMAP[layer_offset + row_offset + current_block_x];
-            }
-        }
-
-        tile_y = (tile_y + 1) & 31;
-        inner_y++;
-        if (inner_y == 16) {
-            inner_y = 0;
-            row_offset += layout_width;
-        }
-    }
-
-    background->unk4C = 0;
-}
-
 static void heat_only_link(s32 layer)
 {
     static TILE black[2];
@@ -1085,66 +1043,6 @@ void func_800270F8(s32 x, s32 y, s32 tile_x, s32 tile_y)
     SP_BG_PRIM_CURSOR = sprite;
 }
 #endif
-
-void func_80027344(s32 layer, s32 x, s32 y)
-{
-    struct BackgroundObj* bg = &background_objects[layer];
-    s32 tile_count = 18;
-    s32 block_x, block_y;
-    s32 tile_x, tile_y;
-    s32 inner_x, inner_y;
-    s32 min_block_x, max_block_x;
-    s32 layer_offset, row_offset;
-    s32 width;
-    s32 i;
-    u8 block;
-
-    if (x < 0)
-        return;
-    if (y < 0) {
-        y = 0;
-        tile_count = 17;
-    }
-
-    block_x = x / 256;
-    block_y = y / 256;
-    tile_x = (x % 512) / 16;
-    tile_y = (y % 512) / 16;
-    inner_x = tile_x & 15;
-    inner_y = tile_y & 15;
-    min_block_x = bg->unk4D;
-    max_block_x = bg->unk4E;
-
-    if ((u32)block_x < min_block_x) {
-        block_x += max_block_x - min_block_x + 1;
-        if (bg->x_pos.i.hi <= (min_block_x - 1) * 256) {
-            bg->x_pos.i.hi = max_block_x * 256;
-            return;
-        }
-    }
-    if ((u32)block_x > max_block_x) {
-        block_x -= max_block_x - min_block_x + 1;
-        if (bg->x_pos.i.hi >= (max_block_x + 1) * 256) {
-            bg->x_pos.i.hi = min_block_x * 256;
-            return;
-        }
-    }
-
-    layer_offset = layer * layout_size;
-    width = layout_width;
-    row_offset = width * block_y;
-    block = SP_BG_TILEMAP[layer_offset + row_offset + block_x];
-    for (i = 0; i < tile_count; i++) {
-        D_801441C8[layer][tile_y][tile_x] = SP_BG_TILE_PIXELS[block * 256 + inner_y * 16 + inner_x];
-        tile_y = (tile_y + 1) & 31;
-        inner_y++;
-        if (inner_y == 16) {
-            inner_y = 0;
-            row_offset += width;
-            block = SP_BG_TILEMAP[layer_offset + row_offset + block_x];
-        }
-    }
-}
 
 void func_800E0D0C(void)
 {

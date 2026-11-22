@@ -17,6 +17,7 @@ void func_80026720(void);
 void func_800267D4(s32 input);
 void func_8002728C(void);
 void func_800270F8(s32 x, s32 y, s32 tile_x, s32 tile_y);
+void func_80027344(s32 layer, s32 x, s32 y);
 
 #ifdef MMX4_PC
 #include <psyz/audio.h>
