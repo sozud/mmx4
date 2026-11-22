@@ -496,7 +496,7 @@ void trident_mech_charge_attack(struct MainObj* self)
         self->contact_damage = 3;
         self->attack_box = &trident_mech_attack_box;
     } else {
-        self->contact_damage = 6;
+        self->contact_damage = DEMO_ALT(6, 4);
         self->attack_box = &trident_mech_charge_attack_box;
     }
     if (self->animation_step.fields.event == 2) {

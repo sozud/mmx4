@@ -32,12 +32,12 @@ void weapon_overlay_update(struct VisualObj* arg0)
         arg0->unk38 = temp_s1->unk38;
         arg0->unk3C = temp_s1->unk3C;
         arg0->animation_table = temp_s1->animation_table;
-        arg0->unk40 = weapon_overlay_palettes[arg0->unk2];
+        arg0->unk40 = DEMO_ALT(weapon_overlay_palettes[arg0->unk2], WEAPON_TEXTURE_SPECIAL_1);
         arg0->unk42 = temp_s1->unk42;
-        arg0->unk16 = weapon_overlay_layers[arg0->unk2];
-        arg0->unk15 = temp_s1->unk15;
+        arg0->unk16 = DEMO_ALT(weapon_overlay_layers[arg0->unk2], 3);
+        arg0->unk15 = DEMO_ALT(temp_s1->unk15, 0);
         arg0->unk49 = 1;
-        set_animation(arg0, weapon_overlay_animations[arg0->unk2]);
+        set_animation(arg0, DEMO_ALT(weapon_overlay_animations[arg0->unk2], 0));
         arg0->state++;
     } else {
         animate_object(arg0);
@@ -46,12 +46,17 @@ void weapon_overlay_update(struct VisualObj* arg0)
     arg0->x_pos.val = temp_s1->x_pos.val;
     arg0->y_pos.val = temp_s1->y_pos.val;
 
+#ifdef VERSION_DEMO
+    decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x30);
+    update_on_screen(arg0, 0x20, 0x28);
+#else
     if (weapon_overlay_gfx_rows[arg0->unk2] != 0) {
         decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, weapon_overlay_gfx_rows[arg0->unk2]);
     }
 
     update_on_screen(arg0, weapon_overlay_bounds[arg0->unk2].x,
         weapon_overlay_bounds[arg0->unk2].y);
+#endif
 }
 
 struct VisualSpawnOffset double_cyclone_charged_fan_offsets[2] = {
@@ -59,6 +64,7 @@ struct VisualSpawnOffset double_cyclone_charged_fan_offsets[2] = {
     { 0x1F, -0x07 },
 };
 
+#ifndef VERSION_DEMO
 u16 weapon_overlay_palettes[4] = { WEAPON_TEXTURE_SPECIAL_1, WEAPON_TEXTURE_SPECIAL_0, WEAPON_TEXTURE_SPECIAL_1, WEAPON_TEXTURE_SPECIAL_1 };
 u8 weapon_overlay_layers[4] = { 3, 2, 3, 3 };
 u8 weapon_overlay_animations[4] = { 0, 1, 2, 4 };
@@ -70,3 +76,4 @@ struct VisualBounds weapon_overlay_bounds[4] = {
     { 0x38, 0x38 },
     { 0x38, 0x38 },
 };
+#endif

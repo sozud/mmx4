@@ -23,6 +23,7 @@ extern u8 ryuenjin_flame_animations[];
 #include "main/sprite_animations.h"
 #endif
 
+#ifndef VERSION_DEMO
 void zero_saber_update(struct WeaponObj* arg0)
 {
     u32 var_a0;
@@ -108,6 +109,7 @@ void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
     weapon->state++;
 }
 
+#endif
 void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
     u8 id;
@@ -120,15 +122,26 @@ void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
     } else {
         arg0->unk50 = (u8*)&zero_saber_hit_boxes[arg0->animation_step.fields.event];
     }
+#ifdef VERSION_DEMO
+    if (arg0->id >= 0x18) {
+        if (arg0->id < 0x1A) {
+            arg0->unk64 = arg0->unk2 + 1;
+        } else if (arg0->id <= 0x20) {
+            arg0->unk64 = arg0->animation_step.fields.event;
+        }
+    }
+#else
     id = arg0->id;
     if (id - 0x18 < 2U) {
         arg0->unk64 = arg0->unk2 + 1;
     } else {
         arg0->unk64 = arg0->animation_step.fields.event;
     }
+#endif
     update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
 }
 
+#ifndef VERSION_DEMO
 // WeaponObj, weapon_object_update_funcs[36]
 
 // rakuhouha_orb_update
@@ -336,3 +349,54 @@ u16 ryuenjin_flame_offsets[4][2] = {
     { 0xFFEC, 0xFFF2 },
     { 0xFFE8, 0x0002 },
 };
+#endif
+
+#ifdef VERSION_DEMO
+struct Unk_unk68 zero_saber_hit_boxes[45] = {
+    { 0, 0, 0, 0 },
+    { -23, -43, 0x1F, 0x1F },
+    { -57, -43, 0x33, 0x36 },
+    { -60, -39, 0x28, 0x3A },
+    { -59, -16, 0x26, 0x24 },
+    { -57, 5, 0x25, 0x10 },
+    { -48, -9, 0x1E, 0x11 },
+    { -66, -8, 0x49, 0x11 },
+    { -67, -6, 0x69, 0x13 },
+    { 18, -6, 0x20, 0x14 },
+    { 20, -6, 0x1E, 0xF },
+    { -13, -41, 0x2C, 0x1D },
+    { -81, -44, 0x5B, 0x3E },
+    { -83, -44, 0x4B, 0x4E },
+    { -83, -34, 0x4C, 0x44 },
+    { -83, -8, 0x4C, 0x29 },
+    { -50, 6, 0x28, 0x1B },
+    { -59, 4, 0x42, 0x1A },
+    { -75, -15, 0x4C, 0x2C },
+    { -72, -17, 0x44, 0x2C },
+    { -43, -19, 0x3E, 0x16 },
+    { 2, -17, 0x1E, 0x18 },
+    { -72, -36, 0x36, 0x3E },
+    { -72, -6, 0x38, 0x30 },
+    { -72, 11, 0x38, 0x1A },
+    { -44, -32, 0x2B, 0x26 },
+    { -64, -30, 0x4E, 0x34 },
+    { -74, -26, 0x6A, 0x3E },
+    { 8, -14, 0x18, 0x22 },
+    { -44, -36, 0x2B, 0x26 },
+    { -64, -34, 0x4E, 0x34 },
+    { -74, -30, 0x6A, 0x3E },
+    { 8, -18, 0x18, 0x22 },
+    { -80, -36, 0x42, 0x30 },
+    { -80, -28, 0x42, 0x28 },
+    { -80, -6, 0x40, 0x12 },
+    { 6, -26, 0x18, 0x14 },
+    { 14, -18, 0x22, 0x22 },
+    { -14, -10, 0x32, 0x18 },
+    { -62, -10, 0x26, 0x18 },
+    { -80, -16, 0x2A, 0x24 },
+    { -80, -16, 0x2A, 0x24 },
+    { -92, -16, 0x36, 0x24 },
+    { -128, -16, 0x5A, 0x24 },
+    { -128, -16, 0x5A, 0x24 },
+};
+#endif

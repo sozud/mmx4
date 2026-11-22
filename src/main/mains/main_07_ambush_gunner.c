@@ -101,6 +101,11 @@ void func_80047404(struct MainObj* arg0)
     arg0->unk6 = 0;
 }
 #else
+#ifdef VERSION_DEMO
+#define AMBUSH_GUNNER_SET_UNK7A(obj)
+#else
+#define AMBUSH_GUNNER_SET_UNK7A(obj) (obj)->unk7A = 1
+#endif
 void func_80047404(struct MainObj* arg0)
 {
     arg0->hp = 6;
@@ -129,7 +134,7 @@ void func_80047404(struct MainObj* arg0)
         break;
     case 2:
         set_animation(arg0, 0);
-        arg0->unk7A = 1;
+        AMBUSH_GUNNER_SET_UNK7A(arg0);
         arg0->unk5 = 2;
         arg0->invincibility_timer = 1;
         arg0->unk15 = 0;
@@ -139,7 +144,7 @@ void func_80047404(struct MainObj* arg0)
         break;
     case 3:
         set_animation(arg0, 0);
-        arg0->unk7A = 1;
+        AMBUSH_GUNNER_SET_UNK7A(arg0);
         arg0->unk5 = 2;
         arg0->invincibility_timer = 1;
         arg0->unk15 = PLAYER_FACING_RIGHT;
@@ -149,7 +154,7 @@ void func_80047404(struct MainObj* arg0)
         break;
     case 4:
         set_animation(arg0, 0);
-        arg0->unk7A = 1;
+        AMBUSH_GUNNER_SET_UNK7A(arg0);
         arg0->unk5 = 2;
         arg0->invincibility_timer = 1;
         arg0->unk15 = 0;
@@ -159,7 +164,7 @@ void func_80047404(struct MainObj* arg0)
         break;
     case 5:
         set_animation(arg0, 0);
-        arg0->unk7A = 1;
+        AMBUSH_GUNNER_SET_UNK7A(arg0);
         arg0->unk5 = 2;
         arg0->invincibility_timer = 1;
         arg0->unk15 = PLAYER_FACING_RIGHT;
@@ -169,7 +174,7 @@ void func_80047404(struct MainObj* arg0)
         break;
     case 6:
         set_animation(arg0, 0);
-        arg0->unk7A = 1;
+        AMBUSH_GUNNER_SET_UNK7A(arg0);
         arg0->unk5 = 2;
         arg0->invincibility_timer = 1;
         arg0->unk15 = 0;
@@ -179,7 +184,7 @@ void func_80047404(struct MainObj* arg0)
         break;
     case 7:
         set_animation(arg0, 0);
-        arg0->unk7A = 1;
+        AMBUSH_GUNNER_SET_UNK7A(arg0);
         arg0->unk5 = 2;
         arg0->invincibility_timer = 1;
         arg0->unk15 = PLAYER_FACING_RIGHT;
@@ -233,7 +238,9 @@ void ambush_gunner_main(struct MainObj* self)
 
 void ambush_gunner_despawn(struct MainObj* self)
 {
+#ifndef VERSION_DEMO
     self->unk7A = 0;
+#endif
     self->ext.main_7.unk80 = 0;
     self->ext.main_7.unk84 = 0;
     self->ext.main_7.saved_x_velocity = 0;
@@ -260,11 +267,15 @@ void func_80047818(struct MainObj* arg0)
     if ((arg0->unk15 == 0 && arg0->x_pos.val > g_Player.x_pos.val) || (arg0->unk15 != 0 && arg0->x_pos.val < g_Player.x_pos.val)) {
         if (arg0->ext.main_7.unk80 == 0) {
             if (ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi) < (s16)arg0->ext.main_7.unk84) {
+#ifndef VERSION_DEMO
                 arg0->unk7A = 0;
+#endif
                 arg0->unk6 = 1;
             }
         } else if (ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi) > (s16)arg0->ext.main_7.unk84) {
+#ifndef VERSION_DEMO
             arg0->unk7A = 0;
+#endif
             arg0->unk6 = 1;
         }
     }

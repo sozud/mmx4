@@ -40,7 +40,7 @@ void briefing_character_init(struct MiscObj* self)
         self->x_pos.val = FIXED(42);
         self->y_pos.val = FIXED(416);
     } else {
-        self->unk42 = OBJECT_CLUT(0x7885);
+        self->unk42 = OBJECT_CLUT(DEMO_ALT(0x7885, 0x7886));
         self->unk40 = OBJECT_STAGE_TEXTURE(3);
         self->unk3C = (s8*)SP_MENU_FRAMES + SP_MENU_FRAMES[3];
         if (engine_obj.cur_character != CHARACTER_X) {
@@ -78,6 +78,330 @@ void briefing_character_animate(struct MiscObj* self)
     is_on_screen(self);
 }
 
+#ifdef VERSION_DEMO
+union AnimationStep D_800DC8D4_demo[] = {
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 90, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 89, 0, 1, 0x00 },
+    { 1, 0, -13, 0x00 },
+};
+
+union AnimationStep D_800DC90C_demo[] = {
+    { 3, 0, 1, 0x00 },
+    { 6, 0, 1, 0x03 },
+    { 6, 0, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 5, 0, 1, 0x04 },
+    { 1, 0, -2, 0x04 },
+};
+
+union AnimationStep D_800DC924_demo[] = {
+    { 6, 0, 1, 0x04 },
+    { 6, 0, 1, 0x03 },
+    { 4, 0, 1, 0x00 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 90, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 89, 0, 1, 0x00 },
+    { 1, 0, -13, 0x00 },
+};
+
+union AnimationStep D_800DC968_demo[] = {
+    { 2, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 6, 0, 1, 0x06 },
+    { 6, 0, 1, 0x08 },
+    { 5, 0, 1, 0x06 },
+    { 1, 0, -2, 0x06 },
+};
+
+union AnimationStep D_800DC980_demo[] = {
+    { 6, 0, 1, 0x06 },
+    { 5, 0, 1, 0x07 },
+    { 1, 0, -2, 0x07 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 90, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 89, 0, 1, 0x00 },
+    { 1, 0, -13, 0x00 },
+};
+
+union AnimationStep D_800DC9C4_demo[] = {
+    { 6, 0, 0, 0x06 },
+};
+
+union AnimationStep D_800DC9C8_demo[] = {
+    { 3, 0, 1, 0x00 },
+    { 4, 0, 1, 0x09 },
+    { 8, 0, 0, 0x0A },
+};
+
+union AnimationStep D_800DC9D4_demo[] = {
+    { 6, 0, 1, 0x06 },
+    { 6, 0, 1, 0x06 },
+    { 5, 0, 1, 0x05 },
+    { 4, 0, 1, 0x05 },
+    { 1, 0, -3, 0x05 },
+};
+
+union AnimationStep D_800DC9E8_demo[] = {
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 90, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 89, 0, 1, 0x00 },
+    { 1, 0, -13, 0x00 },
+};
+
+union AnimationStep D_800DCA20_demo[] = {
+    { 3, 0, 1, 0x00 },
+    { 6, 0, 1, 0x03 },
+    { 6, 0, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 5, 0, 1, 0x04 },
+    { 1, 0, -2, 0x04 },
+};
+
+union AnimationStep D_800DCA38_demo[] = {
+    { 6, 0, 1, 0x04 },
+    { 6, 0, 1, 0x03 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 90, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 89, 0, 1, 0x00 },
+    { 1, 0, -13, 0x00 },
+};
+
+union AnimationStep D_800DCA7C_demo[] = {
+    { 2, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 6, 0, 1, 0x06 },
+    { 6, 0, 1, 0x08 },
+    { 5, 0, 1, 0x06 },
+    { 1, 0, -2, 0x06 },
+};
+
+union AnimationStep D_800DCA94_demo[] = {
+    { 6, 0, 1, 0x06 },
+    { 6, 0, 1, 0x07 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 90, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 89, 0, 1, 0x00 },
+    { 1, 0, -13, 0x00 },
+};
+
+union AnimationStep D_800DCAD4_demo[] = {
+    { 6, 0, 0, 0x06 },
+};
+
+union AnimationStep D_800DCAD8_demo[] = {
+    { 3, 0, 1, 0x00 },
+    { 4, 0, 1, 0x0A },
+    { 8, 0, 0, 0x09 },
+};
+
+union AnimationStep D_800DCAE4_demo[] = {
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 90, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 89, 0, 1, 0x00 },
+    { 1, 0, -18, 0x00 },
+};
+
+union AnimationStep D_800DCB30_demo[] = {
+    { 5, 0, 1, 0x06 },
+    { 5, 0, 1, 0x07 },
+    { 5, 0, 1, 0x08 },
+    { 4, 0, 1, 0x09 },
+    { 1, 0, -2, 0x09 },
+};
+
+union AnimationStep D_800DCB44_demo[] = {
+    { 5, 0, 1, 0x07 },
+    { 5, 0, 1, 0x06 },
+    { 5, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 90, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 89, 0, 1, 0x00 },
+    { 1, 0, -18, 0x00 },
+};
+
+union AnimationStep D_800DCB9C_demo[] = {
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x0B },
+    { 5, 0, 1, 0x0A },
+    { 5, 0, 1, 0x0C },
+    { 4, 0, 1, 0x0B },
+    { 1, 0, -2, 0x0B },
+};
+
+union AnimationStep D_800DCBB4_demo[] = {
+    { 5, 0, 1, 0x0B },
+    { 5, 0, 1, 0x06 },
+    { 5, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 90, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 89, 0, 1, 0x00 },
+    { 1, 0, -18, 0x00 },
+};
+
+union AnimationStep D_800DCC0C_demo[] = {
+    { 5, 0, 0, 0x0B },
+};
+
+union AnimationStep D_800DCC10_demo[] = {
+    { 5, 0, 1, 0x06 },
+    { 8, 0, 0, 0x0D },
+};
+
+union AnimationStep D_800DCC18_demo[] = {
+    { 5, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 1, 0, -2, 0x05 },
+};
+
+u32* briefing_x_partner_animations[] = {
+    D_800DC8D4_demo,
+    D_800DC9C8_demo,
+    D_800DC90C_demo,
+    D_800DC924_demo,
+    D_800DC90C_demo,
+    D_800DC924_demo,
+    D_800DC968_demo,
+    D_800DC980_demo,
+    D_800DC9C4_demo,
+    D_800DC9D4_demo,
+};
+
+u32* briefing_x_animations[] = {
+    D_800DC9E8_demo,
+    D_800DCAD8_demo,
+    D_800DCA20_demo,
+    D_800DCA38_demo,
+    D_800DCA20_demo,
+    D_800DCA38_demo,
+    D_800DCA7C_demo,
+    D_800DCA94_demo,
+    D_800DCAD4_demo,
+};
+
+u32* briefing_zero_animations[] = {
+    D_800DCAE4_demo,
+    D_800DCC10_demo,
+    D_800DCC18_demo,
+    D_800DCAE4_demo,
+    D_800DCB30_demo,
+    D_800DCB44_demo,
+    D_800DCB9C_demo,
+    D_800DCBB4_demo,
+    D_800DCC0C_demo,
+};
+
+void (*g_MegamanInBriefingRoomUpdateFuncs[])(struct MiscObj*) = {
+    briefing_character_init,
+    briefing_character_animate,
+};
+#else
 union AnimationStep D_8010E100[] = {
     { 3, 0, 1, 0x00 },
     { 3, 0, 1, 0x01 },
@@ -466,3 +790,4 @@ void (*g_MegamanInBriefingRoomUpdateFuncs[])(struct MiscObj*) = {
     briefing_character_init,
     briefing_character_animate,
 };
+#endif

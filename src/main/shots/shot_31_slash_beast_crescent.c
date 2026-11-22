@@ -51,22 +51,22 @@ void func_8009FF4C(struct ShotObj* self)
     if (self->unk2 == 0) {
         self->y_vel.val = 0;
         if (self->unk15 == 0)
-            self->x_vel.val = 0xFFFB0000;
+            self->x_vel.val = DEMO_ALT(0xFFFB0000, 0xFFFC0000);
         else
-            self->x_vel.val = 0x50000;
+            self->x_vel.val = DEMO_ALT(0x50000, 0x40000);
     } else {
-        self->y_vel.val = 0x38919;
+        self->y_vel.val = DEMO_ALT(0x38919, 0x2D414);
         if (self->unk15 == 0)
-            self->x_vel.val = 0xFFFC76E7;
+            self->x_vel.val = DEMO_ALT(0xFFFC76E7, 0xFFFD2BEC);
         else
-            self->x_vel.val = 0x38919;
+            self->x_vel.val = DEMO_ALT(0x38919, 0x2D414);
     }
     self->unk16 = 0;
     self->unk68 = NULL;
     self->unk54 = slash_beast_crescent_boxes[self->unk2];
     self->unk50.data = slash_beast_crescent_boxes[self->unk2];
     self->unk5C = 1;
-    self->unk60 = 6;
+    self->unk60 = DEMO_ALT(6, 4);
     set_animation(self, self->unk2 + 0x1A);
 }
 

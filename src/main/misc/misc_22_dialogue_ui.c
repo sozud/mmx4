@@ -10,6 +10,8 @@
 
 #ifdef MMX4_SATURN
 #define DIALOGUE_SKIP_PRESSED (saturn_pad_pressed & SATURN_PAD_DIALOGUE_SKIP)
+#elif defined(VERSION_DEMO)
+#define DIALOGUE_SKIP_PRESSED (controller_input.pressed & (PADstart | PADRright))
 #elif defined(MMX4_GAMECUBE)
 #define DIALOGUE_SKIP_PRESSED (controller_input.pressed & 0xFF0)
 #else
@@ -52,6 +54,11 @@ void dialogue_ui_update(struct MiscObj* self)
         return;
     case 3:
         ptr = abc_object.unkE + &self->ext.unk.unk50->unk0;
+#ifdef VERSION_DEMO
+        if (*ptr != 0 && (abc_object.unkC == 1 || self->animation_step.fields.event == 0)) {
+            animate_object(self);
+        }
+#else
         if (*ptr != 0 && (abc_object.unkC == 1)) {
             if (self->ext.unk.unk55 == 0) {
                 set_animation(self, 1);
@@ -71,6 +78,7 @@ void dialogue_ui_update(struct MiscObj* self)
         } else {
             set_animation(self, 0);
         }
+#endif
         is_on_screen(self);
         return;
     case 4:
@@ -79,6 +87,11 @@ void dialogue_ui_update(struct MiscObj* self)
         return;
     case 5:
         ptr = abc_object.unkE + &self->ext.unk.unk50->unk0;
+#ifdef VERSION_DEMO
+        if (*ptr == 0 && (abc_object.unkC == 1 || self->animation_step.fields.event == 0)) {
+            animate_object(self);
+        }
+#else
         if ((*ptr == 0) && (abc_object.unkC == 1)) {
             if (self->ext.unk.unk55 == 0) {
                 set_animation(self, self->ext.unk.unk54 + 1);
@@ -98,6 +111,7 @@ void dialogue_ui_update(struct MiscObj* self)
         } else {
             set_animation(self, self->ext.unk.unk54);
         }
+#endif
         is_on_screen(self);
         return;
 #ifdef MMX4_SATURN
@@ -163,6 +177,7 @@ void dialogue_ui_update(struct MiscObj* self)
         is_on_screen(self);
         return;
 #endif
+#ifndef VERSION_DEMO
     case 8:
         if (self->unk5 == 0) {
             animate_object(self);
@@ -179,5 +194,6 @@ void dialogue_ui_update(struct MiscObj* self)
         self->on_screen = 0;
         ZeroObjectState(self);
         return;
+#endif
     }
 }

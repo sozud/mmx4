@@ -26,11 +26,15 @@ enum PlayerAction {
     PLAYER_SCRIPT_WALK,
     PLAYER_SCRIPT_VANISH,
     PLAYER_SCRIPT_JUMP,
+#ifndef VERSION_DEMO
     PLAYER_SCRIPT_VICTORY,
+#endif
     PLAYER_STAGE_CLEAR,
     PLAYER_LADDER_SHOOT = 0x20,
     PLAYER_HOVER,
+#ifndef VERSION_DEMO
     PLAYER_NOVA_STRIKE,
+#endif
     PLAYER_SOUL_BODY,
     PLAYER_SOUL_BODY_CLONE,
     PLAYER_SOUL_BODY_VANISH,
@@ -40,6 +44,9 @@ enum PlayerAction {
     PLAYER_ZERO_SABER = 0x30,
     PLAYER_ZERO_JUMP_SLASH,
     PLAYER_ZERO_FALL_SLASH,
+#ifdef VERSION_DEMO
+    PLAYER_ZERO_DEMO_SLASH,
+#endif
     PLAYER_ZERO_LADDER_SLASH,
     PLAYER_ZERO_WALL_SLASH,
     PLAYER_ZERO_RAIJINGEKI,
@@ -98,7 +105,11 @@ s32 player_zero_check_shippuuga(struct PlayerObj*);
 
 s32 player_zero_check_ryuenjin(struct PlayerObj*);
 
+#ifdef VERSION_DEMO
+void player_hover_steer(struct PlayerObj*);
+#else
 s32 player_hover_steer(struct PlayerObj*);
+#endif
 
 s32 player_zero_shippuuga_cancel(struct PlayerObj*);
 

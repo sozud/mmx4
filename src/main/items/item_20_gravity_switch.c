@@ -32,6 +32,7 @@ void gravity_switch_flip_objects(void);
 u8 gravity_switch_terrain_box[4] = { 0, 0, 8, 8 };
 u8 gravity_switch_hit_box[4] = { 0xF8, 0xF8, 0x10, 0x10 };
 
+#ifndef VERSION_DEMO
 struct Item20BackgroundConfig gravity_switch_camera_bounds[8] = {
     { 0x0400, 0x0400 },
     { 0x0300, 0x0300 },
@@ -42,6 +43,7 @@ struct Item20BackgroundConfig gravity_switch_camera_bounds[8] = {
     { 0x0100, 0x0300 },
     { 0x0100, 0x0300 },
 };
+#endif
 
 void gravity_switch_update(struct ItemObj* arg0)
 {
@@ -59,8 +61,8 @@ void func_800C4D20(struct ItemObj* self)
 
     self->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x9C));
 
-    self->animation_step.fields.frame_index = self->unk2 & 7;
-    if (self->unk2 & 8) {
+    self->animation_step.fields.frame_index = self->unk2 & DEMO_ALT(7, 0xF);
+    if (DEMO_ALT(self->unk2 & 8, (s8)self->unk2 & 0xF0)) {
         self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
@@ -93,11 +95,20 @@ void gravity_switch_wait_touch(struct ItemObj* arg0)
     }
 }
 
+#ifdef VERSION_DEMO
+void func_800A7BD8_demo(struct ItemObj* self)
+{
+    self->unk5 = 2;
+}
+#endif
+
+#ifndef VERSION_DEMO
 void gravity_switch_activate(struct ItemObj* arg0)
 {
     func_8001540C(2, SATURN_SOUND(0xEC, 0xAD), arg0);
     arg0->unk5 = 2;
 }
+#endif
 
 // gravity_switch_flip
 
@@ -108,6 +119,41 @@ void gravity_switch_flip_objects(void);
 void func_800C5210(struct ItemObj*);
 #endif
 
+#ifdef VERSION_DEMO
+void func_800C4F40(struct ItemObj* self)
+{
+    s32 bg_y = background_objects[0].y_pos.val;
+
+    background_objects[0].unk4C = 1;
+    background_objects[1].unk4C = 1;
+    background_objects[2].unk4C = 1;
+    g_Player.y_pos.val = 0x8000000 - g_Player.y_pos.val;
+    background_objects[0].y_pos.val = 0x7000000 - bg_y;
+    background_objects[0].unk18.val = 0x7000000 - background_objects[0].unk18.val;
+    background_objects[1].y_pos.val = 0x9000000 - background_objects[1].y_pos.val;
+    background_objects[1].unk18.val = 0x9000000 - background_objects[1].unk18.val;
+    background_objects[2].y_pos.val = 0x9000000 - background_objects[2].y_pos.val;
+    background_objects[2].unk18.val = 0x9000000 - background_objects[2].unk18.val;
+    gravity_switch_flip_objects();
+    engine_obj.character_state.bytes[0] = 1 - (u8)engine_obj.character_state.bytes[0];
+    if (engine_obj.character_state.bytes[0] != 0) {
+        background_objects[1].unk42 += 0x80;
+        background_objects[2].unk42 += 0xC0;
+        background_objects[0].unk20 = 0x700;
+        background_objects[0].unk22 = 0x400;
+        background_objects[0].unk2A = 0x400;
+        background_objects[0].unk28 = 0x700;
+    } else {
+        background_objects[0].unk20 = 0x300;
+        background_objects[0].unk28 = 0x300;
+        background_objects[0].unk22 = 0;
+        background_objects[0].unk2A = 0;
+        background_objects[1].unk42 -= 0x80;
+        background_objects[2].unk42 -= 0xC0;
+    }
+    self->unk5 = 0;
+}
+#else
 void func_800C4F40(struct ItemObj* self)
 {
     s32 bg_y;
@@ -134,11 +180,18 @@ void func_800C4F40(struct ItemObj* self)
     func_800C5210(self);
     self->unk5 = 0;
 }
+#endif
 
 void gravity_switch_despawn(struct ItemObj* arg0)
 {
     despawn_object(OBJECT_HEADER(arg0));
 }
+
+#ifdef VERSION_DEMO
+#define GRAVITY_FLIP_PREVIOUS(p)
+#else
+#define GRAVITY_FLIP_PREVIOUS(p) (p)->unk1C.val = FIXED(0x800) - (p)->unk1C.val
+#endif
 
 void gravity_switch_flip_objects(void)
 {
@@ -153,40 +206,51 @@ void gravity_switch_flip_objects(void)
     for (i = 0; i < COUNT(main_objects); p1++, i++) {
         if (p1->active != 0) {
             p1->y_pos.val = FIXED(0x800) - p1->y_pos.val;
-            p1->unk1C.val = FIXED(0x800) - p1->unk1C.val;
+            GRAVITY_FLIP_PREVIOUS(p1);
         }
     }
     p2 = misc_objects;
     for (i = 0; i < COUNT(misc_objects); p2++, i++) {
         if (p2->active != 0) {
             p2->y_pos.val = FIXED(0x800) - p2->y_pos.val;
-            p2->unk1C.val = FIXED(0x800) - p2->unk1C.val;
+            GRAVITY_FLIP_PREVIOUS(p2);
         }
     }
     p3 = weapon_objects;
     for (i = 0; i < COUNT(weapon_objects); p3++, i++) {
         if (p3->active != 0) {
             p3->y_pos.val = FIXED(0x800) - p3->y_pos.val;
-            p3->unk1C.val = FIXED(0x800) - p3->unk1C.val;
+            GRAVITY_FLIP_PREVIOUS(p3);
         }
     }
     p4 = shot_objects;
     for (i = 0; i < COUNT(shot_objects); p4++, i++) {
         if (p4->active != 0) {
             p4->y_pos.val = FIXED(0x800) - p4->y_pos.val;
-            p4->unk1C.val = FIXED(0x800) - p4->unk1C.val;
+            GRAVITY_FLIP_PREVIOUS(p4);
         }
     }
     p5 = visual_objects;
     for (i = 0; i < COUNT(visual_objects); p5++, i++) {
         if (p5->active != 0) {
             p5->y_pos.val = FIXED(0x800) - p5->y_pos.val;
-            p5->unk1C.val = FIXED(0x800) - p5->unk1C.val;
+            GRAVITY_FLIP_PREVIOUS(p5);
         }
     }
 }
 
+#ifdef VERSION_DEMO
+extern u8 hopper_switch_box[4];
+
+void func_800A7F08_demo(struct ItemObj* self)
+{
+    self->unk68 = (struct Unk_unk68*)hopper_switch_box;
+    self->state = 1;
+}
+#endif
+
 // gravity_switch_flip_camera
+#ifndef VERSION_DEMO
 void func_800C5210(struct ItemObj* self)
 {
     u8 index = (u8)self->unk2 >> 4;
@@ -203,6 +267,7 @@ void func_800C5210(struct ItemObj* self)
         background_objects[2].unk42 -= 0xC0;
     }
 }
+#endif
 
 void (*gravity_switch_state_funcs[])(struct ItemObj*) = {
     func_800C4D20,
@@ -212,6 +277,6 @@ void (*gravity_switch_state_funcs[])(struct ItemObj*) = {
 
 void (*gravity_switch_step_funcs[3])(struct ItemObj*) = {
     gravity_switch_wait_touch,
-    gravity_switch_activate,
+    DEMO_ALT(gravity_switch_activate, func_800A7BD8_demo),
     func_800C4F40,
 };

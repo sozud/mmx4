@@ -57,6 +57,30 @@ extern /* The final record continues into g_BootTransitionDataRegion. */ s16 D_8
 extern struct MovieHudQuad D_800F1C18[13];
 extern struct MoviePlaybackData D_800F1D04[11];
 
+#ifdef VERSION_DEMO
+struct DemoHudLayoutData {
+    s16 x;
+    s16 y;
+    u8 tile;
+    u8 character;
+};
+
+extern struct DemoHudLayoutData D_800C62BC_demo[27];
+
+struct DemoMovieHudQuad {
+    s16 x0;
+    s16 y0;
+    s16 x1;
+    s16 y1;
+    s16 x2;
+    s16 y2;
+    s16 x3;
+    s16 y3;
+};
+
+extern struct DemoMovieHudQuad D_800C63FC_demo[13];
+#endif
+
 #ifdef MMX4_PC
 #include <psyz/audio.h>
 #include <psyz/spu.h>
@@ -127,6 +151,10 @@ extern struct MoviePlaybackData D_800F1D04[11];
 #endif
 
 #ifndef MMX4_SATURN
+#ifdef VERSION_DEMO
+void func_8002E764_demo(u8 index);
+void func_8002EA00_demo(void);
+#endif
 void func_80017340(void)
 {
     u8 start;
@@ -138,6 +166,13 @@ void func_80017340(void)
     SP_AUX_CURSOR = &temp1[SP_DRAW_BUFFER];
 
     func_80017E84();
+#ifdef VERSION_DEMO
+    for (start = 0; start < 0x1B; start++) {
+        func_8002E764_demo(start);
+    }
+    func_8002EA00_demo();
+    func_80017F2C();
+#else
 
     end = engine_obj.cur_character == CHARACTER_X ? 10 : 8;
 
@@ -190,6 +225,7 @@ void func_80017340(void)
     func_800175AC(0x22);
     func_800179BC();
     func_80017F2C();
+#endif
 }
 
 #if !defined(MMX4_PC)
@@ -198,6 +234,83 @@ static inline u16 pause_menu_clut(u8 value)
     return (value & 0xF) | (((value >> 4) + 0x1E0) << 6);
 }
 
+#ifdef VERSION_DEMO
+void func_8002E764_demo(u8 index)
+{
+    struct DemoHudLayoutData* layout = &D_800C62BC_demo[index];
+    s16 x;
+    s16 y;
+    u8* archive;
+    u16* frame;
+    u8* pieces;
+    u32 count;
+    u16 clut;
+    SPRT_16* slot;
+    SPRT_16* sprite;
+    DR_TPAGE* page;
+    u32 texture;
+    u16 uv;
+    u16 base;
+    u8 code;
+    u8 flags;
+    s16 sx;
+    s16 sy;
+    u8 u;
+    u8 v;
+
+    if (layout->character != 0xFF && bar_object.options.items[layout->character] == 0)
+        return;
+    x = layout->x;
+    y = layout->y;
+    archive = SP_TITLE_FRAMES;
+    if (layout->tile == 0xD)
+        frame = (u16*)(archive + (layout->tile + engine_obj.player_lives) * 4);
+    else
+        frame = (u16*)(archive + layout->tile * 4);
+    count = frame[0];
+    pieces = archive + frame[1] * 4;
+    base = 0x1D60;
+    slot = SP_PRIM_CURSOR;
+    page = SP_DRAW_MODE_CURSOR;
+    for (; count != 0; count--) {
+        flags = pieces[0];
+        code = 0x7D;
+        sx = (s8)pieces[2];
+        sx += x;
+        sy = y + (s8)pieces[3];
+        texture = base + (pieces[1] | ((flags & 3) << 8));
+        if (index == 2)
+            clut = 0x7840;
+        else
+            clut = 0x7900 | ((flags & 0xC) >> 2);
+        uv = texture;
+        v = uv & 0xF0;
+        u = uv << 4;
+        sprite = slot;
+        setlen(sprite, 3);
+        sprite->code = code;
+        sprite->clut = clut;
+        sprite->x0 = sx;
+        sprite->y0 = sy;
+        sprite->u0 = u;
+        sprite->v0 = v;
+        BG_DRAW_TPAGE(page, (texture >> 8) | 0x20);
+        setaddr(page, sprite);
+        setaddr(sprite, page + 1);
+        page++;
+        slot = (SPRT_16*)((POLY_FT4*)slot + 1);
+        pieces += 4;
+    }
+    SP_PRIM_CURSOR = slot;
+    {
+        u32 buffer = SP_DRAW_BUFFER;
+        u8 ordering = 5;
+        setaddr(D_8013BC40[buffer][ordering >> 4][ordering & 0xF], SP_DRAW_MODE_CURSOR);
+        D_8013BC40[buffer][ordering >> 4][ordering & 0xF] = (P_TAG*)((POLY_FT4*)slot - 1);
+    }
+    SP_DRAW_MODE_CURSOR = page;
+}
+#else
 void func_800175AC(u8 index)
 {
     struct HudLayoutData* layout = &D_800F1AD8[index];
@@ -217,6 +330,7 @@ void func_800175AC(u8 index)
     u8 flags;
     s16 sx;
     s16 sy;
+    u8 u;
     u8 v;
 
     if (index == 0x20) {
@@ -290,8 +404,50 @@ void func_800175AC(u8 index)
     SP_DRAW_MODE_CURSOR = page;
 }
 #endif
+#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef VERSION_DEMO
+void func_8002EA00_demo(void)
+{
+    u8 i;
+    P_TAG*(*ot)[8];
+    POLY_F4* poly;
+    struct DemoMovieHudQuad* row;
+    DR_TPAGE* page;
+
+    page = SP_DRAW_MODE_CURSOR;
+    poly = SP_PRIM_CURSOR;
+    row = D_800C63FC_demo;
+    for (i = 0; i < 13; i++) {
+        setPolyF4(poly);
+        poly->x0 = row->x0;
+        poly->y0 = row->y0;
+        poly->x2 = row->x2;
+        poly->y2 = row->y2;
+        if (i < 10) {
+            poly->x1 = row->x0 + g_Player.weapon_energy[i] * 2;
+            poly->x3 = row->x2 + g_Player.weapon_energy[i] * 2;
+        } else {
+            poly->x1 = row->x1;
+            poly->x3 = row->x3;
+        }
+        poly->y1 = row->y1;
+        poly->y3 = row->y3;
+        setRGB0(poly, 0x29, 0xC6, 0x29);
+        setlen(page, 1);
+        page->code[0] = (GetGraphType() == 1 || GetGraphType() == 2) ? 0xE1000000 : 0xE1000000;
+        ot = D_8013BC40[SP_DRAW_BUFFER];
+        setaddr(ot[0][5], page);
+        setaddr(page, poly);
+        ot[0][5] = (P_TAG*)poly;
+        SP_PRIM_CURSOR = (POLY_FT4*)SP_PRIM_CURSOR + 1;
+        SP_DRAW_MODE_CURSOR = (DR_TPAGE*)SP_DRAW_MODE_CURSOR + 1;
+        page = SP_DRAW_MODE_CURSOR;
+        poly = SP_PRIM_CURSOR;
+        row++;
+    }
+}
+#elif defined(MMX4_PC) || defined(MMX4_SATURN)
 static const s16* pause_bar_geometry(u32 index)
 {
     return index < 13 ? &D_800F1C18[index].x0 : (const s16*)D_800F1D04;
@@ -529,4 +685,14 @@ void func_80017F2C(void)
         }
     }
 }
+
+#ifdef VERSION_DEMO
+void func_8002ED84_demo(void)
+{
+}
+
+void func_8002ED8C_demo(void)
+{
+}
+#endif
 #endif

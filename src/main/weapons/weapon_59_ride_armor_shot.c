@@ -138,7 +138,11 @@ void func_80098DA0(struct WeaponObj* arg0)
     s32 ty;
 
     for (main = main_objects; main < main_objects + COUNT(main_objects); main++) {
+#ifdef VERSION_DEMO
+        if (main->active == 0 || main->on_screen == 0)
+#else
         if (main->active == 0 || main->on_screen == 0 || main->unk7A != 0)
+#endif
             continue;
         target = arg0->ext.target;
         if (target != NULL) {

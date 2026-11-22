@@ -176,6 +176,9 @@ void func_80050874(struct MainObj* arg0)
         update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
         return;
     }
+#ifdef VERSION_DEMO
+    func_8002D9BC(arg0);
+#endif
     if (!(arg0->invincibility_timer & 0x7F)) {
         arg0->ext.main_18.saved_unk5 = arg0->unk5;
         hit = func_8002DD04(arg0);
@@ -183,7 +186,9 @@ void func_80050874(struct MainObj* arg0)
             g_Player.invincibility_timer = 0x7F;
             func_8001540C(5, SATURN_SOUND(2, 0x24), NULL);
             spawn_explosion(BASE_OBJECT(arg0));
+#ifndef VERSION_DEMO
             g_Player.spike_immune = 1;
+#endif
             spawn_debris(4, D_800FC33C, arg0);
             arg0->ext.main_18.ice_pieces = 0;
             arg0->ext.main_18.shed_timer = 0;
@@ -227,7 +232,9 @@ void func_80050874(struct MainObj* arg0)
         if (--arg0->invincibility_timer == 0)
             arg0->unk42 &= 0x7FFF;
     }
+#ifndef VERSION_DEMO
     func_8002D9BC(arg0);
+#endif
     update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
 }
 
@@ -726,7 +733,7 @@ void ice_core_build_grow(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (*(u8*)&self->unk7E == 0xFF && self->hp < 0x30) {
         if (--self->ext.main_18.state.runtime.unk85 == 0) {
-            func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
+            func_8001540C(0, SATURN_SOUND(DEMO_ALT(0xE, 0xF), 0x14), NULL);
             self->ext.main_18.state.runtime.unk85 = 3;
         }
         self->hp++;
@@ -756,7 +763,11 @@ void ice_core_build_wait(struct MainObj* self)
 {
     if (*(u8*)&self->unk7E == 0xFF && self->hp < 0x30) {
         if (--self->ext.main_18.state.runtime.unk85 == 0) {
+#ifdef VERSION_DEMO
+            func_8001540C(0, SATURN_SOUND(0xF, 0x14), NULL);
+#else
             func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
+#endif
             self->ext.main_18.state.runtime.unk85 = 3;
         }
         self->hp++;
@@ -973,7 +984,7 @@ void ice_core_intro_descend(struct MainObj* self)
     if (--self->unk7C == 0) {
         self->y_speed = 0;
         self->gravity = FIXED(0.0078125);
-        self->unk16 = VISUAL_SATURN_LAYER(5);
+        self->unk16 = DEMO_ALT(VISUAL_SATURN_LAYER(5), 6);
         self->unk6 = 3;
     }
 }

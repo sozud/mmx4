@@ -44,7 +44,9 @@ void func_80055024(struct MainObj* self)
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     self->collision_data = (const u16*)D_80106D74;
+#ifndef VERSION_DEMO
     self->unk42 = OBJECT_STAGE_CLUT(5);
+#endif
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;

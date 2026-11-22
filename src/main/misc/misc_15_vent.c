@@ -35,8 +35,12 @@ void func_800CA86C(struct MiscObj* self)
         set_animation(self, 0);
         self->unk16 = 2;
     } else {
+#ifdef VERSION_DEMO
+        set_animation(self, 1);
+#else
         animation = engine_obj.unk5F < 5 ? 0 : (engine_obj.unk5F < 7 ? 1 : 2);
         set_animation_frame(ANIMATED_OBJECT(self), 1, animation);
+#endif
         self->unk16 = 1;
     }
     self->state++;
@@ -46,11 +50,19 @@ void func_800CA86C(struct MiscObj* self)
 void vent_animate(struct MiscObj* self)
 {
     self->on_screen = 0;
+#ifdef VERSION_DEMO
+    if (self->unk2 != 0) {
+        self->unk6++;
+    } else if (!(self->unk6++ & 1)) {
+        return;
+    }
+#else
     if (self->unk2 == 0) {
         if (!(self->unk6++ & 1)) {
             return;
         }
     }
+#endif
     animate_object(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
 }
@@ -67,11 +79,17 @@ union AnimationStep vent_anim_0[4] = {
     { 1, 0, -3, 0x02 },
 };
 
+#ifdef VERSION_DEMO
+union AnimationStep vent_anim_1[1] = {
+    { 1, 0, 0, 0x03 },
+};
+#else
 union AnimationStep vent_anim_1[3] = {
     { 1, 0, 0, 0x03 },
     { 1, 0, 0, 0x05 },
     { 1, 0, 0, 0x04 },
 };
+#endif
 
 union AnimationStep* vent_animations[2] = { vent_anim_0, vent_anim_1 };
 

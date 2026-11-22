@@ -120,6 +120,7 @@ extern RECT D_800F1AD0;
 #ifndef MMX4_SATURN
 extern RECT D_800F1AD0;
 
+#ifndef VERSION_DEMO
 void func_800170B0(void)
 {
     LoadImage(&D_800F1AD0, SP_VRAM_IMAGE);
@@ -130,6 +131,7 @@ void func_800170E0(void)
     need_palette_load |= 1;
 }
 
+#endif
 extern u16* D_80139578;
 extern SPRT_16* D_8013957C;
 extern DR_TPAGE D_80139580[2];
@@ -138,6 +140,9 @@ void func_80017100(void)
 {
     DR_TPAGE* page;
 
+#ifdef VERSION_DEMO
+    LoadImage(&D_800F1AD0, SP_VRAM_IMAGE);
+#endif
     D_80139578 = (u16*)SP_ARC_34;
     D_8013957C = D_8015D9D0[SP_DRAW_BUFFER].sprites;
     page = &D_80139580[SP_DRAW_BUFFER];

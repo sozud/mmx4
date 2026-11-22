@@ -41,7 +41,7 @@ void jet_drone_bullet_init(struct ShotObj* self)
     self->unk54 = jet_drone_bullet_hit_box;
     self->unk50.data = jet_drone_bullet_hit_box;
     self->unk5C = 1;
-    self->unk60 = 3;
+    self->unk60 = DEMO_ALT(3, 2);
     set_animation(self, 3);
 }
 

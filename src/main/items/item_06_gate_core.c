@@ -58,7 +58,11 @@ void gate_core_init(struct ItemObj* arg0)
     if (arg0->unk2 == 0) {
         arg0->unk42 = OBJECT_CLUT(0x79CE);
     } else {
+#ifdef VERSION_DEMO
+        arg0->unk42 = SOME_COORDINATE_CONVERSION(frame_index);
+#else
         arg0->unk42 = OBJECT_CLUT(0x7946);
+#endif
     }
     arg0->animation_table = (const u8* const*)gate_core_animations;
     arg0->state++;

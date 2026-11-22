@@ -70,7 +70,7 @@ void mushroom_shot_spore_init(struct ShotObj* self)
     self->unk50.data = mushroom_shot_spore_hit_box;
     self->timer = 0x28;
     self->unk5C = 1;
-    self->unk60 = 6;
+    self->unk60 = DEMO_ALT(6, 4);
     set_animation(self, 0xB);
 }
 
@@ -95,11 +95,15 @@ void mushroom_shot_spore_fly(struct ShotObj* self)
     if (self->unk7C->state == 2) {
         self->on_screen = 0;
         ZeroObjectState(OBJECT_HEADER(self));
+#ifndef VERSION_DEMO
         return;
+#endif
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 1) {
         self->state = 2;
+#ifndef VERSION_DEMO
         return;
+#endif
     }
     update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
 }
@@ -136,7 +140,7 @@ void mushroom_shot_sprout_init(struct ShotObj* self)
     self->unk2C = 0;
     self->unk16 = 0;
     self->unk5C = 1;
-    self->unk60 = 6;
+    self->unk60 = DEMO_ALT(6, 4);
     set_animation(self, 0x10);
     self->state = 5;
     self->unk5 = 0;
@@ -160,7 +164,7 @@ void mushroom_shot_sprout_main(struct ShotObj* self)
             if (++self->unk7 == 4) {
                 self->unk7 = 0;
             }
-            if (engine_obj.stage == 3) {
+            if (DEMO_ALT(engine_obj.stage == 3, 0)) {
                 color = mushroom_shot_sprout_palettes[self->unk7];
             } else {
                 color = mushroom_shot_sprout_alt_palettes[self->unk7];
@@ -175,7 +179,9 @@ void mushroom_shot_sprout_main(struct ShotObj* self)
     if (self->unk7C->state == 2) {
         self->on_screen = 0;
         ZeroObjectState(OBJECT_HEADER(self));
+#ifndef VERSION_DEMO
         return;
+#endif
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
         self->state = 6;
@@ -213,7 +219,7 @@ void func_800A4D20(struct ShotObj* self)
     self->unk54 = NULL;
     self->unk50.data = mushroom_shot_sprout_hit_box;
     self->unk5C = 1;
-    self->unk60 = 6;
+    self->unk60 = DEMO_ALT(6, 4);
     set_animation(ANIMATED_OBJECT(self), 0x12);
 }
 
@@ -230,11 +236,15 @@ void mushroom_shot_spray_fly(struct ShotObj* self)
     if (self->unk7C->state == 2) {
         self->on_screen = 0;
         ZeroObjectState(OBJECT_HEADER(self));
+#ifndef VERSION_DEMO
         return;
+#endif
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 1) {
         self->state = 9;
+#ifndef VERSION_DEMO
         return;
+#endif
     }
     update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
 }
@@ -262,7 +272,7 @@ void mushroom_shot_sprout_grow(struct ShotObj* self)
         self->unk7 = 0;
         self->unk8A = 3;
         self->unk84.bytes[0] = 0;
-        if (engine_obj.stage == 3) {
+        if (DEMO_ALT(engine_obj.stage == 3, 0)) {
             var_v1 = mushroom_shot_sprout_palettes[self->unk7];
             var_v0 = var_v1 >> 4;
         } else {
@@ -371,9 +381,13 @@ u8 mushroom_shot_spore_hit_box[4] = { 0xF1, 0xF1, 0x19, 0x1C };
 
 u8 mushroom_shot_sprout_hit_box[4] = { 0xF9, 0xF9, 0x0D, 0x0D };
 
+#ifdef VERSION_DEMO
+u8 mushroom_shot_sprout_alt_palettes[4] = { 0x3C, 0x3D, 0x3E, 0x3F };
+#else
 u8 mushroom_shot_sprout_palettes[4] = { 0x3C, 0x3D, 0x3E, 0x3F };
 
 u8 mushroom_shot_sprout_alt_palettes[4] = { 0x2C, 0x2D, 0x2E, 0x2F };
+#endif
 
 u8 mushroom_shot_spore_offsets[8] = { 0x0C, 0x0B, 0x06, 0x0F, 0xFC, 0x0F, 0xF5, 0x0D };
 

@@ -8,6 +8,23 @@ u8 eregion_fireball_explode_box[4] = { 0xF6, 0xE5, 0x12, 0x1D };
 
 u8 eregion_fireball_terrain_box[4] = { 0, 0xFE, 8, 7 };
 
+#ifdef VERSION_DEMO
+void func_8008A660_demo(struct ShotObj*);
+void func_8008A82C_demo(struct ShotObj*);
+void func_8008AA74_demo(struct ShotObj*);
+void func_8008A994_demo(struct ShotObj*);
+void func_8008AA94_demo(struct ShotObj*);
+
+void (*eregion_fireball_state_funcs[])(struct ShotObj*) = {
+    func_8008A660_demo,
+    func_8008A82C_demo,
+    func_8008AA74_demo,
+    func_8008A994_demo,
+    func_8008AA94_demo,
+};
+
+u8 eregion_fireball_debris[2][4] = { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } };
+#else
 u8 eregion_fireball_debris[2][4] = { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } };
 
 void (*eregion_fireball_state_funcs[])(struct ShotObj*) = {
@@ -16,3 +33,4 @@ void (*eregion_fireball_state_funcs[])(struct ShotObj*) = {
     eregion_fireball_despawn,
     eregion_fireball_explode,
 };
+#endif

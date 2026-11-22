@@ -25,7 +25,7 @@ void func_8002509C(struct PlayerObj* arg0);
 #include <string.h>
 #endif
 void func_80016F0C();
-extern u8 D_800F2B5C[21][12];
+extern u8 D_800F2B5C[DEMO_ALT(21, 16)][12];
 extern u8 D_800F2C58[];
 extern u8 D_800F2D18[];
 extern u32 D_800F2F08[12];
@@ -179,6 +179,7 @@ void init_objects(void);
 
 void func_800241E8(void);
 
+#ifndef VERSION_DEMO
 u8 D_800F2C58[] = {
     0x0A,
     0x0B,
@@ -873,9 +874,52 @@ u32 D_800F2F08[12] = {
     0x00FE19FE,
 };
 #endif
+#else
+u8 D_800F2C58[] = { 0x01, 0x02, 0x93, 0x03, 0x01, 0x02, 0x94, 0x03, 0x01, 0x02, 0x95, 0x03, 0x01, 0x02, 0x96, 0x03 };
+
+u8 x_ready_text_flags[] = { 1, 0, 0, 0 };
+static u8 x_ready_text_flags_4[] = { 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0 };
+static u8 x_ready_text_flags_16[] = { 0, 1, 0, 1, 1, 0, 0, 0 };
+static u8 x_ready_text_flags_24[] = { 1, 0, 1, 1, 0, 1, 0, 0 };
+
+static u8* x_ready_text[] = {
+    x_ready_text_flags,
+    x_ready_text_flags_4,
+    x_ready_text_flags_16,
+    x_ready_text_flags_24,
+};
+
+u8 D_800F2D18[] = { 0x01, 0x02, 0x95, 0x03, 0x01, 0x02, 0x96, 0x03 };
+
+static u8 zero_ready_text_flags[] = { 0, 1, 0, 1, 1, 0, 0, 0 };
+static u8 zero_ready_text_flags_1[] = { 1, 0, 1, 1, 0, 1, 0, 0 };
+
+static u8* zero_ready_text[] = { zero_ready_text_flags, zero_ready_text_flags_1 };
+
+const u8* D_800F2DD0[] = { D_800F2C58, D_800F2D18 };
+
+u8* const* D_800F2DD8[] = { x_ready_text, zero_ready_text };
+
+static union AnimationStep anim_91_0[] = { { 1, 0, 1, 0x00 }, { 1, 1, -1, 0x01 } };
+
+static union AnimationStep anim_91_1[] = { { 1, 0, 1, 0x02 }, { 1, 1, -1, 0x03 } };
+
+static const union AnimationStep* animation_91[] = { anim_91_0, anim_91_1 };
+
+const union AnimationStep* const* D_800F2EE8[] = {
+    animation_91,
+    animation_91,
+    animation_91,
+    animation_91,
+    animation_91,
+    animation_91,
+    animation_91,
+};
+#endif
 
 u32 D_800F2F38[2] = { 0x00010001, 0 };
 
+#ifndef VERSION_DEMO
 u16 D_800F2F40[16] = {
     0x0000,
     0xEDE1,
@@ -894,6 +938,7 @@ u16 D_800F2F40[16] = {
     0xC2BB,
     0x8E40,
 };
+#endif
 
 union AnimationStep D_800F2F60[] = {
     { 4, 0, 1, 0x28 },
@@ -981,10 +1026,12 @@ void func_80024920(struct QuadObj* quad)
     u8 ordering;
     u32 buffer;
 
+#ifndef VERSION_DEMO
     if (SP_SPRITE_COUNT >= 1000) {
         return;
     }
     SP_SPRITE_COUNT++;
+#endif
 
     if (quad->bg_offset < 0) {
         x = quad->x_pos.i.hi;
@@ -1041,10 +1088,12 @@ void func_80024B9C(struct QuadObj* quad)
     DR_TPAGE* draw_mode;
     POLY_G4* primitive;
 
+#ifndef VERSION_DEMO
     if (SP_SPRITE_COUNT >= 1000) {
         return;
     }
     SP_SPRITE_COUNT++;
+#endif
 
     if (quad->bg_offset < 0) {
         x = quad->x_pos.i.hi;
@@ -1098,6 +1147,40 @@ void func_80024B9C(struct QuadObj* quad)
 #endif
 
 #ifndef MMX4_SATURN
+#ifdef VERSION_DEMO
+void func_80024E70(void)
+{
+    struct PlayerObj* player = &g_Player;
+    struct EngineObj* ptr = &engine_obj;
+    s8 divisor;
+    s8 energy;
+    s8 temp;
+
+    if (engine_obj.unk1F != 0) {
+        func_800253F0(MAIN_OBJECT(player), 0);
+        func_80025188(1, engine_obj.player_lives + 0x3B);
+        func_80025188(0, (engine_obj.max_hp - 0x20) / 2 + 0x45);
+    }
+    if (player->weapon != 0) {
+        energy = player->weapon_energy[player->weapon];
+        func_80025588(0x24, 0x29, 0x4F - energy, 0x4F, 0);
+        divisor = player_weapon_energy.hud.health_divisors[player->shot_types[0]];
+        temp = energy / divisor;
+        func_80025188(3, (temp / 10) + 0x3B);
+        func_80025188(4, (temp % 10) + 0x3B);
+        if (player->weapon == 3) {
+            func_80025188(6, player->weapon + 0x4E);
+        } else {
+            func_80025188(5, player->weapon + 0x4E);
+        }
+        func_80025188(2, 0x4E);
+    }
+    if (ptr->enable_boss) {
+        func_800253F0(ptr->boss_ptr, 1);
+        func_80025188(7, ptr->unk25 + 0x57);
+    }
+}
+#else
 void func_80024E70(void)
 {
     struct PlayerObj* player = &g_Player;
@@ -1119,7 +1202,9 @@ void func_80024E70(void)
     }
 }
 #endif
+#endif
 #ifndef MMX4_SATURN
+#ifndef VERSION_DEMO
 void func_80024F5C(struct PlayerObj* arg0)
 {
     s8 temp_v0_2;
@@ -1144,7 +1229,9 @@ void func_80024F5C(struct PlayerObj* arg0)
     }
 }
 #endif
+#endif
 #ifndef MMX4_SATURN
+#ifndef VERSION_DEMO
 void func_8002509C(struct PlayerObj* arg0)
 {
     s8 temp_s0;
@@ -1159,6 +1246,7 @@ void func_8002509C(struct PlayerObj* arg0)
         func_80025188(2, 0x4E);
     }
 }
+#endif
 #endif
 
 #ifndef MMX4_SATURN
@@ -1473,6 +1561,7 @@ void func_8002588C(arg0, part, clut)
 #endif
 #endif
 #ifndef MMX4_SATURN
+#ifndef VERSION_DEMO
 void func_80025CDC(void)
 {
     struct UnkObj* var_s0;
@@ -1488,4 +1577,5 @@ void func_80025CDC(void)
     }
     func_80024260();
 }
+#endif
 #endif

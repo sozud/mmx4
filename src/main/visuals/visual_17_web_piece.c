@@ -18,18 +18,29 @@ extern void (*web_piece_step_funcs[])(struct VisualObj*);
 void web_piece_hang(struct VisualObj*);
 #include "weapon_resources.h"
 
+#ifdef VERSION_DEMO
+extern s16 web_piece_positions_a[4][2];
+#else
 s16 web_piece_positions_a[4][2] = {
     { 0x12C0, 0x538 },
     { 0x12F8, 0x568 },
     { 0x1288, 0x568 },
     { 0x12C0, 0x598 },
 };
+#endif
 
 s16 web_piece_positions_b[4][2] = {
+#ifdef VERSION_DEMO
+    { 0x12C0, 0x538 },
+    { 0x12F8, 0x568 },
+    { 0x1288, 0x568 },
+    { 0x12C0, 0x598 },
+#else
     { 0x10C0, 0x638 },
     { 0x10F8, 0x668 },
     { 0x1088, 0x668 },
     { 0x10C0, 0x698 },
+#endif
 };
 
 void web_piece_update(struct VisualObj* arg0)
@@ -100,6 +111,10 @@ void func_800B20CC(struct VisualObj* arg0)
     arg0->unk16 = 5;
     set_animation(arg0, 0x17);
     index = (arg0->unk2 - 1) * 2;
+#ifdef VERSION_DEMO
+    target_x = web_piece_positions_b[0][index] << 16;
+    target_y = web_piece_positions_b[0][index + 1] << 16;
+#else
     if (engine_obj.stage != 0xC) {
         target_x = web_piece_positions_a[0][index] << 16;
         target_y = web_piece_positions_a[0][index + 1] << 16;
@@ -107,6 +122,7 @@ void func_800B20CC(struct VisualObj* arg0)
         target_x = web_piece_positions_b[0][index] << 16;
         target_y = web_piece_positions_b[0][index + 1] << 16;
     }
+#endif
     direction = angle_from_delta(arg0->x_pos.val - target_x, arg0->y_pos.val - target_y);
     set_velocity_from_angle(MOVING_OBJECT(arg0), direction);
     arg0->unk54 = direction;
@@ -152,6 +168,10 @@ void func_800B22B4(struct VisualObj* arg0)
     struct BaseObj* quad;
 
     index = (arg0->unk2 - 1) * 2;
+#ifdef VERSION_DEMO
+    target_x = web_piece_positions_b[0][index] << 16;
+    target_y = web_piece_positions_b[0][index + 1] << 16;
+#else
     if (engine_obj.stage != 0xC) {
         target_x = web_piece_positions_a[0][index] << 16;
         target_y = web_piece_positions_a[0][index + 1] << 16;
@@ -159,6 +179,7 @@ void func_800B22B4(struct VisualObj* arg0)
         target_x = web_piece_positions_b[0][index] << 16;
         target_y = web_piece_positions_b[0][index + 1] << 16;
     }
+#endif
     direction = angle_from_delta(arg0->x_pos.val - target_x, arg0->y_pos.val - target_y);
     quad = (struct BaseObj*)arg0->unk5C.owner;
 

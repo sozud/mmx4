@@ -88,7 +88,11 @@ s32 func_8003A1DC(struct PlayerObj* self);
 s32 player_nova_strike_hit_wall(struct PlayerObj* self);
 void player_set_ladder_shoot_animation(struct PlayerObj* self);
 void player_zero_attack_finish(struct PlayerObj* self);
+#ifdef VERSION_DEMO
+#define player_zero_begin_attack(self) ((self)->attacking = 1, (self)->combo = 0, (self)->afterimage = 0)
+#else
 void player_zero_begin_attack(struct PlayerObj* self);
+#endif
 s32 player_zero_check_hyouretsuzan(struct PlayerObj* self);
 s32 player_zero_check_ladder_or_walk(struct PlayerObj* self);
 s32 player_zero_check_slash_input(struct PlayerObj* self);
@@ -476,6 +480,42 @@ void player_set_animation_shooting(struct PlayerObj* self, s32 animation);
 
 void player_cancel_released_charge(void);
 
+#ifdef VERSION_DEMO
+void func_800440B8_demo(struct PlayerObj* self);
+
+u8 player_shoot_animations[24] = { 0x50, 0x50, 0, 0x50, 0, 0x50, 0x51, 0, 0x50, 0x52, 0x50, 0, 0, 0x50, 0x50, 0x51, 0, 0x50, 0x53, 0x52, 0x53, 0, 0, 0 };
+
+u8 player_ladder_shoot_animations[24] = { 0x54, 0x54, 0, 0x54, 0, 0x54, 0x55, 0, 0x54, 0x54, 0x54, 0, 0, 0x50, 0x54, 0x55, 0, 0x54, 0x54, 0x54, 0x54, 0, 0, 0 };
+
+void (*player_hover_funcs[3])(struct PlayerObj*) = {
+    func_800440B8_demo,
+    player_hover_rise,
+    player_hover_hold,
+};
+
+s8 player_hover_bob[16] = { 0, 1, 0, 1, 1, 0, 1, 0, 0, -1, 0, -1, -1, 0, -1, 0 };
+
+u8 player_zero_combo_sounds[4][2] = {
+    { 7, 3 },
+    { 8, 4 },
+    { 7, 5 },
+    { 0, 0 },
+};
+
+u8 D_800CC868_demo[4][3] = {
+    { 0x50, 7, 3 },
+    { 0x53, 8, 0 },
+    { 0x56, 7, 8 },
+    { 0x57, 7, 8 },
+};
+
+u8 D_800CC874_demo[1][3] = {
+    { 0x58, 0, 0 },
+};
+
+u8 player_special_data_pad = 0;
+
+#else
 u8 player_shoot_animations[] = {
     0x58,
     0x58,
@@ -591,6 +631,7 @@ void (*player_zero_ryuenjin_funcs[])(struct PlayerObj*) = {
     player_zero_ryuenjin_peak,
     player_zero_ryuenjin_fall,
 };
+#endif
 
 void player_idle_animate(struct PlayerObj* self)
 {
@@ -604,12 +645,14 @@ void player_idle_animate(struct PlayerObj* self)
             return;
         }
     }
+#ifndef VERSION_DEMO
     if (self->unk17 == 6) {
         if (self->hp >= engine_obj.max_hp / 3) {
             player_set_animation(self, 5);
             return;
         }
     }
+#endif
     animate_object(ANIMATED_OBJECT(self));
 }
 
@@ -621,7 +664,7 @@ void player_set_shoot_animation(struct PlayerObj* self)
 
     animation = player_shoot_animations[self->shot_type];
     player_set_animation(self, animation);
-    if (animation == 0x59) {
+    if (animation == PLAYER_ANIM(0x59)) {
         self->animation_step.fields.duration = self->attack_pose_timer - 8;
     }
 }
@@ -636,17 +679,100 @@ void player_enter_ladder_shoot(struct PlayerObj* self)
     self->unk6 = 0;
 }
 
+#ifdef VERSION_DEMO
+void func_80043D90_demo(struct PlayerObj* self)
+{
+    player_set_animation(self, 0x57);
+    self->controlling_clone = 1;
+    self->air_state = 1;
+    self->unk5 = 0x22;
+    self->unk6 = 0;
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_80043DD4_demo(struct PlayerObj* self)
+{
+    if (self->shot_type == 7) {
+        player_set_animation(self, 0x5A);
+        player_play_voice(self, 4);
+    } else {
+        player_set_animation(self, 0x5B);
+        player_play_voice(self, 8);
+    }
+    self->air_state = 1;
+    self->unk5 = 0x25;
+    self->unk6 = 0;
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_80043E4C_demo(struct PlayerObj* self)
+{
+    player_set_animation(self, 0x5C);
+    player_play_voice(self, 7);
+    self->air_state = 1;
+    self->unk5 = 0x26;
+    self->unk6 = 0;
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_80043E98_demo(struct PlayerObj* self)
+{
+    player_set_animation(self, 0x5D);
+    player_play_voice(self, 7);
+    self->air_state = 1;
+    self->unk5 = 0x26;
+    self->unk6 = 0;
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_80043EE4_demo(struct PlayerObj* self)
+{
+    player_set_animation(self, 0x5F);
+    self->air_state = 1;
+    self->unk5 = 0x25;
+    self->unk6 = 0;
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_80043F24_demo(struct PlayerObj* self)
+{
+    if ((player_check_off_ladder(self) == 0) && (player_check_shoot_air(self) == 0)) {
+        animate_object(ANIMATED_OBJECT(self));
+        if (self->pressed_input & PLAYER_INPUT_LEFT) {
+            self->unk15 = 0;
+        }
+        if (self->pressed_input & PLAYER_INPUT_RIGHT) {
+            self->unk15 = PLAYER_FACING_RIGHT;
+        }
+        if (self->shot_fired != 0) {
+            player_set_ladder_shoot_animation(self);
+            return;
+        }
+        if (self->attack_ended != 0) {
+            player_set_animation_frame(self, PLAYER_ANIM(0x20), 3);
+            player_enter_ladder_down(self);
+        }
+    }
+}
+#endif
+
 void player_set_ladder_shoot_animation(struct PlayerObj* self)
 {
     u8 animation;
 
     animation = player_ladder_shoot_animations[self->last_shot_type];
     player_set_animation(self, animation);
-    if (animation == 0x5D) {
+    if (animation == PLAYER_ANIM(0x5D)) {
         self->animation_step.fields.duration = self->attack_pose_timer - 8;
     }
 }
 
+#ifndef VERSION_DEMO
 void player_ladder_shoot(struct PlayerObj* self)
 {
     if ((player_check_off_ladder(self) == 0) && (player_check_shoot_ladder(self) == 0)) {
@@ -658,22 +784,48 @@ void player_ladder_shoot(struct PlayerObj* self)
             self->unk15 = PLAYER_FACING_RIGHT;
         }
         if (self->attack_ended != 0) {
-            player_set_animation_frame(self, 0x20, 3);
+            player_set_animation_frame(self, PLAYER_ANIM(0x20), 3);
             player_enter_ladder_down(self);
         }
     }
 }
+#endif
+
+#ifdef VERSION_DEMO
+void func_80040540_demo(struct PlayerObj* self);
+void func_8004345C_demo(struct PlayerObj* self);
+#endif
 
 void player_hover(struct PlayerObj* self)
 {
     if (self->input_locked != 0) {
-        player_enter_fall(self);
+        DEMO_ALT(player_enter_fall, func_80040540_demo)
+        (self);
+#ifdef VERSION_DEMO
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+        func_8004345C_demo(self);
+#else
     } else if (player_check_shoot_air(self) == 0) {
         animate_object(ANIMATED_OBJECT(self));
+#endif
         player_hover_funcs[self->unk6](self);
     }
 }
 
+#ifdef VERSION_DEMO
+void func_800440B8_demo(struct PlayerObj* self)
+{
+    if (self->animation_step.fields.event & 0x80) {
+        self->animation_step.fields.event &= 0x7F;
+        self->unk6++;
+        return;
+    }
+    func_80038568(self, 0x15);
+}
+#endif
+
+#ifndef VERSION_DEMO
 void player_hover_start(struct PlayerObj* self)
 {
     func_80038568(self, 0x15);
@@ -683,6 +835,7 @@ void player_hover_start(struct PlayerObj* self)
         self->unk6++;
     }
 }
+#endif
 
 void player_hover_rise(struct PlayerObj* self)
 {
@@ -698,6 +851,13 @@ void player_hover_rise(struct PlayerObj* self)
         player_enter_air_dash(self);
         return;
     }
+#ifdef VERSION_DEMO
+    player_hover_steer(self);
+    if (self->x_vel.val != 0) {
+        self->hover_timer = 0x28;
+        self->unk6++;
+    }
+#else
     direction = player_hover_steer(self);
     if (direction != 0) {
         self->hover_timer = 0x28;
@@ -705,6 +865,7 @@ void player_hover_rise(struct PlayerObj* self)
         return;
     }
     func_80038568(self, 0x15);
+#endif
 }
 
 void player_hover_hold(struct PlayerObj* self)
@@ -712,15 +873,20 @@ void player_hover_hold(struct PlayerObj* self)
     s32 direction;
 
     if ((player_hover_check_end(self) == 0) && (player_check_wall(self) == 0)) {
+#ifdef VERSION_DEMO
+        player_hover_steer(self);
+#else
         direction = player_hover_steer(self);
         if (direction != 0) {
             player_hover_set_direction(self, direction);
             return;
         }
         func_80038568(self, 0x16);
+#endif
     }
 }
 
+#ifndef VERSION_DEMO
 void player_hover_forward(struct PlayerObj* self)
 {
     s32 direction;
@@ -746,7 +912,9 @@ void player_hover_forward(struct PlayerObj* self)
         self->unk6 = 4;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_hover_forward_stop(struct PlayerObj* self)
 {
     s32 action;
@@ -765,7 +933,9 @@ void player_hover_forward_stop(struct PlayerObj* self)
         func_80038568(self, 0x18);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_hover_back(struct PlayerObj* self)
 {
     s32 direction;
@@ -787,7 +957,9 @@ void player_hover_back(struct PlayerObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_hover_back_stop(struct PlayerObj* self)
 {
     s32 action;
@@ -806,6 +978,7 @@ void player_hover_back_stop(struct PlayerObj* self)
         func_80038568(self, 0x1A);
     }
 }
+#endif
 
 #if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/player_special", player_hover_check_end);
@@ -816,7 +989,11 @@ s32 player_hover_check_end(struct PlayerObj* self)
     u32 trigger;
 
     trigger = 0;
+#ifdef VERSION_DEMO
+    if (!(self->input.buttons.held & PLAYER_INPUT_JUMP)) {
+#else
     if (self->pressed_input & PLAYER_INPUT_JUMP) {
+#endif
         trigger = 1;
     }
     if (--self->hover_timer == 0) {
@@ -832,6 +1009,32 @@ s32 player_hover_check_end(struct PlayerObj* self)
 }
 #endif
 
+#ifdef VERSION_DEMO
+extern s8 D_8013E370_demo;
+
+void player_hover_steer(struct PlayerObj* self)
+{
+    u16 buttons;
+
+    buttons = self->input.buttons.held;
+    self->y_pos.i.hi += player_hover_bob[D_8013E370_demo];
+    D_8013E370_demo = (D_8013E370_demo + 1) & 0xF;
+    if (buttons & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT)) {
+        if (buttons & PLAYER_INPUT_RIGHT) {
+            if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
+                return;
+            }
+            self->x_vel.val = FIXED(2);
+        } else {
+            if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT) {
+                return;
+            }
+            self->x_vel.val = FIXED(-2);
+        }
+        move_object(MOVING_OBJECT(self));
+    }
+}
+#else
 s32 player_hover_steer(struct PlayerObj* self)
 {
     u16 buttons;
@@ -865,7 +1068,9 @@ s32 player_hover_steer(struct PlayerObj* self)
     }
     return 1;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_hover_set_direction(struct PlayerObj* self, s32 direction)
 {
     if (direction > 0) {
@@ -876,7 +1081,9 @@ void player_hover_set_direction(struct PlayerObj* self, s32 direction)
         self->unk6 = 5;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_nova_strike(struct PlayerObj* self)
 {
     if (self->input_locked != 0) {
@@ -889,7 +1096,9 @@ void player_nova_strike(struct PlayerObj* self)
         player_nova_strike_funcs[self->unk6](self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_nova_strike_windup(struct PlayerObj* self)
 {
     player_nova_strike_hit_wall(self);
@@ -900,7 +1109,9 @@ void player_nova_strike_windup(struct PlayerObj* self)
     }
     move_with_gravity(ANIMATED_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_nova_strike_dash(struct PlayerObj* self)
 {
     if (player_nova_strike_hit_wall(self) != 0 && ((u8)self->animation_step.fields.event & 0x40)) {
@@ -927,7 +1138,9 @@ void player_nova_strike_dash(struct PlayerObj* self)
         self->unk6++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_nova_strike_end(struct PlayerObj* self)
 {
     u32 should_reset;
@@ -952,7 +1165,9 @@ void player_nova_strike_end(struct PlayerObj* self)
         move_object(MOVING_OBJECT(self));
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_nova_strike_hit_wall(struct PlayerObj* self)
 {
     u8 wall_flag;
@@ -973,6 +1188,7 @@ s32 player_nova_strike_hit_wall(struct PlayerObj* self)
     }
     return 0;
 }
+#endif
 
 void player_soul_body(struct PlayerObj* self)
 {
@@ -987,9 +1203,15 @@ void player_soul_body_cast(struct PlayerObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event & 0x80) {
+#ifdef VERSION_DEMO
+        func_8001540C(1, 9, self);
+        player_play_voice(self, 5U);
+        self->animation_step.fields.event &= 0x7F;
+#else
         self->animation_step.fields.event &= 0x7F;
         func_8001540C(1, 9, self);
         player_play_voice(self, 5U);
+#endif
         player_init_clone();
         g_Entity.active = 1;
         g_Entity.x_pos.val = self->x_pos.val;
@@ -1003,10 +1225,22 @@ void player_soul_body_cast(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_DEMO
+#define SOUL_BODY_LAND_OR_FALL(self)                                   \
+    if ((self)->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) { \
+        (self)->air_state = 0;                                         \
+        player_enter_idle(self);                                       \
+    } else {                                                           \
+        player_enter_fall(self);                                       \
+    }
+#else
+#define SOUL_BODY_LAND_OR_FALL(self) player_enter_land_or_fall(self)
+#endif
+
 void player_soul_body_wait(struct PlayerObj* self)
 {
     if (self->controlling_clone == 0) {
-        player_enter_land_or_fall(self);
+        SOUL_BODY_LAND_OR_FALL(self);
     } else {
         animate_object(ANIMATED_OBJECT(self));
     }
@@ -1034,7 +1268,7 @@ void player_soul_body_clone_advance(struct PlayerObj* self)
         done = 1;
     }
     if (done != 0) {
-        player_enter_land_or_fall(self);
+        SOUL_BODY_LAND_OR_FALL(self);
     } else {
         self->clone_offset.value += 8;
     }
@@ -1047,10 +1281,105 @@ void player_soul_body_clone_vanish(struct PlayerObj* self)
         self->active = 0;
         self->on_screen = 0;
         g_Player.controlling_clone = 0;
+#ifndef VERSION_DEMO
         g_Player.spike_immune = 0;
+#endif
     }
 }
 
+#ifdef VERSION_DEMO
+void func_8004456C_demo(struct PlayerObj* self)
+{
+    struct WeaponObj* weapon;
+    struct VisualObj* visual;
+    s8 row;
+    s8 column;
+
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event & 0x80) {
+        self->animation_step.fields.event &= 0x7F;
+        if (self->shot_type == 2) {
+            weapon = find_free_weapon_obj();
+            if (weapon != NULL) {
+                weapon->active = 1;
+                weapon->id = 2;
+                weapon->unk2 = 0;
+            }
+            visual = find_free_visual_obj();
+            if (visual != NULL) {
+                visual->active = 1;
+                visual->id = 0x1A;
+                visual->unk2 = 1;
+                visual->unk50 = (struct PlayerObj*)weapon;
+            }
+            self->shot_count++;
+            self->special_shot_count++;
+        }
+        if (self->shot_type == 0xB) {
+            weapon = find_free_weapon_obj();
+            if (weapon != NULL) {
+                weapon->active = 1;
+                weapon->id = 0xB;
+                weapon->unk2 = 0;
+            }
+            self->shot_count++;
+            self->special_shot_count++;
+        }
+        if (self->shot_type == 7) {
+            weapon = find_free_weapon_obj();
+            if (weapon != NULL) {
+                weapon->active = 1;
+                weapon->id = 7;
+                weapon->unk2 = 0;
+            }
+            weapon = find_free_weapon_obj();
+            if (weapon != NULL) {
+                weapon->active = 1;
+                weapon->id = 7;
+                weapon->unk2 = 1;
+            }
+            self->shot_count += 2;
+            self->special_shot_count += 2;
+        }
+        if (self->shot_type == 0x10) {
+            visual = find_free_visual_obj();
+            if (visual != NULL) {
+                visual->active = 1;
+                visual->id = 0x13;
+                visual->unk2 = 0;
+            }
+            visual = find_free_visual_obj();
+            if (visual != NULL) {
+                visual->active = 1;
+                visual->id = 0x13;
+                visual->unk2 = 1;
+            }
+            for (row = 0; row < 2; row++) {
+                for (column = 0; column < 5; column++) {
+                    weapon = find_free_weapon_obj();
+                    if (weapon != NULL) {
+                        weapon->active = 1;
+                        weapon->id = 0x10;
+                        weapon->unk2 = (row << 7) | column;
+                    }
+                }
+            }
+            self->shot_count++;
+            self->special_shot_count++;
+        }
+    }
+    if (self->animation_step.fields.relative_step == 0) {
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
+            self->air_state = 0;
+            player_enter_idle(self);
+        } else {
+            player_enter_fall(self);
+        }
+    }
+}
+#endif
+
+#ifndef VERSION_DEMO
 void player_weapon_pose(struct PlayerObj* self)
 {
     struct WeaponObj* weapon;
@@ -1095,7 +1424,80 @@ void player_weapon_pose(struct PlayerObj* self)
         player_enter_land_or_fall(self);
     }
 }
+#endif
 
+#ifdef VERSION_DEMO
+void player_rising_fire(struct PlayerObj* self)
+{
+    struct WeaponObj* weapon;
+    struct VisualObj* visual;
+
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event & 0x80) {
+        self->animation_step.fields.event &= 0x7F;
+        weapon = find_free_weapon_obj();
+        if (weapon != NULL) {
+            weapon->active = 1;
+            weapon->id = 4;
+            if (self->unk17 == 0x5C) {
+                weapon->unk2 = 0;
+            } else {
+                weapon->unk2 = 1;
+            }
+        }
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 1;
+            visual->id = 0x1A;
+            visual->unk2 = 0;
+            visual->unk50 = (struct PlayerObj*)weapon;
+        }
+        self->shot_count++;
+        self->special_shot_count++;
+    }
+
+    if ((self->unk17 == 0x5C) && (self->attacking == 0)) {
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
+            self->air_state = 0;
+            if (player_check_script(self) != 0) {
+                return;
+            }
+            if (player_check_ladder(self) != 0) {
+                return;
+            }
+            if (player_check_shoot(self) != 0) {
+                return;
+            }
+            if (player_check_dash_jump(self) != 0) {
+                return;
+            }
+            if (player_check_walk_start(self) != 0) {
+                player_enter_walk_start(self);
+                return;
+            }
+            if (self->shot_fired != 0) {
+                player_set_shoot_animation(self);
+                self->unk5 = PLAYER_IDLE;
+                self->unk6 = 0;
+                return;
+            }
+            self->air_state = 1;
+        } else {
+            player_enter_fall(self);
+            return;
+        }
+    }
+
+    if (self->animation_step.fields.relative_step == 0) {
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
+            self->air_state = 0;
+            player_enter_idle(self);
+        } else {
+            player_enter_fall(self);
+        }
+    }
+}
+#else
 void player_rising_fire(struct PlayerObj* self)
 {
     struct WeaponObj* weapon;
@@ -1151,13 +1553,17 @@ void player_rising_fire(struct PlayerObj* self)
         player_enter_land_or_fall(self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_rising_fire_charged(struct PlayerObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     player_rising_fire_charged_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_rising_fire_charged_start(struct PlayerObj* self)
 {
     if (self->animation_step.fields.event != 0) {
@@ -1173,21 +1579,27 @@ void player_rising_fire_charged_start(struct PlayerObj* self)
         self->unk6++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_rising_fire_charged_rise(struct PlayerObj* self)
 {
     if (player_leap_check_peak(self) == 0) {
         player_leap_check_wall(self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_rising_fire_charged_peak(struct PlayerObj* self)
 {
     if (player_leap_check_peak(self) != 0) {
         return;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_rising_fire_charged_fall(struct PlayerObj* self)
 {
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
@@ -1204,7 +1616,9 @@ void player_rising_fire_charged_fall(struct PlayerObj* self)
         self->unk6 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_zero_check_ground_technique(struct PlayerObj* self)
 {
     if (self->unk2 == 0) {
@@ -1222,13 +1636,14 @@ s32 player_zero_check_ground_technique(struct PlayerObj* self)
     }
     return 0;
 }
+#endif
 
 s32 player_zero_check_saber(struct PlayerObj* self)
 {
     if (player_zero_check_slash_input(self) == 0) {
         return 0;
     }
-    player_set_animation(self, 0x58);
+    player_set_animation(self, PLAYER_ANIM(0x58));
     func_8001540C(1, PLAYER_ZERO_SOUND_7, self);
     player_play_voice(self, 3);
     self->dash_momentum = 0;
@@ -1244,6 +1659,12 @@ s32 player_zero_check_jump_slash(struct PlayerObj* self)
     if (player_zero_check_slash_input(self) == 0) {
         return 0;
     }
+#ifdef VERSION_DEMO
+    player_set_animation(self, PLAYER_ANIM(0x5B));
+    func_8001540C(1, PLAYER_ZERO_SOUND_8, self);
+    self->unk5 = PLAYER_ZERO_JUMP_SLASH;
+    self->unk6 = 0;
+#else
     if (self->boss_flags & 4) {
         player_set_animation(self, 0x64);
         func_8001540C(1, PLAYER_ZERO_SOUND_7, self);
@@ -1255,10 +1676,54 @@ s32 player_zero_check_jump_slash(struct PlayerObj* self)
         self->unk5 = PLAYER_ZERO_JUMP_SLASH;
         self->unk6 = 0;
     }
+#endif
     player_zero_jump_slash(self);
     return 1;
 }
 
+#ifdef VERSION_DEMO
+s32 player_zero_check_fall_slash(struct PlayerObj* self)
+{
+    if (player_zero_check_slash_input(self) == 0) {
+        return 0;
+    }
+    player_set_animation(self, PLAYER_ANIM(0x5B));
+    func_8001540C(1, PLAYER_ZERO_SOUND_8, self);
+    self->unk5 = PLAYER_ZERO_FALL_SLASH;
+    self->unk6 = 0;
+    player_zero_fall_slash(self);
+    return 1;
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_800453F4_demo(struct PlayerObj* self);
+s32 func_80044B40_demo(struct PlayerObj* self)
+{
+    if (player_zero_check_slash_input(self) == 0) {
+        return 0;
+    }
+    player_set_animation(self, 0x55);
+    func_8001540C(1, 8, self);
+    player_play_voice(self, 9);
+    self->dash_momentum = 0;
+    self->air_action = 0;
+    if (self->unk15 != 0) {
+        self->x_vel.val = 0x42000;
+    } else {
+        self->x_vel.val = 0xFFFBE000;
+    }
+    self->unk28 = -0x3800;
+    self->y_vel.val = 0;
+    self->unk2C = 0;
+    self->unk5 = PLAYER_ZERO_DEMO_SLASH;
+    self->unk6 = 0;
+    func_800453F4_demo(self);
+    return 1;
+}
+#endif
+
+#ifndef VERSION_DEMO
 s32 player_zero_check_fall_slash(struct PlayerObj* self)
 {
     if (self->unk2 == 0) {
@@ -1288,13 +1753,14 @@ s32 player_zero_check_fall_slash(struct PlayerObj* self)
     player_zero_fall_slash(self);
     return 1;
 }
+#endif
 
 s32 player_zero_check_ladder_slash(struct PlayerObj* self)
 {
     if (player_zero_check_slash_input(self) == 0) {
         return 0;
     }
-    player_set_animation(self, 0x5D);
+    player_set_animation(self, PLAYER_ZERO_ANIM(0x5D));
     func_8001540C(1, PLAYER_ZERO_SOUND_7, self);
     player_play_voice(self, 8);
     self->dash_momentum = 0;
@@ -1311,7 +1777,7 @@ s32 player_zero_check_wall_slash(struct PlayerObj* self)
         return 0;
     }
 
-    player_set_animation(self, 0x5E);
+    player_set_animation(self, PLAYER_ZERO_ANIM(0x5E));
     func_8001540C(1, PLAYER_ZERO_SOUND_7, self);
     player_play_voice(self, 8);
     self->unk5 = PLAYER_ZERO_WALL_SLASH;
@@ -1338,30 +1804,40 @@ s32 player_zero_check_slash_input(struct PlayerObj* self)
     return 1;
 }
 
+#ifndef VERSION_DEMO
 void player_zero_begin_attack(struct PlayerObj* self)
 {
     self->attacking = 1;
     self->combo = 0;
     self->afterimage = 0;
 }
+#endif
 
 s32 player_zero_check_raijingeki(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    if (self->unk2 == 0)
+        return 0;
+    if (self->input_locked != 0)
+        return 0;
+#else
     if (!(self->boss_flags & 1))
         return 0;
+#endif
     if (!(self->pressed_input & PLAYER_INPUT_SPECIAL))
         return 0;
     if (self->attacking != 0)
         return 0;
 
     player_zero_begin_attack(self);
-    player_set_animation(self, 0x5F);
+    player_set_animation(self, PLAYER_ZERO_ANIM(0x5F));
     self->unk5 = PLAYER_ZERO_RAIJINGEKI;
     self->unk6 = 0;
     player_zero_raijingeki(self);
     return 1;
 }
 
+#ifndef VERSION_DEMO
 s32 player_zero_check_hyouretsuzan(struct PlayerObj* self)
 {
     if (!(self->boss_flags & 2)) {
@@ -1391,7 +1867,9 @@ s32 player_zero_check_hyouretsuzan(struct PlayerObj* self)
     player_zero_hyouretsuzan(self);
     return 1;
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_zero_check_double_jump(struct PlayerObj* self)
 {
     if (!(self->boss_flags & 4)) {
@@ -1415,7 +1893,9 @@ s32 player_zero_check_double_jump(struct PlayerObj* self)
         return 1;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_zero_check_ryuenjin(struct PlayerObj* self)
 {
     if (!(self->boss_flags & 8)) {
@@ -1442,8 +1922,10 @@ s32 player_zero_check_ryuenjin(struct PlayerObj* self)
     player_zero_ryuenjin(self);
     return 1;
 }
+#endif
 
 // player_zero_check_rakuhouha
+#ifndef VERSION_DEMO
 s32 func_80039F28(struct PlayerObj* arg)
 {
     struct PlayerObj* player = arg;
@@ -1474,6 +1956,8 @@ s32 func_80039F28(struct PlayerObj* arg)
     player_zero_rakuhouha(arg);
     return 1;
 }
+#endif
+#ifndef VERSION_DEMO
 s32 player_zero_check_shippuuga(struct PlayerObj* self)
 {
     if (self->unk2 == 0) {
@@ -1510,6 +1994,13 @@ s32 player_zero_check_shippuuga(struct PlayerObj* self)
     player_zero_shippuuga(self);
     return 1;
 }
+#endif
+
+#ifdef VERSION_DEMO
+s32 func_80044FA0_demo(struct PlayerObj* self);
+s32 func_80045980_demo(struct PlayerObj* self, s32 index);
+s32 func_80045A4C_demo(struct PlayerObj* self, s32 index);
+#endif
 
 void player_zero_saber(struct PlayerObj* self)
 {
@@ -1524,6 +2015,22 @@ void player_zero_saber(struct PlayerObj* self)
     }
 
     if (self->input_locked == 0) {
+#ifdef VERSION_DEMO
+        if (func_80044FA0_demo(self) != 0) {
+            return;
+        }
+        if (func_80045980_demo(self, 0) != 0) {
+            return;
+        }
+        if (func_80045A4C_demo(self, 0) != 0) {
+            self->unk5 = PLAYER_ZERO_RAIJINGEKI;
+            self->unk6 = 1;
+            return;
+        }
+        if (player_zero_check_ladder_or_walk(self) != 0) {
+            return;
+        }
+#else
         self->attacking = 0;
         if (player_check_dash_jump(self) != 0) {
             return;
@@ -1540,6 +2047,7 @@ void player_zero_saber(struct PlayerObj* self)
             }
         }
         self->attacking = 1;
+#endif
     }
     player_zero_attack_finish(self);
 }
@@ -1561,12 +2069,27 @@ s32 func_8003A1DC(struct PlayerObj* arg0)
     }
     if (arg0->pressed_input & 0x10) {
         arg0->combo++;
-        player_set_animation(arg0, arg0->combo + 0x58);
+        player_set_animation(arg0, arg0->combo + DEMO_ALT(0x58, 0x50));
         func_8001540C(1, player_zero_combo_sounds[arg0->combo][0], arg0);
         player_play_voice(arg0, player_zero_combo_sounds[arg0->combo][1]);
+#ifdef VERSION_DEMO
+        return 0;
+#else
         player_zero_spawn_saber(arg0, (s8)(arg0->combo + 0x18));
         return 1;
+#endif
     }
+#ifdef VERSION_DEMO
+    if (arg0->pressed_input & 0x20) {
+        player_set_animation(arg0, 0x5F);
+        arg0->combo = 1;
+        arg0->unk5 = 0x36;
+        arg0->unk6 = 0;
+        player_zero_raijingeki(arg0);
+        return 1;
+    }
+    return 0;
+#else
     arg0->attacking = 0;
     if (player_zero_check_ryuenjin(arg0) != 0) {
         return 1;
@@ -1581,9 +2104,35 @@ s32 func_8003A1DC(struct PlayerObj* arg0)
     arg0->unk6 = 0;
     player_zero_raijingeki(arg0);
     return 1;
+#endif
 }
+
+#ifdef VERSION_DEMO
+s32 func_80044FA0_demo(struct PlayerObj* self)
+{
+    if (player_check_dash_jump(self) != 0) {
+        self->attacking = 0;
+        return 1;
+    }
+    return 0;
+}
+#endif
 s32 player_zero_check_ladder_or_walk(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    if (!(self->animation_step.fields.event & 0x40)) {
+        return 0;
+    }
+    if (player_check_ladder(self)) {
+        self->attacking = 0;
+        return 1;
+    }
+    if (player_check_walk_start(self)) {
+        self->attacking = 0;
+        player_enter_walk_start(self);
+        return 1;
+    }
+#else
     if (player_check_ladder(self)) {
         return 1;
     }
@@ -1591,6 +2140,7 @@ s32 player_zero_check_ladder_or_walk(struct PlayerObj* self)
         player_enter_walk_start(self);
         return 1;
     }
+#endif
     return 0;
 }
 
@@ -1610,6 +2160,47 @@ void player_zero_attack_finish(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_DEMO
+s32 func_8004532C_demo(struct PlayerObj* self);
+
+void player_zero_jump_slash(struct PlayerObj* self)
+{
+    if (self->unk6 == 0) {
+        player_zero_spawn_saber(self, 0x1B);
+        self->unk6++;
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+    }
+    if (self->input_locked != 0) {
+        self->y_vel.val = 0;
+    }
+    if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_CEILING) {
+        self->y_vel.val = 0;
+    }
+    if (!(self->input.buttons.held & PLAYER_INPUT_JUMP)) {
+        self->y_vel.val = 0;
+    }
+    if (self->attacking != 0 && self->animation_step.fields.relative_step == 0) {
+        self->attacking = 0;
+    }
+    if (func_8004532C_demo(self) != 0) {
+        return;
+    }
+    player_air_steer(self);
+    player_check_splash(self);
+    if (self->y_vel.val <= 0) {
+        if (self->attacking != 0) {
+            self->unk5 = PLAYER_ZERO_FALL_SLASH;
+            self->unk6 = 1;
+        } else {
+            player_set_animation_frame(self, 0xB, 5);
+            self->unk5 = PLAYER_FALL;
+            self->unk6 = 0;
+        }
+        self->air_state = -1;
+    }
+}
+#else
 void player_zero_jump_slash(struct PlayerObj* self)
 {
     s8 saved_unk8E;
@@ -1679,7 +2270,48 @@ void player_zero_jump_slash(struct PlayerObj* self)
         self->air_state = -1;
     }
 }
+#endif
 
+#ifdef VERSION_DEMO
+void player_zero_fall_slash(struct PlayerObj* self)
+{
+    u8 duration;
+
+    if (self->unk6 == 0) {
+        player_zero_spawn_saber(self, 0x1B);
+        self->unk6++;
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+    }
+    if (self->attacking != 0 && self->animation_step.fields.relative_step == 0) {
+        self->attacking = 0;
+    }
+    if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
+        if (self->attacking != 0) {
+            duration = self->animation_step.fields.duration;
+            player_set_animation_frame(self, 0x54, self->animation_step.fields.event & 0x1F);
+            self->unk5 = PLAYER_ZERO_SABER;
+            self->animation_step.fields.duration = duration;
+            self->air_state = 0;
+            self->unk6 = 1;
+        } else {
+            player_enter_land(self);
+        }
+        return;
+    }
+    if (func_8004532C_demo(self) != 0) {
+        return;
+    }
+    player_air_steer(self);
+    player_check_splash(self);
+    if (self->attacking == 0) {
+        player_set_animation_frame(self, 0xB, 5);
+        self->unk8A.bytes.low = 0;
+        self->unk5 = PLAYER_FALL;
+        self->unk6 = 0;
+    }
+}
+#else
 void player_zero_fall_slash(struct PlayerObj* self)
 {
     u8 duration;
@@ -1750,6 +2382,132 @@ void player_zero_fall_slash(struct PlayerObj* self)
         self->unk6 = 0;
     }
 }
+#endif
+
+#ifdef VERSION_DEMO
+s32 func_80045554_demo(struct PlayerObj* self);
+
+s32 func_8004532C_demo(struct PlayerObj* self)
+{
+    if (self->input_locked != 0) {
+        return 0;
+    }
+    if (player_check_wall(self) != 0) {
+        self->attacking = 0;
+        return 1;
+    }
+    if ((self->armor_parts & 8) && self->air_action == 0 && player_check_dash_input(self) != 0) {
+        self->attacking = 0;
+        player_enter_air_dash(self);
+        return 1;
+    }
+    if (func_80045980_demo(self, 1) != 0) {
+        player_zero_spawn_saber(self, 0x1B);
+        player_air_steer(self);
+        player_check_splash(self);
+        return 1;
+    }
+    return 0;
+}
+
+void func_800453F4_demo(struct PlayerObj* self)
+{
+    u8 side_mask;
+
+    if (self->unk6 == 0) {
+        self->unk6++;
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+    }
+    player_zero_spawn_saber(self, 0x1D);
+    if (func_80045554_demo(self) != 0) {
+        return;
+    }
+    if (self->animation_step.fields.event & 0x20) {
+        self->animation_step.fields.event = 0;
+        self->x_vel.val = 0;
+    }
+    if (self->unk15 != 0) {
+        side_mask = PLAYER_COLLIDE_RIGHT;
+    } else {
+        side_mask = PLAYER_COLLIDE_LEFT;
+    }
+    if (self->unk88.bytes.collision_flags & side_mask) {
+        self->x_vel.val = 0;
+    }
+    if (self->x_vel.val != 0) {
+        move_with_gravity(ANIMATED_OBJECT(self));
+    }
+    if (self->unk15 != 0) {
+        if (self->x_vel.val < 0) {
+            self->x_vel.val = 0;
+        }
+    } else {
+        if (self->x_vel.val > 0) {
+            self->x_vel.val = 0;
+        }
+    }
+    if (self->animation_step.fields.relative_step == 0) {
+        self->attacking = 0;
+        if (engine_obj.unkF != 0) {
+            player_start_stage_clear(self);
+            return;
+        }
+        if (self->script_state != 0) {
+            func_80034E2C(self);
+            return;
+        }
+        player_enter_idle(self);
+    }
+}
+#endif
+
+#ifdef VERSION_DEMO
+s32 func_80045554_demo(struct PlayerObj* self)
+{
+    if (self->input_locked != 0) {
+        return 0;
+    }
+    if (!(self->animation_step.fields.event & 0x40)) {
+        return 0;
+    }
+    if (player_check_ladder(self)) {
+        self->attacking = 0;
+        return 1;
+    }
+    if (func_80045980_demo(self, 0) != 0) {
+        self->unk5 = PLAYER_ZERO_SABER;
+        self->unk6 = 1;
+        return 1;
+    }
+    if (player_check_dash_jump(self)) {
+        self->attacking = 0;
+        return 1;
+    }
+    if (player_check_walk_start(self)) {
+        self->attacking = 0;
+        player_enter_walk_start(self);
+        return 1;
+    }
+    return 0;
+}
+#endif
+
+#ifdef VERSION_DEMO
+s32 func_80045980_demo(struct PlayerObj* self, s32 index);
+void func_80040A9C_demo(struct PlayerObj* self);
+#define ZERO_SABER_CHAIN(self, check, index)    \
+    if (func_80045980_demo(self, index) != 0) { \
+        return;                                 \
+    }
+#else
+#define ZERO_SABER_CHAIN(self, check, index) \
+    (self)->attacking = 0;                   \
+    if (check(self) != 0) {                  \
+        return;                              \
+    }                                        \
+    (self)->attacking = 1;
+#endif
 
 void player_zero_ladder_slash(struct PlayerObj* self)
 {
@@ -1769,22 +2527,20 @@ void player_zero_ladder_slash(struct PlayerObj* self)
 
     player_zero_saber_on_event(self, 0x1E);
     if ((u8)self->animation_step.fields.event & 0x40) {
-        self->attacking = 0;
-        if (player_zero_check_ladder_slash(self) != 0) {
-            return;
-        }
-        self->attacking = 1;
+        ZERO_SABER_CHAIN(self, player_zero_check_ladder_slash, 2);
     }
 
+#ifndef VERSION_DEMO
     if (self->pressed_input & PLAYER_INPUT_LEFT) {
         self->unk15 = 0;
     }
     if (self->pressed_input & PLAYER_INPUT_RIGHT) {
         self->unk15 = PLAYER_FACING_RIGHT;
     }
+#endif
     if (self->animation_step.fields.relative_step == 0) {
         self->attacking = 0;
-        player_set_animation_frame(self, 0x1F, 2);
+        player_set_animation_frame(self, PLAYER_ANIM(0x1F), 2);
         player_enter_ladder_up(self);
     }
 }
@@ -1801,6 +2557,18 @@ void player_zero_wall_slash(struct PlayerObj* self)
         player_enter_land(self);
         return;
     }
+#ifdef VERSION_DEMO
+    if (self->input_locked != 0) {
+        self->attacking = 0;
+        func_80040540_demo(self);
+        return;
+    }
+    if (!(collision_flags & (PLAYER_COLLIDE_RIGHT | PLAYER_COLLIDE_LEFT))) {
+        self->attacking = 0;
+        func_80040A9C_demo(self);
+        return;
+    }
+#else
     airborne = 0;
     if (self->input_locked != 0) {
         airborne = 1;
@@ -1813,6 +2581,7 @@ void player_zero_wall_slash(struct PlayerObj* self)
         player_enter_fall(self);
         return;
     }
+#endif
     if (player_check_wall_jump(self) != 0) {
         self->attacking = 0;
         return;
@@ -1826,11 +2595,7 @@ void player_zero_wall_slash(struct PlayerObj* self)
         }
         player_zero_saber_on_event(self, 0x1F);
         if (self->animation_step.fields.event & 0x40) {
-            self->attacking = 0;
-            if (player_zero_check_wall_slash(self) != 0) {
-                return;
-            }
-            self->attacking = 1;
+            ZERO_SABER_CHAIN(self, player_zero_check_wall_slash, 3);
         }
         move_object(MOVING_OBJECT(self));
         player_check_splash(self);
@@ -1857,9 +2622,25 @@ void player_zero_raijingeki(struct PlayerObj* self)
     if (self->animation_step.fields.event & 0x10) {
         self->animation_step.fields.event = 0;
         func_8001540C(1, PLAYER_ZERO_SOUND_8, self);
-        player_play_voice(self, 6);
+        player_play_voice(self, DEMO_ALT(6, 0xA));
     }
     if (self->input_locked == 0) {
+#ifdef VERSION_DEMO
+        if (func_80044FA0_demo(self) != 0) {
+            return;
+        }
+        if (func_80045980_demo(self, 0) != 0) {
+            self->unk5 = PLAYER_ZERO_SABER;
+            self->unk6 = 1;
+            return;
+        }
+        if (func_80045A4C_demo(self, 0) != 0) {
+            return;
+        }
+        if (player_zero_check_ladder_or_walk(self) != 0) {
+            return;
+        }
+#else
         self->attacking = 0;
         if (player_check_dash_jump(self) != 0) {
             return;
@@ -1876,16 +2657,20 @@ void player_zero_raijingeki(struct PlayerObj* self)
             }
         }
         self->attacking = 1;
+#endif
     }
     player_zero_attack_finish(self);
 }
 
+#ifndef VERSION_DEMO
 void player_zero_hyouretsuzan(struct PlayerObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     player_zero_hyouretsuzan_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_hyouretsuzan_start(struct PlayerObj* self)
 {
     player_zero_saber_on_event(self, 0x21);
@@ -1909,7 +2694,9 @@ void player_zero_hyouretsuzan_start(struct PlayerObj* self)
         self->unk6++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_hyouretsuzan_drop(struct PlayerObj* self)
 {
     struct MiscObj* debris;
@@ -1959,7 +2746,9 @@ void player_zero_hyouretsuzan_drop(struct PlayerObj* self)
         player_check_splash(self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_hyouretsuzan_land(struct PlayerObj* self)
 {
     if (self->input_locked == 0) {
@@ -1982,13 +2771,17 @@ void player_zero_hyouretsuzan_land(struct PlayerObj* self)
     }
     player_zero_attack_finish(self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_ryuenjin(struct PlayerObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     player_zero_ryuenjin_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_ryuenjin_start(struct PlayerObj* self)
 {
     player_zero_saber_on_event(self, 0x23);
@@ -2006,7 +2799,9 @@ void player_zero_ryuenjin_start(struct PlayerObj* self)
         self->unk6++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_ryuenjin_rise(struct PlayerObj* self)
 {
     if (player_leap_check_peak(self) == 0) {
@@ -2014,14 +2809,18 @@ void player_zero_ryuenjin_rise(struct PlayerObj* self)
         player_zero_ryuenjin_spawn_flame(self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_ryuenjin_peak(struct PlayerObj* self)
 {
     if (player_leap_check_peak(self) == 0) {
         player_zero_ryuenjin_spawn_flame(self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_ryuenjin_fall(struct PlayerObj* self)
 {
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
@@ -2038,7 +2837,9 @@ void player_zero_ryuenjin_fall(struct PlayerObj* self)
         self->unk6 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_ryuenjin_spawn_flame(struct PlayerObj* self)
 {
     struct MiscObj* obj;
@@ -2054,7 +2855,9 @@ void player_zero_ryuenjin_spawn_flame(struct PlayerObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_rakuhouha(struct PlayerObj* self)
 {
     u32 i;
@@ -2102,7 +2905,9 @@ void player_zero_rakuhouha(struct PlayerObj* self)
         player_enter_land_or_fall(self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_zero_saber_on_event(struct PlayerObj* self, s8 saber_id)
 {
     if (self->animation_step.fields.event & 0x80) {
@@ -2110,21 +2915,80 @@ void player_zero_saber_on_event(struct PlayerObj* self, s8 saber_id)
         player_zero_spawn_saber(self, saber_id);
     }
 }
+#endif
 
 void player_zero_spawn_saber(struct PlayerObj* self, s8 saber_id)
 {
     struct WeaponObj* weapon;
 
+#ifdef VERSION_DEMO
+    if (!(self->animation_step.fields.event & 0x80)) {
+        return;
+    }
+    self->animation_step.fields.event &= 0x7F;
+#endif
     weapon = find_free_weapon_obj();
     if (weapon != NULL) {
         weapon->active = 1;
         weapon->id = saber_id;
         weapon->unk2 = self->combo;
         weapon->bg_offset = self->bg_offset;
+#ifndef VERSION_DEMO
         weapon->unk84.word = self->unk17;
+#endif
     }
 }
 
+#ifdef VERSION_DEMO
+extern u8 D_800CC868_demo[][3];
+extern u8 D_800CC874_demo[][3];
+
+s32 func_80045980_demo(struct PlayerObj* self, s32 index)
+{
+    if (self->input_locked != 0) {
+        return 0;
+    }
+    if (!(self->animation_step.fields.event & 0x40)) {
+        return 0;
+    }
+    if (self->pressed_input & 0x10) {
+        player_set_animation(self, D_800CC868_demo[index][0]);
+        if (D_800CC868_demo[index][1] != 0) {
+            func_8001540C(1, D_800CC868_demo[index][1], self);
+        }
+        if (D_800CC868_demo[index][2] != 0) {
+            player_play_voice(self, D_800CC868_demo[index][2]);
+        }
+        self->combo = 0;
+        return 1;
+    }
+    return 0;
+}
+
+s32 func_80045A4C_demo(struct PlayerObj* self, s32 index)
+{
+    if (self->input_locked != 0) {
+        return 0;
+    }
+    if (!(self->animation_step.fields.event & 0x40)) {
+        return 0;
+    }
+    if (self->pressed_input & 0x20) {
+        player_set_animation(self, D_800CC874_demo[index][0]);
+        if (D_800CC874_demo[index][1] != 0) {
+            func_8001540C(1, D_800CC874_demo[index][1], self);
+        }
+        if (D_800CC874_demo[index][2] != 0) {
+            player_play_voice(self, D_800CC874_demo[index][2]);
+        }
+        self->combo = 0;
+        return 1;
+    }
+    return 0;
+}
+#endif
+
+#ifndef VERSION_DEMO
 void player_zero_shippuuga(struct PlayerObj* self)
 {
     u8 side_mask;
@@ -2160,7 +3024,9 @@ void player_zero_shippuuga(struct PlayerObj* self)
         player_zero_attack_finish(self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_zero_shippuuga_cancel(struct PlayerObj* self)
 {
     if (self->input_locked != 0) {
@@ -2186,3 +3052,4 @@ s32 player_zero_shippuuga_cancel(struct PlayerObj* self)
     self->attacking = 1;
     return 0;
 }
+#endif

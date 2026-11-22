@@ -14,6 +14,21 @@ void dragoon_flame_despawn(struct MiscObj*);
 void dragoon_flame_attached(struct MiscObj*);
 #include "weapon_resources.h"
 
+#ifdef VERSION_DEMO
+extern s32 D_8013A4F4_demo;
+
+void dragoon_flame_attached(struct MiscObj* self)
+{
+    if (D_8013A4F4_demo != self->ext.pointer.unk54) {
+        if (D_8013A4F4_demo != 0) {
+            set_animation_frame(ANIMATED_OBJECT(self), 1, 2);
+        } else {
+            set_animation_frame(ANIMATED_OBJECT(self), 1, 1);
+        }
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
+#else
 // dragoon_flame_init
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -117,3 +132,4 @@ void (*dragoon_flame_state_funcs[5])(struct MiscObj*) = {
     func_800CF660,
     dragoon_flame_attached,
 };
+#endif

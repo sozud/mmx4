@@ -39,11 +39,18 @@ void func_800BD3C0(struct EffectObj* self)
     g_FilterAmountR = 0;
     g_FilterAmountG = 0;
     g_FilterAmountB = 0;
+#ifdef VERSION_DEMO
+    self->ext.effect_37.timer = 0x28;
+    self->ext.effect_37.unk19 = 4;
+    self->ext.effect_37.unk1A = 3;
+    self->ext.effect_37.action = 0;
+#else
     self->ext.effect_37.action = (s8)self->unk2 >> 4;
     self->ext.effect_37.timer = self->ext.effect_37.unk1E;
     self->ext.effect_37.unk19 = self->ext.effect_37.unk1F;
     self->ext.effect_37.unk1A = self->ext.effect_37.unk20;
     self->ext.effect_37.unk22 = (s8)self->unk2 >> 4;
+#endif
     self->state++;
     self->unk7 = 0x27;
 }
@@ -65,15 +72,26 @@ void alarm_flash_despawn(struct EffectObj* self)
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
+#ifdef VERSION_DEMO
+#define ALARM_FLASH_RESTART(self, timer_field, demo_timer) \
+    need_palette_load = 1;                                 \
+    (self)->ext.effect_37.timer = demo_timer;              \
+    (self)->ext.effect_37.unk19 = 4;                       \
+    (self)->ext.effect_37.action ^= 1;
+#else
+#define ALARM_FLASH_RESTART(self, timer_field, demo_timer)           \
+    need_palette_load |= 5;                                          \
+    (self)->ext.effect_37.timer = (self)->ext.effect_37.timer_field; \
+    (self)->ext.effect_37.unk19 = (self)->ext.effect_37.unk1F;       \
+    if ((self)->ext.effect_37.unk22 == 0) {                          \
+        (self)->ext.effect_37.action ^= 1;                           \
+    }
+#endif
+
 void alarm_flash_red(struct EffectObj* self)
 {
     if (--self->ext.effect_37.unk19 == 0) {
-        need_palette_load |= 5;
-        self->ext.effect_37.timer = self->ext.effect_37.unk1E;
-        self->ext.effect_37.unk19 = self->ext.effect_37.unk1F;
-        if (self->ext.effect_37.unk22 == 0) {
-            self->ext.effect_37.action ^= 1;
-        }
+        ALARM_FLASH_RESTART(self, unk1E, 0x2D);
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
@@ -88,12 +106,7 @@ void alarm_flash_red(struct EffectObj* self)
 void alarm_flash_white(struct EffectObj* self)
 {
     if (--self->ext.effect_37.unk19 == 0) {
-        need_palette_load |= 5;
-        self->ext.effect_37.timer = self->ext.effect_37.unk21;
-        self->ext.effect_37.unk19 = self->ext.effect_37.unk1F;
-        if (self->ext.effect_37.unk22 == 0) {
-            self->ext.effect_37.action ^= 1;
-        }
+        ALARM_FLASH_RESTART(self, unk21, 0x14);
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;

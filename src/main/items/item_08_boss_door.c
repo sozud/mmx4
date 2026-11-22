@@ -97,12 +97,18 @@ struct Item08AnimationStep boss_door_close_steps[30] = {
     { 2, 2, 0, 0 },
 };
 
+#ifndef VERSION_DEMO
 struct Unk_unk68 boss_door_terrain_box = { 0, 0, 0x10, 0x20 };
 
 struct Item08AnimationStep* boss_door_animations[2] = {
     boss_door_open_steps,
     boss_door_close_steps,
 };
+
+#else
+extern struct Unk_unk68 boss_door_terrain_box;
+extern struct Item08AnimationStep* boss_door_animations[2];
+#endif
 
 void boss_door_update(struct ItemObj* arg0)
 {
@@ -123,7 +129,13 @@ void boss_door_init(struct ItemObj* arg0)
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk15 = 0;
     arg0->unk67 = 0;
+#ifdef VERSION_DEMO
+    arg0->unk68 = &boss_door_terrain_box;
+#endif
     arg0->unk75 = 1;
+#ifdef VERSION_DEMO
+    arg0->state = 1;
+#else
     arg0->unk7C.timer = arg0->unk2 & 0x10;
     arg0->ext.packed = arg0->unk2 & 0x40;
     if (arg0->unk2 & 0xC0) {
@@ -134,6 +146,7 @@ void boss_door_init(struct ItemObj* arg0)
         arg0->unk68 = &boss_door_terrain_box;
     }
     arg0->unk2 &= 0xF;
+#endif
     arg0->unk5 = 0;
     set_animation(ANIMATED_OBJECT(arg0), 0);
 }
@@ -150,6 +163,13 @@ void boss_door_wait_player(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
 {
     collide_with_players(PLAYER_OBJECT(arg0));
+#ifdef VERSION_DEMO
+    if (func_800C1E7C(arg0)) {
+        reset_main_and_shots();
+        arg2->capsule_state = 1;
+        arg0->unk5 = 1;
+    }
+#else
     boss_door_block_player(arg0);
     if (func_800C1E7C(arg0)) {
         if (arg0->unk7C.timer == 0) {
@@ -159,6 +179,7 @@ void boss_door_wait_player(struct ItemObj* arg0, struct EngineObj* arg1,
         background_objects[0].unk3E.half &= 0xF;
         arg0->unk5 = 1;
     }
+#endif
 }
 
 void boss_door_open(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2)
@@ -207,6 +228,7 @@ void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
     case 3:
         background_objects[0].unk24 = arg0->x_pos.i.hi;
         break;
+#ifndef VERSION_DEMO
     case 4:
         background_objects[0].unk24 = arg0->x_pos.i.hi + 0x50;
         break;
@@ -216,6 +238,7 @@ void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
     case 6:
         background_objects[0].unk24 = arg0->x_pos.i.hi + 0x5A0;
         break;
+#endif
     }
     background_objects[0].unk26 = arg0->x_pos.i.hi;
     arg0->unk5 = 3;
@@ -262,6 +285,11 @@ void boss_door_close(struct ItemObj* arg0, struct EngineObj* arg1,
     } else {
         arg0->state = 2;
         arg0->unk5 = 0;
+#ifdef VERSION_DEMO
+        if ((engine_obj.stage == 0 || engine_obj.stage == 5) && arg0->unk2 != 0) {
+            engine_obj.unkF = 1;
+        }
+#endif
     }
 }
 
@@ -309,8 +337,10 @@ s8 func_800C1E7C(struct ItemObj* arg0)
         return 0;
     if (g_Player.unk2 != 0 && g_Player.attacking != 0)
         return 0;
+#ifndef VERSION_DEMO
     if (player->spike_immune != 0)
         return 0;
+#endif
     item = arg0;
     other = player;
     if (other->x_pos.i.hi > item->x_pos.i.hi)
@@ -335,6 +365,12 @@ s8 func_800C1E7C(struct ItemObj* arg0)
 }
 #endif
 
+#ifdef VERSION_DEMO
+void func_800A5544_demo(struct ItemObj* arg0)
+{
+    collide_with_players(PLAYER_OBJECT(arg0));
+}
+#else
 void boss_door_locked(struct ItemObj* arg0)
 {
     collide_with_players(PLAYER_OBJECT(arg0));
@@ -371,3 +407,27 @@ Item08StateFunc boss_door_step_funcs[5] = {
     boss_door_walk_through,
     boss_door_close,
 };
+#endif
+
+#ifdef VERSION_DEMO
+struct Item08AnimationStep* boss_door_animations[2] = {
+    boss_door_open_steps,
+    boss_door_close_steps,
+};
+
+void (*boss_door_state_funcs[])(struct ItemObj*) = {
+    boss_door_init,
+    boss_door_main,
+    func_800A5544_demo,
+};
+
+struct Unk_unk68 boss_door_terrain_box = { 0, 0, 0x10, 0x20 };
+
+Item08StateFunc boss_door_step_funcs[5] = {
+    boss_door_wait_player,
+    boss_door_open,
+    func_800C1C88,
+    boss_door_walk_through,
+    boss_door_close,
+};
+#endif

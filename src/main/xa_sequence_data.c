@@ -7,6 +7,61 @@
         sequence_, volume_     \
     }
 
+#ifdef VERSION_DEMO
+struct XaSequenceParams stage_music[16][2][2] = {
+    { { XA(0, 0x7F), XA(1, 0x70) }, { XA(0, 0x7F), XA(1, 0x70) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+    { { XA(4, 0x7F), XA(4, 0x7F) }, { XA(9, 0x7F), XA(9, 0x7F) } },
+    { { XA(5, 0x7F), XA(5, 0x7F) }, { XA(5, 0x7F), XA(5, 0x7F) } },
+    { { XA(6, 0x70), XA(6, 0x70) }, { XA(6, 0x70), XA(6, 0x70) } },
+    { { XA(7, 0x70), XA(7, 0x70) }, { XA(7, 0x70), XA(7, 0x70) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+    { { XA(10, 0x7F), XA(10, 0x7F) }, { XA(10, 0x7F), XA(10, 0x7F) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+    { { XA(8, 0x7F), XA(8, 0x7F) }, { XA(8, 0x7F), XA(8, 0x7F) } },
+};
+
+u8 alternate_stage_music[32] = {
+    2,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+    11,
+    0x70,
+};
+#else
 struct XaSequenceParams stage_music[16][2][2] = {
     { { XA(MUSIC_STAGE_INTRO_X, 0x75), XA(MUSIC_STAGE_INTRO_ZERO, 0x70) }, { XA(MUSIC_STAGE_INTRO_X, 0x75), XA(MUSIC_STAGE_INTRO_ZERO, 0x70) } },
     { { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) }, { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) } },
@@ -60,6 +115,8 @@ u8 alternate_stage_music[32] = {
     MUSIC_BOSS_BATTLE,
     0x70,
 };
+
+#endif
 
 s32 D_800F1AAC = 1;
 

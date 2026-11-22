@@ -172,7 +172,7 @@ void func_80040838(struct MainObj* arg0)
     if (result > 0) {
         arg0->unk5 = saved_step;
         arg0->unk6 = saved_substep;
-        func_8001540C(2, 0xC, arg0);
+        func_8001540C(2, DEMO_ALT(0xC, 0x21), arg0);
         arg0->invincibility_timer = 0x1E;
     }
     if (arg0->invincibility_timer != 0) {

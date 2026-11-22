@@ -246,9 +246,15 @@ void decompress_player_gfx(struct GraphicsObj* arg0, s16 x, s16 y)
 void load_palette(void)
 {
     if (need_palette_load != 0) {
+#ifdef VERSION_DEMO
+        if (need_palette_load == 1) {
+            LoadImage(&D_800F1658, (u_long*)SP_PALETTE);
+        } else {
+#else
         if (need_palette_load & 1) {
             LoadImage(&D_800F1658, (u_long*)SP_PALETTE);
         } else if (need_palette_load & 2) {
+#endif
             LoadImage(&D_800F1658, (u_long*)D_80141F70); // D_80141F70 is in vram_rect_ptr but can't figure out a match
         }
 
@@ -321,7 +327,30 @@ void func_800160F4(void)
 }
 #endif
 
-#ifndef MMX4_SATURN
+#ifdef VERSION_DEMO
+extern DR_MODE D_800F37A0_demo[2][2];
+extern SPRT D_800F37D0_demo[2][2];
+
+void func_80018000(void)
+{
+    u8 i;
+
+    for (i = 0; i < 2; i++) {
+        SetDrawMode(&D_800F37A0_demo[SP_DRAW_BUFFER][i], 0, 0, GetTPage(1, 0, i != 0 ? 0x1C0 : 0x140, 0), 0);
+        SetSprt(&D_800F37D0_demo[SP_DRAW_BUFFER][i]);
+        setXY0(&D_800F37D0_demo[SP_DRAW_BUFFER][i], i != 0 ? 0x100 : 0, 0);
+        setUV0(&D_800F37D0_demo[SP_DRAW_BUFFER][i], 0, 0);
+        D_800F37D0_demo[SP_DRAW_BUFFER][i].clut = GetClut(0, 0x1E0);
+        setShadeTex(&D_800F37D0_demo[SP_DRAW_BUFFER][i], 1);
+        setSemiTrans(&D_800F37D0_demo[SP_DRAW_BUFFER][i], 0);
+        D_800F37D0_demo[SP_DRAW_BUFFER][i].w = i != 0 ? 0x40 : 0x100;
+        D_800F37D0_demo[SP_DRAW_BUFFER][i].h = 0xF0;
+        catPrim(&D_800F37A0_demo[SP_DRAW_BUFFER][i], &D_800F37D0_demo[SP_DRAW_BUFFER][i]);
+        addPrims(cur_draw_info->ordering_table.mid, &D_800F37A0_demo[SP_DRAW_BUFFER][i],
+            &D_800F37D0_demo[SP_DRAW_BUFFER][i]);
+    }
+}
+#elif !defined(MMX4_SATURN)
 
 extern DR_MODE D_80139250[2];
 extern SPRT D_80139268[2][17];

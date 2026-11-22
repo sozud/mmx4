@@ -131,7 +131,7 @@ void func_800CACF0(struct MiscObj* arg0)
             arg0->animation_step.fields.event = 0;
             arg0->x_vel.val = -arg0->x_vel.val;
         }
-        limit = engine_obj.stage != 0xC ? 0x5D0 : 0x6D0;
+        limit = DEMO_ALT(engine_obj.stage != 0xC ? 0x5D0 : 0x6D0, 0x5D0);
         if (arg0->y_pos.i.hi >= limit) {
             arg0->y_vel.val = 0;
             arg0->unk2C = 0;

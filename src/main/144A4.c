@@ -26,7 +26,7 @@ void func_80026118(void);
 #include <string.h>
 #endif
 void func_80016F0C();
-extern u8 D_800F2B5C[21][12];
+extern u8 D_800F2B5C[DEMO_ALT(21, 16)][12];
 extern u8 D_800F2C58[];
 extern u8 D_800F2D18[];
 extern u32 D_800F2F08[12];
@@ -165,10 +165,12 @@ void func_80023B98(struct MiscObj* arg0);
 
 void func_80023C0C(struct MiscObj* arg0);
 
+#ifndef VERSION_DEMO
 void func_80023CA4(struct MiscObj* arg0)
 {
     D_800F30C8[arg0->state](arg0);
 }
+#endif
 #ifndef MMX4_SATURN
 void func_80023CE0()
 {
@@ -218,7 +220,9 @@ void init_objects(void)
     struct MainObj* var_s0_2;
     struct UnkObj* var_s0;
 
+#ifndef VERSION_DEMO
     SP_SPRITE_COUNT = 0;
+#endif
     SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;
     SP_DRAW_MODE_CURSOR = temp2[SP_DRAW_BUFFER].data;
     SP_BG_PRIM_CURSOR = temp3[SP_DRAW_BUFFER].data;
@@ -295,11 +299,13 @@ void init_objects(void)
         }
     }
 
+#ifndef VERSION_DEMO
     for (var_s0_8 = &unk_objects[0]; var_s0_8 < &unk_objects[COUNT(unk_objects)]; var_s0_8++) {
         if (var_s0_8->on_screen != 0) {
             func_80024334(var_s0_8);
         }
     }
+#endif
 
     ptr4 = &qux_object;
     if (ptr4->on_screen != 0) {

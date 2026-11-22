@@ -8,6 +8,7 @@ void (*D_800F2390[3])(struct GameInfo*) = {
     func_8001EBA0,
 };
 
+#ifndef VERSION_DEMO
 void (*D_800F239C[5])(struct GameInfo*) = {
     func_8001EC90,
     func_8001ED44,
@@ -15,3 +16,4 @@ void (*D_800F239C[5])(struct GameInfo*) = {
     func_8001EF48,
     func_8001EFF0,
 };
+#endif

@@ -110,8 +110,10 @@ void func_80066F1C(struct MainObj* self)
                 self->ext.main_47.train_boss->attack_flags |= D_800FF9FC[self->unk2];
                 self->ext.main_47.train_boss->attack_flags |= D_800FFA00[self->unk2];
                 if ((self->ext.main_47.train_boss->attack_flags & 7) == 7) {
+#ifndef VERSION_DEMO
                     g_Player.spike_immune = 1;
                     self->on_screen = 0;
+#endif
                     self->state = 3;
                 } else {
                     self->unk7C = 0xB4;
@@ -123,6 +125,10 @@ void func_80066F1C(struct MainObj* self)
             }
             if (collision != 0)
                 self->invincibility_timer = 2;
+#ifdef VERSION_DEMO
+            if (self->unk42 & 0x8000)
+                self->ext.main_47.train_boss->layer_signals->unk16 = 1;
+#else
             if (collision == 0x7F) {
                 self->ext.main_47.unk88.flag = 1;
             } else {
@@ -130,12 +136,15 @@ void func_80066F1C(struct MainObj* self)
                 if (self->unk42 & 0x8000)
                     self->ext.main_47.train_boss->layer_signals->unk16 = 1;
             }
+#endif
             *self->ext.main_47.boss_hp -= (u8)self->unk5D - (u8)self->hp;
             self->unk5D = self->hp;
         }
     } else {
         self->invincibility_timer--;
+#ifndef VERSION_DEMO
         if (self->ext.main_47.unk88.flag == 0)
+#endif
             self->ext.main_47.train_boss->layer_signals->unk16 = 1;
     }
     update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
@@ -170,6 +179,9 @@ void train_boss_armor_clear(struct MainObj* self)
     self->ext.main_47.unk8C = 0;
     self->ext.main_47.unk90 = 0;
     self->ext.main_47.unk94 = 0;
+#ifdef VERSION_DEMO
+    despawn_object_permanently(OBJECT_HEADER(self));
+#endif
 }
 
 void train_boss_armor_start_idle(struct MainObj* self)

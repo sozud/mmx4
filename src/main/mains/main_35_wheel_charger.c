@@ -81,7 +81,9 @@ void func_8005ECA8(struct MainObj* arg0)
         arg0->unk5 = 2;
         break;
     case 1:
+#ifndef VERSION_DEMO
         arg0->unk7A = 1;
+#endif
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->ext.main_35.unk80 = 0;
         arg0->x_speed = 0x28000;
@@ -94,7 +96,9 @@ void func_8005ECA8(struct MainObj* arg0)
         arg0->unk5 = 2;
         break;
     case 3:
+#ifndef VERSION_DEMO
         arg0->unk7A = 1;
+#endif
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->ext.main_35.unk80 = 1;
         arg0->x_speed = 0x28000;
@@ -121,9 +125,12 @@ void wheel_charger_main(struct MainObj* self)
         if (g_Player.x_pos.i.hi <= 0x9B6) {
             func_8002D9BC(self);
         }
-    } else {
+    }
+#ifndef VERSION_DEMO
+    else {
         func_8002D9BC(self);
     }
+#endif
     self->ext.main_35.saved_unk5 = self->unk5;
     hit = func_8002DD04(self);
     if (hit < 0) {
@@ -140,7 +147,9 @@ void wheel_charger_main(struct MainObj* self)
 
 void wheel_charger_despawn(struct MainObj* self)
 {
+#ifndef VERSION_DEMO
     self->unk7A = 0;
+#endif
     self->ext.main_35.unk80 = 0;
     self->ext.main_35.sound_timer = 0;
     self->ext.main_35.saved_unk5 = 0;
@@ -208,7 +217,9 @@ void func_8005EFB0(struct MainObj* arg0)
 void wheel_charger_wait_for_player(struct MainObj* self)
 {
     if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) > 0xB4) {
+#ifndef VERSION_DEMO
         self->unk7A = 0;
+#endif
         self->unk5 = 2;
     }
 }

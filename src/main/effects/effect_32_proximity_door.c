@@ -81,7 +81,11 @@ void proximity_door_step(struct EffectObj* self)
         self->ext.effect_32.palette_source.words += self->ext.effect_32.palette.fields.step;
         self->ext.effect_32.palette.packed = *self->ext.effect_32.palette_source.words;
         apply_tile_effect(self->ext.effect_32.palette.fields.id,
+#ifdef VERSION_DEMO
+            self->x_pos.i.hi - 0x10, self->y_pos.i.hi - 0x20);
+#else
             self->x_pos.i.hi - 0x30, self->y_pos.i.hi - 0x30);
+#endif
     }
 }
 

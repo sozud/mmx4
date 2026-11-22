@@ -103,7 +103,7 @@ struct StageObjectMarginData D_800F4334 = {
     0,
 };
 
-const u8* s_StageMainIds[13][2] = {
+const u8* s_StageMainIds[DEMO_ALT(13, 12)][2] = {
     { D_800F4A50, D_800F4A60 },
     { D_800F5008, D_800F5014 },
     { D_800F55E0, D_800F55EC },
@@ -116,7 +116,9 @@ const u8* s_StageMainIds[13][2] = {
     { D_800F817C, NULL },
     { D_800F81E0, NULL },
     { D_800F8470, D_800F847C },
+#ifndef VERSION_DEMO
     { D_800F87C8, D_800F87D0 },
+#endif
 };
 
 struct ObjectHeader* (*g_MakeObjectFuncs[8])() = {

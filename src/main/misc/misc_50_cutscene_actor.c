@@ -15,6 +15,7 @@ void cutscene_actor_animate(struct MiscObj* arg0);
 #include "weapon_resources.h"
 
 // cutscene_actor_init
+#ifndef VERSION_DEMO
 #ifdef MMX4_SATURN
 #define ACTOR_CLUT 32
 #define ACTOR_STILL_CLUT 28
@@ -98,7 +99,9 @@ void func_800D1B44(struct MiscObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 #endif
+#endif
 
+#ifndef VERSION_DEMO
 void cutscene_actor_wait(struct MiscObj* self)
 {
     if (engine_obj.unk2 == 7) {
@@ -107,17 +110,22 @@ void cutscene_actor_wait(struct MiscObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void cutscene_actor_hold(struct MiscObj* self)
 {
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void cutscene_actor_animate(struct MiscObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
 void cutscene_actor_update(struct MiscObj* self)
 {
@@ -125,6 +133,42 @@ void cutscene_actor_update(struct MiscObj* self)
     cutscene_actor_state_funcs[self->state](self);
 }
 
+#ifdef VERSION_DEMO
+struct DemoMenuCursorExt {
+    s32 base_y;
+    u8 selection;
+};
+
+extern u32* title_animations[];
+
+void func_800AE858_demo(struct MiscObj* self)
+{
+    self->unk3C = SP_TITLE_FRAMES;
+    self->unk40 = 0x600;
+    self->animation_table = title_animations;
+    self->bg_offset = -1;
+    self->unk15 = 0;
+    self->unk42 = 0x7804;
+    set_animation_frame(ANIMATED_OBJECT(self), 1, 0xC);
+    self->y_pos.i.hi = ((struct DemoMenuCursorExt*)&self->ext)->base_y + main_bss_state.transition.selection * 2;
+    ((struct DemoMenuCursorExt*)&self->ext)->selection = main_bss_state.transition.selection;
+    self->unk16 = 0;
+    self->state++;
+    is_on_screen(BASE_OBJECT(self));
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_800AE688_demo(struct MiscObj*);
+void cyberspace_warp_despawn(struct MiscObj*);
+void dragoon_flame_attached(struct MiscObj*);
+
+void (*cutscene_actor_state_funcs[3])(struct MiscObj*) = {
+    func_800AE688_demo,
+    cyberspace_warp_despawn,
+    dragoon_flame_attached,
+};
+#else
 union AnimationStep cutscene_actor_anim_0[18] = {
     { 30, 0, 1, 0x10 },
     { 4, 0, 1, 0x01 },
@@ -334,3 +378,4 @@ void (*cutscene_actor_state_funcs[4])(struct MiscObj*) = {
     cutscene_actor_hold,
     cutscene_actor_animate,
 };
+#endif

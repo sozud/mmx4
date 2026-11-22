@@ -46,7 +46,7 @@ void func_8002A484(void)
     u32 palette_index;
     u32 red;
 
-    if (((g_FilterAmountR | g_FilterAmountG | g_FilterAmountB) != 0) || (need_palette_load & 4)) {
+    if (DEMO_ALT(((g_FilterAmountR | g_FilterAmountG | g_FilterAmountB) != 0) || (need_palette_load & 4), 1)) {
         if ((lastFilterAmountR != g_FilterAmountR) || (lastFilterAmountG != g_FilterAmountG) || (lastFilterAmountB != g_FilterAmountB) || (need_palette_load != 0)) {
             src = dst = SP_PALETTE;
             dst = D_80141F70;

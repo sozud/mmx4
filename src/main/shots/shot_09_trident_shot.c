@@ -131,7 +131,11 @@ void func_8009B1E8(struct ShotObj* arg0)
     arg0->x_vel.val *= 4;
     arg0->y_vel.val *= 4;
     arg0->unk5C = 1;
+#ifdef VERSION_DEMO
+    arg0->unk60 = 2;
+#else
     arg0->unk60 = 3;
+#endif
     set_animation(ANIMATED_OBJECT(arg0), arg0->unk2 + 8);
 }
 #endif

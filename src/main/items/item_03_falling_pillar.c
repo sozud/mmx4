@@ -53,6 +53,12 @@ void falling_pillar_update(struct ItemObj* arg0)
 void func_800C044C(struct ItemObj* arg0);
 #endif
 
+#ifdef VERSION_DEMO
+#define FALLING_PILLAR_FRAMES 7
+#else
+#define FALLING_PILLAR_FRAMES 8
+#endif
+
 void func_800C044C(struct ItemObj* arg0)
 {
     s32* frames;
@@ -70,7 +76,7 @@ void func_800C044C(struct ItemObj* arg0)
         arg0->x_vel.val = -0x4000;
     arg0->unk40 = SATURN_ALT(0x1500, OBJECT_STAGE_TEXTURE(8));
     arg0->unk42 = OBJECT_CLUT(0x79C1);
-    arg0->sprite_frames = (const u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[8];
+    arg0->sprite_frames = (const u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[FALLING_PILLAR_FRAMES];
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk61 = 0;
     arg0->unk68 = NULL;

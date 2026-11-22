@@ -117,7 +117,7 @@ void func_8001326C(u8 arg0)
     struct Prim* prim;
     s32 tpage;
 
-    if ((arg0 != 0) || !(main_bss_state.frame_counter & 0x10)) {
+    if (DEMO_ALT((arg0 != 0) || !(main_bss_state.frame_counter & 0x10), 1)) {
         sprt = SP_PRIM_CURSOR;
         draw_mode = SP_DRAW_MODE_CURSOR;
         prim = &D_800EE504[arg0];
@@ -125,7 +125,7 @@ void func_8001326C(u8 arg0)
         SetDrawMode(draw_mode, 0, 0, tpage, 0);
         setSprt(sprt);
         setXY0(sprt, prim->x, prim->y);
-        setUV0(sprt, (prim->uv & 0xF) * 0x10, prim->uv & 0xF0);
+        setUV0(sprt, DEMO_ALT(prim->uv & 0xF, (u8)prim->uv) * 0x10, prim->uv & 0xF0);
         clut = prim->clut;
         setShadeTex(sprt, 1);
         setSemiTrans(sprt, 0);
@@ -144,7 +144,9 @@ void func_8001326C(u8 arg0)
 void func_80013404(u8 arg0)
 {
     u8 var_s0;
+#ifndef VERSION_DEMO
     struct EngineObj* ptr = &engine_obj;
+#endif
     SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;
     SP_DRAW_MODE_CURSOR = temp2[SP_DRAW_BUFFER].data;
 
@@ -154,6 +156,24 @@ void func_80013404(u8 arg0)
         func_8001326C(var_s0);
     }
     if (arg0) {
+#ifdef VERSION_DEMO
+        if (engine_obj.cur_character != CHARACTER_X) {
+            func_8001326C(4);
+        } else {
+            func_8001326C(3);
+        }
+        func_8001326C(5);
+
+        D_800EE504[6].uv = D_800EE54C.stage_archive_indices[engine_obj.stage];
+
+        func_8001326C(6);
+
+        if (engine_obj.substage != 0) {
+            func_8001326C(8);
+        } else {
+            func_8001326C(7);
+        }
+#else
         if (ptr->cur_character != CHARACTER_X) {
             func_8001326C(4);
         } else {
@@ -172,6 +192,7 @@ void func_80013404(u8 arg0)
                 func_8001326C(7);
             }
         }
+#endif
     }
 }
 #ifndef MMX4_PC

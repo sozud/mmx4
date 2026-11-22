@@ -59,7 +59,7 @@ ret_s8 func_8002DD04(struct MainObj* object);
 extern struct Unk_unk68 D_80107AF8[];
 extern struct Unk_unk68 beam_drone_hit_box;
 extern struct Unk_unk68 beam_drone_debris;
-extern void (*beam_drone_step_funcs[6])(struct MainObj*);
+extern void (*beam_drone_step_funcs[DEMO_ALT(6, 5)])(struct MainObj*);
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800745E8(struct MainObj* self);
 void func_80074438(struct MainObj* self);
@@ -69,14 +69,18 @@ void func_80074438(struct MainObj* self)
 {
     self->active = 0x41;
     self->hp = 5;
-    self->contact_damage = 3;
+    self->contact_damage = DEMO_ALT(3, 6);
     self->invincibility_timer = 0;
     self->bg_offset = g_Player.bg_offset;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     self->collision_data = D_80107AF8;
+#ifdef VERSION_DEMO
+    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
+#else
     if (self->unk2 == 0)
         self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
+#endif
     switch (self->unk2) {
     case 0:
         self->x_speed = 0;
@@ -86,10 +90,10 @@ void func_80074438(struct MainObj* self)
     case 1:
         self->x_speed = 0;
         self->y_speed = self->y_pos.val < g_Player.y_pos.val ? -0x18000 : 0x18000;
-        self->unk7E = 0x3C;
+        self->unk7E = DEMO_ALT(0x3C, 0x50);
         break;
     case 2:
-        self->x_speed = self->x_pos.val > g_Player.x_pos.val ? -0x15000 : 0x15000;
+        self->x_speed = self->x_pos.val > g_Player.x_pos.val ? DEMO_ALT(-0x15000, -0x10000) : DEMO_ALT(0x15000, 0x10000);
         self->y_speed = 0;
         self->unk7E = 0x3C;
         break;
@@ -110,12 +114,43 @@ void func_80074438(struct MainObj* self)
     self->ext.main_58.unk90 = 0;
     self->ext.main_58.unk94 = 0;
     self->unk7C = 0;
+#ifdef VERSION_DEMO
+    self->state++;
+#else
     self->state = 1;
+#endif
     self->unk5 = 2;
     self->unk6 = 0;
 }
 
 // beam_drone_main
+#ifdef VERSION_DEMO
+void func_800745E8(struct MainObj* self)
+{
+    s32 status;
+
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    beam_drone_step_funcs[self->unk5](self);
+    status = func_8002DD04(self);
+    func_8002D9BC(self);
+    if (self->unk5 != 0)
+        self->ext.main_58.saved_unk5 = self->unk5;
+    if (status < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(3, &beam_drone_debris, self);
+        drop_item(BASE_OBJECT(self), 8);
+        self->ext.main_58.unk88 = 2;
+        self->state++;
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
+    } else if (self->unk5 != 4) {
+        self->state++;
+    }
+}
+#else
 void func_800745E8(struct MainObj* self)
 {
     s32 status;
@@ -172,11 +207,12 @@ void func_800745E8(struct MainObj* self)
         self->state = 2;
     }
 }
+#endif
 
 void beam_drone_despawn(struct MainObj* self)
 {
     self->ext.main_58.unk88 = 2;
-    if (self->unk2 == 0) {
+    if (DEMO_ALT(self->unk2 == 0, 1)) {
         despawn_object(OBJECT_HEADER(self));
         return;
     }
@@ -224,7 +260,9 @@ void beam_drone_charge_start(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 7);
     beam_drone_spawn_charge(ANIMATED_OBJECT(self));
+#ifndef VERSION_DEMO
     func_8001540C(2, SATURN_SOUND(0x2D, 0x7A), self);
+#endif
     self->unk7C = 0x50;
     self->unk6++;
 }
@@ -249,7 +287,9 @@ void beam_drone_fire_start(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 1);
     beam_drone_spawn_beam(self);
+#ifndef VERSION_DEMO
     func_8001540C(2, SATURN_SOUND(0x2C, 0x79), self);
+#endif
     self->unk7C = 0x12;
     self->unk6++;
 }
@@ -272,7 +312,7 @@ void beam_drone_fire_fade(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         self->ext.main_58.unk88 = 0;
-        self->unk7C = 0x2A;
+        self->unk7C = DEMO_ALT(0x2A, 30);
         self->unk6++;
     }
 }
@@ -282,7 +322,7 @@ void beam_drone_fire_end(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         set_animation(self, 0);
-        if (self->unk2 == 0) {
+        if (DEMO_ALT(self->unk2 == 0, 1)) {
             self->unk5 = 2;
         } else {
             self->unk5 = 5;
@@ -292,11 +332,14 @@ void beam_drone_fire_end(struct MainObj* self)
     }
 }
 
+#ifndef VERSION_DEMO
 void beam_drone_leave(struct MainObj* self)
 {
     beam_drone_leave_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void beam_drone_leave_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -309,7 +352,9 @@ void beam_drone_leave_start(struct MainObj* self)
     }
     self->unk6++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void beam_drone_leave_move(struct MainObj* self)
 {
 
@@ -320,6 +365,7 @@ void beam_drone_leave_move(struct MainObj* self)
         ZeroObjectState(OBJECT_HEADER(self));
     }
 }
+#endif
 
 void beam_drone_spawn_beam(struct VisualObj* self)
 {
@@ -340,9 +386,9 @@ void beam_drone_spawn_beam(struct VisualObj* self)
             shot->unk15 = self->unk15;
             shot->bg_offset = self->bg_offset;
             if (self->unk15 == 0) {
-                shot->unk16 = 0;
+                shot->unk16 = DEMO_ALT(0, 1);
             } else {
-                shot->unk16 = 1;
+                shot->unk16 = DEMO_ALT(1, 2);
             }
         }
     }
@@ -442,7 +488,7 @@ struct Unk_unk68 beam_drone_anim_7[8] = {
     { 2, 0, 1, 6 },
     { 2, 0, 1, 7 },
     { 2, 0, 1, 8 },
-    { 3, 0, -7, 9 },
+    { 3, 0, DEMO_ALT(-7, 0), 9 },
 };
 
 struct Unk_unk68 beam_drone_anim_8[13] = {
@@ -496,13 +542,15 @@ void (*beam_drone_state_funcs[3])() = {
     beam_drone_despawn,
 };
 
-void (*beam_drone_step_funcs[6])() = {
+void (*beam_drone_step_funcs[DEMO_ALT(6, 5)])() = {
     enemy_hit_reaction,
     beam_drone_resume_step,
     beam_drone_drop,
     beam_drone_charge,
     beam_drone_fire,
+#ifndef VERSION_DEMO
     beam_drone_leave,
+#endif
 };
 
 void (*beam_drone_drop_funcs[2])() = {
@@ -522,7 +570,9 @@ void (*beam_drone_fire_funcs[4])() = {
     beam_drone_fire_end,
 };
 
+#ifndef VERSION_DEMO
 void (*beam_drone_leave_funcs[2])() = {
     beam_drone_leave_start,
     beam_drone_leave_move,
 };
+#endif

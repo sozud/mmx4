@@ -167,6 +167,13 @@ extern void (*D_800F1AB0[])(void);
 #endif
 
 #ifndef MMX4_SATURN
+#ifdef VERSION_DEMO
+extern s32 D_8013A4F4_demo; // D_80171EA9
+extern s32 D_800FBCB8_demo; // D_80141BD0
+extern s32 D_801062AC_demo; // D_801441B8
+extern s32 D_8010403C_demo; // D_80141F4A
+#endif
+
 void func_80016334(void)
 {
     func_80016420(0);
@@ -175,35 +182,37 @@ void func_80016334(void)
     D_8013956C = 0;
     D_801307F8 = 0;
 #endif
-    D_80171EA9 = 1;
+    DEMO_ALT(D_80171EA9, D_8013A4F4_demo) = 1;
 #ifndef VERSION_EU
+#ifndef VERSION_DEMO
     D_8013956C = 1;
+#endif
     D_801419AC = 0;
-    D_801441B8 = 0;
+    DEMO_ALT(D_801441B8, D_801062AC_demo) = 0;
 #endif
 #ifdef VERSION_EU
     D_80141F4A = 1;
 #else
-    D_80141F4A = 0;
+    DEMO_ALT(D_80141F4A, D_8010403C_demo) = 0;
 #endif
     D_8013952C = 0;
     D_80141BD4 = 0;
     D_80139524 = 0x80;
     D_80139530 = 0;
-    D_80141BD0 = 0;
+    DEMO_ALT(D_80141BD0, D_800FBCB8_demo) = 0;
     D_80139564 = 0;
     D_801441B0 = 0;
 }
 
 void func_800163BC(s32 arg0)
 {
-    D_80171EA9 = 0;
+    DEMO_ALT(D_80171EA9, D_8013A4F4_demo) = 0;
     func_80016420(D_80139524);
 }
 
 void func_800163EC(void)
 {
-    D_80171EA9 = 1;
+    DEMO_ALT(D_80171EA9, D_8013A4F4_demo) = 1;
     func_80016420(D_80139524);
 }
 
@@ -228,7 +237,7 @@ void func_80016448(u8 arg0)
     pc_cd_set_volume(arg0);
 #else
     D_80139528 = arg0;
-    if (D_80171EA9 == 1) {
+    if (DEMO_ALT(D_80171EA9, D_8013A4F4_demo) == 1) {
         D_80139520.val0 = arg0;
         D_80139520.val1 = 0;
         D_80139520.val2 = arg0;
@@ -260,6 +269,12 @@ void func_800164D8(void)
 }
 #endif
 
+#ifdef VERSION_DEMO
+void func_8002DB00_demo(void)
+{
+    func_8001663C(alternate_stage_music[engine_obj.stage * 2], alternate_stage_music[engine_obj.stage * 2 + 1]);
+}
+#else
 void func_8001653C(void)
 {
     s32 track;
@@ -298,12 +313,61 @@ void func_8001653C(void)
 
     func_8001663C(track, volume);
 }
+#endif
 
 extern s32 D_80139538, D_80139540, D_80139544;
 extern s16 D_80139560;
 extern s32 D_80139530, D_80141BD4;
 
-#ifdef MMX4_GAMECUBE
+#ifdef VERSION_DEMO
+void func_8001663C(u8 selection, u8 volume)
+{
+    u16 base;
+    const u16* entry;
+    s32 channel;
+    CdlLOC* location;
+
+    base = 0;
+    channel = 0;
+    D_80139560 = selection < 8 ? XA_ARCHIVE_BGM1 : XA_ARCHIVE_BGM2;
+    switch (selection >> 3) {
+    case 0:
+        entry = D_800F19E0;
+        D_80139560 = XA_ARCHIVE_BGM1;
+        break;
+
+    case 1:
+        selection %= 8;
+        entry = D_800F19E4;
+        D_80139560 = XA_ARCHIVE_BGM2;
+        break;
+    }
+
+    while (base++ < selection) {
+        if ((*entry) & 0x8000) {
+            channel++;
+            entry++;
+        }
+        entry++;
+    }
+
+    ((u8*)D_80175EE8)[0] = 1;
+    ((u8*)D_80175EE8)[1] = channel;
+    D_80139544 = func_80013614(D_80139560, &D_80139538) + ((u8*)D_80175EE8)[1];
+    D_80139540 = D_80139544;
+    do {
+        D_80139540 += ((entry[0] & 0x7FFF) * 8);
+        location = (CdlLOC*)&D_80139514;
+    } while (0);
+    D_80139544 += ((entry[1] & 0x7FFF) * 8);
+    CdIntToPos(D_80139540, location);
+    SsSetSerialAttr(0, 0, 1);
+    D_8013A4F4_demo = 1;
+    func_80016420(volume);
+    D_80141BD4 = 2;
+    D_80139530 = 7;
+}
+#elif defined(MMX4_GAMECUBE)
 s32 fn_800158E4(void* player);
 void fn_8001586C(void* player, s32 volume);
 void fn_800159B4(void* player, u8 track, s32 flags);
@@ -497,11 +561,15 @@ void func_800168D8(void)
                 temp_v0_2 = CdPosToInt(D_80139554 + 5);
                 D_8013953C = temp_v0_2;
                 if ((D_80139544 - 8) < temp_v0_2) {
+#ifdef VERSION_DEMO
+                    D_80139530 = 5;
+#else
                     if (*(u8*)&D_80139568 == 0) {
                         D_80139530 = 5;
                     } else {
                         func_80016F0C();
                     }
+#endif
                 }
             }
             CdControlF(0x11, 0);
@@ -529,6 +597,35 @@ extern s32 D_80141BD4;
 
 extern u8 D_80171EA9;
 
+#ifdef VERSION_DEMO
+s32 func_800169D8(void)
+{
+    if (D_80141BD4 == 2) {
+        if (*(u8*)&D_8013952C != 0) {
+            return -1;
+        }
+        D_800F1AB0[D_80139530]();
+        if (D_800FBCB8_demo == 0) {
+            return 0;
+        }
+        if (D_800F1AAC != 0) {
+            D_800F1AAC = 0;
+            D_80139510 = D_80139528 - D_80139534;
+        } else {
+            D_800F1AAC = 1;
+        }
+        if (D_80139510 < 4) {
+            D_80139510 = 0;
+            D_800F1AAC = 1;
+            func_80016F0C();
+            D_800FBCB8_demo = 0;
+        }
+        func_80016448(D_80139510);
+        return 0;
+    }
+    return -1;
+}
+#else
 s32 func_800169D8(void)
 {
     u8 temp_a0;
@@ -571,10 +668,11 @@ s32 func_800169D8(void)
     }
     return -1;
 }
+#endif
 
 void func_80016B38(void)
 {
-    D_80141BD0 = 0;
+    DEMO_ALT(D_80141BD0, D_800FBCB8_demo) = 0;
     D_80141BD4 = 0;
     D_80139564 = 0;
 }
@@ -594,7 +692,9 @@ void func_80016B58(void)
 #endif
     temp_v0 = CdSync(1, ptr);
     if ((temp_v0 == 2) && !(*ptr & 0x40) && (CdControl(CdlReadS, 0, ptr) != 0)) {
+#ifndef VERSION_DEMO
         D_80173C84 = 2;
+#endif
         D_80139530 = temp_v0;
 #ifdef MMX4_PC
         mmx4_pc_xa_starts++;
@@ -608,11 +708,11 @@ void func_80016B58(void)
 void func_80016BDC(void)
 {
 #ifdef MMX4_WIN32
-    if (D_8013955C & D_801441B8) {
+    if (D_8013955C & DEMO_ALT(D_801441B8, D_801062AC_demo)) {
         D_80139530 = 3;
     }
 #else
-    if (D_8013955C & D_801441B8) {
+    if (D_8013955C & DEMO_ALT(D_801441B8, D_801062AC_demo)) {
         while (CdControl(CdlPause, 0, &D_80139554) == 5)
             ;
         D_80139530 = 3;
@@ -634,7 +734,7 @@ void func_80016C5C(void)
     s32 status;
 
     status = CdSync(1, 0);
-    if ((status == 2) && (D_80139564 != 0) && (D_801441B8 == 0) && (CdControl(CdlReadS, 0, D_80139554) != 0)) {
+    if ((status == 2) && (D_80139564 != 0) && (DEMO_ALT(D_801441B8, D_801062AC_demo) == 0) && (CdControl(CdlReadS, 0, D_80139554) != 0)) {
         D_8013955C = 0;
         D_80139530 = status;
         if (D_80139554[0] & 0x10) {
@@ -659,7 +759,7 @@ void func_80016D0C(void)
 
     status = CdSync(1, 0);
     if (status == 2) {
-        if (D_80139564 == status) {
+        if (D_80139564 == DEMO_ALT(status, 1)) {
             if (CdControlB(CdlPause, 0, 0) == 0) {
                 return;
             }
@@ -693,7 +793,7 @@ void func_80016DAC()
         if (var_v0 != 0) {
             D_80139530 = 1;
         }
-        D_80139564 = 2;
+        D_80139564 = DEMO_ALT(2, 1);
     }
 #endif
 }
@@ -781,11 +881,49 @@ void func_80016E84(void)
     }
 #endif
 }
+#ifdef VERSION_DEMO
+u8 func_8002E2AC_demo(void)
+{
+    u8 result[8];
+
+    while (CdControlB(CdlNop, 0, result) == 0)
+        ;
+    if (result[0] & 0x10) {
+        D_801419AC = 0;
+        D_8013952C = 1;
+    }
+    return result[0];
+}
+#endif
 
 #ifdef MMX4_WIN32
 void pc_cd_stop(void);
 #endif
 
+#ifdef VERSION_DEMO
+void func_80016F0C()
+{
+    if (D_80141BD4 == 2) {
+        func_80016420(0);
+        if (D_80139564 == 1) {
+            if (D_8013955C != 0) {
+                while (CdControlB(CdlPause, 0, NULL) == 0)
+                    ;
+                VSync(1);
+            }
+        }
+        SsSetSerialAttr(0, 0, 0);
+        D_80139564 = 0;
+        D_80139530 = 0;
+    }
+}
+
+void func_80016FB4(s32 arg0)
+{
+    D_80139534 = arg0;
+    D_800FBCB8_demo = 1;
+}
+#else
 void func_80016F0C()
 {
 #ifdef MMX4_WIN32
@@ -826,5 +964,6 @@ void func_80016FB4(s32 arg0)
         D_80141BD0 = 1;
     }
 }
+#endif
 #endif
 #endif

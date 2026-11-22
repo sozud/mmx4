@@ -24,13 +24,13 @@ void data_capsule_idle(struct ItemObj*);
 
 u16 data_capsule_positions[8] = {
     0x07B0,
-    0x022C,
+    DEMO_ALT(0x022C, 0x0228),
     0x07B0,
-    0x03A0,
+    DEMO_ALT(0x03A0, 0x03C0),
     0x07B0,
-    0x0458,
+    DEMO_ALT(0x0458, 0x0448),
     0x07B0,
-    0x05D8,
+    DEMO_ALT(0x05D8, 0x05D0),
 };
 
 u8 data_capsule_box_0[4] = { 0, 0xFE, 0x29, 8 };
@@ -68,6 +68,8 @@ void func_800C49BC(struct ItemObj* self);
 void collide_with_players(struct PlayerObj*);
 extern ret_u8 func_8002938C(s32);
 
+#define DATA_CAPSULE_KINDS DEMO_ALT(4, 3)
+
 void func_800C4778(struct ItemObj* self)
 {
     u32 i;
@@ -75,8 +77,10 @@ void func_800C4778(struct ItemObj* self)
     u8 index;
     s32 j;
 
-    if (self->unk2 < 4) {
+    if (self->unk2 < DATA_CAPSULE_KINDS) {
+#ifndef VERSION_DEMO
         self->active |= 0x40;
+#endif
         self->state = 1;
         self->unk5 = 0;
         self->unk6 = 0;
@@ -85,7 +89,9 @@ void func_800C4778(struct ItemObj* self)
         self->unk18 = self->x_pos;
         self->unk1C = self->y_pos;
         index = func_8002938C(0x29);
+#ifndef VERSION_DEMO
         self->animation_table = (const u8* const*)data_hopper_animations;
+#endif
         self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
         self->unk40 = OBJECT_STAGE_TEXTURE(index);
         self->unk42 = OBJECT_CLUT(CLUT_FROM_XY(index, index));
@@ -103,6 +109,17 @@ void func_800C4778(struct ItemObj* self)
         self->y_vel.val = 0;
         self->unk28 = 0;
         self->unk2C = 0;
+#ifdef VERSION_DEMO
+        self->unk16 = 5;
+        self->unk7C.timer16 = 0xA;
+        self->unk7 = engine_obj.character_state.fields.active;
+        if (self->unk2 != 2) {
+            self->animation_step.fields.frame_index = 0x3F - self->unk2;
+        } else {
+            self->animation_step.fields.frame_index = 0x3F;
+            self->unk68 = (struct Unk_unk68*)data_capsule_box_2;
+        }
+#else
         self->unk16 = VISUAL_SATURN_LAYER(6);
         self->unk7C.timer16 = 0xA;
         ((u16*)&self->unk7C)[1] = 0;
@@ -113,6 +130,7 @@ void func_800C4778(struct ItemObj* self)
         } else {
             set_animation(self, self->unk2 + 0xF);
         }
+#endif
     } else {
         self->state = 2;
         self->unk5 = 0;
@@ -125,7 +143,7 @@ void func_800C4778(struct ItemObj* self)
                 child->active = 1;
                 child->id = 0x13;
                 child->unk2 = i;
-                j = (self->unk2 - 4) * 4 + i * 2;
+                j = (self->unk2 - DATA_CAPSULE_KINDS) * 4 + i * 2;
                 child->x_pos.i.hi = data_capsule_positions[j];
                 child->y_pos.i.hi = data_capsule_positions[j + 1];
             }
@@ -135,6 +153,46 @@ void func_800C4778(struct ItemObj* self)
 }
 
 // data_capsule_main
+#ifdef VERSION_DEMO
+void func_800C49BC(struct ItemObj* self)
+{
+    struct MainObj* spawned;
+    s32 index;
+    s16 right_edge;
+
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    if (engine_obj.character_state.fields.active != self->unk7)
+        self->unk7C.timer16 = 0x1E;
+
+    if (self->unk2 == 0) {
+        if (self->unk7C.timer16 == 0) {
+            right_edge = (s16)(background_objects[self->bg_offset].y_pos.i.hi + 0xF0);
+            if (right_edge > self->y_pos.i.hi) {
+                self->unk7C.timer16 = 0x1E;
+                spawned = find_free_main_obj();
+                if (spawned != NULL) {
+                    spawned->active = 0x41;
+                    spawned->id = 0x29;
+                    spawned->unk2 = 1;
+                    index = (u8)func_8002938C(0x29);
+                    spawned->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
+                    spawned->unk40 = OBJECT_STAGE_TEXTURE(index);
+                    spawned->unk42 = OBJECT_CLUT(((index * 4 + 0x18) % 16) | (((index * 4 + 0x18) / 16 + 0x1E0) << 6));
+                    spawned->x_pos = self->x_pos;
+                    spawned->y_pos.val = self->y_pos.val + 0x200000;
+                    spawned->unk15 = 0;
+                }
+            }
+        } else {
+            self->unk7C.timer16--;
+        }
+    }
+    self->unk7 = engine_obj.character_state.fields.active;
+    collide_with_players(self);
+    is_on_screen(BASE_OBJECT(self));
+}
+#else
 void func_800C49BC(struct ItemObj* self)
 {
     struct MainObj* spawned;
@@ -193,6 +251,7 @@ void func_800C49BC(struct ItemObj* self)
     collide_with_players(self);
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
 void data_capsule_idle(struct ItemObj* arg0)
 {

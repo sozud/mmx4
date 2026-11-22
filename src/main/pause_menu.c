@@ -125,6 +125,57 @@ void func_8002FD28(struct BarObj* arg0)
     arg0->unk5 = 1;
 }
 
+#ifdef VERSION_DEMO
+void func_8003C964_demo(struct BarObj* self)
+{
+    u32 i;
+
+    if (main_bss_state.transition.active != 0) {
+        PAUSE_RENDER();
+        return;
+    }
+    PAUSE_FADE_IN();
+    self->unk5 = 2;
+    self->unk14 = 0;
+    self->options.fields.player[0] = 1;
+    if (((u8)g_Player.armor_parts) & 2) {
+        self->options.fields.player[1] = 1;
+    } else {
+        self->options.fields.player[1] = 0;
+    }
+    for (i = 2; i < 10; i++) {
+        if (((u8)g_Player.boss_flags >> (i - 2)) & 1) {
+            self->options.items[i] = 1;
+        } else {
+            self->options.items[i] = 0;
+        }
+    }
+    if (engine_obj.sub_tanks[0] < 0) {
+        self->options.fields.unk20 = 1;
+        if (engine_obj.sub_tanks[1] < 0) {
+            self->options.fields.unk21 = 1;
+        }
+    } else {
+        self->options.fields.unk20 = 0;
+        self->options.fields.unk21 = 0;
+    }
+    if (engine_obj.collected_upgrades & 0x4000) {
+        self->options.fields.unk22 = 1;
+    } else {
+        self->options.fields.unk22 = 0;
+    }
+    self->options.fields.unk23 = 0;
+    self->options.fields.unk24 = 1;
+    if (g_Player.unk2 != 0) {
+        for (i = 0xA; i < 0xF; i++) {
+            if (self->options.items[i] != 0) {
+                self->unk14 = i;
+                break;
+            }
+        }
+    }
+}
+#else
 void func_8002FD70(struct BarObj* self)
 {
     s8 weapon;
@@ -225,13 +276,14 @@ void func_8002FD70(struct BarObj* self)
     self->unk30 = 0;
     PAUSE_SAVED_WEAPON = current_weapon;
 }
+#endif
 
 void func_800300AC(struct BarObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
         arg0->state = 1;
         arg0->unk5 = 0;
-        if (g_Player.unk2 || arg0->unk2) {
+        if (DEMO_ALT(g_Player.unk2 || arg0->unk2, g_Player.unk2)) {
             if (arg0->unk14 >= 0xD) {
                 arg0->unk5 = 2;
             } else {
@@ -252,7 +304,7 @@ void func_800300AC(struct BarObj* arg0)
 
 void func_80030128(struct BarObj* arg0)
 {
-#ifndef MMX4_SATURN
+#if !defined(MMX4_SATURN) && !defined(VERSION_DEMO)
     if (controller_input.pressed & PADselect) {
         if (arg0->unk5 < 3) {
             arg0->unk28 = arg0->unk5;
@@ -262,11 +314,135 @@ void func_80030128(struct BarObj* arg0)
     }
 #endif
     D_800F48F4[arg0->unk5](arg0);
+#ifdef VERSION_DEMO
+    PAUSE_DRAW();
+#else
     if (arg0->unk5 < 5) {
         PAUSE_DRAW();
     }
+#endif
 }
 
+#ifdef VERSION_DEMO
+void func_8003CB84_demo(struct BarObj* arg0)
+{
+    s16 var_a1;
+    u16 var_a1_2;
+    s8 var_a2;
+    s8 initial_unk14;
+
+    var_a1 = 0;
+    switch (PAUSE_PRESSED) {
+    case PAUSE_PAD_START:
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        break;
+    case PADRdown:
+    case PADRleft:
+        if (arg0->unk14 < 0xAU) {
+            if (arg0->unk14 < 2) {
+                g_Player.weapon = 0;
+            } else {
+                g_Player.weapon = arg0->unk14 - 1;
+            }
+        }
+        break;
+    case PAUSE_PAD_UP:
+        var_a2 = arg0->unk14;
+        do {
+            var_a2 -= 2;
+            if (var_a2 < 0) {
+                var_a2 = arg0->unk14;
+            }
+            if (arg0->unk14 == var_a2) {
+                break;
+            }
+            if (var_a2 == 0) {
+                break;
+            }
+        } while (arg0->options.items[var_a2] == 0);
+        arg0->unk14 = var_a2;
+        break;
+    case PAUSE_PAD_DOWN:
+        var_a2 = arg0->unk14;
+        do {
+            var_a2 += 2;
+            if (var_a2 < 0xA) {
+                continue;
+            }
+            var_a2 = 9;
+            for (var_a1_2 = 0; var_a1_2 < 5; var_a1_2++) {
+                var_a2++;
+                if (arg0->options.items[var_a2] != 0) {
+                    if (var_a2 >= 0xD) {
+                        arg0->unk5 = 2;
+                    } else {
+                        arg0->unk5 = 1;
+                    }
+                    break;
+                }
+            }
+            break;
+        } while (arg0->unk14 != var_a2 && arg0->options.items[var_a2] == 0);
+        arg0->unk14 = var_a2;
+        break;
+    case PAUSE_PAD_RIGHT:
+        var_a2 = arg0->unk14;
+        var_a2++;
+        if (!(var_a2 & 1)) {
+            var_a2 = arg0->unk14;
+            break;
+        }
+        initial_unk14 = var_a2;
+        if (arg0->options.items[var_a2] == 0) {
+            do {
+                if (var_a1 == 0) {
+                    var_a2 += 2;
+                    if (var_a2 >= 0xB) {
+                        var_a2 -= 2;
+                        var_a1 = 1;
+                    }
+                } else {
+                    var_a2 -= 2;
+                }
+                if (var_a2 == initial_unk14) {
+                    var_a2 = arg0->unk14;
+                    break;
+                }
+            } while (arg0->options.items[var_a2] == 0);
+        }
+        arg0->unk14 = var_a2;
+        break;
+    case PAUSE_PAD_LEFT:
+        var_a2 = arg0->unk14;
+        var_a2--;
+        if (var_a2 & 1) {
+            var_a2 = arg0->unk14;
+            break;
+        }
+        initial_unk14 = var_a2;
+        if (arg0->options.items[var_a2] == 0) {
+            do {
+                if (var_a1 != 0) {
+                    var_a2 -= 2;
+                    if (var_a2 < 0) {
+                        var_a2 += 2;
+                        var_a1 = 1;
+                    }
+                } else {
+                    var_a2 += 2;
+                }
+                if (var_a2 == initial_unk14) {
+                    var_a2 = arg0->unk14;
+                    break;
+                }
+            } while (arg0->options.items[var_a2] == 0);
+        }
+        arg0->unk14 = var_a2;
+        break;
+    }
+}
+#else
 void func_800301BC(struct BarObj* arg0)
 {
     s16 var_a1;
@@ -393,8 +569,131 @@ void func_800301BC(struct BarObj* arg0)
         func_8001540C(0, PAUSE_SOUND_MOVE, 0);
     }
 }
+#endif
 
-#ifdef MMX4_SATURN
+#ifdef VERSION_DEMO
+void func_800304E4(struct BarObj* arg0)
+{
+    u8 original;
+    s8 cursor;
+
+    switch (PAUSE_PRESSED) {
+    case PAUSE_PAD_START:
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        break;
+    case PADRdown:
+    case PADRleft:
+        if (arg0->unk14 >= 10 && arg0->unk14 < 13) {
+            if (arg0->unk14 != 12) {
+                arg0->unk5 = 3;
+            }
+        }
+        break;
+    case PAUSE_PAD_UP:
+        if (g_Player.unk2 != 0)
+            break;
+        cursor = 9;
+        do {
+            if (cursor == 0 || arg0->options.items[cursor] != 0)
+                break;
+        } while (--cursor != 0);
+        arg0->unk5 = 0;
+        arg0->unk14 = cursor;
+        break;
+    case PAUSE_PAD_DOWN:
+        break;
+    case PAUSE_PAD_RIGHT:
+        cursor = arg0->unk14;
+        for (;;) {
+            if (++cursor >= 0xD) {
+                if (arg0->options.items[cursor] != 0) {
+                    arg0->unk5 = 2;
+                } else {
+                    cursor++;
+                    arg0->unk5 = 2;
+                }
+                break;
+            }
+            if (arg0->options.items[cursor] != 0)
+                break;
+        }
+        arg0->unk14 = cursor;
+        break;
+    case PAUSE_PAD_LEFT:
+        original = arg0->unk14;
+        cursor = original;
+        for (;;) {
+            if (--cursor < 10) {
+                cursor = original;
+                break;
+            }
+            if (arg0->options.items[cursor] != 0)
+                break;
+        }
+        arg0->unk14 = cursor;
+        break;
+    }
+}
+void func_8003D04C_demo(struct BarObj* arg0)
+{
+    s8 cursor;
+    u16 pressed;
+
+    pressed = PAUSE_PRESSED;
+    if (pressed & PAUSE_PAD_START) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    } else if ((pressed & PAUSE_PAD_UP) && g_Player.unk2 == 0) {
+        cursor = arg0->unk14;
+        do {
+            if (--cursor < 0xD) {
+                cursor = 9;
+                do {
+                    if (cursor == 0 || arg0->options.items[cursor] != 0)
+                        break;
+                } while (--cursor != 0);
+                arg0->unk5 = 0;
+                break;
+            }
+        } while (arg0->unk14 != cursor && arg0->options.items[cursor] == 0);
+        arg0->unk14 = cursor;
+    } else if (pressed & PAUSE_PAD_DOWN) {
+        cursor = arg0->unk14;
+        do {
+            if (++cursor >= 0xF) {
+                cursor = 0xE;
+                break;
+            }
+        } while (arg0->unk14 != cursor && arg0->options.items[cursor] == 0);
+        arg0->unk14 = cursor;
+    } else if (pressed & PAUSE_PAD_LEFT) {
+        if (g_Player.unk2 == 0) {
+            cursor = 0xC;
+            do {
+                if (cursor == 0 || arg0->options.items[cursor] != 0)
+                    break;
+            } while (--cursor != 0);
+            arg0->unk14 = cursor;
+            if (cursor < 10) {
+                arg0->unk5 = 0;
+            } else {
+                arg0->unk5 = 1;
+            }
+        } else {
+            cursor = 0xC;
+            do {
+                if (cursor == 0 || arg0->options.items[cursor] != 0) {
+                    arg0->unk14 = cursor;
+                    arg0->unk5 = 1;
+                    break;
+                }
+                cursor--;
+            } while (cursor >= 10);
+        }
+    }
+}
+#elif defined(MMX4_SATURN)
 void func_800304E4(struct BarObj* arg0)
 {
     u8* bytes = (u8*)arg0;
@@ -744,6 +1043,31 @@ static inline void bar_merge_sub_tanks(void)
     engine_obj.sub_tanks[0] = second;
     engine_obj.sub_tanks[1] = TANK_DRAINED(second);
 }
+
+#ifdef VERSION_DEMO
+void func_8003D234_demo(struct BarObj* arg0)
+{
+    u8 tank;
+    u8 energy;
+
+    tank = arg0->unk14 != 10;
+    energy = TANK_VALUE(engine_obj.sub_tanks[tank]);
+    if (energy != 0) {
+        if (g_Player.hp != engine_obj.max_hp) {
+            engine_obj.sub_tanks[tank] = (energy - 1) | 0x80;
+            g_Player.hp++;
+        } else {
+            arg0->unk5 = 1;
+        }
+        return;
+    }
+    arg0->unk5 = 1;
+    if (tank == 0 && engine_obj.sub_tanks[1] < 0) {
+        engine_obj.sub_tanks[0] = engine_obj.sub_tanks[1];
+        engine_obj.sub_tanks[1] &= 0x80;
+    }
+}
+#else
 
 void func_80030A2C(struct BarObj* arg0)
 {
@@ -1095,6 +1419,7 @@ void func_80030EC8(struct BarObj* arg0)
     }
 }
 #endif
+#endif
 
 void func_80030F9C(struct BarObj* arg0)
 {
@@ -1113,11 +1438,26 @@ void func_80031014(struct BarObj* arg0)
     if (main_bss_state.transition.active != 0) {
         PAUSE_DRAW();
     } else {
+#ifdef VERSION_DEMO
+        PAUSE_FADE_IN();
+#else
         PAUSE_LEAVE();
+#endif
         arg0->unk5 = 2;
     }
 }
 
+#ifdef VERSION_DEMO
+void func_8003D3B8_demo(struct BarObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        engine_obj.unk1 = 0;
+        arg0->state = 0;
+        arg0->unk5 = 0;
+    }
+    PAUSE_RENDER();
+}
+#else
 void func_80031064(struct BarObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
@@ -1146,7 +1486,9 @@ void func_80031064(struct BarObj* arg0)
     }
     arg0->unk5 = 3;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void func_80031130(struct BarObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -1178,7 +1520,9 @@ void func_80031130(struct BarObj* arg0)
         PAUSE_RENDER();
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void (*D_800F48D4[3])(struct BarObj*) = {
     func_8002FCEC,
     func_80030128,
@@ -1209,3 +1553,32 @@ void (*D_800F4910[4])(struct BarObj*) = {
     func_80031064,
     func_80031130,
 };
+#else
+void func_8003CB84_demo(struct BarObj*);
+void func_8003D234_demo(struct BarObj*);
+
+void (*D_800F48D4[3])(struct BarObj*) = {
+    func_8002FCEC,
+    func_80030128,
+    func_80030F9C,
+};
+
+void (*D_800F48E0[3])(struct BarObj*) = {
+    func_8002FD28,
+    func_8003C964_demo,
+    func_800300AC,
+};
+
+void (*D_800F48F4[4])(struct BarObj*) = {
+    func_8003CB84_demo,
+    func_800304E4,
+    func_8003D04C_demo,
+    func_8003D234_demo,
+};
+
+void (*D_800F4910[3])(struct BarObj*) = {
+    func_80030FD8,
+    func_80031014,
+    func_8003D3B8_demo,
+};
+#endif

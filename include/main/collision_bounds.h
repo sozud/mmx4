@@ -14,7 +14,7 @@ extern struct Unk_unk68 D_80106270[32];
 extern struct Unk_unk68 D_801072F4[];
 
 extern u16 D_80106770[64];
-extern struct Unk_unk68 D_801068F0[33];
+extern struct Unk_unk68 D_801068F0[DEMO_ALT(33, 32)];
 
 extern struct Unk_unk68 D_80106974[];
 

@@ -76,7 +76,9 @@ void player_update(void)
 void player_update_normal(struct PlayerObj* self)
 {
     self->input_locked = self->script_state | engine_obj.unkF;
+#ifndef VERSION_DEMO
     self->input_locked |= self->capsule_state;
+#endif
     self->unk88.bytes.collision_flags = self->unk70 | self->unk71;
     self->shot_fired = 0;
     self->attack_ended = 0;
@@ -141,16 +143,22 @@ void player_beam_in(struct PlayerObj* self)
             return;
         }
         move_object(MOVING_OBJECT(self));
+#ifndef VERSION_DEMO
         player_check_splash(self);
+#endif
         return;
     }
+#ifndef VERSION_DEMO
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
         self->armor_parts = engine_obj.armor_parts;
         self->arm_type = engine_obj.arm_type;
     }
+#endif
     if (self->animation_step.fields.relative_step == 0) {
+#ifndef VERSION_DEMO
         engine_obj.gameplay_locked = 0;
+#endif
         player_enter_idle(self);
     }
 }
@@ -166,7 +174,9 @@ void player_beam_out(struct PlayerObj* self)
     } else {
         if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x40) == 0) {
             move_object(MOVING_OBJECT(self));
+#ifndef VERSION_DEMO
             player_check_splash(self);
+#endif
             return;
         }
         self->on_screen = 0;
@@ -178,7 +188,11 @@ void player_beam_out(struct PlayerObj* self)
 
 void player_idle(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    if (player_check_script(self) == 0 && player_check_ladder(self) == 0 && player_check_shoot(self) == 0 && player_zero_check_raijingeki(self) == 0 && player_zero_check_saber(self) == 0 && player_check_dash_jump(self) == 0) {
+#else
     if (player_check_script(self) == 0 && player_check_ladder(self) == 0 && player_check_shoot(self) == 0 && player_zero_check_ground_technique(self) == 0 && player_check_dash_jump(self) == 0 && player_zero_check_saber(self) == 0) {
+#endif
         if (player_check_walk_start(self) != 0) {
             player_enter_walk_start(self);
         } else {
@@ -189,7 +203,11 @@ void player_idle(struct PlayerObj* self)
 
 void player_walk_start(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    if ((player_check_script(self) == 0) && (player_check_ladder(self) == 0) && (player_check_shoot(self) == 0) && (player_zero_check_raijingeki(self) == 0) && (player_zero_check_saber(self) == 0) && (player_check_dash_jump(self) == 0)) {
+#else
     if ((player_check_script(self) == 0) && (player_check_ladder(self) == 0) && (player_check_shoot(self) == 0) && (player_zero_check_ground_technique(self) == 0) && (player_check_dash_jump(self) == 0) && (player_zero_check_saber(self) == 0)) {
+#endif
         if (player_check_walk_start(self) != 0) {
             animate_object(ANIMATED_OBJECT(self));
             if (self->animation_step.fields.relative_step < 0) {
@@ -206,7 +224,11 @@ void player_walk_start(struct PlayerObj* self)
 
 void player_walk(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    if (player_check_script(self) == 0 && player_check_ladder(self) == 0 && player_check_shoot(self) == 0 && player_zero_check_raijingeki(self) == 0 && player_zero_check_saber(self) == 0 && player_check_dash_jump(self) == 0) {
+#else
     if (player_check_script(self) == 0 && player_check_ladder(self) == 0 && player_check_shoot(self) == 0 && player_zero_check_ground_technique(self) == 0 && player_check_dash_jump(self) == 0 && player_zero_check_saber(self) == 0) {
+#endif
         if (player_check_walk(self) != 0) {
             animate_object(ANIMATED_OBJECT(self));
             move_object(MOVING_OBJECT(self));
@@ -219,7 +241,11 @@ void player_walk(struct PlayerObj* self)
 
 void player_settle(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    if ((player_check_script(self) == 0) && (player_check_ladder(self) == 0) && (player_zero_check_raijingeki(self) == 0) && (player_zero_check_saber(self) == 0) && (player_check_dash_jump(self) == 0)) {
+#else
     if ((player_check_script(self) == 0) && (player_check_ladder(self) == 0) && (player_zero_check_ground_technique(self) == 0) && (player_check_dash_jump(self) == 0) && (player_zero_check_saber(self) == 0)) {
+#endif
         if (player_check_walk_start(self) != 0) {
             player_enter_walk_start(self);
             return;
@@ -248,6 +274,16 @@ void player_jump(struct PlayerObj* self)
             self->animation_step.fields.event &= 0x3F;
             func_8001540C(1, 1, self);
         }
+#ifdef VERSION_DEMO
+        {
+            if (self->unk8A.bytes.high == 0) {
+                if (player_check_ladder_air(self) != 0 || player_check_wall(self) != 0) {
+                    return;
+                }
+            } else {
+                self->unk8A.bytes.high--;
+            }
+#else
         if (player_check_ladder_air(self) == 0) {
             if (self->unk8A.bytes.high == 0) {
                 if (player_check_wall(self) != 0) {
@@ -256,7 +292,12 @@ void player_jump(struct PlayerObj* self)
             } else {
                 self->unk8A.bytes.high--;
             }
+#endif
+#ifdef VERSION_DEMO
+            if (func_8003FA78_demo(self) == 0 && player_check_air_move(self) == 0) {
+#else
             if (player_check_air_move(self) == 0) {
+#endif
                 player_air_steer(self);
                 player_check_splash(self);
                 if (self->y_vel.val <= 0) {
@@ -279,7 +320,11 @@ void player_fall(struct PlayerObj* self)
         return;
     }
 
+#ifdef VERSION_DEMO
+    if ((player_check_shoot_air(self) == 0) && (player_zero_check_fall_slash(self) == 0) && (player_check_ladder_air(self) == 0) && (player_check_wall(self) == 0) && (func_8003FA78_demo(self) == 0) && (player_check_air_move(self) == 0)) {
+#else
     if ((player_check_shoot_air(self) == 0) && (player_zero_check_fall_slash(self) == 0) && (player_check_ladder_air(self) == 0) && (player_check_wall(self) == 0) && (player_check_air_move(self) == 0)) {
+#endif
         animate_object(ANIMATED_OBJECT(self));
         player_air_steer(self);
         player_check_splash(self);
@@ -289,7 +334,11 @@ void player_fall(struct PlayerObj* self)
 
 void player_land(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    if ((player_check_script(self) == 0) && (player_check_ladder(self) == 0) && (player_check_shoot(self) == 0) && (player_zero_check_raijingeki(self) == 0) && (player_zero_check_saber(self) == 0) && (player_check_dash_jump_walk(self) == 0)) {
+#else
     if ((player_check_script(self) == 0) && (player_check_ladder(self) == 0) && (player_check_shoot(self) == 0) && (player_zero_check_ground_technique(self) == 0) && (player_check_dash_jump_walk(self) == 0) && (player_zero_check_saber(self) == 0)) {
+#endif
         animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.relative_step < 0) {
             player_enter_stand(self);
@@ -306,7 +355,11 @@ void player_wall_cling(struct PlayerObj* self)
         return;
     }
     if (self->input_locked != 0) {
+#ifdef VERSION_DEMO
+        func_80040540_demo(self);
+#else
         player_enter_fall(self);
+#endif
         return;
     }
     if (player_check_shoot_air(self) != 0) {
@@ -352,7 +405,11 @@ void player_wall_jump_push(struct PlayerObj* self)
     s32 vertical_mask;
 
     if (self->input_locked != 0) {
+#ifdef VERSION_DEMO
+        func_80040540_demo(self);
+#else
         player_enter_fall(self);
+#endif
         return;
     }
 
@@ -401,8 +458,16 @@ void player_wall_jump_rise(struct PlayerObj* self)
     if ((self->input.buttons.held & PLAYER_INPUT_JUMP) == 0) {
         self->y_vel.val = 0;
     }
+#ifdef VERSION_DEMO
+    if ((player_check_shoot_air(self) == 0) && (player_zero_check_jump_slash(self) == 0)) {
+        animate_object(ANIMATED_OBJECT(self));
+        if ((player_check_ladder_air(self) != 0) || (player_check_wall(self) != 0) || (func_8003FA78_demo(self) != 0) || (player_check_air_move(self) != 0)) {
+            return;
+        }
+#else
     if ((player_check_shoot_air(self) == 0) && (player_zero_check_jump_slash(self) == 0) && (player_check_ladder_air(self) == 0) && (player_check_wall(self) == 0) && (player_check_air_move(self) == 0)) {
         animate_object(ANIMATED_OBJECT(self));
+#endif
         player_air_steer(self);
         player_check_splash(self);
         if (self->y_vel.val <= 0) {
@@ -437,7 +502,11 @@ void player_wall_slide_down(struct PlayerObj* self)
     }
 
     if (self->input_locked != 0) {
+#ifdef VERSION_DEMO
+        func_80040540_demo(self);
+#else
         player_enter_fall(self);
+#endif
         return;
     }
     if (player_check_shoot_air(self) != 0) {
@@ -447,7 +516,11 @@ void player_wall_slide_down(struct PlayerObj* self)
         return;
     }
     if ((self->unk88.bytes.collision_flags & (PLAYER_COLLIDE_RIGHT | PLAYER_COLLIDE_LEFT)) == 0) {
+#ifdef VERSION_DEMO
+        func_80040A9C_demo(self);
+#else
         player_enter_fall(self);
+#endif
         return;
     }
 
@@ -471,10 +544,14 @@ void player_wall_slide_release(struct PlayerObj* self)
         return;
     }
     if (self->input_locked != 0) {
+#ifdef VERSION_DEMO
+        func_80040540_demo(self);
+#else
         player_enter_fall(self);
+#endif
         return;
     }
-    if ((player_check_shoot_air(self) == 0) && (player_zero_check_fall_slash(self) == 0)) {
+    if ((player_check_shoot_air(self) == 0) && (DEMO_ALT(player_zero_check_fall_slash, player_zero_check_jump_slash)(self) == 0)) {
         animate_object(ANIMATED_OBJECT(self));
         move_with_gravity(ANIMATED_OBJECT(self));
         player_check_splash(self);
@@ -498,6 +575,18 @@ void player_dash(struct PlayerObj* self)
 
 void player_dash_start(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    if (player_check_shoot(self) == 0) {
+        if (self->animation_step.fields.event & 0x20) {
+            self->animation_step.fields.event &= 0xF;
+            player_spawn_dash_spark(self);
+        }
+        if (self->pressed_input & PLAYER_INPUT_JUMP) {
+            player_enter_jump(self);
+            return;
+        }
+        {
+#else
     if ((player_check_shoot(self) == 0) && (player_zero_check_ground_technique(self) == 0)) {
         if (self->pressed_input & PLAYER_INPUT_JUMP) {
             player_enter_jump(self);
@@ -508,6 +597,7 @@ void player_dash_start(struct PlayerObj* self)
                 self->animation_step.fields.event &= 0xF;
                 player_spawn_dash_spark(self);
             }
+#endif
             if (self->animation_step.fields.event & 0x80) {
                 self->animation_step.fields.event &= 0xF;
                 func_8001540C(1, 5, self);
@@ -520,6 +610,59 @@ void player_dash_start(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_DEMO
+void player_dash_move(struct PlayerObj* self)
+{
+    s32 collision_side;
+    s32 end;
+    s32 backward;
+    u16 held;
+    u8 timer;
+
+    if ((player_check_shoot(self) == 0) && (player_zero_check_saber(self) == 0)) {
+        if (self->pressed_input & PLAYER_INPUT_JUMP) {
+            player_enter_jump(self);
+            return;
+        }
+        collision_side = self->unk15 != 0 ? PLAYER_COLLIDE_RIGHT : PLAYER_COLLIDE_LEFT;
+        if (collision_side & self->unk88.bytes.collision_flags) {
+            goto end_dash;
+        }
+        move_with_gravity(ANIMATED_OBJECT(self));
+        if (self->unk15 != 0) {
+            if (self->x_vel.val <= FIXED(4.125) - 1) {
+                self->x_vel.val = FIXED(4.125);
+            }
+        } else if (self->x_vel.val > FIXED(-4.125)) {
+            self->x_vel.val = FIXED(-4.125);
+        }
+        timer = self->dash_timer - 1;
+        self->dash_timer = timer;
+        if ((timer << 24) == 0) {
+            goto end_dash;
+        }
+        held = self->input.buttons.held;
+        end = !(held & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT | PLAYER_INPUT_DASH));
+        backward = self->unk15 != 0 ? held & PLAYER_INPUT_LEFT : held & PLAYER_INPUT_RIGHT;
+        if (backward) {
+            end = 1;
+        }
+        if (end) {
+        end_dash:
+            player_enter_dash_end(self);
+            return;
+        }
+        if (self->animation_step.fields.event & 0x40) {
+            self->animation_step.fields.event &= 0xF;
+            player_spawn_dash_dust(self);
+        }
+        if (!(self->dash_timer & 3)) {
+            player_spawn_dash_splash(self);
+        }
+        func_80038568(self, 0x10);
+    }
+}
+#else
 void player_dash_move(struct PlayerObj* self)
 {
     if ((player_check_shoot(self) == 0) && (player_zero_check_shippuuga(self) == 0)) {
@@ -543,12 +686,17 @@ void player_dash_move(struct PlayerObj* self)
         }
     }
 }
+#endif
 
 void player_dash_end(struct PlayerObj* self)
 {
     u8 wall_flag;
 
+#ifdef VERSION_DEMO
+    if (player_check_ladder(self) == 0 && player_check_shoot(self) == 0 && player_zero_check_saber(self) == 0 && player_check_dash_jump_walk(self) == 0) {
+#else
     if (player_check_ladder(self) == 0 && player_check_shoot(self) == 0 && player_zero_check_ground_technique(self) == 0 && player_check_dash_jump_walk(self) == 0 && player_zero_check_saber(self) == 0) {
+#endif
         if (self->animation_step.fields.event & 0x80) {
             self->animation_step.fields.event &= 0x7F;
             func_8001540C(1, 6, self);
@@ -577,16 +725,33 @@ void player_dash_end(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_DEMO
+void func_80040540_demo(struct PlayerObj* self);
+#endif
+
 void player_air_dash(struct PlayerObj* self)
 {
+#ifndef VERSION_DEMO
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
         player_enter_land(self);
         return;
     }
+#endif
     if (self->input_locked != 0) {
-        player_enter_fall(self);
+        DEMO_ALT(player_enter_fall, func_80040540_demo)
+        (self);
         return;
     }
+#ifdef VERSION_DEMO
+    if (player_check_shoot_air(self) != 0) {
+        return;
+    }
+    if (self->unk2 == 0 && self->attacking != 0) {
+        player_enter_fall_shooting(self);
+        player_fall(self);
+        return;
+    }
+#else
     if (self->unk2 == 0) {
         if (player_check_shoot_air(self) != 0) {
             return;
@@ -596,12 +761,14 @@ void player_air_dash(struct PlayerObj* self)
             return;
         }
     }
+#endif
     animate_object(ANIMATED_OBJECT(self));
     player_air_dash_funcs[self->unk6](self);
 }
 
 void player_air_dash_start(struct PlayerObj* self)
 {
+#ifndef VERSION_DEMO
     if (player_zero_check_fall_slash(self) != 0) {
         self->x_vel.val = 0;
         self->unk28 = 0;
@@ -611,6 +778,7 @@ void player_air_dash_start(struct PlayerObj* self)
         self->dash_momentum = 0;
         return;
     }
+#endif
 
     if (self->animation_step.fields.event & 0x40) {
         self->animation_step.fields.event &= 0x3F;
@@ -625,6 +793,45 @@ void player_air_dash_start(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_DEMO
+void func_8003E814_demo(struct PlayerObj* self)
+{
+    s32 collision_side;
+    u16 held;
+    s32 keep_dashing;
+    s32 reversing;
+
+    collision_side = self->unk15 != 0 ? PLAYER_COLLIDE_RIGHT : PLAYER_COLLIDE_LEFT;
+    if (!(collision_side & self->unk88.bytes.collision_flags)) {
+        if (self->unk15 != 0) {
+            if (self->x_vel.val <= FIXED(4.125) - 1) {
+                self->x_vel.val = FIXED(4.125);
+            }
+        } else if (self->x_vel.val > FIXED(-4.125)) {
+            self->x_vel.val = FIXED(-4.125);
+        }
+        move_with_gravity(ANIMATED_OBJECT(self));
+        if (--self->dash_timer != 0) {
+            held = self->input.buttons.held;
+            keep_dashing = (held & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT | PLAYER_INPUT_DASH)) != 0;
+            reversing = self->unk15 != 0 ? held & PLAYER_INPUT_LEFT : held & PLAYER_INPUT_RIGHT;
+            if (reversing) {
+                keep_dashing = 0;
+            }
+            if (keep_dashing) {
+                if (self->animation_step.fields.event & 0x40) {
+                    self->animation_step.fields.event &= 0x3F;
+                    player_spawn_dash_dust(self);
+                }
+                return;
+            }
+        }
+    }
+    player_enter_air_dash_end(self);
+}
+#endif
+
+#ifndef VERSION_DEMO
 void player_air_dash_move(struct PlayerObj* self)
 {
     if (player_zero_check_fall_slash(self) != 0) {
@@ -643,6 +850,7 @@ void player_air_dash_move(struct PlayerObj* self)
         }
     }
 }
+#endif
 
 void player_air_dash_end(struct PlayerObj* self)
 {
@@ -650,6 +858,7 @@ void player_air_dash_end(struct PlayerObj* self)
         player_enter_land(self);
         return;
     }
+#ifndef VERSION_DEMO
     if (player_zero_check_fall_slash(self) != 0) {
         self->x_vel.val = 0;
         self->unk28 = 0;
@@ -659,6 +868,7 @@ void player_air_dash_end(struct PlayerObj* self)
         self->dash_momentum = 0;
         return;
     }
+#endif
     move_with_gravity(ANIMATED_OBJECT(self));
     player_check_splash(self);
     if ((self->animation_step.fields.relative_step < 0) || (self->input.buttons.held & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT))) {
@@ -678,7 +888,7 @@ void player_ladder_grab(struct PlayerObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     if (self->animation_step.fields.relative_step < 0) {
-        player_set_animation(self, 0x1F);
+        player_set_animation(self, PLAYER_ANIM(0x1F));
         player_enter_ladder_up(self);
     }
 }
@@ -711,7 +921,7 @@ void player_ladder_climb_on_top(struct PlayerObj* self)
     if (self->animation_step.fields.relative_step < 0) {
         self->y_pos.i.hi = self->y_pos.i.hi + 0x10;
         player_set_collision_bounds(self);
-        player_set_animation_frame(self, 0x20, 3);
+        player_set_animation_frame(self, PLAYER_ANIM(0x20), 3);
         player_enter_ladder_down(self);
     }
 }
@@ -753,7 +963,11 @@ void player_ladder_up(struct PlayerObj* self)
         }
         if (buttons & PLAYER_INPUT_DOWN) {
             duration = self->animation_step.fields.duration;
-            player_set_animation_frame(self, 0x20, self->animation_step.fields.event);
+#ifdef VERSION_DEMO
+            player_set_animation_frame(self, 0x1B, self->animation_step.fields.event);
+#else
+            player_set_animation_frame(self, PLAYER_ANIM(0x20), self->animation_step.fields.event);
+#endif
             self->animation_step.fields.duration = duration;
             player_enter_ladder_down(self);
         }
@@ -776,7 +990,11 @@ void player_ladder_down(struct PlayerObj* self)
         buttons = self->input.buttons.held;
         if (buttons & PLAYER_INPUT_UP) {
             duration = self->animation_step.fields.duration;
-            player_set_animation_frame(self, 0x1F, self->animation_step.fields.event);
+#ifdef VERSION_DEMO
+            player_set_animation_frame(self, 0x1A, self->animation_step.fields.event);
+#else
+            player_set_animation_frame(self, PLAYER_ANIM(0x1F), self->animation_step.fields.event);
+#endif
             self->animation_step.fields.duration = duration;
             player_enter_ladder_up(self);
             return;
@@ -799,6 +1017,7 @@ void player_hurt_slide(struct PlayerObj* self);
 void player_hurt_knockback(struct PlayerObj* self)
 {
     player_hurt_slide(self);
+#ifndef VERSION_DEMO
     if (self->unk2 == 0) {
         if (self->animation_step.fields.frame_index == 0xEC) {
             player_set_palette(self, 0x49);
@@ -806,8 +1025,17 @@ void player_hurt_knockback(struct PlayerObj* self)
             player_reset_palette(self);
         }
     }
+#endif
     if (self->invincibility_timer == 0x3C) {
+#ifdef VERSION_DEMO
+        if (self->air_state != 0) {
+            player_enter_fall(self);
+        } else {
+            player_enter_idle(self);
+        }
+#else
         player_enter_land_or_fall(self);
+#endif
         if (self->input_locked != 0) {
             self->hurt_phase = 0;
             self->invincibility_timer = 0;
@@ -840,6 +1068,16 @@ void player_hurt_launch(struct PlayerObj* self)
         self->unk2C = 0;
     }
     if (self->invincibility_timer == 0x3C) {
+#ifdef VERSION_DEMO
+        if (self->air_state != 0) {
+            player_set_animation(self, 0xB);
+            self->air_state = -1;
+            self->unk5 = PLAYER_FALL;
+            self->unk6 = 0;
+        } else {
+            player_enter_idle(self);
+        }
+#else
         if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
             self->air_state = 0;
             player_enter_idle(self);
@@ -851,6 +1089,7 @@ void player_hurt_launch(struct PlayerObj* self)
         } else {
             player_enter_fall(self);
         }
+#endif
         if (self->input_locked != 0) {
             self->hurt_phase = 0;
             self->invincibility_timer = 0;
@@ -865,12 +1104,14 @@ void player_hurt_stun(struct PlayerObj* self)
 {
     s8 stun;
 
+#ifndef VERSION_DEMO
     if (self->input.buttons.held & PLAYER_INPUT_LEFT) {
         self->unk15 = 0;
     }
     if (self->input.buttons.held & PLAYER_INPUT_RIGHT) {
         self->unk15 = PLAYER_FACING_RIGHT;
     }
+#endif
 
     stun = self->stun_timer;
     if (stun > 0) {
@@ -883,10 +1124,10 @@ void player_hurt_stun(struct PlayerObj* self)
     }
 
     if (stun == -1) {
-        player_set_animation(self, 0x25);
+        player_set_animation(self, PLAYER_ANIM(0x25));
         self->stun_timer = -2;
     } else if (self->animation_step.fields.relative_step < 0) {
-        player_set_animation(self, 0x24);
+        player_set_animation(self, PLAYER_ANIM(0x24));
         self->stun_timer = 1;
     } else {
         return;
@@ -898,6 +1139,17 @@ void player_hurt_slide(struct PlayerObj* self)
     s32 velocity;
     u8 direction;
 
+#ifdef VERSION_DEMO
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->unk15 != 0 ? self->x_vel.val > 0 : self->x_vel.val < 0) {
+        self->x_vel.val = 0;
+        self->unk28 = 0;
+    }
+    if (self->unk88.bytes.collision_flags & (PLAYER_COLLIDE_RIGHT | PLAYER_COLLIDE_LEFT)) {
+        self->x_vel.val = 0;
+        self->unk28 = 0;
+    }
+#else
     if (self->capsule_state != 0) {
         return;
     }
@@ -927,6 +1179,7 @@ void player_hurt_slide(struct PlayerObj* self)
 
     self->x_vel.val = 0;
     self->unk28 = 0;
+#endif
 }
 
 void player_ride(struct PlayerObj* self)
@@ -942,23 +1195,33 @@ void player_ride(struct PlayerObj* self)
     if (self->ride_state == 0) {
         player_set_collision_bounds(self);
         player_enter_jump(self);
+#ifndef VERSION_DEMO
         self->air_action = 1;
+#endif
         return;
     }
     if (self->unk6 == 0) {
-        player_set_animation(self, (u8)self->ride_animation);
+        player_set_animation(self, DEMO_ALT((u8)self->ride_animation, self->ride_animation));
         self->unk6++;
     }
     animate_object(ANIMATED_OBJECT(self));
 }
 
+#ifdef VERSION_DEMO
+extern void (*player_capsule_funcs[])(struct PlayerObj*);
+#endif
+
 void player_capsule(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    player_capsule_funcs[self->unk6](self);
+#else
     if (self->unk6 == 0) {
         func_80032FA4(self);
     } else {
         player_capsule_fall(self);
     }
+#endif
 }
 
 // player_capsule_enter
@@ -969,7 +1232,26 @@ void func_80032FA4(struct PlayerObj* arg0);
 
 void func_80032FA4(struct PlayerObj* arg0)
 {
+#ifdef VERSION_DEMO
+    player_clear_attack(arg0);
+#endif
     if (arg0->capsule_state == 0) {
+#ifdef VERSION_DEMO
+        if (arg0->air_state != 0) {
+            player_set_animation(arg0, 0xB);
+            arg0->unk2C = 0x4200;
+            arg0->air_state = -1;
+            arg0->x_vel.val = 0;
+            arg0->unk28 = 0;
+            arg0->y_vel.val = 0;
+            arg0->unk6 = 1;
+        } else if (arg0->dash_momentum != 0) {
+            player_set_animation(arg0, 0x11);
+            arg0->unk6 = 2;
+        } else {
+            player_enter_stand(arg0);
+        }
+#else
         if (arg0->unk88.unsigned_bytes.collision_flags & 8) {
             player_enter_stand(arg0);
         } else {
@@ -981,6 +1263,7 @@ void func_80032FA4(struct PlayerObj* arg0)
             arg0->air_state = -1;
             arg0->unk6++;
         }
+#endif
         arg0->dash_momentum = 0;
         arg0->air_action = 0;
     } else if (arg0->air_state == 0) {
@@ -995,10 +1278,33 @@ void player_capsule_fall(struct PlayerObj* self)
         return;
     }
 
+#ifdef VERSION_DEMO
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+#else
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
     player_check_splash(self);
+#endif
 }
+
+#ifdef VERSION_DEMO
+void func_8003F298_demo(struct PlayerObj* self)
+{
+    if (player_check_script(self) == 0 && player_check_ladder(self) == 0 && player_check_shoot(self) == 0
+        && player_zero_check_saber(self) == 0 && player_check_dash_jump(self) == 0) {
+        if (player_check_walk_start(self) != 0) {
+            player_enter_walk_start(self);
+            return;
+        }
+        if (self->animation_step.fields.relative_step < 0) {
+            player_enter_idle(self);
+            return;
+        }
+        animate_object(ANIMATED_OBJECT(self));
+    }
+}
+#endif
 
 void player_script_wait(struct PlayerObj* self)
 {
@@ -1037,7 +1343,11 @@ void player_script_vanish(struct PlayerObj* self)
 {
     if (player_check_script(self) == 0 && self->unk6 == 0) {
         animate_object(ANIMATED_OBJECT(self));
+#ifdef VERSION_DEMO
+        if (self->animation_step.fields.relative_step < 0) {
+#else
         if (self->animation_step.fields.relative_step == 0) {
+#endif
             self->on_screen = 0;
             self->unk6++;
         }
@@ -1066,13 +1376,14 @@ void player_script_jump(struct PlayerObj* self)
     }
 }
 
+#ifndef VERSION_DEMO
 void player_script_victory(struct PlayerObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
 
     if (self->unk6 == 0) {
         if (self->item_step == 4) {
-            player_set_animation(self, 0x27);
+            player_set_animation(self, PLAYER_ANIM(0x27));
             self->unk6++;
         }
     } else {
@@ -1091,6 +1402,7 @@ void player_script_victory(struct PlayerObj* self)
         }
     }
 }
+#endif
 
 #ifdef MMX4_GAMECUBE
 s32 fn_4_9E0E8(void);
@@ -1099,13 +1411,19 @@ s32 fn_4_9E0E8(void);
 void player_stage_clear(struct PlayerObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
+#ifdef VERSION_DEMO
+    if (self->animation_step.fields.relative_step == 0) {
+        player_set_animation(self, PLAYER_ANIM(0x28));
+        player_enter_beam_out(self);
+    }
+#else
     if (self->unk6 == 0) {
 #ifdef MMX4_GAMECUBE
         if (fn_4_9E0E8() == 0) {
 #else
         if (D_80173C84 == 0) {
 #endif
-            player_set_animation(self, 0x27);
+            player_set_animation(self, PLAYER_ANIM(0x27));
             self->unk6++;
         }
     } else {
@@ -1118,10 +1436,11 @@ void player_stage_clear(struct PlayerObj* self)
 #endif
         }
         if (self->animation_step.fields.relative_step == 0) {
-            player_set_animation(self, 0x28);
+            player_set_animation(self, PLAYER_ANIM(0x28));
             player_enter_beam_out(self);
         }
     }
+#endif
 }
 
 // player_take_hit
@@ -1155,6 +1474,119 @@ u8 func_8002D94C(struct PlayerObj* arg0);
 // player_zero_check_combo
 
 #ifndef MMX4_SATURN_NATIVE_PLAYER_TABLES
+#ifdef VERSION_DEMO
+void func_800415B0_demo(struct PlayerObj*);
+void func_80043F24_demo(struct PlayerObj*);
+void func_8004456C_demo(struct PlayerObj*);
+void func_800453F4_demo(struct PlayerObj*);
+
+void (*player_state_funcs[])(struct PlayerObj*) = {
+    func_800415B0_demo,
+    player_update_normal,
+    player_update_death,
+    player_update_inactive,
+};
+
+void (*player_normal_state_funcs[])(struct PlayerObj*) = {
+    player_beam_in,
+    player_beam_out,
+    player_idle,
+    player_walk_start,
+    player_walk,
+    player_settle,
+    player_jump,
+    player_fall,
+    player_land,
+    player_wall_cling,
+    player_wall_jump,
+    player_wall_slide,
+    player_dash,
+    player_air_dash,
+    player_ladder_transition,
+    player_ladder_up,
+    player_ladder_down,
+    player_hurt,
+    player_ride,
+    player_capsule,
+    player_script_wait,
+    func_80033108,
+    player_script_vanish,
+    player_script_jump,
+    player_stage_clear,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    func_80043F24_demo,
+    player_hover,
+    player_soul_body,
+    player_soul_body_clone_advance,
+    player_soul_body_clone_vanish,
+    func_8004456C_demo,
+    player_rising_fire,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_zero_saber,
+    player_zero_jump_slash,
+    player_zero_fall_slash,
+    func_800453F4_demo,
+    player_zero_ladder_slash,
+    player_zero_wall_slash,
+    player_zero_raijingeki,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+    player_idle,
+};
+
+void (*player_dash_funcs[])(struct PlayerObj*) = {
+    player_dash_start,
+    player_dash_move,
+    player_dash_end,
+};
+
+void (*player_air_dash_funcs[])(struct PlayerObj*) = {
+    player_air_dash_start,
+    func_8003E814_demo,
+    player_air_dash_end,
+};
+
+void (*player_ladder_transition_funcs[])(struct PlayerObj*) = {
+    player_ladder_grab,
+    player_ladder_climb_off_top,
+    player_ladder_climb_on_top,
+    player_ladder_step_off_bottom,
+    player_ladder_let_go,
+};
+
+void (*player_hurt_funcs[])(struct PlayerObj*) = {
+    player_hurt_knockback,
+    player_hurt_knockback,
+    player_hurt_launch,
+    player_hurt_stun,
+};
+
+void (*player_capsule_funcs[])(struct PlayerObj*) = {
+    func_80032FA4,
+    player_capsule_fall,
+    func_8003F298_demo,
+};
+#else
 void (*player_state_funcs[])(struct PlayerObj*) = {
     player_update_init,
     player_update_normal,
@@ -1256,4 +1688,5 @@ void (*player_hurt_funcs[])(struct PlayerObj*) = {
     player_hurt_stun,
     player_hurt_knockback,
 };
+#endif
 #endif

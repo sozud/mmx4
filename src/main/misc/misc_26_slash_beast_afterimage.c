@@ -51,7 +51,15 @@ void func_800CC7F8(struct MiscObj* arg0)
 
 void slash_beast_afterimage_despawn(struct MiscObj* self)
 {
+#ifdef VERSION_DEMO
+    if (self->unk2 == 1) {
+        despawn_object_permanently(OBJECT_HEADER(self));
+    } else {
+        despawn_object(OBJECT_HEADER(self));
+    }
+#else
     ZeroObjectState(OBJECT_HEADER(self));
+#endif
 }
 
 void (*slash_beast_afterimage_state_funcs[])(struct MiscObj*) = {

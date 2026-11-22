@@ -354,7 +354,7 @@ void func_800B0CA0(type, mode, source, radius, count)
                 visual->y_vel.val = 0;
                 break;
             }
-            visual->unk15 = 0;
+            visual->unk15 = DEMO_ALT(0, get_random() & 0x40);
             visual->unk5C.value = t >> 4;
             visual->state = 0;
             visual->unk5 = 0;
@@ -453,7 +453,7 @@ void func_800B10E4(kind, left, top, right, bottom, count_arg)
             break;
         }
 
-        visual->unk15 = 0;
+        visual->unk15 = DEMO_ALT(0, get_random() & 0x40);
         visual->unk5C.value = kind >> 4;
         visual->state = 0;
         visual->unk5 = 0;

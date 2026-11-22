@@ -25,10 +25,13 @@ void train_scroll_shake(struct LayerObj* arg0);
 
 void train_scroll_update_section(struct LayerObj* arg0);
 
+#ifndef VERSION_DEMO
 void train_scroll_update(struct LayerObj* arg0)
 {
     train_scroll_state_funcs[arg0->state](arg0);
 }
+
+#endif
 
 void train_scroll_init(struct LayerObj* arg0)
 {
@@ -43,7 +46,7 @@ void train_scroll_init(struct LayerObj* arg0)
     background_objects[2].unk4E = 5;
     background_objects[0].unk2E = 0xA0;
     background_objects[0].unk2C = 0x30;
-    func_8001540C(5, SATURN_SOUND(9, 0x42), NULL);
+    func_8001540C(5, DEMO_ALT(SATURN_SOUND(9, 0x42), 0), NULL);
     train_scroll_main(arg0);
 }
 

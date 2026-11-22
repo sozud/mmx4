@@ -45,7 +45,7 @@ void func_800BC784(struct EffectObj* arg0)
     case 0x00:
         if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi) {
             arg0->ext.effect_33.timer = 1;
-            arg0->ext.effect_33.period = 0x50;
+            arg0->ext.effect_33.period = DEMO_ALT(0x50, 0x32);
             arg0->state = 1;
         }
         return;
@@ -62,19 +62,19 @@ void func_800BC784(struct EffectObj* arg0)
         switch (arg0->unk2 & 0xF) {
         case 0:
             arg0->ext.effect_33.timer = 1;
-            arg0->ext.effect_33.period = 0x3C;
+            arg0->ext.effect_33.period = DEMO_ALT(0x3C, 0x28);
             arg0->ext.effect_33.proximity = 0;
             arg0->ext.effect_33.variant = 0;
             break;
         case 1:
             arg0->ext.effect_33.timer = 1;
-            arg0->ext.effect_33.period = 0x50;
+            arg0->ext.effect_33.period = DEMO_ALT(0x50, 0x3C);
             arg0->ext.effect_33.proximity = 0;
             arg0->ext.effect_33.variant = 0;
             break;
         case 2:
             arg0->ext.effect_33.timer = 1;
-            arg0->ext.effect_33.period = 0x64;
+            arg0->ext.effect_33.period = DEMO_ALT(0x64, 0x50);
             arg0->ext.effect_33.proximity = 0;
             arg0->ext.effect_33.variant = 0;
             break;
@@ -102,6 +102,7 @@ void func_800BC784(struct EffectObj* arg0)
             arg0->ext.effect_33.proximity = 1;
             arg0->ext.effect_33.variant = 0;
             break;
+#ifndef VERSION_DEMO
         case 7:
             arg0->ext.effect_33.timer = 1;
             arg0->ext.effect_33.period = 0x78;
@@ -114,6 +115,7 @@ void func_800BC784(struct EffectObj* arg0)
             arg0->ext.effect_33.proximity = 0;
             arg0->ext.effect_33.variant = 2;
             break;
+#endif
         }
         arg0->state = 1;
         arg0->unk6 = 0;
@@ -344,7 +346,9 @@ void func_800BC92C(struct EffectObj* arg0)
                     shot->x_pos.i.hi = arg0->x_pos.i.hi;
                     shot->unk6 = arg0->unk6;
                     shot->state = 6;
+#ifndef VERSION_DEMO
                     shot->unk84.effect = arg0;
+#endif
                     arg0->unk6 = 1;
                 }
                 return;
@@ -362,7 +366,9 @@ void func_800BC92C(struct EffectObj* arg0)
                     shot->x_pos.i.hi = arg0->x_pos.i.hi;
                     shot->state = 6;
                     shot->unk6 = arg0->unk6;
+#ifndef VERSION_DEMO
                     shot->unk84.effect = arg0;
+#endif
                     arg0->unk6 = 1;
                 }
                 return;
@@ -376,29 +382,28 @@ void func_800BC92C(struct EffectObj* arg0)
 }
 #endif
 
+#ifdef VERSION_DEMO
+#define ROCK_DROPPER_DESPAWN_WITH(self, despawn) despawn(OBJECT_HEADER(self))
+#else
+#define ROCK_DROPPER_DESPAWN_WITH(self, despawn) \
+    if ((self)->backref != NULL) {               \
+        despawn(OBJECT_HEADER(self));            \
+    } else {                                     \
+        ZeroObjectState(OBJECT_HEADER(self));    \
+    }
+#endif
+
 void rock_dropper_despawn(struct EffectObj* self)
 {
     switch (self->unk2 & 0xF0) {
     case 0:
-        if (self->backref != NULL) {
-            despawn_object_permanently(OBJECT_HEADER(self));
-        } else {
-            ZeroObjectState(OBJECT_HEADER(self));
-        }
+        ROCK_DROPPER_DESPAWN_WITH(self, despawn_object_permanently);
         break;
     case 0x10:
-        if (self->backref != NULL) {
-            despawn_object_permanently(OBJECT_HEADER(self));
-        } else {
-            ZeroObjectState(OBJECT_HEADER(self));
-        }
+        ROCK_DROPPER_DESPAWN_WITH(self, despawn_object_permanently);
         break;
     case 0x20:
-        if (self->backref != NULL) {
-            despawn_object(OBJECT_HEADER(self));
-        } else {
-            ZeroObjectState(OBJECT_HEADER(self));
-        }
+        ROCK_DROPPER_DESPAWN_WITH(self, despawn_object);
         break;
     }
 }

@@ -63,9 +63,11 @@ void ground_hunter_update(struct WeaponObj* arg0)
     if (g_Player.input_locked != 0) {
         shouldSetState = 1;
     }
+#ifndef VERSION_DEMO
     if (g_Player.capsule_state != 0) {
         shouldSetState = 1;
     }
+#endif
     if (g_Player.weapon != 5) {
         shouldSetState = 1;
     }
@@ -91,6 +93,18 @@ void func_80095854(struct WeaponObj* self)
     self->animation_table = D_8011C0C8;
     self->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     self->unk42 = WEAPON_PALETTE_1;
+#ifdef VERSION_DEMO
+    self->unk16 = 1;
+    self->unk15 = player->unk15;
+    if (self->unk15) {
+        self->x_pos.i.hi = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        self->x_vel.val = FIXED(6);
+    } else {
+        self->x_pos.i.hi = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        self->x_vel.val = FIXED(-6);
+    }
+    self->y_pos.i.hi = player->y_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
+#else
     self->unk16 = 0;
     self->unk15 = player->unk15;
 
@@ -101,13 +115,14 @@ void func_80095854(struct WeaponObj* self)
     } else {
         self->x_vel.val = FIXED(-6);
     }
+#endif
     self->unk28.val = 0;
     self->y_vel.val = FIXED(-2);
     self->unk2C = 0;
     self->unk67 = 1;
 
     set_animation(self, 0);
-    func_8001540C(1, 8, self);
+    func_8001540C(1, DEMO_ALT(8, 9), self);
     self->state++;
     self->unk5 = 0;
     update_on_screen(BASE_OBJECT(self), 0x2C, 0x20);
@@ -265,9 +280,11 @@ void ground_hunter_charged_update(struct WeaponObj* arg0)
     if (player->input_locked != 0) {
         should_reset = 1;
     }
+#ifndef VERSION_DEMO
     if (player->capsule_state != 0) {
         should_reset = 1;
     }
+#endif
     if (player->weapon != 5) {
         should_reset = 1;
     }
@@ -304,23 +321,39 @@ void func_80095E3C(struct WeaponObj* self)
     self->unk28.val = 0;
     self->y_vel.val = 0;
     self->unk2C = 0;
+#ifdef VERSION_DEMO
+    self->unk67 = 1;
+#endif
     set_animation(self, self->unk2 + 3);
     self->state++;
     if (self->unk2 == 0) {
-        self->unk16 = 0;
+        self->unk16 = DEMO_ALT(0, 1);
         self->unk50 = ground_hunter_charged_hit_box;
+#ifdef VERSION_DEMO
+        if (self->unk15) {
+            self->x_pos.i.hi = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2];
+            self->x_vel.val = FIXED(6);
+        } else {
+            self->x_pos.i.hi = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2];
+            self->x_vel.val = FIXED(-6);
+        }
+        self->y_pos.i.hi = player->y_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
+#else
         self->unk64 = 1;
         buster_shot_place_at_muzzle((struct VisualObj*)self, player, self->id);
         if (self->unk15)
             self->x_vel.val = FIXED(6);
         else
             self->x_vel.val = FIXED(-6);
+#endif
         func_8001540C(1, 9, self);
         self->unk5 = 0;
     } else {
-        self->unk16 = 1;
+        self->unk16 = DEMO_ALT(1, 2);
         self->unk50 = ground_hunter_charged_shot_box;
+#ifndef VERSION_DEMO
         self->unk64 = 0;
+#endif
         if (self->unk2 == 1)
             self->y_vel.val = FIXED(8);
         else
@@ -345,6 +378,11 @@ void ground_hunter_charged_main(struct WeaponObj* arg0)
 void ground_hunter_charged_wait_fire(struct WeaponObj* arg0)
 {
     struct Weapon14Ext* ext = &arg0->ext.weapon_14;
+#ifdef VERSION_DEMO
+    if (arg0->unk98) {
+        arg0->unk50 = NULL;
+    }
+#endif
     if (g_Player.input.buttons.held & 0xC) {
         ext->unk8C = 0;
         ext->unk8D = 5;
@@ -359,9 +397,34 @@ void func_80096060(struct WeaponObj* self)
     struct Weapon14Ext* ext = &self->ext.weapon_14;
     struct PlayerObj* player = &g_Player;
 
+#ifdef VERSION_DEMO
+    if (self->unk98 != 0) {
+        self->unk50 = NULL;
+    }
+#endif
     if (ext->unk8C == 0) {
         struct WeaponObj* shot;
         ext->unk8C = 4;
+#ifdef VERSION_DEMO
+        shot = find_free_weapon_obj();
+        if (shot != NULL) {
+            shot->active = 1;
+            shot->id = 0xE;
+            shot->unk2 = 1;
+            shot->bg_offset = g_Player.bg_offset;
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+        }
+        shot = find_free_weapon_obj();
+        if (shot != NULL) {
+            shot->active = 1;
+            shot->id = 0xE;
+            shot->unk2 = 2;
+            shot->bg_offset = g_Player.bg_offset;
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+        }
+#else
         shot = player_spawn_weapon(1, 0xE, 1, NULL);
         if (shot != NULL) {
             shot->x_pos.val = self->x_pos.val;
@@ -372,6 +435,7 @@ void func_80096060(struct WeaponObj* self)
             shot->x_pos.val = self->x_pos.val;
             shot->y_pos.val = self->y_pos.val;
         }
+#endif
         player->shot_count += 2;
         player->special_shot_count += 2;
         if (--*(u8*)&ext->unk8D == 0)
@@ -392,6 +456,17 @@ void ground_hunter_charged_shot_fly(struct WeaponObj* arg0)
     update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x18);
 }
 
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 ground_hunter_crawl_box[];
+extern struct Unk_unk68 ground_hunter_rise_box[];
+extern struct Unk_unk68 ground_hunter_terrain_box[];
+extern struct Unk_unk68 ground_hunter_charged_hit_box[];
+extern struct Unk_unk68 ground_hunter_charged_shot_box[];
+extern void (*ground_hunter_state_funcs[])(struct WeaponObj*);
+extern void (*ground_hunter_step_funcs[])(struct WeaponObj*);
+extern void (*ground_hunter_charged_state_funcs[])(struct WeaponObj*);
+extern void (*ground_hunter_charged_step_funcs[])(struct WeaponObj*);
+#else
 struct Unk_unk68 ground_hunter_crawl_box[] = {
     { -16, -8, 0x22, 0xE },
 };
@@ -437,3 +512,42 @@ void (*ground_hunter_charged_step_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))func_80096060,
     (void (*)(struct WeaponObj*))ground_hunter_charged_shot_fly,
 };
+#endif
+
+#ifdef VERSION_DEMO
+struct Unk_unk68 ground_hunter_crawl_box[1] = { { -16, -8, 34, 14 } };
+
+struct Unk_unk68 ground_hunter_rise_box[1] = { { -10, -16, 18, 28 } };
+
+struct Unk_unk68 ground_hunter_terrain_box[1] = { { 0, 0, 8, 6 } };
+
+void (*ground_hunter_state_funcs[4])(struct WeaponObj*) = {
+    func_80095854,
+    ground_hunter_main,
+    ground_hunter_burst,
+    ground_hunter_despawn,
+};
+
+void (*ground_hunter_step_funcs[3])(struct WeaponObj*) = {
+    ground_hunter_fly,
+    ground_hunter_rise,
+    ground_hunter_crawl,
+};
+
+void (*ground_hunter_charged_state_funcs[4])(struct WeaponObj*) = {
+    func_80095E3C,
+    ground_hunter_charged_main,
+    ground_hunter_burst,
+    ground_hunter_despawn,
+};
+
+struct Unk_unk68 ground_hunter_charged_hit_box[1] = { { -24, -12, 62, 24 } };
+
+struct Unk_unk68 ground_hunter_charged_shot_box[1] = { { -10, -16, 18, 34 } };
+
+void (*ground_hunter_charged_step_funcs[3])(struct WeaponObj*) = {
+    ground_hunter_charged_wait_fire,
+    func_80096060,
+    ground_hunter_charged_shot_fly,
+};
+#endif

@@ -58,7 +58,9 @@ void func_80099B6C(struct ShotObj* self)
     self->y_pos.i.hi += drill_copter_shot_spawn_offsets[0][(s8)self->unk2 * 2 + 1];
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk68 = NULL;
+#ifndef VERSION_DEMO
     self->unk58.collision_data = D_80106070;
+#endif
     self->unk54 = drill_copter_shot_hit_box;
     self->unk50.data = drill_copter_shot_hit_box;
     self->unk60 = 2;
@@ -71,9 +73,11 @@ void drill_copter_shot_fly(struct ShotObj* self)
         animate_object(ANIMATED_OBJECT(self));
         move_object(MOVING_OBJECT(self));
         func_8002D9BC(self);
+#ifndef VERSION_DEMO
         if (func_8002DD04(MAIN_OBJECT(self)) != 0) {
             self->state = 2;
         }
+#endif
     } else {
         self->state++;
     }

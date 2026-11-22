@@ -586,6 +586,7 @@ void update_misc_objects(void)
 #undef current
 }
 
+#ifndef VERSION_DEMO
 void update_unk_objects(void)
 {
 #define current SP_CUR_UNK_OBJ
@@ -596,6 +597,7 @@ void update_unk_objects(void)
     }
 #undef current
 }
+#endif
 
 void update_quad_objects(void)
 {
@@ -666,7 +668,11 @@ void func_80021D20(void)
     if (abc_object.unkC != 0) {
         func_80022730(&abc_object);
     } else if (abc_object.unk10 != 0) {
+#ifdef VERSION_DEMO
+        DEMO_START_DIALOGUE(abc_object.unk10 & 0x7FFF, 0xFF);
+#else
         func_8002217C((u16)(abc_object.unk10 & ~0x8000), 0xFF, 0);
+#endif
     }
 }
 
@@ -678,6 +684,353 @@ void func_80021D84(void)
 #endif
 
 #ifndef MMX4_SATURN_NATIVE_OBJECT_TABLES
+#ifdef VERSION_DEMO
+void func_80088A3C_demo(struct WeaponObj* self);
+void object_afterimage_main(struct VisualObj*);
+
+void (*main_object_update_funcs[65])(struct MainObj*) = {
+    background_dragon_update,
+    armored_walker_update,
+    item_carrier_update,
+    spike_marl_update,
+    drill_copter_update,
+    robot_bee_update,
+    bulldozer_update,
+    ambush_gunner_update,
+    eregion_update,
+    unused_main_09_update,
+    dragonfly_update,
+    wall_crawler_update,
+    hover_sentry_update,
+    heavy_mech_update,
+    ice_bird_update,
+    shell_crawler_update,
+    trident_mech_update,
+    snowman_bomb_update,
+    ice_core_update,
+    surface_hopper_update,
+    ice_block_update,
+    falling_icicle_update,
+    bee_hive_update,
+    slope_skier_update,
+    jet_drone_update,
+    caterkiller_update,
+    ice_wall_update,
+    dash_gunner_update,
+    spawner_pod_update,
+    pod_spawner_update,
+    regen_turret_update,
+    thorn_trap_update,
+    bomb_bat_update,
+    spike_sled_update,
+    highway_trooper_update,
+    wheel_charger_update,
+    latcher_update,
+    rocket_spiker_update,
+    train_cannon_update,
+    falling_ceiling_update,
+    breakable_terrain_update,
+    data_hopper_update,
+    homing_orb_update,
+    web_spider_update,
+    anchored_mine_update,
+    train_boss_update,
+    train_boss_turret_update,
+    train_boss_armor_update,
+    sentry_drone_update,
+    train_soldier_update,
+    train_crate_update,
+    fortress_cannon_update,
+    jump_shooter_update,
+    wave_rider_update,
+    slash_beast_update,
+    jet_stingray_flyby_update,
+    jet_stingray_update,
+    frost_walrus_update,
+    beam_drone_update,
+    timed_explosion_update,
+    storm_owl_update,
+    split_mushroom_update,
+    flame_jet_update,
+    hatch_turret_update,
+    cyber_peacock_aiming_laser,
+};
+
+void (*weapon_object_update_funcs[63])(struct WeaponObj*) = {
+    lemon_update,
+    lightning_web_update,
+    lemon_update,
+    soul_body_update,
+    rising_fire_update,
+    lemon_update,
+    func_800961B0,
+    double_cyclone_update,
+    lemon_update,
+    charge_shot_update,
+    lightning_web_charged_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    aiming_laser_charged_update,
+    double_cyclone_charged_update,
+    lemon_update,
+    charge_shot_update,
+    charge_shot_update,
+    charge_shot_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    func_80088A3C_demo,
+    func_80088A3C_demo,
+    func_80088A3C_demo,
+    func_80088A3C_demo,
+    func_80088A3C_demo,
+    func_80088A3C_demo,
+    func_80088A3C_demo,
+    func_80088A3C_demo,
+    func_80088A3C_demo,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    lemon_update,
+    ride_chaser_shot_update,
+    ride_chaser_ram_update,
+    ice_block_hitbox_update,
+    ride_armor_shot_update,
+    ride_armor_missile_update,
+    ride_armor_punch_update,
+    ride_armor_punch_update,
+};
+
+void (*shot_object_update_funcs[41])(struct ShotObj*) = {
+    dragon_shot_update,
+    drill_copter_shot_update,
+    gunner_shot_update,
+    eregion_fireball_update,
+    eregion_wing_slash_update,
+    mech_boulder_update,
+    wall_crawler_shot_update,
+    dropped_bomb_update,
+    shell_crawler_shot_update,
+    trident_shot_update,
+    dragon_spread_shot_update,
+    enemy_bullet_update,
+    ice_core_shot_update,
+    jet_drone_bullet_update,
+    dash_gunner_shot_update,
+    turret_laser_update,
+    linked_spark_update,
+    depth_charge_update,
+    aimed_bullet_update,
+    trooper_bomb_update,
+    cannon_blast_update,
+    cannon_shell_update,
+    web_shot_update,
+    web_thread_update,
+    train_boss_shot_update,
+    grenade_update,
+    sentry_shot_update,
+    jump_shooter_shot_update,
+    melee_hitbox_update,
+    cannon_missile_update,
+    cannon_shot_update,
+    slash_beast_crescent_update,
+    flame_pillar_update,
+    falling_rock_update,
+    ray_trap_update,
+    walrus_ice_update,
+    drone_beam_update,
+    owl_feather_update,
+    owl_cyclone_update,
+    mushroom_shot_update,
+    hatch_blast_update,
+};
+
+void (*visual_object_update_funcs[27])(struct VisualObj*) = {
+    wall_slide_dust_update,
+    dash_dust_update,
+    charge_muzzle_flash_update,
+    small_effect_update,
+    blast_update,
+    object_afterimage_main,
+    func_800AFF78,
+    water_wake_update,
+    ice_shard_update,
+    dust_puff_update,
+    dragon_fx_update,
+    charge_ring_update,
+    ride_dust_update,
+    ride_chaser_jet_update,
+    lift_effect_update,
+    ride_chaser_flash_update,
+    enemy_charge_glow_update,
+    web_piece_update,
+    aiming_laser_scope_update,
+    func_800B2698,
+    web_flash_update,
+    wave_rider_jet_update,
+    missile_smoke_update,
+    jet_stingray_fx_update,
+    frost_walrus_fx_update,
+    flame_jet_fx_update,
+    weapon_overlay_update,
+};
+
+void (*effect_object_update_funcs[38])(struct EffectObj*) = {
+    storm_owl_fx_update,
+    tile_animator_update,
+    TitleScalingXUpdate,
+    palette_animator_update,
+    stage_music_update,
+    func_800B60BC,
+    checkpoint_trigger_update,
+    search_light_maker_update,
+    bg_zone_controller_update,
+    bg_wind_update,
+    func_800B7EE8,
+    null_effect_update,
+    enemy_spawner_update,
+    edge_spawner_update,
+    item_scatter_update,
+    bg_zone_controller_b_update,
+    autoscroll_segment_update,
+    freeze_blast_update,
+    world_flip_update,
+    bg_zone_controller_c_update,
+    bg_zone_controller_d_update,
+    crumble_sequencer_update,
+    bg_zone_controller_e_update,
+    tile_flicker_update,
+    boss_warning_update,
+    bg_zone_controller_f_update,
+    boss_death_fx_update,
+    TeleportRelatedObjectUpdate,
+    fortress_collapse_update,
+    tile_anim_trigger_update,
+    qux_spawner_update,
+    floor_trap_update,
+    proximity_door_update,
+    rock_dropper_update,
+    rock_drop_sequence_update,
+    palette_pulse_update,
+    stage_exit_fade_update,
+    alarm_flash_update,
+};
+
+void (*item_object_update_funcs[23])(struct ItemObj*) = {
+    breakable_wall_update,
+    stage_block_update,
+    pickup_update,
+    falling_pillar_update,
+    destructible_core_update,
+    moving_lift_update,
+    gate_core_update,
+    rising_platform_update,
+    boss_door_update,
+    moving_block_update,
+    spark_machine_update,
+    teleporter_update,
+    crusher_wall_update,
+    trap_floor_update,
+    big_elevator_update,
+    rising_slab_update,
+    sliding_floor_update,
+    crumble_trigger_update,
+    drop_pillar_update,
+    data_capsule_update,
+    gravity_switch_update,
+    hopper_switch_update,
+    layout_gate_update,
+};
+
+void (*misc_object_update_funcs[33])(struct MiscObj*) = {
+    static_sprite_update,
+    common_effect_update,
+    rubble_update,
+    debris_update,
+    dragon_rubble_update,
+    pod_effect_update,
+    homing_point_update,
+    attached_effect_update,
+    crumbling_tile_update,
+    owner_fx_update,
+    MegamanInBriefingRoomUpdate,
+    blink_marker_update,
+    stage_icon_update,
+    stage_portrait_update,
+    frame_ghost_update,
+    vent_update,
+    vent_puff_update,
+    death_orb_update,
+    MegamanRelatedUpdate,
+    TitleUpdate,
+    scroll_prop_update,
+    center_sprite_update,
+    dialogue_ui_update,
+    explosion_puff_update,
+    enemy_hatch_update,
+    sentry_flash_update,
+    slash_beast_afterimage_update,
+    owner_aura_update,
+    SelectACharacterUpdate,
+    TitleLogoUpdate,
+    spore_rain_fx_update,
+    cutscene_actor_update,
+    menu_text_update,
+};
+
+void (*quad_object_update_funcs[14])(struct QuadObj*) = {
+    SearchLightUpdate,
+    stage_select_panel_update,
+    stage_select_flyout_update,
+    boss_warning_quad_update,
+    boss_death_shard_update,
+    web_piece_quad_update,
+    light_ray_update,
+    ready_line_update,
+    flash_band_update,
+    aiming_laser_beam_update,
+    aiming_laser_charged_beam_update,
+    TitleUpdate2,
+    title_facet_update,
+    quad_null_update,
+};
+
+void (*layer_object_update_funcs[6])(struct LayerObj*) = {
+    colonel_beam_update,
+    jungle_parallax_update,
+    train_tunnel_update,
+    func_800D9C84,
+    volcano_camera_update,
+    airship_bob_update,
+};
+
+void (*D_800F2AD4[2])(struct RideArmorObj*) = {
+    func_8003B3DC,
+    func_8003D3F8,
+};
+
+#else
 void (*main_object_update_funcs[])(struct MainObj*) = {
     background_dragon_update,
     armored_walker_update,
@@ -757,10 +1110,12 @@ void (*main_object_update_funcs[])(struct MainObj*) = {
     general_update,
     spike_crawler_update,
 };
+#endif
 
 #endif
 
 #if !defined(MMX4_SATURN_NATIVE_OBJECT_TABLES) || defined(MMX4_SATURN_OWN_WEAPON_TABLE)
+#ifndef VERSION_DEMO
 void (*weapon_object_update_funcs[])(struct WeaponObj*) = {
     lemon_update,
     lightning_web_update,
@@ -826,10 +1181,12 @@ void (*weapon_object_update_funcs[])(struct WeaponObj*) = {
     ride_armor_punch_update,
     ride_armor_punch_update,
 };
+#endif
 
 #endif
 
 #if !defined(MMX4_SATURN_NATIVE_OBJECT_TABLES) || defined(MMX4_SATURN_OWN_SHOT_TABLE)
+#ifndef VERSION_DEMO
 void (*shot_object_update_funcs[])(struct ShotObj*) = {
     dragon_shot_update,
     drill_copter_shot_update,
@@ -890,10 +1247,12 @@ void (*shot_object_update_funcs[])(struct ShotObj*) = {
     sigma_spit_update,
     sigma_beam_hitbox_update,
 };
+#endif
 
 #endif
 
 #if !defined(MMX4_SATURN_NATIVE_OBJECT_TABLES) || defined(MMX4_SATURN_OWN_VISUAL_TABLE)
+#ifndef VERSION_DEMO
 void (*visual_object_update_funcs[])(struct VisualObj*) = {
     wall_slide_dust_update,
     dash_dust_update,
@@ -936,10 +1295,20 @@ void (*visual_object_update_funcs[])(struct VisualObj*) = {
     func_800C6EDC,
     func_80098338,
 };
+#endif
 
 #endif
 
 #if !defined(MMX4_SATURN_NATIVE_OBJECT_TABLES) || defined(MMX4_SATURN_OWN_EFFECT_TABLE)
+#ifdef VERSION_DEMO
+extern void (*effect_object_update_funcs[])(struct EffectObj*);
+extern void (*item_object_update_funcs[])(struct ItemObj*);
+extern void (*misc_object_update_funcs[])(struct MiscObj*);
+extern void (*unk_object_update_funcs[])(struct UnkObj*);
+extern void (*quad_object_update_funcs[])(struct QuadObj*);
+extern void (*layer_object_update_funcs[])(struct LayerObj*);
+extern void (*D_800F2AD4[])(struct RideArmorObj*);
+#else
 void (*effect_object_update_funcs[])(struct EffectObj*) = {
     camera_trigger_update,
     tile_animator_update,
@@ -1120,4 +1489,5 @@ void (*D_800F2AD4[])(struct RideArmorObj*) = {
     func_8003B3DC,
     func_8003D3F8,
 };
+#endif
 #endif

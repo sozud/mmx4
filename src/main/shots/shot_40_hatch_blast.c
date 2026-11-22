@@ -60,7 +60,7 @@ void hatch_blast_open(struct ShotObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5 = 1;
         self->unk6 = 0;
-        self->timer = 0xF0;
+        self->timer = DEMO_ALT(0xF0, 30);
         self->unk50.data = hatch_blast_hit_box;
         set_animation(self, 4);
         return;
@@ -69,6 +69,23 @@ void hatch_blast_open(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
+#ifdef VERSION_DEMO
+void hatch_blast_fire(struct ShotObj* self)
+{
+    if (self->timer == 0) {
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->unk50.data = 0;
+        set_animation(self, 3);
+        return;
+    }
+    if (self->unk70 & 0xB) {
+        self->unk8A = 0x14;
+    }
+    self->timer--;
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 void hatch_blast_fire(struct ShotObj* self)
 {
     struct ShotObj* shot = self;
@@ -87,6 +104,7 @@ void hatch_blast_fire(struct ShotObj* self)
     shot->timer--;
     animate_object(ANIMATED_OBJECT(shot));
 }
+#endif
 
 void hatch_blast_close(struct ShotObj* self)
 {
@@ -113,16 +131,24 @@ void hatch_blast_main(struct ShotObj* self)
             if (!(WEAPON_FRAME_COUNTER & 3)) {
                 func_800AF878(BASE_OBJECT(self), 1, 0x60, 0x60);
                 func_800AF878(BASE_OBJECT(self), 1, 0x30, 0x30);
+#ifndef VERSION_DEMO
                 x_offset = get_random() & 0x30;
                 spawn_debris_offset(7, hatch_blast_debris, (struct MiscObj*)self, x_offset, get_random() & 0x30);
+#endif
             }
             self->unk8A--;
             if (self->unk8A == 0) {
                 apply_tile_effect(0, hatch_blast_tile_x[self->unk2], 0x150);
+#ifndef VERSION_DEMO
                 spawn_debris(0xE, hatch_blast_break_debris, self);
+#endif
             }
         }
+#ifdef VERSION_DEMO
+        is_on_screen(BASE_OBJECT(self));
+#else
         update_on_screen(BASE_OBJECT(self), 0x80, 0x80);
+#endif
         return;
     }
     ZeroObjectState(OBJECT_HEADER(self));
@@ -140,9 +166,11 @@ struct Unk_unk68 hatch_blast_terrain_box = { 0, 8, 0x2E, 0x78 };
 
 s16 hatch_blast_tile_x[4] = { 0x0AE0, 0x14E0, 0x1710, 0 };
 
+#ifndef VERSION_DEMO
 u8 hatch_blast_debris[8] = { 6, 7, 8, 9, 0x0A, 0x0B, 0x0C, 0 };
 
 u8 hatch_blast_break_debris[16] = { 6, 7, 8, 9, 0x0A, 0x0B, 0x0C, 6, 7, 8, 9, 0x0A, 0x0B, 0x0C, 0, 0 };
+#endif
 
 void (*hatch_blast_state_funcs[])(struct ShotObj*) = {
     hatch_blast_init,

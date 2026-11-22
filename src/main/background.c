@@ -305,6 +305,12 @@ void func_80027B70(struct Unk9* arg0)
     *(u16*)((u8*)arg0 + BG_Y_HIGH_OFFSET) = delta + base;
 }
 
+#ifdef VERSION_DEMO
+#define FALL_DEATH_MARGIN 32
+#else
+#define FALL_DEATH_MARGIN 8
+#endif
+
 void func_80027BE4(struct BackgroundObj* arg0)
 {
     s16 temp_v1;
@@ -334,7 +340,7 @@ void func_80027BE4(struct BackgroundObj* arg0)
     if (arg0->unk20 < arg0->y_pos.i.hi) {
         arg0->y_pos.i.hi = arg0->unk20;
         temp_v1 = arg0->unk20 + 0x100;
-        if (g_Player.y_pos.i.hi - 8 >= temp_v1) {
+        if (g_Player.y_pos.i.hi - FALL_DEATH_MARGIN >= temp_v1) {
             EASY_HP_SET(0);
             g_Player.hp = -0x80;
         }
@@ -917,7 +923,7 @@ struct BackgroundLayoutConfigData D_800F3188 = {
         BACKGROUND_CONFIG(7, 3, 9, 10, 5, 9, 4, 8, 6, 10),
         BACKGROUND_CONFIG(7, 3, 9, 10, 4, 8, 5, 9, 6, 10),
         BACKGROUND_CONFIG(6, 3, 9, 10, 4, 7, 5, 8, 9, 10),
-        BACKGROUND_CONFIG(7, 3, 8, 10, 4, 8, 5, 9, 6, 10),
+        BACKGROUND_CONFIG(7, 3, DEMO_ALT(8, 9), 10, 4, 8, 5, 9, 6, 10),
         BACKGROUND_CONFIG(7, 3, 9, 10, 4, 8, 5, 9, 6, 10),
         BACKGROUND_CONFIG(7, 3, 9, 10, 4, 8, 5, 9, 6, 10),
         BACKGROUND_CONFIG(7, 3, 7, 10, 4, 8, 5, 9, 6, 10),
@@ -927,15 +933,29 @@ struct BackgroundLayoutConfigData D_800F3188 = {
         BACKGROUND_CONFIG(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
         BACKGROUND_CONFIG(7, 3, 7, 10, 4, 8, 5, 9, 6, 10),
         BACKGROUND_CONFIG(7, 3, 7, 10, 4, 8, 5, 9, 6, 10),
+#ifdef VERSION_DEMO
+        BACKGROUND_CONFIG(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        BACKGROUND_CONFIG(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        BACKGROUND_CONFIG(7, 3, 9, 10, 4, 8, 5, 9, 6, 10),
+        BACKGROUND_CONFIG(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+#else
         BACKGROUND_CONFIG(7, 3, 7, 10, 4, 8, 5, 9, 6, 10),
         BACKGROUND_CONFIG(7, 3, 6, 10, 4, 8, 5, 9, 6, 10),
         BACKGROUND_CONFIG(4, 3, 9, 10, 4, 8, 5, 9, 6, 10),
         BACKGROUND_CONFIG(4, 3, 9, 10, 9, 10, 4, 6, 5, 7),
+#endif
         BACKGROUND_CONFIG(8, 7, 5, 4, 3, 6, 5, 10, 4, 9),
+#ifdef VERSION_DEMO
+        BACKGROUND_CONFIG(7, 3, 9, 10, 4, 8, 5, 9, 6, 10),
+        BACKGROUND_CONFIG(6, 8, 9, 10, 5, 8, 4, 7, 9, 10),
+        BACKGROUND_CONFIG(6, 8, 9, 10, 5, 7, 4, 8, 9, 10),
+        BACKGROUND_CONFIG(6, 8, 9, 10, 5, 8, 4, 7, 9, 10),
+#else
         BACKGROUND_CONFIG(6, 3, 9, 10, 4, 7, 5, 8, 9, 9),
         BACKGROUND_CONFIG(6, 3, 9, 10, 4, 7, 5, 8, 9, 9),
         BACKGROUND_CONFIG(9, 8, 9, 10, 4, 5, 7, 8, 10, 10),
         BACKGROUND_CONFIG(6, 8, 9, 10, 4, 5, 10, 10, 6, 7),
+#endif
     },
     { 0, 0 },
 };
@@ -949,15 +969,15 @@ struct BackgroundCameraModePair D_800F32D4[16][2] = {
     { { 3, 5 }, { 2, 2 } },
     { { 5, 5 }, { 5, 5 } },
     { { 1, 3 }, { 2, 1 } },
-    { { 8, 6 }, { 2, 4 } },
+    { { 8, 6 }, { 2, DEMO_ALT(4, 3) } },
     { { 1, 3 }, { 1, 3 } },
     { { 5, 5 }, { 5, 5 } },
     { { 5, 5 }, { 5, 5 } },
-    { { 1, 1 }, { 0, 0 } },
+    { { DEMO_ALT(1, 5), DEMO_ALT(1, 5) }, { 0, 0 } },
     { { 5, 1 }, { 0, 0 } },
     { { 5, 3 }, { 5, 3 } },
-    { { 2, 1 }, { 2, 3 } },
-    { { 0, 0 }, { 5, 5 } },
+    { { DEMO_ALT(2, 0), DEMO_ALT(1, 0) }, { DEMO_ALT(2, 0), DEMO_ALT(3, 0) } },
+    { { 0, 0 }, { DEMO_ALT(5, 0), DEMO_ALT(5, 0) } },
     { { 0, 0 }, { 0, 0 } },
-    { { 5, 5 }, { 2, 3 } },
+    { { DEMO_ALT(5, 2), DEMO_ALT(5, 3) }, { 2, 3 } },
 };

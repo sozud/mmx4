@@ -37,7 +37,7 @@ void dash_gunner_shot_init(struct ShotObj* self)
     self->unk54 = dash_gunner_shot_hit_box;
     self->unk50.data = dash_gunner_shot_hit_box;
     self->unk5C = 1;
-    self->unk60 = 3;
+    self->unk60 = DEMO_ALT(3, 2);
     set_animation(self, 5);
 }
 
@@ -53,9 +53,12 @@ void dash_gunner_shot_fly(struct ShotObj* self)
         } else if (g_Player.x_pos.i.hi <= 0x9B6) {
             func_8002D9BC(self);
         }
-    } else {
+    }
+#ifndef VERSION_DEMO
+    else {
         func_8002D9BC(self);
     }
+#endif
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
         spawn_explosion(BASE_OBJECT(self));
         self->state = 2;

@@ -76,17 +76,17 @@ void palette_animator_step(struct EffectObj* self)
 extern s8* palette_animator_scripts_s00_0[10];
 extern s8* palette_animator_scripts_s00_1[3];
 extern s8* palette_animator_scripts_s01_0[6];
-extern s8* palette_animator_scripts_s01_1[5];
+extern s8* palette_animator_scripts_s01_1[DEMO_ALT(5, 1)];
 extern s8* palette_animator_scripts_s02_0[3];
 extern s8* palette_animator_scripts_s02_1[9];
 extern s8* palette_animator_scripts_s03_0[2];
-extern s8* palette_animator_scripts_s03_1[4];
+extern s8* palette_animator_scripts_s03_1[DEMO_ALT(4, 2)];
 extern s8* palette_animator_scripts_s04_0[6];
-extern s8* palette_animator_scripts_s04_1[7];
+extern s8* palette_animator_scripts_s04_1[DEMO_ALT(7, 6)];
 extern s8* palette_animator_scripts_s05_0[4];
 extern s8* palette_animator_scripts_s05_1[5];
 extern s8* palette_animator_scripts_s06_0[2];
-extern s8* palette_animator_scripts_s06_1[4];
+extern s8* palette_animator_scripts_s06_1[DEMO_ALT(4, 3)];
 extern s8* palette_animator_scripts_s07_1[3];
 extern s8* palette_animator_scripts_s08_1[2];
 extern s8* palette_animator_scripts_s09_0[1];
@@ -127,7 +127,7 @@ struct PaletteAnimatorTarget* palette_animator_stage_timings[27] = {
     palette_animator_timings_s01_1,
     palette_animator_timings_s02_0,
     palette_animator_timings_s02_1,
-    palette_animator_timings_s03_0,
+    DEMO_ALT(palette_animator_timings_s03_0, NULL),
     palette_animator_timings_s03_1,
     palette_animator_timings_s04_0,
     palette_animator_timings_s04_1,
@@ -139,14 +139,14 @@ struct PaletteAnimatorTarget* palette_animator_stage_timings[27] = {
     palette_animator_timings_s07_1,
     NULL,
     palette_animator_timings_s08_1,
-    palette_animator_timings_s09_0,
+    DEMO_ALT(palette_animator_timings_s09_0, NULL),
     NULL,
-    palette_animator_timings_s10_0,
+    DEMO_ALT(palette_animator_timings_s10_0, NULL),
     NULL,
-    palette_animator_timings_s11_0,
-    palette_animator_timings_s11_1,
-    palette_animator_timings_s12_0,
-    palette_animator_timings_s12_1,
+    DEMO_ALT(palette_animator_timings_s11_0, NULL),
+    DEMO_ALT(palette_animator_timings_s11_1, NULL),
+    DEMO_ALT(palette_animator_timings_s12_0, NULL),
+    DEMO_ALT(palette_animator_timings_s12_1, NULL),
     palette_animator_timings_s13_0,
 };
 
@@ -157,7 +157,7 @@ s8** palette_animator_stage_scripts[27] = {
     palette_animator_scripts_s01_1,
     palette_animator_scripts_s02_0,
     palette_animator_scripts_s02_1,
-    palette_animator_scripts_s03_0,
+    DEMO_ALT(palette_animator_scripts_s03_0, NULL),
     palette_animator_scripts_s03_1,
     palette_animator_scripts_s04_0,
     palette_animator_scripts_s04_1,
@@ -169,14 +169,14 @@ s8** palette_animator_stage_scripts[27] = {
     palette_animator_scripts_s07_1,
     NULL,
     palette_animator_scripts_s08_1,
-    palette_animator_scripts_s09_0,
+    DEMO_ALT(palette_animator_scripts_s09_0, NULL),
     NULL,
-    palette_animator_scripts_s10_0,
+    DEMO_ALT(palette_animator_scripts_s10_0, NULL),
     NULL,
-    palette_animator_scripts_s11_0,
-    palette_animator_scripts_s11_1,
-    palette_animator_scripts_s12_0,
-    palette_animator_scripts_s12_1,
+    DEMO_ALT(palette_animator_scripts_s11_0, NULL),
+    DEMO_ALT(palette_animator_scripts_s11_1, NULL),
+    DEMO_ALT(palette_animator_scripts_s12_0, NULL),
+    DEMO_ALT(palette_animator_scripts_s12_1, NULL),
     palette_animator_scripts_s13_0,
 };
 

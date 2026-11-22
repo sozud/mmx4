@@ -5,12 +5,20 @@
 #define MMX4_BIG_ENDIAN
 #endif
 
-#ifdef VERSION_JP
+#ifdef VERSION_DEMO
+#define ASM_ROOT "asm/demo/"
+#elif defined(VERSION_JP)
 #define ASM_ROOT "asm/jp/"
 #elif defined(VERSION_EU)
 #define ASM_ROOT "asm/eu/"
 #else
 #define ASM_ROOT "asm/us/"
+#endif
+
+#ifdef VERSION_DEMO
+#define DEMO_ALT(retail, demo) (demo)
+#else
+#define DEMO_ALT(retail, demo) (retail)
 #endif
 
 #if defined(MMX4_SHC)
@@ -414,7 +422,7 @@ struct BootTransitionDataRegion {
 #ifdef MMX4_WIN32
 extern u8 mission_stage_order[16];
 #else
-extern u8 mission_stage_order[12];
+extern u8 mission_stage_order[DEMO_ALT(12, 8)];
 #endif
 
 union AnimationStep {
@@ -519,7 +527,11 @@ extern struct SoundTransfer D_80137E00;
 extern u8 D_80137DDC;
 extern s32 D_8013BD44;
 extern u8 D_8013BD40;
+#ifdef VERSION_DEMO
+extern u16 D_80141BD2;
+#else
 extern s16 D_80141BD2;
+#endif
 extern u8 layout_height;
 #ifdef MMX4_PC
 #define D_8010B465 (((u8*)search_light_spawners)[1])
@@ -698,7 +710,6 @@ extern u8 D_80166D68;
 extern u8 D_8012F46C[0x22];
 extern u16 cur_random;
 extern s32 D_8013BD44;
-extern s16 D_80141BD2;
 extern u8 D_80139528;
 #ifndef MMX4_SATURN
 extern CdlATV D_80139520;
@@ -740,6 +751,11 @@ extern s32 D_80139684;
 extern s32 D_80139688;
 extern u8* D_80173C80;
 extern u8 need_palette_load;
+#ifdef VERSION_DEMO
+#define REQUEST_PALETTE_LOAD() (need_palette_load = 1)
+#else
+#define REQUEST_PALETTE_LOAD() (need_palette_load |= 1)
+#endif
 extern s8 D_801721F7;
 extern s32 D_8013E188[4];
 // extern s32 D_8013E18C;

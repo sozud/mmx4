@@ -22,6 +22,17 @@ void cyberspace_warp_wait_start(struct MiscObj*);
 void cyberspace_warp_wait_blink(struct MiscObj*);
 #include "weapon_resources.h"
 
+#ifdef VERSION_DEMO
+void cyberspace_warp_despawn(struct MiscObj* self)
+{
+    if (self->unk7 == main_bss_state.transition.selection) {
+        self->unk42 = 0x7805;
+    } else {
+        self->unk42 = 0x7804;
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
+#else
 void cyberspace_warp_update(struct MiscObj* self)
 {
     self->unk18.val = self->x_pos.val;
@@ -311,3 +322,4 @@ void (*cyberspace_warp_wait_funcs[2])(struct MiscObj*) = {
     cyberspace_warp_wait_start,
     cyberspace_warp_wait_blink,
 };
+#endif

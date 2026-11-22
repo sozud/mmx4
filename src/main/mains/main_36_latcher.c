@@ -24,7 +24,11 @@ extern void (*latcher_grab_funcs[])(struct MainObj*);
 
 void latcher_grab_release(struct MainObj*);
 
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 D_800FE2E4;
+#else
 struct Unk_unk68 D_800FE2E4 = { -20, -20, 38, 38 };
+#endif
 
 void latcher_update(struct MainObj* self)
 {
@@ -203,12 +207,14 @@ void latcher_grab_drain(struct MainObj* self)
     }
     if (current->ext.main_36.unk8C != 0) {
         if (current->ext.main_36.unk8A - 0x40 == 0) {
-            player_damage(4);
+            player_damage(DEMO_ALT(4, 8));
         }
     }
+#ifndef VERSION_DEMO
     if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8A & 7) == 0) {
         func_8001540C(2, SATURN_SOUND(0xED, 0xAE), self);
     }
+#endif
 }
 
 void latcher_grab_release(struct MainObj* self)
@@ -219,6 +225,8 @@ void latcher_grab_release(struct MainObj* self)
         self->unk6 = 0;
     }
 }
+
+#define LATCHER_PUSH DEMO_ALT(FIXED(0.28125), FIXED(0.1875))
 
 void latcher_check_hit(struct MainObj* self)
 {
@@ -239,24 +247,29 @@ void latcher_check_hit(struct MainObj* self)
     }
 
     self->hp = 0x10;
+#ifndef VERSION_DEMO
     if (self->unk5 == 3) {
         return;
     }
+#endif
 
     if (g_Player.x_pos.i.hi <= self->x_pos.i.hi) {
-        self->x_speed += FIXED(0.28125);
-        if (self->x_speed == FIXED(0.28125)) {
+        self->x_speed += LATCHER_PUSH;
+        if (self->x_speed == LATCHER_PUSH) {
             set_animation(self, 1);
         }
     } else {
-        self->x_speed -= FIXED(0.28125);
-        if (self->x_speed == FIXED(-0.28125)) {
+        self->x_speed -= LATCHER_PUSH;
+        if (self->x_speed == -LATCHER_PUSH) {
             set_animation(self, 2);
         }
     }
 }
 
-struct Unk_unk68 latcher_hurt_box = { -14, -14, 28, 28 };
+#ifdef VERSION_DEMO
+struct Unk_unk68 D_800D1D68_demo = { -20, -20, 38, 38 };
+#endif
+struct Unk_unk68 latcher_hurt_box = { DEMO_ALT(-14, -20), DEMO_ALT(-14, -20), DEMO_ALT(28, 38), DEMO_ALT(28, 38) };
 
 union AnimationStep latcher_anim_0[] = {
     { 2, 0, 1, 0x00 },

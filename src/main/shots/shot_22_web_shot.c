@@ -38,6 +38,24 @@ void web_shot_update(struct ShotObj* self)
 void func_8009D788(struct ShotObj* arg0);
 #endif
 
+#ifdef VERSION_DEMO
+void func_8009D788(struct ShotObj* arg0)
+{
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk16 = 3;
+    arg0->unk68 = NULL;
+    arg0->unk54 = web_shot_hit_box;
+    arg0->unk50.data = web_shot_hit_box;
+    arg0->unk58.data = (u8*)D_80106070;
+    set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
+    arg0->x_vel.val *= arg0->unk2;
+    arg0->y_vel.val *= arg0->unk2;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
+    set_animation(arg0, 0x16);
+}
+#else
 void func_8009D788(struct ShotObj* arg0)
 {
     arg0->state = 1;
@@ -60,7 +78,28 @@ void func_8009D788(struct ShotObj* arg0)
     arg0->unk90.val = 0;
     set_animation(arg0, 0x16);
 }
+#endif
 
+#ifdef VERSION_DEMO
+void func_8008DEA0_demo(struct ShotObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        goto despawn;
+    }
+    if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) == 0 && func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
+        return;
+    }
+despawn:
+    self->state = 2;
+}
+#endif
+
+#ifndef VERSION_DEMO
 void web_shot_fly(struct ShotObj* self)
 {
     if ((self->unk8C.word == 3) && (g_Player.stun_timer != 0)) {
@@ -76,7 +115,9 @@ void web_shot_fly(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void web_shot_home(struct ShotObj* self)
 {
     s32 target;
@@ -112,13 +153,17 @@ void web_shot_home(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void web_shot_pin_player(struct ShotObj* self)
 {
     g_Player.x_pos.val = self->x_pos.val;
     g_Player.y_pos.val = self->y_pos.val;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void web_shot_catch(struct ShotObj* self)
 {
     self->unk5++;
@@ -130,7 +175,9 @@ void web_shot_catch(struct ShotObj* self)
     web_shot_pin_player(self);
     self->unk90.val = 0x30;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void web_shot_hold(struct ShotObj* self)
 {
 
@@ -151,7 +198,9 @@ void web_shot_hold(struct ShotObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void web_shot_fade(struct ShotObj* self)
 {
 
@@ -171,7 +220,9 @@ void web_shot_fade(struct ShotObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void web_shot_main(struct ShotObj* self)
 {
     struct WeaponObj* owner;
@@ -197,21 +248,25 @@ void web_shot_main(struct ShotObj* self)
         self->state = 2;
     }
 }
+#endif
 
 void web_shot_despawn(struct ShotObj* self)
 {
+#ifndef VERSION_DEMO
     if (self->unk8C.word == 3 && g_Player.stun_timer != 0) {
         g_Player.stun_timer = 0;
     }
+#endif
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
 void (*web_shot_state_funcs[])(struct ShotObj*) = {
     func_8009D788,
-    web_shot_main,
+    DEMO_ALT(web_shot_main, func_8008DEA0_demo),
     web_shot_despawn,
 };
 
+#ifndef VERSION_DEMO
 void (*web_shot_step_funcs[5])(struct ShotObj*) = {
     web_shot_fly,
     web_shot_home,
@@ -219,3 +274,4 @@ void (*web_shot_step_funcs[5])(struct ShotObj*) = {
     web_shot_hold,
     web_shot_fade,
 };
+#endif

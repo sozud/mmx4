@@ -116,7 +116,7 @@ struct Item10AnimationStep spark_machine_anim_8[12] = {
     { 2, 0, 1, 40 },
     { 6, 0, 1, 42 },
     { 6, 0, 1, 43 },
-    { 6, 1, 0, 44 },
+    { 6, DEMO_ALT(1, 0), 0, 44 },
 };
 
 struct Item10AnimationStep spark_machine_anim_9[11] = {
@@ -158,11 +158,13 @@ struct Item10AnimationStep spark_machine_anim_12[2] = {
     { 3, 0, 255, 64 },
 };
 
+#ifndef VERSION_DEMO
 struct Item10AnimationStep spark_machine_anim_13[1] = {
     { 3, 0, 0, 65 },
 };
+#endif
 
-struct Item10AnimationStep* spark_machine_animations[14] = {
+struct Item10AnimationStep* spark_machine_animations[DEMO_ALT(14, 13)] = {
     spark_machine_anim_0,
     spark_machine_anim_1,
     spark_machine_anim_2,
@@ -176,7 +178,9 @@ struct Item10AnimationStep* spark_machine_animations[14] = {
     spark_machine_anim_10,
     spark_machine_anim_11,
     spark_machine_anim_12,
+#ifndef VERSION_DEMO
     spark_machine_anim_13,
+#endif
 };
 
 void spark_machine_update(struct ItemObj* arg0)
@@ -184,7 +188,94 @@ void spark_machine_update(struct ItemObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     spark_machine_state_funcs[arg0->state](arg0);
+#ifdef VERSION_DEMO
+    animate_object(ANIMATED_OBJECT(arg0));
+#endif
 }
+
+#ifdef VERSION_DEMO
+extern u8 spark_machine_terrain_box[4];
+extern u8 spark_machine_hit_box[4];
+extern struct Unk_unk68 D_80108504[];
+extern struct Item10Offset spark_machine_spark_offsets[];
+
+void func_800A5790_demo(struct ItemObj* self)
+{
+    u8 index;
+    struct MiscObj* spark;
+
+    self->active = 0x41;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->unk40 = (u16)(OBJECT_STAGE_TEXTURE(9));
+    self->unk15 = 0;
+    self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 9);
+    self->unk42 = OBJECT_CLUT(0x78CC);
+    self->animation_table = (const u8* const*)spark_machine_animations;
+    self->unk68 = (struct Unk_unk68*)spark_machine_terrain_box;
+    self->unk54 = spark_machine_hit_box;
+    self->unk58 = (const u8*)D_80108504;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk61 = 0;
+    self->unk75 = 1;
+    self->unk67 = 0;
+    self->unk5C = 0x10;
+    self->state = 1;
+    set_animation(self, 0);
+    self->ext.packed = 0;
+    for (index = 0; index < 4; index++) {
+        spark = find_free_misc_obj();
+        if (spark != NULL) {
+            spark->active = 0x41;
+            spark->id = 9;
+            spark->unk15 = get_random() & PLAYER_FACING_RIGHT;
+            spark->state = 0;
+            spark->unk5 = 0;
+            spark->unk6 = 0;
+            spark->x_pos.i.hi = self->x_pos.i.hi + spark_machine_spark_offsets[index].x;
+            spark->y_pos.i.hi = self->y_pos.i.hi + spark_machine_spark_offsets[index].y;
+            spark->unk2 = 0xA;
+            spark->ext.misc_9.owner = self;
+        }
+    }
+    for (index = 0; index < 2; index++) {
+        spark = find_free_misc_obj();
+        if (spark != NULL) {
+            spark->active = 0x41;
+            spark->id = 9;
+            spark->unk15 = get_random() & PLAYER_FACING_RIGHT;
+            spark->state = 0;
+            spark->unk5 = 0;
+            spark->unk6 = 0;
+            spark->x_pos.i.hi = self->x_pos.i.hi + spark_machine_spark_offsets[index].x;
+            spark->y_pos.i.hi = self->y_pos.i.hi + spark_machine_spark_offsets[index].y;
+            spark->unk2 = 0xB;
+            spark->ext.misc_9.owner = self;
+        }
+    }
+}
+#endif
+
+#ifdef VERSION_DEMO
+extern void (*D_800DBD20_demo[])(struct ItemObj*);
+void func_800A59A0_demo(struct ItemObj* arg0)
+{
+    s32 hit;
+
+    D_800DBD20_demo[arg0->unk5](arg0);
+    hit = func_8002DD04(MAIN_OBJECT(arg0));
+    if (hit < 0) {
+        ((void (*)(s32, u8*, struct ItemObj*, s32))spawn_debris)(5, spark_machine_debris, arg0, 0);
+        arg0->state++;
+        return;
+    }
+    if (hit > 0) {
+        arg0->unk42 |= 0x8000;
+    } else {
+        arg0->unk42 &= 0x7FFF;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
+#endif
 
 // spark_machine_init
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -194,7 +285,7 @@ ret_s8 func_8002DD04(struct MainObj* object);
 extern u8 spark_machine_terrain_box[4];
 extern u8 spark_machine_hit_box[4];
 extern struct Unk_unk68 D_80108604[];
-extern struct Item10Offset spark_machine_spark_offsets[5];
+extern struct Item10Offset spark_machine_spark_offsets[DEMO_ALT(5, 4)];
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C2528(struct ItemObj* self);
 void func_800C2638(struct ItemObj* self);
@@ -203,6 +294,7 @@ void func_800C2638(struct ItemObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
+#ifndef VERSION_DEMO
 void func_800C2528(struct ItemObj* self)
 {
     self->active = 0x41;
@@ -228,8 +320,10 @@ void func_800C2528(struct ItemObj* self)
     self->tail_ext.unk1.unk84.bytes[2] = 0x14;
     self->tail_ext.unk1.unk84.bytes[3] = 0;
 }
+#endif
 
 // spark_machine_main
+#ifndef VERSION_DEMO
 void func_800C2638(struct ItemObj* self)
 {
     s32 hit = func_8002DD04((struct MainObj*)self);
@@ -266,7 +360,9 @@ void func_800C2638(struct ItemObj* self)
             self->unk42 &= 0x7FFF;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void spark_machine_sparking(struct ItemObj* arg0)
 {
     if (--arg0->tail_ext.unk1.unk84.bytes[3] == 0) {
@@ -278,27 +374,49 @@ void spark_machine_sparking(struct ItemObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
 }
+#endif
 
 void spark_machine_break(struct ItemObj* arg0)
 {
+#ifndef VERSION_DEMO
     arg0->unk42 &= 0x7FFF;
+#endif
     arg0->ext.timer = 1;
+#ifndef VERSION_DEMO
     spawn_debris(5, spark_machine_debris, arg0);
+#endif
     apply_tile_effect(
-        (u8)arg0->unk2,
+        DEMO_ALT((u8)arg0->unk2, 0),
         (s16)(arg0->x_pos.i.hi - 0x20),
         (s16)(arg0->y_pos.i.hi - 0x28));
     set_animation(arg0, 0xC);
+#ifndef VERSION_DEMO
     is_on_screen(BASE_OBJECT(arg0));
+#endif
     arg0->state++;
 }
 
+#ifdef VERSION_DEMO
+void func_800A5ABC_demo(struct ItemObj* arg0)
+{
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_800A5AC4_demo(struct ItemObj* arg0)
+{
+}
+#endif
+
+#ifndef VERSION_DEMO
 void spark_machine_broken(struct ItemObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void spark_machine_spawn_spark_a(struct ItemObj* arg0)
 {
     if (arg0->tail_ext.unk2.timer == 0) {
@@ -320,7 +438,9 @@ void spark_machine_spawn_spark_a(struct ItemObj* arg0)
     }
     arg0->tail_ext.unk2.timer--;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void spark_machine_spawn_spark_b(struct ItemObj* arg0)
 {
     if (arg0->tail_ext.unk2.previous_value == 0) {
@@ -342,7 +462,9 @@ void spark_machine_spawn_spark_b(struct ItemObj* arg0)
     }
     arg0->tail_ext.unk2.previous_value--;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void spark_machine_spawn_spark_c(struct ItemObj* arg0)
 {
     if (arg0->tail_ext.unk2.value == 0) {
@@ -364,7 +486,31 @@ void spark_machine_spawn_spark_c(struct ItemObj* arg0)
     }
     arg0->tail_ext.unk2.value--;
 }
+#endif
 
+#ifdef VERSION_DEMO
+void (*spark_machine_state_funcs[])(struct ItemObj*) = {
+    func_800A5790_demo,
+    func_800A59A0_demo,
+    spark_machine_break,
+    func_800A5ABC_demo,
+};
+
+void (*D_800DBD20_demo[])(struct ItemObj*) = {
+    func_800A5AC4_demo,
+};
+
+u8 spark_machine_terrain_box[4] = { 0, 0xF8, 0x20, 0x18 };
+u8 spark_machine_hit_box[4] = { 0xE0, 0xE8, 0x40, 0x30 };
+u8 spark_machine_debris[8] = { 1, 2, 3, 4, 5, 0, 0, 0 };
+
+struct Item10Offset spark_machine_spark_offsets[4] = {
+    { 4, 12 },
+    { -8, -8 },
+    { 16, -10 },
+    { -19, 16 },
+};
+#else
 void (*spark_machine_state_funcs[])(struct ItemObj*) = {
     func_800C2528,
     func_800C2638,
@@ -385,3 +531,4 @@ struct Item10Offset spark_machine_spark_offsets[5] = {
     { -19, 16 },
     { -16, -6 },
 };
+#endif

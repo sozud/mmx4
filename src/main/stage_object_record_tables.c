@@ -26,7 +26,7 @@ extern struct StageObjectRecord stage_object_records_11_1[];
 extern struct StageObjectRecord stage_object_records_12_0[];
 extern struct StageObjectRecord stage_object_records_12_1[];
 
-struct StageObjectRecord* D_800F43C8[13][2] = {
+struct StageObjectRecord* D_800F43C8[DEMO_ALT(13, 12)][2] = {
     { stage_object_records_0_0, stage_object_records_0_1 },
     { stage_object_records_1_0, stage_object_records_1_1 },
     { stage_object_records_2_0, stage_object_records_2_1 },
@@ -39,9 +39,27 @@ struct StageObjectRecord* D_800F43C8[13][2] = {
     { stage_object_records_9_0, NULL },
     { stage_object_records_10_0, NULL },
     { stage_object_records_11_0, stage_object_records_11_1 },
+#ifndef VERSION_DEMO
     { stage_object_records_12_0, stage_object_records_12_1 },
+#endif
 };
 
+#ifdef VERSION_DEMO
+struct StageObjectRecord* D_800F4430[12][2] = {
+    { &stage_object_records_0_0[64], &stage_object_records_0_1[64] },
+    { &stage_object_records_1_0[64], &stage_object_records_1_1[90] },
+    { &stage_object_records_2_0[68], &stage_object_records_2_1[247] },
+    { &stage_object_records_3_0[64], &stage_object_records_3_1[64] },
+    { &stage_object_records_4_0[80], &stage_object_records_4_1[64] },
+    { &stage_object_records_5_0[103], &stage_object_records_5_1[72] },
+    { &stage_object_records_6_0[64], &stage_object_records_6_1[64] },
+    { &stage_object_records_7_0[80], &stage_object_records_7_1[64] },
+    { &stage_object_records_8_0[77], &stage_object_records_8_1[115] },
+    { &stage_object_records_9_0[64], NULL },
+    { &stage_object_records_10_0[64], NULL },
+    { &stage_object_records_11_0[64], &stage_object_records_11_1[64] },
+};
+#else
 struct StageObjectRecord* D_800F4430[13][2] = {
     { &stage_object_records_0_0[59], &stage_object_records_0_1[49] },
     { &stage_object_records_1_0[51], &stage_object_records_1_1[79] },
@@ -57,3 +75,4 @@ struct StageObjectRecord* D_800F4430[13][2] = {
     { &stage_object_records_11_0[21], &stage_object_records_11_1[50] },
     { &stage_object_records_12_0[26], &stage_object_records_12_1[12] },
 };
+#endif

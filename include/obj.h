@@ -197,6 +197,7 @@ struct Main17Ext {
 union Main37Unk80 {
     u32 word;
     u8 saved_direction;
+    s16 halves[2];
 };
 
 struct Main37Ext {
@@ -679,7 +680,9 @@ struct Main72Ext {
 
 struct Main60Ext {
     struct EffectObj* effect;
+#ifndef VERSION_DEMO
     u8* pattern;
+#endif
     u16 feather_mask;
     u8 saved_unk5;
     u8 corner;
@@ -1281,11 +1284,13 @@ struct PlayerObj {
     union PlayerUnkDC clone_offset;
     s8 controlling_clone;
     s8 unkDF;
+#ifndef VERSION_DEMO
     s8 nova_strike_active;
     s8 nova_strike_timer;
     u8 item_step;
     s8 : 8;
-}; // size 0xE4
+#endif
+};
 
 MMX4_STATIC_ASSERT(player_unk68_offset,
     MMX4_OFFSET_OF(struct PlayerObj, unk68) == MMX4_OFFSET_OF(struct MainObj, terrain_box));
@@ -1666,6 +1671,7 @@ union UnkObjLink {
     u8* data;
     struct UnkObj* previous;
     struct PlayerObj* player;
+    s32 value;
 };
 
 struct PlayerAfterimageExt {
@@ -1860,6 +1866,7 @@ struct ReadyTextExt {
 
 struct MiscPointerExt {
     void* unk50;
+    u8 unk54;
 };
 
 struct Misc7Ext {
@@ -2806,9 +2813,11 @@ struct EngineObj {
     u16 collected_upgrades;
     s8 sub_tanks[3];
     u8 unk5F;
+#ifndef VERSION_DEMO
     u8 unk60;
     u8 pad61[3];
-}; // size 0x64
+#endif
+};
 
 #define engine_flags engine_obj.character_state.fields.flags
 
@@ -3020,8 +3029,15 @@ struct Effect14Ext {
 };
 struct Effect17Ext {
     struct AnimatedObj* source;
+#ifdef VERSION_DEMO
+    u8 unk18[5];
+    s8 timer;
+    u8 unk1E[6];
+    s8 phase;
+#else
     u8 timer;
     u8 phase;
+#endif
 };
 union Effect32Palette {
     s32 packed;

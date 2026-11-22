@@ -104,7 +104,7 @@ void spawner_pod_main(struct MainObj* self)
         self->x_speed = 0;
         self->y_speed = 0;
         spawn_debris(2, spawner_pod_debris, self);
-        drop_item(BASE_OBJECT(self), 0xC);
+        drop_item(BASE_OBJECT(self), DEMO_ALT(0xC, 3));
         self->state = 2;
         return;
     }

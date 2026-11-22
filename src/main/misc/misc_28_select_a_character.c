@@ -293,7 +293,9 @@ void select_char_selector_animate(struct MiscObj* self)
     animate_object(self);
     if (engine_obj.cur_character != self->ext.sel_char.cur_character_selected) {
         self->unk6 = 0;
+#ifndef VERSION_DEMO
         func_8001540C(SATURN_ALT(5, 0), SATURN_SOUND(0, 0x1B), NULL);
+#endif
     }
     self->ext.sel_char.cur_character_selected = engine_obj.cur_character;
 }

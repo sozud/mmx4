@@ -177,6 +177,24 @@ void func_800C0EBC(struct ItemObj* arg0)
 }
 
 // moving_lift_move
+#ifdef VERSION_DEMO
+void func_800C1050(struct ItemObj* arg0)
+{
+    update_on_screen(BASE_OBJECT(arg0), moving_lift_boxes[arg0->unk2][2], moving_lift_boxes[arg0->unk2][3]);
+    if (arg0->unk76 == 0) {
+        animate_object(ANIMATED_OBJECT(arg0));
+        arg0->y_vel.val = moving_lift_motion[arg0->unk2].velocity;
+    } else if (moving_lift_motion[arg0->unk2].collision_mode != 0) {
+        arg0->y_vel.val = -0x1A000;
+    }
+    move_object((struct MovingObj*)arg0);
+    collide_with_players(PLAYER_OBJECT(arg0));
+    if (arg0->y_pos.i.hi > 0x620) {
+        arg0->y_vel.val = moving_lift_motion[arg0->unk2].velocity;
+        arg0->y_pos.i.hi = 0x4E0;
+    }
+}
+#else
 void func_800C1050(struct ItemObj* arg0)
 {
     u8 old_flags;
@@ -216,6 +234,7 @@ void func_800C1050(struct ItemObj* arg0)
         arg0->y_pos.i.hi = 0x4E0;
     }
 }
+#endif
 
 void moving_lift_despawn(struct ItemObj* arg0)
 {

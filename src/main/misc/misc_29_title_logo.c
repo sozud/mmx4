@@ -52,7 +52,11 @@ void title_logo_init(struct MiscObj* self)
 
     if (self->unk2 < 0x20) {
         self->unk42 = TITLE_LOGO_STAR_PALETTE;
+#ifdef VERSION_DEMO
+        set_animation_frame(ANIMATED_OBJECT(self), 1, 0xC);
+#else
         self->animation_step.fields.frame_index = 0x1C;
+#endif
         if (!(self->unk2 & 0x10)) {
             self->x_pos.val = 0;
             self->y_pos.val = FIXED(240);
@@ -69,6 +73,19 @@ void title_logo_init(struct MiscObj* self)
         return;
     }
     self->unk42 = TITLE_LOGO_PALETTE;
+#ifdef VERSION_DEMO
+    if (self->unk2 == 0x20) {
+        set_animation(self, 2);
+        self->x_pos.i.hi = TITLE_FADE_X;
+        self->y_pos.i.hi = 72;
+        self->state = 5;
+    } else {
+        set_animation(self, 3);
+        self->x_pos.i.hi = TITLE_SPARKLE_X;
+        self->y_pos.i.hi = 72;
+        self->state = 7;
+    }
+#else
     if (self->unk2 == 0x20) {
         set_animation(self, 0);
         self->x_pos.i.hi = TITLE_FADE_X; // set x pos of "MEGAMAN" while it's fading from white
@@ -88,6 +105,7 @@ void title_logo_init(struct MiscObj* self)
         self->animation_step.fields.frame_index = 0x1C;
         self->unk2 = 0;
     }
+#endif
     is_on_screen(self);
 }
 
@@ -99,7 +117,9 @@ void title_logo_star_delay(struct MiscObj* self)
     } else {
         self->ext.title_logo.palette_shift_value = angle_to_point(OBJECT_HEADER(self), FIXED(216), FIXED(72));
         self->ext.title_logo.palette_shift_speed = 3;
+#ifndef VERSION_DEMO
         self->ext.title_logo.unk50 = NULL;
+#endif
         self->state++;
     }
 }
@@ -117,14 +137,20 @@ void title_logo_star_fly(struct MiscObj* self)
         self->unk16 = 2;
     } else {
         if (self->ext.title_logo.palette_shift_speed == 0) {
+#ifdef VERSION_DEMO
+            obj = find_free_misc_obj();
+#else
             obj = func_8002AE90(self->ext.title_logo.unk50, 0);
+#endif
             if (obj != NULL) {
                 obj->active = 1;
                 obj->id = 0x1D;
                 obj->unk2 = 0x10;
                 obj->x_pos.val = self->x_pos.val;
                 obj->y_pos.val = self->y_pos.val;
+#ifndef VERSION_DEMO
                 self->ext.title_logo.unk50 = obj;
+#endif
             }
             self->ext.title_logo.palette_shift_speed = 3;
         } else {
@@ -200,11 +226,11 @@ void title_logo_fade_palette(struct MiscObj* self)
             for (i = 0; i < TITLE_PALETTE_WORDS; i++) {
                 *dst++ = *src++;
             }
-            need_palette_load |= 1;
+            REQUEST_PALETTE_LOAD();
             self->ext.title_logo.palette1 += TITLE_PALETTE_WORDS;
         } else {
             self->id = 0x13;
-            self->unk2 = 0;
+            self->unk2 = DEMO_ALT(0, 0x10);
             self->state = 0;
         }
     }
@@ -216,7 +242,7 @@ void title_logo_sparkle(struct MiscObj* self)
 {
     animate_object(self);
     if (self->animation_step.fields.relative_step == 0) {
-        ZeroObjectState(self);
+        ZeroObjectState(DEMO_ALT(self, self->ext.title_logo.unk50));
     } else {
         is_on_screen(self);
     }

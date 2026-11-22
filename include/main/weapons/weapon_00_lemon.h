@@ -4,7 +4,9 @@
 void lemon_update(struct WeaponObj*);
 void buster_shot_launch(struct AnimatedObj*);
 
+#ifndef VERSION_DEMO
 void buster_shot_hide(struct WeaponObj*);
+#endif
 
 void lemon_update(struct WeaponObj*);
 

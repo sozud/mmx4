@@ -25,10 +25,12 @@ void static_sprite_init(struct MiscObj* self)
     self->unk40 = SATURN_ALT(0x1511, OBJECT_STAGE_TEXTURE(9));
     self->animation_step.fields.frame_index = (u8)self->unk2;
 
+#ifndef VERSION_DEMO
     self->bg_offset = g_Player.bg_offset;
+#endif
     self->unk15 = 0;
 
-    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0x24 / 4];
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[DEMO_ALT(0x24, 0x20) / 4];
 
     self->unk42 = OBJECT_CLUT(0x7904);
     self->state++;

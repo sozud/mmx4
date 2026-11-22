@@ -11,6 +11,7 @@
 #include "main/1263C.h"
 #include "main/144A4.h"
 #include "main/323C.h"
+#include "main/3A6C.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/195B4.h"
@@ -91,6 +92,9 @@ static void apply_direct_progress(u8 stage, u8 character, u8 loadout, u8 story)
 #endif
 
 #ifndef MMX4_SATURN
+#ifdef VERSION_DEMO
+void func_8002EFC0_demo(void);
+#endif
 void func_8001D064(void)
 {
     s32 var_v1;
@@ -203,17 +207,23 @@ void func_8001D064(void)
     }
 #endif
     PlayCapcomLogo();
+#ifdef VERSION_DEMO
+    func_8002EFC0_demo();
+    D_8013BD44 = 1;
+#endif
     fill = 0;
     var_a0 = (s8*)&game_info;
     var_v1 = sizeof(game_info);
     while (var_v1-- != 0) {
         *var_a0++ = fill;
     }
+#ifndef VERSION_DEMO
     D_8013BD44 = 1;
     game_info.unk0 = 0;
     game_info.mode = 0;
     game_info.unk2 = 0;
     game_info.unk3 = 0;
+#endif
 #ifdef MMX4_PC
     {
         const char* scene = getenv("MMX4_ORACLE_SCENE");
@@ -321,13 +331,22 @@ void func_8001D104(void)
 
 void PlayCapcomLogo(void)
 {
-#ifdef VERSION_EU
+#ifdef VERSION_DEMO
+#elif defined(VERSION_EU)
     func_800182E8(11);
     func_800182E8(0);
 #else
     func_800182E8();
 #endif
+#ifndef VERSION_DEMO
     SetDispMask(0);
+#endif
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_8002EFC0_demo(void)
+{
 }
 #endif
 
@@ -370,6 +389,13 @@ void func_8001D1A4(struct GameInfo* arg0)
     }
 }
 
+#ifdef VERSION_DEMO
+void func_8002F084_demo(struct GameInfo* arg0)
+{
+    arg0->unk0 = 1;
+}
+#endif
+
 #ifdef MMX4_SATURN
 void func_8001D1F0(struct GameInfo* arg0)
 {
@@ -391,6 +417,7 @@ void func_8001D1F0(struct GameInfo* arg0)
     }
 }
 #else
+#ifndef VERSION_DEMO
 void func_8001D1F0(struct GameInfo* arg0)
 {
     if (arg0->mode == 0) {
@@ -399,20 +426,40 @@ void func_8001D1F0(struct GameInfo* arg0)
         func_8001D284(arg0);
     }
 }
+#endif
 
 void func_8001D230(struct GameInfo* arg0)
 {
+#ifdef VERSION_DEMO
+    SetDispMask(1);
+    arg0->unkD = 0;
+    arg0->unk4 = 0x78;
+#else
     arg0->unkD = 1;
     D_80173C80 = MAIN_ARCHIVE_ARENA;
     func_80018000(1); // nop out to skip opening cinematic
+#endif
     arg0->mode++;
 }
 
+#ifdef VERSION_DEMO
+void func_8002F0D4_demo(struct GameInfo* arg0)
+{
+    if (--arg0->unk4 == 0) {
+        SetDispMask(0);
+        arg0->unk0 = 1;
+        arg0->mode = 0;
+    }
+}
+#endif
+
+#ifndef VERSION_DEMO
 void func_8001D284(struct GameInfo* arg0)
 {
     arg0->unk0 = 1;
     arg0->mode = 0;
 }
+#endif
 #endif
 
 void func_8001D294(struct GameInfo* arg0)
@@ -449,6 +496,9 @@ void func_8001D2D0(struct GameInfo* arg0)
 #endif
     func_80021E3C();
     func_80012EB8();
+#ifdef VERSION_DEMO
+    func_80013530();
+#endif
 #endif
     func_80013014();
     arg0->unk4 = 0x960;
@@ -609,6 +659,16 @@ void func_8001D6DC(struct GameInfo* arg0)
     switch (arg0->unkE) {
     case 0:
         break;
+#ifdef VERSION_DEMO
+    case 1:
+    case 3:
+        update_misc_objects();
+        init_objects();
+        break;
+    case 2:
+        func_80023D68();
+        break;
+#else
     case 1:
         update_misc_objects();
         func_80023D68();
@@ -620,6 +680,7 @@ void func_8001D6DC(struct GameInfo* arg0)
         update_misc_objects();
         init_objects();
         break;
+#endif
     }
 #endif
 }
@@ -640,11 +701,27 @@ void func_8001D77C(struct GameInfo* arg0)
     fn_4_DABD0(0);
 #endif
     update_misc_objects();
+#ifdef VERSION_DEMO
+    init_objects();
+#else
     func_8002A484();
     func_80023D68();
 #endif
+#endif
 }
 
+#ifdef VERSION_DEMO
+void func_8002F654_demo(struct GameInfo* arg0)
+{
+    main_bss_state.transition.suspended = 0;
+    func_80016F0C();
+    stop_sound(0xFF, 0);
+    func_80012740(1, &func_8001FB50);
+    func_800127FC();
+}
+#endif
+
+#ifndef VERSION_DEMO
 void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
 {
     u8 var_s0;
@@ -673,7 +750,7 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
 #elif defined(MMX4_WIN32)
          var_s0 < 13;
 #else
-             var_s0 < 14;
+         var_s0 < 14;
 #endif
          var_s0++) {
         misc = find_free_misc_obj();
@@ -686,6 +763,7 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
     func_800129A4(8);
     arg0->mode++;
 }
+#endif
 
 #ifdef MMX4_SATURN
 void func_8001D8DC(struct GameInfo* arg0)
@@ -719,7 +797,9 @@ void func_8001D8DC(struct GameInfo* arg0)
 {
     if (main_bss_state.transition.active == 0) {
         if (controller_input.pressed & PADLup) {
+#ifndef VERSION_DEMO
             func_8001540C(0, 0xC, 0);
+#endif
             if (arg0->unk2 == 0) {
                 arg0->unk2 = 2;
             } else {
@@ -727,7 +807,9 @@ void func_8001D8DC(struct GameInfo* arg0)
             }
         }
         if (controller_input.pressed & PADLdown) {
+#ifndef VERSION_DEMO
             func_8001540C(0, 0xC, 0);
+#endif
             if (arg0->unk2 == 2) {
                 arg0->unk2 = 0;
             } else {
@@ -735,7 +817,9 @@ void func_8001D8DC(struct GameInfo* arg0)
             }
         }
         if (controller_input.pressed & (PAD_CONFIRM | PADstart)) {
+#ifndef VERSION_DEMO
             func_8001540C(0, 0x22, 0);
+#endif
             func_800129F0(8);
             arg0->mode++;
         }
@@ -748,10 +832,12 @@ void func_8001D9D0(struct GameInfo* arg0)
     if (main_bss_state.transition.active == 0) {
         switch (arg0->unk2) {
         case 0:
+#ifndef VERSION_DEMO
             engine_obj.state = 0;
             engine_obj.unk1 = 0;
             engine_obj.unk2 = 0;
             engine_obj.unk3 = 0;
+#endif
             func_80012740(1, &func_8001FB50);
             func_800127FC();
             return;
@@ -787,10 +873,12 @@ void func_8001DAA0(void)
     func_800127FC();
 }
 
+#ifndef VERSION_DEMO
 void func_8001DAD0(struct GameInfo* arg0)
 {
     func_8001A9EC(&engine_obj);
 }
+#endif
 
 #ifdef MMX4_SATURN
 void func_8001DAF8(void)
@@ -867,6 +955,39 @@ void func_8001DAF8(void)
 #endif
 
 #if !defined(MMX4_SATURN) && !defined(MMX4_GAMECUBE)
+#ifdef VERSION_DEMO
+extern u8 D_8013A858_demo;
+
+void func_8001DAF8(void)
+{
+    game_info.unk0 = 0;
+    game_info.mode = 0;
+    game_info.unk2 = 0;
+    game_info.unk3 = 0;
+    game_info.unkD = 1;
+    main_bss_state.transition.suspended = 0;
+    func_8001D134();
+    while (1) {
+        D_800F21B0[game_info.unk0](&game_info);
+        if (game_info.unkD == 0 && (controller_input.pressed & PADstart)) {
+            game_info.unkD = 1;
+            game_info.unkE = game_info.unk0;
+            func_80012854(1);
+            if (main_bss_state.transition.active == 0) {
+                func_800129F0(8);
+            }
+            game_info.unk0 = 5;
+            game_info.mode = 0;
+            game_info.unk2 = 0;
+            game_info.unk3 = 0;
+        }
+        func_800127C8(1);
+        if (D_8013A858_demo) {
+            func_800127FC();
+        }
+    }
+}
+#else
 void func_8001DAF8(void)
 {
     s16 var_v1;
@@ -899,7 +1020,9 @@ void func_8001DAF8(void)
     }
 }
 #endif
+#endif
 
+#ifndef VERSION_DEMO
 #ifndef MMX4_SATURN
 void func_8001DC30(void)
 {
@@ -913,6 +1036,7 @@ void func_8001DC30(void)
 void func_8001DC30(void)
 {
 }
+#endif
 #endif
 
 void (*D_800F2170[4])(struct GameInfo*) = {
@@ -931,6 +1055,8 @@ char* saturn_demo_archives[4] = {
 };
 #elif defined(VERSION_EU)
 u8 D_800F2180[4] = { 0x51, 0x52, 0x53, 0x54 };
+#elif defined(VERSION_DEMO)
+    u8 D_800F2180[4] = { 0x1E, 0x1E, 0x1E, 0x1E };
 #else
     u8 D_800F2180[4] = { 0x50, 0x51, 0x52, 0x53 };
 #endif
@@ -943,7 +1069,7 @@ void (*D_800F2184[4])(struct GameInfo*) = {
 };
 
 void (*D_800F2194[3])(struct GameInfo*) = {
-    func_8001D7D0,
+    DEMO_ALT(func_8001D7D0, func_8002F654_demo),
     func_8001D8DC,
     func_8001D9D0,
 };
@@ -967,45 +1093,60 @@ u8 D_800F21A0[] = {
     0xFF,
     0xFF,
 };
+#elif defined(VERSION_DEMO)
+u8 D_800F21A0[] = { 0x10, 0x11, 0x12, 0x13, 0x15, 0x17, 0x18, 0x19 };
 #elif defined(VERSION_JP)
-u8 D_800F21A0[] = {
-    0x00,
-    0x01,
-    0x02,
-    0x05,
-    0x07,
-    0x09,
-    0x0D,
-    0x0E,
-    0x0F,
-    0x08,
-    0x03,
-    0x00,
-};
+    u8 D_800F21A0[] = {
+        0x00,
+        0x01,
+        0x02,
+        0x05,
+        0x07,
+        0x09,
+        0x0D,
+        0x0E,
+        0x0F,
+        0x08,
+        0x03,
+        0x00,
+    };
 #elif defined(MMX4_WIN32)
+#ifdef VERSION_DEMO
+    extern u8 D_800F21A0[];
+#else
     u8 D_800F21A0[] = {
         0x12, 0x13, 0x00, 0x0b, 0x0c, 0x06, 0x09, 0x02,
         0x0d, 0x0e, 0x0f, 0x10, 0x05, 0x00, 0x00, 0x00
     };
+#endif
+#else
+#ifdef VERSION_DEMO
+    extern u8 D_800F21A0[];
 #else
     u8 D_800F21A0[] = {
         0x12, 0x13, 0x00, 0x0b, 0x0c, 0x07, 0x11, 0x09,
         0x02, 0x0d, 0x0e, 0x0f, 0x10, 0x05, 0x00, 0x00
     };
 #endif
+#endif
 
-void (*D_800F21B0[11])(struct GameInfo*) = {
-    func_8001D1F0,
+void (*D_800F21B0[DEMO_ALT(11, 9)])(struct GameInfo*) = {
+    DEMO_ALT(func_8001D1F0, func_8002F084_demo),
     func_8001E708,
     func_8001D294,
     func_8001D57C,
     func_8001D698,
     func_8001D6DC,
     func_8001D77C,
+#ifdef VERSION_DEMO
+    func_8001DA70,
+    func_8001DAA0,
+#else
     func_8001F0BC,
     func_8001EC34,
     func_8001DAD0,
     func_8002A41C,
+#endif
 };
 
 #ifdef VERSION_JP

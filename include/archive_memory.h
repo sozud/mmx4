@@ -24,7 +24,11 @@ extern u8 gc_replay_data[0x2000];
 extern u8 gc_window_archive_data[0x3000];
 #define WINDOW_ARCHIVE_DATA gc_window_archive_data
 #else
+#ifdef VERSION_DEMO
+#define MAIN_ARCHIVE_ARENA ((u8*)0x80140000)
+#else
 #define MAIN_ARCHIVE_ARENA ((u8*)0x80178000)
+#endif
 #define REPLAY_DATA ((u8*)0x801F6000)
 #define WINDOW_ARCHIVE_DATA ((u8*)0x801F3000)
 #endif

@@ -30,13 +30,17 @@ u8 small_effect_animations[] = {
     0x0E,
     0x0F,
     0x10,
+#ifndef VERSION_DEMO
     0x09,
     0x00,
     0x00,
+#endif
 };
 
-struct Visual03Bounds small_effect_bounds[14] = {
+struct Visual03Bounds small_effect_bounds[DEMO_ALT(14, 13)] = {
+#ifndef VERSION_DEMO
     { 0x20, 0x20 },
+#endif
     { 0x20, 0x20 },
     { 0x20, 0x20 },
     { 0x20, 0x20 },

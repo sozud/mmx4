@@ -66,8 +66,64 @@ void stage_music_init(struct EffectObj* self)
 #endif
 }
 #endif
+
+#ifdef VERSION_DEMO
+extern u8 stage_music_tracks[16];
+s32 func_80015A50(s32, s32, s32);
+void func_8002DB00_demo(void);
+
+void func_8009AC6C_demo(struct EffectObj* self)
+{
+    switch (self->unk5) {
+    case 0:
+        if ((s16)--self->ext.effect_4.timer < 0) {
+            self->unk5 = 2;
+            if (D_80171EA8 == 0) {
+                func_80013AD8(stage_music_tracks[engine_obj.stage], 2, D_8015D9C8);
+                self->unk5 = 1;
+                D_80171EA8 = 1;
+            } else {
+                func_8002DB00_demo();
+                self->state = 2;
+            }
+        }
+        break;
+    case 1:
+        if (D_801406AC == 2 && D_8013BD40 == 0) {
+            self->unk5++;
+            self->ext.effect_4.unk16 = func_80015A50(2, 0, 0);
+        }
+        break;
+    case 2:
+        if (self->ext.effect_4.unk16 < 0) {
+            self->ext.effect_4.unk16 = func_80015A50(2, 0, 0);
+        } else {
+            self->state++;
+            func_8002DB00_demo();
+        }
+        break;
+    }
+}
+#endif
 u8 stage_music_tracks[16] = {
-#ifdef VERSION_JP
+#if defined(VERSION_DEMO)
+    0x2D,
+    0x2E,
+    0x2F,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+#elif defined(VERSION_JP)
     0x75,
     0x76,
     0x77,
@@ -121,6 +177,7 @@ u8 stage_music_tracks[16] = {
 #endif
 };
 
+#ifndef VERSION_DEMO
 #ifdef MMX4_SATURN
 void stage_music_load(struct EffectObj* self)
 {
@@ -259,6 +316,7 @@ void stage_music_load(struct EffectObj* self)
 }
 
 #endif
+#endif
 
 void stage_music_despawn(struct EffectObj* self)
 {
@@ -276,6 +334,6 @@ void stage_music_update(struct EffectObj* self)
 
 void (*stage_music_state_funcs[])(struct EffectObj*) = {
     stage_music_init,
-    stage_music_load,
+    DEMO_ALT(stage_music_load, func_8009AC6C_demo),
     stage_music_despawn,
 };

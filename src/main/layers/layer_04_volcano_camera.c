@@ -87,8 +87,14 @@ void volcano_camera_section_1_wait(struct LayerObj* arg0)
 
 void volcano_camera_section_1_done(struct LayerObj* arg0)
 {
+#ifdef VERSION_DEMO
+    if (g_Player.x_pos.i.hi >= 0x1425 && g_Player.y_pos.i.hi >= 0x280) {
+        engine_obj.unkF = 1;
+    }
+#else
     arg0->unk5 = 2;
     arg0->unk6 = 0;
+#endif
 }
 
 void volcano_camera_idle(struct LayerObj* arg0)

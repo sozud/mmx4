@@ -86,13 +86,17 @@ void dragonfly_init(struct MainObj* self)
         self->ext.main_10.can_grab = 1;
         break;
     case 1:
+#ifndef VERSION_DEMO
         self->unk7A = 1;
+#endif
         self->unk15 = PLAYER_FACING_RIGHT;
         self->ext.main_10.hold_state = 0;
         self->ext.main_10.can_grab = 1;
         break;
     case 2:
+#ifndef VERSION_DEMO
         self->unk7A = 1;
+#endif
         self->unk15 = 0;
         self->ext.main_10.hold_state = 0;
         self->ext.main_10.can_grab = 1;
@@ -101,7 +105,9 @@ void dragonfly_init(struct MainObj* self)
     case 4:
     case 9:
     case 10:
+#ifndef VERSION_DEMO
         self->unk7A = 1;
+#endif
         self->ext.main_10.hold_state = 0;
         self->ext.main_10.can_grab = 0;
         break;
@@ -109,7 +115,9 @@ void dragonfly_init(struct MainObj* self)
     case 6:
     case 11:
     case 12:
+#ifndef VERSION_DEMO
         self->unk7A = 1;
+#endif
         self->gravity = -0x600;
         self->ext.main_10.hold_state = 0;
         self->ext.main_10.can_grab = 0;
@@ -118,7 +126,9 @@ void dragonfly_init(struct MainObj* self)
     case 8:
     case 13:
     case 14:
+#ifndef VERSION_DEMO
         self->unk7A = 1;
+#endif
         self->gravity = 0x600;
         self->ext.main_10.hold_state = 0;
         self->ext.main_10.can_grab = 0;
@@ -166,7 +176,9 @@ void dragonfly_run(struct MainObj* self)
 
 void dragonfly_finish(struct MainObj* self)
 {
+#ifndef VERSION_DEMO
     self->unk7A = 0;
+#endif
     self->unk62 = 0;
     STOP_SOUND(2, 0xD, 0x6);
     if (self->ext.main_10.hold_state == 3) {
@@ -199,20 +211,26 @@ void dragonfly_wait(struct MainObj* self)
 {
     switch (self->unk2) {
     case 0:
+#ifndef VERSION_DEMO
         self->unk7A = 0;
+#endif
         self->unk5 = 3;
         break;
     case 1:
         if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0xC0) {
             self->ext.main_10.hold_state = 1;
+#ifndef VERSION_DEMO
             self->unk7A = 0;
+#endif
             self->unk5 = 3;
         }
         break;
     case 2:
         if (self->x_pos.i.hi - g_Player.x_pos.i.hi > 0xC0) {
             self->ext.main_10.hold_state = 1;
+#ifndef VERSION_DEMO
             self->unk7A = 0;
+#endif
             self->unk5 = 3;
         }
         break;
@@ -223,7 +241,9 @@ void dragonfly_wait(struct MainObj* self)
     case 7:
     case 8:
         if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0xC0) {
+#ifndef VERSION_DEMO
             self->unk7A = 0;
+#endif
             self->ext.main_10.hold_state = 1;
             self->unk15 = PLAYER_FACING_RIGHT;
             if (!(self->unk2 & 1)) {
@@ -240,7 +260,9 @@ void dragonfly_wait(struct MainObj* self)
     case 12:
     case 13:
     case 14:
+#ifndef VERSION_DEMO
         self->unk7A = 0;
+#endif
         self->unk15 = 0;
         self->ext.main_10.hold_state = 1;
         if (!(self->unk2 & 1)) {
@@ -514,7 +536,7 @@ void dragonfly_carry_squeeze(struct MainObj* self)
     if (self->animation_step.fields.event != 0) {
         self->ext.main_10.timer--;
         if (self->ext.main_10.timer == 9 || self->ext.main_10.timer == 4) {
-            player_damage(2);
+            player_damage(DEMO_ALT(2, 1));
         }
         if (self->ext.main_10.timer == 0) {
             STOP_SOUND(2, 0xE, 0x6);

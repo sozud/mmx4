@@ -18,8 +18,11 @@ config/undefined_funcs_auto.jp.main.txt
 config/undefined_syms_auto.jp.main.txt
 config/undefined_funcs_auto.eu.main.txt
 config/undefined_syms_auto.eu.main.txt
+config/undefined_funcs_auto.demo.main.txt
+config/undefined_syms_auto.demo.main.txt
 main.eu.ld
 main.jp.ld
+main.demo.ld
 expected
 objdiff.json
 replay-runs

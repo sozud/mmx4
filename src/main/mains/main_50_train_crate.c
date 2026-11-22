@@ -64,19 +64,54 @@ void func_80069748(struct MainObj* arg0)
     arg0->animation_table = (const u8* const*)train_crate_animations;
     arg0->attack_box = NULL;
     arg0->terrain_box = NULL;
+#ifdef VERSION_DEMO
+    arg0->ext.main_50.unk84 = arg0->unk2 >> 4;
+    arg0->unk2 &= 0xF;
+    if (arg0->unk2 != 8)
+        arg0->collision_data = D_80108504;
+    else
+        arg0->collision_data = D_801060F0;
+#else
     arg0->ext.main_50.unk84 = (u8)arg0->unk2 >> 4;
     arg0->unk2 &= 0xF;
     if (arg0->ext.main_50.unk84 != 8)
         arg0->collision_data = D_80108504;
     else
         arg0->collision_data = D_80108584;
+#endif
     arg0->unk15 = 0;
-    arg0->hp = 3;
+    arg0->hp = DEMO_ALT(3, 1);
     arg0->state = 1;
     arg0->unk5 = 1;
 }
 
 // train_crate_main
+#ifdef VERSION_DEMO
+void func_800698D8(struct MainObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    train_crate_step_funcs[arg0->unk5](arg0);
+    if (func_8002DD04(arg0) < 0) {
+        arg0->ext.main_50.timer = 0;
+        spawn_debris(6, D_800FFBDC, arg0);
+        if (arg0->unk2 != 8) {
+            if (engine_obj.stage == 8) {
+                ((void (*)(s32, s32, s32))apply_tile_effect)(arg0->unk2 + 8, arg0->x_pos.i.hi - 0x20, arg0->y_pos.i.hi - 0x40);
+            } else {
+                ((void (*)(s32, s32, s32))apply_tile_effect)(arg0->unk2, arg0->x_pos.i.hi - 0x20, arg0->y_pos.i.hi - 0x30);
+                if (arg0->ext.main_50.unk84 != 0)
+                    ((void (*)(s32, s32, s32))apply_tile_effect)(arg0->ext.main_50.unk84, arg0->x_pos.i.hi - 0x20, arg0->y_pos.i.hi);
+            }
+        }
+        arg0->ext.main_50.unk84 = 0;
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    } else if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
+        despawn_object(OBJECT_HEADER(arg0));
+    }
+}
+#else
 void func_800698D8(struct MainObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
@@ -102,6 +137,7 @@ void func_800698D8(struct MainObj* arg0)
         despawn_object(OBJECT_HEADER(arg0));
     }
 }
+#endif
 
 void train_crate_explode(struct MainObj* self)
 {
@@ -127,7 +163,9 @@ u8 train_crate_hurt_box[4] = { 0xE0, 0xE0, 0x40, 0x50 };
 
 u8 D_800FFBDC[6] = { 0, 1, 2, 1, 0, 2 };
 
+#ifndef VERSION_DEMO
 u8 train_crate_debris[6] = { 7, 8, 9, 7, 9, 8 };
+#endif
 
 union AnimationStep train_crate_anim_0[1] = { { 1, 1, 0, 0x00 } };
 
@@ -175,5 +213,9 @@ void (*train_crate_step_funcs[2])() = {
 };
 
 #ifdef MMX4_WIN32
+#ifdef VERSION_DEMO
+extern u8 D_800FFB5C[4];
+#else
 u8 D_800FFB5C[4] = { 0, 0, 13, 21 };
+#endif
 #endif

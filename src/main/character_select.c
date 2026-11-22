@@ -66,19 +66,27 @@ void character_select_state_0(struct EngineObj* arg0)
     func_800127C8(1);
     saturn_music_start(arg0->stage, 0);
 #else
-    need_palette_load = need_palette_load | 1;
-    background_objects[0].unk3 = 0;
+    REQUEST_PALETTE_LOAD();
+    background_objects[0].unk3 = DEMO_ALT(0, 1);
     background_objects[1].unk3 = 0;
-    background_objects[2].unk3 = 1;
+    background_objects[2].unk3 = DEMO_ALT(1, 0);
+#ifndef VERSION_DEMO
     func_8001663C(MUSIC_CHARACTER_SELECT, 0x70);
 #endif
+#endif
+#ifndef VERSION_DEMO
     arg0->unk37 = 0;
+#endif
     func_800129A4(8);
     arg0->cur_character = CHARACTER_X;
+#ifndef VERSION_DEMO
     arg0->character_state.bytes[3] = arg0->cur_character;
+#endif
     arg0->unk1++;
     arg0->unk2 = 0;
+#ifndef VERSION_DEMO
     arg0->unkA = 3;
+#endif
 }
 
 void character_select_state_1(struct EngineObj* arg0)
@@ -136,7 +144,7 @@ void character_select_state_2_substate_0(struct EngineObj* arg0)
         D_8013E188[1] = 0;
         D_8013E188[2] = 0;
         D_8013E188[3] = 0;
-        need_palette_load |= 1;
+        REQUEST_PALETTE_LOAD();
 #endif
     }
 }
@@ -189,6 +197,26 @@ void character_select_state_2(struct EngineObj* arg0)
     character_select_state_2_update_funcs[arg0->unk2](arg0);
 }
 
+#ifdef VERSION_DEMO
+extern u16 D_8012CCFC_demo;
+void func_80038418_demo(struct EngineObj* arg0)
+{
+    u16* pressed = &D_8012CCFC_demo;
+
+    if (*pressed & 0xC000) {
+        arg0->cur_character = 0;
+    }
+    if (*pressed & 0x3000) {
+        arg0->cur_character = 1;
+    }
+    if (*pressed & 0x820) {
+        arg0->character_state.bytes[0] = 1;
+        arg0->unk1++;
+    }
+}
+#endif
+
+#ifndef VERSION_DEMO
 void character_select_state_3(struct EngineObj* arg0)
 {
     s8 temp_v1;
@@ -219,6 +247,7 @@ void character_select_state_3(struct EngineObj* arg0)
     }
     arg0->character_state.bytes[3] = arg0->cur_character;
 }
+#endif
 
 void character_select_state_4(struct EngineObj* arg0)
 {
@@ -228,9 +257,15 @@ void character_select_state_4(struct EngineObj* arg0)
             arg0->character_state.bytes[1] |= 0x80;
         }
     } else if (!(arg0->character_state.bytes[1] & 0x7F)) {
+#ifdef VERSION_DEMO
+        arg0->unk1 = 6;
+        arg0->unk2 = 0;
+        func_800129F0(8);
+#else
         arg0->unk1++;
         arg0->unk2 = 0;
         arg0->unk4 = 20; // how long to wait on green background before fading out
+#endif
     }
 }
 
@@ -254,14 +289,19 @@ void character_select_state_6(struct EngineObj* arg0)
         saturn_stage_commit_video();
         reset_objects();
 #else
+#ifndef VERSION_DEMO
         func_8001D134();
+#endif
         background_objects[0].unk3 = 0;
         background_objects[1].unk3 = 0;
         background_objects[2].unk3 = 0;
         reset_objects();
         func_80012EB8();
+#ifdef VERSION_DEMO
+        func_80013530();
 #endif
-        arg0->state = 3;
+#endif
+        arg0->state = DEMO_ALT(3, arg0->state + 1);
         arg0->unk1 = 0;
         arg0->stage = 0;
         arg0->substage = 0;
@@ -286,6 +326,7 @@ INCLUDE_ASM("main/nonmatchings/character_select", func_80029A48);
 INCLUDE_ASM("main/nonmatchings/character_select", func_80029BD8);
 #else
 // character_select_state_3_update_funcs state 0
+#ifndef VERSION_DEMO
 void func_80029A48(void)
 {
     s8* const phase = &engine_obj.character_state.fields.secret_code_phase;
@@ -330,8 +371,10 @@ void func_80029A48(void)
         break;
     }
 }
+#endif
 
 // character_select_state_3_update_funcs state 1
+#ifndef VERSION_DEMO
 void func_80029BD8(void)
 {
     s8* const phase = &engine_obj.character_state.fields.secret_code_phase;
@@ -387,6 +430,7 @@ void func_80029BD8(void)
         break;
     }
 }
+#endif
 
 #endif
 
@@ -395,10 +439,12 @@ void (*character_select_state_2_update_funcs[])(struct EngineObj*) = {
     character_select_spawn_objects,
 };
 
+#ifndef VERSION_DEMO
 void (*character_select_state_3_update_funcs[])() = {
     func_80029A48,
     func_80029BD8,
 };
+#endif
 
 void character_select_state_0(struct EngineObj*);
 
@@ -418,13 +464,21 @@ void (*D_800F44A8[])(struct EngineObj*) = {
     character_select_state_0,
     character_select_state_1,
     character_select_state_2,
+#ifdef VERSION_DEMO
+    func_80038418_demo,
+#else
     character_select_state_3,
+#endif
     character_select_state_4,
     character_select_state_5,
     character_select_state_6,
 };
 
 #ifdef MMX4_SATURN
+#ifdef VERSION_DEMO
+extern u16 D_800F44C4[9];
+extern u16 D_800F44D8[7];
+#else
 u16 D_800F44C4[9] = {
     SATURN_PAD_B,
     SATURN_PAD_B,
@@ -446,9 +500,20 @@ u16 D_800F44D8[7] = {
     SATURN_PAD_RIGHT,
     SATURN_PAD_B,
 };
+#endif
 #elif defined(MMX4_WIN32)
+#ifdef VERSION_DEMO
+extern u32 D_800F44D8;
+extern u32 D_800F44C4;
+#else
 u32 D_800F44D8 = 0x4000;
 u32 D_800F44C4 = 0x1000;
+#endif
+#else
+#ifdef VERSION_DEMO
+extern u16 D_800F44C4[9];
+extern u16 D_800F44D6;
+extern u16 D_800F44D8[8];
 #else
 u16 D_800F44C4[9] = {
 #ifdef VERSION_JP
@@ -483,4 +548,5 @@ u16 D_800F44D8[8] = {
 #endif
     0,
 };
+#endif
 #endif

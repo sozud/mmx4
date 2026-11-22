@@ -37,8 +37,8 @@ void thorn_trap_extend_high(struct MainObj* arg0);
 
 extern void (*thorn_trap_state_funcs[])(struct MainObj*);
 
-extern union AnimationStep* thorn_trap_animations[21];
-extern s8 D_800FDC40[4][2];
+extern union AnimationStep* thorn_trap_animations[DEMO_ALT(21, 17)];
+extern s8 D_800FDC40[DEMO_ALT(4, 5)][2];
 
 void thorn_trap_update(struct MainObj* self)
 {
@@ -58,7 +58,9 @@ void func_8005B8D0(struct MainObj* self)
 {
     s32 variant;
 
+#ifndef VERSION_DEMO
     self->active |= 4;
+#endif
     self->state++;
     self->unk5 = 2;
     self->bg_offset = g_Player.bg_offset;
@@ -75,7 +77,7 @@ void func_8005B8D0(struct MainObj* self)
     self->hurt_box = NULL;
     self->attack_box = thorn_trap_attack_box;
     self->hp = 6;
-    self->contact_damage = 6;
+    self->contact_damage = DEMO_ALT(6, 4);
     variant = ((s8)self->unk2 >> 1) % 3;
     self->invincibility_timer = 0;
     self->unk62 = 0;
@@ -187,7 +189,7 @@ void thorn_trap_windup(struct MainObj* self)
 void thorn_trap_strike(struct MainObj* self)
 {
     if (self->animation_step.fields.event != 0) {
-        self->contact_damage = 9;
+        self->contact_damage = DEMO_ALT(9, 6);
         self->attack_box = &thorn_trap_strike_boxes;
         func_8002D9BC(self);
         self->attack_box = &D_800FD9F8;
@@ -200,7 +202,7 @@ void thorn_trap_strike(struct MainObj* self)
         func_8002D9BC(self);
         self->attack_box = &D_800FDA08;
         func_8002D9BC(self);
-        self->contact_damage = 6;
+        self->contact_damage = DEMO_ALT(6, 4);
         self->attack_box = &thorn_trap_attack_box;
         return;
     }
@@ -229,10 +231,14 @@ void func_8005BDE4(struct MainObj* self)
     struct ShotObj* shot;
 
     if (self->animation_step.fields.event != 0) {
+#ifdef VERSION_DEMO
+        choice = get_random_nonzero() % 5;
+#else
         if (self->unk2 > 9)
             choice = (u8)get_random_nonzero() % 3;
         else
             choice = (u8)get_random_nonzero() % 2;
+#endif
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -320,7 +326,9 @@ void func_8005C0E4(struct MainObj* self)
         self->state++;
         self->unk5 = 0;
         self->unk42 &= 0x7FFF;
+#ifndef VERSION_DEMO
         update_on_screen(BASE_OBJECT(self), 0x70, 0x30);
+#endif
         return;
     }
 
@@ -363,6 +371,22 @@ void func_8005C0E4(struct MainObj* self)
         spawn_debris_offset(5, D_800FDC28, self,
             self->unk15 != 0 ? FIXED(-71) : FIXED(71), FIXED(1));
 
+#ifdef VERSION_DEMO
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(-40) : FIXED(40), 0);
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(-12) : FIXED(12), FIXED(-1));
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(21) : FIXED(-21), FIXED(2));
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(51) : FIXED(-51), FIXED(-1));
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(80) : FIXED(-80), 0);
+#else
         spawn_debris_offset(1, D_800FDC30, self,
             self->unk15 != 0 ? FIXED(-40) : FIXED(40), 0);
 
@@ -374,6 +398,7 @@ void func_8005C0E4(struct MainObj* self)
 
         spawn_debris_offset(1, D_800FDC3C, self,
             self->unk15 != 0 ? FIXED(51) : FIXED(-51), FIXED(-1));
+#endif
     }
 
     func_8002D9BC(self);
@@ -427,6 +452,22 @@ void func_8005C474(struct MainObj* self)
         spawn_debris_offset(5, D_800FDC28, self,
             self->unk15 != 0 ? FIXED(-71) : FIXED(71), FIXED(1));
 
+#ifdef VERSION_DEMO
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(-40) : FIXED(40), 0);
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(-12) : FIXED(12), FIXED(-1));
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(21) : FIXED(-21), FIXED(2));
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(51) : FIXED(-51), FIXED(-1));
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(80) : FIXED(-80), 0);
+#else
         spawn_debris_offset(1, D_800FDC30, self,
             self->unk15 != 0 ? FIXED(-40) : FIXED(40), 0);
 
@@ -438,6 +479,7 @@ void func_8005C474(struct MainObj* self)
 
         spawn_debris_offset(1, D_800FDC3C, self,
             self->unk15 != 0 ? FIXED(51) : FIXED(-51), FIXED(-1));
+#endif
     }
 
     health = self->ext.main_31.unk83;
@@ -658,6 +700,7 @@ union AnimationStep thorn_trap_anim_16[] = {
     { 1, 0, 0, 0x2B },
 };
 
+#ifndef VERSION_DEMO
 union AnimationStep thorn_trap_anim_17[] = {
     { 1, 0, 0, 0x33 },
 };
@@ -673,6 +716,7 @@ union AnimationStep thorn_trap_anim_19[] = {
 union AnimationStep thorn_trap_anim_20[] = {
     { 1, 0, 0, 0x36 },
 };
+#endif
 
 union AnimationStep* thorn_trap_animations[] = {
     thorn_trap_anim_0,
@@ -692,10 +736,12 @@ union AnimationStep* thorn_trap_animations[] = {
     thorn_trap_anim_14,
     thorn_trap_anim_15,
     thorn_trap_anim_16,
+#ifndef VERSION_DEMO
     thorn_trap_anim_17,
     thorn_trap_anim_18,
     thorn_trap_anim_19,
     thorn_trap_anim_20,
+#endif
 };
 
 u8 D_800FDC28[] = {
@@ -709,6 +755,7 @@ u8 D_800FDC28[] = {
     0x00,
 };
 
+#ifndef VERSION_DEMO
 u8 D_800FDC30[] = {
     0x11,
     0x00,
@@ -736,13 +783,24 @@ u8 D_800FDC3C[] = {
     0x00,
     0x00,
 };
+#endif
 
+#ifdef VERSION_DEMO
+s8 D_800FDC40[5][2] = {
+    { -92, -5 },
+    { -60, -1 },
+    { -14, 7 },
+    { 19, -9 },
+    { 54, -2 },
+};
+#else
 s8 D_800FDC40[4][2] = {
     { 54, -2 },
     { 19, -9 },
     { -14, 7 },
     { 0, 0 },
 };
+#endif
 
 void (*thorn_trap_state_funcs[])(struct MainObj*) = {
     func_8005B8D0,

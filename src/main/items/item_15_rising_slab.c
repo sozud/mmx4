@@ -68,7 +68,7 @@ void rising_slab_rise(struct ItemObj* arg0)
         arg0->unk2C = 0;
     }
     arg0->unk68 = (struct Unk_unk68*)rising_slab_crush_boxes[arg0->unk2];
-    if (!(arg0->unk7C.timer & 7)) {
+    if (!(arg0->unk7C.timer & DEMO_ALT(7, 3))) {
         func_800B0CA0(0x10, (u8)(arg0->ext.packed + 3), MAIN_OBJECT(arg0), 4, 1);
         arg0->ext.packed ^= 1;
     }
@@ -108,8 +108,8 @@ u8 rising_slab_crush_boxes[4][16] = {
 };
 
 u8 rising_slab_terrain_boxes[4][16] = {
-    { 0x00, 0xB8, 0x30, 0x10 },
-    { 0x00, 0x48, 0x30, 0x10 },
-    { 0x00, 0xC0, 0x30, 0x10 },
-    { 0x00, 0x40, 0x30, 0x10 },
+    { 0x00, DEMO_ALT(0xB8, 0xC0), 0x30, 0x10 },
+    { 0x00, DEMO_ALT(0x48, 0x40), 0x30, 0x10 },
+    { 0x00, DEMO_ALT(0xC0, 0xB8), 0x30, 0x10 },
+    { 0x00, DEMO_ALT(0x40, 0x48), 0x30, 0x10 },
 };

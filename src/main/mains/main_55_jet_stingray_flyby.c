@@ -45,12 +45,14 @@ extern s16 jet_stingray_flyby_explosion_offsets[8][2];
 
 void func_8006EB40(struct MainObj* self)
 {
+#ifndef VERSION_DEMO
     if (engine_obj.palette_flags & 0x10) {
         self->state = 2;
         return;
     }
+#endif
     self->on_screen = 1;
-    self->state = 1;
+    self->state = DEMO_ALT(1, self->state + 1);
     self->unk5 = 2;
     self->bg_offset = g_Player.bg_offset;
     self->unk15 = PLAYER_FACING_RIGHT;
@@ -451,7 +453,7 @@ void jet_stingray_flyby_main(struct MainObj* self)
     if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x60) == 0) {
         update_on_screen(BASE_OBJECT(self), 0x40, 0x30);
     } else {
-        self->state = 2;
+        self->state = DEMO_ALT(2, self->state + 1);
     }
 }
 
@@ -559,6 +561,7 @@ union AnimationStep jet_stingray_flyby_anim_9[] = {
     { 2, 0, 0, 0x2E },
 };
 
+#ifndef VERSION_DEMO
 union AnimationStep jet_stingray_flyby_anim_10[] = {
     { 1, 0, 0, 0x2F },
 };
@@ -566,9 +569,10 @@ union AnimationStep jet_stingray_flyby_anim_10[] = {
 union AnimationStep jet_stingray_flyby_anim_11[] = {
     { 1, 0, 0, 0x30 },
 };
+#endif
 
 struct AnimationTable12 {
-    union AnimationStep* entries[12];
+    union AnimationStep* entries[DEMO_ALT(12, 10)];
     s32 count;
 };
 
@@ -584,8 +588,10 @@ struct AnimationTable12 jet_stingray_flyby_animations = {
         jet_stingray_flyby_anim_7,
         jet_stingray_flyby_anim_8,
         jet_stingray_flyby_anim_9,
+#ifndef VERSION_DEMO
         jet_stingray_flyby_anim_10,
         jet_stingray_flyby_anim_11,
+#endif
     },
     0x00000052,
 };
@@ -627,7 +633,11 @@ void (*jet_stingray_flyby_state_funcs[3])() = {
 void jet_stingray_flyby_despawn(struct MainObj* self)
 {
     engine_obj.enable_boss = 0;
+#ifdef VERSION_DEMO
+    ZeroObjectState(OBJECT_HEADER(self));
+#else
     despawn_object_permanently(OBJECT_HEADER(self));
+#endif
 }
 
 void jet_stingray_flyby_update(struct MainObj* self)

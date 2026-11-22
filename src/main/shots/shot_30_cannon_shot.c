@@ -44,7 +44,7 @@ void func_8009FB9C(struct ShotObj* arg0)
 
     arg0->on_screen = 1;
     arg0->unk5C = 1;
-    arg0->unk60 = 6;
+    arg0->unk60 = DEMO_ALT(6, 4);
     arg0->unk50.data = (const u8*)cannon_shot_boxes;
     arg0->unk58.collision_bounds = D_80106170;
     arg0->unk54 = (const u8*)cannon_shot_boxes;
@@ -76,9 +76,13 @@ void func_8009FB9C(struct ShotObj* arg0)
         arg0->y_pos.i.hi = owner->y_pos.i.hi + 0x12;
     }
     set_animation(arg0, 3);
+#ifdef VERSION_DEMO
+    arg0->unk84.value = 0x10;
+#else
     cannon_shot_spawn_flash(arg0);
     arg0->unk84.value = 0x10;
     arg0->unk8C.word = 0;
+#endif
 }
 
 // cannon_shot_fly
@@ -106,7 +110,9 @@ void func_8009FD00(struct ShotObj* arg0)
             return;
         }
     }
+#ifndef VERSION_DEMO
     arg0->unk8C.word = 1;
+#endif
     arg0->state++;
 }
 
@@ -119,6 +125,7 @@ void cannon_shot_idle(struct ShotObj* self)
 {
 }
 
+#ifndef VERSION_DEMO
 void cannon_shot_spawn_flash(struct ShotObj* self)
 {
     struct VisualObj* obj = find_free_visual_obj();
@@ -138,6 +145,7 @@ void cannon_shot_spawn_flash(struct ShotObj* self)
         obj->y_pos.val = self->y_pos.val;
     }
 }
+#endif
 
 u8 cannon_shot_boxes[4][4] = {
     { 0xF3, 0xFA, 0x17, 0x0A },

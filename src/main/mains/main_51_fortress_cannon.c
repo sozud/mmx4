@@ -14,7 +14,7 @@ extern struct Unk_unk68 D_800FFC54;
 extern struct Unk_unk68 D_800FFC58;
 extern struct Unk_unk68 D_800FFC5C;
 
-extern union AnimationStep* fortress_cannon_animations[14];
+extern union AnimationStep* fortress_cannon_animations[DEMO_ALT(14, 13)];
 
 // fortress_cannon_state_funcs
 extern void (*fortress_cannon_state_funcs[])(struct MainObj*);
@@ -60,7 +60,7 @@ void func_80069AD0(struct MainObj* obj)
 {
     obj->active = 0x41;
     obj->hp = 0x1E;
-    obj->contact_damage = 4;
+    obj->contact_damage = DEMO_ALT(4, 5);
     obj->invincibility_timer = 0;
     obj->bg_offset = g_Player.bg_offset;
     obj->unk18.val = obj->x_pos.val;
@@ -109,7 +109,7 @@ void func_80069BE4(struct MainObj* self)
     }
 
     if (check < 0) {
-        spawn_debris(5, fortress_cannon_debris, self);
+        spawn_debris(DEMO_ALT(5, 4), fortress_cannon_debris, self);
         self->on_screen = 0;
         self->unk7C = 0x1E;
         self->unk7E = 5;
@@ -117,7 +117,7 @@ void func_80069BE4(struct MainObj* self)
         return;
     }
 
-    if (func_8002B1E8(BASE_OBJECT(self), 0x60, 0x40) == 0) {
+    if (func_8002B1E8(BASE_OBJECT(self), DEMO_ALT(0x60, 0x40), 0x40) == 0) {
         update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
         return;
     }
@@ -173,7 +173,11 @@ void fortress_cannon_fire_start(struct MainObj* self)
         set_animation(self, 1);
     }
     func_8001540C(2, SATURN_SOUND(0xA1, 0x71), self);
+#ifdef VERSION_DEMO
+    if (self->ext.main_51.unk84 == 2 && engine_obj.cur_character == 0) {
+#else
     if (self->unk2 == 0 && self->ext.main_51.unk84 == 2 && engine_obj.cur_character == 0) {
+#endif
         fortress_cannon_fire_double_shot(self);
     } else {
         fortress_cannon_fire_shot(self);
@@ -190,7 +194,7 @@ void func_80069F28(struct MainObj* self)
         return;
     }
     self->unk6 = 0;
-    if (self->unk2 == 0) {
+    if (DEMO_ALT(self->unk2 == 0, 1)) {
         if ((s32)++self->ext.main_51.unk84 < engine_obj.cur_character + 3) {
             return;
         }
@@ -463,6 +467,7 @@ union AnimationStep fortress_cannon_anim_12[] = {
     { 1, 0, 0, 0x24 },
 };
 
+#ifndef VERSION_DEMO
 union AnimationStep fortress_cannon_anim_13[] = {
     { 3, 0, 1, 0x25 },
     { 3, 0, 1, 0x26 },
@@ -470,8 +475,9 @@ union AnimationStep fortress_cannon_anim_13[] = {
     { 3, 0, 1, 0x28 },
     { 3, 0, -4, 0x29 },
 };
+#endif
 
-union AnimationStep* fortress_cannon_animations[14] = {
+union AnimationStep* fortress_cannon_animations[DEMO_ALT(14, 13)] = {
     fortress_cannon_anim_0,
     fortress_cannon_anim_1,
     fortress_cannon_anim_2,
@@ -485,10 +491,23 @@ union AnimationStep* fortress_cannon_animations[14] = {
     fortress_cannon_anim_10,
     fortress_cannon_anim_11,
     fortress_cannon_anim_12,
+#ifndef VERSION_DEMO
     fortress_cannon_anim_13,
+#endif
 };
 
-u8 fortress_cannon_debris[8] = { 8, 9, 10, 11, 12, 0, 0, 0 };
+u8 fortress_cannon_debris[DEMO_ALT(8, 4)] = {
+    8,
+    9,
+    10,
+    11,
+#ifndef VERSION_DEMO
+    12,
+    0,
+    0,
+    0,
+#endif
+};
 
 void (*fortress_cannon_state_funcs[4])(struct MainObj*) = {
     func_80069AD0,

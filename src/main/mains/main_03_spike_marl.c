@@ -433,7 +433,11 @@ void spike_marl_roll_entry_update(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     if (--self->unk7C == 0) {
+#ifdef VERSION_DEMO
+        self->x_speed = self->unk15 & PLAYER_FACING_RIGHT ? FIXED(4) : FIXED(-4);
+#else
         self->x_speed = self->unk15 & PLAYER_FACING_RIGHT ? FIXED(2) : FIXED(-2);
+#endif
         self->unk5 = 5;
         self->unk6 = 0;
     }

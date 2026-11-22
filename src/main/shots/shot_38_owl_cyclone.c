@@ -21,7 +21,9 @@ void owl_cyclone_despawn(struct ShotObj*);
 void owl_cyclone_idle(struct ShotObj*);
 
 u8 owl_cyclone_hit_box[4] = { 0xFC, 0xFC, 0x08, 0x08 };
+#ifndef VERSION_DEMO
 u8 owl_cyclone_column_box[4] = { 0xF0, 0x92, 0x1F, 0xD4 };
+#endif
 
 void owl_cyclone_update(struct ShotObj* self)
 {
@@ -52,26 +54,26 @@ void func_800A42C8(struct ShotObj* arg0)
     arg0->unk58.data = (u8*)D_80105FF0;
     arg0->unk50.data = owl_cyclone_hit_box;
     arg0->unk5C = 1;
-    arg0->unk60 = 6;
+    arg0->unk60 = DEMO_ALT(6, 4);
     arg0->unk84.value = 4;
     switch (arg0->unk2) {
     case 0:
         set_animation(arg0, 0xF);
-        arg0->x_vel.val = 0x45000;
-        arg0->y_vel.val = 0x45000;
+        arg0->x_vel.val = DEMO_ALT(0x45000, 0x2E000);
+        arg0->y_vel.val = DEMO_ALT(0x45000, 0x2E000);
         dx = 0xB;
         dy = -0x15;
         break;
     case 1:
         set_animation(arg0, 0x10);
-        arg0->x_vel.val = 0x52800;
-        arg0->y_vel.val = 0x2A000;
+        arg0->x_vel.val = DEMO_ALT(0x52800, 0x37000);
+        arg0->y_vel.val = DEMO_ALT(0x2A000, 0x1D000);
         dx = 0x10;
         dy = -0x13;
         break;
     case 2:
         set_animation(arg0, 0x11);
-        arg0->x_vel.val = 0x60000;
+        arg0->x_vel.val = DEMO_ALT(0x60000, 0x40000);
         arg0->y_vel.val = 0;
         if (owner->unk17 == 4) {
             dx = 0x19;
@@ -83,18 +85,19 @@ void func_800A42C8(struct ShotObj* arg0)
         break;
     case 3:
         set_animation(arg0, 0x12);
-        arg0->x_vel.val = 0x52800;
-        arg0->y_vel.val = -0x2A000;
+        arg0->x_vel.val = DEMO_ALT(0x52800, 0x37000);
+        arg0->y_vel.val = DEMO_ALT(-0x2A000, -0x1D000);
         dx = 0x19;
         dy = 0;
         break;
     case 4:
         set_animation(arg0, 0x13);
-        arg0->x_vel.val = 0x45000;
-        arg0->y_vel.val = -0x45000;
+        arg0->x_vel.val = DEMO_ALT(0x45000, 0x2E000);
+        arg0->y_vel.val = DEMO_ALT(-0x45000, -0x2E000);
         dx = 0x14;
         dy = 5;
         break;
+#ifndef VERSION_DEMO
     case 5:
         arg0->unk58.data = (u8*)D_80105FF0;
         arg0->unk50.data = owl_cyclone_column_box;
@@ -109,9 +112,12 @@ void func_800A42C8(struct ShotObj* arg0)
         arg0->unk60 = 9;
         arg0->timer = 1;
         break;
+#endif
     }
+#ifndef VERSION_DEMO
     if (arg0->unk2 >= 5)
         return;
+#endif
     if (owner->unk15 == 0) {
         arg0->x_pos.i.hi = owner->x_pos.i.hi - dx;
         arg0->x_vel.val *= -1;
@@ -127,6 +133,23 @@ void owl_cyclone_fly(struct ShotObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
+#ifdef VERSION_DEMO
+    owl_cyclone_spawn_trail(self);
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        self->state++;
+        return;
+    }
+    if (owner->active == 0) {
+        self->state++;
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
+    } else {
+        self->state++;
+    }
+#else
     func_8002D9BC(self);
     if (self->unk2 < 5) {
         owl_cyclone_spawn_trail(self);
@@ -175,6 +198,7 @@ void owl_cyclone_fly(struct ShotObj* self)
     } else {
         self->state++;
     }
+#endif
 }
 
 void owl_cyclone_despawn(struct ShotObj* self)
@@ -198,7 +222,11 @@ void owl_cyclone_spawn_trail(struct ShotObj* self)
         misc = find_free_misc_obj();
         if (misc != 0) {
             misc->active = 0x41;
+#ifdef VERSION_DEMO
+            misc->id = 0x1F;
+#else
             misc->id = 0x23;
+#endif
             misc->unk2 = shot->unk2;
             misc->ext.pointer.unk50 = shot;
             misc->bg_offset = shot->bg_offset;

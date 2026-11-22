@@ -55,7 +55,9 @@ void train_boss_update(struct MainObj* self)
 
 void train_boss_init(struct MainObj* self)
 {
+#ifndef VERSION_DEMO
     self->active |= 4;
+#endif
     self->on_screen = 0;
     self->hp = 0;
     self->contact_damage = 2;
@@ -135,7 +137,11 @@ void train_boss_defeated(struct MainObj* self)
         }
     }
     if (self->unk6 == 0) {
+#ifdef VERSION_DEMO
+        if (g_Player.unk5 == 2) {
+#else
         if ((g_Player.x_pos.i.hi <= self->x_pos.i.hi + 0x69) || (g_Player.x_pos.i.hi >= 0x1B36)) {
+#endif
             player_start_script_action(0x14, PLAYER_FACING_RIGHT);
             self->unk6 = 1;
         }
@@ -159,12 +165,14 @@ extern u8 D_800FF8B0[8];
 
 void func_80065EA4(struct MainObj* self)
 {
+#ifndef VERSION_DEMO
     if (self->x_pos.i.hi + 0x69 < g_Player.x_pos.i.hi && (u8)(get_layout_screen(1, 0xA0, 0x80) - 0x23) < 2) {
         g_Player.x_pos.i.hi = background_objects[0].x_pos.i.hi + 0x12C;
         g_Player.y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x64;
         g_Player.unk18 = g_Player.x_pos;
         g_Player.unk1C = g_Player.y_pos;
     }
+#endif
     func_80066970(self);
     switch ((s16)(get_layout_screen(1, -0x20, 0x80) - 0x20)) {
     case 9:
@@ -199,16 +207,22 @@ void func_80065EA4(struct MainObj* self)
         break;
     case 3:
         if (self->unk5 == 5) {
+#ifndef VERSION_DEMO
             (SP_BG_TILEMAP + layout_size)[2] = 0x1D;
             (SP_BG_TILEMAP + layout_size)[3] = 0x1D;
             (SP_BG_TILEMAP + layout_size)[4] = 0x1D;
+#endif
             (SP_BG_TILEMAP + layout_size)[7] = 0x1D;
             self->unk7C = 0xC;
             self->state = 4;
         }
         break;
     }
+#ifdef VERSION_DEMO
+    if (self->unk6 == 0 && g_Player.unk5 == 2) {
+#else
     if (self->unk6 == 0 && (g_Player.x_pos.i.hi <= self->x_pos.i.hi + 0x69 || g_Player.x_pos.i.hi >= 0x1B36)) {
+#endif
         player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         self->unk6 = 1;
     }
@@ -217,6 +231,22 @@ void func_80065EA4(struct MainObj* self)
 }
 
 // train_boss_despawn
+#ifdef VERSION_DEMO
+void func_800661AC(struct MainObj* self)
+{
+    func_80066970(self);
+    if (--self->unk7C == 0) {
+        engine_obj.unkF = 0x40;
+        despawn_object(OBJECT_HEADER(self));
+    }
+    if (self->unk6 == 0 && g_Player.unk5 == 2) {
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
+        self->unk6 = 1;
+    }
+    collide_with_players(PLAYER_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
+}
+#else
 void func_800661AC(struct MainObj* self)
 {
 #ifdef VERSION_JP
@@ -243,6 +273,7 @@ void func_800661AC(struct MainObj* self)
     collide_with_players(PLAYER_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
 }
+#endif
 
 // train_boss_update_parts
 extern u8 D_800FF8B0[8];
@@ -363,7 +394,11 @@ void func_800665BC(struct MainObj* self)
     }
     part = find_free_main_obj();
     if (part != NULL) {
+#ifdef VERSION_DEMO
+        part->active = 0x41;
+#else
         part->active = 0x45;
+#endif
         part->id = 0x2E;
         part->unk2 = 0;
         part->unk40 = self->unk40;
@@ -382,7 +417,11 @@ void func_800665BC(struct MainObj* self)
         part = find_free_main_obj();
         if (part == NULL)
             continue;
+#ifdef VERSION_DEMO
+        part->active = 0x41;
+#else
         part->active = 0x45;
+#endif
         part->id = 0x2F;
         part->unk2 = index;
         part->unk40 = self->unk40;
@@ -427,7 +466,7 @@ void train_boss_arrive_fill_hp(struct MainObj* self)
 {
     if (self->hp < 0x30) {
         if (--self->unk7E == 0) {
-            func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
+            func_8001540C(0, SATURN_SOUND(DEMO_ALT(0xE, 0xF), 0x14), NULL);
             self->unk7E = 3;
         }
         self->hp++;

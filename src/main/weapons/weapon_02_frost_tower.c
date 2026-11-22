@@ -66,9 +66,11 @@ void frost_tower_update(struct WeaponObj* arg0)
     if (player->input_locked != 0) {
         should_change_state = 1;
     }
+#ifndef VERSION_DEMO
     if (player->capsule_state != 0) {
         should_change_state = 1;
     }
+#endif
     if (player->weapon != 2) {
         should_change_state = 1;
     }
@@ -102,8 +104,10 @@ void func_80093D78(struct WeaponObj* arg0)
     struct Weapon2Ext* ext;
 
     arg0->on_screen = 1;
+#ifndef VERSION_DEMO
     arg0->unk50 = frost_tower_hit_box;
     arg0->unk64 = 1;
+#endif
     arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[3];
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0xB];
     arg0->animation_table = D_8011C094;
@@ -124,7 +128,7 @@ void func_80093D78(struct WeaponObj* arg0)
     arg0->unk2C = 0;
     arg0->unk49 = 0;
     arg0->unk67 = 1;
-    ext->lifetime = 0x96;
+    ext->lifetime = DEMO_ALT(0x96, 0xF0);
     ext->timer = 8;
     set_animation(arg0, 0);
     arg0->state++;
@@ -140,7 +144,9 @@ void frost_tower_main(struct WeaponObj* arg0)
 
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x28, 0x38) == 0) {
         if (ext->lifetime == 0) {
+#ifndef VERSION_DEMO
             func_8001540C(0, WEAPON_SOUND_FROST, arg0);
+#endif
             for (i = 0; i < 8U; i++) {
                 frost_tower_spawn_shard(arg0);
             }
@@ -163,6 +169,26 @@ void frost_tower_main(struct WeaponObj* arg0)
     frost_tower_hide(arg0);
 }
 
+#ifdef VERSION_DEMO
+extern u8 D_800D86B8_demo[];
+extern struct Unk_unk68 D_800D86BC_demo;
+void func_80084E48_demo(struct WeaponObj* arg0)
+{
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->unk50 = D_800D86B8_demo;
+        arg0->animation_step.fields.event = 0;
+        arg0->unk64 = 1;
+    }
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->unk68 = &D_800D86BC_demo;
+        arg0->animation_step.fields.event = 0;
+        arg0->unk67 = 0;
+        arg0->unk5 = 1;
+    }
+}
+#endif
+
+#ifndef VERSION_DEMO
 void frost_tower_form(struct WeaponObj* arg0)
 {
     if (arg0->animation_step.fields.event & 0x40) {
@@ -176,11 +202,12 @@ void frost_tower_form(struct WeaponObj* arg0)
         arg0->unk5 = 1;
     }
 }
+#endif
 
 void frost_tower_check_ground(struct WeaponObj* arg0)
 {
     if (!(arg0->unk70 & 8)) {
-        arg0->unk67 = -1;
+        arg0->unk67 = DEMO_ALT(-1, 1);
         arg0->x_vel.val = 0;
         arg0->unk28.val = 0;
         arg0->y_vel.val = 0;
@@ -194,7 +221,9 @@ void frost_tower_fall(struct WeaponObj* arg0)
     u32 i;
 
     if (arg0->unk70 & 8) {
+#ifndef VERSION_DEMO
         func_8001540C(0, WEAPON_SOUND_FROST, arg0);
+#endif
         arg0->unk67 = 0;
         i = 0;
         do {
@@ -251,9 +280,11 @@ void frost_tower_charged_update(struct WeaponObj* arg0)
     if (player->input_locked != 0) {
         disabled = 1;
     }
+#ifndef VERSION_DEMO
     if (player->capsule_state != 0) {
         disabled = 1;
     }
+#endif
     if (player->weapon != 2) {
         disabled = 1;
     }
@@ -313,7 +344,9 @@ void func_800942E8(struct WeaponObj* arg0)
             strength = 0x40;
             break;
         }
+#ifndef VERSION_DEMO
         func_8001540C(0, WEAPON_SOUND_FROST, 0);
+#endif
         start_screen_shake_x(strength, 8, 1);
         if (++ext[3] == 4)
             frost_tower_hide(arg0);
@@ -398,9 +431,11 @@ void frost_shard_update(struct MiscObj* arg0)
     if (g_Player.input_locked != 0) {
         var_a1 = 1;
     }
+#ifndef VERSION_DEMO
     if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
+#endif
     if (g_Player.weapon != 2) {
         var_a1 = 1;
     }
@@ -418,6 +453,7 @@ void frost_shard_update(struct MiscObj* arg0)
     frost_particle_fall(arg0);
 }
 
+#ifndef VERSION_DEMO
 void frost_shard_init(struct MiscObj* arg0)
 {
     s32* player_gfx;
@@ -434,7 +470,9 @@ void frost_shard_init(struct MiscObj* arg0)
     arg0->unk16 = 0;
     set_animation(arg0, (get_random() & 3) + 2);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void frost_sparkle_update(struct MiscObj* arg0)
 {
     if (arg0->state == 0) {
@@ -443,7 +481,9 @@ void frost_sparkle_update(struct MiscObj* arg0)
         frost_particle_fall(arg0);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void frost_sparkle_init(struct MiscObj* arg0)
 {
     s32* sprite_frames;
@@ -457,10 +497,19 @@ void frost_sparkle_init(struct MiscObj* arg0)
     arg0->unk16 = 0;
     set_animation(arg0, frost_sparkle_animations[get_random() & 7]);
 }
+#endif
 
 void frost_particle_launch(struct MiscObj* self)
 {
     self->on_screen = 1;
+#ifdef VERSION_DEMO
+    self->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[3];
+    self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0xB];
+    self->animation_table = D_8011C094;
+    self->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    self->unk42 = WEAPON_PALETTE_1;
+    self->unk16 = 1;
+#endif
 
     if (get_random() & 1) {
         self->x_pos.i.hi += get_random() & 0xF;
@@ -484,6 +533,9 @@ void frost_particle_launch(struct MiscObj* self)
     self->y_vel.val = frost_particle_y_vels[get_random() & 7];
     self->unk28 = 0;
     self->unk2C = FIXED(0.3125);
+#ifdef VERSION_DEMO
+    set_animation(self, (get_random() & 3) + 2);
+#endif
     self->state++;
     self->unk5 = 0;
     update_on_screen(BASE_OBJECT(self), 0x14, 0x18);
@@ -506,6 +558,19 @@ void frost_particle_fall(struct MiscObj* arg0)
     }
 }
 
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 frost_tower_hit_box[];
+extern struct Unk_unk68 frost_tower_terrain_box[];
+extern struct Unk_unk68 frost_tower_charged_part_box[];
+extern void (*frost_tower_state_funcs[])(struct WeaponObj*);
+extern void (*frost_tower_step_funcs[])(struct WeaponObj*);
+extern void (*frost_tower_charged_state_funcs[])(struct WeaponObj*);
+extern void (*frost_tower_charged_part_state_funcs[])(struct WeaponObj*);
+extern u16 frost_tower_charged_part_offsets[];
+extern u8 frost_sparkle_animations[];
+extern s32 frost_particle_x_vels[];
+extern s32 frost_particle_y_vels[];
+#else
 struct Unk_unk68 frost_tower_hit_box[] = {
     { -22, -44, 0x2C, 0x56 },
 };
@@ -586,3 +651,45 @@ s32 frost_particle_y_vels[] = {
     (s32)0x00058000,
     (s32)0x00028000,
 };
+#endif
+
+#ifdef VERSION_DEMO
+void (*frost_tower_state_funcs[4])(struct WeaponObj*) = {
+    func_80093D78,
+    frost_tower_main,
+    frost_tower_despawn,
+    frost_tower_despawn,
+};
+
+void (*frost_tower_step_funcs[3])(struct WeaponObj*) = {
+    func_80084E48_demo,
+    frost_tower_check_ground,
+    frost_tower_fall,
+};
+
+u8 D_800D86B8_demo[4] = { 0xEA, 0xD4, 0x2C, 0x56 };
+
+struct Unk_unk68 D_800D86BC_demo = { 0, 0, 6, 27 };
+
+void (*frost_tower_charged_state_funcs[4])(struct WeaponObj*) = {
+    func_80094280,
+    func_800942E8,
+    frost_tower_despawn,
+    frost_tower_despawn,
+};
+
+void (*frost_tower_charged_part_state_funcs[4])(struct WeaponObj*) = {
+    func_800944B8,
+    frost_tower_charged_part_main,
+    frost_tower_despawn,
+    frost_tower_despawn,
+};
+
+u16 frost_tower_charged_part_offsets[6] = { 0, 0, 0x40, 0x60, 0x28, 0x70 };
+
+struct Unk_unk68 frost_tower_charged_part_box[1] = { { -34, -46, 66, 96 } };
+
+s32 frost_particle_x_vels[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
+
+s32 frost_particle_y_vels[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };
+#endif

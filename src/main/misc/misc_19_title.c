@@ -19,6 +19,7 @@ extern struct TitleObjectInit title_object_inits[];
 extern u32* title_animations[];
 
 // g_TitleUpdateFuncs state 0
+#ifndef VERSION_DEMO
 void title_init(struct MiscObj* self)
 {
     u8 temp_a1 = self->unk2;
@@ -49,8 +50,10 @@ void title_init(struct MiscObj* self)
     self->animation_step.fields.frame_index = title_object_inits[temp_a1].sprite;
     is_on_screen(self);
 }
+#endif
 
 // g_TitleUpdateFuncs state 1
+#ifndef VERSION_DEMO
 void title_draw(struct MiscObj* self)
 {
     if (self->unk2 == 0xF) {
@@ -80,6 +83,7 @@ void title_draw(struct MiscObj* self)
         is_on_screen(self);
     }
 }
+#endif
 
 // g_TitleUpdateFuncs state 2
 void title_despawn(struct MiscObj* self)
@@ -93,6 +97,56 @@ void TitleUpdate(struct MiscObj* self)
     g_TitleUpdateFuncs[self->state](self);
 }
 
+#ifdef VERSION_DEMO
+s16 D_800DCE1C_demo[5][2] = {
+    { 100, 64 },
+    { 56, 120 },
+    { 124, 152 },
+    { 168, 152 },
+    { 0, 0 },
+};
+
+s16 D_800DCE30_demo[12][2] = {
+    { 120, 72 },
+    { 216, 72 },
+    { 160, 144 },
+    { 96, 144 },
+    { 160, 160 },
+    { 152, 184 },
+    { 152, 184 },
+    { 160, 216 },
+    { 248, 120 },
+    { 272, 104 },
+    { 120, 72 },
+    { 216, 72 },
+};
+
+u8 D_800DCE60_demo[12] = { 0, 4, 6, 6, 10, 10, 10, 10, 10, 10, 0, 4 };
+
+union AnimationStep D_800DCE6C_demo[] = {
+    { 1, 0, 0, 0x16 },
+    { 1, 0, 0, 0x17 },
+    { 1, 0, 0, 0x18 },
+    { 1, 0, 0, 0x19 },
+    { 1, 0, 0, 0x03 },
+};
+
+union AnimationStep D_800DCE80_demo[] = {
+    { 1, 0, 0, 0x00 },
+    { 1, 0, 0, 0x01 },
+    { 1, 0, 0, 0x02 },
+    { 1, 0, 0, 0x03 },
+    { 1, 0, 0, 0x04 },
+    { 1, 0, 0, 0x05 },
+    { 1, 0, 0, 0x06 },
+    { 1, 0, 0, 0x07 },
+    { 1, 0, 0, 0x08 },
+    { 1, 0, 0, 0x09 },
+    { 1, 0, 0, 0x1A },
+    { 1, 0, 0, 0x1B },
+    { 1, 0, 0, 0x1C },
+};
+#else
 struct TitleObjectInit title_object_inits[] = {
 #ifdef VERSION_JP
     { 120, 72, 0, 0 },
@@ -148,6 +202,7 @@ struct TitleObjectInit title_object_inits[] = {
     { 176, 72, 34, 8 },
 #endif
 };
+#endif
 
 union AnimationStep title_anim_0[] = {
     { 2, 0, 1, 0x0A },
@@ -186,6 +241,23 @@ union AnimationStep title_anim_1[] = {
     { 3, 0, 0, 0x19 },
 };
 
+#ifdef VERSION_DEMO
+void func_800ABFDC_demo(struct MiscObj* self);
+void func_800AC12C_demo(struct MiscObj* self);
+
+u32* title_animations[] = {
+    D_800DCE6C_demo,
+    D_800DCE80_demo,
+    title_anim_0,
+    title_anim_1,
+};
+
+void (*g_TitleUpdateFuncs[3])(struct MiscObj*) = {
+    func_800ABFDC_demo,
+    func_800AC12C_demo,
+    title_despawn,
+};
+#else
 u32* title_animations[] = { title_anim_0, title_anim_1 };
 
 void (*g_TitleUpdateFuncs[3])(struct MiscObj*) = {
@@ -193,3 +265,4 @@ void (*g_TitleUpdateFuncs[3])(struct MiscObj*) = {
     title_draw,
     title_despawn,
 };
+#endif

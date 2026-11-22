@@ -9,6 +9,10 @@ void object_afterimage_follow(struct VisualObj*);
 void object_afterimage_start(struct VisualObj*);
 void object_afterimage_wait(struct VisualObj*);
 void object_afterimage_main(struct VisualObj*);
+#ifdef VERSION_DEMO
+void func_80096AA0_demo(struct VisualObj*);
+void func_80096B88_demo(struct VisualObj*);
+#endif
 
 // object_afterimage_step_funcs
 extern void (*object_afterimage_step_funcs[])(struct VisualObj*);
@@ -20,6 +24,10 @@ void object_afterimage_catch_up(struct VisualObj*);
 extern void saturn_queue_object(void*);
 #endif
 
+#ifdef VERSION_DEMO
+extern void (*object_afterimage_state_funcs[])(struct VisualObj*);
+extern void (*object_afterimage_step_funcs[])(struct VisualObj*);
+#else
 void (*object_afterimage_state_funcs[])(struct VisualObj*) = {
     object_afterimage_wait,
     object_afterimage_main,
@@ -30,7 +38,9 @@ void (*object_afterimage_step_funcs[])(struct VisualObj*) = {
     object_afterimage_linger,
     object_afterimage_catch_up,
 };
+#endif
 
+#ifndef VERSION_DEMO
 void object_afterimage_update(struct VisualObj* arg0)
 {
     u8 temp_a1;
@@ -49,7 +59,9 @@ void object_afterimage_update(struct VisualObj* arg0)
     }
     object_afterimage_state_funcs[arg0->state](arg0);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void object_afterimage_wait(struct VisualObj* arg0)
 {
     s8 temp_v0;
@@ -66,16 +78,81 @@ void object_afterimage_wait(struct VisualObj* arg0)
         owner->pad4B[0] = 0;
     }
 }
+#endif
 
 void object_afterimage_main(struct VisualObj* arg0)
 {
+#ifdef VERSION_DEMO
+    if (arg0->state == 0) {
+        func_80096AA0_demo(arg0);
+    } else {
+        func_80096B88_demo(arg0);
+    }
+#else
     object_afterimage_step_funcs[arg0->unk5](arg0);
+#endif
 #ifdef MMX4_SATURN
     if (arg0->on_screen)
         saturn_queue_object(arg0);
 #endif
 }
 
+#ifdef VERSION_DEMO
+s32 D_800D9768_demo[8] = {
+    FIXED(-3),
+    FIXED(-2),
+    FIXED(1.5),
+    FIXED(2.5),
+    FIXED(-3.5),
+    FIXED(-2.5),
+    FIXED(2),
+    FIXED(3),
+};
+s32 D_800D9788_demo[8] = {
+    FIXED(3.5),
+    FIXED(4.5),
+    FIXED(6),
+    FIXED(3),
+    FIXED(4),
+    FIXED(5),
+    FIXED(5.5),
+    FIXED(2.5),
+};
+
+void func_80096AA0_demo(struct VisualObj* arg0)
+{
+    arg0->on_screen = 1;
+    arg0->unk3C = arg0->unk50->unk3C;
+    arg0->animation_table = arg0->unk50->animation_table;
+    arg0->unk40 = arg0->unk50->unk40;
+    arg0->unk42 = arg0->unk50->unk42 & 0x7FFF;
+    arg0->unk54 = 0x12C;
+    arg0->unk16 = 1;
+    arg0->unk2C = 0x5000;
+    arg0->x_vel.val = D_800D9768_demo[get_random() & 7] + arg0->unk50->x_vel.val / 2;
+    arg0->y_vel.val = D_800D9788_demo[get_random() & 7];
+    set_animation(arg0, arg0->unk56);
+    arg0->state++;
+    is_on_screen(BASE_OBJECT(arg0));
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_80096B88_demo(struct VisualObj* arg0)
+{
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
+        if (arg0->on_screen ^= 1) {
+            is_on_screen(BASE_OBJECT(arg0));
+        }
+    } else {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
+#endif
+
+#ifndef VERSION_DEMO
 void object_afterimage_trail(struct VisualObj* arg0)
 {
     struct PlayerObj* owner;
@@ -91,7 +168,9 @@ void object_afterimage_trail(struct VisualObj* arg0)
         arg0->unk5++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void object_afterimage_linger(struct VisualObj* arg0)
 {
     s16 temp_v0;
@@ -111,7 +190,9 @@ void object_afterimage_linger(struct VisualObj* arg0)
         arg0->unk5++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void object_afterimage_catch_up(struct VisualObj* arg0)
 {
     struct PlayerObj* owner;
@@ -129,7 +210,9 @@ void object_afterimage_catch_up(struct VisualObj* arg0)
         owner->pad4B[0] = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void object_afterimage_follow(struct VisualObj* arg0)
 {
     struct PlayerObj* parent;
@@ -138,7 +221,9 @@ void object_afterimage_follow(struct VisualObj* arg0)
     arg0->x_pos.val = parent->unk18.val;
     arg0->y_pos.val = parent->unk1C.val;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void object_afterimage_start(struct VisualObj* arg0)
 {
     struct ObjectHeader* parent;
@@ -154,3 +239,4 @@ void object_afterimage_start(struct VisualObj* arg0)
     arg0->unk5 = 0;
     arg0->state = state + 1;
 }
+#endif

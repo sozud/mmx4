@@ -17,6 +17,7 @@ void lemon_main(struct WeaponObj*);
 void lemon_deflected(struct WeaponObj*);
 #include "weapon_resources.h"
 
+#ifndef VERSION_DEMO
 struct Unk_unk68 lemon_hit_box[] = {
     { -10, -6, 0x12, 0xB },
 };
@@ -45,6 +46,15 @@ struct Unk_unk68 D_80108720[] = {
 struct Unk_unk68 nova_strike_hit_box[] = {
     { -52, -34, 0x7C, 0x42 },
 };
+#endif
+
+#ifdef VERSION_DEMO
+static inline void buster_shot_hide(struct WeaponObj* arg0)
+{
+    arg0->on_screen = 0;
+    arg0->state = 3;
+}
+#endif
 
 void lemon_update(struct WeaponObj* arg0)
 {
@@ -58,6 +68,9 @@ void lemon_init(struct WeaponObj* arg0)
     arg0->active = 0x21;
     arg0->on_screen = 1;
     arg0->unk50 = (const u8*)lemon_hit_box;
+#ifdef VERSION_DEMO
+    arg0->unk38 = NULL;
+#endif
     arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
     arg0->animation_table = D_8011BF40;
     arg0->unk40 = WEAPON_TEXTURE_BASE;
@@ -89,7 +102,9 @@ void lemon_main(struct WeaponObj* arg0)
         animate_object(ANIMATED_OBJECT(arg0));
         if (arg0->unk98 == 0) {
             buster_shot_launch(ANIMATED_OBJECT(arg0));
+#ifndef VERSION_DEMO
             update_on_screen(BASE_OBJECT(arg0), 0xC, 8);
+#endif
             return;
         }
         lemon_deflect(arg0);
@@ -109,6 +124,9 @@ void buster_shot_launch(struct AnimatedObj* arg0)
     } else {
         move_object(MOVING_OBJECT(arg0));
     }
+#ifdef VERSION_DEMO
+    update_on_screen(BASE_OBJECT(arg0), 0xC, 8);
+#endif
 }
 void lemon_deflect(struct WeaponObj* arg0)
 {
@@ -141,12 +159,14 @@ void lemon_deflected(struct WeaponObj* arg0)
     buster_shot_hide(arg0);
 }
 
+#ifndef VERSION_DEMO
 void buster_shot_hide(struct WeaponObj* arg0)
 {
     arg0->on_screen = 0;
     arg0->state = 3;
     arg0->unk50 = 0;
 }
+#endif
 
 void buster_shot_despawn(struct WeaponObj* arg0)
 {
@@ -158,9 +178,43 @@ void buster_shot_despawn(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
+#ifdef VERSION_DEMO
+// buster_shot_place_at_muzzle
+void buster_shot_follow_muzzle(struct WeaponObj* arg0)
+{
+    struct PlayerObj* owner;
+    s32 offset;
+
+    if (arg0->unk84.word == 0) {
+        owner = arg0->owner;
+        if (owner->attacking == 0) {
+            arg0->unk84.word = 1;
+        }
+        if (owner->unk15 != arg0->unk15) {
+            arg0->unk84.word = 1;
+        }
+        if (arg0->unk84.word == 0) {
+            offset = owner->animation_step.fields.frame_index * 2;
+            if (arg0->unk15 != 0) {
+                arg0->x_pos.i.hi = owner->x_pos.i.hi - D_8011B230.components[offset];
+            } else {
+                arg0->x_pos.i.hi = owner->x_pos.i.hi + D_8011B230.components[offset];
+            }
+            arg0->y_pos.i.hi = owner->y_pos.i.hi + D_8011B230.components[offset + 1];
+        }
+    }
+}
+#endif
+
 void (*lemon_state_funcs[])(struct WeaponObj*) = {
     lemon_init,
     lemon_main,
     lemon_deflected,
     buster_shot_despawn,
 };
+
+#ifdef VERSION_DEMO
+struct Unk_unk68 lemon_hit_box[] = {
+    { -10, -6, 0x12, 0xB },
+};
+#endif

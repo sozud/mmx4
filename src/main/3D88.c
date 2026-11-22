@@ -100,7 +100,7 @@ void func_80013530(void);
 void func_80013588(void)
 {
     u8 sp10;
-    sp10 = 0xA0;
+    sp10 = DEMO_ALT(0xA0, 0x80);
 #ifdef MMX4_PC
     CdInit();
     CdControl(CdlSetmode, &sp10, 0);
@@ -149,6 +149,25 @@ extern s32 D_80137CCC;
 
 extern CdlLOC D_80137DE8;
 
+#ifdef VERSION_DEMO
+s8 func_800136B0(void)
+{
+    u32 count;
+
+    if ((u32)D_80137CBC >= 0x801U) {
+        CdGetSector(D_80137CC4, 0x200);
+        D_80137CBC -= 0x800;
+        D_80137CC4 += 0x800;
+    } else {
+        CdGetSector(D_80137CC4, ((u32)(D_80137CBC + 3) >> 2));
+        count = (u32)(D_80137CBC + 3) >> 2;
+        if (count != 0x200) {
+            CdGetSector(&D_801374BC, 0x200 - count);
+        }
+        D_80137CBC = 0;
+    }
+}
+#else
 s8 func_800136B0(void)
 {
     s32 temp_v0_2;
@@ -186,6 +205,7 @@ s8 func_800136B0(void)
     return 0;
 #endif
 }
+#endif
 
 void func_800137F0(void)
 {
@@ -234,6 +254,22 @@ extern s32 D_80137DE4;
 
 extern u8 D_801406AC;
 
+#ifdef VERSION_DEMO
+void func_80013890(u32 arg0, u8* arg1)
+{
+    do {
+
+    } while (func_8001385C() & 0x40);
+    D_80137CD8 = 0;
+    D_80137CCC = func_80013614(arg0, &D_80137CC8);
+    D_80137CC4 = (u8*)arg1;
+    D_80137CBC = D_80137CC8;
+    func_80013968();
+    while (D_801406AC != 2 || D_8013BD40 == 1) {
+        func_800127C8(1);
+    }
+}
+#else
 void func_80013890(u32 arg0, u8* arg1)
 {
     if (CdReady(1, NULL) != 0) {
@@ -254,16 +290,19 @@ void func_80013890(u32 arg0, u8* arg1)
     D_80137CBC = D_80137CC8;
     func_80013968();
 }
+#endif
 
 void func_80013968(void)
 {
     u8 sp10;
 
-    sp10 = 0xA0;
+    sp10 = DEMO_ALT(0xA0, 0x80);
     D_801406AC = 0;
     D_80137CEC = 0;
     CdIntToPos(D_80137CCC, &D_80137CF8);
+#ifndef VERSION_DEMO
     D_80137CCC -= 1;
+#endif
 loop_1:
     if (CdReady(1, NULL) != 0) {
         goto loop_1;
@@ -278,6 +317,22 @@ loop_1:
     func_80013650();
 }
 
+#ifdef VERSION_DEMO
+void MyCdReadyCallback(u8 status, u8* result)
+{
+    if (D_801406AC != 0) {
+        D_80137CEC += 1;
+        if (CdReady(1, NULL) != 1) {
+            func_80013968();
+        } else {
+            func_800136B0();
+            if (D_80137CBC == 0) {
+                func_800137F0();
+            }
+        }
+    }
+}
+#else
 void MyCdReadyCallback(u8 status, u8* result)
 {
     (void)status;
@@ -301,6 +356,7 @@ void MyCdReadyCallback(u8 status, u8* result)
         }
     }
 }
+#endif
 
 extern struct CdCompletionSlot D_80137D04[16];
 
@@ -313,6 +369,7 @@ void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
     u8 i;
     s16 temp_a0;
     s8 temp_a0_2;
+#ifndef VERSION_DEMO
     if (CdReady(1, 0) != 0) {
         CdControlB(9U, 0, 0);
     }
@@ -333,7 +390,8 @@ void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
         D_80137D04[i].pending = 0;
         i += 1;
     } while (i < 0x10U);
-    switch (D_80137DDC) {
+#endif
+    switch (DEMO_ALT(D_80137DDC, arg1)) {
     case 0:
         D_80137DCC = MAIN_ARCHIVE_ARENA;
         i = 0;
@@ -374,6 +432,7 @@ void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
         } while (i < 6U);
         break;
 
+#ifndef VERSION_DEMO
     case 4:
         D_80137DD0 = (s32)arg2;
         D_80137DCC = D_8015D9C8;
@@ -382,6 +441,7 @@ void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
             D_8013E198[2] = -1;
         }
         break;
+#endif
     }
 
     D_80137CD8 = 1;
@@ -415,7 +475,10 @@ void func_80013DA8(void)
 {
     u8 sp10;
 
-    sp10 = 0xA0;
+    sp10 = DEMO_ALT(0xA0, 0x80);
+#ifdef VERSION_DEMO
+    D_801406AC = 0;
+#endif
     D_80137CEC = 0;
     CdIntToPos(D_80137CCC, &D_80137CF8);
 loop_1:
@@ -477,15 +540,22 @@ void func_80013E68(u8 status, u8* result)
     (void)result;
     *(D_80010014_t*)sp10 = D_80010014;
 
+#ifndef VERSION_DEMO
     if (D_801406AC != 0x80) {
+#endif
         if (CdReady(1, NULL) != 1) {
-            CdReadyCallback(NULL);
-            CdControlB(9U, NULL, NULL);
-            D_801406AC = 0x80;
+#ifdef VERSION_DEMO
+            func_80013DA8();
+#else
+        CdReadyCallback(NULL);
+        CdControlB(9U, NULL, NULL);
+        D_801406AC = 0x80;
+#endif
             return;
         }
         if (D_80137CEC == 0) {
             D_80137CD0 = D_80169498.sector;
+#ifndef VERSION_DEMO
             CdGetSector(&D_80137DE8, 3);
             if (CdPosToInt(&D_80137DE8) != D_80137CCC) {
                 CdReadyCallback(NULL);
@@ -493,6 +563,7 @@ void func_80013E68(u8 status, u8* result)
                 D_801406AC = 0x80;
                 return;
             }
+#endif
             CdGetSector(D_80137CD0, 0x200);
             D_80137CDC = *D_80137CD0++;
             D_80137CC8 = *D_80137CD0++;
@@ -508,7 +579,7 @@ void func_80013E68(u8 status, u8* result)
 #ifdef VERSION_EU
         sp10[D_80137CD4.word >> 16]();
 #else
-        sp10[D_80137CD4.f.handler]();
+    sp10[D_80137CD4.f.handler]();
 #endif
         if (D_80137CBC == 0) {
             if ((D_80137CD4.word >> 16) == 0) {
@@ -529,7 +600,9 @@ void func_80013E68(u8 status, u8* result)
         if (D_80137CDC == 0) {
             func_800137F0();
         }
+#ifndef VERSION_DEMO
     }
+#endif
 }
 
 void func_80014140(void)
@@ -538,11 +611,15 @@ void func_80014140(void)
         D_80137CE8 = 0;
         D_80137CC4 = D_80137DC4;
     }
+#ifdef VERSION_DEMO
+    func_800136B0();
+#else
     if (func_800136B0() == -1) {
         CdReadyCallback(0);
         CdControlB(CdlPause, NULL, NULL);
         D_801406AC = 0x80;
     }
+#endif
 }
 
 void func_800141BC(void)
@@ -553,12 +630,16 @@ void func_800141BC(void)
         D_80137CE8 = 0;
         D_80137CC4 = D_80137DC4;
     }
+#ifdef VERSION_DEMO
+    func_800136B0();
+#else
     if (func_800136B0() == -1) {
         CdReadyCallback(0);
         CdControlB(CdlPause, NULL, NULL);
         D_801406AC = 0x80;
         return;
     }
+#endif
     if (D_80137CBC == 0) {
         index = (D_80137CD4.word >> 8) & 0xFF;
         if (D_8013E1C8[index] != -1) {
@@ -577,6 +658,64 @@ extern u16 D_8012F4AC;
 
 extern u16 D_8012F4B0;
 
+#ifdef VERSION_DEMO
+void func_800142BC(void)
+{
+    struct CdCompletionSlot* slot;
+    u16 temp_v0_3;
+    u16* temp_v0_2;
+
+    D_80137CF4++;
+    if (D_80137CF4 - D_80137CF0 >= 7) {
+        func_80013DA8();
+        return;
+    }
+    if (D_80137CE8 != 0) {
+        temp_v0_2 = &D_800F1614[D_80137CD4.f.arg].x;
+        D_8012F4A8 = *temp_v0_2++;
+        temp_v0_3 = *temp_v0_2;
+        D_80137CE8 = 0;
+        D_8012F4AC = temp_v0_3;
+        D_8012F4B0 = temp_v0_3 & 0x100;
+    }
+    D_80137CC4 = D_8012F4B4.sectors[D_801374B8];
+    func_800136B0();
+    D_8013BD40 = 1;
+    D_80137D04[D_801374B8].pending = 1;
+    D_80137D04[D_801374B8].callback = 1;
+    slot = &D_80137D04[D_801374B8];
+    slot->callback_arg = (D_8012F4A8 << 16) | D_8012F4AC;
+    if (++D_801374B8 == 0x10) {
+        D_801374B8 = 0;
+    }
+    switch ((D_80137CD4.word >> 8) & 0xFF) {
+    case 0:
+        if (D_8012F4AC == D_8012F4B0 + 0xF0) {
+            D_8012F4A8 += 0x40;
+            D_8012F4AC = D_8012F4B0;
+        } else {
+            D_8012F4AC += 0x10;
+        }
+        return;
+    case 1:
+        if (D_8012F4AC == D_8012F4B0 + 0xA0) {
+            D_8012F4A8 += 0x40;
+            D_8012F4AC = D_8012F4B0;
+        } else {
+            D_8012F4AC += 0x10;
+        }
+        return;
+    case 2:
+        if (D_8012F4AC == 0xF0) {
+            D_8012F4A8 += 0x40;
+            D_8012F4AC = 0xB0;
+        } else {
+            D_8012F4AC += 0x10;
+        }
+        return;
+    }
+}
+#else
 void func_800142BC(void)
 {
     struct CdCompletionSlot* slot;
@@ -638,6 +777,7 @@ void func_800142BC(void)
         }
     }
 }
+#endif
 
 extern u32 D_80137CE0;
 
@@ -652,9 +792,13 @@ void func_80014514(void)
     struct SoundArchive* archive;
     D_80137CF4++;
     if (D_80137CF4 - D_80137CF0 >= 7) {
+#ifdef VERSION_DEMO
+        func_80013DA8();
+#else
         CdReadyCallback(0);
         CdControlB(9, 0, 0);
         D_801406AC = 0x80;
+#endif
         return;
     }
     temp_s1 = D_80137CD4.word >> 8;
@@ -666,12 +810,14 @@ void func_80014514(void)
         D_80141EE8[temp_s0] = temp_a0 = (u8*)archive + archive->vab_offset;
         temp_v0_2 = SsVabOpenHeadSticky(temp_a0, archive->vab_id, D_80137DD0);
         D_8013E198[temp_s0] = temp_v0_2;
+#ifndef VERSION_DEMO
         if (temp_v0_2 == -1) {
             CdReadyCallback(0);
             CdControlB(9, 0, 0);
             D_801406AC = 0x80;
             return;
         }
+#endif
         SpuSetTransferMode(0);
         var_a1 = D_80137CBC;
         D_80137CE8 = 0;
@@ -682,12 +828,16 @@ void func_80014514(void)
     }
     D_80137CC4 = D_8012F4B4.sectors[D_801374B8];
 
+#ifdef VERSION_DEMO
+    func_800136B0();
+#else
     if (func_800136B0() == -1) {
         CdReadyCallback(0);
         CdControlB(9, 0, 0);
         D_801406AC = 0x80;
         return;
     }
+#endif
     D_8013BD40 = 1;
     D_80137D04[D_801374B8].pending = 1;
     D_80137D04[D_801374B8].callback = 2;
@@ -713,7 +863,61 @@ const D_80010014_t D_80010014 = {
     func_80014140, func_800142BC, func_80014514, func_800141BC
 };
 
-#ifdef VERSION_JP
+#ifdef VERSION_DEMO
+struct Unk5 D_800F0E18[] = {
+    { (s32)0x0000001Au, (s32)0x00002000u, (s32)0x00000002u },
+    { (s32)0x0000001Eu, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000021u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000024u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000027u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x0000002Au, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x0000002Du, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000030u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000033u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000036u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000039u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x0000003Cu, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x0000003Fu, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000042u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000045u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000048u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x0000004Bu, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x0000004Eu, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000051u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000054u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000057u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x0000005Au, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x0000005Du, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000060u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000063u, (s32)0x00001800u, (s32)0x00000001u },
+    { (s32)0x00000066u, (s32)0x00002000u, (s32)0x00000002u },
+    { (s32)0x0000006Au, (s32)0x00010800u, (s32)0x00000002u },
+    { (s32)0x0000008Bu, (s32)0x000BB800u, (s32)0x00000012u },
+    { (s32)0x00000202u, (s32)0x000BA800u, (s32)0x00000011u },
+    { (s32)0x00000377u, (s32)0x00002000u, (s32)0x00000E10u },
+    { (s32)0x0000037Bu, (s32)0x00002000u, (s32)0x00000E10u },
+    { (s32)0x0000037Fu, (s32)0x000A6800u, (s32)0x0000000Cu },
+    { (s32)0x000004CCu, (s32)0x000B2800u, (s32)0x0000000Eu },
+    { (s32)0x00000631u, (s32)0x00095000u, (s32)0x0000000Cu },
+    { (s32)0x0000075Bu, (s32)0x000AC800u, (s32)0x0000000Cu },
+    { (s32)0x000008B4u, (s32)0x000B1800u, (s32)0x0000000Cu },
+    { (s32)0x00000A17u, (s32)0x000A3000u, (s32)0x0000000Cu },
+    { (s32)0x00000B5Du, (s32)0x00084800u, (s32)0x0000000Au },
+    { (s32)0x00000C66u, (s32)0x00085000u, (s32)0x0000000Cu },
+    { (s32)0x00000D70u, (s32)0x0006B800u, (s32)0x0000000Au },
+    { (s32)0x00000E47u, (s32)0x00072800u, (s32)0x0000000Au },
+    { (s32)0x00000F2Cu, (s32)0x0003D800u, (s32)0x0000000Au },
+    { (s32)0x00000FA7u, (s32)0x0003E800u, (s32)0x0000000Au },
+    { (s32)0x00001024u, (s32)0x0001A800u, (s32)0x00000007u },
+    { (s32)0x00001059u, (s32)0x0002A000u, (s32)0x00000007u },
+    { (s32)0x000010ADu, (s32)0x00027800u, (s32)0x00000002u },
+    { (s32)0x000010FCu, (s32)0x00022800u, (s32)0x00000003u },
+    { (s32)0x00001141u, (s32)0x00034000u, (s32)0x00000003u },
+    { (s32)0x000011A9u, (s32)0x00012E0Cu, (s32)0x0000000Cu },
+    { (s32)0x000011D0u, (s32)0x02A86200u, (s32)0x01640001u },
+    { (s32)0x00005C60u, (s32)0x036B6E00u, (s32)0x01640001u },
+};
+#elif defined(VERSION_JP)
 struct Unk5 D_800F0E18[] = {
 #include "archive_data.jp.inc"
 };
@@ -953,7 +1157,9 @@ struct CdImageOrigin D_800F1614[] = {
     { 0x340, 0x100 },
     { 0x380, 0x100 },
     { 0x1C0, 0x000 },
+#ifndef VERSION_DEMO
     { 0x200, 0x000 },
+#endif
 #ifdef MMX4_WIN32
     { 0x002, 0x000 },
 #endif
@@ -1037,6 +1243,28 @@ void func_80014968(void)
 }
 #ifndef MMX4_PC
 
+#ifdef VERSION_DEMO
+extern s16 D_800FBCBC_demo;
+
+void func_80014A90(s32 arg0, s32 arg1)
+{
+    cd_fade_requested = 0;
+    D_8013BD44 = 0;
+    while (D_801406AC != 2 || D_8013BD40 == 1) {
+        if ((cd_fade_requested == 0) && !(arg1 & 0xFF) && (main_bss_state.transition.active == 0)) {
+            func_800129A4(8);
+            cd_fade_requested += 1;
+        }
+        func_80013404(arg0 & 0xFF);
+        func_800127C8(1);
+    }
+    D_8013BD44 = 1;
+    D_800FBCBC_demo = 0x78;
+    if (arg1 & 0xFF) {
+        func_80013530();
+    }
+}
+#else
 void func_80014A90(s32 arg0, s32 arg1)
 {
     u8 sp10;
@@ -1079,7 +1307,19 @@ void func_80014A90(s32 arg0, s32 arg1)
     }
 }
 #endif
+#endif
 #ifndef MMX4_PC
+#ifdef VERSION_DEMO
+void func_80014C70(void)
+{
+    D_8013BD44 = 0;
+    while (D_801406AC != 2 || D_8013BD40 == 1) {
+        func_800127C8(1);
+    }
+    D_8013BD44 = 1;
+    D_800FBCBC_demo = 0x78;
+}
+#else
 void func_80014C70(void)
 {
     u8 sp10;
@@ -1115,4 +1355,5 @@ void func_80014C70(void)
     D_8013BD44 = 1;
     D_80141BD2 = 0x78;
 }
+#endif
 #endif

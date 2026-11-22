@@ -104,7 +104,7 @@ void ice_bird_main(struct MainObj* self)
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(6, ice_bird_debris, self);
         drop_item(BASE_OBJECT(self), 8);
-        self->state = 2;
+        self->state = DEMO_ALT(2, self->state + 1);
         return;
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
@@ -114,7 +114,7 @@ void ice_bird_main(struct MainObj* self)
     if (self->x_pos.val > g_Player.x_pos.val && self->ext.main_14.unk8C == 0) {
         self->ext.main_14.unk94 = 1;
     }
-    self->state = 2;
+    self->state = DEMO_ALT(2, self->state + 1);
 }
 
 void ice_bird_despawn(struct MainObj* self)
@@ -232,7 +232,9 @@ void ice_bird_blast_release(struct MainObj* self)
         effect->unk7 = 0;
         effect->x_pos.val = self->x_pos.val;
         effect->y_pos.val = self->y_pos.val;
+#ifndef VERSION_DEMO
         effect->ext.effect_17.source = ANIMATED_OBJECT(self);
+#endif
     }
 
     animate_object(ANIMATED_OBJECT(self));

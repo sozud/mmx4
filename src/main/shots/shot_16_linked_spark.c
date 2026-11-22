@@ -69,7 +69,7 @@ void func_8009C45C(struct ShotObj* self)
         if (self->animation_step.fields.relative_step == 0) {
             set_animation(self, self->unk84.value + 1);
             self->unk5 = 1;
-            if (owner->active != 0 && owner->id == 0x1D && owner->state == 1 && owner->unk2 >= 0)
+            if (DEMO_ALT(owner->active != 0 && owner->id == 0x1D && owner->state == 1 && owner->unk2 >= 0, owner->state == 1))
                 owner->unk5 = 4;
         } else {
 #ifdef MMX4_PC
@@ -97,7 +97,11 @@ void linked_spark_despawn(struct ShotObj* self)
     struct WeaponObj* weapon;
 
     weapon = self->unk7C;
+#ifdef VERSION_DEMO
+    if ((weapon->active != 0) && (weapon->id == 0x1D)) {
+#else
     if ((weapon->active != 0) && (weapon->id == 0x1D) && (weapon->unk2 >= 0)) {
+#endif
         weapon->unk80.bytes[1] &= 0xFE;
         weapon->ext.weapon_29.unk90 = 0;
     }

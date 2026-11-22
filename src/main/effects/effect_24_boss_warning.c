@@ -34,21 +34,28 @@ void func_800BABA8(struct EffectObj* arg0)
 {
     struct EffectObj* spawned;
 
+#ifndef VERSION_DEMO
     if (engine_obj.stage > 0 && engine_obj.stage < 9
         && ((u8)engine_obj.palette_flags & (1 << (engine_obj.stage - 1)))) {
         engine_obj.unkF = 1;
         return;
     }
+#endif
     spawned = find_free_effect_obj();
     if (spawned != NULL) {
         spawned->active = 1;
         spawned->id = 4;
+#ifndef VERSION_DEMO
         arg0->ext.effect_24.spawned_effect = spawned;
+#endif
     }
     arg0->state++;
     arg0->ext.effect_24.timer = 0;
     arg0->ext.effect_24.unk1A = 5;
     arg0->ext.effect_24.unk1B = 0;
+#ifdef VERSION_DEMO
+    arg0->ext.effect_24.spawned_effect = NULL;
+#endif
 }
 
 // boss_warning_spawn_tiles
@@ -67,7 +74,7 @@ void func_800BAC58(struct EffectObj* arg0)
             arg0->ext.effect_24.timer = 2;
             if (arg0->ext.effect_24.unk1B == 0x16) {
                 arg0->ext.effect_24.unk1B = 0;
-                arg0->ext.effect_24.timer = 0xB4;
+                arg0->ext.effect_24.timer = DEMO_ALT(0xB4, 120);
                 arg0->unk5++;
             }
         }
@@ -76,13 +83,16 @@ void func_800BAC58(struct EffectObj* arg0)
     }
 }
 
+#ifndef VERSION_DEMO
 void boss_warning_wait(struct EffectObj* self)
 {
     if (--self->ext.effect_24.timer == 0) {
         self->unk5++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void boss_warning_wait_tiles(struct EffectObj* self)
 {
     struct EffectObj* spawned;
@@ -116,7 +126,26 @@ void boss_warning_wait_tiles(struct EffectObj* self)
         }
     }
 }
+#endif
 
+#ifdef VERSION_DEMO
+void boss_warning_advance_tiles(struct EffectObj* self)
+{
+    struct EffectObj* effect;
+
+    if (self->ext.effect_24.timer == 0) {
+        effect = boss_warning_tiles[self->ext.effect_24.unk1B];
+        effect->unk5++;
+        self->ext.effect_24.unk1B++;
+        self->ext.effect_24.timer = 2;
+        if (self->ext.effect_24.unk1B == 0x16) {
+            self->state++;
+        }
+    } else {
+        self->ext.effect_24.timer--;
+    }
+}
+#else
 void boss_warning_advance_tiles(struct EffectObj* self)
 {
     struct EffectObj* effect;
@@ -138,7 +167,9 @@ void boss_warning_advance_tiles(struct EffectObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void boss_warning_finish(struct EffectObj* self)
 {
     self->ext.effect_24.unk1A = 0xA;
@@ -146,10 +177,12 @@ void boss_warning_finish(struct EffectObj* self)
         self->state++;
     }
 }
+#endif
 
 void boss_warning_main(struct EffectObj* self)
 {
     boss_warning_step_funcs[self->unk5](self);
+#ifndef VERSION_DEMO
     if (self->ext.effect_24.unk1A == 0) {
 #ifdef MMX4_GAMECUBE
         if (gc_stage_music_opened == 0) {
@@ -163,6 +196,7 @@ void boss_warning_main(struct EffectObj* self)
     } else {
         self->ext.effect_24.unk1A--;
     }
+#endif
 }
 
 void boss_warning_despawn(struct EffectObj* self)
@@ -175,6 +209,18 @@ void boss_warning_update(struct EffectObj* self)
     boss_warning_state_funcs[self->state](self);
 }
 
+#ifdef VERSION_DEMO
+void (*boss_warning_step_funcs[])(struct EffectObj*) = {
+    func_800BAC58,
+    boss_warning_advance_tiles,
+};
+
+void (*boss_warning_state_funcs[])(struct EffectObj*) = {
+    func_800BABA8,
+    boss_warning_main,
+    boss_warning_despawn,
+};
+#else
 void (*boss_warning_step_funcs[5])(struct EffectObj*) = {
     func_800BAC58,
     boss_warning_wait,
@@ -188,3 +234,4 @@ void (*boss_warning_state_funcs[])(struct EffectObj*) = {
     boss_warning_main,
     boss_warning_despawn,
 };
+#endif

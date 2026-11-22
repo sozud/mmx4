@@ -5,6 +5,7 @@
 #include "main/mains/main_63_hatch_turret.h"
 #include "main/objects.h"
 #include "main/55C4.h"
+#include "main/mains/main_64_cyber_peacock.h"
 
 // hatch_turret_state_funcs
 extern void (*hatch_turret_state_funcs[])(struct MainObj*);
@@ -12,7 +13,7 @@ void func_8007BFF4(struct MainObj*);
 
 void hatch_turret_despawn(struct MainObj* arg0);
 
-extern void* hatch_turret_animations[13];
+extern void* hatch_turret_animations[DEMO_ALT(13, 6)];
 
 // hatch_turret_init
 void func_8007BFF4(struct MainObj* self)
@@ -20,11 +21,13 @@ void func_8007BFF4(struct MainObj* self)
     s32 v = 1;
 
     self->state = v;
+    self->unk7C = DEMO_ALT(0x30, 0x80);
     self->on_screen = v;
-    self->unk7C = 0x30;
     self->hp = 3;
     self->contact_damage = 3;
+#ifndef VERSION_DEMO
     self->unk7A = v;
+#endif
     self->animation_table = (const u8* const*)hatch_turret_animations;
     self->unk5 = 0;
     self->unk6 = 0;
@@ -79,7 +82,7 @@ void func_8007C144(struct MainObj* arg0);
 
 void func_8007C144(struct MainObj* arg0)
 {
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) == 0) {
+    if (DEMO_ALT(func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80), func_8002B160(BASE_OBJECT(arg0))) == 0) {
         switch (arg0->unk5) {
         case 0:
             if (arg0->unk7C == 0) {
@@ -95,7 +98,9 @@ void func_8007C144(struct MainObj* arg0)
                 break;
             }
             arg0->unk5 = 2;
+#ifndef VERSION_DEMO
             func_8001540C(2, SATURN_SOUND(0x78, 0x30), arg0);
+#endif
             set_animation(arg0, 1);
             break;
         case 2:
@@ -104,7 +109,9 @@ void func_8007C144(struct MainObj* arg0)
                 break;
             }
             arg0->unk5 = 3;
+#ifndef VERSION_DEMO
             func_8001540C(2, SATURN_SOUND(0x79, 0x31), arg0);
+#endif
             func_8007C090(WEAPON_OBJECT(arg0));
             break;
         case 3:
@@ -121,7 +128,11 @@ void func_8007C144(struct MainObj* arg0)
             animate_object(ANIMATED_OBJECT(arg0));
             break;
         }
+#ifdef VERSION_DEMO
+        is_on_screen(BASE_OBJECT(arg0));
+#else
         update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
+#endif
     } else {
         arg0->state = 2;
     }
@@ -136,6 +147,36 @@ void hatch_turret_update(struct MainObj* self)
 {
     hatch_turret_state_funcs[self->state](self);
 }
+
+#ifdef VERSION_DEMO
+void func_80082EF8_demo(struct MainObj* self)
+{
+    s32 v = 1;
+
+    self->unk5 = v;
+    self->unk7C = 0x80;
+    self->on_screen = v;
+    self->state = 0;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->hp = 0;
+    self->contact_damage = 3;
+    self->invincibility_timer = 0;
+    self->animation_table = (const u8* const*)cyber_peacock_animations;
+    self->hurt_box = NULL;
+    self->attack_box = NULL;
+    self->terrain_box = NULL;
+    self->collision_data = NULL;
+    self->air_state = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->unk16 = VISUAL_SATURN_LAYER(3);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+}
+#endif
 
 union AnimationStep hatch_turret_anim_0[] = {
     { 7, 0, 1, 0x00 },
@@ -269,6 +310,7 @@ struct Unk_unk68 hatch_turret_anim_4[8] = {
     { 1, 0, -7, 36 },
 };
 
+#ifndef VERSION_DEMO
 union AnimationStep hatch_turret_anim_6[] = {
     { 1, 0, 0, 0x25 },
 };
@@ -296,14 +338,16 @@ union AnimationStep hatch_turret_anim_11[] = {
 union AnimationStep hatch_turret_anim_12[] = {
     { 1, 0, 0, 0x2B },
 };
+#endif
 
-void* hatch_turret_animations[13] = {
+void* hatch_turret_animations[DEMO_ALT(13, 6)] = {
     hatch_turret_anim_0,
     hatch_turret_anim_1,
     hatch_turret_anim_2,
     hatch_turret_anim_3,
     hatch_turret_anim_4,
     hatch_turret_anim_5,
+#ifndef VERSION_DEMO
     hatch_turret_anim_6,
     hatch_turret_anim_7,
     hatch_turret_anim_8,
@@ -311,6 +355,7 @@ void* hatch_turret_animations[13] = {
     hatch_turret_anim_10,
     hatch_turret_anim_11,
     hatch_turret_anim_12,
+#endif
 };
 
 void (*hatch_turret_state_funcs[3])() = {

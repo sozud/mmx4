@@ -150,7 +150,9 @@ void func_800567C4(struct MainObj* arg0)
         arg0->unk5 = 2;
         break;
     case 4:
+#ifndef VERSION_DEMO
         arg0->unk7A = 1;
+#endif
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = 0x50000;
         arg0->y_speed = -0x1C000;
@@ -160,7 +162,9 @@ void func_800567C4(struct MainObj* arg0)
         arg0->unk5 = 3;
         break;
     case 5:
+#ifndef VERSION_DEMO
         arg0->unk7A = 1;
+#endif
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = 0x50000;
         arg0->y_speed = -0xC000;
@@ -170,7 +174,9 @@ void func_800567C4(struct MainObj* arg0)
         arg0->unk5 = 3;
         break;
     case 6:
+#ifndef VERSION_DEMO
         arg0->unk7A = 1;
+#endif
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = 0x50000;
         arg0->y_speed = 0x1C000;
@@ -180,7 +186,9 @@ void func_800567C4(struct MainObj* arg0)
         arg0->unk5 = 3;
         break;
     case 7:
+#ifndef VERSION_DEMO
         arg0->unk7A = 1;
+#endif
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = 0x50000;
         arg0->y_speed = 0xC000;
@@ -225,7 +233,9 @@ void jet_drone_main(struct MainObj* self)
 
 void jet_drone_despawn(struct MainObj* self)
 {
+#ifndef VERSION_DEMO
     self->unk7A = 0;
+#endif
     self->ext.main_24.unk80 = 0;
     self->ext.main_24.saved_unk5 = 0;
     despawn_object(OBJECT_HEADER(self));
@@ -382,7 +392,9 @@ void jet_drone_wait_for_player(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0xA0) {
         func_8001540C(2, SATURN_SOUND(0x50, 0x41), self);
+#ifndef VERSION_DEMO
         self->unk7A = 0;
+#endif
         self->unk5 = 2;
     }
 }

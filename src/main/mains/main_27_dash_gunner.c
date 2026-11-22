@@ -227,7 +227,9 @@ void func_80058740(struct MainObj* arg0)
         arg0->ext.main_27.unk80 = 0;
         arg0->ext.main_27.unk8C = 0x1E;
         arg0->unk5 = 3;
+#ifndef VERSION_DEMO
         arg0->unk7A = 1;
+#endif
         break;
     case 2:
     case 6:
@@ -252,7 +254,9 @@ void func_80058740(struct MainObj* arg0)
         arg0->ext.main_27.unk88 = 1;
         arg0->ext.main_27.unk89 = 0x14;
         arg0->ext.main_27.unk8A = 0;
+#ifndef VERSION_DEMO
         arg0->unk7A = 1;
+#endif
         arg0->unk5 = 3;
         break;
     case 8:
@@ -261,7 +265,9 @@ void func_80058740(struct MainObj* arg0)
         arg0->unk15 = 0;
         arg0->ext.main_27.unk80 = 0;
         arg0->ext.main_27.unk8A = 0;
+#ifndef VERSION_DEMO
         func_8001540C(2, 0x51, arg0);
+#endif
         arg0->x_speed = -0x18000;
         arg0->unk5 = 2;
         break;
@@ -271,7 +277,9 @@ void func_80058740(struct MainObj* arg0)
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->ext.main_27.unk80 = 0;
         arg0->ext.main_27.unk8A = 0;
+#ifndef VERSION_DEMO
         func_8001540C(2, 0x51, arg0);
+#endif
         arg0->x_speed = 0x18000;
         arg0->unk5 = 2;
         break;
@@ -282,7 +290,9 @@ void func_80058740(struct MainObj* arg0)
         arg0->unk15 = 0;
         arg0->ext.main_27.unk80 = 0;
         arg0->ext.main_27.unk8A = 0;
+#ifndef VERSION_DEMO
         func_8001540C(2, 0x51, arg0);
+#endif
         arg0->x_speed = -0x18000;
         arg0->unk5 = 2;
         break;
@@ -293,7 +303,9 @@ void func_80058740(struct MainObj* arg0)
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->ext.main_27.unk80 = 0;
         arg0->ext.main_27.unk8A = 0;
+#ifndef VERSION_DEMO
         func_8001540C(2, 0x51, arg0);
+#endif
         arg0->x_speed = 0x18000;
         arg0->unk5 = 2;
         break;
@@ -301,14 +313,14 @@ void func_80058740(struct MainObj* arg0)
 
     subtype = arg0->unk2;
     if (subtype <= 3 || (subtype > 7 && subtype <= 11)) {
-        arg0->contact_damage = 6;
+        arg0->contact_damage = DEMO_ALT(6, 3);
         arg0->terrain_box = &dash_gunner_box_4;
         D_8013B828 = &dash_gunner_box_0;
         D_8013B82C = &dash_gunner_box_1;
         D_8013B830 = &dash_gunner_box_3;
         D_8013B834 = &dash_gunner_box_2;
     } else {
-        arg0->contact_damage = 7;
+        arg0->contact_damage = DEMO_ALT(7, 4);
         arg0->terrain_box = &dash_gunner_box_9;
         D_8013B828 = &dash_gunner_box_5;
         D_8013B82C = &dash_gunner_box_6;
@@ -327,8 +339,10 @@ void func_80058AC8(struct MainObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     dash_gunner_step_funcs[arg0->unk5](arg0);
+#ifndef VERSION_DEMO
     if (engine_obj.stage == 3 && arg0->x_pos.i.hi < 0x20)
         arg0->x_pos.i.hi = 0x20;
+#endif
     if ((u8)arg0->unk2 < 4) {
         if (arg0->x_pos.i.hi > 0x780)
             arg0->x_pos.i.hi = 0x780;
@@ -389,7 +403,9 @@ void dash_gunner_explode(struct MainObj* self)
 
 void dash_gunner_despawn(struct MainObj* self)
 {
+#ifndef VERSION_DEMO
     self->unk7A = 0;
+#endif
     self->ext.raw[0] = 0;
     self->ext.raw[1] = 0;
     self->ext.raw[2] = 0;
@@ -452,7 +468,9 @@ void dash_gunner_wait_for_player(struct MainObj* self)
 {
     if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) > 0xBC) {
         func_8001540C(2, SATURN_SOUND(0x51, 0x42), self);
+#ifndef VERSION_DEMO
         self->unk7A = 0;
+#endif
         if (self->ext.main_27.unk80 == 0) {
             self->unk5 = 2;
             self->unk6 = 0;

@@ -58,7 +58,7 @@ void breakable_wall_main(struct ItemObj* arg0)
 {
     if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
         spawn_debris(7, breakable_wall_debris, arg0);
-        if (arg0->unk2 == 0) {
+        if (DEMO_ALT(arg0->unk2 == 0, 1)) {
             apply_tile_effect(2, (s16)(arg0->x_pos.i.hi - 0x20), (s16)(arg0->y_pos.i.hi - 0x18));
         } else {
             apply_tile_effect(7, (s16)(arg0->x_pos.i.hi - 0x20), (s16)(arg0->y_pos.i.hi - 0x18));

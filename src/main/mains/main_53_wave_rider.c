@@ -98,7 +98,7 @@ void func_8006AF70(struct MainObj* arg0)
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->hp = 6;
-    arg0->contact_damage = 5;
+    arg0->contact_damage = DEMO_ALT(5, 4);
     arg0->air_state = 0;
     set_animation(arg0, 0);
     if (arg0->unk2 == 0) {
@@ -394,7 +394,9 @@ void wave_rider_main(struct MainObj* self)
         self->unk42 &= 0x7FFF;
         spawn_debris(8, wave_rider_debris, self);
         spawn_debris(7, wave_rider_rider_debris, self);
+#ifndef VERSION_DEMO
         spawn_explosion(BASE_OBJECT(self));
+#endif
         return;
     }
     self->ext.main_53.unk83 = self->unk65;

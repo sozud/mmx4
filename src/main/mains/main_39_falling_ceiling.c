@@ -295,6 +295,22 @@ void falling_ceiling_drop_start(struct MainObj* self)
 }
 
 // falling_ceiling_drop_fall
+#ifdef VERSION_DEMO
+#define FALLING_CEILING_DEBRIS_KIND(item, i) \
+    do {                                     \
+        if (self->unk2 < 8)                  \
+            (item)->unk2 = (i);              \
+        else                                 \
+            (item)->unk2 = (i) + 2;          \
+    } while (0)
+#else
+#define FALLING_CEILING_DEBRIS_KIND(item, i) \
+    if (self->unk2 < 8)                      \
+        (item)->unk2 = (i);                  \
+    else                                     \
+        (item)->unk2 = (i) + 2
+#endif
+
 void func_80061B58(struct MainObj* self)
 {
     s32 i;
@@ -323,14 +339,15 @@ void func_80061B58(struct MainObj* self)
         if (item != NULL) {
             item->active = 0x41;
             item->id = 0xF;
-            if (self->unk2 < 8)
-                item->unk2 = i;
-            else
-                item->unk2 = i + 2;
+            FALLING_CEILING_DEBRIS_KIND(item, i);
             item->bg_offset = self->bg_offset;
+#ifndef VERSION_DEMO
             item->x_pos.val = 0;
+#endif
             item->x_pos.i.hi = self->ext.main_39.unk80.h.unk80;
+#ifndef VERSION_DEMO
             item->y_pos.val = 0;
+#endif
             item->y_pos.i.hi = self->ext.main_39.unk84.h.unk86;
             item->state = 0;
         }
