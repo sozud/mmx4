@@ -361,7 +361,57 @@ void func_800261B4(s32 arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/165A0", func_800262B8);
+// fills the layer's 32x32 tile cache with the 22x17 tiles around its position
+void func_800262B8(u8 layer)
+{
+    s32 x;
+    s32 y;
+    s32 tile_x;
+    s32 tile_y;
+    s32 block_x;
+    s32 block_y;
+    s32 start_block_x;
+    s32 start_tile_x;
+    s32 start_inner_x;
+    s32 inner_x;
+    s32 inner_y;
+    s8 i;
+    s8 j;
+    u8 block;
+
+    x = background_objects[layer].x_pos.i.hi / 16;
+    y = background_objects[layer].y_pos.i.hi / 16;
+    block_x = x / 16;
+    start_block_x = block_x;
+    block_y = y / 16;
+    start_tile_x = x & 31;
+    tile_y = y & 31;
+    start_inner_x = x & 15;
+    inner_y = y & 15;
+    for (i = 0; i < 17; i++) {
+        inner_x = start_inner_x;
+        tile_x = start_tile_x;
+        block = (SP_BG_TILEMAP + layer * layout_size + layout_width * block_y)[block_x];
+        for (j = 0; j < 22; j++) {
+            D_801441C8[layer][tile_y][tile_x++] = (SP_BG_TILE_PIXELS + block * 256 + inner_y * 16)[inner_x];
+            tile_x &= 31;
+            if (++inner_x == 16) {
+                inner_x = 0;
+                block_x++;
+                block = (SP_BG_TILEMAP + layer * layout_size + layout_width * block_y)[block_x];
+            }
+        }
+        block_x = start_block_x;
+        tile_y++;
+        tile_y &= 31;
+        if (++inner_y == 16) {
+            inner_y = 0;
+            block_y++;
+        }
+    }
+    background_objects[layer].unk4C = 0;
+}
+
 void func_800264D0(s32 layer, s32 x, s32 y)
 {
     s32 block_x = x / 16;
@@ -586,7 +636,59 @@ void func_8002728C(void)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/165A0", func_80027344);
+// fills one column of the layer's tile cache, wrapping between its block bounds
+void func_80027344(s32 layer, s32 x, s32 y)
+{
+    u32 block_x;
+    u32 block_y;
+    s32 tile_x;
+    s32 tile_y;
+    s32 inner_x;
+    s32 inner_y;
+    u32 count;
+    u32 i;
+    s32 block;
+
+    if (x >= 0) {
+        if (y < 0) {
+            y = 0;
+            count = 17;
+        } else {
+            count = 18;
+        }
+        block_x = x / 256;
+        block_y = y / 256;
+        tile_x = (x % 512) / 16;
+        tile_y = (y % 512) / 16;
+        inner_x = tile_x & 15;
+        inner_y = tile_y & 15;
+        if (block_x < background_objects[layer].unk4D) {
+            block_x += background_objects[layer].unk4E - background_objects[layer].unk4D + 1;
+            if (background_objects[layer].x_pos.i.hi <= (background_objects[layer].unk4D - 1) * 256) {
+                background_objects[layer].x_pos.i.hi = background_objects[layer].unk4E * 256;
+                return;
+            }
+        }
+        if (block_x > background_objects[layer].unk4E) {
+            block_x -= background_objects[layer].unk4E + 1;
+            block_x += background_objects[layer].unk4D;
+            if (background_objects[layer].x_pos.i.hi >= (background_objects[layer].unk4E + 1) * 256) {
+                background_objects[layer].x_pos.i.hi = background_objects[layer].unk4D * 256;
+                return;
+            }
+        }
+        block = (SP_BG_TILEMAP + layer * layout_size + layout_width * block_y)[block_x];
+        for (i = 0; i < count; i++) {
+            D_801441C8[layer][tile_y++][tile_x] = (SP_BG_TILE_PIXELS + block * 256 + inner_y * 16)[inner_x];
+            tile_y &= 31;
+            if (++inner_y == 16) {
+                inner_y = 0;
+                block_y++;
+                block = (SP_BG_TILEMAP + layer * layout_size + layout_width * block_y)[block_x];
+            }
+        }
+    }
+}
 
 void func_800275DC(s32 layer, s32 x, s32 y)
 {

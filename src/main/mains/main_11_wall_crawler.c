@@ -65,45 +65,47 @@ void func_8004A9F4(struct MainObj* self);
 void func_8004AD18(struct MainObj* self);
 void func_8004B668(struct MainObj* self);
 void func_8004AB6C(struct MainObj* self);
+#endif
 extern struct Unk_unk68 D_800FB568;
 extern struct Unk_unk68 D_801067F0[];
 extern union AnimationStep* wall_crawler_animations[];
-#endif
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
 void func_8004A78C(struct MainObj* self)
 {
-    u16 x;
+    s16 x;
 
     self->contact_damage = 3;
     self->invincibility_timer = 0;
     self->bg_offset = g_Player.bg_offset;
-    self->animation_table = (const u8* const*)wall_crawler_animations;
-    self->collision_data = D_801067F0;
-    self->unk16 = VISUAL_SATURN_LAYER(6);
-    self->unk1C = self->y_pos;
     self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
+    self->air_state = 1;
+    self->animation_table = (const u8* const*)wall_crawler_animations;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->air_state = 0;
     self->attack_box = &wall_crawler_terrain_box;
+    self->collision_data = D_801067F0;
     if (self->unk2 == 2) {
         self->hp = 5;
         set_animation(self, 0x17);
+        self->state++;
         self->terrain_box = &D_800FB568;
         self->unk5 = 7;
         self->unk6 = 0;
+        self->x_pos.i.hi &= -0x10;
+        self->y_pos.i.hi &= -0x10;
+        self->x_pos.i.hi += 8;
+        self->y_pos.i.hi += 0x14;
         self->hurt_box = NULL;
-        self->state++;
-        self->x_pos.i.hi = (self->x_pos.i.hi & -0x10) + 8;
-        self->y_pos.i.hi = (self->y_pos.i.hi & -0x10) + 0x14;
         return;
     }
 
     self->hurt_box = &wall_crawler_terrain_box;
-    if (g_Player.x_pos.val < self->x_pos.val) {
+    if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
         SP_CUR_MAIN_OBJ->ext.main_11.unk80 = 1;
         self->x_speed = -0x18000;
@@ -113,31 +115,33 @@ void func_8004A78C(struct MainObj* self)
         self->x_speed = 0x18000;
     }
     move_object(MOVING_OBJECT(self));
-    x = self->x_pos.i.hi;
-    if (engine_obj.character_state.fields.active != 0 && ((x >= 0xC0F && x < 0xDF1) || (x >= 0x100F && x < 0x11F1) || (x >= 0x1315 && x < 0x14F1) || (x >= 0x1613 && x < 0x17D2))) {
-        set_animation(self, 0x16);
-        self->state = 2;
-        self->hp = 1;
-        self->gravity = 0x8000;
-        self->x_speed = 0;
-        self->y_speed = 0;
-        self->x_accel = 0;
-        self->terrain_box = &D_800FB56C;
-        return;
-    }
-    if (engine_obj.character_state.fields.active == 0) {
+    if (engine_obj.character_state.fields.active != 0) {
+        x = self->x_pos.i.hi;
+        if ((x >= 0xC0F && x <= 0xDF0) || (x >= 0x100F && x <= 0x11F0) || (x >= 0x1315 && x <= 0x14F0) || (x >= 0x1613 && x <= 0x17D1)) {
+            set_animation(self, 0x16);
+            self->state = 2;
+            self->hp = 1;
+            self->x_speed = 0;
+            self->y_speed = 0;
+            self->x_accel = 0;
+            self->gravity = 0x8000;
+            self->terrain_box = &D_800FB56C;
+            return;
+        }
+    } else {
         self->hp = 5;
         set_animation(self, 0);
-        self->terrain_box = &D_800FB568;
         self->state++;
+        self->terrain_box = &D_800FB568;
     }
     self->unk5 = 2;
     self->unk6 = 0;
-    *(u16*)((u8*)&SP_CUR_MAIN_OBJ->ext + 2) = self->unk2 == 0 ? 0x3C : 0xB4;
+    if (self->unk2 == 0) {
+        SP_CUR_MAIN_OBJ->ext.main_11.timer = 0x3C;
+    } else {
+        SP_CUR_MAIN_OBJ->ext.main_11.timer = 0xB4;
+    }
 }
-#else
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A78C);
-#endif
 
 // wall_crawler_attach
 void func_8004A9F4(struct MainObj* self)
