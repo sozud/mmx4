@@ -91,21 +91,31 @@ void func_800B913C(struct EffectObj* self)
 // freeze_blast_flash
 void func_800B91E0(struct EffectObj* self)
 {
+#ifdef VERSION_DEMO
+    if (--self->ext.effect_17.phase != -1)
+#else
     if (((struct Effect17Ext*)&self->ext)->phase-- != 0)
+#endif
         return;
     if ((u16)g_FilterAmountR >= 0x1E) {
+#ifdef VERSION_DEMO
+        need_palette_load = 1;
+#else
         need_palette_load |= 1;
+#endif
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
         engine_obj.character_state.fields.active = 1;
         func_800B9354(self);
+#ifndef VERSION_DEMO
         engine_obj.unk10 = 0;
         engine_obj.unk12 = 0;
         engine_obj.unk11 = 0;
         engine_obj.unk13 = 0;
         func_800B94B8(self);
         self->ext.effect_17.timer = 2;
+#endif
         self->state++;
         return;
     }
@@ -119,6 +129,19 @@ void func_800B91E0(struct EffectObj* self)
     self->ext.effect_17.timer = 2;
 }
 
+#ifdef VERSION_DEMO
+void func_8009E058_demo(struct EffectObj* self)
+{
+    engine_obj.unk10 = 0;
+    engine_obj.unk12 = 0;
+    engine_obj.unk11 = 0;
+    engine_obj.unk13 = 0;
+    func_800B94B8(self);
+    ZeroObjectState(OBJECT_HEADER(self));
+}
+#endif
+
+#ifndef VERSION_DEMO
 void freeze_blast_finish(struct EffectObj* self)
 {
     if (--self->ext.effect_17.timer != 0) {
@@ -126,6 +149,7 @@ void freeze_blast_finish(struct EffectObj* self)
         ZeroObjectState(OBJECT_HEADER(self));
     }
 }
+#endif
 
 // freeze_blast_freeze_tiles
 void func_800B9354(struct EffectObj* self)
@@ -269,5 +293,5 @@ struct Effect17SpawnGroup freeze_blast_spawn_groups[4] = {
 void (*freeze_blast_state_funcs[])(struct EffectObj*) = {
     func_800B913C,
     func_800B91E0,
-    freeze_blast_finish,
+    DEMO_ALT(freeze_blast_finish, func_8009E058_demo),
 };

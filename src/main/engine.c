@@ -42,6 +42,41 @@ extern void (*D_800F23D4[])(struct EngineObj*);
 
 void func_80016F0C();
 
+#ifdef VERSION_DEMO
+#include "main/102FC.h"
+
+void func_8001F968(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0 && (controller_input.pressed & PADRright)) {
+        func_800129F0(8);
+        arg0->unk1++;
+    }
+}
+
+void func_8001F9DC(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        func_80012740(1, func_8001FB50);
+        func_800127FC();
+    }
+}
+
+void func_8001FAC0(struct EngineObj* arg0)
+{
+    D_800F23D4[arg0->unk1](arg0);
+    update_misc_objects();
+    func_8002A484();
+    func_80023D68();
+}
+
+void func_8001EC90(struct GameInfo* arg0);
+void (*D_800F23D4[3])(struct EngineObj*) = {
+    func_8001EC90,
+    func_8001F968,
+    func_8001F9DC,
+};
+#else
+
 void func_8001F118(void)
 {
     update_misc_objects();
@@ -432,3 +467,4 @@ void (*D_800F23D4[2])(struct EngineObj*) = {
     func_8001F9DC,
     func_8001FA24,
 };
+#endif

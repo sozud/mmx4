@@ -150,9 +150,13 @@ void func_800BB364(struct EffectObj* arg0)
 #ifdef MMX4_SATURN
         saturn_music_stop();
 #else
+#ifndef VERSION_DEMO
         func_80016F0C();
 #endif
+#endif
+#ifndef VERSION_DEMO
         engine_obj.unk42 = 0;
+#endif
     }
 }
 
@@ -253,10 +257,14 @@ void func_800BB750(struct EffectObj* arg0)
             g_FilterAmountB += 0x400;
             if (g_FilterAmountR == 0x1F) {
                 arg0->state++;
+#ifdef VERSION_DEMO
+                arg0->ext.effect_26.timer = 0x28;
+#else
                 if (arg0->active & 0x80)
                     arg0->ext.effect_26.timer = 0xC8;
                 else
                     arg0->ext.effect_26.timer = 0x28;
+#endif
                 arg0->unk7 = 1;
                 engine_obj.enable_boss = 0;
                 func_8001540C(0, 5, NULL);
@@ -289,10 +297,14 @@ void func_800BB888(struct EffectObj* arg0)
 
 void boss_death_fx_finish(struct EffectObj* self)
 {
+#ifdef VERSION_DEMO
+    player_end_script_action();
+#else
     if (!(self->active & 0x80)) {
         player_end_script_action();
     }
     engine_obj.gameplay_locked = 1;
+#endif
     ZeroObjectState(OBJECT_HEADER(self));
 }
 

@@ -1,7 +1,9 @@
 #include "common.h"
 #include "main/archive_stage_data.h"
 
-#ifdef VERSION_JP
+#ifdef VERSION_DEMO
+#define ARCHIVE_PATH(path) "D:\\PSX\\ROCKX4\\TAIKEN\\DATA\\" path
+#elif defined(VERSION_JP)
 #define ARCHIVE_PATH(path) "E:\\ROCKX4\\JAPAN\\" path
 #elif defined(VERSION_EU)
 #define ARCHIVE_PATH(path) "E:\\ROCKX4\\" path
@@ -13,6 +15,59 @@ struct ArchivePathData D_800EE54C = {
     { 0x10, 0x16, 0x20, 0x26, 0x30, 0x36, 0x40, 0x46, 0x50, 0x56, 0x60, 0x66 },
 #ifndef MMX4_WIN32
     {
+#ifdef VERSION_DEMO
+        ARCHIVE_PATH("ARC\\CAPCOM.ARC"),
+        ARCHIVE_PATH("ARC\\COL00_0X.ARC"),
+        ARCHIVE_PATH("ARC\\COL00_0Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL00_1X.ARC"),
+        ARCHIVE_PATH("ARC\\COL00_1Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL01_0X.ARC"),
+        ARCHIVE_PATH("ARC\\COL01_0Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL01_1X.ARC"),
+        ARCHIVE_PATH("ARC\\COL01_1Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL02_0X.ARC"),
+        ARCHIVE_PATH("ARC\\COL02_0Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL02_1X.ARC"),
+        ARCHIVE_PATH("ARC\\COL02_1Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL04_0X.ARC"),
+        ARCHIVE_PATH("ARC\\COL04_0Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL04_1X.ARC"),
+        ARCHIVE_PATH("ARC\\COL04_1Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL05_0X.ARC"),
+        ARCHIVE_PATH("ARC\\COL05_0Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL05_1X.ARC"),
+        ARCHIVE_PATH("ARC\\COL05_1Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL0D_0X.ARC"),
+        ARCHIVE_PATH("ARC\\COL0D_0Z.ARC"),
+        ARCHIVE_PATH("ARC\\COL0E_00.ARC"),
+        ARCHIVE_PATH("ARC\\COL0E_01.ARC"),
+        ARCHIVE_PATH("ARC\\FONT8X8.ARC"),
+        ARCHIVE_PATH("ARC\\LOAD.ARC"),
+        ARCHIVE_PATH("ARC\\PL00.ARC"),
+        ARCHIVE_PATH("ARC\\PL01.ARC"),
+        ARCHIVE_PATH("ARC\\PLDEMO.ARC"),
+        ARCHIVE_PATH("ARC\\PLDEMO00.ARC"),
+        ARCHIVE_PATH("ARC\\ST00_00.ARC"),
+        ARCHIVE_PATH("ARC\\ST00_01.ARC"),
+        ARCHIVE_PATH("ARC\\ST01_00.ARC"),
+        ARCHIVE_PATH("ARC\\ST01_01.ARC"),
+        ARCHIVE_PATH("ARC\\ST02_00.ARC"),
+        ARCHIVE_PATH("ARC\\ST02_01.ARC"),
+        ARCHIVE_PATH("ARC\\ST04_00.ARC"),
+        ARCHIVE_PATH("ARC\\ST04_01.ARC"),
+        ARCHIVE_PATH("ARC\\ST05_00.ARC"),
+        ARCHIVE_PATH("ARC\\ST05_01.ARC"),
+        ARCHIVE_PATH("ARC\\ST0D_0X.ARC"),
+        ARCHIVE_PATH("ARC\\ST0D_0Z.ARC"),
+        ARCHIVE_PATH("ARC\\ST0E_00.ARC"),
+        ARCHIVE_PATH("ARC\\ST0E_01.ARC"),
+        ARCHIVE_PATH("ARC\\ST0_1_1.ARC"),
+        ARCHIVE_PATH("ARC\\ST1_1_1.ARC"),
+        ARCHIVE_PATH("ARC\\ST2_1_1.ARC"),
+        ARCHIVE_PATH("ARC\\X4_CM.ARC"),
+        ARCHIVE_PATH("XA\\BGM1.XA"),
+        ARCHIVE_PATH("XA\\BGM2.XA"),
+#else
         ARCHIVE_PATH("ARC\\CAPCOM.ARC"),
         ARCHIVE_PATH("ARC\\COL00_0X.ARC"),
         ARCHIVE_PATH("ARC\\COL00_0Z.ARC"),
@@ -265,6 +320,7 @@ struct ArchivePathData D_800EE54C = {
 #endif
 #endif
         "E:\\PSX\\ZNULL.DAT",
+#endif
     },
 #endif
 };

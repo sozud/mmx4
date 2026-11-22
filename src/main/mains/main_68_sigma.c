@@ -140,6 +140,7 @@ extern void (*sigma_intro_funcs[])(struct MainObj*);
 
 extern void (*sigma_cloak_teleport_funcs[])(struct MainObj*);
 
+#ifndef VERSION_DEMO
 void sigma_intro_wait_player(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -157,6 +158,7 @@ void sigma_intro_wait_player(struct MainObj* self)
         }
     }
 }
+#endif
 
 // sigma_intro_init
 
@@ -183,6 +185,7 @@ extern struct Unk_unk68 D_80103F08;
 extern struct Unk_unk68 D_80103F0C;
 #endif
 
+#ifndef VERSION_DEMO
 void func_8008329C(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -227,7 +230,9 @@ void func_8008329C(struct MainObj* self)
     play_boss_voice(0xC);
     colonel_spawn_afterimages(self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_intro_fill_health(struct MainObj* self)
 {
 
@@ -253,7 +258,9 @@ void sigma_intro_fill_health(struct MainObj* self)
         is_on_screen(BASE_OBJECT(self));
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_intro_wait(struct MainObj* self)
 {
 
@@ -270,7 +277,9 @@ void sigma_intro_wait(struct MainObj* self)
         is_on_screen(BASE_OBJECT(self));
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_intro_finish(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
@@ -278,12 +287,16 @@ void sigma_intro_finish(struct MainObj* self)
         self->unk5 = 2;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_intro(struct MainObj* self)
 {
     sigma_intro_funcs[self->unk5](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_teleport_appear(struct MainObj* self)
 {
     s16 x_pos;
@@ -312,7 +325,9 @@ void sigma_cloak_teleport_appear(struct MainObj* self)
     set_animation(self->ext.main_68.scythe, 5);
     func_8001540C(2, SATURN_SOUND(3, 0xC2), self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_teleport_fade_in(struct MainObj* self)
 {
     self->hurt_box = (const u8*)&D_80103EE8;
@@ -328,8 +343,10 @@ void sigma_cloak_teleport_fade_in(struct MainObj* self)
     }
     self->unk7C--;
 }
+#endif
 
 // sigma_cloak_teleport_windup
+#ifndef VERSION_DEMO
 void func_80083710(struct MainObj* self)
 {
     struct VisualObj* visual;
@@ -355,8 +372,10 @@ void func_80083710(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
 // sigma_cloak_teleport_fire
+#ifndef VERSION_DEMO
 void func_800837FC(struct MainObj* self)
 {
     u8 i;
@@ -390,7 +409,9 @@ void func_800837FC(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_teleport_wait_shots(struct MainObj* self)
 {
     if (self->ext.main_68.active_shots == 0) {
@@ -400,7 +421,9 @@ void sigma_cloak_teleport_wait_shots(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_teleport_fade_out(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
@@ -414,7 +437,9 @@ void sigma_cloak_teleport_fade_out(struct MainObj* self)
         is_on_screen(BASE_OBJECT(self));
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_teleport_finish(struct MainObj* self)
 {
     self->on_screen = 0;
@@ -424,7 +449,9 @@ void sigma_cloak_teleport_finish(struct MainObj* self)
         self->x_pos.i.hi = background_objects[0].x_pos.i.hi - 0x100;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_teleport(struct MainObj* self)
 {
     sigma_cloak_teleport_funcs[self->unk6](self);
@@ -438,7 +465,9 @@ void sigma_cloak_teleport(struct MainObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_dash_appear(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi > 0x4D0) {
@@ -455,7 +484,9 @@ void sigma_cloak_dash_appear(struct MainObj* self)
     set_animation(self->ext.main_68.scythe, 5);
     func_8001540C(2, SATURN_SOUND(3, 0xC2), self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_dash_fade_in(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
@@ -468,8 +499,10 @@ void sigma_cloak_dash_fade_in(struct MainObj* self)
         is_on_screen(BASE_OBJECT(self));
     }
 }
+#endif
 
 // sigma_cloak_dash_start
+#ifndef VERSION_DEMO
 void func_80083C2C(struct MainObj* self)
 {
     if (self->unk7 == 0) {
@@ -493,7 +526,9 @@ void func_80083C2C(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_dash_run(struct MainObj* self)
 {
     self->unk18.val = self->x_pos.val;
@@ -511,7 +546,9 @@ void sigma_cloak_dash_run(struct MainObj* self)
     CollisionRelated(PLAYER_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_dash_fade_out(struct MainObj* self)
 {
 
@@ -527,7 +564,9 @@ void sigma_cloak_dash_fade_out(struct MainObj* self)
         is_on_screen(BASE_OBJECT(self));
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_dash_finish(struct MainObj* self)
 {
     self->on_screen = 0;
@@ -536,12 +575,16 @@ void sigma_cloak_dash_finish(struct MainObj* self)
         self->unk6 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_dash(struct MainObj* self)
 {
     sigma_cloak_dash_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_spin_jump(struct MainObj* self)
 {
     s8 state = self->unk7;
@@ -563,7 +606,9 @@ void sigma_scythe_spin_jump(struct MainObj* self)
         func_8001540C(2, SATURN_SOUND(0, 0xBF), self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_spin_rise(struct MainObj* self)
 {
     set_velocity_from_angle(MOVING_OBJECT(self),
@@ -577,7 +622,9 @@ void sigma_scythe_spin_rise(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_spin_throw(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -606,7 +653,9 @@ void sigma_scythe_spin_throw(struct MainObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_spin_wait(struct MainObj* self)
 {
     if (self->ext.main_68.scythe->active == 0) {
@@ -621,7 +670,9 @@ void sigma_scythe_spin_wait(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_spin_land(struct MainObj* self)
 {
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -634,7 +685,9 @@ void sigma_scythe_spin_land(struct MainObj* self)
         func_8001540C(2, SATURN_SOUND(1, 0xC0), self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_spin_recover(struct MainObj* self)
 {
     animate_object(self);
@@ -644,12 +697,16 @@ void sigma_scythe_spin_recover(struct MainObj* self)
         self->unk7 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_spin(struct MainObj* self)
 {
     sigma_scythe_spin_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_plant_jump(struct MainObj* self)
 {
     if (self->unk7 == 0) {
@@ -674,7 +731,9 @@ void sigma_scythe_plant_jump(struct MainObj* self)
         func_8001540C(2, SATURN_SOUND(0, 0xBF), self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_plant_apex(struct MainObj* self)
 {
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -686,7 +745,9 @@ void sigma_scythe_plant_apex(struct MainObj* self)
         set_animation(self, 0x1A);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_plant_throw(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -710,7 +771,9 @@ void sigma_scythe_plant_throw(struct MainObj* self)
         set_animation(self, 0x13);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_plant_land(struct MainObj* self)
 {
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -723,7 +786,9 @@ void sigma_scythe_plant_land(struct MainObj* self)
         func_8001540C(2, SATURN_SOUND(1, 0xC0), self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_plant_wait(struct MainObj* self)
 {
     s8 step;
@@ -745,12 +810,16 @@ void sigma_scythe_plant_wait(struct MainObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_plant(struct MainObj* self)
 {
     sigma_scythe_plant_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_pick_attack(struct MainObj* self)
 {
     self->unk5 = sigma_cloak_pattern[self->ext.main_68.next_attack];
@@ -762,7 +831,9 @@ void sigma_cloak_pick_attack(struct MainObj* self)
         self->ext.main_68.next_attack = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_darts_start(struct MainObj* self)
 {
     self->unk6++;
@@ -770,7 +841,9 @@ void sigma_darts_start(struct MainObj* self)
     self->ext.main_68.count = 0;
     set_animation(self, 0x1B);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_darts_spawn(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -794,7 +867,9 @@ void sigma_darts_spawn(struct MainObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_darts_pose(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -804,7 +879,9 @@ void sigma_darts_pose(struct MainObj* self)
         set_animation(self, 0x2B);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_darts_wait(struct MainObj* self)
 {
     animate_object(self);
@@ -814,12 +891,16 @@ void sigma_darts_wait(struct MainObj* self)
         self->unk7 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_darts(struct MainObj* self)
 {
     sigma_darts_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_retrieve_jump(struct MainObj* self)
 {
     if (self->unk7 == 0) {
@@ -841,7 +922,9 @@ void sigma_scythe_retrieve_jump(struct MainObj* self)
         func_8001540C(2, SATURN_SOUND(0, 0xBF), self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_retrieve_rise(struct MainObj* self)
 {
     struct ObjectHeader* temp_v1;
@@ -858,7 +941,9 @@ void sigma_scythe_retrieve_rise(struct MainObj* self)
         temp_v1->unk5++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_retrieve_wait(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -873,7 +958,9 @@ void sigma_scythe_retrieve_wait(struct MainObj* self)
         func_8001540C(2, SATURN_SOUND(8, 0xC7), self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_retrieve_land(struct MainObj* self)
 {
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -885,7 +972,9 @@ void sigma_scythe_retrieve_land(struct MainObj* self)
         set_animation(self, 0x19);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_retrieve_recover(struct MainObj* self)
 {
     animate_object(self);
@@ -895,12 +984,16 @@ void sigma_scythe_retrieve_recover(struct MainObj* self)
         self->unk7 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_scythe_retrieve(struct MainObj* self)
 {
     sigma_scythe_retrieve_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_land_pause(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -918,8 +1011,10 @@ void sigma_land_pause(struct MainObj* self)
         self->unk7 = 0;
     }
 }
+#endif
 
 // sigma_eye_laser_jump
+#ifndef VERSION_DEMO
 void func_80084B14(struct MainObj* self)
 {
     switch (self->unk7) {
@@ -971,7 +1066,9 @@ void func_80084B14(struct MainObj* self)
         break;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_eye_laser_fire(struct MainObj* self)
 {
     struct QuadObj* quad;
@@ -1010,7 +1107,9 @@ void sigma_eye_laser_fire(struct MainObj* self)
         set_animation(self, 0x1D);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_eye_laser_wait(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -1021,16 +1120,20 @@ void sigma_eye_laser_wait(struct MainObj* self)
         self->unk7 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_eye_laser(struct MainObj* self)
 {
     sigma_eye_laser_funcs[self->unk6](self);
 }
+#endif
 
 void sigma_idle(struct MainObj* self)
 {
 }
 
+#ifndef VERSION_DEMO
 void sigma_pose(struct MainObj* self)
 {
     struct VisualObj* visual;
@@ -1050,8 +1153,10 @@ void sigma_pose(struct MainObj* self)
         self->unk7C--;
     }
 }
+#endif
 
 // sigma_cloak_fight
+#ifndef VERSION_DEMO
 void func_80084EE4(struct MainObj* self)
 {
     s32 collision = func_8002DD04(self);
@@ -1092,8 +1197,10 @@ void func_80084EE4(struct MainObj* self)
         self->hurt_box = NULL;
     }
 }
+#endif
 
 // sigma_revealed_fight
+#ifndef VERSION_DEMO
 void func_8008502C(struct MainObj* self)
 {
     s32 collision_result;
@@ -1173,12 +1280,16 @@ void func_8008502C(struct MainObj* self)
     CollisionRelated(PLAYER_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_fight(struct BarObj* self)
 {
     sigma_fight_funcs[self->unk2](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_death_start(struct MainObj* self)
 {
     STOP_SOUND(2, 5, 0x6);
@@ -1192,7 +1303,9 @@ void sigma_death_start(struct MainObj* self)
     set_animation(self, 0x29);
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -1219,7 +1332,9 @@ void sigma_death_blink(struct MainObj* self)
         self->unk7E = blink_value;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_death_wait_explosion(struct MainObj* self)
 {
     struct MainObj* target;
@@ -1241,6 +1356,7 @@ void sigma_death_wait_explosion(struct MainObj* self)
         background_objects[0].unk28 += 0x100;
     }
 }
+#endif
 
 // sigma_death_explode
 #if defined(MMX4_WIN32) || defined(MMX4_PC) || defined(MMX4_SATURN)
@@ -1252,6 +1368,7 @@ void sigma_death_wait_explosion(struct MainObj* self)
 #endif
 u8 get_random();
 extern s16 D_8010442C[8][2];
+#ifndef VERSION_DEMO
 void func_80085460(struct MainObj* self)
 {
     u8 kind;
@@ -1276,7 +1393,9 @@ void func_80085460(struct MainObj* self)
         self->unk5++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_death_finish(struct MainObj* self)
 {
     if (background_objects[0].y_pos.i.hi == background_objects[0].unk20) {
@@ -1288,12 +1407,16 @@ void sigma_death_finish(struct MainObj* self)
         ZeroObjectState(OBJECT_HEADER(self));
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_death(struct MainObj* self)
 {
     sigma_death_funcs[self->unk5](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_stagger_start(struct MainObj* self)
 {
     self->unk4B = -1;
@@ -1307,7 +1430,9 @@ void sigma_cloak_stagger_start(struct MainObj* self)
     func_8001540C(2, SATURN_SOUND(4, 0xC3), self);
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_stagger_trail(struct MainObj* self)
 {
     struct VisualObj* visual;
@@ -1330,7 +1455,9 @@ void sigma_cloak_stagger_trail(struct MainObj* self)
 
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_stagger_fade(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
@@ -1342,7 +1469,9 @@ void sigma_cloak_stagger_fade(struct MainObj* self)
         is_on_screen(BASE_OBJECT(self));
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_stagger_finish(struct MainObj* self)
 {
     self->on_screen = 0;
@@ -1354,7 +1483,9 @@ void sigma_cloak_stagger_finish(struct MainObj* self)
         self->x_pos.i.hi = background_objects[0].x_pos.i.hi - 0x70;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_cloak_stagger(struct MainObj* self)
 {
     sigma_cloak_stagger_funcs[self->unk5](self);
@@ -1368,7 +1499,9 @@ void sigma_cloak_stagger(struct MainObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_reveal_start(struct MainObj* self)
 {
     u8 state = self->unk5;
@@ -1388,7 +1521,9 @@ void sigma_reveal_start(struct MainObj* self)
     set_animation(self->ext.main_68.scythe, 9);
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_reveal_fall(struct MainObj* self)
 {
     struct VisualObj* visual;
@@ -1410,8 +1545,10 @@ void sigma_reveal_fall(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
 // sigma_reveal_burn_cloak
+#ifndef VERSION_DEMO
 void func_80085A44(struct MainObj* self)
 {
     struct VisualObj* visual;
@@ -1456,7 +1593,9 @@ void func_80085A44(struct MainObj* self)
     if (self->unk7C & 1)
         is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_reveal_wait_cloak(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -1466,7 +1605,9 @@ void sigma_reveal_wait_cloak(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_reveal_dialogue(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -1491,7 +1632,9 @@ void sigma_reveal_dialogue(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_reveal_fill_health(struct MainObj* self)
 {
     s16 temp_v0;
@@ -1509,7 +1652,9 @@ void sigma_reveal_fill_health(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_reveal_finish(struct MainObj* self)
 {
     ulong_ptr temp_v1;
@@ -1531,7 +1676,9 @@ void sigma_reveal_finish(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_reveal(struct MainObj* self)
 {
     self->unk18.val = self->x_pos.val;
@@ -1539,12 +1686,91 @@ void sigma_reveal(struct MainObj* self)
     sigma_reveal_funcs[self->unk5](self);
     CollisionRelated(PLAYER_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void sigma_update(struct MainObj* self)
 {
     sigma_state_funcs[self->state](self);
 }
+#endif
 
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 D_80103EE4;
+extern struct Unk_unk68 D_80103EE8;
+extern struct Unk_unk68 D_80103EEC;
+extern struct Unk_unk68 D_80103EF0;
+extern struct Unk_unk68 D_80103EF4;
+extern struct Unk_unk68 D_80103EF8;
+extern struct Unk_unk68 D_80103EFC;
+extern struct Unk_unk68 D_80103F00;
+extern struct Unk_unk68 D_80103F04;
+extern struct Unk_unk68 D_80103F08;
+extern struct Unk_unk68 D_80103F0C;
+extern struct Unk_unk68 D_80103F10[4];
+extern struct Unk_unk68 D_80103F20[3];
+extern union AnimationStep D_80103F2C[];
+extern union AnimationStep D_80103F4C[38];
+extern struct Unk_unk68 D_80103FE4[3];
+extern struct Unk_unk68 D_80103FF0[3];
+extern union AnimationStep D_80103FFC[];
+extern struct Unk_unk68 D_80104000[3];
+extern u8 D_8010400C[8];
+extern u8 D_80104014[8];
+extern struct Unk_unk68 D_8010401C[11];
+extern struct Unk_unk68 D_80104048[4];
+extern struct Unk_unk68 D_80104058[4];
+extern u8 D_80104068[8];
+extern union AnimationStep D_80104070[];
+extern union AnimationStep D_80104094[];
+extern struct Unk_unk68 D_801040B0[4];
+extern union AnimationStep D_801040C0[];
+extern u8 D_801040D0[8];
+extern u8 D_801040D8[8];
+extern union AnimationStep D_801040E0[];
+extern struct Unk_unk68 D_801040F4[4];
+extern union AnimationStep D_80104104[];
+extern u8 D_80104114[8];
+extern u8 D_8010411C[8];
+extern union AnimationStep D_80104124[];
+extern union AnimationStep D_80104138[];
+extern union AnimationStep D_80104154[];
+extern union AnimationStep D_80104174[];
+extern u8 D_80104188[8];
+extern struct Unk_unk68 D_80104190[4];
+extern struct Unk_unk68 D_801041A0[3];
+extern struct Unk_unk68 D_801041AC[3];
+extern struct Unk_unk68 D_801041B8[12];
+extern union AnimationStep D_801041E8[];
+extern struct Unk_unk68 D_80104204[4];
+extern union AnimationStep D_80104214[];
+extern union AnimationStep D_80104230[];
+extern union AnimationStep D_80104240[];
+extern union AnimationStep D_80104258[];
+extern union AnimationStep D_8010425C[];
+extern union AnimationStep D_80104260[];
+extern struct Unk_unk68 D_80104264[4];
+extern union AnimationStep D_80104274[];
+extern void* sigma_animations[44];
+extern void (*sigma_intro_funcs[5])(struct MainObj*);
+extern void (*sigma_cloak_teleport_funcs[7])(struct MainObj*);
+extern void (*sigma_cloak_dash_funcs[6])();
+extern void (*sigma_scythe_spin_funcs[6])(struct MainObj*);
+extern u8 sigma_scythe_plant_next[4];
+extern void (*sigma_scythe_plant_funcs[5])(struct MainObj*);
+extern u8 sigma_cloak_pattern[4];
+extern void (*sigma_darts_funcs[4])();
+extern void (*sigma_scythe_retrieve_funcs[5])(struct MainObj*);
+extern void (*sigma_eye_laser_funcs[3])(struct MainObj*);
+extern void (*sigma_cloak_step_funcs[5])();
+extern void (*sigma_step_funcs[9])();
+extern void (*sigma_fight_funcs[2])();
+extern s16 D_8010442C[8][2];
+extern void (*sigma_death_funcs[5])(struct MainObj*);
+extern void (*sigma_cloak_stagger_funcs[4])(struct MainObj*);
+extern void (*sigma_reveal_funcs[7])(struct MainObj*);
+extern void (*sigma_state_funcs[5])();
+#else
 struct Unk_unk68 D_80103EE4 = { -14, -21, 29, 57 };
 
 struct Unk_unk68 D_80103EE8 = { -21, -26, 41, 61 };
@@ -2091,3 +2317,4 @@ void (*sigma_state_funcs[5])() = {
     sigma_cloak_stagger,
     sigma_reveal,
 };
+#endif

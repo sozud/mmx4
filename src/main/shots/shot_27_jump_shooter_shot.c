@@ -65,7 +65,7 @@ void func_8009F27C(struct ShotObj* self)
     self->unk54 = jump_shooter_shot_hit_box;
     self->unk50.data = jump_shooter_shot_hit_box;
     self->unk5C = 1;
-    self->unk60 = 3;
+    self->unk60 = DEMO_ALT(3, 2);
     set_animation(ANIMATED_OBJECT(self), 0xC);
 }
 

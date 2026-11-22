@@ -120,6 +120,78 @@ void water_wake_moving(struct VisualObj* arg0, struct PlayerObj* arg1)
     arg0->unk5 = 0;
 }
 
+#ifdef VERSION_DEMO
+s32 water_wake_player_idle(struct PlayerObj* arg0)
+{
+    u8 animation = arg0->unk17;
+
+    if (animation == 2)
+        return 1;
+    if (animation == 5)
+        return 1;
+    if (animation == 6)
+        return 1;
+    if (animation == 9)
+        return 1;
+    if (animation == 0xC)
+        return 1;
+    if (arg0->unk2 == 0) {
+        if (animation == 0x50)
+            return 1;
+        if (animation == 0x51)
+            return 1;
+        if (animation == 0x52)
+            return 1;
+        if (animation == 0x53)
+            return 1;
+        if (animation == 0x56)
+            return 1;
+        if (animation == 0x74)
+            return 1;
+        if (animation == 0x57)
+            return 1;
+    }
+    return 0;
+}
+
+s32 water_wake_player_moving(struct PlayerObj* arg0)
+{
+    u8 animation = arg0->unk17;
+
+    if (animation == 7)
+        return 1;
+    if (animation == 8)
+        return 1;
+    if (animation == 0x10)
+        return 1;
+    if (animation == 0x11)
+        return 1;
+    if (animation == 0x1C)
+        return 1;
+    if (arg0->unk2 == 0) {
+        if (animation == 0x6F)
+            return 1;
+        if (animation == 0x70)
+            return 1;
+        if (animation == 0x78)
+            return 1;
+        if (animation == 0x79)
+            return 1;
+    } else {
+        if (animation == 0x50)
+            return 1;
+        if (animation == 0x51)
+            return 1;
+        if (animation == 0x52)
+            return 1;
+        if (animation == 0x54)
+            return 1;
+        if (animation == 0x55)
+            return 1;
+    }
+    return 0;
+}
+#else
 s32 water_wake_player_idle(struct PlayerObj* arg0)
 {
     u8 mode;
@@ -144,6 +216,7 @@ s32 water_wake_player_moving(struct PlayerObj* arg0)
 
     return state == 2;
 }
+#endif
 
 void (*water_wake_step_funcs[])(struct VisualObj*, struct PlayerObj*) = {
     water_wake_hidden,

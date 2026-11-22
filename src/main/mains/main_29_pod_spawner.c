@@ -356,7 +356,7 @@ void func_8005AD00(struct MainObj* self)
         }
         break;
     case 2:
-        drop_item(BASE_OBJECT(self), 0x13);
+        drop_item(BASE_OBJECT(self), DEMO_ALT(0x13, 0x15));
         despawn_object(OBJECT_HEADER(self));
         break;
     }

@@ -21,7 +21,11 @@ void spore_rain_fx_animate(struct MiscObj* self)
 
     if (owner->state >= 2) {
         self->on_screen = 0;
+#ifdef VERSION_DEMO
+        despawn_object(OBJECT_HEADER(self));
+#else
         ZeroObjectState(OBJECT_HEADER(self));
+#endif
         return;
     }
     if (self->unk2 == 0) {
@@ -50,10 +54,56 @@ void spore_rain_fx_animate(struct MiscObj* self)
 
 void spore_rain_fx_despawn(struct MiscObj* self)
 {
+#ifdef VERSION_DEMO
+    despawn_object(OBJECT_HEADER(self));
+#else
     ZeroObjectState(OBJECT_HEADER(self));
+#endif
 }
+
+#ifdef VERSION_DEMO
+extern union AnimationStep D_800DD354_demo[3];
+extern union AnimationStep* D_800DD360_demo[1];
+extern s32 D_8013A4F4_demo;
+
+void func_800AE688_demo(struct MiscObj* self)
+{
+    self->unk40 = 0x600;
+    self->animation_table = (u32**)D_800DD360_demo;
+    self->unk3C = SP_TITLE_FRAMES;
+    D_800DD354_demo[0].fields.frame_index = self->unk2;
+    self->bg_offset = -1;
+    self->unk15 = 0;
+    self->unk42 = 0x7804;
+    self->x_pos.i.hi = 0xA0;
+    self->unk16 = 0;
+    if ((u8)self->unk2 == 0x56 || (u8)self->unk2 == 0x57) {
+        self->state += 2;
+        self->ext.misc_30.unk54 = D_8013A4F4_demo;
+        if (D_8013A4F4_demo != 0) {
+            set_animation_frame(ANIMATED_OBJECT(self), 1, 2);
+        } else {
+            set_animation_frame(ANIMATED_OBJECT(self), 1, 1);
+        }
+    } else {
+        self->state++;
+        set_animation_frame(ANIMATED_OBJECT(self), 1, 0);
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
+#endif
 
 void (*spore_rain_fx_state_funcs[2])(struct MiscObj*) = {
     spore_rain_fx_animate,
     spore_rain_fx_despawn,
 };
+
+#ifdef VERSION_DEMO
+union AnimationStep D_800DD354_demo[3] = {
+    { 1, 0, 0, 0x00 },
+    { 1, 0, 0, 0x56 },
+    { 1, 0, 0, 0x57 },
+};
+
+union AnimationStep* D_800DD360_demo[1] = { D_800DD354_demo };
+#endif

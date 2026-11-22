@@ -36,7 +36,7 @@ void dash_dust_update(struct VisualObj* arg0)
         var_a0 = 0;
         if (entity->dash_momentum > 0) {
             if (entity->unk17 != 0x10) {
-                var_a0 = entity->unk17 != 0x80;
+                var_a0 = entity->unk17 != DEMO_ALT(0x80, 0x78);
             }
         } else if (entity->unk17 != 0x12) {
             var_a0 = 1;

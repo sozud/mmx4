@@ -32,6 +32,7 @@ void ride_armor_pilot_despawn(struct MainObj* arg0);
 extern void* ride_armor_pilot_animations[31];
 extern struct Unk_unk68 ride_armor_pilot_terrain_box;
 
+#ifndef VERSION_DEMO
 // ride_armor_pilot_init
 #if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_80089AA4);
@@ -331,10 +332,13 @@ void ride_armor_pilot_set_scripted_speed(struct MainObj* self)
     }
 }
 
+#endif
+
 void ride_armor_pilot_stub(struct MainObj* self, s32 arg1, s32 arg2)
 {
 }
 
+#ifndef VERSION_DEMO
 // ride_armor_pilot_idle
 void func_8008A064(struct MainObj* self)
 {
@@ -753,6 +757,8 @@ void ride_armor_pilot_despawn_remove(struct MainObj* self)
     despawn_object(OBJECT_HEADER(self));
 }
 
+#endif
+
 void ride_armor_pilot_despawn_idle(void)
 {
 }
@@ -761,6 +767,7 @@ void ride_armor_pilot_despawn_idle2(void)
 {
 }
 
+#ifndef VERSION_DEMO
 void ride_armor_pilot_despawn(struct MainObj* self)
 {
     ride_armor_pilot_despawn_funcs[self->unk5](self);
@@ -1059,3 +1066,4 @@ void (*ride_armor_pilot_state_funcs[3])() = {
     func_8008AC40,
     ride_armor_pilot_despawn,
 };
+#endif

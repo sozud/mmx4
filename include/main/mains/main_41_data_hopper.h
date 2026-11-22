@@ -13,7 +13,7 @@ void func_80062778(struct MainObj* arg0);
 void data_hopper_blink(struct MainObj* arg0);
 void data_hopper_vanish(struct MainObj* arg0);
 
-extern union AnimationStep* data_hopper_animations[19];
+extern union AnimationStep* data_hopper_animations[DEMO_ALT(19, 18)];
 extern struct Unk_unk68 data_hopper_terrain_box;
 
 #endif

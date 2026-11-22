@@ -4,8 +4,8 @@ import subprocess
 import ninja_syntax
 
 VERSION = os.environ.get("VERSION", "us").lower()
-if VERSION not in ("us", "jp", "eu"):
-    raise RuntimeError(f"unsupported VERSION={VERSION!r}; expected 'us', 'jp' or 'eu'")
+if VERSION not in ("us", "jp", "eu", "demo"):
+    raise RuntimeError(f"unsupported VERSION={VERSION!r}; expected 'us', 'jp', 'eu' or 'demo'")
 
 OUTPUT_DIR = f"build/{VERSION}"
 BUILD_FILE = f"{OUTPUT_DIR}/build.ninja"
@@ -19,10 +19,12 @@ UNDEFINED_SYMBOL_FILES = (
 )
 if VERSION == "jp":
     UNDEFINED_SYMBOL_FILES += " config/undefined_syms.jp.manual.txt"
-EXE_SIZE = 0x11B800 if VERSION == "eu" else 0x120000
+EXE_SIZE = {"eu": 0x11B800, "demo": 0xC3800}.get(VERSION, 0x120000)
 CC1 = "./bin/compilers/gcc-2.8.1/cc1" if VERSION == "eu" else "./bin/cc1"
 ASPSX_VERSION = "2.56"
 EXTRA_CPP_DEFS = f" -DVERSION_{VERSION.upper()}=1"
+if VERSION == "demo":
+    EXTRA_CPP_DEFS += " -DVERSION_JP=1"
 if os.environ.get("MMX4_PROGRESS_REPORT") == "1":
     EXTRA_CPP_DEFS += " -DSKIP_ASM=1"
 

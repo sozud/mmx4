@@ -65,6 +65,7 @@ extern struct Unk_unk68 D_800FB6A0;
 extern struct Unk_unk68 D_800FB6A4;
 
 extern struct Unk_unk68 D_800FB684, D_800FB688, D_800FB68C;
+#define HOVER_SENTRY_DAMAGE DEMO_ALT(3, 2)
 void func_8004B8FC(struct MainObj* arg0)
 {
     arg0->state = 1;
@@ -88,7 +89,7 @@ void func_8004B8FC(struct MainObj* arg0)
     switch (arg0->unk2) {
     case 0:
         arg0->hp = 3;
-        arg0->contact_damage = 3;
+        arg0->contact_damage = HOVER_SENTRY_DAMAGE;
         arg0->unk5 = 2;
         arg0->x_speed = 0;
         arg0->y_speed = -0x8000;
@@ -102,7 +103,7 @@ void func_8004B8FC(struct MainObj* arg0)
         break;
     case 1:
         arg0->hp = 3;
-        arg0->contact_damage = 3;
+        arg0->contact_damage = HOVER_SENTRY_DAMAGE;
         arg0->unk5 = 6;
         SP_CUR_MAIN_OBJ->ext.main_12.unk86 = arg0->y_pos.i.hi;
         arg0->x_speed = 0;
@@ -118,7 +119,7 @@ void func_8004B8FC(struct MainObj* arg0)
         break;
     case 2:
         arg0->hp = 3;
-        arg0->contact_damage = 3;
+        arg0->contact_damage = HOVER_SENTRY_DAMAGE;
         arg0->unk7E = 0;
         arg0->unk5 = 4;
         arg0->unk6 = 0;

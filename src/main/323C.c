@@ -253,8 +253,26 @@ void func_80012E2C(void)
 void fn_4_130(void* dst, void* src, u32 size);
 #endif
 
+#ifdef VERSION_DEMO
+#define DEMO_IMAGE_ARCHIVE ((u32*)0x80140000)
+extern RECT D_800C4EF8_demo[3];
+
+void func_8002AAD8_demo(void)
+{
+    func_80013890(0x30, (u8*)DEMO_IMAGE_ARCHIVE);
+    func_80014C70();
+    LoadImage(&D_800C4EF8_demo[0], DEMO_IMAGE_ARCHIVE + DEMO_IMAGE_ARCHIVE[0] / 4);
+    LoadImage(&D_800C4EF8_demo[1], DEMO_IMAGE_ARCHIVE + DEMO_IMAGE_ARCHIVE[1] / 4);
+    LoadImage(&D_800C4EF8_demo[2], DEMO_IMAGE_ARCHIVE + DEMO_IMAGE_ARCHIVE[2] / 4);
+}
+#endif
+
 void func_80012E38(void)
 {
+#ifdef VERSION_DEMO
+    func_80013AD8(0x1A, 0, 0);
+    func_80014C70();
+#else
 #ifdef VERSION_JP
     func_80013AD8(0x41, 0, 0);
 #else
@@ -270,6 +288,7 @@ void func_80012E38(void)
 #ifdef MMX4_GAMECUBE
     fn_4_130(WINDOW_ARCHIVE_DATA, WINDOW_ARCHIVE_DATA, 0x2C9C);
 #endif
+#endif
 }
 #endif
 
@@ -279,7 +298,11 @@ void func_80012E38(void)
 void saturn_music_stop_paced(void);
 void saturn_stage_select_sound(void);
 
+#ifdef VERSION_DEMO
+extern char checkpoint_archive[];
+#else
 static char checkpoint_archive[] = "STC_0_0.ARC";
+#endif
 
 void func_80012E80()
 {
@@ -299,6 +322,19 @@ void func_80012EB0(void)
 {
 }
 
+#ifdef VERSION_DEMO
+void func_80012EB8(void)
+{
+    if (engine_obj.cur_character == CHARACTER_X) {
+        func_80013AD8(0x1B, 0, 0);
+    } else {
+        func_80013AD8(0x1C, 0, 0);
+    }
+    func_80014A90(0, 0);
+    D_80173C80 = D_8015D9C8;
+    saved_vab_address = loaded_vab_address;
+}
+#else
 void func_80012EB8(void)
 {
     s32 var_a0;
@@ -335,7 +371,9 @@ void func_80012EB8(void)
     func_80015C10();
 }
 #endif
+#endif
 
+#ifndef VERSION_DEMO
 #ifdef MMX4_SATURN
 void func_80012F44(void)
 {
@@ -383,6 +421,7 @@ void func_80012F44(void)
     D_80171EA8 = (u8)engine_obj.checkpoint;
 }
 #endif
+#endif
 
 extern u8 D_80110064[64];
 
@@ -408,6 +447,9 @@ void func_80013014(void)
     s32 count;
     struct EngineObj* engine = &engine_obj;
 
+#ifdef VERSION_DEMO
+    stage_common_archives[13][0] = stage_common_stage13_variants.archive_ids[engine_obj.cur_character];
+#else
     stage_common_archives[15][0] = stage_common_stage15_variants.archive_ids[engine_obj.cur_character];
     stage_common_archives[11][0] = stage_common_stage11_variants.archive_ids[engine_obj.cur_character];
     if ((engine_obj.stage == 0xD) && (engine_obj.substage != 0)) {
@@ -417,8 +459,9 @@ void func_80013014(void)
     } else {
         stage_common_archives[13][0] = stage_common_stage13_variants.archive_ids[engine->cur_character];
     }
+#endif
     if (engine->stage == 0xE) {
-        func_80013AD8(stage_common_archives[14][engine->substage], 0, 0);
+        func_80013AD8(stage_common_archives[DEMO_ALT(14, engine->stage)][engine->substage], 0, 0);
     } else {
         func_80013AD8(stage_common_archives[engine->stage][engine->substage], 3, 0);
     }
@@ -448,7 +491,11 @@ void func_80013014(void)
     layout_height = D_80110064[count + 1];
     layout_size = layout_width * layout_height;
     func_80016074();
+#ifdef VERSION_DEMO
+    need_palette_load = 1;
+#else
     need_palette_load |= 1;
+#endif
 }
 #endif
 
@@ -507,6 +554,94 @@ void func_80014514(void);
 #define REGION_VALUE(us, jp, eu) us
 #endif
 
+#ifdef VERSION_DEMO
+RECT D_800C4EF8_demo[3] = {
+    { 0x140, 0, 0x80, 0xF0 },
+    { 0x1C0, 0, 0x20, 0xF0 },
+    { 0, 0x1E0, 0x100, 1 },
+};
+
+u8 stage_common_archives[16][2] = {
+    { 0x1F, 0x20 },
+    { 0x21, 0x22 },
+    { 0x23, 0x24 },
+    { 0x00, 0x00 },
+    { 0x25, 0x26 },
+    { 0x27, 0x28 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x29, 0x00 },
+    { 0x2B, 0x2C },
+    { 0x00, 0x00 },
+};
+
+struct CharacterArchiveVariants stage_common_stage13_variants = {
+    { 0x29, 0x2A },
+    { 0x00, 0x00 },
+};
+
+u8 stage_x_archives[16][2] = {
+    { 0x01, 0x03 },
+    { 0x05, 0x07 },
+    { 0x09, 0x0B },
+    { 0x00, 0x00 },
+    { 0x0D, 0x0F },
+    { 0x11, 0x13 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x15, 0x00 },
+    { 0x17, 0x18 },
+    { 0x00, 0x00 },
+};
+
+u8 stage_zero_archives[16][2] = {
+    { 0x02, 0x04 },
+    { 0x06, 0x08 },
+    { 0x0A, 0x0C },
+    { 0x00, 0x00 },
+    { 0x0E, 0x10 },
+    { 0x12, 0x14 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x00, 0x00 },
+    { 0x16, 0x00 },
+    { 0x17, 0x18 },
+    { 0x00, 0x00 },
+};
+
+u16 D_800C4F74_demo[16] = {
+    0x0000,
+    0xF7BC,
+    0xBBC1,
+    0x801F,
+    0x83FF,
+    0x9400,
+    0x9800,
+    0x9C00,
+    0xA000,
+    0xA400,
+    0xA800,
+    0xAC00,
+    0xB000,
+    0xB400,
+    0xB800,
+    0xBC00,
+};
+#else
 u8 D_800EE480[8] = {
     REGION_VALUE(0x45, 0x46, 0x46),
     REGION_VALUE(0x47, 0x48, 0x48),
@@ -551,11 +686,17 @@ struct CharacterArchiveVariants stage_common_stage11_variants = {
     { REGION_VALUE(0x6A, 0x69, 0x6B), REGION_VALUE(0x6B, 0x6A, 0x6C) },
     { 0x00, 0x00 },
 };
-
-#ifdef MMX4_WIN32
-u8 stage_archive_padding[4] = { 0, 0, 0, 0 };
 #endif
 
+#ifdef MMX4_WIN32
+#ifdef VERSION_DEMO
+extern u8 stage_archive_padding[4];
+#else
+u8 stage_archive_padding[4] = { 0, 0, 0, 0 };
+#endif
+#endif
+
+#ifndef VERSION_DEMO
 u8 stage13_common_substage_archives[8] = {
     REGION_VALUE(0x82, 0x81, 0x83),
     REGION_VALUE(0x83, 0x82, 0x84),
@@ -615,6 +756,7 @@ u8 stage13_character_archives[8] = {
     REGION_VALUE(0x3D, 0x3E, 0x3D),
     REGION_VALUE(0x3E, 0x3F, 0x3E),
 };
+#endif
 
 #undef REGION_VALUE
 

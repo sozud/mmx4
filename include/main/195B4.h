@@ -6,7 +6,7 @@ struct StageObjectMarginData {
     u16 alignment_padding;
 };
 
-extern const u8* s_StageMainIds[13][2];
+extern const u8* s_StageMainIds[DEMO_ALT(13, 12)][2];
 
 void func_80028FEC(s16, s16, s16, s16, u8);
 

@@ -165,6 +165,14 @@ void func_80047E58(struct MainObj* arg0)
     s32 collision;
     s8 timer;
 
+#ifdef VERSION_DEMO
+    func_8002D9BC(arg0);
+    if (arg0->ext.main_8.unk88 != 0) {
+        arg0->attack_box = arg0->ext.main_8.unk80;
+        func_8002D9BC(arg0);
+        arg0->attack_box = arg0->ext.main_8.unk84;
+    }
+#endif
     if (engine_obj.cur_character == 0)
         arg0->hurt_box = (const void*)&D_800FA740;
     else
@@ -191,11 +199,17 @@ void func_80047E58(struct MainObj* arg0)
     arg0->unk65 = arg0->ext.main_8.unk8C;
     collision = func_8002DD04(arg0);
     if (collision < 0) {
+#ifdef VERSION_DEMO
+        arg0->state++;
+#else
         arg0->state = 2;
+#endif
         arg0->unk5 = 0;
         arg0->unk6 = 0;
         update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
+#ifndef VERSION_DEMO
         g_Player.spike_immune = 1;
+#endif
         return;
     }
     if (collision > 0) {
@@ -229,12 +243,14 @@ void func_80047E58(struct MainObj* arg0)
             arg0->unk42 &= 0x7FFF;
     }
 
+#ifndef VERSION_DEMO
     func_8002D9BC(arg0);
     if (arg0->ext.main_8.unk88 != 0) {
         arg0->attack_box = arg0->ext.main_8.unk80;
         func_8002D9BC(arg0);
         arg0->attack_box = arg0->ext.main_8.unk84;
     }
+#endif
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 }
 
@@ -761,6 +777,9 @@ void eregion_death_wait_explosion(struct MainObj* self)
         self->unk7 = -0x80;
         return;
     }
+#ifdef VERSION_DEMO
+    engine_obj.unkF = 1;
+#else
     misc = find_free_misc_obj();
     if (misc != 0) {
         misc->active = 0x41;
@@ -768,6 +787,7 @@ void eregion_death_wait_explosion(struct MainObj* self)
         misc->state = 0;
     }
     player_start_script_action(0x14, PLAYER_FACING_RIGHT);
+#endif
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
@@ -936,7 +956,11 @@ void eregion_intro_fill_health(struct MainObj* self)
 {
     if (self->hp < 0x30) {
         if (--self->unk7E == 0) {
+#ifdef VERSION_DEMO
+            func_8001540C(0, SATURN_SOUND(0xF, 0x14), NULL);
+#else
             func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
+#endif
             self->unk7E = 3;
         }
         self->hp++;

@@ -80,7 +80,9 @@ void color_filter_step(struct EffectObj* self)
         g_FilterModeR = self->ext.scaling_x.unk14->unk3 & 1;
         g_FilterModeG = self->ext.scaling_x.unk14->unk3 & 2;
         g_FilterModeB = self->ext.scaling_x.unk14->unk3 & 4;
+#ifndef VERSION_DEMO
         need_palette_load |= 5;
+#endif
     }
 }
 
@@ -96,7 +98,7 @@ void copy_animated_palette(struct EffectObj* self)
         *var_a1++ = *var_a2++;
     }
 
-    need_palette_load |= 1;
+    REQUEST_PALETTE_LOAD();
 }
 
 struct Unk14 color_filter_script_0[13] = {
@@ -233,6 +235,7 @@ struct Unk14 color_filter_script_13[5] = {
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
+#ifndef VERSION_DEMO
 struct Unk14 color_filter_script_14[17] = {
     { 0x0400, (s8)0x08, 0x06 },
     { 0x0420, (s8)0x08, 0x06 },
@@ -294,8 +297,9 @@ struct Unk14 color_filter_script_16[33] = {
     { 0x0000, (s8)0x02, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
+#endif
 
-struct Unk14* color_filter_scripts[17] = {
+struct Unk14* color_filter_scripts[DEMO_ALT(17, 14)] = {
     color_filter_script_0,
     color_filter_script_1,
     color_filter_script_2,
@@ -310,9 +314,11 @@ struct Unk14* color_filter_scripts[17] = {
     color_filter_script_11,
     color_filter_script_12,
     color_filter_script_13,
+#ifndef VERSION_DEMO
     color_filter_script_14,
     color_filter_script_15,
     color_filter_script_16,
+#endif
 };
 
 #ifdef MMX4_SATURN
@@ -337,7 +343,7 @@ const u8 color_filter_saturn_masks[17] = {
 };
 #endif
 
-s32 color_filter_masks[17][4] = {
+s32 color_filter_masks[DEMO_ALT(17, 14)][4] = {
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0xFFFF0000u, (s32)0x00000000u },
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0x00007F00u, (s32)0x00000000u },
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0x0003FF80u, (s32)0x00000000u },
@@ -352,9 +358,11 @@ s32 color_filter_masks[17][4] = {
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0x0003FF80u, (s32)0x00000000u },
     { (s32)0xFFFFFFFFu, (s32)0xFFFFFFFFu, (s32)0xFFFFFFFFu, (s32)0xFFFFFFFFu },
     { (s32)0xFFFFFFFFu, (s32)0xFFFFFFFFu, (s32)0xFFFFFFFFu, (s32)0xFFFFFFFFu },
+#ifndef VERSION_DEMO
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0xFFFFC000u, (s32)0x00000000u },
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0xFFFCF000u, (s32)0x00000000u },
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0xFFFC3000u, (s32)0x00000000u },
+#endif
 };
 
 void (*g_TitleScalingXUpdateFuncs[])(struct EffectObj*) = {

@@ -17,6 +17,23 @@ void enemy_charge_glow_update(struct VisualObj* arg0)
     enemy_charge_glow_state_funcs[arg0->state](arg0);
 }
 
+#ifdef VERSION_DEMO
+void enemy_charge_glow_init(struct VisualObj* arg0)
+{
+    struct PlayerObj* owner;
+
+    owner = arg0->unk50;
+    arg0->unk15 = owner->unk15;
+    arg0->unk42 &= 0x7FFF;
+    if (owner->id == 0x26) {
+        set_animation(arg0, 0x14);
+    } else {
+        set_animation(arg0, 8);
+    }
+    arg0->on_screen = 1;
+    arg0->state++;
+}
+#else
 void enemy_charge_glow_init(struct VisualObj* arg0)
 {
     struct PlayerObj* owner;
@@ -37,6 +54,7 @@ void enemy_charge_glow_init(struct VisualObj* arg0)
     arg0->on_screen = 1;
     arg0->state = 1;
 }
+#endif
 
 // enemy_charge_glow_main
 
@@ -44,6 +62,20 @@ void enemy_charge_glow_init(struct VisualObj* arg0)
 void func_800B1F78(struct VisualObj* arg0);
 #endif
 
+#ifdef VERSION_DEMO
+void func_800B1F78(struct VisualObj* arg0)
+{
+    struct MainObj* owner;
+
+    owner = (struct MainObj*)arg0->unk50;
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (owner->ext.main_38.unk88 == 1 && owner->id == 0x26)
+        set_animation(arg0, 0x13);
+    if (owner->ext.main_38.unk88 == 2 || owner->unk5 != 3)
+        arg0->state++;
+    update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
+}
+#else
 void func_800B1F78(struct VisualObj* arg0)
 {
     struct MainObj* owner;
@@ -68,6 +100,7 @@ void func_800B1F78(struct VisualObj* arg0)
     arg0->y_pos.i.hi = shot->y_pos.i.hi;
     update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
 }
+#endif
 
 void enemy_charge_glow_despawn(struct VisualObj* arg0)
 {

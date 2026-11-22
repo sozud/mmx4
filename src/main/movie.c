@@ -155,6 +155,7 @@ void Set24BitDisp(s32 w, s32 h);
 s32 func_80018B88(s32 arg0, s32 arg1);
 
 // general movie playing code
+#ifndef VERSION_DEMO
 #ifndef SKIP_MDEC
 void func_80018000(arg_u8 movie)
 {
@@ -345,6 +346,7 @@ void func_800182E8(void)
 #endif
 }
 #endif
+#endif
 void Set24BitDisp(s32 w, s32 h)
 {
     RECT rect;
@@ -353,7 +355,7 @@ void Set24BitDisp(s32 w, s32 h)
     ResetGraph(0);
     rect.x = 0;
     rect.y = 0;
-    rect.w = 480;
+    rect.w = DEMO_ALT(480, 320);
     rect.h = 480;
     VSync(0);
     ClearImage(&rect, 0, 0, 0);
@@ -378,6 +380,7 @@ void Set24BitDisp(s32 w, s32 h)
     draw_infos[0].dispenv.screen.w = 0;
 #endif
 }
+#ifndef VERSION_DEMO
 
 extern u32* D_801395D4[];
 extern s32 D_801395DC;
@@ -752,4 +755,5 @@ void func_800192F8(void)
         }
     }
 }
+#endif
 #endif

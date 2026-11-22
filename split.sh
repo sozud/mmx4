@@ -12,5 +12,9 @@ eu)
 	SPLAT_CONFIG=SLES_011.76.splat.yaml
 	rm -rf asm/eu assets/eu
 	;;
+demo)
+	SPLAT_CONFIG=X4.demo.splat.yaml
+	rm -rf asm/demo assets/demo
+	;;
 esac
 splat split ./config/${SPLAT_CONFIG}

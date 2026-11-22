@@ -49,7 +49,11 @@ void missile_smoke_main(struct VisualObj* arg0)
         }
     } else {
         temp_a0 = arg0->unk50;
+#ifdef VERSION_DEMO
+        if (((u8)temp_a0->shot_types[0] == 2) && (temp_a0->active != 0)) {
+#else
         if (((u8)temp_a0->shot_types[0] == 2) && (temp_a0->active != 0) && (temp_a0->last_shot_type & 0x40)) {
+#endif
             arg0->unk15 = temp_a0->unk15;
             arg0->x_pos.i.hi = temp_a0->x_pos.i.hi;
             arg0->y_pos.i.hi = temp_a0->y_pos.i.hi;
@@ -66,6 +70,19 @@ void missile_smoke_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
+
+#ifdef VERSION_DEMO
+void func_80099A5C_demo(struct VisualObj* arg0)
+{
+    arg0->state++;
+    if (arg0->unk2 == 0) {
+        arg0->unk5C.value = 0;
+        arg0->x_pos.i.hi += arg0->unk15 != 0 ? 0x33 : -0x33;
+        arg0->y_pos.i.hi -= 4;
+        set_animation(arg0, 0x13);
+    }
+}
+#endif
 
 void (*missile_smoke_state_funcs[])(struct VisualObj*) = {
     missile_smoke_init,

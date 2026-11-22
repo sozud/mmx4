@@ -129,7 +129,7 @@ static void robot_bee_arc_position(struct MainObj* self, int index,
 
 void func_80044F88(struct MainObj* arg0)
 {
-    arg0->state = 1;
+    arg0->state = DEMO_ALT(1, arg0->state + 1);
     arg0->unk5 = 2;
     arg0->unk7C = 0;
     arg0->bg_offset = g_Player.bg_offset;
@@ -176,14 +176,14 @@ void robot_bee_main(struct MainObj* self)
             spawn_explosion(BASE_OBJECT(self));
             spawn_debris(5, robot_bee_debris, self);
             drop_item(BASE_OBJECT(self), 0);
-            self->state = 2;
+            self->state = DEMO_ALT(2, self->state + 1);
             return;
         }
         robot_bee_step_funcs[self->unk5](self);
         func_8002D9BC(self);
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     } else {
-        self->state = 2;
+        self->state = DEMO_ALT(2, self->state + 1);
     }
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
@@ -203,9 +203,13 @@ void robot_bee_despawn(struct MainObj* self)
     subtype = self->unk2;
     if ((subtype == 3) || (subtype == 4)) {
         target = self->ext.main_5.owner;
+#ifdef VERSION_DEMO
+        target->ext.main_22.parts_mask ^= 1 << self->ext.main_5.part_index;
+#else
         if ((target->active != 0) && (target->id == 0x16)) {
             target->ext.main_22.parts_mask ^= 1 << self->ext.main_5.part_index;
         }
+#endif
         ZeroObjectState(OBJECT_HEADER(self));
         return;
     }

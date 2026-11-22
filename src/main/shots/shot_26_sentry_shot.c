@@ -64,7 +64,7 @@ void func_8009EEC8(struct ShotObj* shot)
     shot->unk3C = shot->unk7C->unk3C;
     shot->unk15 = shot->unk7C->unk15;
     shot->bg_offset = shot->unk7C->bg_offset;
-    shot->unk60 = 3;
+    shot->unk60 = DEMO_ALT(3, 2);
     shot->unk5C = 1;
     shot->x_vel.val *= 2;
     shot->y_vel.val *= 2;

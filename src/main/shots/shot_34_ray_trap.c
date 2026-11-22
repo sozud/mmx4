@@ -27,17 +27,19 @@ void ray_trap_despawn(struct ShotObj*);
 
 void func_80021DBC(s16* arg0, s16* arg1, s32 arg2);
 
-struct Unk_unk68 ray_trap_box0 = { -6, -10, 10, 18 };
-struct Unk_unk68 ray_trap_box1 = { -17, -10, 33, 18 };
+struct Unk_unk68 ray_trap_box0 = { -6, DEMO_ALT(-10, -6), 10, DEMO_ALT(18, 9) };
+struct Unk_unk68 ray_trap_box1 = { -17, DEMO_ALT(-10, -7), 33, DEMO_ALT(18, 12) };
 struct Unk_unk68 ray_trap_box2 = { 0, -1, 11, 3 };
 struct Unk_unk68 ray_trap_box3 = { -6, -5, 10, 11 };
 struct Unk_unk68 ray_trap_box4 = { -7, -15, 13, 30 };
 struct Unk_unk68 ray_trap_box5 = { 0, 0, 7, 8 };
+#ifndef VERSION_DEMO
 u8 ray_trap_effect_animation_ids[3][4] = {
     { 10, 10, 10, 11 },
     { 40, 40, 40, 42 },
     { 41, 41, 41, 42 },
 };
+#endif
 s8 ray_trap_trailing_data[4] = { 18, 9, -18, 9 };
 
 s32 ray_trap_animations[2][4] = {
@@ -84,6 +86,50 @@ void func_80021DBC(s16* arg0, s16* arg1, s32 arg2);
 void ray_trap_check_airborne(struct ShotObj* arg0);
 #endif
 
+#ifdef VERSION_DEMO
+void func_800A16FC(struct ShotObj* arg0)
+{
+    arg0->state++;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->x_vel.val = 0x60000;
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->unk16 = 5;
+    switch (arg0->unk2) {
+    case 0:
+        arg0->unk54 = (u8*)&ray_trap_box4;
+        arg0->unk50.data = (u8*)&ray_trap_box3;
+        arg0->unk68 = &ray_trap_box5;
+        arg0->unk15 = arg0->x_pos.val < g_Player.x_pos.val ? PLAYER_FACING_RIGHT : 0;
+        arg0->unk8C.bytes[3] = 0;
+        break;
+    case 1:
+        arg0->unk54 = (u8*)&ray_trap_box1;
+        arg0->unk50.data = (u8*)&ray_trap_box0;
+        arg0->unk68 = NULL;
+        break;
+    case 2:
+    case 3:
+        arg0->unk54 = (u8*)&ray_trap_box4;
+        arg0->unk50.data = (u8*)&ray_trap_box3;
+        arg0->unk68 = &ray_trap_box5;
+        arg0->x_vel.val = arg0->unk15 != 0 ? 0x30000 : -0x30000;
+        arg0->unk8C.bytes[3] = 1;
+        break;
+    }
+    arg0->unk60 = 4;
+    arg0->unk5C = 1;
+    arg0->unk58.data = (u8*)D_80105FF0;
+    arg0->unk67 = 0;
+    arg0->timer = 0;
+    arg0->unk8C.bytes[0] = 7;
+    arg0->unk8C.bytes[2] = 0;
+    arg0->unk5 = ray_trap_animations[1][arg0->unk2];
+    set_animation(arg0, ray_trap_animations[0][arg0->unk2]);
+}
+#else
 void func_800A16FC(struct ShotObj* arg0)
 {
     arg0->state = 1;
@@ -131,6 +177,7 @@ void func_800A16FC(struct ShotObj* arg0)
     arg0->unk5 = ray_trap_animations[1][arg0->unk2];
     set_animation(arg0, ray_trap_animations[0][arg0->unk2]);
 }
+#endif
 
 void ray_trap_check_airborne(struct ShotObj* self)
 {
@@ -219,7 +266,7 @@ void func_800A19A8(struct ShotObj* arg0)
     }
     animate_object(ANIMATED_OBJECT(arg0));
     if (owner->active == 0)
-        arg0->state = 2;
+        arg0->state = DEMO_ALT(2, arg0->state + 1);
 }
 
 // ray_trap_ride_wait
@@ -239,7 +286,7 @@ void func_800A1B1C(struct ShotObj* arg0)
     arg0->y_pos.i.hi = owner->y_pos.i.hi + arg0->unk84.halves[1];
     animate_object(ANIMATED_OBJECT(arg0));
     if (owner->active == 0)
-        arg0->state = 2;
+        arg0->state = DEMO_ALT(2, arg0->state + 1);
 }
 
 // ray_trap_ride_return
@@ -375,6 +422,25 @@ void ray_trap_chase(struct ShotObj* self)
 }
 
 // ray_trap_main
+#ifdef VERSION_DEMO
+void func_800A2098(struct ShotObj* arg0)
+{
+    if (func_8002DD04((struct MainObj*)arg0) < 0) {
+        spawn_explosion(BASE_OBJECT(arg0));
+    } else {
+        arg0->unk8C.bytes[2] = 1;
+        func_8002D9BC(arg0);
+        if (arg0->unk2 == 0)
+            ray_trap_check_airborne(arg0);
+        ray_trap_step_funcs[arg0->unk5](arg0);
+        if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) == 0) {
+            ((void (*)(struct BaseObj*, s32, s32))is_on_screen)(BASE_OBJECT(arg0), 0x10, 0x10);
+            return;
+        }
+    }
+    arg0->state++;
+}
+#else
 void func_800A2098(struct ShotObj* arg0)
 {
     s32 hit = func_8002DD04((struct MainObj*)arg0);
@@ -420,6 +486,7 @@ void func_800A2098(struct ShotObj* arg0)
     else
         arg0->state = st;
 }
+#endif
 
 void ray_trap_despawn(struct ShotObj* self)
 {

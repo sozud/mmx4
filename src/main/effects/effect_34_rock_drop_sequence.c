@@ -27,10 +27,12 @@ void rock_drop_sequence_update(struct EffectObj* self)
 
 void rock_drop_sequence_wait_player(struct EffectObj* self)
 {
+#ifndef VERSION_DEMO
     if (0 != engine_obj.checkpoint) {
         ZeroObjectState(OBJECT_HEADER(self));
         return;
     }
+#endif
 
     if (g_Player.x_pos.i.hi > 0x240) {
         self->ext.effect_34.unk14 = 0;
@@ -53,7 +55,9 @@ void rock_drop_sequence_spawn(struct EffectObj* self)
             effect->unk2 = rock_drop_sequence_subtypes[self->ext.effect_34.unk14];
             effect->x_pos.u.hi = rock_drop_sequence_x_positions[self->ext.effect_34.unk14];
             effect->y_pos.u.hi = 0x270;
+#ifndef VERSION_DEMO
             effect->backref = NULL;
+#endif
             effect->state = 0;
         }
 
@@ -127,11 +131,17 @@ void func_800BD080(struct EffectObj* arg0)
         arg0->ext.effect_4.unk16 += 3;
 }
 
-s16 rock_drop_sequence_delays[10] = { 2, 2, 2, 0x46, 0x64, 0x46, 0x46, 0x46, 0x46, 0 };
+#define ROCK_DROP_DELAY DEMO_ALT(0x46, 0x28)
+
+s16 rock_drop_sequence_delays[10] = {
+    2, 2, 2, ROCK_DROP_DELAY, 0x64, ROCK_DROP_DELAY, ROCK_DROP_DELAY, ROCK_DROP_DELAY, ROCK_DROP_DELAY, 0
+};
 
 u8 rock_drop_sequence_subtypes[12] = { 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0, 0, 0 };
 
-s16 rock_drop_sequence_x_positions[10] = { 0xC0, 0x140, 0x2A0, 0x1C0, 0x240, 0x300, 0x380, 0x410, 0x4C0, 0 };
+s16 rock_drop_sequence_x_positions[10] = {
+    0xC0, 0x140, DEMO_ALT(0x2A0, 0x290), 0x1C0, 0x240, DEMO_ALT(0x300, 0x2E0), 0x380, 0x410, 0x4C0, 0
+};
 
 void (*rock_drop_sequence_state_funcs[])(struct EffectObj*) = {
     rock_drop_sequence_wait_player,

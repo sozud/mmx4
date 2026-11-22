@@ -21,10 +21,15 @@ void sentry_flash_despawn(struct MiscObj*);
 
 void sentry_flash_update(struct MiscObj* self)
 {
+#ifndef VERSION_DEMO
     struct ObjectHeader* owner;
+#endif
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
+#ifdef VERSION_DEMO
+    sentry_flash_state_funcs[self->state](self);
+#else
     owner = OBJECT_HEADER(self->ext.unk.unk50);
     if (owner->active != 0x41) {
         ZeroObjectState(OBJECT_HEADER(self));
@@ -33,6 +38,7 @@ void sentry_flash_update(struct MiscObj* self)
     } else {
         sentry_flash_state_funcs[self->state](self);
     }
+#endif
 }
 
 // sentry_flash_init

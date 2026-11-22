@@ -96,7 +96,9 @@ void func_80061F2C(struct MainObj* arg0)
             arg0->ext.main_40.timer = 0x30;
             arg0->ext.main_40.trigger_time = 0x2F;
             arg0->on_screen = 0;
+#ifndef VERSION_DEMO
             spawn_debris(7, D_800FEA1C, arg0);
+#endif
             arg0->state++;
             return;
         }
@@ -108,7 +110,9 @@ void func_80061F2C(struct MainObj* arg0)
             arg0->ext.main_40.timer = 0x30;
             arg0->ext.main_40.trigger_time = 0x2F;
             arg0->on_screen = 0;
+#ifndef VERSION_DEMO
             spawn_debris(7, D_800FEA1C, arg0);
+#endif
             arg0->state++;
             return;
         }
@@ -251,6 +255,7 @@ s8 D_800FE9E0[4] = { -32, -24, 64, 48 };
 
 union AnimationStep breakable_terrain_anim_0[] = { { 1, 0, 0, 0x00 } };
 
+#ifndef VERSION_DEMO
 union AnimationStep breakable_terrain_anim_1[] = { { 1, 0, 0, 0x01 } };
 
 union AnimationStep breakable_terrain_anim_2[] = { { 1, 0, 0, 0x02 } };
@@ -260,19 +265,24 @@ union AnimationStep breakable_terrain_anim_3[] = { { 1, 0, 0, 0x03 } };
 union AnimationStep breakable_terrain_anim_4[] = { { 1, 0, 0, 0x04 } };
 
 union AnimationStep breakable_terrain_anim_5[] = { { 1, 0, 0, 0x05 } };
+#endif
 
-union AnimationStep* breakable_terrain_animations[6] = {
+union AnimationStep* breakable_terrain_animations[DEMO_ALT(6, 1)] = {
     breakable_terrain_anim_0,
+#ifndef VERSION_DEMO
     breakable_terrain_anim_1,
     breakable_terrain_anim_2,
     breakable_terrain_anim_3,
     breakable_terrain_anim_4,
     breakable_terrain_anim_5,
+#endif
 };
 
 u8 D_800FEA14[8] = { 0, 1, 2, 1, 0, 2, 0, 0 };
 
+#ifndef VERSION_DEMO
 u8 D_800FEA1C[8] = { 1, 2, 3, 4, 5, 2, 4, 0 };
+#endif
 
 s8* D_800FEA24[7] = {
     D_800FE9C8,

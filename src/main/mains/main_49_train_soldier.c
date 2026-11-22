@@ -86,7 +86,9 @@ void func_80068548(struct MainObj* arg0)
     } else {
         SP_CUR_MAIN_OBJ->ext.main_49.unk86 = 1;
         if (arg0->unk2 != 9) {
+#ifndef VERSION_DEMO
             arg0->unk7A = 1;
+#endif
         }
         arg0->unk42 = TRAIN_SOLDIER_CLUT(0x18);
         SP_CUR_MAIN_OBJ->ext.main_49.unk85 = arg0->unk2;
@@ -208,7 +210,9 @@ void train_soldier_wait_for_player(struct MainObj* self)
             self->state = 1;
             self->unk5 = 2;
             self->unk6 = 0;
+#ifndef VERSION_DEMO
             self->unk7A = 0;
+#endif
             if (g_Player.x_pos.val < self->x_pos.val) {
                 self->unk15 = 0;
                 return;

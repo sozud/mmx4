@@ -12,6 +12,13 @@ struct PlayerGaugePosition {
 };
 
 void func_8002217C(arg_u16, arg_u8, arg_u8);
+#ifdef VERSION_DEMO
+void demo_start_dialogue(arg_u16 message, arg_u8 portrait);
+#define DEMO_START_DIALOGUE(message, portrait) \
+    do {                                       \
+        demo_start_dialogue(message, portrait); \
+    } while (0)
+#endif
 void func_80022730(struct AbcObj*);
 
 #endif

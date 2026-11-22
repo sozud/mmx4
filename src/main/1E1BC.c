@@ -2,6 +2,7 @@
 #include "common.h"
 #include "main/1CF60.h"
 #include "main/1E1BC.h"
+#include "main/323C.h"
 #include "main/collision.h"
 #include "main/objects.h"
 #include "weapon_resources.h"
@@ -127,8 +128,13 @@ struct EffectSpawnData D_800F460C[64] = {
     { 0x04, 0x00, 0x01, 0x01, 0x0C },
     { 0x03, 0x00, 0x01, 0x01, 0x0C },
     { 0x04, 0x00, 0x01, 0x00, 0x0C },
+#ifdef VERSION_DEMO
+    { 0x00, 0x00, 0x00, 0x00, 0x00 },
+    { 0x00, 0x00, 0x00, 0x00, 0x00 },
+#else
     { 0x04, 0x00, 0x00, 0x00, 0x0C },
     { 0x04, 0x00, 0x00, 0x00, 0x0C },
+#endif
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
     { 0x07, 0x01, 0x00, 0x00, 0x00 },
     { 0x06, 0x01, 0x00, 0x00, 0x00 },
@@ -139,10 +145,17 @@ struct EffectSpawnData D_800F460C[64] = {
     { 0x07, 0x01, 0x00, 0x00, 0x00 },
     { 0x07, 0x01, 0x00, 0x00, 0x00 },
     { 0x0A, 0x01, 0x00, 0x00, 0x00 },
+#ifdef VERSION_DEMO
+    { 0x00, 0x00, 0x00, 0x00, 0x00 },
+    { 0x00, 0x00, 0x00, 0x00, 0x00 },
+    { 0x00, 0x00, 0x00, 0x00, 0x00 },
+    { 0x00, 0x00, 0x00, 0x00, 0x00 },
+#else
     { 0x0B, 0x01, 0x00, 0x00, 0x00 },
     { 0x07, 0x01, 0x00, 0x00, 0x00 },
     { 0x07, 0x01, 0x00, 0x00, 0x00 },
     { 0x07, 0x01, 0x01, 0x00, 0x00 },
+#endif
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
@@ -162,6 +175,15 @@ struct EffectSpawnData D_800F460C[64] = {
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
+#ifdef VERSION_DEMO
+    { 0x0C, 0x03, 0x01, 0x01, 0x0C },
+    { 0x0C, 0x03, 0x01, 0x01, 0x0C },
+    { 0x0C, 0x03, 0x00, 0x00, 0x0C },
+    { 0x0C, 0x03, 0x01, 0x00, 0x00 },
+    { 0x0C, 0x03, 0x01, 0x00, 0x00 },
+    { 0x0C, 0x02, 0x00, 0x00, 0x08 },
+    { 0x0C, 0x02, 0x00, 0x00, 0x08 },
+#else
     { 0x0C, 0x02, 0x01, 0x01, SATURN_SOUND(0x0C, 0x35) },
     { 0x0C, 0x02, 0x01, 0x01, SATURN_SOUND(0x0C, 0x35) },
     { 0x0C, 0x04, 0x00, 0x00, 0x00 },
@@ -169,6 +191,7 @@ struct EffectSpawnData D_800F460C[64] = {
     { 0x0C, 0x02, 0x01, 0x00, SATURN_SOUND(0x09, 0x66) },
     { 0x0C, 0x03, 0x00, 0x00, SATURN_SOUND(0x08, 0x40) },
     { 0x0C, 0x03, 0x00, 0x00, SATURN_SOUND(0x08, 0x40) },
+#endif
     { 0x00, 0x00, 0x00, 0x00, 0x00 },
 };
 
@@ -185,9 +208,11 @@ ret_u8 func_8002D9BC(void* object)
     u8 contact_damage;
     shot = object;
     player = &g_Player;
+#ifndef VERSION_DEMO
     if (g_Player.spike_immune != 0) {
         return 0;
     }
+#endif
     if (g_Player.ride_state < 0) {
         ride = &qux_object;
         if (HP_DAMAGE_FLAG(ride->hp)) {
@@ -234,9 +259,12 @@ ret_u8 func_8002D9BC(void* object)
     damage_type = (s8)shot->unk62;
     switch (damage_type) {
     case 0:
+#ifndef VERSION_DEMO
         if ((player->unk2 == 0) && (((u8)player->armor_parts) & 2)) {
             player->hurt_type = 4;
-        } else if (shot->unk60 < 5) {
+        } else
+#endif
+            if (shot->unk60 < 5) {
             player->hurt_type = 1;
         } else {
             player->hurt_type = 2;
@@ -248,6 +276,10 @@ ret_u8 func_8002D9BC(void* object)
         break;
     }
 
+#ifdef VERSION_DEMO
+    remaining_hp = ((u8)player->hp) - (u8)shot->unk60;
+    player->hp = remaining_hp;
+#else
     contact_damage = (u8)shot->unk60;
     damage_type = (s8)contact_damage;
     if (damage_type != 0) {
@@ -263,6 +295,7 @@ ret_u8 func_8002D9BC(void* object)
         }
         player->hp = remaining_hp;
     }
+#endif
     if (player->hp > 0) {
         player->hp = player->hp | 0x80;
     } else {
@@ -275,6 +308,9 @@ ret_u8 func_8002D9BC(void* object)
             player->hit_facing = PLAYER_FACING_RIGHT;
         }
     }
+#ifdef VERSION_DEMO
+    return 1;
+#else
     if (player->unk2 == 0) {
         if (!(((u8)player->armor_parts) & 2)) {
             return 1;
@@ -289,6 +325,7 @@ ret_u8 func_8002D9BC(void* object)
         }
     }
     return 1;
+#endif
 }
 // check_weapon_hits
 
@@ -312,12 +349,14 @@ ret_s8 func_8002DD04(struct MainObj* object)
     struct PlayerObj* player = &g_Player;
     struct WeaponObj* weapon;
 
+#ifndef VERSION_DEMO
     if (object->unk7A != 0) {
         object->unk65 = 0;
         return 0;
     }
     if (object->collision_data == D_80106070 && (player->unk2 == 0 || !(player->boss_flags & 0x40)))
         return 0;
+#endif
     if (object->unk5 != 0)
         object->unk42 &= 0x7FFF;
     for (weapon = weapon_objects; weapon < weapon_objects + COUNT(weapon_objects); weapon++) {
@@ -368,9 +407,11 @@ s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
     case 0x1E:
     case 0x1F:
     case 0x20:
+#ifndef VERSION_DEMO
     case 0x21:
     case 0x22:
     case 0x23:
+#endif
     case 0x3D:
     case 0x3E:
         g_Player.update_delay_request = 1;
@@ -457,9 +498,11 @@ void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
     s32 visual_id;
 
     id = arg0->id;
+#ifndef VERSION_DEMO
     if (D_800F460C[id].effect_type == 4) {
         return;
     }
+#endif
 
     if (arg1 < 0) {
         if (D_800F460C[id].set_facing != 0) {
@@ -483,11 +526,15 @@ void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
             }
             break;
         case 2:
+#ifndef VERSION_DEMO
         case 3:
+#endif
             func_8001540C(5, D_800F460C[id].animation_id, arg0);
             break;
+#ifndef VERSION_DEMO
         case 4:
             break;
+#endif
         }
         visual_id = D_800F460C[id].visual_id;
     }
@@ -505,30 +552,52 @@ void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
     visual->unk40 = WEAPON_HIT_TEXTURE;
     visual->unk42 = WEAPON_PALETTE_2;
     visual->unk16 = 0;
+#ifdef VERSION_DEMO
+    visual->unk15 = arg0->unk15 ^ PLAYER_FACING_RIGHT;
+    visual->x_pos.i.hi = (s16)((u16*)&arg0->unk80)[0];
+    if (D_800F460C[id].effect_type != 0) {
+        visual->y_pos.i.hi = (s16)((u16*)&arg0->unk80)[1];
+    } else {
+        visual->y_pos.i.hi = arg0->y_pos.i.hi;
+    }
+#else
     visual->x_pos.i.hi = (s16)((u16*)&arg0->unk80)[0];
     visual->y_pos.i.hi = (s16)((u16*)&arg0->unk80)[1];
     visual->unk15 = arg0->unk15 ^ PLAYER_FACING_RIGHT;
+#endif
 }
 #endif
+#ifdef VERSION_DEMO
+#define COLLIDE_PUSH(obj, target, direction) \
+    ((void (*)(struct MovingObj*, struct MovingObj*))func_8002E380)(MOVING_OBJECT(obj), MOVING_OBJECT(target))
+#else
+#define COLLIDE_PUSH(obj, target, direction) func_8002E380(MOVING_OBJECT(obj), MOVING_OBJECT(target), direction)
+#endif
+
 void collide_with_players(struct PlayerObj* arg0)
 {
+#ifdef VERSION_DEMO
+    arg0->unk72 = 0;
+    arg0->unk73 = 0;
+    arg0->unk74 = 0;
+#endif
     if (arg0->unk68 != NULL) {
         func_8002E294(arg0, &g_Player);
         if (arg0->unk76 > 0) {
-            func_8002E380(MOVING_OBJECT(arg0), MOVING_OBJECT(&g_Player), arg0->unk72);
+            COLLIDE_PUSH(arg0, &g_Player, arg0->unk72);
         }
         func_8002C36C(arg0, &g_Player, 0);
         if (g_Entity.active != 0) {
             func_8002E294(arg0, &g_Entity);
             if (arg0->unk77 > 0) {
-                func_8002E380(MOVING_OBJECT(arg0), MOVING_OBJECT(&g_Entity), arg0->unk73);
+                COLLIDE_PUSH(arg0, &g_Entity, arg0->unk73);
             }
             func_8002C36C(arg0, &g_Entity, 1);
         }
         if (qux_object.active != 0) {
             func_8002E294(arg0, (struct PlayerObj*)&qux_object);
             if (arg0->unk78 > 0) {
-                func_8002E380(MOVING_OBJECT(arg0), MOVING_OBJECT(&qux_object), arg0->unk74);
+                COLLIDE_PUSH(arg0, &qux_object, arg0->unk74);
             }
             func_8002C36C(arg0, (struct PlayerObj*)&qux_object, 2);
         }
@@ -586,6 +655,17 @@ void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
     }
 }
 #endif
+#ifdef VERSION_DEMO
+void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
+{
+    if (arg0->x_pos.val != arg0->unk18.val && arg1->x_pos.val == arg1->unk18.val) {
+        arg1->x_pos.i.hi = arg0->x_pos.i.hi - (arg0->unk18.i.hi - arg1->unk18.i.hi);
+    }
+    if (arg0->y_pos.val - arg0->unk1C.val > 0 && arg1->y_pos.val == arg1->unk1C.val) {
+        arg1->y_pos.i.hi = arg0->y_pos.i.hi - (arg0->unk1C.i.hi - arg1->unk1C.i.hi);
+    }
+}
+#else
 void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
 {
     s32 delta;
@@ -610,3 +690,39 @@ void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
         arg1->y_pos.i.hi = (target_hi - target_prev_hi_y) + (arg0->y_pos.i.hi - (arg0->unk1C.i.hi - target_prev_hi_y));
     }
 }
+#endif
+
+#ifdef VERSION_DEMO
+extern union TitleScratch D_80169498;
+extern u8 D_800F59DC_demo;
+
+void func_8003C198_demo(struct EngineObj* arg0)
+{
+    u32 i;
+    s32* src;
+    s32* dst;
+
+    arg0->stage = 0xD;
+    arg0->substage = 0;
+    arg0->checkpoint = 0;
+    arg0->unk1F = 0;
+    arg0->enable_boss = 0;
+    arg0->unk8 = 0;
+    arg0->unkA = 0;
+    src = SP_PALETTE_WORDS;
+    dst = D_80169498.sector;
+    for (i = 0; i < 0xC0; i += 4) {
+        *dst++ = *src++;
+    }
+    func_80013014();
+    reset_objects();
+    func_8002AB20();
+    func_80028BF0();
+    func_8002771C();
+    func_80023CE0();
+    D_8013B814 = 0;
+    D_800F59DC_demo = 0;
+    D_80171EA8 = 0;
+    arg0->unk1++;
+}
+#endif

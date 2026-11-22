@@ -28,7 +28,7 @@
 #include <string.h>
 #endif
 void func_80016F0C();
-extern u8 D_800F2B5C[21][12];
+extern u8 D_800F2B5C[DEMO_ALT(21, 16)][12];
 extern u8 D_800F2C58[];
 extern u8 D_800F2D18[];
 extern u32 D_800F2F08[12];
@@ -158,6 +158,101 @@ extern u8 D_801397D8;
 extern s16 D_801397E0;
 
 #ifndef MMX4_SATURN
+#ifdef VERSION_DEMO
+void func_8002328C(struct AbcObj* arg0)
+{
+    s16 count;
+    struct MiscObj* misc;
+    u16 code;
+    u8 next_state;
+
+    do {
+        code = *arg0->unk0;
+        arg0->unk4 = code;
+        if ((code & 0x1FF) != 0x1FF) {
+            if (D_801397E0 == 0) {
+                misc = find_free_misc_obj();
+                if (misc != NULL) {
+                    D_801397C0 = misc;
+                    misc->active = 1;
+                    misc->id = 0x16;
+                    misc->unk16 = 0x10;
+                    misc->unk40 = 0x1F00;
+                    misc->unk2 = 0;
+                    misc->unk3C = &D_801396C8.count;
+                    misc->unk42 = 0x7845;
+                    misc->bg_offset = -1;
+                    misc->x_pos.val = 0xA00000;
+                    if (!(arg0->unk4 & 0x800)) {
+                        misc->y_pos.val = 0;
+                    } else {
+                        misc->y_pos.val = 0x780000;
+                    }
+                    misc->animation_step.fields.frame_index = 0;
+                    misc->unk15 = 0;
+                }
+                D_801396C8.active = 1;
+            }
+            D_801396C8.glyphs[D_801397E0].frame = 0;
+            D_801396C8.glyphs[D_801397E0].character = (u8)arg0->unk4;
+            D_801396C8.glyphs[D_801397E0].x = (u8)arg0->unk6;
+            D_801396C8.glyphs[D_801397E0].y = (u8)arg0->unk8;
+            count = (u16)D_801397E0 + 1;
+            D_801397E0 = count;
+            D_801396C8.count = count;
+        }
+        arg0->unk0++;
+        if (arg0->unk4 & 0x4000) {
+            arg0->unk6 = -0x78U;
+            arg0->unk8 = (u16)(arg0->unk8 + 0x12);
+        } else {
+            arg0->unk6 = (u16)(arg0->unk6 + 0x10);
+        }
+    } while (!(arg0->unk4 & 0xB000));
+    func_8001540C(0, 0xF, 0);
+    if ((arg0->unk4 & 0xB000) == 0x1000) {
+        if (arg0->unkF != 0) {
+            if ((u8)controller_input.held == 0) {
+                arg0->unkF = 0;
+            }
+            arg0->unkA = 4;
+        } else if ((u8)controller_input.held != 0) {
+            arg0->unkA = 1;
+        } else {
+            arg0->unkA = 4;
+        }
+        next_state = 2;
+    } else {
+        if (arg0->unk4 & 0x2000) {
+            misc = find_free_misc_obj();
+            if (misc != NULL) {
+                D_801397C4 = misc;
+                misc->active = 1;
+                misc->id = 0x16;
+                misc->unk16 = 0x10;
+                misc->unk40 = 0x1FFF;
+                misc->unk2 = 1;
+                misc->unk3C = D_800F2F38;
+                misc->unk42 = 0x7845;
+                misc->bg_offset = -1;
+                misc->x_pos.i.hi = 0x98;
+                if (!(arg0->unk4 & 0x800)) {
+                    misc->y_pos.i.hi = 0x4D;
+                } else {
+                    misc->y_pos.i.hi = 0xC5;
+                }
+                misc->animation_step.fields.frame_index = 0;
+                misc->unk15 = 0;
+                misc->ext.title_logo.palette_shift_speed = 0;
+                misc->ext.ready_text.stay_up_timer = 0x20;
+            }
+        }
+        arg0->unkC = 0xFF;
+        next_state = 3;
+    }
+    arg0->unkD = next_state;
+}
+#else
 void func_8002328C(struct AbcObj* arg0)
 {
     s16 temp_v0_2;
@@ -291,6 +386,8 @@ void func_8002328C(struct AbcObj* arg0)
     arg0->unkD = var_v0_4;
 }
 #endif
+#endif
+#ifndef VERSION_DEMO
 #ifdef MMX4_SATURN
 #define ENDING_SHADOW_WORDS 6
 #define ENDING_SHADOW_OFFSET 0x114
@@ -644,7 +741,9 @@ void func_800239E0(struct EngineObj* arg0)
 #endif
 
 #endif
+#endif
 
+#ifndef VERSION_DEMO
 void func_80023A54(struct EngineObj* arg0)
 {
 #ifdef VERSION_EU
@@ -658,7 +757,9 @@ void func_80023A54(struct EngineObj* arg0)
     update_misc_objects();
     func_80023D68();
 }
+#endif
 
+#ifndef VERSION_DEMO
 #define SPARKLE_STATIC 2
 #define SPARKLE_X_CENTER 0x100
 #define SPARKLE_Y_CENTER 0x98
@@ -684,6 +785,8 @@ void func_80023AA8(struct MiscObj* arg0)
     arg0->unk15 = 0;
     set_animation(arg0, arg0->unk2);
 }
+#endif
+#ifndef VERSION_DEMO
 void func_80023B98(struct MiscObj* arg0)
 {
     s8 timer;
@@ -700,6 +803,8 @@ void func_80023B98(struct MiscObj* arg0)
     }
     arg0->ext.misc_11.active = timer - 1;
 }
+#endif
+#ifndef VERSION_DEMO
 void func_80023C0C(struct MiscObj* arg0)
 {
     s8 timer;
@@ -721,3 +826,4 @@ void func_80023C0C(struct MiscObj* arg0)
     }
     arg0->ext.misc_11.active = timer - 1;
 }
+#endif

@@ -26,11 +26,19 @@ void owner_fx_init(struct MiscObj* self)
     self->unk40 = self->ext.misc_9.owner->unk40;
     self->unk42 = self->ext.misc_9.owner->unk42 & 0x7FFF;
     self->unk16 = VISUAL_SATURN_LAYER(5);
+#ifndef VERSION_DEMO
     self->bg_offset = (s8)(u8)self->ext.misc_9.owner->bg_offset;
+#endif
     set_animation(self, self->unk2);
     self->state++;
     is_on_screen(BASE_OBJECT(self));
 }
+
+#ifdef VERSION_DEMO
+#define OWNER_FX_DESPAWN despawn_object_permanently
+#else
+#define OWNER_FX_DESPAWN ZeroObjectState
+#endif
 
 void owner_fx_animate(struct MiscObj* self)
 {
@@ -45,9 +53,9 @@ void owner_fx_animate(struct MiscObj* self)
             is_on_screen(BASE_OBJECT(self));
         }
         if (self->animation_step.fields.event == 1) {
-            ZeroObjectState(OBJECT_HEADER(self));
+            OWNER_FX_DESPAWN(OBJECT_HEADER(self));
         }
     } else {
-        ZeroObjectState(OBJECT_HEADER(self));
+        OWNER_FX_DESPAWN(OBJECT_HEADER(self));
     }
 }

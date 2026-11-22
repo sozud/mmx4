@@ -122,7 +122,7 @@ void func_80044508(struct MainObj* self)
         spawn_debris(D_800FA0B4[self->unk2], D_800FA0A8[self->unk2], self);
         if (self->unk2 != 2)
             drop_item(BASE_OBJECT(self), 8);
-        self->state = 2;
+        self->state = DEMO_ALT(2, self->state + 1);
         return;
     }
     if (self->unk2 == 0)
@@ -136,7 +136,7 @@ void func_80044508(struct MainObj* self)
 #endif
         return;
     }
-    self->state = 2;
+    self->state = DEMO_ALT(2, self->state + 1);
 }
 
 void drill_copter_despawn(struct MainObj* self)

@@ -225,7 +225,7 @@ void bg_zone_controller_e_update_zone(struct EffectObj* self)
     }
 }
 
-s16 bg_zone_controller_e_zone_bounds[4] = { 0x0960, 0x0A08, 0x1700, 0 };
+s16 bg_zone_controller_e_zone_bounds[4] = { 0x0960, DEMO_ALT(0x0A08, 0x0A00), 0x1700, 0 };
 
 void (*bg_zone_controller_e_state_funcs[])(struct EffectObj*) = {
     bg_zone_controller_e_init,

@@ -5,6 +5,7 @@ A matching decompilation of *Mega Man X4* (PlayStation, 1997).
 [![US](https://decomp.dev/sozud/mmx4/us.svg?mode=shield&category=game&label=US)](https://decomp.dev/sozud/mmx4)
 [![JP](https://decomp.dev/sozud/mmx4/jp.svg?mode=shield&category=game&label=JP)](https://decomp.dev/sozud/mmx4)
 [![EU](https://decomp.dev/sozud/mmx4/eu.svg?mode=shield&category=game&label=EU)](https://decomp.dev/sozud/mmx4)
+[![JP demo](https://decomp.dev/sozud/mmx4/demo.svg?mode=shield&category=game&label=JP%20demo)](https://decomp.dev/sozud/mmx4)
 [![GameCube](https://decomp.dev/sozud/mmx4/gc.svg?mode=shield&category=game&label=GameCube)](https://decomp.dev/sozud/mmx4)
 [![Build](https://github.com/sozud/mmx4/actions/workflows/build.yaml/badge.svg)](https://github.com/sozud/mmx4/actions/workflows/build.yaml)
 
@@ -24,6 +25,7 @@ This repository does not contain any game assets. You need your own copy of the 
 | US        | `SLUS_005.61`         | GCC 2.7.2                 | `check.us.txt` |
 | JP        | `SLPS_009.02`         | GCC 2.7.2                 | `check.jp.txt` |
 | EU        | `SLES_011.76`         | GCC 2.8.1                 | `check.eu.txt` |
+| JP demo   | `X4.EXE` (SLPM-80121 demo disc, May 8 1997) | GCC 2.7.2 | `check.demo.txt` |
 | Saturn US | `0.BIN`, `X4LOW.X4`   | `sh-elf-gcc` (retail: SHC) | non-matching   |
 | GameCube  | `x4.rel` (GXGE08)     | CodeWarrior GC/2.6        | `gc/config/GXGE08/build.sha1` |
 

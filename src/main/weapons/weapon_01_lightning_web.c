@@ -73,9 +73,11 @@ void lightning_web_update(struct WeaponObj* self)
     if (g_Player.input_locked != 0) {
         should_reset = 1;
     }
+#ifndef VERSION_DEMO
     if (g_Player.capsule_state != 0) {
         should_reset = 1;
     }
+#endif
     if (g_Player.weapon != 1) {
         should_reset = 1;
     }
@@ -89,9 +91,11 @@ void lightning_web_update(struct WeaponObj* self)
         if (self->unk72 & 4) {
             g_Player.unk71 &= 0xB;
         }
+#ifndef VERSION_DEMO
         if (self->unk72 & 8) {
             g_Player.unk71 &= 7;
         }
+#endif
     }
 }
 
@@ -110,21 +114,35 @@ void lightning_web_init(struct WeaponObj* arg0)
     arg0->animation_table = D_8011C070;
     arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->unk42 = WEAPON_PALETTE_1;
-    arg0->unk16 = 0;
+    arg0->unk16 = DEMO_ALT(0, 3);
     arg0->unk15 = player->unk15;
     ext = &arg0->ext.weapon_1;
+#ifdef VERSION_DEMO
+    if (arg0->unk15 != 0) {
+        arg0->x_pos.i.hi = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        arg0->x_vel.val = FIXED(3);
+    } else {
+        arg0->x_pos.i.hi = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        arg0->x_vel.val = FIXED(-3);
+    }
+    arg0->y_pos.i.hi = player->y_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
+#else
     buster_shot_place_at_muzzle((struct VisualObj*)arg0, player, arg0->id);
     if (arg0->unk15 != 0) {
         arg0->x_vel.val = FIXED(8);
     } else {
         arg0->x_vel.val = FIXED(-8);
     }
+#endif
     arg0->unk28.val = 0;
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
+#ifdef VERSION_DEMO
+    arg0->unk67 = 1;
+#endif
     arg0->unk49 = 0;
-    ext->lifetime = 0x69;
-    ext->timer = 0x10;
+    ext->lifetime = DEMO_ALT(0x69, 0x78);
+    ext->timer = DEMO_ALT(0x10, 0x14);
     set_animation(arg0, 0);
     func_8001540C(1, 8, arg0);
     arg0->state++;
@@ -139,7 +157,9 @@ void lightning_web_fly(struct WeaponObj* arg0)
     weapon_1 = &arg0->ext.weapon_1;
     if (--weapon_1->timer == 0) {
         set_animation(arg0, 1);
+#ifndef VERSION_DEMO
         arg0->unk16 = 3;
+#endif
         arg0->state++;
     } else {
         animate_object(ANIMATED_OBJECT(arg0));
@@ -169,8 +189,10 @@ void lightning_web_main(struct WeaponObj* arg0)
     } else {
         arg0->on_screen = 0;
         arg0->state = 3;
+#ifndef VERSION_DEMO
         arg0->unk50 = 0;
         arg0->unk75 = 0;
+#endif
     }
 }
 
@@ -191,7 +213,9 @@ void lightning_web_spread(struct WeaponObj* arg0)
         set_animation(arg0, 2);
         arg0->unk50 = (const u8*)lightning_web_net_box;
         arg0->unk68 = lightning_web_terrain_box;
+#ifndef VERSION_DEMO
         ext->unk90 = 0;
+#endif
         arg0->unk75 = 1;
         arg0->unk5++;
     }
@@ -202,7 +226,9 @@ void lightning_web_hang(struct WeaponObj* arg0)
     u8* lifetime = &arg0->ext.weapon_1.lifetime;
 
     animate_object(ANIMATED_OBJECT(arg0));
+#ifndef VERSION_DEMO
     lightning_web_buzz_sound(arg0, lifetime);
+#endif
     if ((arg0->unk76 != 0) && ((arg0->unk72 & 3) != 0)) {
         set_animation(arg0, 4);
         if (arg0->unk72 & 1) {
@@ -214,6 +240,7 @@ void lightning_web_hang(struct WeaponObj* arg0)
     }
 }
 
+#ifndef VERSION_DEMO
 void lightning_web_buzz_sound(struct WeaponObj* arg0, u8* arg1)
 {
     if (arg1[4] == 0) {
@@ -223,6 +250,7 @@ void lightning_web_buzz_sound(struct WeaponObj* arg0, u8* arg1)
     }
     arg1[4]--;
 }
+#endif
 
 void lightning_web_stuck(struct WeaponObj* arg0)
 {
@@ -280,9 +308,11 @@ void lightning_web_charged_update(struct WeaponObj* arg0)
     if (player->input_locked != 0) {
         disabled = 1;
     }
+#ifndef VERSION_DEMO
     if (player->capsule_state != 0) {
         disabled = 1;
     }
+#endif
     if (player->weapon != 1) {
         disabled = 1;
     }
@@ -317,17 +347,28 @@ void lightning_web_charged_init(struct WeaponObj* arg0)
     arg0->unk16 = 0;
     arg0->unk15 = player->unk15;
     ext = &arg0->ext.weapon_10;
+#ifdef VERSION_DEMO
+    if (arg0->unk15 != 0) {
+        arg0->x_pos.i.hi = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        arg0->x_vel.val = FIXED(3);
+    } else {
+        arg0->x_pos.i.hi = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        arg0->x_vel.val = FIXED(-3);
+    }
+    arg0->y_pos.i.hi = player->y_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
+#else
     buster_shot_place_at_muzzle((struct VisualObj*)arg0, player, arg0->id);
     if (arg0->unk15 != 0) {
         arg0->x_vel.val = FIXED(8);
     } else {
         arg0->x_vel.val = FIXED(-8);
     }
+#endif
     arg0->unk28.val = 0;
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
     arg0->unk49 = 1;
-    ext->timer = 0x10;
+    ext->timer = DEMO_ALT(0x10, 0x1E);
     ext->unk8F = 0;
     set_animation(arg0, 0);
     func_8001540C(1, 8, arg0);
@@ -350,9 +391,14 @@ void lightning_web_charged_fly(struct WeaponObj* arg0)
         arg0->unk5++;
         return;
     }
+#ifdef VERSION_DEMO
+    arg0->ext.weapon_10.timer--;
+#endif
     animate_object(ANIMATED_OBJECT(arg0));
     move_object(MOVING_OBJECT(arg0));
+#ifndef VERSION_DEMO
     arg0->ext.weapon_10.timer--;
+#endif
 }
 
 void lightning_web_charged_spread(struct WeaponObj* arg0)
@@ -364,7 +410,9 @@ void lightning_web_charged_spread(struct WeaponObj* arg0)
         arg0->unk50 = (const u8*)lightning_web_charged_net_box;
         arg0->unk64 = 2;
         ext->timer = 0x3C;
+#ifndef VERSION_DEMO
         ext->unk90 = 0;
+#endif
         arg0->unk5++;
     }
 }
@@ -375,7 +423,9 @@ void lightning_web_charged_hold(struct WeaponObj* arg0)
     struct Weapon10Ext* ext = &arg0->ext.weapon_10;
 
     animate_object(ANIMATED_OBJECT(arg0));
+#ifndef VERSION_DEMO
     lightning_web_buzz_sound(arg0, &ext->timer);
+#endif
     temp_v0 = ext->timer;
     if (temp_v0 == 0) {
         temp_v0 = 0x98;
@@ -398,9 +448,14 @@ void lightning_web_charged_fade(struct WeaponObj* arg0)
         arg0->state = 4;
     } else {
         arg0->ext.weapon_10.timer--;
+#ifndef VERSION_DEMO
         animate_object(ANIMATED_OBJECT(arg0));
         lightning_web_buzz_sound(arg0, timer_ptr);
+#endif
     }
+#ifdef VERSION_DEMO
+    animate_object(ANIMATED_OBJECT(arg0));
+#endif
 }
 
 // lightning_web_charged_part_init
@@ -529,6 +584,20 @@ void lightning_web_charged_draw(struct WeaponObj* arg0)
     update_on_screen(BASE_OBJECT(arg0), 0x28, 0x28);
 }
 
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 lightning_web_charged_shot_box[];
+extern struct Unk_unk68 lightning_web_charged_net_box[];
+extern struct Unk_unk68 lightning_web_charged_part_box[];
+extern void (*lightning_web_state_funcs[])(struct WeaponObj*);
+extern struct Unk_unk68 lightning_web_shot_box[];
+extern void (*lightning_web_step_funcs[])(struct WeaponObj*);
+extern struct Unk_unk68 lightning_web_net_box[];
+extern struct Unk_unk68 lightning_web_terrain_box[];
+extern void (*lightning_web_charged_state_funcs[])(struct WeaponObj*);
+extern void (*lightning_web_charged_part_state_funcs[])(struct WeaponObj*);
+extern void (*lightning_web_charged_step_funcs[])(struct WeaponObj*);
+extern void (*lightning_web_charged_part_step_funcs[])(struct WeaponObj*);
+#else
 struct Unk_unk68 lightning_web_charged_shot_box[] = {
     { -8, -8, 0xE, 0xE },
 };
@@ -596,3 +665,62 @@ void (*lightning_web_charged_part_step_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))lightning_web_charged_part_hold,
     (void (*)(struct WeaponObj*))lightning_web_charged_part_drift,
 };
+#endif
+
+#ifdef VERSION_DEMO
+void (*lightning_web_state_funcs[5])(struct WeaponObj*) = {
+    lightning_web_init,
+    lightning_web_fly,
+    lightning_web_main,
+    lightning_web_despawn,
+    lightning_web_vanish,
+};
+
+struct Unk_unk68 lightning_web_shot_box[1] = { { -8, -8, 14, 14 } };
+
+void (*lightning_web_step_funcs[4])(struct WeaponObj*) = {
+    lightning_web_spread,
+    lightning_web_hang,
+    lightning_web_stuck,
+    lightning_web_release,
+};
+
+struct Unk_unk68 lightning_web_net_box[1] = { { -12, -22, 24, 42 } };
+
+struct Unk_unk68 lightning_web_terrain_box[1] = { { 0, 0, 8, 22 } };
+
+void (*lightning_web_charged_state_funcs[5])(struct WeaponObj*) = {
+    lightning_web_charged_init,
+    lightning_web_charged_main,
+    lightning_web_despawn,
+    lightning_web_despawn,
+    lightning_web_charged_vanish,
+};
+
+void (*lightning_web_charged_part_state_funcs[5])(struct WeaponObj*) = {
+    func_80093930,
+    lightning_web_charged_part_wait,
+    lightning_web_charged_part_main,
+    lightning_web_despawn,
+    lightning_web_charged_vanish,
+};
+
+struct Unk_unk68 lightning_web_charged_shot_box[1] = { { -8, -8, 14, 14 } };
+
+void (*lightning_web_charged_step_funcs[4])(struct WeaponObj*) = {
+    lightning_web_charged_fly,
+    lightning_web_charged_spread,
+    lightning_web_charged_hold,
+    lightning_web_charged_fade,
+};
+
+struct Unk_unk68 lightning_web_charged_net_box[1] = { { -22, -22, 44, 44 } };
+
+void (*lightning_web_charged_part_step_funcs[3])(struct WeaponObj*) = {
+    lightning_web_charged_part_fly,
+    lightning_web_charged_part_hold,
+    lightning_web_charged_part_drift,
+};
+
+struct Unk_unk68 lightning_web_charged_part_box[1] = { { -22, -22, 44, 44 } };
+#endif

@@ -212,3 +212,30 @@ void blast_animate(struct VisualObj* arg0)
         is_on_screen(arg0);
     }
 }
+
+#ifdef VERSION_DEMO
+void func_80096994_demo(u8 count, u8* animations, struct BaseObj* source)
+{
+    u8* anim = animations;
+    struct BaseObj* src = source;
+    struct VisualObj* visual;
+    u8 n;
+
+    for (n = count; n != 0; n--) {
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 5;
+            visual->unk15 = get_random() & 0x40;
+            visual->state = 0;
+            visual->unk5 = 0;
+            visual->unk6 = 0;
+            visual->unk50 = (struct PlayerObj*)src;
+            visual->x_pos.val = src->x_pos.val + (get_random() & 3);
+            visual->y_pos.val = src->y_pos.val + (get_random() & 3);
+            visual->unk56 = *anim;
+            anim++;
+        }
+    }
+}
+#endif

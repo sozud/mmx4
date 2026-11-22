@@ -31,6 +31,21 @@ void boss_teleporter_warp_leave(struct ItemObj*);
 void boss_teleporter_warp_finish(struct ItemObj*);
 #include "weapon_resources.h"
 
+#ifdef VERSION_DEMO
+void boss_teleporter_warp_start(struct ItemObj* arg0)
+{
+    struct EffectObj* effect;
+
+    effect = find_free_effect_obj();
+    if (effect != NULL) {
+        effect->active = 1;
+        effect->id = 0x25;
+        effect->unk2 = arg0->tail_ext.unk1.unk84.bytes[0];
+        effect->x_pos.val = arg0->x_pos.val;
+        effect->y_pos.val = arg0->y_pos.val;
+    }
+}
+#else
 struct Item26AnimationStep {
     u8 duration;
     u8 mode;
@@ -590,3 +605,4 @@ void (*boss_teleporter_warp_funcs[])(struct ItemObj*) = {
     boss_teleporter_warp_leave,
     boss_teleporter_warp_finish,
 };
+#endif

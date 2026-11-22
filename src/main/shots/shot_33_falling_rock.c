@@ -133,6 +133,65 @@ void func_800A03F4(struct ShotObj* arg0)
     arg0->state = 1;
     arg0->unk5 = 0;
 }
+#elif defined(VERSION_DEMO)
+void func_800A03F4(struct ShotObj* arg0)
+{
+    struct MiscObj* misc;
+    s32 random;
+    s32 offset;
+    u8 random2;
+
+    arg0->on_screen = 1;
+    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->unk5C = 0xF;
+    arg0->unk60 = 3;
+    arg0->unk42 &= 0x7FFF;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x8E));
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x8E)];
+    arg0->unk42 = OBJECT_STAGE_CLUT(0x8E);
+    arg0->animation_table = (u32**)falling_rock_a_animations;
+    random = get_random();
+    random2 = get_random();
+    random &= 1;
+    random <<= 8;
+    offset = random2 + random;
+    offset += 0x40;
+    arg0->x_pos.i.hi = background_objects[g_Player.bg_offset].x_pos.i.hi + offset;
+    arg0->y_pos.i.hi = background_objects[g_Player.bg_offset].y_pos.i.hi - 0x40;
+    arg0->unk16 = 1;
+    arg0->x_vel.val = -0x10000;
+    arg0->y_vel.val = -0x10000;
+    arg0->unk28 = 0x400;
+    arg0->unk2C = 0x400;
+    arg0->unk68 = falling_rock_box_3;
+    arg0->unk54 = (const u8*)falling_rock_box_0;
+    arg0->unk50.data = (const u8*)falling_rock_box_0;
+    arg0->unk15 = 0;
+    arg0->unk62 = 2;
+    set_animation(arg0, 1);
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 0x1B;
+        misc->unk16 = 0;
+        misc->unk40 = arg0->unk40;
+        misc->unk42 = arg0->unk42 & 0x7FFF;
+        misc->animation_table = arg0->animation_table;
+        misc->unk3C = arg0->unk3C;
+        misc->bg_offset = arg0->bg_offset;
+        misc->x_pos.val = arg0->x_pos.val;
+        misc->y_pos.val = arg0->y_pos.val;
+        misc->unk15 = arg0->unk15;
+        misc->ext.misc_5.owner = (struct MainObj*)arg0;
+        misc->state = 0;
+        misc->unk6 = 0;
+        misc->unk7 = 0;
+        set_animation(misc, 0);
+        arg0->unk7C = (struct WeaponObj*)misc;
+    }
+    arg0->state = 1;
+    arg0->unk5 = 0;
+}
 #else
 void func_800A03F4(struct ShotObj* arg0)
 {
@@ -249,13 +308,16 @@ void func_800A068C(struct ShotObj* self)
         if (result < 0) {
             set_animation(self, 2);
             self->unk5 = 1;
-        } else if (((result == 3) || (result == 0xC)) || (result == 0x22)) {
+        }
+#ifndef VERSION_DEMO
+        else if (((result == 3) || (result == 0xC)) || (result == 0x22)) {
             self->unk84.value = 8;
             set_animation(self, 8);
             self->unk7C->active = 0;
             self->unk7C->on_screen = 0;
             self->unk5 = 2;
         }
+#endif
         break;
 
     case 1:
@@ -300,7 +362,9 @@ void func_800A0A38(struct ShotObj* arg0)
     arg0->unk5C = 0x7F;
     arg0->unk60 = 6;
     arg0->unk42 &= 0x7FFF;
+#ifndef VERSION_DEMO
     arg0->bg_offset = g_Player.bg_offset;
+#endif
     arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x8C));
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x8C)];
     arg0->unk42 = OBJECT_STAGE_CLUT(0x8C);
@@ -389,13 +453,16 @@ void func_800A0C4C(struct ShotObj* arg0)
             if (arg0->on_screen != 0)
                 func_8001540C(2, 0xA0, arg0);
             arg0->state = 5;
-        } else if (collision == 3 || collision == 0xC || collision == 0x22) {
+        }
+#ifndef VERSION_DEMO
+        else if (collision == 3 || collision == 0xC || collision == 0x22) {
             arg0->unk84.value = 8;
             set_animation(arg0, 7);
             arg0->unk7C->active = 0;
             arg0->unk7C->on_screen = 0;
             arg0->unk5 = 1;
         }
+#endif
     } else if (--arg0->unk84.value == 0) {
         spawn_debris(5, falling_rock_debris_3, arg0);
         arg0->state = 5;
@@ -423,10 +490,12 @@ void func_800A0FE8(struct ShotObj* arg0)
     }
     arg0->on_screen = 1;
     arg0->unk58.animation_steps = D_80105FF0;
-    arg0->unk5C = 0xF;
+    arg0->unk5C = DEMO_ALT(0xF, 0x12);
     arg0->unk60 = 6;
     arg0->unk42 &= 0x7FFF;
+#ifndef VERSION_DEMO
     arg0->bg_offset = g_Player.bg_offset;
+#endif
     arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x8D));
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x8D)];
     arg0->unk42 = OBJECT_STAGE_CLUT(0x8D);
@@ -444,9 +513,11 @@ void func_800A0FE8(struct ShotObj* arg0)
         set_animation(arg0, 1);
         arg0->y_vel.val = 0xA0000;
         arg0->unk2C = 0x2000;
+#ifndef VERSION_DEMO
         if (engine_obj.substage != 0 && arg0->x_pos.i.hi > 0x60 && arg0->x_pos.i.hi < 0x4E0)
             arg0->y_pos.i.hi = 0x330;
         else
+#endif
             arg0->y_pos.i.hi = background_objects[g_Player.bg_offset].y_pos.i.hi + 0x130;
     }
     arg0->unk68 = falling_rock_box_5;
@@ -523,10 +594,12 @@ void func_800A12EC(struct ShotObj* self)
             return;
         }
         if (self->y_vel.val == 0) {
+#ifndef VERSION_DEMO
             if (self->unk2 == 2) {
                 self->state = 8;
                 return;
             }
+#endif
             set_animation(self, 3);
             set_animation(self->unk7C, 2);
         }
@@ -544,19 +617,28 @@ void func_800A12EC(struct ShotObj* self)
             if (self->on_screen != 0) {
                 func_8001540C(2, SATURN_SOUND(0xA0, 0x70), self);
             }
+#ifndef VERSION_DEMO
             self->unk84.effect->ext.effect_33.timer = 0xB4;
+#endif
             spawn_debris(5, falling_rock_debris_4, self);
             self->state = 8;
-        } else if (((tile == 3) || (tile == 0xC)) || (tile == 0x22)) {
+        }
+#ifndef VERSION_DEMO
+        else if (((tile == 3) || (tile == 0xC)) || (tile == 0x22)) {
             self->timer = 8;
             set_animation(self, 9);
             self->unk7C->active = 0;
             self->unk7C->on_screen = 0;
             self->unk5 = 1;
         }
+#endif
     } else {
+#ifdef VERSION_DEMO
+        if (--self->unk84.value == 0) {
+#else
         if (--self->timer == 0) {
             self->unk84.effect->ext.effect_33.timer = 0xB4;
+#endif
             spawn_debris(5, falling_rock_debris_5, self);
             self->state = 8;
         }

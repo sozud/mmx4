@@ -118,7 +118,7 @@ void ready_text_init(struct MiscObj* self)
                 pal_pos += 1;
                 color += 1;
             } while (pal_pos < 16);
-            need_palette_load |= 1;
+            REQUEST_PALETTE_LOAD();
         }
         set_animation(self, 0);
     } else {
@@ -214,7 +214,7 @@ void ready_text_bounce(struct MiscObj* self)
                 *pal_dst++ = *pal_src++;
                 pal_pos += 1;
             } while (pal_pos < 16);
-            need_palette_load |= 1;
+            REQUEST_PALETTE_LOAD();
         } else {
             self->x_vel.val = FIXED(16);
         }
@@ -238,9 +238,11 @@ void ready_text_leave(struct MiscObj* self)
     }
     self->state = 2;
     self->unk5 = 0;
+#ifndef VERSION_DEMO
     if ((engine_obj.stage == 5) && (engine_obj.checkpoint == 0)) {
         engine_obj.gameplay_locked = 0;
     }
+#endif
 }
 
 // ready_text_part_funcs state 2
@@ -275,7 +277,7 @@ void ready_text_load_palette(struct MiscObj* arg0, s32 arg1)
         *var_v1++ = *var_a0++;
         var_a2 += 1;
     } while (var_a2 < 0x10);
-    need_palette_load |= 1;
+    REQUEST_PALETTE_LOAD();
 }
 
 // g_MegamanRelatedUpdateFuncs state 2
@@ -283,6 +285,70 @@ void ready_text_despawn(struct MiscObj* self)
 {
     ZeroObjectState(self);
 }
+
+#ifdef VERSION_DEMO
+extern u32* title_animations[];
+extern s16 D_800DCE1C_demo[][2];
+extern s16 D_800DCE30_demo[][2];
+extern u8 D_800DCE60_demo[];
+
+void func_800ABFDC_demo(struct MiscObj* self)
+{
+    u8 index;
+    u8 palette;
+
+    self->animation_table = title_animations;
+    self->bg_offset = -1;
+    self->unk16 = 3;
+    self->state++;
+    self->unk15 = 0;
+    if (self->unk2 < 0x10) {
+        self->unk40 = 0x1E00;
+        self->unk42 = 0x7800;
+        self->unk3C = SP_ARC_44;
+        self->x_pos.val = FIXED(D_800DCE1C_demo[self->unk2][0]);
+        self->y_pos.val = FIXED(D_800DCE1C_demo[self->unk2][1]);
+        set_animation_frame(ANIMATED_OBJECT(self), 0, self->unk2);
+    } else {
+        index = self->unk2 - 0x10;
+        if (self->unk2 == 0x16) {
+            self->unk2--;
+        }
+        self->unk40 = 0x600;
+        self->unk3C = SP_TITLE_FRAMES;
+        palette = D_800DCE60_demo[index];
+        self->unk42 = (palette % 16) | (((palette >> 4) + 0x1E0) << 6);
+        self->x_pos.val = FIXED(D_800DCE30_demo[index][0]);
+        self->y_pos.val = FIXED(D_800DCE30_demo[index][1]);
+        set_animation_frame(ANIMATED_OBJECT(self), 1, index);
+    }
+    is_on_screen(self);
+}
+#endif
+
+#ifdef VERSION_DEMO
+extern s8 D_8013A83B_demo;
+extern u8 D_8013C122_demo;
+void func_800AC12C_demo(struct MiscObj* self)
+{
+    if (self->unk2 == 0x13) {
+        if (engine_obj.state != 0) {
+            self->y_pos.val = D_8013A83B_demo != 0 ? 0xA00000 : 0x900000;
+        } else {
+            self->y_pos.i.hi = (s8)((s8)D_8013C122_demo % 3) * 0x18 + 0x78;
+        }
+    }
+    if ((u8)(self->unk2 - 0x14) < 2) {
+        self->on_screen = 0;
+        if (WEAPON_FRAME_COUNTER & 0x10) {
+            is_on_screen(self);
+        }
+    } else {
+        self->on_screen = 1;
+        is_on_screen(self);
+    }
+}
+#endif
 
 union AnimationStep ready_text_anim_0[] = {
     { 1, 0, 0, 0x00 },

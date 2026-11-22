@@ -175,11 +175,15 @@ s32 func_8002BD58(struct MainObj* arg0, struct MainObj* arg1, s16* arg2, s16* ar
                 if (((temp_t2 + var_a0) >= var_a2) && temp_t1 < var_a1) {
                     *arg2 = var_a2 - (temp_t1 / 2);
                 } else {
+#ifdef VERSION_DEMO
+                    *arg2 = var_a0 + (var_a1 / 2);
+#else
                     if ((var_a2 - temp_t1) < var_a0) {
                         *arg2 = var_a0 + (var_a1 / 2);
                     } else {
                         *arg2 = (var_a2 - temp_t1) + ((temp_t2 + var_a0 - (var_a2 - temp_t1)) / 2);
                     }
+#endif
                 }
                 goto dummy;
             }
@@ -288,13 +292,17 @@ s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1)
     object0 = arg0;
     object1 = arg1;
     initial_bounds0 = object0->collision_bounds;
+#ifndef VERSION_DEMO
     if (initial_bounds0 == NULL) {
         return 0;
     }
+#endif
     initial_bounds1 = object1->collision_bounds;
+#ifndef VERSION_DEMO
     if (initial_bounds1 == NULL) {
         return 0;
     }
+#endif
 
     center0 = object0->x_pos.i.hi + initial_bounds0->unk0;
     center1 = object1->x_pos.i.hi + initial_bounds1->unk0;
@@ -460,6 +468,28 @@ void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
         }
     }
 
+#ifdef VERSION_DEMO
+    if (slot == 0) {
+        self->unk72 = flags;
+    } else {
+        self->unk73 = flags;
+    }
+    other->unk71 |= flags;
+
+    if (flags & 0xB) {
+        if (slot == 0) {
+            self->unk76 = 1;
+        } else {
+            self->unk77 = 1;
+        }
+    } else {
+        if (slot == 0) {
+            self->unk76 = 0;
+        } else {
+            self->unk77 = 0;
+        }
+    }
+#else
     switch ((u32)slot) {
     case 0:
         self->unk72 = flags;
@@ -498,6 +528,7 @@ void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
             break;
         }
     }
+#endif
 }
 #endif
 

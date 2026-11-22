@@ -17,6 +17,9 @@ void teleporter_idle(struct ItemObj*);
 // teleporter_step_funcs
 extern void (*teleporter_step_funcs[])(struct ItemObj*);
 void teleporter_wait_player(struct ItemObj*);
+#ifdef VERSION_DEMO
+s8 func_800A6114_demo(struct ItemObj*, struct PlayerObj*);
+#endif
 void teleporter_activate(struct ItemObj*);
 void teleporter_warp(struct ItemObj*);
 void teleporter_finish(struct ItemObj*);
@@ -188,7 +191,7 @@ void teleporter_idle(struct ItemObj* arg0)
 
 void teleporter_wait_player(struct ItemObj* arg0)
 {
-    if ((u8)arg0->unk72 & 8) {
+    if (DEMO_ALT((u8)arg0->unk72 & 8, func_800A6114_demo(arg0, &g_Player))) {
         g_Player.x_pos.i.hi = arg0->x_pos.i.hi;
         g_Player.y_pos.i.hi = (arg0->y_pos.i.hi - arg0->unk68->unk3) - g_Player.unk68->unk3;
         player_start_script_action(0x14, g_Player.unk15);
@@ -307,6 +310,40 @@ void teleporter_finish(struct ItemObj* arg0)
     }
 }
 
+#ifdef VERSION_DEMO
+s8 func_800A6114_demo(struct ItemObj* self, struct PlayerObj* player)
+{
+    struct Unk_unk68* box = player->unk68;
+    struct PlayerObj* rider;
+    struct ItemObj* pad_obj;
+    struct Unk_unk68* pad;
+    s16 pad_right;
+    s16 player_right;
+    s16 pad_y;
+    s16 player_y;
+    s16 dist;
+
+    if (box == NULL) {
+        return 0;
+    }
+    pad_obj = self;
+    rider = player;
+    pad = pad_obj->unk68;
+    if ((s16)(pad_obj->x_pos.i.hi - (pad->unk2 - 0x10)) > (s16)(rider->x_pos.i.hi - box->unk2)) {
+        return 0;
+    }
+    pad_right = pad_obj->x_pos.i.hi + (pad->unk2 - 0x10);
+    player_right = rider->x_pos.i.hi + box->unk2;
+    if (pad_right < player_right) {
+        return 0;
+    }
+    pad_y = pad_obj->y_pos.i.hi + pad->unk1;
+    player_y = rider->y_pos.i.hi + box->unk1;
+    dist = ABS(pad_y, player_y);
+    return dist <= pad_obj->unk68->unk3 + rider->unk68->unk3;
+}
+#endif
+
 void (*teleporter_state_funcs[])(struct ItemObj*) = {
     func_800C2C3C,
     teleporter_main,
@@ -321,7 +358,7 @@ void (*teleporter_step_funcs[])(struct ItemObj*) = {
     teleporter_finish,
 };
 
-u8 teleporter_terrain_box[4] = { 0, 0, 0x1C, 8 };
+u8 teleporter_terrain_box[4] = { 0, 0, DEMO_ALT(0x1C, 0x20), 8 };
 
 void (*teleporter_warp_funcs[])(struct ItemObj*) = {
     teleporter_spawn_beam,

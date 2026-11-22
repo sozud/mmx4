@@ -51,7 +51,7 @@ void func_8009C12C(struct ShotObj* self)
     self->unk54 = turret_laser_hit_box;
     self->unk50.data = turret_laser_hit_box;
     self->unk5C = 1;
-    self->unk60 = 3;
+    self->unk60 = DEMO_ALT(3, 1);
     set_animation(self, 4);
 }
 

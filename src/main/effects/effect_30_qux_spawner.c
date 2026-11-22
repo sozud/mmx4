@@ -10,17 +10,23 @@ void qux_spawner_update(struct EffectObj* self)
 {
     self->state = 1;
     self->unk5 = 0;
-    qux_object.active = 0x41;
+    qux_object.active = DEMO_ALT(0x41, 1);
     qux_object.id = 1;
+#ifndef VERSION_DEMO
     qux_object.state = 0;
     qux_object.unk5 = 0;
     qux_object.unk6 = 0;
     qux_object.unk7 = 0;
+#endif
     qux_object.unk2 = self->unk2;
     qux_object.backref = self->backref;
     qux_object.x_pos.val = self->x_pos.val;
     qux_object.y_pos.val = self->y_pos.val;
+#ifdef VERSION_DEMO
+    ZeroObjectState(OBJECT_HEADER(self));
+#else
     despawn_object_permanently(OBJECT_HEADER(self));
+#endif
 }
 
 void floor_trap_wait(struct EffectObj* self)

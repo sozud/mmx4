@@ -2,6 +2,7 @@
 #include "common.h"
 #include "main/objects.h"
 #include "main/object_motion.h"
+#include "main/player_check.h"
 
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
@@ -314,7 +315,7 @@ s16 func_8002BAA4(void)
 {
     u16 flags = g_Player.pressed_input;
     s16 count = (flags & 0xF) != 0;
-    if (flags & 0x1B0) {
+    if (flags & (PLAYER_INPUT_SHOOT | PLAYER_INPUT_SPECIAL | PLAYER_INPUT_JUMP | PLAYER_INPUT_DASH)) {
         count++;
     }
     return count;

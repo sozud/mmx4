@@ -25,8 +25,10 @@ void func_800B2698(struct VisualObj* arg0)
 
     if (player->input_locked != 0)
         cancel = 1;
+#ifndef VERSION_DEMO
     if (player->capsule_state != 0)
         cancel = 1;
+#endif
     if (player->weapon != 7)
         cancel = 1;
     if (player->actions_reset != 0)
@@ -39,6 +41,9 @@ void func_800B2698(struct VisualObj* arg0)
     }
     if (arg0->state == 0) {
         arg0->on_screen = 1;
+#ifdef VERSION_DEMO
+        arg0->bg_offset = g_Player.bg_offset;
+#endif
         player_gfx = SP_PLAYER_GFX;
         arg0->unk38 = (u8*)player_gfx + player_gfx[8];
         sprite_frames = SP_SPRITE_FRAMES;
@@ -46,7 +51,7 @@ void func_800B2698(struct VisualObj* arg0)
         arg0->animation_table = D_8011C0F0;
         arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
         arg0->unk42 = WEAPON_PALETTE_1;
-        arg0->unk16 = VISUAL_SATURN_LAYER(0);
+        arg0->unk16 = DEMO_ALT(VISUAL_SATURN_LAYER(0), 1);
         dx = double_cyclone_charged_fan_offsets[arg0->unk2].x;
         dy = double_cyclone_charged_fan_offsets[arg0->unk2].y;
         if (arg0->unk2 == 0)

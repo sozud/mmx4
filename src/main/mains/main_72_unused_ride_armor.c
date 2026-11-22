@@ -40,6 +40,7 @@ void unused_ride_armor_despawn(struct MainObj* arg0);
 
 extern void (*unused_ride_armor_despawn_funcs[])(struct MainObj*);
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_init(struct MainObj* self)
 {
     self->state = 1;
@@ -65,7 +66,9 @@ void unused_ride_armor_init(struct MainObj* self)
     self->gravity = 0;
     self->unk16 = VISUAL_SATURN_LAYER(5);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_face_player(struct MainObj* self)
 {
     if ((self->x_pos.val - g_Player.x_pos.val) < 0) {
@@ -75,18 +78,24 @@ void unused_ride_armor_face_player(struct MainObj* self)
 
     self->unk15 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_set_step(struct BaseObj* self, s8 arg1)
 {
     self->unk5 = arg1;
     self->unk6 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_apply_x_speed(struct MainObj* self)
 {
     self->x_pos.val += self->x_speed;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_set_walk_speed(struct MainObj* self)
 {
     if (self->unk15 != 0) {
@@ -95,7 +104,9 @@ void unused_ride_armor_set_walk_speed(struct MainObj* self)
         self->x_speed = FIXED(-1.375);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_set_jump_speed(struct MainObj* self)
 {
     s32 value;
@@ -106,7 +117,9 @@ void unused_ride_armor_set_jump_speed(struct MainObj* self)
     }
     self->x_speed = value;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_spawn_shot(struct MainObj* self, s32 arg1)
 {
     u8 v;
@@ -127,8 +140,10 @@ void unused_ride_armor_spawn_shot(struct MainObj* self, s32 arg1)
         obj->unk15 = self->unk15;
     }
 }
+#endif
 
 // unused_ride_armor_idle
+#ifndef VERSION_DEMO
 void func_8008B020(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -162,11 +177,13 @@ void func_8008B020(struct MainObj* self)
         animate_object(self);
     }
 }
+#endif
 
 // unused_ride_armor_walk
 #define RIDE_ARMOR_WALK_ATTACK 0x160
 #define RIDE_ARMOR_WALK_FRAMES 64
 
+#ifndef VERSION_DEMO
 void func_8008B188(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -188,7 +205,9 @@ void func_8008B188(struct MainObj* self)
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_shoot(struct MainObj* self)
 {
     struct Main72Ext* main_72;
@@ -221,7 +240,9 @@ void unused_ride_armor_shoot(struct MainObj* self)
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_jump(struct MainObj* self)
 {
     s8 state;
@@ -247,7 +268,9 @@ void unused_ride_armor_jump(struct MainObj* self)
     }
     unused_ride_armor_set_step(BASE_OBJECT(self), 2);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_land(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -263,12 +286,14 @@ void unused_ride_armor_land(struct MainObj* self)
     }
     animate_object(self);
 }
+#endif
 
 // unused_ride_armor_dash
 #define RIDE_ARMOR_DASH_ATTACK 0x420
 #define RIDE_ARMOR_DASH_SPEED FIXED(4.125)
 #define RIDE_ARMOR_DASH_FLASH 30
 
+#ifndef VERSION_DEMO
 void func_8008B4B8(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -293,7 +318,9 @@ void func_8008B4B8(struct MainObj* self)
     unused_ride_armor_apply_x_speed(self);
     animate_object(self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_fall(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -320,10 +347,12 @@ void unused_ride_armor_fall(struct MainObj* self)
     }
     move_with_gravity(ANIMATED_OBJECT(self));
 }
+#endif
 
 // unused_ride_armor_jump_shoot
 #define RIDE_ARMOR_FALL_LIMIT FIXED(-5.875)
 
+#ifndef VERSION_DEMO
 void func_8008B69C(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -356,7 +385,9 @@ void func_8008B69C(struct MainObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_rapid_fire(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -377,12 +408,16 @@ void unused_ride_armor_rapid_fire(struct MainObj* self)
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_reset(struct MainObj* self)
 {
     unused_ride_armor_set_step(BASE_OBJECT(self), 2);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_main(struct MainObj* self)
 {
     s32 result;
@@ -407,12 +442,15 @@ void unused_ride_armor_main(struct MainObj* self)
     self->state = 2;
     self->unk5 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_despawn_remove(struct MainObj* self)
 {
     self->unk42 &= 0x7FFF;
     despawn_object(OBJECT_HEADER(self));
 }
+#endif
 
 void unused_ride_armor_despawn_idle(void)
 {
@@ -422,16 +460,52 @@ void unused_ride_armor_despawn_idle2(void)
 {
 }
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_despawn(struct MainObj* self)
 {
     unused_ride_armor_despawn_funcs[self->unk5](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void unused_ride_armor_update(struct MainObj* self)
 {
     unused_ride_armor_state_funcs[self->state](self);
 }
+#endif
 
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 unused_ride_armor_anim_0[5];
+extern struct Unk_unk68 unused_ride_armor_anim_1[9];
+extern union AnimationStep unused_ride_armor_anim_2[];
+extern union AnimationStep unused_ride_armor_anim_3[];
+extern union AnimationStep unused_ride_armor_anim_4[];
+extern union AnimationStep unused_ride_armor_anim_5[];
+extern union AnimationStep unused_ride_armor_anim_6[];
+extern union AnimationStep unused_ride_armor_anim_7[];
+extern struct Unk_unk68 unused_ride_armor_anim_8[4];
+extern struct Unk_unk68 unused_ride_armor_anim_9[4];
+extern union AnimationStep unused_ride_armor_anim_10[];
+extern union AnimationStep unused_ride_armor_anim_11[];
+extern union AnimationStep unused_ride_armor_anim_15[];
+extern struct Unk_unk68 unused_ride_armor_anim_14[12];
+extern union AnimationStep unused_ride_armor_anim_24[];
+extern union AnimationStep unused_ride_armor_anim_25[];
+extern union AnimationStep unused_ride_armor_anim_26[];
+extern union AnimationStep unused_ride_armor_anim_27[];
+extern union AnimationStep unused_ride_armor_anim_28[];
+extern union AnimationStep unused_ride_armor_anim_29[];
+extern union AnimationStep unused_ride_armor_anim_30[];
+extern struct Unk_unk68 unused_ride_armor_anim_12[4];
+extern struct Unk_unk68 unused_ride_armor_anim_13[4];
+extern void* unused_ride_armor_animations[33];
+extern struct Unk_unk68 unused_ride_armor_hit_box;
+extern struct Unk_unk68 unused_ride_armor_terrain_box;
+extern struct Unk_unk68 unused_ride_armor_debris[2];
+extern void (*unused_ride_armor_step_funcs[11])(struct MainObj*);
+extern void (*unused_ride_armor_despawn_funcs[3])();
+extern void (*unused_ride_armor_state_funcs[3])();
+#else
 struct Unk_unk68 unused_ride_armor_anim_0[5] = {
     { 100, 0, 1, 0 },
     { 7, 0, 1, 11 },
@@ -650,3 +724,4 @@ void (*unused_ride_armor_state_funcs[3])() = {
     unused_ride_armor_main,
     unused_ride_armor_despawn,
 };
+#endif

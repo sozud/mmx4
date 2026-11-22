@@ -41,7 +41,7 @@ void func_80062D9C(struct MainObj* arg0)
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = NULL;
     arg0->invincibility_timer = 0;
-    arg0->hp = 3;
+    arg0->hp = DEMO_ALT(3, 9);
     arg0->contact_damage = 3;
     arg0->animation_table = (const u8* const*)homing_orb_animations;
     arg0->collision_data = D_80107574;
@@ -79,9 +79,9 @@ void homing_orb_wait(struct MainObj* self)
                 OBJECT_HEADER(&g_Player))
                 & 0xFF);
 
-        self->x_accel = -((s32)(self->x_speed * 0x2D) >> 8);
+        self->x_accel = -((s32)(self->x_speed * DEMO_ALT(0x2D, 0x5B)) >> 8);
         temp_a2 = self->y_speed;
-        self->gravity = -((s32)(temp_a2 * 0x2D) >> 8);
+        self->gravity = -((s32)(temp_a2 * DEMO_ALT(0x2D, 0x5B)) >> 8);
         self->x_speed = 0;
         self->y_speed = 0;
         set_animation(self, 1);
@@ -96,13 +96,13 @@ void homing_orb_lunge(struct MainObj* self)
 {
     struct MiscObj* misc;
 
-    if (--self->unk7C == 0x5A) {
+    if (--self->unk7C == DEMO_ALT(0x5A, 0x2D)) {
         self->x_accel = -self->x_accel;
         self->gravity = -self->gravity;
     }
     if (--self->unk7C == 0) {
         if (self->ext.main_42.background_relative < 5) {
-            self->unk7C = 0xB4;
+            self->unk7C = DEMO_ALT(0xB4, 0x5A);
             self->x_accel = 0;
             self->gravity = 0;
             self->x_speed = 0;
@@ -118,7 +118,7 @@ void homing_orb_lunge(struct MainObj* self)
         }
     }
     if (!(self->unk7C & 3)) {
-        misc = func_8002AE90(self->ext.main_42.unk84, 0);
+        misc = func_8002AE90(self->ext.main_42.unk84, DEMO_ALT(0, 1));
         if (misc != NULL) {
             misc->active = 0x41;
             misc->id = 0xE;

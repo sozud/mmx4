@@ -66,6 +66,12 @@ void func_800CA228(struct MiscObj* self)
         set_animation_frame(ANIMATED_OBJECT(self), 1, self->unk2 & 0x7F);
         self->state = 2;
     } else {
+#ifdef VERSION_DEMO
+        self->unk42 = OBJECT_CLUT(0x7809);
+        self->unk16 = 0x10;
+        set_animation_frame(ANIMATED_OBJECT(self), 0, self->unk2);
+        self->state++;
+#else
         self->unk42 = OBJECT_CLUT(0x780A);
         self->unk16 = 0x10;
         if (self->unk2 == 8 || self->unk2 == 9) {
@@ -83,6 +89,7 @@ void func_800CA228(struct MiscObj* self)
             self->state++;
         }
         set_animation_frame(ANIMATED_OBJECT(self), 0, self->unk2);
+#endif
     }
     self->unk7 = 0;
 }
@@ -109,6 +116,7 @@ void func_800CA40C(struct MiscObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifndef VERSION_DEMO
 void stage_icon_follow(struct MiscObj* self)
 {
     if (self->ext.misc_24.main->active == 0) {
@@ -117,7 +125,9 @@ void stage_icon_follow(struct MiscObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void stage_icon_show_selected(struct MiscObj* self)
 {
     self->on_screen = 0;
@@ -125,13 +135,14 @@ void stage_icon_show_selected(struct MiscObj* self)
         is_on_screen(BASE_OBJECT(self));
     }
 }
+#endif
 
 void stage_icon_update(struct MiscObj* self)
 {
     stage_icon_state_funcs[self->state](self);
 }
 
-union AnimationStep stage_icon_anim_0[9] = {
+union AnimationStep stage_icon_anim_0[DEMO_ALT(9, 8)] = {
     { 30, 0, 1, 0x00 },
     { 30, 0, 1, 0x01 },
     { 30, 0, 1, 0x02 },
@@ -139,8 +150,12 @@ union AnimationStep stage_icon_anim_0[9] = {
     { 30, 0, 1, 0x04 },
     { 30, 0, 1, 0x05 },
     { 30, 0, 1, 0x06 },
+#ifdef VERSION_DEMO
+    { 30, 0, -7, 0x07 },
+#else
     { 30, 0, 1, 0x07 },
     { 30, 0, 0, 0x10 },
+#endif
 };
 
 union AnimationStep stage_icon_anim_1[8] = {
@@ -167,10 +182,12 @@ struct Misc12Position stage_icon_positions[8] = {
     { 0xE2, 0x1B0 },
 };
 
-void (*stage_icon_state_funcs[5])(struct MiscObj*) = {
+void (*stage_icon_state_funcs[DEMO_ALT(5, 3)])(struct MiscObj*) = {
     func_800CA228,
     stage_icon_highlight,
     func_800CA40C,
+#ifndef VERSION_DEMO
     stage_icon_follow,
     stage_icon_show_selected,
+#endif
 };

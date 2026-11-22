@@ -22,6 +22,18 @@
 
 void func_8006E920(struct MainObj* arg0, u32 value);
 
+#ifdef VERSION_DEMO
+#define SLASH_BEAST_CLEAR_AFTERIMAGES()                                \
+    {                                                                  \
+        struct MiscObj* obj;                                           \
+        for (obj = &misc_objects[2]; obj <= &misc_objects[9]; obj++) { \
+            if (obj->unk2 == 1) {                                      \
+                obj->active = 0;                                       \
+            }                                                          \
+        }                                                              \
+    }
+#endif
+
 extern struct Unk_unk68 D_80100200;
 extern struct Unk_unk68 D_80100204;
 extern struct Unk_unk68 D_80100210;
@@ -117,10 +129,153 @@ void slash_beast_update(struct MainObj* self)
 {
     slash_beast_state_funcs[self->state](self);
     CollisionRelated(self);
+#ifndef VERSION_DEMO
     if (!HP_VALUE(g_Player.hp)) {
         func_8006E920(self, TILE_ATTR_VALUE(0x38));
     }
+#endif
 }
+
+#ifdef VERSION_DEMO
+extern union AnimationStep* D_800D3D50_demo[];
+extern struct Unk_unk68 D_800D8068_demo[];
+
+void func_80075BE0_demo(struct MainObj* self)
+{
+    self->hp = 0;
+    self->contact_damage = 4;
+    self->invincibility_timer = 0;
+    self->collision_data = D_800D8068_demo;
+    self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
+    self->bg_offset = g_Player.bg_offset;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->terrain_box = NULL;
+    self->animation_table = (const u8* const*)D_800D3D50_demo;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->hurt_box = D_801001FC;
+    self->attack_box = D_801001F8;
+    slash_beast_face_player(self);
+    set_animation(self, 0);
+    self->ext.main_54.flash_timer = 0;
+    self->ext.main_54.powered_up = 1;
+    self->ext.main_54.was_hit = 0;
+    self->ext.main_54.grab = 0;
+    self->ext.main_54.active = 0;
+    self->ext.main_54.claw_hitbox = 0;
+    self->ext.main_54.pattern_set = 0;
+    self->ext.main_54.power_hits = 1;
+    self->ext.main_54.unk94 = 0;
+    self->ext.main_54.fight_started = 0;
+    self->ext.main_54.high_jump = 0;
+    func_8006E920(self, TILE_ATTR_VALUE(0x38));
+    self->state = 1;
+    self->unk5 = 9;
+    self->unk6 = 0;
+}
+#endif
+
+#ifdef VERSION_DEMO
+extern void (*D_800D3E10_demo[])(struct MainObj*);
+extern struct Unk_unk68 D_800D3A54_demo; // D_80100218
+extern struct Unk_unk68 D_800D3A58_demo; // D_8010021C
+extern struct Unk_unk68 D_800D3A78_demo; // D_8010023C
+
+void func_80075CFC_demo(struct MainObj* self)
+{
+    s32 hit;
+    s8 flash;
+    const void* saved;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    D_800D3E10_demo[self->unk5](self);
+    if (self->ext.main_54.crash_timer != 0) {
+        if (--self->ext.main_54.crash_timer == 0)
+            func_8006E920(self, TILE_ATTR_VALUE(0x38));
+    }
+    if (self->ext.main_54.pattern_set == 1 && self->ext.main_54.unk94 == 0 && self->ext.main_54.fight_started != 0) {
+        self->ext.main_54.unk94 = 2;
+    }
+    if (self->ext.main_54.unk94 != 0 && self->ext.main_54.unk94 != 0xFF) {
+        if (self->ext.main_54.unk94 == 2) {
+            if (self->ext.main_54.pad8B != get_layout_screen(1, 0x14F, 0x80)) {
+                self->ext.main_54.pad8B = get_layout_screen(1, 0x14F, 0x80);
+                self->ext.main_54.unk94--;
+            }
+        } else if (self->ext.main_54.pad8B != get_layout_screen(1, 0x14F, 0x80)) {
+            if (++background_objects[1].unk4E == 0x1D) {
+                self->ext.main_54.unk94 = 0xFF;
+            }
+            background_objects[1].unk4D++;
+            self->ext.main_54.pad8B = get_layout_screen(1, 0x14F, 0x80);
+        }
+    }
+    if (self->ext.main_54.active == 0)
+        return;
+    if (self->ext.main_54.grab & 0x80)
+        self->attack_box = &D_800D3A54_demo;
+    func_8002D9BC(self);
+    if (self->ext.main_54.claw_hitbox != 0) {
+        saved = self->attack_box;
+        self->attack_box = &D_800D3A58_demo;
+        func_8002D9BC(self);
+        self->attack_box = saved;
+    }
+    if (self->animation_step.fields.frame_index == 0x25) {
+        saved = self->attack_box;
+        self->attack_box = &D_800D3A78_demo;
+        func_8002D9BC(self);
+        self->attack_box = saved;
+    }
+    hit = func_8002DD04(self);
+    self->ext.main_54.was_hit = 0;
+    flash = (s8)self->ext.main_54.flash_timer;
+    if (flash == 0) {
+        if (hit < 0) {
+            self->state = 2;
+            self->unk5 = 0;
+            return;
+        }
+        if (hit != 0 && hit != 0x7F) {
+            self->ext.main_54.was_hit = 1;
+            self->collision_data = D_801060F0;
+            self->unk42 |= 0x8000;
+            if (hit == 0x19 || hit == 0x1A)
+                self->ext.main_54.flash_timer = 2;
+            else
+                self->ext.main_54.flash_timer = 0x40;
+            if ((hit == 6 || hit == 0xF) && self->ext.main_54.grab == 0) {
+                if (self->ext.main_54.claw_hitbox == 0) {
+                    self->contact_damage = 4;
+                    self->unk5 = 0xA;
+                    self->unk6 = 0;
+                }
+            }
+        }
+    } else {
+        self->ext.main_54.flash_timer = --flash;
+        if (flash == 0) {
+            self->collision_data = D_800D8068_demo;
+            self->unk42 &= 0x7FFF;
+        } else if (!(flash & 1)) {
+            self->unk42 |= 0x8000;
+        } else {
+            self->unk42 &= 0x7FFF;
+        }
+    }
+    if (self->hp <= 0x10)
+        self->ext.main_54.pattern_set = 2;
+    else if (self->hp <= 0x20)
+        self->ext.main_54.pattern_set = 1;
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
+}
+#endif
 
 // slash_beast_init
 
@@ -200,6 +355,7 @@ static void main54_face_anim(struct MainObj* arg0, s32 anim)
 }
 #endif
 
+#ifndef VERSION_DEMO
 void func_8006BB70(struct MainObj* arg0)
 {
     arg0->hp = 0;
@@ -244,8 +400,10 @@ void func_8006BB70(struct MainObj* arg0)
     arg0->unk5 = 9;
     arg0->unk6 = 0;
 }
+#endif
 
 // slash_beast_run
+#ifndef VERSION_DEMO
 void func_8006BD1C(struct MainObj* arg0)
 {
     s32 hit;
@@ -322,6 +480,7 @@ void func_8006BD1C(struct MainObj* arg0)
     }
     update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
 }
+#endif
 
 void slash_beast_death(struct MainObj* self)
 {
@@ -389,7 +548,7 @@ void slash_beast_death_finish(struct MainObj* self)
         self->ext.raw[5] = 0;
         engine_obj.enable_boss = 0;
         engine_obj.boss_ptr = 0;
-        if (engine_obj.stage != 0xC) {
+        if (DEMO_ALT(engine_obj.stage != 0xC, 1)) {
             engine_obj.unkF = 0x10;
         } else {
             engine_obj.unkF = -0x80;
@@ -684,6 +843,7 @@ void func_8006C6AC(struct MainObj* arg0)
         slash_beast_pick_pattern(arg0);
     switch (*arg0->ext.main_54.pattern) {
     case 0:
+#ifndef VERSION_DEMO
         if ((get_random() & 7) == 0) {
             slash_beast_face_player(arg0);
             set_animation(arg0, 8);
@@ -691,19 +851,23 @@ void func_8006C6AC(struct MainObj* arg0)
             arg0->unk6 = 0;
             return;
         }
+#endif
         slash_beast_face_player(arg0);
         set_animation(arg0, 0xB);
         arg0->unk7C = 0x3C;
         arg0->unk6 = 1;
         return;
     case 1:
+#ifndef VERSION_DEMO
         if ((get_random() & 7) == 0) {
             slash_beast_face_player(arg0);
             set_animation(arg0, 8);
             arg0->unk5 = 2;
             arg0->unk6 = 0;
             return;
-        } else if (ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 0x70) {
+        } else
+#endif
+            if (ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 0x70) {
             if (arg0->ext.main_54.powered_up != 0) {
                 set_animation(arg0, 0x26);
                 arg0->unk5 = 0xB;
@@ -712,7 +876,7 @@ void func_8006C6AC(struct MainObj* arg0)
             } else {
                 slash_beast_face_player(arg0);
                 set_animation(arg0, 0xC);
-                arg0->unk7C = 0x24;
+                arg0->unk7C = DEMO_ALT(0x24, 0x30);
                 arg0->unk7E = 2;
                 arg0->unk5 = 6;
                 arg0->unk6 = 0;
@@ -727,7 +891,11 @@ void func_8006C6AC(struct MainObj* arg0)
             return;
         }
     case 2:
+#ifdef VERSION_DEMO
+        if (ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 0x70) {
+#else
         if (ABS(g_Player.x_pos.i.hi, arg0->x_pos.i.hi) < 0x70 && (get_random() & 7) != 0) {
+#endif
             if (arg0->ext.main_54.powered_up != 0) {
                 set_animation(arg0, 0x26);
                 arg0->unk5 = 0xB;
@@ -736,7 +904,7 @@ void func_8006C6AC(struct MainObj* arg0)
             } else {
                 slash_beast_face_player(arg0);
                 set_animation(arg0, 0xC);
-                arg0->unk7C = 0x24;
+                arg0->unk7C = DEMO_ALT(0x24, 0x30);
                 arg0->unk7E = 2;
                 arg0->unk5 = 6;
                 arg0->unk6 = 0;
@@ -758,7 +926,7 @@ void func_8006C6AC(struct MainObj* arg0)
     case 4:
         slash_beast_face_player(arg0);
         set_animation(arg0, 0xC);
-        arg0->unk7C = 0x24;
+        arg0->unk7C = DEMO_ALT(0x24, 0x30);
         arg0->unk7E = 2;
         arg0->unk5 = 6;
         arg0->unk6 = 0;
@@ -817,7 +985,9 @@ void func_8006CB50(struct MainObj* arg0)
     s32 y;
 
     if (arg0->animation_step.fields.event != 0) {
+#ifndef VERSION_DEMO
         arg0->x_accel = 0;
+#endif
         set_animation(arg0, 2);
         arg0->hurt_box = &D_8010020C;
         arg0->attack_box = &D_80100208;
@@ -853,7 +1023,7 @@ void func_8006CC3C(struct MainObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event == 2) {
         arg0->unk62 = 0;
-        arg0->contact_damage = 6;
+        arg0->contact_damage = DEMO_ALT(6, 4);
         arg0->hurt_box = D_801001FC;
         arg0->attack_box = D_801001F8;
     }
@@ -928,21 +1098,23 @@ void slash_beast_dash_windup(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
+#ifdef VERSION_DEMO
+        SLASH_BEAST_CLEAR_AFTERIMAGES();
+#endif
         set_animation(self, 0xD);
         self->unk6 = 1;
     }
 }
-
 void slash_beast_dash_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        self->contact_damage = 9;
+        self->contact_damage = DEMO_ALT(9, 6);
         set_animation(self, 0xE);
         if (self->unk15 == 0) {
             self->x_speed = FIXED(-1);
         } else {
-            self->x_speed = FIXED(1);
+            self->x_speed = DEMO_ALT(FIXED(1), FIXED(-1));
         }
         self->ext.main_54.claw_hitbox = 1;
         self->ext.main_54.afterimage_timer = 1;
@@ -1023,7 +1195,7 @@ void func_8006CFB8(struct MainObj* self)
             return;
         }
         start_screen_shake_x(0x1E, 8, 2);
-        self->contact_damage = 6;
+        self->contact_damage = DEMO_ALT(6, 4);
         set_animation(self, 0xF);
         self->hurt_box = NULL;
         self->attack_box = NULL;
@@ -1037,7 +1209,7 @@ void func_8006CFB8(struct MainObj* self)
         }
         start_screen_shake_x(0x1E, 8, 2);
         set_animation(self, 0xF);
-        self->contact_damage = 6;
+        self->contact_damage = DEMO_ALT(6, 4);
         self->hurt_box = NULL;
         self->attack_box = NULL;
         self->unk6 = 3;
@@ -1078,7 +1250,7 @@ void slash_beast_dash_turn(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        self->contact_damage = 9;
+        self->contact_damage = DEMO_ALT(9, 6);
         self->ext.main_54.claw_hitbox = 1;
         self->x_speed = -self->x_speed;
         set_animation(self, 0xE);
@@ -1162,7 +1334,9 @@ void func_8006D3DC(struct MainObj* arg0)
         arg0->unk5 = 3;
         arg0->unk6 = 0;
     } else if (arg0->animation_step.fields.event != 0) {
+#ifndef VERSION_DEMO
         arg0->x_accel = 0;
+#endif
         if (M54_84(arg0) == 0) {
             set_animation(arg0, 2);
             target = arg0->x_pos.val;
@@ -1210,7 +1384,7 @@ void slash_beast_grab_check(struct MainObj* self)
     if (--self->unk7C == 0) {
         set_animation(self, 6);
         self->unk16 = VISUAL_SATURN_LAYER(6);
-        self->contact_damage = 6;
+        self->contact_damage = DEMO_ALT(6, 4);
         self->unk62 = 0;
         self->ext.main_54.grab = 0;
         self->hurt_box = D_801001FC;
@@ -1239,12 +1413,18 @@ void slash_beast_grab_check(struct MainObj* self)
     set_animation(self, 5);
     self->unk16 = 1;
     self->unk7C = 0x30;
+#ifdef VERSION_DEMO
+    func_8001540C(2, 0x83, self);
+#endif
     self->unk6 = 1;
 }
 
 void slash_beast_grab_windup(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
+#ifdef VERSION_DEMO
+        SLASH_BEAST_CLEAR_AFTERIMAGES();
+#endif
         set_animation(self, 7);
         self->unk6 = 2;
         self->ext.main_54.afterimage_timer = 1;
@@ -1334,7 +1514,9 @@ void slash_beast_grab_throw(struct MainObj* self)
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->hurt_box = &D_8010020C;
     self->attack_box = &D_80100208;
+#ifndef VERSION_DEMO
     self->x_accel = 0;
+#endif
     if (self->unk15 != 0) {
         self->x_speed = FIXED(-3.244140625);
     } else {
@@ -1347,7 +1529,7 @@ void slash_beast_grab_throw(struct MainObj* self)
     self->unk5 = 4;
     self->unk6 = 1;
     self->unk62 = 0;
-    self->contact_damage = 9;
+    self->contact_damage = DEMO_ALT(9, 8);
     self->ext.main_54.grab = 0;
     g_Player.stun_timer = 0;
 }
@@ -1361,7 +1543,7 @@ void slash_beast_intro_wait_player(struct MainObj* self)
 {
     struct EffectObj* temp_v0;
 
-    if (g_Player.x_pos.i.hi >= 0x2500 || engine_obj.stage == 0xC) {
+    if (DEMO_ALT(g_Player.x_pos.i.hi >= 0x2500 || engine_obj.stage == 0xC, g_Player.x_pos.i.hi >= 0x2500)) {
         temp_v0 = find_free_effect_obj();
         if (temp_v0 != 0) {
             temp_v0->active = 1;
@@ -1370,7 +1552,7 @@ void slash_beast_intro_wait_player(struct MainObj* self)
         }
 
         player_start_script_action(0x14, PLAYER_FACING_RIGHT);
-        if (engine_obj.stage == 8) {
+        if (DEMO_ALT(engine_obj.stage == 8, 1)) {
             background_objects[0].unk26 = 0x24A0;
             background_objects[0].unk24 = 0x24E0;
             background_objects[0].unk2A = 0xF8;
@@ -1385,7 +1567,11 @@ void slash_beast_intro_wait_player(struct MainObj* self)
 
 void slash_beast_intro_wait_warning(struct MainObj* self)
 {
+#ifdef VERSION_DEMO
+    if (self->ext.main_54.effect->active == 0 && background_objects[0].x_pos.i.hi == 0x24A0) {
+#else
     if (self->ext.main_54.effect->active == 0 && (background_objects[0].x_pos.i.hi == 0x24A0 || engine_obj.stage == 0xC)) {
+#endif
         self->unk6 = 2;
     }
 }
@@ -1398,7 +1584,10 @@ void func_8006DD44(struct MainObj* arg0)
 
     if (--arg0->unk7E != 0)
         return;
-    if (engine_obj.stage != 0xC) {
+#ifndef VERSION_DEMO
+    if (engine_obj.stage != 0xC)
+#endif
+    {
         item = find_free_item_obj();
         if (item != NULL) {
             item->active = 0x41;
@@ -1414,10 +1603,17 @@ void func_8006DD44(struct MainObj* arg0)
             item->state = 0;
         }
     }
+#ifdef VERSION_DEMO
+    if (--arg0->unk7C == 0) {
+#else
     if (--arg0->unk7C == 0 || engine_obj.stage == 0xC) {
+#endif
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 1;
         engine_obj.boss_ptr = arg0;
+#ifdef VERSION_DEMO
+        set_animation(arg0, 0x15);
+#endif
         arg0->unk7C = 0xC8;
         misc = find_free_misc_obj();
         if (misc != NULL) {
@@ -1437,6 +1633,11 @@ void func_8006DD44(struct MainObj* arg0)
             misc->ext.misc_26.owner = arg0;
             misc->state = 0;
         }
+#ifdef VERSION_DEMO
+        arg0->unk15 = PLAYER_FACING_RIGHT;
+        arg0->x_speed = 0x10000;
+        arg0->unk6 = 3;
+#else
         if (engine_obj.stage == 8) {
             arg0->unk15 = PLAYER_FACING_RIGHT;
             set_animation(arg0, 0x15);
@@ -1448,6 +1649,7 @@ void func_8006DD44(struct MainObj* arg0)
             arg0->unk7E = 1;
             arg0->unk6 = 4;
         }
+#endif
     } else {
         arg0->unk7E = 0x1E;
     }
@@ -1496,9 +1698,15 @@ void slash_beast_intro_land(struct MainObj* self)
                 == 0x38) {
                 if (engine_obj.stage == 8) {
                     apply_tile_effect(8, 0x2580, 0x140);
+#ifndef VERSION_DEMO
                     func_8001540C(2, SATURN_SOUND(0x80, 0x51), self);
                     spawn_debris(4, D_801005B0, self);
+#endif
                 }
+#ifdef VERSION_DEMO
+                func_8001540C(2, SATURN_SOUND(0x80, 0x51), self);
+                spawn_debris(4, D_801005B0, self);
+#endif
                 self->unk7E = 1;
             }
             break;
@@ -1508,9 +1716,11 @@ void slash_beast_intro_land(struct MainObj* self)
                 == 0x38) {
                 self->unk7E = 2;
                 set_animation(self, 3);
+#ifndef VERSION_DEMO
                 if (engine_obj.stage == 0xC) {
                     func_8001540C(2, SATURN_SOUND(0x82, 0x53), self);
                 }
+#endif
             }
             break;
         }
@@ -1527,6 +1737,12 @@ void slash_beast_intro_pose(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
+#ifdef VERSION_DEMO
+        self->unk15 = 0;
+        set_animation(self, 0x18);
+        self->unk6 = 6;
+        DEMO_START_DIALOGUE(0x10, 0xFF);
+#else
         if (engine_obj.stage == 8) {
             self->unk15 = 0;
             set_animation(self, 0x18);
@@ -1534,6 +1750,7 @@ void slash_beast_intro_pose(struct MainObj* self)
             engine_obj.character_state.bytes[8] = 1;
         }
         self->unk6 = 6;
+#endif
     }
 }
 
@@ -1543,25 +1760,30 @@ void slash_beast_intro_wait_dialogue(struct MainObj* self)
         set_animation(self, 0x19);
         self->unk7E = 3;
         self->unk6 = 7;
+#ifndef VERSION_DEMO
         play_boss_voice(7);
+#endif
     }
 }
 
 void slash_beast_intro_fill_health(struct MainObj* self)
 {
-    if (update_boss_music_delay() == 0) {
-        if (engine_obj.stage == 8) {
+    if (DEMO_ALT(update_boss_music_delay() == 0, 1)) {
+        if (DEMO_ALT(engine_obj.stage == 8, 1)) {
             if (background_objects[0].unk26 != 0x24B0) {
                 background_objects[0].unk26 -= 1;
             }
         }
 
         if (--self->unk7E == 0) {
-            func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
+            func_8001540C(0, DEMO_ALT(SATURN_SOUND(0xE, 0x14), 0xF), 0);
             self->unk7E = 3;
         }
 
         if (++self->hp == 0x30) {
+#ifdef VERSION_DEMO
+            self->ext.main_54.pad8B = get_layout_screen(1, 0x14F, 0x80);
+#endif
             self->ext.main_54.pattern_set = 0;
             self->ext.main_54.fight_started = 1;
             slash_beast_pick_pattern(self);
@@ -1611,7 +1833,9 @@ void func_8006E450(struct MainObj* arg0)
         arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_speed = 0x10000;
     }
+#ifndef VERSION_DEMO
     arg0->x_accel = 0;
+#endif
     arg0->y_speed = 0x40000;
     arg0->gravity = 0x8000;
     move_object(MOVING_OBJECT(arg0));
@@ -1642,7 +1866,9 @@ void slash_beast_stagger_recover(struct MainObj* self)
         self->unk7E = 1;
         self->unk5 = 6;
         self->unk6 = 0;
+#ifndef VERSION_DEMO
         self->ext.main_54.claw_hitbox = 1;
+#endif
     }
 }
 
@@ -1660,7 +1886,9 @@ void slash_beast_high_leap_jump(struct MainObj* self)
         } else {
             self->x_speed = FIXED(1.75);
         }
+#ifndef VERSION_DEMO
         self->x_accel = 0;
+#endif
         self->y_speed = FIXED(7.4375);
         self->gravity = FIXED(0.21875);
         move_with_gravity(ANIMATED_OBJECT(self));
@@ -1675,11 +1903,13 @@ void slash_beast_high_leap_fall(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     if (self->y_speed == 0) {
-        self->gravity = FIXED(2);
+        self->gravity = DEMO_ALT(FIXED(2), FIXED(1.5));
         self->x_speed = 0;
         self->unk6 = 2;
         set_animation(self, 0x17);
+#ifndef VERSION_DEMO
         self->contact_damage = 7;
+#endif
         self->attack_box = (const u8*)&D_80100210;
         self->hurt_box = (const u8*)&D_80100214;
     }
@@ -1704,7 +1934,9 @@ void slash_beast_high_leap_recover(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     if (self->collision_flags & 8) {
+#ifndef VERSION_DEMO
         self->contact_damage = 5;
+#endif
         self->y_speed = 0;
         self->gravity = 0;
     }
@@ -1751,6 +1983,30 @@ void func_8006E920(struct MainObj* arg0, u32 value)
         attrs[index] &= ~0xFF;
         attrs[index] |= value;
 #endif
+    }
+}
+#elif defined(VERSION_DEMO)
+void func_8006E920(struct MainObj* arg0, u32 value)
+{
+    s16 start;
+    s16 end;
+    s32 i;
+    u32* attrs;
+
+    if (value == TILE_ATTR_VALUE(0x38)) {
+        start = 0;
+        end = 8;
+    } else if (arg0->unk15 == 0) {
+        start = 4;
+        end = 8;
+    } else {
+        start = 0;
+        end = 4;
+    }
+    for (i = start; i < end; i++) {
+        attrs = SP_BG_TILE_ATTRS;
+        attrs[D_801005B8[i]] &= ~0xFF;
+        attrs[D_801005B8[i]] |= value;
     }
 }
 #else
@@ -1829,6 +2085,385 @@ void slash_beast_pick_pattern(struct MainObj* self)
     self->ext.main_54.pattern = base + i * 4;
 }
 
+#ifdef VERSION_DEMO
+union AnimationStep D_801001F8[1] = { { 239,
+    241,
+    37,
+    0x22 } };
+
+union AnimationStep D_801001FC[1] = { { 229,
+    235,
+    58,
+    0x31 } };
+
+struct Unk_unk68 D_80100200 = { -28, -16, 34, 38 };
+
+struct Unk_unk68 D_80100204 = { -37, -24, 64, 48 };
+
+struct Unk_unk68 D_80100208 = { -11, -30, 29, 57 };
+
+struct Unk_unk68 D_8010020C = { -17, -32, 43, 66 };
+
+struct Unk_unk68 D_80100210 = { -16, -38, 31, 81 };
+
+struct Unk_unk68 D_80100214 = { -22, -43, 43, 93 };
+
+struct Unk_unk68 D_800D3A54_demo = { -42, -19, 33, 27 };
+
+struct Unk_unk68 D_800D3A58_demo = { -66, -10, 26, 6 };
+
+struct Unk_unk68 D_80100220 = { -15, -29, 26, 50 };
+
+struct Unk_unk68 D_80100224 = { -22, -36, 40, 64 };
+
+struct Unk_unk68 D_80100228 = { -11, -13, 39, 27 };
+
+struct Unk_unk68 D_8010022C = { -20, -22, 57, 46 };
+
+union AnimationStep D_80100230[1] = { { 196,
+    245,
+    68,
+    0x22 } };
+
+union AnimationStep D_80100234[1] = { { 194,
+    232,
+    89,
+    0x39 } };
+
+union AnimationStep D_80100238[1] = { { 177,
+    208,
+    71,
+    0x1F } };
+
+struct Unk_unk68 D_800D3A78_demo = { -48, -73, 49, 48 };
+
+struct Unk_unk68 D_80100240 = { -74, -69, 105, 90 };
+
+struct Unk_unk68 D_80100244 = { -6, -68, 32, 80 };
+
+struct Unk_unk68 D_80100248 = { -15, -71, 48, 96 };
+
+struct Unk_unk68 D_8010024C = { 0, 0, 28, 26 };
+
+u8 slash_beast_pattern_steps[1][4] = {
+    { 0, 1, 1, 0xFF },
+};
+
+u8 D_800D3A90_demo[4] = { 0, 7, 2, 0xFF };
+
+u8 D_800D3A94_demo[4] = { 0, 3, 4, 0xFF };
+
+u8 D_800D3A98_demo[4] = { 0, 7, 2, 0xFF };
+
+u8 D_800D3A9C_demo[8] = { 5, 3, 4, 6, 0xFF, 0, 0, 0 };
+
+u8 D_800D3AA4_demo[8] = { 0, 7, 2, 2, 0xFF, 0, 0, 0 };
+
+u8 D_800D3AAC_demo[4] = { 5, 6, 6, 0xFF };
+
+u8* D_800D3AB0_demo[4] = { slash_beast_pattern_steps, D_800D3A90_demo, NULL, NULL };
+
+u8* D_800D3AC0_demo[4] = { D_800D3A94_demo, D_800D3A98_demo, NULL, NULL };
+
+u8* D_800D3AD0_demo[4] = { D_800D3A9C_demo, D_800D3AA4_demo, D_800D3AAC_demo, NULL };
+
+u8** slash_beast_patterns[3] = { D_800D3AB0_demo, D_800D3AC0_demo, D_800D3AD0_demo };
+
+u8 slash_beast_pattern_weights[4][3] = {
+    { 7, 0x10, 0 },
+    { 9, 0x10, 0 },
+    { 7, 10, 0x10 },
+    { 0, 0, 0 },
+};
+
+union AnimationStep D_800D3AF8_demo[1] = { { 1,
+    1,
+    0,
+    0x00 } };
+
+union AnimationStep D_800D3AFC_demo[6] = { { 2, 0, 1, 0x00 }, { 2, 0, 1, 0x01 }, { 4, 0, 1, 0x02 }, { 2, 0, 1, 0x01 }, { 1, 0, 1, 0x00 }, { 1,
+                                              1,
+                                              0,
+                                              0x00 } };
+
+union AnimationStep D_800D3B14_demo[12] = { { 2, 0, 1, 0x03 }, { 2, 0, 1, 0x04 }, { 2, 0, 1, 0x03 }, { 2, 0, 1, 0x04 }, { 2, 0, 1, 0x03 }, { 2, 0, 1, 0x04 }, { 2, 0, 1, 0x03 }, { 2, 0, 1, 0x04 }, { 2, 0, 1, 0x03 }, { 2, 0, 1, 0x04 }, { 2, 2, 1, 0x05 }, { 2,
+                                               1,
+                                               -1,
+                                               0x06 } };
+
+union AnimationStep D_800D3B44_demo[6] = { { 2, 0, 1, 0x02 }, { 2, 0, 1, 0x01 }, { 12, 0, 1, 0x02 }, { 2, 0, 1, 0x01 }, { 1, 0, 1, 0x00 }, { 1,
+                                              1,
+                                              0,
+                                              0x00 } };
+
+union AnimationStep D_800D3B5C_demo[2] = { { 2, 0, 1, 0x07 }, { 2,
+                                              1,
+                                              -1,
+                                              0x08 } };
+
+union AnimationStep D_800D3B64_demo[2] = { { 19, 0, 1, 0x09 }, { 1,
+                                              1,
+                                              0,
+                                              0x09 } };
+
+union AnimationStep D_800D3B6C_demo[6] = { { 2, 0, 1, 0x02 }, { 2, 0, 1, 0x01 }, { 28, 0, 1, 0x02 }, { 2, 0, 1, 0x01 }, { 1, 0, 1, 0x00 }, { 1,
+                                              1,
+                                              0,
+                                              0x00 } };
+
+union AnimationStep D_800D3B84_demo[1] = { { 1,
+    1,
+    0,
+    0x0A } };
+
+union AnimationStep D_800D3B88_demo[6] = { { 2, 0, 1, 0x01 }, { 2, 0, 1, 0x02 }, { 2, 0, 1, 0x01 }, { 2, 2, 1, 0x1F }, { 23, 0, 1, 0x20 }, { 1,
+                                              1,
+                                              0,
+                                              0x20 } };
+
+union AnimationStep D_800D3BA0_demo[16] = { { 2, 0, 1, 0x1F }, { 2, 0, 1, 0x21 }, { 2, 4, 1, 0x22 }, { 2, 0, 1, 0x23 }, { 1, 2, 1, 0x24 }, { 1, 3, 1, 0x25 }, { 1, 5, 1, 0x26 }, { 1, 0, 1, 0x27 }, { 2, 0, 1, 0x28 }, { 10, 0, 1, 0x27 }, { 2, 0, 1, 0x28 }, { 2, 0, 1, 0x29 }, { 2, 6, 1, 0x2A }, { 2, 7, 1, 0x2C }, { 1, 0, 1, 0x2B }, { 1,
+                                               1,
+                                               0,
+                                               0x2B } };
+
+union AnimationStep D_800D3BE0_demo[5] = { { 2, 0, 1, 0x01 }, { 30, 0, 1, 0x02 }, { 2, 0, 1, 0x01 }, { 1, 0, 1, 0x00 }, { 1,
+                                              1,
+                                              0,
+                                              0x00 } };
+
+union AnimationStep D_800D3BF4_demo[8] = { { 2, 0, 1, 0x00 }, { 2, 0, 1, 0x1A }, { 1, 2, 1, 0x1B }, { 7, 0, 1, 0x1B }, { 2, 0, 1, 0x1A }, { 2, 0, 1, 0x00 }, { 1, 0, 1, 0x17 }, { 1,
+                                              1,
+                                              -1,
+                                              0x18 } };
+
+union AnimationStep D_800D3C14_demo[5] = { { 2, 0, 1, 0x00 }, { 2, 0, 1, 0x01 }, { 1, 0, 1, 0x0B }, { 1, 0, 1, 0x0D }, { 1,
+                                              1,
+                                              -2,
+                                              0x0C } };
+
+union AnimationStep D_800D3C28_demo[3] = { { 1, 0, 1, 0x02 }, { 1, 0, 1, 0x0E }, { 1,
+                                              1,
+                                              0,
+                                              0x09 } };
+
+union AnimationStep D_800D3C34_demo[3] = { { 1, 0, 1, 0x0F }, { 1, 0, 1, 0x10 }, { 1,
+                                              1,
+                                              -2,
+                                              0x11 } };
+
+union AnimationStep D_800D3C40_demo[7] = { { 2, 0, 1, 0x12 }, { 2, 2, 1, 0x13 }, { 2, 0, 1, 0x14 }, { 20, 0, 1, 0x15 }, { 2, 0, 1, 0x14 }, { 1, 0, 1, 0x13 }, { 1,
+                                              1,
+                                              0,
+                                              0x13 } };
+
+union AnimationStep D_800D3C5C_demo[2] = { { 1, 0, 1, 0x16 }, { 1,
+                                              1,
+                                              0,
+                                              0x0A } };
+
+union AnimationStep D_800D3C64_demo[2] = { { 2, 0, 1, 0x33 }, { 2,
+                                              1,
+                                              -1,
+                                              0x34 } };
+
+union AnimationStep D_800D3C6C_demo[12] = { { 2, 0, 1, 0x35 }, { 2, 0, 1, 0x36 }, { 2, 0, 1, 0x35 }, { 2, 0, 1, 0x36 }, { 2, 0, 1, 0x35 }, { 24, 0, 1, 0x36 }, { 2, 0, 1, 0x35 }, { 2, 0, 1, 0x36 }, { 2, 0, 1, 0x02 }, { 2, 0, 1, 0x01 }, { 1, 0, 1, 0x00 }, { 1,
+                                               1,
+                                               0,
+                                               0x00 } };
+
+union AnimationStep D_800D3C9C_demo[1] = { { 1,
+    1,
+    0,
+    0x37 } };
+
+union AnimationStep D_800D3CA0_demo[4] = { { 1, 0, 1, 0x30 }, { 1, 0, 1, 0x31 }, { 1, 0, 1, 0x32 }, { 1,
+                                              1,
+                                              -3,
+                                              0x1B } };
+
+union AnimationStep D_800D3CB0_demo[3] = { { 1, 0, 1, 0x2D }, { 1, 0, 1, 0x2E }, { 1,
+                                              1,
+                                              -2,
+                                              0x2F } };
+
+union AnimationStep D_800D3CBC_demo[2] = { { 2, 0, 1, 0x03 }, { 2,
+                                              1,
+                                              -1,
+                                              0x04 } };
+
+union AnimationStep D_800D3CC4_demo[6] = { { 2, 0, 1, 0x05 }, { 2, 0, 1, 0x06 }, { 2, 0, 1, 0x05 }, { 2, 0, 1, 0x06 }, { 2, 0, 1, 0x1C }, { 2,
+                                              1,
+                                              -1,
+                                              0x1D } };
+
+union AnimationStep D_800D3CDC_demo[1] = { { 1,
+    1,
+    0,
+    0x19 } };
+
+union AnimationStep D_800D3CE0_demo[7] = { { 2, 0, 1, 0x00 }, { 2, 0, 1, 0x1A }, { 20, 0, 1, 0x1B }, { 2, 0, 1, 0x1A }, { 2, 0, 1, 0x00 }, { 1, 0, 1, 0x17 }, { 1,
+                                              1,
+                                              -1,
+                                              0x18 } };
+
+union AnimationStep D_800D3CFC_demo[2] = { { 1, 0, 1, 0x38 }, { 1,
+                                              1,
+                                              -1,
+                                              0x39 } };
+
+union AnimationStep D_800D3D04_demo[2] = { { 1, 0, 1, 0x3A }, { 1,
+                                              1,
+                                              -1,
+                                              0x3B } };
+
+union AnimationStep D_800D3D0C_demo[1] = { { 1,
+    1,
+    0,
+    0x74 } };
+
+union AnimationStep D_800D3D10_demo[1] = { { 1,
+    1,
+    0,
+    0x75 } };
+
+union AnimationStep D_800D3D14_demo[1] = { { 1,
+    1,
+    0,
+    0x76 } };
+
+union AnimationStep D_800D3D18_demo[1] = { { 1,
+    1,
+    0,
+    0x77 } };
+
+union AnimationStep D_800D3D1C_demo[1] = { { 1,
+    1,
+    0,
+    0x78 } };
+
+union AnimationStep D_800D3D20_demo[1] = { { 1,
+    1,
+    0,
+    0x79 } };
+
+union AnimationStep D_800D3D24_demo[1] = { { 1,
+    1,
+    0,
+    0x7A } };
+
+union AnimationStep D_800D3D28_demo[1] = { { 1,
+    1,
+    0,
+    0x7B } };
+
+union AnimationStep D_800D3D2C_demo[1] = { { 1,
+    1,
+    0,
+    0x7C } };
+
+union AnimationStep D_800D3D30_demo[2] = { { 2, 0, 1, 0x05 }, { 2,
+                                              1,
+                                              -1,
+                                              0x06 } };
+
+union AnimationStep D_800D3D38_demo[6] = { { 3, 0, 1, 0x00 }, { 3, 0, 1, 0x01 }, { 6, 0, 1, 0x02 }, { 3, 0, 1, 0x01 }, { 2, 0, 1, 0x00 }, { 1,
+                                              1,
+                                              0,
+                                              0x00 } };
+
+union AnimationStep* D_800D3D50_demo[39] = { D_800D3AF8_demo, D_800D3AFC_demo, D_800D3B14_demo, D_800D3B44_demo, D_800D3B5C_demo, D_800D3B64_demo, D_800D3B6C_demo, D_800D3B84_demo, D_800D3B88_demo, D_800D3BA0_demo, D_800D3BE0_demo, D_800D3BF4_demo, D_800D3C14_demo, D_800D3C28_demo, D_800D3C34_demo, D_800D3C40_demo, D_800D3C5C_demo, D_800D3C64_demo, D_800D3C6C_demo, D_800D3C9C_demo, D_800D3CA0_demo, D_800D3CB0_demo, D_800D3CBC_demo, D_800D3CC4_demo, D_800D3CDC_demo, D_800D3CE0_demo, D_800D3CFC_demo, D_800D3D04_demo, D_800D3D0C_demo, D_800D3D10_demo, D_800D3D14_demo, D_800D3D18_demo, D_800D3D1C_demo, D_800D3D20_demo, D_800D3D24_demo, D_800D3D28_demo, D_800D3D2C_demo, D_800D3D30_demo, D_800D3D38_demo };
+
+u8 D_801005B0[4] = { 0x1D, 0x1E, 0x1F, 0x20 };
+
+char D_801005B4[] = "\"#$";
+
+u16 D_801005B8[8] = { 0x70, 0x72, 0x74, 0x76, 0x65, 0x67, 0x69, 0x6B };
+
+void (*slash_beast_state_funcs[3])(struct MainObj*) = {
+    func_80075BE0_demo,
+    func_80075CFC_demo,
+    slash_beast_death,
+};
+
+void (*D_800D3E10_demo[12])(struct MainObj*) = {
+    enemy_hit_reaction,
+    slash_beast_start_pattern,
+    slash_beast_crescent,
+    slash_beast_decide,
+    slash_beast_jump,
+    func_8006CDD4,
+    slash_beast_dash,
+    func_8006D3DC,
+    slash_beast_grab,
+    slash_beast_intro,
+    slash_beast_stagger,
+    slash_beast_high_leap,
+};
+
+void (*slash_beast_death_funcs[3])(struct MainObj*) = {
+    slash_beast_death_start,
+    slash_beast_death_blink,
+    slash_beast_death_finish,
+};
+
+void (*slash_beast_crescent_funcs[4])(struct MainObj*) = {
+    slash_beast_crescent_jump,
+    func_8006C378,
+    slash_beast_crescent_land,
+    slash_beast_crescent_recover,
+};
+
+void (*slash_beast_decide_funcs[2])(struct MainObj*) = {
+    func_8006C6AC,
+    slash_beast_crouch,
+};
+
+void (*slash_beast_jump_funcs[3])(struct MainObj*) = {
+    func_8006CB50,
+    func_8006CC3C,
+    slash_beast_jump_recover,
+};
+
+void (*slash_beast_dash_funcs[5])(struct MainObj*) = {
+    slash_beast_dash_windup,
+    slash_beast_dash_start,
+    func_8006CFB8,
+    func_8006D280,
+    slash_beast_dash_turn,
+};
+
+void (*slash_beast_grab_funcs[4])(struct MainObj*) = {
+    slash_beast_grab_check,
+    slash_beast_grab_windup,
+    func_8006D888,
+    slash_beast_grab_throw,
+};
+
+void (*slash_beast_intro_funcs[8])(struct MainObj*) = {
+    slash_beast_intro_wait_player,
+    slash_beast_intro_wait_warning,
+    func_8006DD44,
+    slash_beast_intro_leap,
+    slash_beast_intro_land,
+    slash_beast_intro_pose,
+    slash_beast_intro_wait_dialogue,
+    slash_beast_intro_fill_health,
+};
+
+void (*slash_beast_stagger_funcs[3])(struct MainObj*) = {
+    func_8006E450,
+    slash_beast_stagger_land,
+    slash_beast_stagger_recover,
+};
+
+void (*slash_beast_high_leap_funcs[4])(struct MainObj*) = {
+    slash_beast_high_leap_jump,
+    slash_beast_high_leap_fall,
+    slash_beast_high_leap_land,
+    slash_beast_high_leap_recover,
+};
+
+#else
 union AnimationStep D_801001F8[] = {
     { -17, -15, 37, 0x22 },
 };
@@ -2353,3 +2988,4 @@ void (*slash_beast_high_leap_funcs[4])(struct MainObj*) = {
     slash_beast_high_leap_land,
     slash_beast_high_leap_recover,
 };
+#endif

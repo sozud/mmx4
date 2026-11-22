@@ -18,6 +18,7 @@ void jet_stingray_fx_main(struct VisualObj*);
 void jet_stingray_fx_despawn(struct VisualObj*);
 #include "weapon_resources.h"
 
+#ifndef VERSION_DEMO
 void jet_stingray_fx_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
@@ -39,6 +40,7 @@ void jet_stingray_fx_init(struct VisualObj* arg0)
     }
     arg0->unk42 &= 0x7FFF;
 }
+#endif
 
 void jet_stingray_fx_vortex(struct VisualObj* arg0)
 {
@@ -59,15 +61,25 @@ void jet_stingray_fx_vortex(struct VisualObj* arg0)
         break;
     case 2:
         if (arg0->animation_step.fields.relative_step == 0) {
+#ifdef VERSION_DEMO
+            arg0->state++;
+#else
             arg0->state = 2;
+#endif
         }
         break;
     }
+#ifdef VERSION_DEMO
+    animate_object(ANIMATED_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+#else
     if (owner->state >= 2) {
         arg0->state = 2;
     }
+#endif
 }
 
+#ifndef VERSION_DEMO
 void jet_stingray_fx_splash(struct VisualObj* arg0)
 {
     struct PlayerObj* entity = arg0->unk50;
@@ -91,19 +103,26 @@ void jet_stingray_fx_splash(struct VisualObj* arg0)
     }
     move_object((struct MovingObj*)arg0);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void jet_stingray_fx_oneshot(struct VisualObj* arg0)
 {
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->state = 2;
     }
 }
+#endif
 
 void jet_stingray_fx_main(struct VisualObj* arg0)
 {
+#ifdef VERSION_DEMO
+    jet_stingray_fx_funcs[arg0->unk2](arg0);
+#else
     animate_object(arg0);
     jet_stingray_fx_funcs[arg0->unk2](arg0);
     is_on_screen(arg0);
+#endif
 }
 
 void jet_stingray_fx_despawn(struct VisualObj* arg0)
@@ -116,6 +135,21 @@ void jet_stingray_fx_update(struct VisualObj* arg0)
     jet_stingray_fx_state_funcs[arg0->state](arg0);
 }
 
+#ifdef VERSION_DEMO
+void func_80099A5C_demo(struct VisualObj* arg0);
+
+s32 D_800D9A98_demo = 0x33CD;
+
+void (*jet_stingray_fx_funcs[])(struct VisualObj*) = {
+    jet_stingray_fx_vortex,
+};
+
+void (*jet_stingray_fx_state_funcs[])(struct VisualObj*) = {
+    func_80099A5C_demo,
+    jet_stingray_fx_main,
+    jet_stingray_fx_despawn,
+};
+#else
 void (*jet_stingray_fx_funcs[])(struct VisualObj*) = {
     jet_stingray_fx_vortex,
     jet_stingray_fx_splash,
@@ -127,3 +161,4 @@ void (*jet_stingray_fx_state_funcs[])(struct VisualObj*) = {
     jet_stingray_fx_main,
     jet_stingray_fx_despawn,
 };
+#endif

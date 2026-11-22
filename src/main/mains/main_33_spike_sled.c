@@ -109,11 +109,16 @@ void spike_sled_run(struct MainObj* self)
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     spike_sled_step_funcs[self->unk5](self);
+#ifdef VERSION_DEMO
+    func_8002D9BC(self);
+#endif
     if (self->ext.main_33.intro_active == 0) {
         self->ext.main_33.saved_unk5 = self->unk5;
         hit = func_8002DD04(self);
         if (hit < 0) {
+#ifndef VERSION_DEMO
             g_Player.spike_immune = 1;
+#endif
             g_Player.invincibility_timer = 0x7F;
             spawn_explosion(BASE_OBJECT(self));
             spawn_debris(9, D_800FDF40, self);
@@ -128,7 +133,9 @@ void spike_sled_run(struct MainObj* self)
             return;
         }
     }
+#ifndef VERSION_DEMO
     func_8002D9BC(self);
+#endif
     if (self->ext.main_33.flash_timer != 0) {
         self->ext.main_33.flash_timer--;
         if (--self->ext.main_33.unk91 == 0) {
@@ -686,7 +693,7 @@ void spike_sled_intro_fill_health(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7E == 0) {
-        func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
+        func_8001540C(0, SATURN_SOUND(DEMO_ALT(0xE, 0xF), 0x14), NULL);
         self->unk7E = 3;
     }
     if (++self->hp == 0x30) {

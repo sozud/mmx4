@@ -30,6 +30,7 @@
 extern u16 menu_button_bits_a[8];
 extern u16 menu_button_bits_b[8];
 
+#ifndef VERSION_DEMO
 void menu_text_init_label(struct UnkObj* self)
 {
 #ifndef MMX4_SATURN
@@ -63,7 +64,9 @@ void menu_text_init_label(struct UnkObj* self)
         self->state++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void menu_text_init_cursor(struct UnkObj* self)
 {
 #ifndef MMX4_SATURN
@@ -96,7 +99,19 @@ void menu_text_init_cursor(struct UnkObj* self)
     self->unk16 = 0;
     self->state = 3;
 }
+#endif
 
+#ifdef VERSION_DEMO
+void menu_text_init(struct UnkObj* self)
+{
+    if (self->ext.unk_0.selection_index != main_bss_state.transition.selection) {
+        self->y_pos.i.hi = self->link.value + main_bss_state.transition.selection * 2;
+        self->ext.unk_0.selection_index = main_bss_state.transition.selection;
+    }
+    animate_object(self);
+    is_on_screen(self);
+}
+#else
 void menu_text_init(struct UnkObj* self)
 {
     if (self->unk2 < 0) {
@@ -106,7 +121,9 @@ void menu_text_init(struct UnkObj* self)
     }
     is_on_screen(self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void menu_text_highlight(struct UnkObj* self)
 {
 #ifdef MMX4_WIN32
@@ -130,6 +147,7 @@ void menu_text_highlight(struct UnkObj* self)
     }
     is_on_screen(self);
 }
+#endif
 
 // menu_text_blink
 
@@ -137,6 +155,7 @@ void menu_text_highlight(struct UnkObj* self)
 void func_800D3798(struct UnkObj* self);
 #endif
 
+#ifndef VERSION_DEMO
 void func_800D3798(struct UnkObj* self)
 {
     u16 mask;
@@ -166,7 +185,9 @@ void func_800D3798(struct UnkObj* self)
     }
     is_on_screen(self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void menu_text_cursor(struct UnkObj* self)
 {
     if (self->unk2 == -1) {
@@ -178,6 +199,7 @@ void menu_text_cursor(struct UnkObj* self)
     }
     is_on_screen(self);
 }
+#endif
 
 // menu_text_state_funcs
 extern void (*menu_text_state_funcs[])(struct UnkObj*);
@@ -189,18 +211,47 @@ void menu_text_update(struct UnkObj* arg0)
 }
 
 #ifdef MMX4_SATURN
+#ifdef VERSION_DEMO
+extern u16 menu_button_bits_a[8];
+extern u16 menu_button_bits_b[8];
+#else
+#ifdef VERSION_DEMO
+extern u16 menu_button_bits_a[8];
+extern u16 menu_button_bits_b[8];
+#else
 u16 menu_button_bits_a[8] = { 0x10, 0x80, 0x100, 0x40, 0x20, 0x200, 0x400, 0x400 };
 
 u16 menu_button_bits_b[8] = { 0x400, 0x100, 0x200, 0x40, 0x20, 0x10, 0x80, 0x08 };
+#endif
+#endif
+#else
+#ifdef VERSION_DEMO
+extern u16 menu_button_bits_a[8];
+extern u16 menu_button_bits_b[8];
+#else
+#ifdef VERSION_DEMO
+extern u16 menu_button_bits_a[8];
+extern u16 menu_button_bits_b[8];
 #else
 u16 menu_button_bits_a[8] = { 0x10, 0x80, 0x100, 0x40, 0x20, 0x200, 0x400, 0 };
 
 u16 menu_button_bits_b[8] = { 0x80, 0x10, 0x40, 0x20, 4, 1, 8, 2 };
 #endif
+#endif
+#endif
 
+#ifdef VERSION_DEMO
+void func_800AE858_demo(struct MiscObj*);
+
+void (*menu_text_state_funcs[2])(struct UnkObj*) = {
+    func_800AE858_demo,
+    menu_text_init,
+};
+#else
 void (*menu_text_state_funcs[4])(struct UnkObj*) = {
     menu_text_init,
     menu_text_highlight,
     func_800D3798,
     menu_text_cursor,
 };
+#endif

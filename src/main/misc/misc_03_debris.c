@@ -40,6 +40,7 @@ void spawn_debris(arg_u8 arg0, void* arg1, void* arg2)
     }
 }
 
+#ifndef VERSION_DEMO
 void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4, s32 arg5)
 {
     s32 var_s1;
@@ -77,6 +78,7 @@ void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
         var_s1 -= 1;
     }
 }
+#endif
 
 void spawn_debris_offset(u8 count, u8* variants, struct MainObj* owner, s32 x_offset, s32 y_offset)
 {

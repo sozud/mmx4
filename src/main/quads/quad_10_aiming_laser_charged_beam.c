@@ -30,9 +30,11 @@ void aiming_laser_charged_beam_update(struct QuadObj* arg0)
     if (ptr->input_locked != 0) {
         var_a1 = 1;
     }
+#ifndef VERSION_DEMO
     if (ptr->capsule_state != 0) {
         var_a1 = 1;
     }
+#endif
     if (ptr->weapon != 6) {
         var_a1 = 1;
     }
@@ -80,8 +82,15 @@ void func_800D6B9C(struct QuadObj* self, struct PlayerObj* player, struct Player
     ext->history[0] = (weapon->adjusted_direction - 8) & 0x1F;
     for (i = 1; i < 16; i++)
         ext->history[i] = ext->history[0];
+#ifdef VERSION_DEMO
+    func_800D6DC4(self, player, owner);
+    self->state++;
+    if (self->on_screen != 0)
+        quad_is_on_screen(self);
+#else
     self->state++;
     func_800D6DC4(self, player, owner);
+#endif
 }
 
 void aiming_laser_charged_beam_extend(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
@@ -166,9 +175,9 @@ void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct Player
     u8 direction;
 
     if (player->unk15 == 0)
-        x = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2] + 2;
+        x = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2] + DEMO_ALT(2, 0);
     else
-        x = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2] - 2;
+        x = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2] - DEMO_ALT(2, 0);
     y = player->y_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
     direction = ext->history[aiming_laser_charged_beam_delays[self->unk2]];
     self->x_pos.i.hi = x;

@@ -17,6 +17,6 @@ void fortress_cannon_fire_double_shot(struct MainObj*);
 extern void (*fortress_cannon_step_funcs[])(struct MainObj*);
 
 void fortress_cannon_check_fall(struct MainObj*);
-extern u8 fortress_cannon_debris[8];
+extern u8 fortress_cannon_debris[DEMO_ALT(8, 4)];
 
 #endif

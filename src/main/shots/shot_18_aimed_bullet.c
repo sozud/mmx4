@@ -40,7 +40,7 @@ void aimed_bullet_init(struct ShotObj* self)
     self->x_vel.val *= 2;
     self->y_vel.val *= 2;
     self->unk5C = 1;
-    self->unk60 = 3;
+    self->unk60 = DEMO_ALT(3, 2);
     set_animation(self, 0xC);
 }
 

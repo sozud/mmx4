@@ -46,7 +46,9 @@ s16 train_tunnel_lock_positions[4] = { 0x16B0, 0x1DE0, 0x2700, 0x2710 };
 void train_tunnel_update(struct LayerObj* arg0)
 {
     train_tunnel_state_funcs[arg0->state](arg0);
+#ifndef VERSION_DEMO
     func_800D9B48(arg0);
+#endif
 }
 
 // train_tunnel_init
@@ -59,8 +61,10 @@ void func_800D9268(struct LayerObj* self)
     self->unk16 = 0x78;
     self->unk17 = 1;
     self->private_state.bytes[0] = 0xFF;
+#ifndef VERSION_DEMO
     self->private_state.bytes[1] = 0;
     engine_obj.character_state.fields.flags = 0;
+#endif
     engine_obj.character_state.fields.active = 0;
     background_objects[1].unk4D = 2;
     background_objects[1].unk4E = 0xD;
@@ -68,7 +72,7 @@ void func_800D9268(struct LayerObj* self)
     background_objects[2].unk4E = 5;
     background_objects[0].unk2E = 0xA0;
     background_objects[0].unk2C = 0x30;
-    func_8001540C(5, SATURN_SOUND(9, 0x42), NULL);
+    func_8001540C(5, DEMO_ALT(SATURN_SOUND(9, 0x42), 0), NULL);
     train_tunnel_main(self);
 }
 
@@ -130,6 +134,12 @@ void train_tunnel_section_1(struct LayerObj* arg0)
     }
 }
 
+#ifdef VERSION_DEMO
+#define TRAIN_TUNNEL_SCREEN() ((s32(*)(s32, s32, s32))get_layout_screen)(1, 0x40, 0)
+#else
+#define TRAIN_TUNNEL_SCREEN() get_layout_screen(1, 0x40, 0x40)
+#endif
+
 void train_tunnel_wait_stop_point(struct LayerObj* arg0)
 {
     switch (arg0->unk7) {
@@ -143,13 +153,13 @@ void train_tunnel_wait_stop_point(struct LayerObj* arg0)
         }
         return;
     case 1:
-        if (get_layout_screen(1, 0x40, 0x40) == 0x1E) {
+        if (TRAIN_TUNNEL_SCREEN() == 0x1E) {
             arg0->unk7 = 2;
             return;
         }
         break;
     case 2:
-        if (get_layout_screen(1, 0x40, 0x40) == 0x18) {
+        if (TRAIN_TUNNEL_SCREEN() == 0x18) {
             arg0->unk6++;
             arg0->unk7 = 0;
         }
@@ -161,7 +171,7 @@ void train_tunnel_start_braking(struct LayerObj* arg0)
 {
     arg0->unk17 = 2;
     engine_obj.character_state.bytes[0] = 1;
-    func_8001540C(5, SATURN_SOUND(0xA, 0x43), NULL);
+    func_8001540C(5, SATURN_SOUND(DEMO_ALT(0xA, 1), 0x43), NULL);
     arg0->unk6++;
     arg0->unk7 = 0;
 }
@@ -178,7 +188,7 @@ void train_tunnel_brake(struct LayerObj* arg0)
         background_objects[0].unk1C = 0x24E0;
         background_objects[0].unk24 = 0x24E0;
         player_end_script_action();
-        func_8001540C(5, SATURN_SOUND(0xB, 0x44), NULL);
+        func_8001540C(5, SATURN_SOUND(DEMO_ALT(0xB, 2), 0x44), NULL);
         arg0->unk7 = 1;
         arg0->unk17 = 0;
         return;
@@ -204,7 +214,7 @@ void train_tunnel_start_departure(struct LayerObj* arg0)
     if (engine_obj.checkpoint != 3) {
         background_objects[0].unk26 = 0x1DE0;
         player_start_script_action(0x14, PLAYER_FACING_RIGHT);
-        func_8001540C(5, SATURN_SOUND(9, 0x42), NULL);
+        func_8001540C(5, SATURN_SOUND(DEMO_ALT(9, 0), 0x42), NULL);
         arg0->unk18.val = FIXED(2);
     } else {
         arg0->unk18.val = FIXED(8);
@@ -312,6 +322,12 @@ void train_tunnel_shake_braking(struct LayerObj* arg0)
     }
 }
 
+#ifdef VERSION_DEMO
+#define TUNNEL_PROP_SCREEN() (((s32(*)(s32, s32, s32))get_layout_screen)(1, 0, 0))
+#else
+#define TUNNEL_PROP_SCREEN() ((s16)get_layout_screen(1, 0, 0x40))
+#endif
+
 void train_tunnel_spawn_scroll_prop(struct LayerObj* arg0)
 {
     struct MiscObj* misc;
@@ -319,7 +335,7 @@ void train_tunnel_spawn_scroll_prop(struct LayerObj* arg0)
 
     if (state != 1) {
         if (state == 0) {
-            if ((s16)get_layout_screen(1, 0, 0x40) == 0x18) {
+            if (TUNNEL_PROP_SCREEN() == 0x18) {
                 misc = find_free_misc_obj();
                 if (misc != 0) {
                     misc->active = 0x41;
@@ -328,7 +344,7 @@ void train_tunnel_spawn_scroll_prop(struct LayerObj* arg0)
                     arg0->private_state.value.bytes[0] = 1;
                 }
             }
-        } else if ((s16)get_layout_screen(1, 0, 0x40) != 0x18) {
+        } else if (TUNNEL_PROP_SCREEN() != 0x18) {
             arg0->private_state.value.bytes[0] = 0;
         }
     }
@@ -350,6 +366,7 @@ u8 train_tunnel_player_at_lock(struct LayerObj* arg0)
 void func_800D9B48(struct LayerObj* self);
 #endif
 
+#ifndef VERSION_DEMO
 void func_800D9B48(struct LayerObj* self)
 {
     if (engine_obj.character_state.fields.flags == 0)
@@ -375,6 +392,7 @@ void func_800D9B48(struct LayerObj* self)
     background_objects[1].unk4D++;
     self->private_state.bytes[2] = get_layout_screen(1, 0x14F, 0x80);
 }
+#endif
 
 void (*train_tunnel_state_funcs[])(struct LayerObj*) = {
     func_800D9268,

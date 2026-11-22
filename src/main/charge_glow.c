@@ -43,6 +43,10 @@ void func_800AE790(struct BazObj* arg0, struct PlayerObj* arg1)
     }
 }
 
+#ifdef VERSION_DEMO
+extern u8 x_water_wake_modes[9][16];
+extern u8 zero_water_wake_modes[9][16];
+#else
 u8 x_water_wake_modes[9][16] = {
     { 0, 0, 1, 1, 0, 1, 1, 2, 2, 2, 0, 0, 1, 0, 0, 0 },
     { 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -66,3 +70,4 @@ u8 zero_water_wake_modes[9][16] = {
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
+#endif

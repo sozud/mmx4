@@ -81,7 +81,11 @@ void rising_platform_rise(struct ItemObj* self)
 
 void rising_platform_despawn(struct ItemObj* arg0)
 {
+#ifdef VERSION_DEMO
+    despawn_object(OBJECT_HEADER(arg0));
+#else
     ZeroObjectState(OBJECT_HEADER(arg0));
+#endif
 }
 
 void rising_platform_update(struct ItemObj* arg0)

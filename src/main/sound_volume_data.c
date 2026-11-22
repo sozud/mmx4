@@ -6,6 +6,42 @@
 #define JP_VALUE(us, jp) us
 #endif
 
+#ifdef VERSION_DEMO
+u16 D_800C61B0_demo[] = {
+    0x8000,
+    0x08A2,
+    0x8000,
+    0x06D0,
+    0x8000,
+    0x064D,
+    0x8000,
+    0x0564,
+    0x8000,
+    0x0952,
+    0x8000,
+    0x08C3,
+    0x8000,
+    0x083B,
+    0x8000,
+    0x07E2,
+    0x8000,
+    0x0BFE,
+    0x8000,
+    0x0AF5,
+    0x8000,
+    0x0926,
+    0x8000,
+    0x0BA7,
+    0,
+    0,
+    0,
+    0,
+};
+
+const u16* D_800F19E0 = &D_800C61B0_demo[0];
+
+const u16* D_800F19E4 = &D_800C61B0_demo[16];
+#else
 u16 D_800F188C[] = {
     0x8000,
     JP_VALUE(0x0c8a, 0x0cc7),
@@ -200,3 +236,4 @@ const u16* D_800F1A00 = &D_800F188C[122];
 const u16* D_800F1A04 = &D_800F188C[138];
 
 const u16* D_800F1A08 = &D_800F188C[154];
+#endif

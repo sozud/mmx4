@@ -366,12 +366,12 @@ union AnimationStep heavy_mech_anim_3[] = {
 };
 
 union AnimationStep heavy_mech_anim_4[] = {
-    { 3, 0, 1, 0x14 },
-    { 16, 0, 1, 0x15 },
-    { 4, 0, 1, 0x16 },
-    { 5, 0, 1, 0x17 },
-    { 6, 0, 1, 0x18 },
-    { 6, 0, 1, 0x19 },
+    { DEMO_ALT(3, 4), 0, 1, 0x14 },
+    { DEMO_ALT(16, 5), 0, 1, 0x15 },
+    { DEMO_ALT(4, 6), 0, 1, 0x16 },
+    { DEMO_ALT(5, 6), 0, 1, 0x17 },
+    { DEMO_ALT(6, 5), 0, 1, 0x18 },
+    { DEMO_ALT(6, 3), 0, 1, 0x19 },
     { 1, 1, 0, 0x19 },
 };
 

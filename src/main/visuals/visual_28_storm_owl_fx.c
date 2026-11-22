@@ -11,11 +11,21 @@ extern void (*storm_owl_fx_state_funcs[])(struct VisualObj*);
 void storm_owl_fx_despawn(struct VisualObj*);
 #include "weapon_resources.h"
 
+#ifdef VERSION_DEMO
+extern void (*camera_trigger_state_funcs[])(struct EffectObj*);
+
+void storm_owl_fx_update(struct VisualObj* arg0)
+{
+    camera_trigger_state_funcs[arg0->state]((struct EffectObj*)arg0);
+}
+#else
 void storm_owl_fx_update(struct VisualObj* arg0)
 {
     storm_owl_fx_state_funcs[arg0->state](arg0);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void storm_owl_fx_init(struct VisualObj* obj)
 {
     s8 type;
@@ -56,7 +66,9 @@ void storm_owl_fx_init(struct VisualObj* obj)
     obj->unk5C.value = 0;
     obj->state++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void storm_owl_fx_main(struct VisualObj* arg0)
 {
     struct MainObj* owner = MAIN_OBJECT(arg0->unk50);
@@ -112,14 +124,21 @@ void storm_owl_fx_main(struct VisualObj* arg0)
         update_on_screen(BASE_OBJECT(arg0), 0x20, 0x80);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void storm_owl_fx_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
+#endif
 
+#ifdef VERSION_DEMO
+extern void (*storm_owl_fx_state_funcs[])(struct VisualObj*);
+#else
 void (*storm_owl_fx_state_funcs[])(struct VisualObj*) = {
     storm_owl_fx_init,
     storm_owl_fx_main,
     storm_owl_fx_despawn,
 };
+#endif

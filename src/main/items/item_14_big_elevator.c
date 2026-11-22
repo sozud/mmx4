@@ -174,7 +174,9 @@ void big_elevator_restore_camera(struct ItemObj* arg0)
 
 void big_elevator_finish(struct ItemObj* arg0)
 {
+#ifndef VERSION_DEMO
     background_objects[0].unk47 = 2;
+#endif
 }
 
 void (*big_elevator_state_funcs[])(struct ItemObj*) = {

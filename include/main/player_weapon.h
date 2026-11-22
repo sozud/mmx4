@@ -68,6 +68,9 @@ extern union PlayerChargeData player_weapon_energy;
 void func_80037484(struct PlayerObj*, s32);
 
 void player_reset_weapon(struct PlayerObj*);
+#ifdef VERSION_DEMO
+void player_clear_weapon(struct PlayerObj*);
+#endif
 
 s32 player_check_shoot_ladder(struct PlayerObj*);
 

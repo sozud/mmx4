@@ -38,15 +38,19 @@ void rising_fire_update(struct WeaponObj* arg0)
     if (g_Player.input_locked != 0) {
         disabled = 1;
     }
+#ifndef VERSION_DEMO
     if (g_Player.capsule_state != 0) {
         disabled = 1;
     }
+#endif
     if (g_Player.weapon != 4) {
         disabled = 1;
     }
+#ifndef VERSION_DEMO
     if (g_Player.shot_type == 0xD) {
         disabled = 1;
     }
+#endif
     if (disabled != 0) {
         arg0->state = 3;
     }
@@ -84,12 +88,14 @@ void func_80095254(struct WeaponObj* arg0)
     arg0->y_pos.i.hi = player->y_pos.i.hi + (s8)rising_fire_charged_offsets[arg0->unk2][1];
     arg0->x_vel.val = 0;
     arg0->unk28.val = 0;
-    arg0->y_vel.val = 0x70000;
+    arg0->y_vel.val = DEMO_ALT(0x70000, 0x80000);
     arg0->unk2C = 0;
     arg0->unk67 = 1;
     arg0->unk49 = 0;
     set_animation(arg0, 1);
+#ifndef VERSION_DEMO
     func_8001540C(0, WEAPON_SOUND_FIRE, arg0);
+#endif
     arg0->state++;
     arg0->unk5 = 0;
     rising_fire_draw(arg0);
@@ -124,6 +130,7 @@ void rising_fire_draw(struct WeaponObj* arg0)
 
 // WeaponObj, weapon_object_update_funcs[13]
 
+#ifndef VERSION_DEMO
 void rising_fire_charged_update(struct WeaponObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
@@ -143,8 +150,10 @@ void rising_fire_charged_update(struct WeaponObj* arg0)
     }
     rising_fire_charged_state_funcs[arg0->state](arg0);
 }
+#endif
 
 // rising_fire_charged_init
+#ifndef VERSION_DEMO
 void func_80095538(struct WeaponObj* arg0)
 {
     arg0->on_screen = 1;
@@ -174,7 +183,9 @@ void func_80095538(struct WeaponObj* arg0)
     arg0->unk5 = 0;
     rising_fire_charged_draw(arg0);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void rising_fire_charged_main(struct WeaponObj* self)
 {
     u8 timer;
@@ -216,13 +227,22 @@ void rising_fire_charged_main(struct WeaponObj* self)
         self->state = 3;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void rising_fire_charged_draw(struct WeaponObj* arg0)
 {
     decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
     update_on_screen(BASE_OBJECT(arg0), 0x38, 0x38);
 }
+#endif
 
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 rising_fire_hit_box[];
+extern struct Unk_unk68 rising_fire_charged_hit_boxes[];
+extern void (*rising_fire_state_funcs[])(struct WeaponObj*);
+extern void (*rising_fire_charged_state_funcs[])(struct WeaponObj*);
+#else
 struct Unk_unk68 rising_fire_hit_box[] = {
     { -22, -32, 0x2A, 0x36 },
 };
@@ -252,3 +272,20 @@ void (*rising_fire_charged_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))rising_fire_despawn,
     (void (*)(struct WeaponObj*))rising_fire_despawn,
 };
+#endif
+
+#ifdef VERSION_DEMO
+void (*rising_fire_state_funcs[4])(struct WeaponObj*) = {
+    func_80095254,
+    rising_fire_main,
+    rising_fire_despawn,
+    rising_fire_despawn,
+};
+
+struct Unk_unk68 rising_fire_hit_box[1] = { { -22, -32, 42, 54 } };
+
+u8 rising_fire_charged_offsets[2][2] = {
+    { 0x00, 0xFD },
+    { 0x06, 0xFC },
+};
+#endif

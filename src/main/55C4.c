@@ -129,7 +129,9 @@ u8 D_800F164C[4] = { 1, 2, 0, 0 };
 
 s16 D_800F1650[2] = { 1, 0 };
 
+#ifndef VERSION_DEMO
 u8 D_800F1654[4] = { CD_AUDIO_FIRST_TRACK, CD_AUDIO_LAST_TRACK, 0, 0 };
+#endif
 
 extern void (*D_800F1AB0[])(void);
 
@@ -230,7 +232,7 @@ void func_80014DC4(void)
 #endif
 
     SsInit();
-    SsSetTableSize(&D_80137E0C, 3, 0xA);
+    SsSetTableSize(&D_80137E0C, DEMO_ALT(3, 2), DEMO_ALT(0xA, 3));
 #ifdef VERSION_EU
     SsSetTickMode(4);
 #else
@@ -508,6 +510,7 @@ extern u8 D_800F1654[];
 
 extern union SepBundle D_801459C8;
 
+#ifndef VERSION_DEMO
 void func_80015C10(void)
 {
     u8 var_s1;
@@ -537,5 +540,6 @@ void func_80015C10(void)
         SsSepSetVol(D_8013E1C8[1], var_s1, 0x7F, 0x7F);
     }
 }
+#endif
 
 #endif

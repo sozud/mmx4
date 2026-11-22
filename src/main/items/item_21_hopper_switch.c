@@ -27,6 +27,7 @@ void func_800C52CC(struct ItemObj* self);
 extern ret_u8 func_8002938C(s32);
 #endif
 
+#ifndef VERSION_DEMO
 void func_800C52CC(struct ItemObj* self)
 {
     u8 index;
@@ -42,13 +43,18 @@ void func_800C52CC(struct ItemObj* self)
     self->unk68 = (struct Unk_unk68*)hopper_switch_box;
     self->state = 1;
 }
+#endif
 
 u32 hopper_switch_hopper_touching(struct ItemObj* arg0)
 {
     struct MainObj* object;
 
     for (object = main_objects; object < main_objects + COUNT(main_objects); object++) {
+#ifdef VERSION_DEMO
+        if (object->active == 0 || !(object->id = 0x29)) {
+#else
         if (object->active == 0 || object->id != 0x29) {
+#endif
             continue;
         }
         if (func_8002C160(COLLISION_OBJECT(arg0), COLLISION_OBJECT(object)) == 0) {
@@ -59,6 +65,17 @@ u32 hopper_switch_hopper_touching(struct ItemObj* arg0)
     return 0;
 }
 
+#ifdef VERSION_DEMO
+void func_800A7FB8_demo(struct ItemObj* arg0)
+{
+    if (hopper_switch_hopper_touching(arg0) != 0) {
+        apply_tile_effect(arg0->unk2, 0, 0);
+        arg0->state = 2;
+    }
+}
+#endif
+
+#ifndef VERSION_DEMO
 void hopper_switch_main(struct ItemObj* arg0)
 {
     if (arg0->unk5 == 0) {
@@ -76,6 +93,7 @@ void hopper_switch_main(struct ItemObj* arg0)
         is_on_screen(BASE_OBJECT(arg0));
     }
 }
+#endif
 
 void hopper_switch_despawn(struct ItemObj* arg0)
 {
@@ -89,10 +107,14 @@ void hopper_switch_update(struct ItemObj* arg0)
     hopper_switch_state_funcs[arg0->state](arg0);
 }
 
-u8 hopper_switch_box[4] = { 0, 0, 8, 0x0E };
+u8 hopper_switch_box[4] = { 0, 0, 8, DEMO_ALT(0x0E, 8) };
+
+#ifdef VERSION_DEMO
+void func_800A7F08_demo(struct ItemObj* self);
+#endif
 
 void (*hopper_switch_state_funcs[])(struct ItemObj*) = {
-    func_800C52CC,
-    hopper_switch_main,
+    DEMO_ALT(func_800C52CC, func_800A7F08_demo),
+    DEMO_ALT(hopper_switch_main, func_800A7FB8_demo),
     hopper_switch_despawn,
 };

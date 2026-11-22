@@ -33,7 +33,7 @@ void func_8007B418(struct MainObj*);
 
 void split_mushroom_spawn_afterimage(struct MainObj*);
 
-extern void* split_mushroom_animations[26];
+extern void* split_mushroom_animations[DEMO_ALT(26, 23)];
 extern struct Unk_unk68 split_mushroom_hurt_box;
 extern struct Unk_unk68 split_mushroom_attack_box;
 

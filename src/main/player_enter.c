@@ -175,11 +175,20 @@ void player_noop(void);
 
 u8 player_jump_voices[][4] = { { 2, 3, 6, 6 }, { 2, 4, 7, 7 } };
 
+#ifdef VERSION_DEMO
+#define ENTER_IDLE_SCRIPT_CHECK(self)                                         \
+    (engine_obj.unkF != 0               ? (player_start_stage_clear(self), 1) \
+            : (self)->script_state != 0 ? (func_80034E2C(self), 1)            \
+                                        : 0)
+#else
+#define ENTER_IDLE_SCRIPT_CHECK(self) player_check_script(self)
+#endif
+
 void player_enter_idle(struct PlayerObj* self)
 {
     s32 frame; // ???
 
-    if (player_check_script(self) == 0) {
+    if (ENTER_IDLE_SCRIPT_CHECK(self) == 0) {
         self->unk5 = PLAYER_IDLE;
         self->unk6 = 0;
         if ((self->unk2 == 0) && (self->attacking != 0)) {
@@ -187,7 +196,7 @@ void player_enter_idle(struct PlayerObj* self)
             if (self->attack_pose_timer <= 4) {
                 frame = 2;
             }
-            player_set_animation_frame(self, 0x5E, frame);
+            player_set_animation_frame(self, PLAYER_ANIM(0x5E), frame);
             if (self->attack_pose_timer > 8) {
                 self->animation_step.fields.duration = self->attack_pose_timer - 8;
             }
@@ -199,7 +208,7 @@ void player_enter_idle(struct PlayerObj* self)
 
 void player_enter_stand(struct PlayerObj* self)
 {
-    if (player_check_script(self) == 0) {
+    if (DEMO_ALT(player_check_script(self) == 0, 1)) {
         if (self->unk2 == 0) {
             player_enter_idle(self);
         } else {
@@ -234,19 +243,31 @@ void player_enter_walk(struct PlayerObj* self)
 
 void player_enter_jump(struct PlayerObj* self)
 {
+#ifdef VERSION_DEMO
+    player_set_animation_shooting(self, 0xA);
+    player_play_voice(self, player_jump_voices[self->unk2][get_random() & 3]);
+    self->y_vel.val = FIXED(5.8125);
+    self->unk2C = 0x4200;
+    self->x_vel.val = 0;
+    self->unk28 = 0;
+    self->air_state = 1;
+#else
     self->air_state = 1;
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = FIXED(5.8125);
     self->unk2C = 0x4200;
+#endif
     if ((self->dash_momentum != 0) || ((self->input.buttons.held & PLAYER_INPUT_DASH) != 0)) {
         self->dash_momentum = 1;
-        self->air_action = 2;
+        self->air_action = DEMO_ALT(2, 1);
         self->afterimage = 1;
     }
     self->unk8A.bytes.high = 0xA;
+#ifndef VERSION_DEMO
     player_set_animation_shooting(self, 0xA);
     player_play_voice(self, player_jump_voices[self->unk2][get_random() & 3]);
+#endif
     player_air_steer(self);
     self->unk5 = PLAYER_JUMP;
     self->unk6 = 0;
@@ -268,18 +289,31 @@ void player_enter_fall(struct PlayerObj* self)
     self->unk6 = 0;
 }
 
+#ifdef VERSION_DEMO
+void func_80040540_demo(struct PlayerObj* self)
+{
+    player_clear_dash_and_attack(self);
+    player_enter_fall(self);
+}
+#endif
+
 void player_enter_land(struct PlayerObj* self)
 {
     func_8001540C(1, 2, self);
     self->air_state = 0;
     player_clear_dash(self);
+#ifdef VERSION_DEMO
+    if ((player_check_script(self) == 0) && (player_check_shoot(self) == 0) && (player_zero_check_ground_technique(self) == 0) && (player_zero_check_saber(self) == 0) && (player_check_dash_jump_walk(self) == 0)) {
+#else
     if ((player_check_script(self) == 0) && (player_check_shoot(self) == 0) && (player_zero_check_ground_technique(self) == 0) && (player_check_dash_jump_walk(self) == 0) && (player_zero_check_saber(self) == 0)) {
+#endif
         player_set_animation_shooting(self, 0xC);
         self->unk5 = PLAYER_LAND;
         self->unk6 = 0;
     }
 }
 
+#ifndef VERSION_DEMO
 void player_enter_land_or_fall(struct PlayerObj* self)
 {
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
@@ -290,6 +324,7 @@ void player_enter_land_or_fall(struct PlayerObj* self)
         player_enter_fall(self);
     }
 }
+#endif
 
 void player_enter_dash(struct PlayerObj* self)
 {
@@ -334,7 +369,7 @@ void player_enter_air_dash(struct PlayerObj* self)
     self->unk2C = 0;
     self->dash_momentum = -1;
     self->dash_timer = 0x12;
-    self->air_action = 3;
+    self->air_action = DEMO_ALT(3, 1);
     player_clear_attack(self);
     self->unk5 = PLAYER_AIR_DASH;
     self->unk6 = 0;
@@ -355,14 +390,14 @@ void player_enter_air_dash_end(struct PlayerObj* self)
 
 void player_enter_fall_shooting(struct PlayerObj* self)
 {
-    player_set_animation(self, 0x84);
+    player_set_animation(self, PLAYER_ANIM(0x84));
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = 0;
     self->unk2C = FIXED(0.2578125);
     self->air_state = -1;
     self->dash_momentum = 0;
-    self->afterimage = 0;
+    self->afterimage = DEMO_ALT(0, -1);
     self->unk5 = PLAYER_FALL;
     self->unk6 = 0;
 }
@@ -400,7 +435,7 @@ void func_800349F4(struct PlayerObj* arg0)
     func_8001540C(1, 3, BASE_OBJECT(arg0));
     player_play_voice(arg0, 2);
     arg0->air_state = 1;
-    if (arg0->input.buttons.held & 0x100) {
+    if (arg0->input.buttons.held & PLAYER_INPUT_DASH) {
         arg0->dash_momentum = 1;
         arg0->air_action = 1;
         arg0->afterimage = 1;
@@ -461,9 +496,25 @@ void func_80034B64(struct PlayerObj* player)
     player->unk5 = 0xB;
     player->unk6 = 1;
 }
+
+#ifdef VERSION_DEMO
+void func_80040A9C_demo(struct PlayerObj* player)
+{
+    player_set_animation_shooting(player, 0xB);
+    player->x_vel.val = 0;
+    player->unk28 = 0;
+    player->y_vel.val = 0;
+    player->unk2C = 0x4200;
+    player->unk8A.bytes.low = 1;
+    player->air_state = -1;
+    player->unk5 = 0xB;
+    player->unk6 = 1;
+}
+#endif
+
 void player_enter_ladder_grab(struct PlayerObj* self)
 {
-    player_set_animation(self, 0x1B);
+    player_set_animation(self, PLAYER_ANIM(0x1B));
     self->x_pos.i.hi = (self->x_pos.i.hi & 0xFFF0) + 8;
     self->x_pos.u.lo = 0;
     self->y_pos.u.lo = 0;
@@ -480,7 +531,7 @@ void player_enter_ladder_grab(struct PlayerObj* self)
 
 void player_enter_ladder_climb_off_top(struct PlayerObj* self)
 {
-    player_set_animation(self, 0x1C);
+    player_set_animation(self, PLAYER_ANIM(0x1C));
     self->unk68 = 0;
     self->y_pos.i.hi &= 0xFFF0;
     self->y_pos.u.lo = 0;
@@ -491,7 +542,7 @@ void player_enter_ladder_climb_off_top(struct PlayerObj* self)
 
 void player_enter_ladder_climb_on_top(struct PlayerObj* self)
 {
-    player_set_animation(self, 0x1D);
+    player_set_animation(self, PLAYER_ANIM(0x1D));
     self->x_pos.i.hi = (self->x_pos.i.hi & 0xFFF0) + 8;
     self->x_pos.u.lo = 0;
     self->y_pos.u.lo = 0;
@@ -505,7 +556,7 @@ void player_enter_ladder_climb_on_top(struct PlayerObj* self)
 
 void player_enter_ladder_step_off_bottom(struct PlayerObj* self)
 {
-    player_set_animation(self, 0x1E);
+    player_set_animation(self, PLAYER_ANIM(0x1E));
     player_clear_attack(self);
     self->unk5 = PLAYER_LADDER_TRANSITION;
     self->unk6 = 3;
@@ -540,21 +591,44 @@ void player_enter_ladder_down(struct PlayerObj* self)
 }
 
 // player_start_script
+#define SCRIPT_ACTION_BASE DEMO_ALT(0, 0x14)
 void func_80034E2C(struct PlayerObj* player)
 {
+#ifdef VERSION_DEMO
+    s32 kept_frame;
+    s8 duration;
+#endif
 
     player->unk5 = player->script_action;
     player->unk6 = 0;
     player_clear_dash_and_attack(player);
-    switch ((s8)(player->unk5 - 0x14)) {
-    case 0:
+    switch (DEMO_ALT((s8)(player->unk5 - 0x14), player->unk5)) {
+    case SCRIPT_ACTION_BASE + 0:
         if ((u8)(player->unk17 - 5) >= 2)
             player_set_idle_animation(player);
         player->script_state = -1;
         player->unk15 = player->script_facing;
         break;
-    case 1:
-        player_set_animation(player, 0x26);
+    case SCRIPT_ACTION_BASE + 1:
+#ifdef VERSION_DEMO
+        kept_frame = 0;
+        duration = player->animation_step.fields.duration;
+        if (player->unk17 == 7 || player->unk17 == 0x6F) {
+            player_set_animation_frame(player, PLAYER_ANIM(0x26), player->animation_step.fields.event);
+            kept_frame = 1;
+            if (player->animation_step.fields.event != 2)
+                player->animation_step.fields.duration = duration;
+        }
+        if (player->unk17 == 8 || player->unk17 == 0x70) {
+            player_set_animation_frame(player, PLAYER_ANIM(0x26), player->animation_step.fields.event + 3);
+            kept_frame = 1;
+            player->animation_step.fields.duration = duration;
+        }
+        if (!kept_frame)
+            player_set_animation(player, PLAYER_ANIM(0x26));
+#else
+        player_set_animation(player, PLAYER_ANIM(0x26));
+#endif
         player->y_vel.val = 0;
         player->unk28 = 0;
         player->unk2C = 0;
@@ -564,12 +638,12 @@ void func_80034E2C(struct PlayerObj* player)
         }
         player->unk15 = PLAYER_FACING_RIGHT;
         break;
-    case 2:
+    case SCRIPT_ACTION_BASE + 2:
         player_set_animation(player, 3);
         player->script_state = -1;
         player->unk15 = player->script_facing;
         break;
-    case 3:
+    case SCRIPT_ACTION_BASE + 3:
         player_set_animation(player, 0xA);
         player_set_collision_bounds(player);
         player->x_vel.val = 0;
@@ -579,11 +653,13 @@ void func_80034E2C(struct PlayerObj* player)
         player->air_state = 1;
         player->unk15 = player->script_facing;
         break;
-    case 4:
+#ifndef VERSION_DEMO
+    case SCRIPT_ACTION_BASE + 4:
         player_set_animation(player, 0x6B);
         player_reset_weapon(player);
         player->unk15 = player->script_facing;
         break;
+#endif
     }
 }
 void player_start_stage_clear(struct PlayerObj* self)
@@ -592,7 +668,24 @@ void player_start_stage_clear(struct PlayerObj* self)
 
     player_clear_dash_and_attack(self);
     player_reset_charge_and_weapon(self);
-
+#ifdef VERSION_DEMO
+    player_clear_weapon(self);
+    flags = engine_obj.unkF;
+    if (flags & 0x10) {
+        player_set_animation(self, 0x21);
+        self->unk5 = PLAYER_STAGE_CLEAR;
+        self->unk6 = 0;
+        return;
+    }
+    if (flags & 0x40) {
+        self->state = PLAYER_STATE_INACTIVE;
+        self->unk5 = 0;
+        self->unk6 = 0;
+        return;
+    }
+    player_set_animation(self, 3);
+    player_enter_beam_out(self);
+#else
     flags = engine_obj.unkF;
     engine_obj.gameplay_locked = 1;
 
@@ -629,6 +722,7 @@ void player_start_stage_clear(struct PlayerObj* self)
     player_set_animation(self, 3);
     player_reset_weapon(self);
     player_enter_beam_out(self);
+#endif
 }
 
 void player_enter_beam_out(struct PlayerObj* self)

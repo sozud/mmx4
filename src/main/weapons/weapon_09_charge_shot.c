@@ -31,6 +31,21 @@ extern struct Unk_unk68 D_80108708[];
 void func_80092684(struct WeaponObj* arg0)
 {
     arg0->on_screen = 1;
+#ifdef VERSION_DEMO
+    if (arg0->id == 9)
+        arg0->unk2 = 0;
+    if (arg0->id == 0x12)
+        arg0->unk2 = 1;
+    if (arg0->id == 0x13)
+        arg0->unk2 = 2;
+    if (arg0->id == 0x14)
+        arg0->unk2 = 3;
+    arg0->unk50 = (const u8*)&D_80108708[arg0->unk2];
+    if (arg0->id == 9)
+        arg0->x_vel.val = FIXED(8);
+    else
+        arg0->x_vel.val = FIXED(10);
+#else
     if (arg0->id == 9) {
         arg0->unk2 = 0;
         arg0->x_vel.val = FIXED(8);
@@ -39,6 +54,7 @@ void func_80092684(struct WeaponObj* arg0)
         arg0->x_vel.val = FIXED(10);
     }
     arg0->unk50 = (const u8*)&D_80108708[arg0->unk2];
+#endif
     if (arg0->unk15 == 0) {
         arg0->x_vel.val = -arg0->x_vel.val;
     }
@@ -52,6 +68,19 @@ void func_80092684(struct WeaponObj* arg0)
 
 void charge_shot_main(struct WeaponObj* arg0)
 {
+#ifdef VERSION_DEMO
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x14) == 0) {
+        animate_object(arg0);
+        if (arg0->unk98 == 0) {
+            move_object(MOVING_OBJECT(arg0));
+            update_on_screen(BASE_OBJECT(arg0), 0x20, 0x14);
+            return;
+        }
+        arg0->unk50 = 0;
+    }
+    arg0->on_screen = 0;
+    arg0->state = 3;
+#else
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x14) == 0 && arg0->unk98 == 0) {
         animate_object(arg0);
         move_object(MOVING_OBJECT(arg0));
@@ -59,6 +88,7 @@ void charge_shot_main(struct WeaponObj* arg0)
         return;
     }
     buster_shot_hide(arg0);
+#endif
 }
 
 void player_shot_despawn(struct WeaponObj* arg0)
@@ -74,3 +104,12 @@ void (*charge_shot_state_funcs[])(struct WeaponObj*) = {
     player_shot_despawn,
     player_shot_despawn,
 };
+
+#ifdef VERSION_DEMO
+struct Unk_unk68 D_80108708[] = {
+    { -13, -7, 0x1D, 0xD },
+    { -34, -19, 0x40, 0x24 },
+    { -24, -17, 0x2C, 0x20 },
+    { -34, -19, 0x40, 0x24 },
+};
+#endif

@@ -28,11 +28,15 @@ void blink_marker_init(struct MiscObj* self)
     case 2:
         set_animation(self, variant + 1);
         break;
+#ifndef VERSION_DEMO
     case 3:
         is_on_screen(BASE_OBJECT(self));
         break;
+#endif
     }
+#ifndef VERSION_DEMO
     self->ext.misc_11.active = 0;
+#endif
     self->state++;
 }
 

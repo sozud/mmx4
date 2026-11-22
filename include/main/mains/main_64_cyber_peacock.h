@@ -56,7 +56,7 @@ void cyber_peacock_intro(struct MainObj* arg0);
 void func_8007D838(struct MainObj*);
 void cyber_peacock_death(struct BarObj* arg0);
 
-extern void* cyber_peacock_animations[38];
+extern void* cyber_peacock_animations[DEMO_ALT(38, 34)];
 
 extern struct Unk_unk68 cyber_peacock_hit_box;
 

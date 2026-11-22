@@ -85,12 +85,12 @@ void func_8009D048(struct ShotObj* self)
         }
     }
 
-    distance = ABS(background_objects->x_pos.i.hi, owner->x_pos.i.hi);
-    if ((u16)distance >= 0x1A0) {
+    distance = ABS(DEMO_ALT(background_objects->x_pos.i.hi, g_Player.x_pos.i.hi), owner->x_pos.i.hi);
+    if ((u16)distance >= DEMO_ALT(0x1A0, 0xF0)) {
         if (self->unk2 != 0) {
-            self->x_pos.i.hi = (owner->x_pos.i.hi - distance) + 0x29;
+            self->x_pos.i.hi = (owner->x_pos.i.hi - distance) + DEMO_ALT(0x29, -0x89);
         } else {
-            adjusted_distance = distance - 0x129;
+            adjusted_distance = distance - DEMO_ALT(0x129, 0x77);
             self->x_pos.i.hi = owner->x_pos.i.hi - adjusted_distance;
         }
     }

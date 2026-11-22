@@ -60,7 +60,7 @@ void falling_icicle_init(struct MainObj* arg0)
     self->ext.main_21.timer_80 = 0x1E;
     self->ext.main_21.timer_82 = self->unk2 * 0x14;
     self->unk15 = 0;
-    self->hp = 3;
+    self->hp = DEMO_ALT(3, 1);
     set_animation(arg0, 0);
     self->state = 1;
     self->unk5 = 2;

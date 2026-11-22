@@ -41,8 +41,13 @@ void charge_muzzle_flash_init(struct VisualObj* arg0)
     if (arg0->unk2 == 0x12) {
         var_a1 = 1;
     }
-    if (arg0->unk2 == 0x14) {
+#ifdef VERSION_DEMO
+    if (arg0->unk2 == 0x13) {
         var_a1 = 2;
+    }
+#endif
+    if (arg0->unk2 == 0x14) {
+        var_a1 = DEMO_ALT(2, 3);
     }
     temp_s0 = var_a1;
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + ((u32*)SP_SPRITE_FRAMES)[charge_muzzle_flash_types[temp_s0].archive_slot];
@@ -81,7 +86,9 @@ void charge_muzzle_flash_spawn_shot(struct VisualObj* arg0)
         if (weapon != NULL) {
             weapon->active = 0x21;
             weapon->id = arg0->unk2;
+#ifndef VERSION_DEMO
             weapon->unk2 = 0;
+#endif
             weapon->x_pos.val = arg0->x_pos.val;
             weapon->y_pos.val = arg0->y_pos.val;
             weapon->unk15 = arg0->unk15;
@@ -105,6 +112,33 @@ void charge_muzzle_flash_fade(struct VisualObj* arg0)
     }
 }
 
+#ifdef VERSION_DEMO
+extern s8* D_800D9684_demo[4];
+
+static inline void charge_muzzle_flash_place(struct VisualObj* arg0, struct PlayerObj* player, s32 type)
+{
+    s32 shot;
+    s8* offsets;
+
+    if (type == 9)
+        shot = 0;
+    if (type == 0x12)
+        shot = 1;
+    if (type == 0x13)
+        shot = 2;
+    if (type == 0x14)
+        shot = 3;
+    offsets = D_800D9684_demo[shot];
+    offsets += player->animation_step.fields.frame_index * 2;
+    if (arg0->unk15 != 0) {
+        arg0->x_pos.i.hi = player->x_pos.i.hi - offsets[0];
+    } else {
+        arg0->x_pos.i.hi = player->x_pos.i.hi + offsets[0];
+    }
+    arg0->y_pos.i.hi = player->y_pos.i.hi + offsets[1];
+}
+#endif
+
 void charge_muzzle_flash_follow(struct VisualObj* arg0)
 {
     struct PlayerObj* entity;
@@ -121,13 +155,36 @@ void charge_muzzle_flash_follow(struct VisualObj* arg0)
         arg0->unk5C.value = 1;
     }
     if (arg0->unk5C.value == 0) {
+#ifdef VERSION_DEMO
+        charge_muzzle_flash_place(arg0, entity, arg0->unk2);
+#else
         buster_shot_place_at_muzzle(arg0, entity, arg0->unk2);
+#endif
     }
 }
 
 struct VisualAttachmentInit charge_muzzle_flash_types[4] = {
     { 0x03, 0x16, 0x09 },
     { 0x02, 0x17, 0x0A },
+#ifdef VERSION_DEMO
+    { 0x01, 0x18, 0x09 },
+    { 0x02, 0x19, 0x0A },
+#else
     { 0x02, 0x19, 0x0A },
     { 0x00, 0x00, 0x00 },
+#endif
 };
+
+#ifdef VERSION_DEMO
+extern s8 D_800E7748_demo[];
+extern s8 D_800E7948_demo[];
+extern s8 D_800E7B48_demo[];
+extern s8 D_800E7D48_demo[];
+
+s8* D_800D9684_demo[4] = {
+    D_800E7748_demo,
+    D_800E7948_demo,
+    D_800E7B48_demo,
+    D_800E7D48_demo,
+};
+#endif

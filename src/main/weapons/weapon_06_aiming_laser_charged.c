@@ -22,9 +22,9 @@ void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player);
 #include "main/player_weapon.h"
 #endif
 
-void aiming_laser_marker_init(struct WeaponObj*);
+void aiming_laser_marker_init(struct WeaponObj*, struct PlayerObj*, struct PlayerObj*);
 
-void aiming_laser_marker_fire(struct WeaponObj*);
+void aiming_laser_marker_fire(struct WeaponObj*, struct PlayerObj*, struct PlayerObj*);
 void aiming_laser_marker_despawn(struct WeaponObj*, struct PlayerObj*);
 
 // aiming_laser_charged_state_funcs
@@ -67,6 +67,14 @@ void func_800961B0(struct WeaponObj* arg0)
             func_800963E8(arg0, player);
         return;
     }
+#ifdef VERSION_DEMO
+    reset = engine_obj.unkF != 0;
+    owner = (struct MainObj*)arg0->owner;
+    if (player->weapon != 6)
+        reset = 1;
+    if (player->hp == 0)
+        reset = 1;
+#else
     owner = (struct MainObj*)arg0->owner;
     reset = player->input_locked != 0;
     if (player->capsule_state != 0)
@@ -81,6 +89,7 @@ void func_800961B0(struct WeaponObj* arg0)
         reset = 1;
     if (owner->hp == 0)
         reset = 1;
+#endif
     if (reset)
         arg0->state = 3;
     arg0->x_pos.val = owner->x_pos.val;
@@ -96,6 +105,9 @@ void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
     s32 frames_offset;
 
     arg0->on_screen = 1;
+#ifdef VERSION_DEMO
+    arg0->bg_offset = arg1->bg_offset;
+#endif
     player_gfx = SP_PLAYER_GFX;
     gfx_offset = player_gfx[0x1C / 4];
     sprite_frames = SP_SPRITE_FRAMES;
@@ -104,27 +116,44 @@ void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
     arg0->animation_table = D_8011C0E4;
     arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->unk42 = WEAPON_PALETTE_1;
-    arg0->unk16 = 0x12;
+    arg0->unk16 = DEMO_ALT(0x12, 0x10);
     arg0->ext.weapon_6.direction = 8;
     arg0->unk3C = (u8*)sprite_frames + frames_offset;
     set_animation(arg0, 1);
+#ifdef VERSION_DEMO
+    aiming_laser_reticle_place(arg0, arg1);
+    arg0->state++;
+    update_on_screen(BASE_OBJECT(arg0), 0x18, 0x18);
+#else
     arg0->state++;
     aiming_laser_reticle_place(arg0, arg1);
+#endif
 }
 
 // aiming_laser_reticle_main
+#ifdef VERSION_DEMO
+s32 func_800870EC_demo(struct WeaponObj* arg0, struct PlayerObj* player, struct MainObj* target);
+#endif
+
 void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
 {
+#ifdef VERSION_DEMO
+    s32 hidden = player->special_shot_count == 3;
+    struct ItemObj* item;
+#else
     s32 hidden = player->weapon_energy[6] == 0;
+#endif
     struct MainObj* obj;
     struct Weapon6Ext* ext = &arg0->ext.weapon_6;
 
+#ifndef VERSION_DEMO
     if (!(player->armor_parts & 1) && player->weapon_energy[6] < player_weapon_energy.charge.initial_thresholds[0])
         hidden = 1;
     if (player->special_shot_count >= 3)
         hidden = 1;
     if (player->hurt_phase > 0)
         hidden = 1;
+#endif
     if (player->attacking != 0) {
         if (player->last_shot_type == 6)
             hidden = 1;
@@ -143,11 +172,24 @@ void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
         ext->direction++;
     aiming_laser_reticle_place(arg0, player);
     arg0->unk50 = aiming_laser_reticle_box;
+#ifdef VERSION_DEMO
+    for (obj = main_objects; obj < &main_objects[COUNT(main_objects)]; obj++) {
+        if (func_800870EC_demo(arg0, player, obj))
+            return;
+    }
+    for (item = item_objects; item < &item_objects[COUNT(item_objects)]; item++) {
+        if (func_800870EC_demo(arg0, player, (struct MainObj*)item))
+            return;
+    }
+    arg0->unk50 = NULL;
+    update_on_screen(BASE_OBJECT(arg0), 0x18, 0x18);
+#else
     for (obj = main_objects; obj < &main_objects[COUNT(main_objects)]; obj++) {
         if (aiming_laser_try_lock_on(arg0, player, obj))
             return;
     }
     arg0->unk50 = NULL;
+#endif
 }
 
 void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1)
@@ -164,9 +206,51 @@ void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1)
     set_velocity_from_angle(MOVING_OBJECT(arg0), (ext->adjusted_direction - 8) & 0x1F);
     arg0->x_pos.val = arg1->x_pos.val + arg0->x_vel.val * 0x60;
     arg0->y_pos.val = arg1->y_pos.val + arg0->y_vel.val * 0x60;
+#ifndef VERSION_DEMO
     update_on_screen(BASE_OBJECT(arg0), 0x18, 0x18);
+#endif
 }
 
+#ifdef VERSION_DEMO
+s32 func_800870EC_demo(struct WeaponObj* arg0, struct PlayerObj* player, struct MainObj* target)
+{
+    struct MainObj* lock_target;
+    struct WeaponObj* marker;
+    s32 slot;
+
+    lock_target = target;
+    if (lock_target != player->weapon_06_slots[0] && lock_target != player->weapon_06_slots[1]
+        && lock_target != player->weapon_06_slots[2]) {
+        if (player->weapon_06_slots[2] == NULL) {
+            slot = 2;
+        }
+        if (player->weapon_06_slots[1] == NULL) {
+            slot = 1;
+        }
+        if (player->weapon_06_slots[0] == NULL) {
+            slot = 0;
+        }
+        if (lock_target->active != 0 && lock_target->hurt_box != NULL
+            && func_8002BB80(MAIN_OBJECT(arg0), lock_target) != 0) {
+            marker = find_free_weapon_obj();
+            if (marker != NULL) {
+                marker->active = 1;
+                marker->id = 6;
+                marker->unk2 = slot;
+                marker->owner = PLAYER_OBJECT(lock_target);
+                player->weapon_06_slots[slot] = lock_target;
+            }
+            player->special_shot_count++;
+            arg0->unk50 = NULL;
+            update_on_screen(BASE_OBJECT(arg0), 0x18, 0x18);
+            return 1;
+        }
+    }
+    return 0;
+}
+#endif
+
+#ifndef VERSION_DEMO
 s32 aiming_laser_try_lock_on(struct WeaponObj* arg0, struct PlayerObj* player, struct MainObj* target)
 {
     struct MainObj* lock_target;
@@ -221,13 +305,26 @@ s32 aiming_laser_try_lock_on(struct WeaponObj* arg0, struct PlayerObj* player, s
     }
     return 0;
 }
+#endif
 
-void aiming_laser_marker_init(struct WeaponObj* arg0)
+#ifdef VERSION_DEMO
+s32 func_8008743C_demo(struct WeaponObj* arg0, struct PlayerObj* player, struct PlayerObj* target, s32 check_player);
+#endif
+
+void aiming_laser_marker_init(struct WeaponObj* arg0, struct PlayerObj* player, struct PlayerObj* owner)
 {
     s32* player_gfx;
     s32* sprite_frames;
 
+#ifdef VERSION_DEMO
+    if (func_8008743C_demo(arg0, player, owner, 0) != 0) {
+        return;
+    }
     arg0->on_screen = 1;
+    arg0->bg_offset = player->bg_offset;
+#else
+    arg0->on_screen = 1;
+#endif
     player_gfx = SP_PLAYER_GFX;
     arg0->unk38 = (u8*)player_gfx + (player_gfx[0x1C / 4]);
     sprite_frames = SP_SPRITE_FRAMES;
@@ -235,7 +332,7 @@ void aiming_laser_marker_init(struct WeaponObj* arg0)
     arg0->animation_table = D_8011C0E4;
     arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->unk42 = WEAPON_PALETTE_1;
-    arg0->unk16 = 0x12;
+    arg0->unk16 = DEMO_ALT(0x12, 0x10);
     arg0->unk15 = 0;
     set_animation(arg0, 2);
     arg0->state++;
@@ -248,8 +345,15 @@ void aiming_laser_marker_wait_fire(struct WeaponObj* self, struct PlayerObj* pla
     struct Weapon6Ext* weapon_6 = &self->ext.weapon_6;
     struct QuadObj* quad;
 
+#ifdef VERSION_DEMO
+    if (func_8008743C_demo(self, player, owner, 0) != 0) {
+        return;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+#else
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x18, 0x18);
+#endif
     if ((player->shot_fired != 0) && (player->shot_type == 6)) {
         self->unk50 = &aiming_laser_marker_box;
         self->unk64 = 1;
@@ -266,16 +370,27 @@ void aiming_laser_marker_wait_fire(struct WeaponObj* self, struct PlayerObj* pla
     }
 }
 
-void aiming_laser_marker_fire(struct WeaponObj* arg0)
+void aiming_laser_marker_fire(struct WeaponObj* arg0, struct PlayerObj* player, struct PlayerObj* owner)
 {
-    struct Weapon6Ext* ext = &arg0->ext.weapon_6;
+    struct Weapon6Ext* ext;
     u8 timer;
 
+#ifdef VERSION_DEMO
+    if (func_8008743C_demo(arg0, player, owner, 1) != 0) {
+        return;
+    }
+#endif
+    ext = &arg0->ext.weapon_6;
     animate_object(ANIMATED_OBJECT(arg0));
     if (ext->lifetime == 0) {
+#ifdef VERSION_DEMO
+        arg0->state = 3;
+        arg0->on_screen = 0;
+#else
         arg0->unk50 = 0;
         arg0->on_screen = 0;
         arg0->state = 3;
+#endif
         return;
     }
     timer = ext->timer;
@@ -286,8 +401,36 @@ void aiming_laser_marker_fire(struct WeaponObj* arg0)
         ext->timer = timer - 1;
     }
     ext->lifetime -= 1;
+#ifndef VERSION_DEMO
     update_on_screen(BASE_OBJECT(arg0), 0x18, 0x18);
+#endif
 }
+
+#ifdef VERSION_DEMO
+s32 func_8008743C_demo(struct WeaponObj* arg0, struct PlayerObj* player, struct PlayerObj* target, s32 check_player)
+{
+    s32 done = 0;
+
+    if (check_player != 0) {
+        done = player->input_locked != 0;
+        if (player->actions_reset != 0) {
+            done = 1;
+        }
+    }
+    if (target->active == 0) {
+        done = 1;
+    }
+    if (target->hp == 0) {
+        done = 1;
+    }
+    if (done != 0) {
+        arg0->on_screen = 0;
+        arg0->state = 3;
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 void aiming_laser_marker_despawn(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
@@ -307,9 +450,11 @@ void aiming_laser_charged_update(struct WeaponObj* arg0)
     if (g_Player.input_locked != 0) {
         var_a1 = 1;
     }
+#ifndef VERSION_DEMO
     if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
+#endif
     if (g_Player.weapon != 6) {
         var_a1 = 1;
     }
@@ -350,7 +495,9 @@ void aiming_laser_charged_init(struct WeaponObj* arg0)
     } while (i < 4);
 
     aiming_laser_charged_aim(arg0, &g_Player);
+#ifndef VERSION_DEMO
     func_8001540C(0, WEAPON_SOUND_LASER_CHARGE, arg0);
+#endif
     arg0->state++;
     arg0->unk5 = 0;
 }
@@ -421,12 +568,21 @@ void aiming_laser_charged_despawn(struct WeaponObj* arg0)
 #ifdef MMX4_SATURN
     func_8001540C(6, 1, NULL);
 #else
+#ifndef VERSION_DEMO
     stop_sound(0, 0x1D);
+#endif
 #endif
     g_Player.special_shot_count--;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 aiming_laser_reticle_box[];
+extern struct Unk_unk68 aiming_laser_marker_box[];
+extern struct Unk_unk68 aiming_laser_charged_box[];
+extern void (*aiming_laser_marker_state_funcs[])(struct WeaponObj*);
+extern void (*aiming_laser_charged_state_funcs[])(struct WeaponObj*);
+#else
 struct Unk_unk68 aiming_laser_reticle_box[] = {
     { -20, -20, 0x28, 0x28 },
 };
@@ -440,7 +596,7 @@ struct Unk_unk68 aiming_laser_charged_box[] = {
 };
 
 void (*aiming_laser_marker_state_funcs[])(struct WeaponObj*) = {
-    aiming_laser_marker_init,
+    (void (*)(struct WeaponObj*))aiming_laser_marker_init,
     (void (*)(struct WeaponObj*))aiming_laser_marker_wait_fire,
     (void (*)(struct WeaponObj*))aiming_laser_marker_fire,
     (void (*)(struct WeaponObj*))aiming_laser_marker_despawn,
@@ -452,3 +608,26 @@ void (*aiming_laser_charged_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))aiming_laser_charged_despawn,
     (void (*)(struct WeaponObj*))aiming_laser_charged_despawn,
 };
+#endif
+
+#ifdef VERSION_DEMO
+void (*aiming_laser_marker_state_funcs[4])(struct WeaponObj*) = {
+    aiming_laser_marker_init,
+    aiming_laser_marker_wait_fire,
+    aiming_laser_marker_fire,
+    aiming_laser_marker_despawn,
+};
+
+struct Unk_unk68 aiming_laser_reticle_box[1] = { { -20, -20, 40, 40 } };
+
+struct Unk_unk68 aiming_laser_marker_box[1] = { { -8, -8, 16, 16 } };
+
+void (*aiming_laser_charged_state_funcs[4])(struct WeaponObj*) = {
+    aiming_laser_charged_init,
+    func_80096B54,
+    aiming_laser_charged_despawn,
+    aiming_laser_charged_despawn,
+};
+
+struct Unk_unk68 aiming_laser_charged_box[1] = { { -24, -24, 48, 48 } };
+#endif

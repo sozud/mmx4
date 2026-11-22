@@ -23,9 +23,11 @@ void aiming_laser_beam_update(struct QuadObj* arg0)
     if (ptr->input_locked != 0) {
         var_a3 = 1;
     }
+#ifndef VERSION_DEMO
     if (ptr->capsule_state != 0) {
         var_a3 = 1;
     }
+#endif
     if (ptr->weapon != 6) {
         var_a3 = 1;
     }
@@ -63,6 +65,9 @@ void aiming_laser_beam_init(struct QuadObj* arg0, struct PlayerObj* arg1, struct
     ext->unk38 = 0x3C;
     func_800D69A8(arg0, arg1, arg2);
     arg0->state++;
+#ifdef VERSION_DEMO
+    quad_is_on_screen(arg0);
+#endif
 }
 
 void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
@@ -77,6 +82,11 @@ void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct
     }
     ext->unk38 -= 1;
     func_800D69A8(arg0, arg1, arg2);
+#ifdef VERSION_DEMO
+    if (arg0->on_screen) {
+        quad_is_on_screen(arg0);
+    }
+#endif
 }
 
 // aiming_laser_beam_place
@@ -94,9 +104,9 @@ void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct Player
     s16 far_y;
 
     if (player->unk15 == 0)
-        x = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2] + 3;
+        x = player->x_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2] + DEMO_ALT(3, 0);
     else
-        x = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2] - 3;
+        x = player->x_pos.i.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2] - DEMO_ALT(3, 0);
     y = player->y_pos.i.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
     tx = target->x_pos.i.hi;
     ty = target->y_pos.i.hi;

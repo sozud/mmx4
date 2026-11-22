@@ -43,12 +43,15 @@ extern void (*engine_state_3_update_funcs[])(struct EngineObj*);
 void func_8002F698(struct EngineObj* arg0);
 void func_8002FBDC(struct EngineObj* arg0);
 
+#ifndef VERSION_DEMO
 void func_8002F510(struct EngineObj* arg0)
 {
     arg0->unk2++;
     arg0->unk3 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void func_8002F524(struct EngineObj* arg0)
 {
     struct QuadObj* quad = find_free_quad_obj();
@@ -60,15 +63,22 @@ void func_8002F524(struct EngineObj* arg0)
         arg0->unk3C = quad;
     }
 }
+#endif
 
 void func_8002F584(struct EngineObj* arg0)
 {
+#ifdef VERSION_DEMO
+    func_800129F0(8);
+    arg0->unk1++;
+#else
     if (arg0->unk3C->state == 2) {
         func_8002217C((u16)arg0->unk3, 0xFF, 0);
         arg0->unk2++;
     }
+#endif
 }
 
+#ifndef VERSION_DEMO
 void func_8002F5E8(struct EngineObj* arg0)
 {
     struct BaseObj* obj;
@@ -96,14 +106,18 @@ void func_8002F5E8(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
 // engine_state_3_update_funcs state 10
+#ifndef VERSION_DEMO
 void func_8002F698(struct EngineObj* arg0)
 {
     D_800F486C[arg0->unk2](arg0);
     func_80022730(&abc_object);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void func_8002F6E4(struct EngineObj* arg0)
 {
     D_8013B810 = arg0->stage;
@@ -125,7 +139,9 @@ void func_8002F6E4(struct EngineObj* arg0)
     background_objects[2].x_pos.val = FIXED((D_8013B810 - 1) << 9);
     arg0->unk2++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void func_8002F7A8(struct EngineObj* arg0)
 {
     struct BaseObj* obj = (struct BaseObj*)find_free_misc_obj();
@@ -140,7 +156,9 @@ void func_8002F7A8(struct EngineObj* arg0)
     func_800129A4(8);
     arg0->unk2++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void func_8002F828(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -153,7 +171,9 @@ void func_8002F828(struct EngineObj* arg0)
 #endif
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 #ifdef MMX4_SATURN
 void func_8002F87C(struct EngineObj* arg0)
 {
@@ -185,7 +205,9 @@ void func_8002F87C(struct EngineObj* arg0)
     }
 }
 #endif
+#endif
 
+#ifndef VERSION_DEMO
 void func_8002F8F8(struct EngineObj* arg0)
 {
     if (--arg0->unk4 == 0) {
@@ -197,7 +219,9 @@ void func_8002F8F8(struct EngineObj* arg0)
         arg0->unk2++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void func_8002F92C(struct EngineObj* arg0)
 {
     struct BaseObj* obj;
@@ -221,7 +245,9 @@ void func_8002F92C(struct EngineObj* arg0)
         arg0->unk2++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void func_8002F9EC(struct EngineObj* arg0)
 {
     struct BaseObj* obj;
@@ -253,7 +279,9 @@ void func_8002F9EC(struct EngineObj* arg0)
         arg0->unk2++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void func_8002FAB0(struct EngineObj* arg0)
 {
     if (--arg0->unk4 == 0) {
@@ -261,7 +289,9 @@ void func_8002FAB0(struct EngineObj* arg0)
         arg0->unk2++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void func_8002FAE4(struct EngineObj* arg0)
 {
     if (--arg0->unk4 == 0) {
@@ -270,7 +300,29 @@ void func_8002FAE4(struct EngineObj* arg0)
     }
     background_objects[0].x_pos.val += FIXED(-6);
 }
+#endif
 
+#ifdef VERSION_DEMO
+extern union TitleScratch D_80169498;
+
+void func_8002FB54(struct EngineObj* arg0)
+{
+    u32 i;
+    s32* src;
+    s32* dst;
+
+    if (main_bss_state.transition.active == 0) {
+        func_8001D134();
+        arg0->state++;
+        arg0->unk1 = 0;
+        src = D_80169498.sector;
+        dst = SP_PALETTE_WORDS;
+        for (i = 0; i < 0xC0; i += 4) {
+            *dst++ = *src++;
+        }
+    }
+}
+#else
 void func_8002FB54(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -290,14 +342,17 @@ void func_8002FB54(struct EngineObj* arg0)
         background_objects[0].x_pos.val += FIXED(-6);
     }
 }
+#endif
 
 // engine_state_3_update_funcs state 11
+#ifndef VERSION_DEMO
 void func_8002FBDC(struct EngineObj* arg0)
 {
     background_objects[0].unk14.val = background_objects[0].x_pos.val;
     background_objects[0].unk18.val = background_objects[0].y_pos.val;
     D_800F487C[arg0->unk2](arg0);
 }
+#endif
 
 // videos / loading / briefing room
 void engine_state_3(struct EngineObj* arg0)
@@ -315,6 +370,19 @@ void engine_state_3(struct EngineObj* arg0)
     func_80023D68();
 }
 
+#ifdef VERSION_DEMO
+void func_8003C198_demo(struct EngineObj*);
+
+void (*engine_state_3_update_funcs[])(struct EngineObj*) = {
+    func_8003C198_demo,
+    func_8002E698,
+    func_8002E7BC,
+    func_8002E994,
+    func_8002ED98,
+    func_8002F584,
+    func_8002FB54,
+};
+#else
 void (*D_800F486C[])(struct EngineObj*) = {
     func_8002F510,
     func_8002F524,
@@ -349,3 +417,4 @@ void (*engine_state_3_update_funcs[])(struct EngineObj*) = {
     func_8002F698,
     func_8002FBDC,
 };
+#endif

@@ -173,6 +173,257 @@ void func_80028BF0(void)
 
 // find_stage_main_index
 
+#ifdef VERSION_DEMO
+struct Checkpoint D_800F3314[67] = {
+    { 200, 256, 40, 256, 40, 256, 20, 256, 0, 2976, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 1360, 256, 1200, 256, 1200, 256, 600, 256, 1200, 2976, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 3328, 256, 3280, 256, 3280, 256, 1640, 256, 3280, 4544, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 144, 256, 0, 256, 0, 256, 0, 256, 0, 4528, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 1616, 256, 1456, 256, 1456, 256, 728, 256, 1456, 4528, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 3936, 256, 3856, 256, 3856, 256, 1928, 256, 3856, 4528, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 56, 16, 0, 0, 0, 0, 0, 0, 0, 1808, 0, 2560, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 8 },
+    { 1872, 288, 1808, 388, 1808, 388, 904, 194, 1808, 1808, 256, 2560, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 1856, 1232, 1808, 1280, 1808, 1280, 904, 640, 1808, 5584, 1280, 1280, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 4112, 1232, 4064, 1280, 4064, 1280, 2032, 640, 4064, 5584, 1280, 1280, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 4 },
+    { 5680, 1200, 5520, 1184, 5520, 1184, 2760, 592, 5376, 5584, 256, 1280, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 4 },
+    { 112, 128, 0, 256, 40, 256, 0, 128, 0, 1200, 256, 2560, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 1408, 448, 1200, 480, 1712, 480, 600, 240, 0, 1200, 480, 2560, 0, 0, 0, 0, 128, 18 },
+    { 640, 736, 512, 768, 1024, 768, 256, 384, 512, 1792, 480, 2560, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 1920, 1264, 1792, 1280, 2304, 1280, 896, 640, 1792, 4016, 1280, 1280, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 3408, 1280, 3328, 1280, 3608, 1280, 1664, 640, 3328, 4016, 1024, 1280, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 21 },
+    { 4480, 1280, 4320, 1280, 4352, 1280, 2160, 640, 4320, 4320, 1280, 1280, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 144, 144, 0, 155, 0, 38, 0, 0, 0, 5312, 0, 2048, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 1776, 224, 1616, 203, 404, 50, 0, 0, 0, 5312, 0, 2048, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 3 },
+    { 3088, 176, 2928, 203, 732, 50, 0, 0, 0, 5312, 0, 2048, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 4704, 1328, 4544, 1291, 1136, 322, 0, 0, 0, 5312, 0, 2048, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 5856, 2048, 5696, 2048, 1424, 512, 0, 0, 0, 5728, 2048, 2048, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 96, 0, 0, 0, 0, 0, 0, 0, 0, 2496, 0, 768, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 8 },
+    { 1328, 304, 1280, 256, 1280, 256, 1280, 256, 1280, 2496, 256, 768, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 8 },
+    { 2944, 272, 2832, 256, 2832, 256, 2832, 256, 2832, 6288, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 8 },
+    { 6736, 256, 6592, 256, 6592, 256, 6592, 256, 6592, 6592, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 8 },
+    { 160, 512, 0, 512, 0, 512, 0, 0, 0, 1728, 0, 512, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 2344, 0, 2304, 0, 1152, 0, 512, 0, 2304, 3248, 0, 0, PLAYER_FACING_RIGHT, 128, 0, 0, 0, 18 },
+    { 6048, 2304, 5888, 2304, 4416, 1728, 2944, 1152, 5888, 5888, 256, 2304, PLAYER_FACING_RIGHT, 1472, 576, 2944, 1152, 18 },
+    { 5552, 544, 5312, 544, 2656, 272, 1328, 136, 4352, 5312, 544, 544, 0, 2656, 240, 144, 376, 1 },
+    { 160, 512, 0, 512, 0, 512, 0, 0, 0, 2240, 0, 512, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 2912, 256, 2816, 256, 1408, 128, 704, 64, 2816, 3776, 256, 256, PLAYER_FACING_RIGHT, 1408, 128, 2112, 192, 18 },
+    { 6048, 2048, 5888, 2048, 2944, 1024, 1472, 512, 5888, 5888, 2048, 2048, PLAYER_FACING_RIGHT, 2944, 768, 4416, 512, 18 },
+    { 6048, 512, 5888, 528, 2944, 264, 1472, 128, 5888, 5888, 256, 528, PLAYER_FACING_RIGHT, 2944, 760, 4416, 512, 18 },
+    { 128, 512, 0, 512, 0, 256, 0, 128, 0, 6064, 512, 768, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 2848, 768, 2736, 768, 1368, 384, 684, 192, 2736, 6064, 768, 768, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 64, 512, 0, 512, 0, 512, 0, 256, 0, 5280, 512, 512, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 1488, 512, 1392, 512, 1392, 512, 696, 256, 1392, 5280, 256, 512, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 2864, 256, 2704, 491, 2704, 491, 1352, 245, 2704, 5280, 256, 512, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 18 },
+    { 5120, 256, 5024, 312, 5025, 312, 2512, 156, 5024, 5280, 256, 512, PLAYER_FACING_RIGHT, 0, 0, 0, 128, 16 },
+    { 160, 182, 256, 0, 192, 0, 64, 0, 256, 28864, 0, 0, PLAYER_FACING_RIGHT, 64, 0, 192, 0, 18 },
+    { 160, 182, 256, 0, 256, 0, 64, 0, 256, 16720, 0, 0, PLAYER_FACING_RIGHT, 0, 0, 192, 0, 18 },
+    { 16480, 0, 16384, 0, 16384, 0, 4096, 0, 16384, 16720, 0, 0, PLAYER_FACING_RIGHT, 0, 0, 192, 0, 18 },
+    { 72, 0, 0, 0, 0, 0, 0, 0, 0, 1632, 0, 0, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 3 },
+    { 72, 768, 0, 768, 0, 384, 0, 192, 0, 608, 768, 768, PLAYER_FACING_RIGHT, 0, 384, 0, 576, 3 },
+    { 72, 512, 0, 512, 0, 256, 0, 128, 0, 1888, 256, 512, PLAYER_FACING_RIGHT, 0, 256, 0, 384, 3 },
+    { 72, 768, 0, 768, 0, 384, 0, 192, 0, 608, 768, 768, PLAYER_FACING_RIGHT, 0, 384, 0, 576, 3 },
+    { 72, 2304, 0, 2304, 0, 1152, 0, 576, 0, 2912, 1280, 2304, PLAYER_FACING_RIGHT, 0, 1152, 0, 1728, 3 },
+    { 72, 768, 0, 768, 0, 384, 0, 192, 0, 608, 768, 768, PLAYER_FACING_RIGHT, 0, 384, 0, 576, 3 },
+    { 328, 768, 256, 768, 64, 384, 64, 192, 256, 6400, 0, 2816, PLAYER_FACING_RIGHT, 128, 640, 192, 832, 8 },
+    { 56, 256, 0, 256, 512, 128, 512, 64, 0, 6080, 256, 256, PLAYER_FACING_RIGHT, 0, 128, 0, 192, 1 },
+    { 224, 768, 64, 768, 512, 384, 512, 192, 64, 2752, 256, 768, PLAYER_FACING_RIGHT, 0, 384, 0, 192, 1 },
+    { 864, 128, 768, 248, 512, 0, 512, 0, 768, 6736, 248, 248, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 4688, 128, 4528, 248, 512, 0, 512, 0, 4528, 6736, 248, 248, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 6464, 128, 6304, 248, 512, 0, 512, 0, 6304, 6736, 248, 248, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 104, 128, 48, 248, 512, 256, 512, 256, 48, 10048, 248, 248, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
+    { 5280, 128, 5120, 248, 512, 256, 512, 256, 5120, 10048, 248, 248, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 2 },
+    { 7728, 128, 7648, 248, 512, 256, 512, 256, 7648, 10048, 248, 248, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 2 },
+    { 9232, 128, 9072, 248, 512, 256, 512, 256, 9072, 10048, 248, 248, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 2 },
+    { 104, 0, 0, 0, 0, 0, 0, 0, 0, 704, 0, 0, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 8 },
+    { 360, 2048, 256, 2048, 256, 2048, 128, 1024, 256, 3776, 512, 2048, PLAYER_FACING_RIGHT, 0, 0, 128, 1024, 8 },
+    { 360, 256, 256, 256, 256, 256, 256, 256, 256, 2240, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 8 },
+    { 360, 256, 256, 256, 256, 256, 256, 256, 256, 3776, 256, 768, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 8 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 0 },
+    { 0, 0, 128, 0, 448, 0, 0, 0, 0, 0, 0, 0, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 0 },
+    { 1424, 16, 1264, 0, 1264, 0, 1264, 0, 0, 1264, 0, 1280, 0, 0, 0, 0, 0, 18 },
+};
+
+struct Checkpoint* checkpoint_list_800C7D10[] = {
+    &D_800F3314[0],
+    &D_800F3314[1],
+    &D_800F3314[2],
+};
+
+struct Checkpoint* checkpoint_list_800C7D1C[] = {
+    &D_800F3314[3],
+    &D_800F3314[4],
+    &D_800F3314[5],
+};
+
+struct Checkpoint* checkpoint_list_800C7D28[] = {
+    &D_800F3314[6],
+    &D_800F3314[7],
+    &D_800F3314[8],
+    &D_800F3314[9],
+    &D_800F3314[10],
+};
+
+struct Checkpoint* checkpoint_list_800C7D3C[] = {
+    &D_800F3314[11],
+    &D_800F3314[12],
+    &D_800F3314[13],
+    &D_800F3314[14],
+    &D_800F3314[15],
+    &D_800F3314[16],
+};
+
+struct Checkpoint* checkpoint_list_800C7D54[] = {
+    &D_800F3314[17],
+    &D_800F3314[18],
+    &D_800F3314[19],
+    &D_800F3314[20],
+    &D_800F3314[21],
+};
+
+struct Checkpoint* checkpoint_list_800C7D68[] = {
+    &D_800F3314[22],
+    &D_800F3314[23],
+    &D_800F3314[24],
+    &D_800F3314[25],
+};
+
+struct Checkpoint* checkpoint_list_800C7D78[] = {
+    &D_800F3314[26],
+    &D_800F3314[27],
+    &D_800F3314[28],
+    &D_800F3314[29],
+};
+
+struct Checkpoint* checkpoint_list_800C7D88[] = {
+    &D_800F3314[30],
+    &D_800F3314[31],
+    &D_800F3314[32],
+    &D_800F3314[33],
+};
+
+struct Checkpoint* checkpoint_list_800C7D98[] = {
+    &D_800F3314[34],
+    &D_800F3314[35],
+};
+
+struct Checkpoint* checkpoint_list_800C7DA0[] = {
+    &D_800F3314[36],
+    &D_800F3314[37],
+    &D_800F3314[38],
+    &D_800F3314[39],
+};
+
+struct Checkpoint* checkpoint_list_800C7DB0[] = {
+    &D_800F3314[40],
+};
+
+struct Checkpoint* checkpoint_list_800C7DB4[] = {
+    &D_800F3314[41],
+    &D_800F3314[42],
+};
+
+struct Checkpoint* checkpoint_list_800C7DBC[] = {
+    &D_800F3314[43],
+    &D_800F3314[44],
+    &D_800F3314[45],
+    &D_800F3314[46],
+    &D_800F3314[47],
+    &D_800F3314[48],
+};
+
+struct Checkpoint* checkpoint_list_800C7DD4[] = {
+    &D_800F3314[49],
+};
+
+struct Checkpoint* checkpoint_list_800C7DD8[] = {
+    &D_800F3314[50],
+};
+
+struct Checkpoint* checkpoint_list_800C7DDC[] = {
+    &D_800F3314[51],
+};
+
+struct Checkpoint* checkpoint_list_800C7DE0[] = {
+    &D_800F3314[52],
+    &D_800F3314[53],
+    &D_800F3314[54],
+};
+
+struct Checkpoint* checkpoint_list_800C7DEC[] = {
+    &D_800F3314[55],
+    &D_800F3314[56],
+    &D_800F3314[57],
+    &D_800F3314[58],
+};
+
+struct Checkpoint* checkpoint_list_800C7DFC[] = {
+    &D_800F3314[59],
+};
+
+struct Checkpoint* checkpoint_list_800C7E00[] = {
+    &D_800F3314[60],
+};
+
+struct Checkpoint* checkpoint_list_800C7E04[] = {
+    &D_800F3314[61],
+};
+
+struct Checkpoint* checkpoint_list_800C7E08[] = {
+    &D_800F3314[62],
+};
+
+struct Checkpoint* checkpoint_list_800C7E0C[] = {
+    &D_800F3314[63],
+};
+
+struct Checkpoint* checkpoint_list_800C7E10[] = {
+    &D_800F3314[64],
+};
+
+struct Checkpoint* checkpoint_list_800C7E14[] = {
+    &D_800F3314[65],
+};
+
+struct Checkpoint* checkpoint_list_800C7E18[] = {
+    &D_800F3314[66],
+};
+
+struct Checkpoint** D_800F42B4[32] = {
+    checkpoint_list_800C7D10,
+    checkpoint_list_800C7D1C,
+    checkpoint_list_800C7D28,
+    checkpoint_list_800C7D3C,
+    checkpoint_list_800C7D54,
+    checkpoint_list_800C7D68,
+    checkpoint_list_800C7D78,
+    checkpoint_list_800C7D88,
+    checkpoint_list_800C7D98,
+    checkpoint_list_800C7DA0,
+    checkpoint_list_800C7DB0,
+    checkpoint_list_800C7DB4,
+    checkpoint_list_800C7DBC,
+    checkpoint_list_800C7DD4,
+    checkpoint_list_800C7DD8,
+    checkpoint_list_800C7DDC,
+    checkpoint_list_800C7DE0,
+    checkpoint_list_800C7DEC,
+    checkpoint_list_800C7DFC,
+    NULL,
+    checkpoint_list_800C7E00,
+    NULL,
+    checkpoint_list_800C7E04,
+    checkpoint_list_800C7E08,
+    NULL,
+    NULL,
+    checkpoint_list_800C7E0C,
+    NULL,
+    checkpoint_list_800C7E10,
+    checkpoint_list_800C7E14,
+    checkpoint_list_800C7E18,
+    NULL,
+};
+#else
 struct Checkpoint D_800F3314[100] = {
     { 200, 256, 40, 256, 40, 256, 20, 256, 0, 2976, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
     { 1360, 256, 1200, 256, 1200, 256, 600, 256, 1200, 2976, 256, 256, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 18 },
@@ -504,3 +755,4 @@ struct Checkpoint** D_800F42B4[32] = {
     checkpoint_list_800F42AC,
     checkpoint_list_800F42B0,
 };
+#endif

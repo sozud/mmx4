@@ -77,6 +77,22 @@ void func_80091898(struct MainObj*);
 
 extern void (*general_death_funcs[5])();
 
+#ifdef VERSION_DEMO
+void general_slam_land(struct MainObj* self)
+{
+    CollisionRelated(PLAYER_OBJECT(self));
+    func_8002D9BC(self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80)) {
+        self->state++;
+        self->unk5 = 0;
+    }
+}
+
+void general_slam(struct MainObj* self)
+{
+    despawn_object(OBJECT_HEADER(self));
+}
+#else
 u8 general_at_position(struct ObjectHeader* self, s16 arg1, s16 arg2)
 {
     s16 temp_v1;
@@ -1558,3 +1574,4 @@ void (*general_state_funcs[])(struct MainObj*) = {
     func_80091218,
     func_80091898,
 };
+#endif

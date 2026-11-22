@@ -87,8 +87,16 @@ void title_facet_finish(struct QuadObj* arg0)
             if (misc != NULL) {
                 misc->active = 1;
                 misc->id = 0x13;
-                misc->unk2 = 0xB;
+                misc->unk2 = DEMO_ALT(0xB, 0x1B);
             }
+#ifdef VERSION_DEMO
+            misc = find_free_misc_obj();
+            if (misc != NULL) {
+                misc->active = 1;
+                misc->id = 0x1D;
+                misc->unk2 = 0x21;
+            }
+#endif
         }
         arg0->state++;
     }

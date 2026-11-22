@@ -137,6 +137,7 @@ void reset_objects(void)
         }
     }
 
+#ifndef VERSION_DEMO
     for (a1 = 0; a1 < COUNT(unk_objects); a1++) {
         a0 = (u8*)&unk_objects[a1];
         var_v1 = sizeof(unk_objects[0]);
@@ -144,6 +145,7 @@ void reset_objects(void)
             *a0++ = fill;
         }
     }
+#endif
 
     for (a1 = 0; a1 < COUNT(layer_objects); a1++) {
         a0 = (u8*)&layer_objects[a1];
@@ -167,6 +169,7 @@ void reset_objects(void)
         *a0++ = fill;
     }
 
+#ifndef VERSION_DEMO
     a0 = (u8*)&bar_object;
     var_v1 = sizeof(bar_object);
     while (var_v1-- != 0) {
@@ -174,6 +177,7 @@ void reset_objects(void)
     }
 
     g_FilterAmountB = 0;
+#endif
     g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
     g_FilterModeR = g_FilterModeG = g_FilterModeB = 0;
     D_8013E188[0] = 0;
@@ -181,11 +185,13 @@ void reset_objects(void)
     D_8013E188[2] = 0;
     D_8013E188[3] = 0;
 
+#ifndef VERSION_DEMO
     a0 = (u8*)&abc_object;
     var_v1 = sizeof(abc_object);
     while (var_v1-- != 0) {
         *a0++ = fill;
     }
+#endif
 }
 
 void func_8002AB20()
@@ -216,14 +222,20 @@ struct MainObj* find_free_main_obj(void)
             var_v1->unk66 = 0;
             var_v1->unk72 = 0;
             var_v1->unk73 = 0;
+#ifndef VERSION_DEMO
             var_v1->unk74 = 0;
+#endif
             var_v1->unk76 = 0;
             var_v1->unk77 = 0;
+#ifndef VERSION_DEMO
             var_v1->unk78 = 0;
+#endif
             var_v1->unk62 = 0;
+#ifndef VERSION_DEMO
             var_v1->unk63 = 0;
             var_v1->unk7A = 0;
             var_v1->unk5D = 0;
+#endif
             var_v1->unk75 = 0;
             return var_v1;
         }
@@ -247,13 +259,17 @@ struct WeaponObj* find_free_weapon_obj()
             current->unk66 = 0;
             current->unk72 = 0;
             current->unk73 = 0;
+#ifndef VERSION_DEMO
             current->unk74 = 0;
+#endif
             current->unk76 = 0;
             current->unk77 = 0;
+#ifndef VERSION_DEMO
             current->unk78 = 0;
             current->unk62 = 0;
             current->unk63 = 0;
             current->unk7A = 0;
+#endif
             current->unk75 = 0;
             return current;
         }
@@ -277,13 +293,19 @@ struct ShotObj* find_free_shot_obj(void)
             current->unk66 = 0;
             current->unk72 = 0;
             current->unk73 = 0;
+#ifndef VERSION_DEMO
             current->unk74 = 0;
+#endif
             current->unk76 = 0;
             current->unk77 = 0;
+#ifndef VERSION_DEMO
             current->unk78 = 0;
+#endif
             current->unk62 = 0;
+#ifndef VERSION_DEMO
             current->unk63 = 0;
             current->unk7A = 0;
+#endif
             current->unk75 = 0;
             return current;
         }
@@ -329,13 +351,17 @@ struct ItemObj* find_free_item_obj()
             current->unk66 = 0;
             current->unk72 = 0;
             current->unk73 = 0;
+#ifndef VERSION_DEMO
             current->unk74 = 0;
+#endif
             current->unk76 = 0;
             current->unk77 = 0;
+#ifndef VERSION_DEMO
             current->unk78 = 0;
             current->unk62 = 0;
             current->unk63 = 0;
             current->unk7A = 0;
+#endif
             current->unk75 = 0;
             return current;
         }
@@ -387,6 +413,7 @@ struct MiscObj* func_8002AE90(struct MiscObj* arg0, u32 arg1)
     return NULL;
 }
 
+#ifndef VERSION_DEMO
 struct VisualObj* func_8002AF4C(struct VisualObj* arg0, u32 arg1)
 {
     if (arg1 == 0) {
@@ -418,6 +445,7 @@ struct VisualObj* func_8002AF4C(struct VisualObj* arg0, u32 arg1)
     }
     return NULL;
 }
+#endif
 
 struct QuadObj* find_free_quad_obj()
 {
@@ -446,6 +474,7 @@ struct LayerObj* find_free_layer_obj()
     return NULL;
 }
 
+#ifndef VERSION_DEMO
 struct UnkObj* find_free_unk_obj()
 {
     struct UnkObj* current;
@@ -458,6 +487,7 @@ struct UnkObj* find_free_unk_obj()
 
     return NULL;
 }
+#endif
 
 void despawn_object(struct ObjectHeader* arg0)
 {
@@ -595,6 +625,9 @@ void func_8002B450(void)
 extern const volatile s8 saturn_sprite_group_ids[4];
 extern volatile s8 saturn_sprite_list_counts[20];
 extern volatile u32 saturn_sprite_object_lists[768];
+#ifdef VERSION_DEMO
+extern volatile u32* const saturn_sprite_list_targets[20];
+#else
 volatile u32* const saturn_sprite_list_targets[20] = {
     (volatile u32*)(saturn_sprite_object_lists + 0),
     (volatile u32*)(saturn_sprite_object_lists + 32),
@@ -617,6 +650,7 @@ volatile u32* const saturn_sprite_list_targets[20] = {
     (volatile u32*)(saturn_sprite_object_lists + 704),
     (volatile u32*)(saturn_sprite_object_lists + 736),
 };
+#endif
 
 static void queue_sprite_object(volatile u8* object, unsigned priority_offset)
 {

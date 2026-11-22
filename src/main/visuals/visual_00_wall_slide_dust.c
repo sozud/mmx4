@@ -52,7 +52,11 @@ void wall_slide_dust_main(struct VisualObj* arg0, struct PlayerObj* arg1)
     if (arg1->unk5 == 0xB && arg1->unk6 == 0) {
         var_a0 = 1;
     }
+#ifdef VERSION_DEMO
+    if (arg1->unk5 == 0x35) {
+#else
     if (arg1->unk5 == 0x34) {
+#endif
         var_a0 = 1;
     }
     if (var_a0 != 0) {

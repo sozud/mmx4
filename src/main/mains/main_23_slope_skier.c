@@ -397,7 +397,7 @@ void func_800564B4(struct MainObj* arg0)
     arg0->terrain_box = slope_skier_hurt_box;
     arg0->hurt_box = &slope_skier_terrain_box;
     arg0->attack_box = &slope_skier_terrain_box;
-    arg0->hp = 3;
+    arg0->hp = DEMO_ALT(3, 1);
     arg0->contact_damage = 1;
     arg0->collision_data = (const u16*)D_80106DF4;
     arg0->x_speed = 0;

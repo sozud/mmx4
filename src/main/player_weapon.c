@@ -358,6 +358,85 @@ struct WeaponObj* player_spawn_weapon(s8 active, s8 id, s8 type, struct PlayerOb
 
 struct VisualObj* player_spawn_visual(s8 active, s8 id, s8 variant, void* owner);
 
+#ifdef VERSION_DEMO
+void func_8004390C_demo(struct PlayerObj* self); // player_fire_none
+void func_80043914_demo(struct PlayerObj* self); // player_fire_weapon
+void func_80043990_demo(struct PlayerObj* self); // player_fire_charged_buster
+void func_80043A34_demo(struct PlayerObj* self);
+
+union PlayerChargeData player_weapon_energy = {
+    {
+        { 0, 4, 3, 6, 3, 1 },
+        { 1, 1, 1 },
+        { 0, 12, 12, 12, 12, 6, 12, 12, 6, 0, 0, 0, 0, 0, 0 },
+    },
+};
+
+// player_shot_has_pose
+s8 D_800CC728_demo[24] = { 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1 };
+
+// player_weapon_bits
+u8 D_800CC740_demo[12] = { 0, 1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80 };
+
+// player_shot_timings
+struct PlayerShotTiming D_800CC74C_demo[22] = {
+    { 0x14, 0x06 },
+    { 0x19, 0x0F },
+    { 0x01, 0x01 },
+    { 0x14, 0x0F },
+    { 0x0C, 0x0C },
+    { 0x14, 0x0A },
+    { 0x46, 0x46 },
+    { 0x01, 0x01 },
+    { 0x14, 0x06 },
+    { 0x19, 0x0F },
+    { 0x19, 0x14 },
+    { 0x01, 0x01 },
+    { 0x01, 0x01 },
+    { 0, 0 },
+    { 0x19, 0x14 },
+    { 0xFA, 0xFA },
+    { 0x01, 0x01 },
+    { 0x19, 0x14 },
+    { 0x23, 0x0F },
+    { 0x19, 0x06 },
+    { 0x23, 0x0F },
+    { 0, 0 },
+};
+
+// player_fire_funcs
+void (*D_800CC778_demo[])(struct PlayerObj*) = {
+    func_80043914_demo,
+    func_80043914_demo,
+    func_8004390C_demo,
+    func_80043914_demo,
+    func_8004390C_demo,
+    func_80043914_demo,
+    func_8004390C_demo,
+    func_8004390C_demo,
+    func_80043A34_demo,
+    func_80043990_demo,
+    player_fire_lightning_web_charged,
+    func_8004390C_demo,
+    func_8004390C_demo,
+    player_fire_none,
+    func_80043914_demo,
+    func_80043914_demo,
+    func_8004390C_demo,
+    func_80043A34_demo,
+    func_80043990_demo,
+    func_80043990_demo,
+    func_80043990_demo,
+};
+
+// player_shot_counts_as_shot
+s8 D_800CC7CC_demo[24] = { 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1 };
+
+// player_shot_counts_as_special
+s8 D_800CC7E4_demo[24] = { 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 };
+
+s8 D_800CC7FC_demo[24] = { 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 };
+#else
 union PlayerChargeData player_weapon_energy = {
 #ifdef MMX4_SHC
     0,
@@ -457,7 +536,9 @@ s8 player_shot_waits_for_specials[24] = { 0, 1, 1, 1, 1, 0, 0, 1 };
 s8 player_shot_counts_as_shot[24] = { 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1 };
 
 s8 player_shot_counts_as_special[24] = { 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 };
+#endif
 
+#ifndef VERSION_DEMO
 void player_reset_weapon(struct PlayerObj* self)
 {
     if (self->unk2 == 0) {
@@ -468,7 +549,9 @@ void player_reset_weapon(struct PlayerObj* self)
         player_equip_weapon(self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_update_weapon(struct PlayerObj* self)
 {
     s8 previous_weapon;
@@ -482,6 +565,7 @@ void player_update_weapon(struct PlayerObj* self)
         }
     }
 }
+#endif
 
 // player_select_weapon
 
@@ -496,6 +580,7 @@ void player_enter_rising_fire_charged(struct PlayerObj* arg0, s32 arg1);
 void player_enter_double_cyclone_pose(struct PlayerObj* arg0);
 #endif
 
+#ifndef VERSION_DEMO
 void func_80036F50(struct PlayerObj* player)
 {
     u16 input;
@@ -542,6 +627,40 @@ void func_80036F50(struct PlayerObj* player)
         }
     }
 }
+#endif
+#ifdef VERSION_DEMO
+void player_clear_weapon(struct PlayerObj* self)
+{
+    self->weapon = 0;
+    player_reset_palette(self);
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_8004314C_demo(struct PlayerObj* self);
+
+void player_update_shot_types(struct PlayerObj* self)
+{
+    if (self->unk2 != 0) {
+        return;
+    }
+    func_8004314C_demo(self);
+    if (self->is_clone == 0) {
+        self->shot_types[0] = self->weapon;
+    } else {
+        self->shot_types[0] = 0;
+    }
+    self->shot_types[1] = 0;
+    if (self->weapon != 0) {
+        if (self->charge_state[0] == PLAYER_CHARGE_FULL) {
+            self->shot_types[0] += 9;
+        }
+    } else {
+        player_update_charged_shot_type(self, 0);
+    }
+    player_update_charged_shot_type(self, 1);
+}
+#else
 void player_update_shot_types(struct PlayerObj* self)
 {
     if (self->is_clone != 0) {
@@ -560,6 +679,103 @@ void player_update_shot_types(struct PlayerObj* self)
     self->shot_types[1] = 0;
     player_update_charged_shot_type(self, 1);
 }
+#endif
+
+#ifdef VERSION_DEMO
+extern u8 D_800CC740_demo[];
+
+void func_8004314C_demo(struct PlayerObj* player)
+{
+    u16 input;
+    u16 pressed;
+    s8 weapon;
+    struct VisualObj* visual;
+    struct WeaponObj* companion;
+
+    if (player->input_locked != 0 || player->is_clone != 0)
+        return;
+    if (player->unk5 == PLAYER_BEAM_IN)
+        return;
+    if (player->unk5 == PLAYER_BEAM_OUT)
+        return;
+    if (player->special_shot_count != 0 || player->ride_state < 0)
+        return;
+    input = player->pressed_input;
+    pressed = input & 0x300;
+    if (((player->input.buttons.held & 0x300) == 0x300) || (pressed == 0x300)) {
+        if (player->weapon != 0) {
+            func_8001540C(0, PLAYER_WEAPON_SELECT_SOUND, 0);
+            player->weapon = 0;
+            player_reset_palette(player);
+        }
+    } else if (pressed != 0) {
+        weapon = player->weapon;
+        if (input & 0x100) {
+            while (1) {
+                if (++weapon == 9) {
+                    weapon = 0;
+                    break;
+                }
+                if ((s8)D_800CC740_demo[weapon] & (u8)player->boss_flags)
+                    break;
+            }
+        } else {
+            while (1) {
+                weapon--;
+                if (weapon < 0)
+                    weapon = 8;
+                if (weapon == 0)
+                    break;
+                if ((s8)D_800CC740_demo[weapon] & (u8)player->boss_flags)
+                    break;
+            }
+        }
+        if (player->weapon != weapon) {
+            func_8001540C(0, PLAYER_WEAPON_SELECT_SOUND, 0);
+            player->weapon = weapon;
+            player_reset_palette(player);
+            if (player->weapon != 0 && !(player->armor_parts & 4)) {
+                player_reset_weapon(player);
+            }
+            switch (player->weapon) {
+            case 5:
+                visual = find_free_visual_obj();
+                if (visual != NULL) {
+                    visual->active = 1;
+                    visual->id = 0x1B;
+                    visual->unk2 = 0;
+                }
+                break;
+            case 6:
+                visual = find_free_visual_obj();
+                if (visual != NULL) {
+                    visual->active = 1;
+                    visual->id = 0x12;
+                    visual->unk2 = 0;
+                }
+                companion = find_free_weapon_obj();
+                if (companion != NULL) {
+                    companion->active = 1;
+                    companion->id = 6;
+                    companion->unk2 = 3;
+                }
+                player->weapon_06_slots[0] = NULL;
+                player->weapon_06_slots[1] = NULL;
+                player->weapon_06_slots[2] = NULL;
+                break;
+            case 8:
+                visual = find_free_visual_obj();
+                if (visual != NULL) {
+                    visual->active = 1;
+                    visual->id = 0x1B;
+                    visual->unk2 = 1;
+                }
+                break;
+            }
+        }
+    }
+}
+#endif
 
 void player_update_charged_shot_type(struct PlayerObj* self, s32 button)
 {
@@ -579,6 +795,117 @@ void player_update_charged_shot_type(struct PlayerObj* self, s32 button)
     }
 }
 
+#ifdef VERSION_DEMO
+extern struct PlayerShotTiming D_800CC74C_demo[];
+extern void (*D_800CC778_demo[])(struct PlayerObj*);
+extern s8 D_800CC7CC_demo[];
+extern s8 D_800CC7E4_demo[];
+extern s8 D_800CC7FC_demo[];
+
+void func_8004345C_demo(struct PlayerObj* self)
+{
+    s8 shot_type;
+    s32 limit;
+
+    if (self->unk2 != 0) {
+        return;
+    }
+    if (self->input_locked != 0) {
+        return;
+    }
+    self->shot_type = -1;
+    player_check_shoot_button(self);
+    player_check_special_button(self);
+    if (self->shot_type == -1) {
+        return;
+    }
+    if (self->shot_cooldown != 0) {
+        return;
+    }
+    switch (self->shot_type) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+        if (self->special_shot_count != 0) {
+            return;
+        }
+        limit = 3;
+        break;
+    case 6:
+        if (self->special_shot_count == 0) {
+            return;
+        }
+        limit = 3;
+        break;
+    case 10:
+        if (self->special_shot_count != 0) {
+            if (self->last_shot_type == 10) {
+                return;
+            }
+        }
+        limit = 4;
+        break;
+    case 11:
+        if (self->special_shot_count != 0) {
+            if (self->last_shot_type == 11) {
+                return;
+            }
+        }
+        limit = 4;
+        break;
+    case 15:
+        limit = 1;
+        break;
+    case 8:
+    case 12:
+    case 14:
+    case 16:
+    case 17:
+        limit = 4;
+        break;
+    default:
+        limit = 3;
+        break;
+    }
+    if (self->shot_count >= limit) {
+        return;
+    }
+    self->attacking = 1;
+    self->shot_fired = 1;
+    self->attack_ended = 0;
+    shot_type = self->last_shot_type = self->shot_type;
+    self->attack_pose_timer = D_800CC74C_demo[shot_type].pose_time;
+    self->shot_cooldown = D_800CC74C_demo[shot_type].cooldown;
+    D_800CC778_demo[shot_type](self);
+    if (D_800CC7CC_demo[shot_type] != 0) {
+        self->shot_count++;
+    }
+    if (D_800CC7E4_demo[shot_type] != 0) {
+        self->special_shot_count++;
+    }
+    self->shot_cycle++;
+    if (self->shot_cycle == 3) {
+        self->shot_cycle = 0;
+    }
+    if (self->shot_type == 0x13) {
+        self->stock_charge--;
+    }
+    if (D_800CC7FC_demo[shot_type] != 0) {
+        self->weapon_energy[self->weapon] -= player_weapon_energy.shot_costs[shot_type];
+    }
+    if (self->is_clone == 0 && self->weapon == 0 && self->hurt_phase == 0) {
+        self->shot_palette_timer = shot_type < 10 ? 6 : 7;
+        if (shot_type == 9) {
+            self->shot_palette_timer = 5;
+        }
+    }
+}
+#endif
+
+#ifndef VERSION_DEMO
 void player_equip_weapon(struct PlayerObj* self)
 {
     player_reset_palette(self);
@@ -596,7 +923,9 @@ void player_equip_weapon(struct PlayerObj* self)
         player_spawn_visual(1, 0x1B, 1, 0);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_check_shoot(struct PlayerObj* self)
 {
     if (self->input_locked != 0) {
@@ -628,7 +957,9 @@ s32 player_check_shoot(struct PlayerObj* self)
 
     return 1;
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_check_shoot_air(struct PlayerObj* self)
 {
     if (self->input_locked != 0) {
@@ -652,7 +983,9 @@ s32 player_check_shoot_air(struct PlayerObj* self)
     func_80037484(self, 1);
     return 1;
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_check_shoot_ladder(struct PlayerObj* self)
 {
     if (self->input_locked != 0) {
@@ -676,8 +1009,10 @@ s32 player_check_shoot_ladder(struct PlayerObj* self)
     }
     return 1;
 }
+#endif
 
 // player_enter_weapon_pose
+#ifndef VERSION_DEMO
 void func_80037484(struct PlayerObj* arg0, s32 arg1)
 {
     switch (arg0->shot_type) {
@@ -700,6 +1035,8 @@ void func_80037484(struct PlayerObj* arg0, s32 arg1)
         break;
     }
 }
+#endif
+#ifndef VERSION_DEMO
 s32 player_check_hover(struct PlayerObj* self)
 {
     if (!(self->armor_parts & 8)) {
@@ -722,7 +1059,9 @@ s32 player_check_hover(struct PlayerObj* self)
     self->unk6 = 0;
     return 1;
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_check_nova_strike(struct PlayerObj* self)
 {
     u8 wall_side;
@@ -777,7 +1116,9 @@ s32 player_check_nova_strike(struct PlayerObj* self)
 
     return 1;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_update_shooting(struct PlayerObj* self)
 {
     s8 shot_type;
@@ -827,7 +1168,33 @@ void player_update_shooting(struct PlayerObj* self)
         }
     }
 }
+#endif
 
+#ifdef VERSION_DEMO
+void func_800437E8_demo(struct PlayerObj* self);
+
+void player_check_shoot_button(struct PlayerObj* self)
+{
+    s8 temp;
+
+    if (self->pressed_input & PLAYER_INPUT_SHOOT) {
+        if (self->weapon != 0) {
+            func_800437E8_demo(self);
+        } else {
+            self->shot_type = self->shot_types[1];
+        }
+    } else if ((self->input.history & ((PLAYER_INPUT_SHOOT << 16) | PLAYER_INPUT_SHOOT)) == (PLAYER_INPUT_SHOOT << 16)) {
+        temp = self->shot_types[0];
+        if (temp >= 9 && temp != 0x13) {
+            if (self->weapon != 0) {
+                func_800437E8_demo(self);
+            } else {
+                self->shot_type = temp;
+            }
+        }
+    }
+}
+#else
 void player_check_shoot_button(struct PlayerObj* self)
 {
     if (self->pressed_input & PLAYER_INPUT_SHOOT) {
@@ -851,15 +1218,48 @@ void player_check_shoot_button(struct PlayerObj* self)
         }
     }
 }
+#endif
+
+#ifdef VERSION_DEMO
+void func_800437E8_demo(struct PlayerObj* self)
+{
+    if (self->weapon_energy[self->weapon] >= player_weapon_energy.shot_costs[self->shot_types[0]]) {
+        self->shot_type = self->shot_types[0];
+    }
+}
+#endif
 
 void player_check_special_button(struct PlayerObj* self)
 {
     if (self->shot_type == -1) {
         if (self->pressed_input & PLAYER_INPUT_SPECIAL) {
+#ifdef VERSION_DEMO
+            if (self->stock_charge != 0) {
+                self->shot_type = 0x13;
+            } else if (self->charge_state[0] > self->charge_state[1]) {
+                if (self->charge_state[0] == PLAYER_CHARGE_NONE) {
+                    self->shot_type = 0;
+                }
+                if (self->charge_state[0] == PLAYER_CHARGE_PARTIAL) {
+                    self->shot_type = 9;
+                }
+                if (self->charge_state[0] == PLAYER_CHARGE_FULL) {
+                    self->shot_type = 0x12;
+                }
+            } else {
+                self->shot_type = self->shot_types[1];
+            }
+#else
             self->shot_type = self->shot_types[1];
+#endif
             return;
         }
+#ifdef VERSION_DEMO
+        if ((self->input.history & ((PLAYER_INPUT_SPECIAL << 16) | PLAYER_INPUT_SPECIAL))
+            == (PLAYER_INPUT_SPECIAL << 16)) {
+#else
         if (!(self->input.buttons.held & PLAYER_INPUT_SPECIAL) && (self->input.buttons.previous & PLAYER_INPUT_SPECIAL)) {
+#endif
             if ((self->shot_types[1] != 0) && (self->shot_types[1] != 0x13)) {
                 self->shot_type = self->shot_types[1];
             }
@@ -867,6 +1267,7 @@ void player_check_special_button(struct PlayerObj* self)
     }
 }
 
+#ifndef VERSION_DEMO
 s32 player_has_weapon_energy(struct PlayerObj* self)
 {
     s8 charge_level;
@@ -884,7 +1285,9 @@ s32 player_has_weapon_energy(struct PlayerObj* self)
 
     return charge_level >= player_weapon_energy.shot_costs[charge_type];
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_use_weapon_energy(struct PlayerObj* self, s8 shot_type)
 {
     s8 animation_cost;
@@ -894,16 +1297,91 @@ void player_use_weapon_energy(struct PlayerObj* self, s8 shot_type)
         self->weapon_energy[self->weapon] -= animation_cost;
     }
 }
+#endif
 
 void player_fire_none(struct PlayerObj* self)
 {
 }
 
+#ifdef VERSION_DEMO
+void func_8004390C_demo(struct PlayerObj* self)
+{
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_80043914_demo(struct PlayerObj* self)
+{
+    struct WeaponObj* weapon = find_free_weapon_obj();
+
+    if (weapon != NULL) {
+        weapon->active = 1;
+        weapon->id = self->shot_type;
+        weapon->unk2 = 0;
+        weapon->bg_offset = self->bg_offset;
+        if (self->shot_type == 0) {
+            weapon->owner = self;
+        }
+    }
+    if (self->shot_type == 0xF) {
+        player_play_voice(self, 5);
+    }
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_80043990_demo(struct PlayerObj* self)
+{
+    struct VisualObj* visual = find_free_visual_obj();
+
+    if (visual != NULL) {
+        visual->active = 0x21;
+        visual->id = 2;
+        visual->unk2 = self->shot_type;
+        visual->bg_offset = self->bg_offset;
+    }
+    if (self->shot_type == 9) {
+        player_play_voice(self, 4);
+    }
+    if (self->shot_type == 0x12) {
+        player_play_voice(self, (get_random() & 1) ? 8 : 9);
+    }
+}
+#endif
+
+#ifdef VERSION_DEMO
+void func_80043A34_demo(struct PlayerObj* self)
+{
+    struct WeaponObj* weapon;
+    s8 count;
+    s8 i;
+
+    count = 8;
+    if (self->shot_type == 8) {
+        count = 2;
+    }
+    for (i = 0; i < count; i++) {
+        weapon = find_free_weapon_obj();
+        if (weapon != NULL) {
+            weapon->active = 1;
+            weapon->id = self->shot_type;
+            weapon->unk2 = i;
+            weapon->bg_offset = self->bg_offset;
+        }
+    }
+    self->shot_count += count;
+    self->special_shot_count += count;
+}
+#endif
+
+#ifndef VERSION_DEMO
 void player_fire_weapon(struct PlayerObj* self)
 {
     player_spawn_weapon(1, self->shot_type, 0, self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_fire_charged_buster(struct PlayerObj* self)
 {
     player_spawn_visual(0x21, 2, self->shot_type, 0);
@@ -911,8 +1389,10 @@ void player_fire_charged_buster(struct PlayerObj* self)
         player_play_voice(self, 8);
     }
 }
+#endif
 
 // player_fire_twin_slasher
+#ifndef VERSION_DEMO
 void func_80037C28(struct PlayerObj* arg0)
 {
     s8 count;
@@ -931,6 +1411,7 @@ void func_80037C28(struct PlayerObj* arg0)
     arg0->shot_count += count;
     arg0->special_shot_count += count;
 }
+#endif
 void player_fire_lightning_web_charged(struct PlayerObj* self)
 {
     struct WeaponObj* weapon;
@@ -953,6 +1434,7 @@ void player_fire_lightning_web_charged(struct PlayerObj* self)
     }
 }
 
+#ifndef VERSION_DEMO
 void player_enter_frost_tower_pose(struct PlayerObj* self)
 {
     player_set_animation(self, 0x5F);
@@ -961,7 +1443,9 @@ void player_enter_frost_tower_pose(struct PlayerObj* self)
     self->unk5 = PLAYER_WEAPON_POSE;
     self->unk6 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_enter_soul_body(struct PlayerObj* self)
 {
     player_set_animation(self, 0x60);
@@ -973,7 +1457,9 @@ void player_enter_soul_body(struct PlayerObj* self)
     self->unk5 = PLAYER_SOUL_BODY;
     self->unk6 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_enter_rising_fire(struct PlayerObj* self, s32 airborne)
 {
     if (airborne == 0) {
@@ -986,7 +1472,9 @@ void player_enter_rising_fire(struct PlayerObj* self, s32 airborne)
     self->unk5 = PLAYER_RISING_FIRE;
     self->unk6 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_enter_rising_fire_charged(struct PlayerObj* self, s32 airborne)
 {
     struct WeaponObj* weapon;
@@ -1013,7 +1501,9 @@ void player_enter_rising_fire_charged(struct PlayerObj* self, s32 airborne)
     self->unk5 = PLAYER_RISING_FIRE_CHARGED;
     self->unk6 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_enter_double_cyclone_pose(struct PlayerObj* self)
 {
     if (self->shot_type == 7) {
@@ -1027,7 +1517,9 @@ void player_enter_double_cyclone_pose(struct PlayerObj* self)
     self->unk5 = PLAYER_WEAPON_POSE;
     self->unk6 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_update_charge(struct PlayerObj* self)
 {
     s8 action; // probably fake
@@ -1049,7 +1541,9 @@ void player_update_charge(struct PlayerObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_set_charge_flash(struct PlayerObj* self, s8 button)
 {
     s8 shot_type;
@@ -1074,7 +1568,9 @@ s32 player_set_charge_flash(struct PlayerObj* self, s8 button)
     self->flash_palette = 0x29;
     return 1;
 }
+#endif
 
+#ifndef VERSION_DEMO
 s32 player_charge_released(struct PlayerObj* self)
 {
     if (self->pressed_input & PLAYER_INPUT_SHOOT) {
@@ -1097,7 +1593,9 @@ s32 player_charge_released(struct PlayerObj* self)
     }
     return 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_charge_shoot_button(struct PlayerObj* self)
 {
     u8 full_charge_time;
@@ -1149,7 +1647,9 @@ void player_charge_shoot_button(struct PlayerObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_charge_special_button(struct PlayerObj* self)
 {
     u8 full_charge_time;
@@ -1194,7 +1694,9 @@ void player_charge_special_button(struct PlayerObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_reset_charge_and_weapon(struct PlayerObj* self)
 {
     if (self->unk2 == 0) {
@@ -1203,7 +1705,9 @@ void player_reset_charge_and_weapon(struct PlayerObj* self)
         player_equip_weapon(self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_reset_charge(struct PlayerObj* self)
 {
 #ifdef MMX4_SATURN
@@ -1217,11 +1721,12 @@ void player_reset_charge(struct PlayerObj* self)
     self->charge_timer = 0;
     self->special_charge_timer = 0;
 }
+#endif
 
 void player_set_animation_shooting(struct PlayerObj* self, s32 animation)
 {
     if (self->unk2 == 0 && self->attacking != 0) {
-        animation += 0x70;
+        animation += PLAYER_ATTACK_ANIM_OFFSET;
     }
     player_set_animation(self, animation);
 }
@@ -1235,7 +1740,7 @@ void func_80038568(struct PlayerObj* self, s32 frame)
     if (self->unk2 != 0) {
         return;
     }
-    attack_frame = frame + 0x70;
+    attack_frame = frame + PLAYER_ATTACK_ANIM_OFFSET;
     if (self->attack_ended != 0) {
         duration = self->animation_step.fields.duration;
         player_set_animation_frame(self, frame, self->animation_step.fields.event & 0x3F);
@@ -1247,6 +1752,7 @@ void func_80038568(struct PlayerObj* self, s32 frame)
     }
 }
 
+#ifndef VERSION_DEMO
 void player_cancel_released_charge(void)
 {
     struct PlayerObj* player = &g_Player;
@@ -1264,3 +1770,4 @@ void player_cancel_released_charge(void)
         player_reset_palette(player);
     }
 }
+#endif

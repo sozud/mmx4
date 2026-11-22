@@ -15,4 +15,18 @@ extern void func_800204A4(void);
 
 void func_800204CC(s8*, u32);
 
+#ifdef VERSION_DEMO
+void func_800311E4_demo(s8 selection, s8 menu);
+
+#define DEMO_MENU_SELECT(engine, count, menu)                      \
+    if (main_bss_state.transition.active == 0) {                   \
+        func_800204CC(&(engine)->unk2, count);                     \
+        if (controller_input.pressed & (PAD_CONFIRM | PADstart)) { \
+            func_800129F0(8);                                      \
+            (engine)->unk1++;                                      \
+        }                                                          \
+        func_800311E4_demo((engine)->unk2, menu);                  \
+    }
+#endif
+
 #endif

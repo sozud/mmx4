@@ -98,6 +98,13 @@ void trap_floor_wait_stand(struct ItemObj* self, struct EngineObj* engine,
     if (y_diff >= 0) {
         item_bounds = self->unk68;
         player_bounds = player->unk68;
+#ifdef VERSION_DEMO
+        if (y_diff > ITEM13_PLAYER_EXTENT(player_bounds) + (item_bounds->unk3 - item_bounds->unk1)) {
+            if (engine->unk10 == 0) {
+                engine->unk10 = 1;
+                engine->unk12 = 1;
+            }
+#else
         if (y_diff >= ITEM13_PLAYER_EXTENT(player_bounds) + (item_bounds->unk3 - item_bounds->unk1)) {
             if (engine->unk10 == 0) {
                 engine->unk10 = 1;
@@ -106,11 +113,14 @@ void trap_floor_wait_stand(struct ItemObj* self, struct EngineObj* engine,
                 engine->unk13 = 1;
                 engine->unk14 = 1;
             }
+#endif
             set_animation(self, 1);
             func_8001540C(5, SATURN_SOUND(2, 0x2B), self);
+#ifndef VERSION_DEMO
             if (self->unk2 != 0) {
                 background_objects[0].unk28 = 0x100;
             }
+#endif
             self->unk5++;
         }
     }
@@ -124,13 +134,22 @@ void trap_floor_open(struct ItemObj* arg0, struct EngineObj* arg1,
     } else {
         if (arg1->unk10 != 0) {
             arg1->unk10 = 0;
+#ifndef VERSION_DEMO
             arg1->unk11 = 0;
+#endif
             arg1->unk12 = 0;
+#ifndef VERSION_DEMO
             arg1->unk13 = 0;
             arg1->unk14 = 0;
+#endif
         }
         arg0->state = 2;
         arg0->unk5 = 0;
+#ifdef VERSION_DEMO
+        if (arg0->unk2 != 0) {
+            engine_obj.unkF = 1;
+        }
+#endif
     }
 }
 

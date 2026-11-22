@@ -8,7 +8,7 @@
 #include "main/objects.h"
 #endif
 
-extern u16** camera_trigger_stage_scripts[26];
+extern u16** camera_trigger_stage_scripts[DEMO_ALT(26, 16)];
 
 // camera_trigger_state_funcs
 extern void (*camera_trigger_state_funcs[])(struct EffectObj*);
@@ -19,10 +19,12 @@ struct Effect00BackgroundUpdate {
     u16 value;
 };
 
+#ifndef VERSION_DEMO
 void camera_trigger_update(struct EffectObj* self)
 {
     camera_trigger_state_funcs[self->state](self);
 }
+#endif
 
 void camera_trigger_init(struct EffectObj* self)
 {
@@ -34,7 +36,7 @@ void camera_trigger_init(struct EffectObj* self)
 
 // camera_trigger_main
 
-extern struct Effect00BackgroundUpdate camera_trigger_bound_values[74];
+extern struct Effect00BackgroundUpdate camera_trigger_bound_values[DEMO_ALT(74, 51)];
 extern u16* camera_trigger_bound_fields[4];
 
 void func_800B5798(struct EffectObj* arg0)
@@ -62,6 +64,223 @@ void func_800B5798(struct EffectObj* arg0)
     }
 }
 
+#ifdef VERSION_DEMO
+void (*camera_trigger_state_funcs[2])(struct EffectObj*) = {
+    camera_trigger_init,
+    func_800B5798,
+};
+
+u16 camera_trigger_script_s00_0_0[8] = { 0xEFF, 0xEF0, 0x1C0, 0x100, 1, 2, 0, 0 };
+
+u16 camera_trigger_script_s00_0_1[8] = { 0xF10, 0xF00, 0x1C0, 0x100, 3, 1, 0, 0 };
+
+u16 D_800D9B78_demo[8] = { 0x10FF, 0x10F0, 0x260, 0x180, 3, 1, 0, 0 };
+
+u16 D_800D9B88_demo[6] = { 0x1110, 0x1100, 0x260, 0x180, 4, 0 };
+
+u16 D_800D9B94_demo[6] = { 0xBD0, 0xBC0, 0x1B0, 0x100, 0x10, 0 };
+
+u16 D_800D9BA0_demo[6] = { 0x11C0, 0x11B0, 0x260, 0x180, 0x24, 0 };
+
+u16* camera_trigger_scripts_s00_0[6] = { camera_trigger_script_s00_0_0, camera_trigger_script_s00_0_1, D_800D9B78_demo, D_800D9B88_demo, D_800D9B94_demo, D_800D9BA0_demo };
+
+u16 camera_trigger_script_s00_1_0[6] = { 0xEA0, 0xE20, 0x1E0, 0x1D0, 5, 0 };
+
+u16 camera_trigger_script_s00_1_1[6] = { 0xEA0, 0xE20, 0x1CF, 0x1C0, 2, 0 };
+
+u16 camera_trigger_script_s00_1_2[6] = { 0x114C, 0x113C, 0x1F0, 0x100, 7, 0 };
+
+u16 camera_trigger_script_s00_1_3[6] = { 0xF10, 0xEA0, 0x1E0, 0x1D0, 5, 0 };
+
+u16 camera_trigger_script_s00_1_4[6] = { 0xF10, 0xEA0, 0x1CF, 0x1C0, 2, 0 };
+
+u16* camera_trigger_scripts_s00_1[5] = { camera_trigger_script_s00_1_0, camera_trigger_script_s00_1_1, camera_trigger_script_s00_1_2, camera_trigger_script_s00_1_3, camera_trigger_script_s00_1_4 };
+
+u16 D_800D9C14_demo[6] = { 0x1C0, 0x1A0, 0x190, 0x120, 6, 0 };
+
+u16 D_800D9C20_demo[6] = { 0x1D0, 0x1C0, 0x1B0, 0x120, 1, 0 };
+
+u16 D_800D9C2C_demo[6] = { 0x850, 0x770, 0x220, 0x210, 9, 0 };
+
+u16 D_800D9C38_demo[8] = { 0x848, 0x710, 0x530, 0x520, 10, 11, 8, 0 };
+
+u16 D_800D9C48_demo[8] = { 0x15C0, 0x15B0, 0x580, 0x4D0, 1, 15, 0, 0 };
+
+u16 D_800D9C58_demo[8] = { 0x1680, 0x1650, 0x1B0, 0x1A0, 2, 12, 0, 0 };
+
+u16 D_800D9C68_demo[6] = { 0x17A0, 0x1790, 0x1B0, 0x100, 14, 0 };
+
+u16 D_800D9C74_demo[8] = { 0x15B0, 0x15A0, 0x580, 0x4D0, 8, 9, 11, 0 };
+
+u16 D_800D9C84_demo[8] = { 0x1670, 0x1660, 0x1C0, 0x1B0, 8, 10, 0, 0 };
+
+u16* D_800D9C94_demo[9] = { D_800D9C14_demo, D_800D9C20_demo, D_800D9C2C_demo, D_800D9C38_demo, D_800D9C48_demo, D_800D9C58_demo, D_800D9C68_demo, D_800D9C74_demo, D_800D9C84_demo };
+
+u16 D_800D9CB8_demo[8] = { 0x5E0, 0x560, 0x1E0, 0x1D0, 0x13, 1, 0, 0 };
+
+u16 D_800D9CC8_demo[8] = { 0x5E0, 0x560, 0x1F0, 0x1E1, 0x14, 0x1A, 0, 0 };
+
+u16 D_800D9CD8_demo[8] = { 0x2E0, 0x200, 0x2F0, 0x2E0, 0x15, 6, 0, 0 };
+
+u16 D_800D9CE8_demo[8] = { 0x2E0, 0x200, 0x300, 0x2F0, 0x16, 0x17, 8, 0 };
+
+u16 D_800D9CF8_demo[6] = { 0x720, 0x710, 0x370, 0x300, 0x14, 0 };
+
+u16 D_800D9D04_demo[6] = { 0x730, 0x720, 0x370, 0x300, 0x1C, 0 };
+
+u16 D_800D9D10_demo[8] = { 0x7A0, 0x770, 0x500, 0x4F0, 10, 11, 0, 0 };
+
+u16 D_800D9D20_demo[8] = { 0xD90, 0xD80, 0x5D0, 0x590, 0x1D, 0x1E, 0x1F, 0 };
+
+u16 D_800D9D30_demo[8] = { 0x7A0, 0x770, 0x4F0, 0x4E0, 0x17, 0x16, 0, 0 };
+
+u16 D_800D9D40_demo[8] = { 0x1190, 0x1180, 0x5C0, 0x540, 8, 11, 0, 0 };
+
+u16* D_800D9D50_demo[10] = { D_800D9CB8_demo, D_800D9CC8_demo, D_800D9CD8_demo, D_800D9CE8_demo, D_800D9CF8_demo, D_800D9D04_demo, D_800D9D10_demo, D_800D9D20_demo, D_800D9D30_demo, D_800D9D40_demo };
+
+u16 D_800D9D78_demo[8] = { 0x1798, 0x1790, 0x8C0, 0x870, 0x21, 0x22, 0, 0 };
+
+u16 D_800D9D88_demo[6] = { 0x1570, 0x1568, 0x550, 0x500, 0x26, 0 };
+
+u16 D_800D9D94_demo[6] = { 0x1568, 0x1560, 0x550, 0x500, 0x13, 0 };
+
+u16* D_800D9DA0_demo[3] = { D_800D9D78_demo, D_800D9D88_demo, D_800D9D94_demo };
+
+u16 D_800D9DAC_demo[6] = { 0x4C0, 0x460, 0x120, 0x110, 6, 0 };
+
+u16 D_800D9DB8_demo[6] = { 0x4C0, 0x460, 0x130, 0x120, 1, 0 };
+
+u16 D_800D9DC4_demo[8] = { 0xA50, 0xA40, 0x160, 0x100, 0x18, 5, 0, 0 };
+
+u16 D_800D9DD4_demo[8] = { 0xA60, 0xA50, 0x160, 0x100, 0x19, 2, 0, 0 };
+
+u16 D_800D9DE4_demo[6] = { 0xBD0, 0xBC0, 0x1C0, 0x120, 0x20, 0 };
+
+u16* D_800D9DF0_demo[5] = { D_800D9DAC_demo, D_800D9DB8_demo, D_800D9DC4_demo, D_800D9DD4_demo, D_800D9DE4_demo };
+
+u16 D_800D9E04_demo[6] = { 0x780, 0x770, 0x100, 0, 0x11, 0 };
+
+u16 D_800D9E10_demo[6] = { 0x770, 0x760, 0x100, 0, 0x12, 0 };
+
+u16 D_800D9E1C_demo[8] = { 0x1320, 0x1310, 0x300, 0x200, 0x23, 0x25, 0, 0 };
+
+u16* D_800D9E2C_demo[3] = { D_800D9E04_demo, D_800D9E10_demo, D_800D9E1C_demo };
+
+u16 D_800D9E38_demo[6] = { 0x1820, 0x17E0, 0x1CA, 0x1B0, 2, 0 };
+
+u16* D_800D9E44_demo[1] = { D_800D9E38_demo };
+
+u16 D_800D9E48_demo[6] = { 0x450, 0x440, 0x3C0, 0x200, 0x17, 0 };
+
+u16 D_800D9E54_demo[6] = { 0x440, 0x430, 0x3C0, 0x200, 0x27, 0 };
+
+u16 D_800D9E60_demo[6] = { 0x1540, 0x1530, 0x3C0, 0x200, 0x27, 0 };
+
+u16 D_800D9E6C_demo[6] = { 0x1530, 0x1520, 0x3C0, 0x200, 0x17, 0 };
+
+u16 D_800D9E78_demo[6] = { 0x1778, 0x1770, 0x2B0, 0x220, 0x28, 0 };
+
+u16 D_800D9E84_demo[6] = { 0x1770, 0x1768, 0x2B0, 0x220, 5, 0 };
+
+u16* D_800D9E90_demo[6] = { D_800D9E48_demo, D_800D9E54_demo, D_800D9E60_demo, D_800D9E6C_demo, D_800D9E78_demo, D_800D9E84_demo };
+
+u16 D_800D9EA8_demo[6] = { 0x5B0, 0x5A0, 0x2C0, 0x200, 0x27, 0 };
+
+u16 D_800D9EB4_demo[6] = { 0x5C0, 0x5B0, 0x2C0, 0x200, 1, 0 };
+
+u16 D_800D9EC0_demo[8] = { 0xBB0, 0xBA0, 0x2C0, 0x200, 0x2A, 0x2B, 0, 0 };
+
+u16 D_800D9ED0_demo[6] = { 0xBA0, 0xB90, 0x2C0, 0x200, 1, 0 };
+
+u16 D_800D9EDC_demo[8] = { 0x14C0, 0x1470, 0x208, 0x1F8, 0x2A, 0x29, 0x2B, 0 };
+
+u16 D_800D9EEC_demo[8] = { 0x11C0, 0x11B0, 0x2C0, 0x200, 1, 0x28, 0, 0 };
+
+u16 D_800D9EFC_demo[8] = { 0x11B0, 0x11A0, 0x2C0, 0x200, 0x2A, 0x2B, 0, 0 };
+
+u16 D_800D9F0C_demo[6] = { 0x600, 0x5F0, 0x2C0, 0x200, 0x2C, 0 };
+
+u16* D_800D9F18_demo[8] = { D_800D9EA8_demo, D_800D9EB4_demo, D_800D9EC0_demo, D_800D9ED0_demo, D_800D9EDC_demo, D_800D9EEC_demo, D_800D9EFC_demo, D_800D9F0C_demo };
+
+u16 D_800D9F38_demo[6] = { 0x4280, 0x4270, 0xB0, 0x60, 0x2D, 0 };
+
+u16* D_800D9F44_demo[1] = { D_800D9F38_demo };
+
+u16 D_800D9F48_demo[8] = { 0xB60, 0xAC0, 0x2B8, 0x2A0, 0x2E, 0x2F, 0, 0 };
+
+u16 D_800D9F58_demo[6] = { 0xB60, 0xAC0, 0x2D0, 0x2C0, 0x30, 0 };
+
+u16 D_800D9F64_demo[6] = { 0x9E0, 0x9D0, 0x2D0, 0x1F0, 0x31, 0 };
+
+u16 D_800D9F70_demo[6] = { 0xA60, 0xA50, 0x2D0, 0x1F0, 0x32, 0 };
+
+u16 D_800D9F7C_demo[6] = { 0xA80, 0xA70, 0x2D0, 0x1F0, 0x33, 0 };
+
+u16* D_800D9F88_demo[5] = { D_800D9F48_demo, D_800D9F58_demo, D_800D9F64_demo, D_800D9F70_demo, D_800D9F7C_demo };
+
+u16** camera_trigger_stage_scripts[16] = { camera_trigger_scripts_s00_0, camera_trigger_scripts_s00_1, D_800D9C94_demo, D_800D9D50_demo, D_800D9DA0_demo, D_800D9DF0_demo, D_800D9E2C_demo, D_800D9E44_demo, D_800D9E90_demo, D_800D9F18_demo, NULL, D_800D9F44_demo, NULL, NULL, NULL, D_800D9F88_demo };
+
+struct Effect00BackgroundUpdate camera_trigger_bound_values[51] = {
+    { 2, 0x100 },
+    { 3, 0x100 },
+    { 3, 0x168 },
+    { 2, 0x168 },
+    { 3, 0x300 },
+    { 2, 0x0 },
+    { 0, 0x115C },
+    { 3, 0x500 },
+    { 0, 0x710 },
+    { 1, 0x15D0 },
+    { 2, 0x500 },
+    { 1, 0x17A0 },
+    { 0, 0x1680 },
+    { 0, 0x17A0 },
+    { 0, 0x1500 },
+    { 0, 0xBA0 },
+    { 1, 0xB80 },
+    { 1, 0x6C0 },
+    { 0, 0x0 },
+    { 0, 0x200 },
+    { 1, 0x4B0 },
+    { 1, 0x700 },
+    { 2, 0x300 },
+    { 1, 0x9C0 },
+    { 1, 0x1890 },
+    { 2, 0x1E0 },
+    { 3, 0x300 },
+    { 0, 0x700 },
+    { 0, 0xD00 },
+    { 2, 0x400 },
+    { 1, 0xFB0 },
+    { 0, 0xB10 },
+    { 3, 0x800 },
+    { 2, 0x800 },
+    { 0, 0x1200 },
+    { 0, 0x1110 },
+    { 1, 0x1200 },
+    { 0, 0x14C0 },
+    { 2, 0x200 },
+    { 3, 0x200 },
+    { 0, 0x13E0 },
+    { 2, 0x1EB },
+    { 3, 0x1EB },
+    { 0, 0x560 },
+    { 3, 0x80 },
+    { 2, 0x1F8 },
+    { 3, 0x1F8 },
+    { 3, 0x300 },
+    { 1, 0x8D0 },
+    { 0, 0x8D0 },
+    { 0, 0x0 },
+};
+
+u16* camera_trigger_bound_fields[4] = {
+    &background_objects[0].unk26,
+    &background_objects[0].unk24,
+    &background_objects[0].unk2A,
+    &background_objects[0].unk28,
+};
+#else
 void (*camera_trigger_state_funcs[])(struct EffectObj*) = {
     camera_trigger_init,
     func_800B5798,
@@ -1240,3 +1459,4 @@ u16* camera_trigger_bound_fields[4] = {
     &background_objects[0].unk2A,
     &background_objects[0].unk28,
 };
+#endif

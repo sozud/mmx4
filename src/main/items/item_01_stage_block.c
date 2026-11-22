@@ -76,15 +76,17 @@ void func_800BEBFC(struct ItemObj* arg0)
         arg0->unk42 = OBJECT_CLUT(0x7983);
         break;
     }
-    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 8);
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, DEMO_ALT(8, 7));
     arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk5C = 0x10;
     arg0->unk61 = 0;
     arg0->unk68 = (struct Unk_unk68*)&stage_block_bounds[arg0->unk2];
     arg0->unk54 = &stage_block_boxes[arg0->unk2 * 4];
     arg0->unk75 = 1;
+#ifndef VERSION_DEMO
     if (arg0->unk2 == 1)
         arg0->unk66 = 1;
+#endif
     arg0->tail_ext.unk1.unk84.previous_value = 0;
     arg0->tail_ext.unk1.unk88 = 0;
     arg0->unk58 = (const u8*)D_80108504;
@@ -372,7 +374,7 @@ struct Item01StageEntry stage_block_entries[15] = {
 
 struct Item01SpriteBounds stage_block_bounds[15] = {
     { 0x00, 0x00, 0x40, 0x20 },
-    { 0x00, 0xF8, 0x30, 0x48 },
+    { 0x00, 0xF8, 0x30, DEMO_ALT(0x48, 0x38) },
     { 0x00, 0x08, 0x30, 0x40 },
     { 0x00, 0x08, 0x30, 0x30 },
     { 0x00, 0x08, 0x30, 0x30 },
@@ -385,7 +387,7 @@ struct Item01SpriteBounds stage_block_bounds[15] = {
     { 0x00, 0x00, 0x50, 0x70 },
     { 0x00, 0x00, 0x50, 0x28 },
     { 0x00, 0x08, 0x70, 0x18 },
-    { 0x00, 0x00, 0x30, 0x38 },
+    { 0x00, 0x00, 0x30, DEMO_ALT(0x38, 0x28) },
 };
 
 u8 stage_block_boxes[60] = {

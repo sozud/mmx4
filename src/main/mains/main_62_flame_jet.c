@@ -72,7 +72,9 @@ void func_8007B90C(struct MainObj* arg0)
 #ifdef MMX4_PC
     visual = NULL;
 #endif
+#ifndef VERSION_DEMO
     arg0->active |= 4;
+#endif
     if (!(arg0->unk2 & 1)) {
         arg0->unk15 = 0;
     } else {
@@ -102,7 +104,9 @@ void func_8007B90C(struct MainObj* arg0)
             arg0->unk15 != 0 ? -0x690000 : 0x690000, 0);
     }
     arg0->ext.main_62.unk80 = visual;
+#ifndef VERSION_DEMO
     arg0->ext.main_62.unk86 = 0;
+#endif
     arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)flame_jet_animations;
     arg0->unk16 = 2;
@@ -140,7 +144,11 @@ void flame_jet_wait_sync(struct MainObj* self)
 #ifdef MMX4_PC
         if ((self->unk2 >= 4) || (self->ext.main_62.unk80->animation_step.fields.event != 0)) {
 #else
+#ifdef VERSION_DEMO
+        if (self->ext.main_62.unk80->animation_step.fields.event != 0) {
+#else
         if ((self->ext.main_62.unk80->animation_step.fields.event != 0) || (self->unk2 > 3)) {
+#endif
 #endif
             set_animation(self, 2);
             self->state++;
@@ -165,9 +173,11 @@ void flame_jet_erupt(struct MainObj* self)
         self->unk5++;
         self->unk7E = (u16)self->unk7C;
     }
-    if (self->animation_step.fields.frame_index != 0) {
+    if (DEMO_ALT(self->animation_step.fields.frame_index != 0, 1)) {
         update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
+#ifndef VERSION_DEMO
         self->ext.main_62.unk86 = (u8)self->on_screen;
+#endif
     }
 }
 
@@ -178,7 +188,9 @@ void flame_jet_pause(struct MainObj* self)
             self->unk5--;
             set_animation(self, 2);
             if (self->ext.main_62.unk86 != 0) {
+#ifndef VERSION_DEMO
                 func_8001540C(2, SATURN_SOUND(0xA2, 0x73), self);
+#endif
             }
         }
     } else {
@@ -190,7 +202,9 @@ void flame_jet_main(struct MainObj* self)
 {
     s32 result;
 
+#ifndef VERSION_DEMO
     flame_jet_step_funcs[self->unk5](self);
+#endif
     if ((self->animation_step.fields.frame_index > 2) && (self->animation_step.fields.frame_index < 12)) {
         self->hurt_box = flame_jet_hurt_boxes[self->animation_step.fields.frame_index - 3];
         self->attack_box = flame_jet_attack_boxes[self->animation_step.fields.frame_index - 3];
@@ -205,6 +219,9 @@ void flame_jet_main(struct MainObj* self)
         self->unk42 = (self->unk42 & 0x7FFF) + 2;
         self->unk7E = 0x14;
     } else {
+#ifdef VERSION_DEMO
+        flame_jet_step_funcs[self->unk5](self);
+#endif
         func_8002D9BC(self);
     }
 }
@@ -230,7 +247,9 @@ void func_8007BE40(struct MainObj* arg0)
         return;
     }
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
+#ifndef VERSION_DEMO
     arg0->ext.main_62.unk86 = arg0->on_screen;
+#endif
 }
 
 void flame_jet_extinguished_idle(void)
@@ -313,7 +332,7 @@ struct Unk_unk68* flame_jet_attack_boxes[9] = {
 union AnimationStep flame_jet_anim_0[] = {
     { 2, 0, 1, 0x00 },
     { 1, 1, 1, 0x01 },
-    { 2, 1, 0, 0x01 },
+    { 2, DEMO_ALT(1, 0), 0, 0x01 },
 };
 
 union AnimationStep flame_jet_anim_1[] = {
@@ -321,7 +340,9 @@ union AnimationStep flame_jet_anim_1[] = {
 };
 
 union AnimationStep flame_jet_anim_2[] = {
+#ifndef VERSION_DEMO
     { 7, 0, 1, 0x00 },
+#endif
     { 7, 0, 1, 0x03 },
     { 7, 0, 1, 0x04 },
     { 7, 0, 1, 0x05 },

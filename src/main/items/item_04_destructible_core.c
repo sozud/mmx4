@@ -217,7 +217,7 @@ void destructible_core_flash_palette(struct ItemObj* arg0)
     for (i = 0; i < 0x38; i++) {
         *destination++ = *source++;
     }
-    need_palette_load |= 1;
+    REQUEST_PALETTE_LOAD();
 }
 
 void (*destructible_core_state_funcs[])(struct ItemObj*) = {

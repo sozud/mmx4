@@ -2,7 +2,9 @@
 #define MAIN_55C4_H
 
 enum XaArchive {
-#ifdef VERSION_JP
+#ifdef VERSION_DEMO
+    XA_ARCHIVE_BGM1 = 0x31,
+#elif defined(VERSION_JP)
     XA_ARCHIVE_BGM1 = 0x94,
 #elif defined(VERSION_EU)
     XA_ARCHIVE_BGM1 = 0x97,
@@ -97,7 +99,11 @@ void func_80016334(void);
 void func_8001663C(u8, u8);
 void func_800175AC(u8);
 
+#ifdef VERSION_DEMO
+void func_80018000(void);
+#else
 void func_80018000(arg_u8);
+#endif
 
 void decompress_player_gfx(struct GraphicsObj* arg0, s16 x, s16 y);
 

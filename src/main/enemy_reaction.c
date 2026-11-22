@@ -122,6 +122,7 @@ void enemy_hit_reaction(struct MainObj* arg0)
     handlers.funcs[object->unk63](arg0);
 }
 
+#ifndef VERSION_DEMO
 #ifdef MMX4_SATURN
 void play_boss_voice(s32 arg0)
 {
@@ -177,8 +178,11 @@ u32 update_boss_music_delay(void)
     return engine_obj.unk36.timer;
 }
 
+#endif
+
 s32 spike_crawler_knockback_speeds[2] = { FIXED(3), FIXED(10) };
 
+#ifndef VERSION_DEMO
 u8 boss_voice_tracks[13][3] = {
     { VOICE_WEB_SPIDER_1, VOICE_WEB_SPIDER_1, VOICE_WEB_SPIDER_2 },
     { VOICE_FROST_WALRUS_1, VOICE_FROST_WALRUS_2, VOICE_FROST_WALRUS_3 },
@@ -196,3 +200,4 @@ u8 boss_voice_tracks[13][3] = {
 };
 
 u8 D_80105FEF_padding = 0;
+#endif

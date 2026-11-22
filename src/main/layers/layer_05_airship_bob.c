@@ -78,10 +78,14 @@ void func_800DA2D4(struct LayerObj* arg0)
     arg0->unk18.val = -0x5800;
     arg0->private_state.value.val = 0;
     *(s32*)arg0->unk20 = 0;
+#ifndef VERSION_DEMO
     arg0->unk24 = 3;
+#endif
     arg0->unk5 = 0;
+#ifndef VERSION_DEMO
     arg0->unk6 = 0;
     arg0->unk7 = 0;
+#endif
     func_800DA358(arg0);
 }
 #endif
@@ -93,6 +97,11 @@ void func_800DA358(struct LayerObj* arg0)
 
     background_objects[1].x_pos.val += *(s32*)&arg0->bg_offset - half;
     background_objects[2].x_pos.val -= *(s32*)&arg0->bg_offset / 2 + half / 2;
+#ifdef VERSION_DEMO
+    if (engine_obj.substage == 0) {
+        airship_bob_sway(arg0);
+    }
+#else
     arg0->unk25 = arg0->unk24;
     if (engine_obj.substage == 0) {
         airship_bob_update_section(arg0);
@@ -103,6 +112,7 @@ void func_800DA358(struct LayerObj* arg0)
                 engine_obj.unkF = 1;
         }
     }
+#endif
 }
 
 void airship_bob_despawn(struct LayerObj* arg0)
@@ -110,6 +120,7 @@ void airship_bob_despawn(struct LayerObj* arg0)
     despawn_object_permanently(arg0);
 }
 
+#ifndef VERSION_DEMO
 void airship_bob_section_0(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
@@ -118,18 +129,24 @@ void airship_bob_section_0(struct LayerObj* arg0)
         airship_bob_section_0_done(arg0);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void airship_bob_section_0_wait(struct LayerObj* arg0)
 {
     arg0->unk6++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void airship_bob_section_0_done(struct LayerObj* arg0)
 {
     arg0->unk5 = 3;
     arg0->unk6 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void airship_bob_section_1(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
@@ -138,18 +155,24 @@ void airship_bob_section_1(struct LayerObj* arg0)
         airship_bob_section_1_done(arg0);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void airship_bob_section_1_wait(struct LayerObj* arg0)
 {
     arg0->unk6++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void airship_bob_section_1_done(struct LayerObj* arg0)
 {
     arg0->unk5 = 3;
     arg0->unk6 = 0;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void airship_bob_section_2(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
@@ -158,21 +181,32 @@ void airship_bob_section_2(struct LayerObj* arg0)
         airship_bob_section_2_done(arg0);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void airship_bob_section_2_wait(struct LayerObj* arg0)
 {
     arg0->unk6++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void airship_bob_section_2_done(struct LayerObj* arg0)
 {
     arg0->unk5 = 3;
     arg0->unk6 = 0;
 }
+#endif
+
+#ifdef VERSION_DEMO
+#define AIRSHIP_SWAY_STEP unk5
+#else
+#define AIRSHIP_SWAY_STEP unk7
+#endif
 
 void airship_bob_sway(struct LayerObj* arg0)
 {
-    airship_bob_sway_funcs[arg0->unk7](arg0);
+    airship_bob_sway_funcs[arg0->AIRSHIP_SWAY_STEP](arg0);
 }
 
 void airship_bob_sway_up(struct LayerObj* arg0)
@@ -190,7 +224,7 @@ void airship_bob_sway_up(struct LayerObj* arg0)
         return;
     }
     arg0->private_state.value.val = 0x1E;
-    arg0->unk7++;
+    arg0->AIRSHIP_SWAY_STEP++;
 }
 
 void airship_bob_sway_down(struct LayerObj* arg0)
@@ -208,13 +242,16 @@ void airship_bob_sway_down(struct LayerObj* arg0)
         return;
     }
     arg0->private_state.value.val = 0x1E;
-    arg0->unk7--;
+    arg0->AIRSHIP_SWAY_STEP--;
 }
 
+#ifndef VERSION_DEMO
 void airship_bob_idle(struct LayerObj* arg0)
 {
 }
+#endif
 
+#ifndef VERSION_DEMO
 void airship_bob_update_section(struct LayerObj* arg0)
 {
     s8 offset = 0;
@@ -234,6 +271,7 @@ void airship_bob_update_section(struct LayerObj* arg0)
         arg0->unk6 = 0;
     }
 }
+#endif
 
 void (*airship_bob_state_funcs[])(struct LayerObj*) = {
     func_800DA2D4,
@@ -241,6 +279,7 @@ void (*airship_bob_state_funcs[])(struct LayerObj*) = {
     airship_bob_despawn,
 };
 
+#ifndef VERSION_DEMO
 s16 airship_bob_section_positions[2] = { 0x6A0, 0x810 };
 
 void (*airship_bob_section_funcs[])(struct LayerObj*) = {
@@ -249,6 +288,7 @@ void (*airship_bob_section_funcs[])(struct LayerObj*) = {
     airship_bob_section_2,
     airship_bob_idle,
 };
+#endif
 
 void (*airship_bob_sway_funcs[])(struct LayerObj*) = {
     airship_bob_sway_up,

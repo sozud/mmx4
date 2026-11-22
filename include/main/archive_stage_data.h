@@ -4,7 +4,9 @@
 struct ArchivePathData {
     s8 stage_archive_indices[12];
 #ifndef MMX4_WIN32
-#ifdef VERSION_JP
+#ifdef VERSION_DEMO
+    char paths[51][64];
+#elif defined(VERSION_JP)
     char paths[162][64];
 #elif defined(VERSION_EU)
     char paths[165][64];

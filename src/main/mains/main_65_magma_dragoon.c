@@ -219,6 +219,7 @@ void cyber_peacock_death(struct BarObj* self);
 
 void cyber_peacock_update(struct MainObj* self);
 
+#ifndef VERSION_DEMO
 void magma_dragoon_spawn_flames(struct AnimatedObj* self, u32 arg1)
 {
     struct MiscObj* obj;
@@ -249,8 +250,10 @@ void magma_dragoon_spawn_flames(struct AnimatedObj* self, u32 arg1)
         }
     }
 }
+#endif
 
 // cyber_peacock_is_player_near_random
+#ifndef VERSION_DEMO
 #define DRAGOON_NEAR_X 64
 #define DRAGOON_NEAR_CHANCE 96
 
@@ -262,6 +265,7 @@ s32 func_8007DD0C(struct MainObj* self)
         return 0;
     return (s32)get_random() <= DRAGOON_NEAR_CHANCE;
 }
+#endif
 
 // magma_dragoon_init
 
@@ -313,6 +317,7 @@ static void main_65_throw(struct MainObj* arg0, s16 y_offset)
 }
 #endif
 
+#ifndef VERSION_DEMO
 void func_8007DD98(struct MainObj* arg0)
 {
     if (engine_obj.stage != 0xC) {
@@ -367,7 +372,9 @@ void func_8007DD98(struct MainObj* arg0)
     if (engine_obj.stage == 4)
         engine_obj.checkpoint = 3;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_intro_warning(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -395,7 +402,9 @@ void magma_dragoon_intro_warning(struct MainObj* self)
         background_objects[0].unk28 = 0x1EB;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_intro_leap(struct MainObj* self)
 {
     if (self->ext.main_65.object->active == 0) {
@@ -409,7 +418,9 @@ void magma_dragoon_intro_leap(struct MainObj* self)
         self->unk7E = 0x14;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_intro_descend(struct MainObj* self)
 {
     if ((self->y_pos.i.hi - background_objects[0].y_pos.i.hi) < 0x20) {
@@ -424,7 +435,9 @@ void magma_dragoon_intro_descend(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_intro_land(struct MainObj* self)
 {
     if (self->collision_flags & 8) {
@@ -441,7 +454,9 @@ void magma_dragoon_intro_land(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_intro_pose(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
@@ -457,7 +472,9 @@ void magma_dragoon_intro_pose(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_intro_start_health_bar(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
@@ -467,7 +484,9 @@ void magma_dragoon_intro_start_health_bar(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_intro_ready(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0 && update_boss_music_delay() == 0) {
@@ -483,7 +502,9 @@ void magma_dragoon_intro_ready(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_intro_fill_health(struct MainObj* self)
 {
     if (self->hp < 0x30) {
@@ -510,12 +531,16 @@ void magma_dragoon_intro_fill_health(struct MainObj* self)
         update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_intro(struct MainObj* self)
 {
     magma_dragoon_intro_funcs[self->unk6](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_face_player(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
@@ -524,8 +549,10 @@ void magma_dragoon_face_player(struct MainObj* self)
         self->unk15 = 0;
     }
 }
+#endif
 
 // magma_dragoon_think
+#ifndef VERSION_DEMO
 void func_8007E4C8(struct MainObj* arg0)
 {
     u8 roll;
@@ -572,7 +599,9 @@ void func_8007E4C8(struct MainObj* arg0)
     animate_object(ANIMATED_OBJECT(arg0));
     update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_dive_kick_jump(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
@@ -587,7 +616,9 @@ void magma_dragoon_dive_kick_jump(struct MainObj* self)
     self->gravity = FIXED(-0.03125);
     self->ext.main_65.jump_start_y = self->y_pos.i.hi;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_dive_kick_rise(struct MainObj* self)
 {
     if ((self->ext.main_65.jump_start_y - self->y_pos.i.hi) > 0x50) {
@@ -602,8 +633,10 @@ void magma_dragoon_dive_kick_rise(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
 // magma_dragoon_dive_kick_dive
+#ifndef VERSION_DEMO
 void func_8007E6F8(struct MainObj* arg0)
 {
     s16 x;
@@ -640,8 +673,10 @@ void func_8007E6F8(struct MainObj* arg0)
         move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
 }
+#endif
 
 // magma_dragoon_dive_kick_land
+#ifndef VERSION_DEMO
 #if defined(VERSION_EU) && !defined(MMX4_PC)
 void func_8007E848(struct MainObj* self)
 {
@@ -678,21 +713,27 @@ void func_8007E848(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 #endif
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_dive_kick(struct MainObj* self)
 {
     magma_dragoon_dive_kick_funcs[self->unk6](self);
     update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_flame_burst_start(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
     set_animation(ANIMATED_OBJECT(self), 0xB);
     self->unk6++;
 }
+#endif
 
 // magma_dragoon_flame_burst_fire
+#ifndef VERSION_DEMO
 void func_8007E95C(struct MainObj* arg0)
 {
     struct ShotObj* shot;
@@ -724,13 +765,17 @@ void func_8007E95C(struct MainObj* arg0)
         set_animation(arg0, 0);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_flame_burst(struct MainObj* self)
 {
     magma_dragoon_flame_burst_funcs[self->unk6](self);
     update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_fire_volley_start(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
@@ -738,7 +783,9 @@ void magma_dragoon_fire_volley_start(struct MainObj* self)
     func_8001540C(2, SATURN_SOUND(3, 0x80), self);
     self->unk6++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_fire_volley_fire(struct MainObj* self)
 {
     s8 event;
@@ -775,7 +822,9 @@ void magma_dragoon_fire_volley_fire(struct MainObj* self)
         self->animation_step.fields.event = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_fire_volley_wait(struct MainObj* self)
 {
     animate_object((struct AnimatedObj*)self);
@@ -784,13 +833,17 @@ void magma_dragoon_fire_volley_wait(struct MainObj* self)
         self->unk6 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_fire_volley(struct MainObj* self)
 {
     magma_dragoon_fire_volley_funcs[self->unk6](self);
     update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_breath_start(struct MainObj* self)
 {
     if (self->x_pos.i.hi > magma_dragoon_arena_center) {
@@ -802,7 +855,9 @@ void magma_dragoon_breath_start(struct MainObj* self)
     func_8001540C(2, SATURN_SOUND(3, 0x80), self);
     self->unk6++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_breath_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -833,13 +888,17 @@ void magma_dragoon_breath_fire(struct MainObj* self)
         set_animation(self, 0);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_breath(struct MainObj* self)
 {
     magma_dragoon_breath_funcs[self->unk6](self);
     update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_leap_center_start(struct MainObj* self)
 {
     if (self->x_pos.i.hi > magma_dragoon_arena_center) {
@@ -858,7 +917,9 @@ void magma_dragoon_leap_center_start(struct MainObj* self)
     self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_leap_center_glide(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -881,7 +942,9 @@ void magma_dragoon_leap_center_glide(struct MainObj* self)
         self->unk6++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_leap_center_land(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -894,7 +957,9 @@ void magma_dragoon_leap_center_land(struct MainObj* self)
         func_8001540C(2, SATURN_SOUND(2, 0x7F), self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_leap_center_recover(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -904,13 +969,17 @@ void magma_dragoon_leap_center_recover(struct MainObj* self)
         self->unk5 = 7;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_leap_center(struct MainObj* self)
 {
     magma_dragoon_leap_center_funcs[self->unk6](self);
     update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_leap_wall_start(struct MainObj* self)
 {
     self->ext.main_65.leap_frames = 0x40;
@@ -930,8 +999,10 @@ void magma_dragoon_leap_wall_start(struct MainObj* self)
     }
     self->unk6++;
 }
+#endif
 
 // magma_dragoon_leap_wall_air
+#ifndef VERSION_DEMO
 #if defined(VERSION_EU) && !defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007F174);
 #else
@@ -977,7 +1048,9 @@ void func_8007F174(struct MainObj* arg0)
     }
 }
 #endif
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_leap_wall_finish(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
@@ -991,13 +1064,17 @@ void magma_dragoon_leap_wall_finish(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_leap_wall(struct MainObj* self)
 {
     magma_dragoon_leap_wall_funcs[self->unk6](self);
     update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_fireball_start(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
@@ -1005,8 +1082,10 @@ void magma_dragoon_fireball_start(struct MainObj* self)
     self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
+#endif
 
 // magma_dragoon_fireball_fire
+#ifndef VERSION_DEMO
 void func_8007F404(struct MainObj* self)
 {
     s32 x;
@@ -1043,13 +1122,17 @@ void func_8007F404(struct MainObj* self)
         self->unk6 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_fireball(struct MainObj* self)
 {
     magma_dragoon_fireball_funcs[self->unk6](self);
     update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_fireball_low_start(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
@@ -1057,8 +1140,10 @@ void magma_dragoon_fireball_low_start(struct MainObj* self)
     self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
+#endif
 
 // magma_dragoon_fireball_low_fire
+#ifndef VERSION_DEMO
 void func_8007F5B0(struct MainObj* self)
 {
     s32 x;
@@ -1092,7 +1177,9 @@ void func_8007F5B0(struct MainObj* self)
         }
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_fireball_low(struct MainObj* self)
 {
     magma_dragoon_fireball_low_funcs[self->unk6](self);
@@ -1103,7 +1190,9 @@ void magma_dragoon_fireball_low(struct MainObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_rising_punch_start(struct MainObj* self)
 {
     self->contact_damage = 8;
@@ -1113,8 +1202,10 @@ void magma_dragoon_rising_punch_start(struct MainObj* self)
     self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
+#endif
 
 // magma_dragoon_rising_punch_charge
+#ifndef VERSION_DEMO
 void func_8007F780(struct MainObj* arg0)
 {
     s16 distance;
@@ -1143,7 +1234,9 @@ void func_8007F780(struct MainObj* arg0)
             arg0->x_accel = -0x2000;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_rising_punch_rise(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -1166,7 +1259,9 @@ void magma_dragoon_rising_punch_rise(struct MainObj* self)
         self->attack_box = (const u8*)&magma_dragoon_attack_box;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_rising_punch_land(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -1181,7 +1276,9 @@ void magma_dragoon_rising_punch_land(struct MainObj* self)
         func_8001540C(2, SATURN_SOUND(2, 0x7F), self);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_rising_punch_recover(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -1199,14 +1296,18 @@ void magma_dragoon_rising_punch_recover(struct MainObj* self)
         self->unk5 = 9;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_rising_punch(struct MainObj* self)
 {
     magma_dragoon_rising_punch_funcs[self->unk6](self);
     update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
+#endif
 
 // magma_dragoon_stagger_start
+#ifndef VERSION_DEMO
 void func_8007FAA4(struct MainObj* arg0)
 {
     struct MiscObj* misc;
@@ -1229,7 +1330,9 @@ void func_8007FAA4(struct MainObj* arg0)
     }
     arg0->unk6++;
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_stagger_rise(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -1238,7 +1341,9 @@ void magma_dragoon_stagger_rise(struct MainObj* self)
         self->unk6++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_stagger_burn(struct MainObj* self)
 {
     struct MainObj* child;
@@ -1254,7 +1359,9 @@ void magma_dragoon_stagger_burn(struct MainObj* self)
         self->unk6++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_stagger_fall(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -1270,7 +1377,9 @@ void magma_dragoon_stagger_fall(struct MainObj* self)
         self->unk7C = 1;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_stagger_recover(struct MainObj* self)
 {
     animate_object((struct AnimatedObj*)self);
@@ -1279,18 +1388,22 @@ void magma_dragoon_stagger_recover(struct MainObj* self)
         self->unk6 = 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_stagger(struct MainObj* self)
 {
     magma_dragoon_stagger_funcs[self->unk6](self);
     update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
+#endif
 
 void magma_dragoon_hold(struct MainObj* self)
 {
 }
 
 // magma_dragoon_main
+#ifndef VERSION_DEMO
 void func_8007FD24(struct MainObj* arg0)
 {
     s32 hit = func_8002DD04(arg0);
@@ -1332,7 +1445,9 @@ void func_8007FD24(struct MainObj* arg0)
     CollisionRelated((struct PlayerObj*)arg0);
     func_8002D9BC(arg0);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_death_start(struct MainObj* self)
 {
     self->unk5++;
@@ -1344,8 +1459,10 @@ void magma_dragoon_death_start(struct MainObj* self)
     player_start_script_action(0x14, g_Player.unk15);
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
 // magma_dragoon_death_flash
+#ifndef VERSION_DEMO
 void func_8007FF00(struct MainObj* arg0)
 {
     struct EffectObj* effect;
@@ -1372,8 +1489,10 @@ void func_8007FF00(struct MainObj* arg0)
 
     update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
 }
+#endif
 
 // magma_dragoon_death_begin_explosion
+#ifndef VERSION_DEMO
 void func_8007FFFC(struct MainObj* arg0)
 {
     struct BaseObj* effect = (struct BaseObj*)arg0->ext.main_65.object;
@@ -1445,7 +1564,9 @@ void func_8007FFFC(struct MainObj* arg0)
         ZeroObjectState(OBJECT_HEADER(arg0));
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_death_wait_explosion(struct MainObj* self, s32 arg1, s32 arg2)
 {
     if (0 == self->ext.main_65.object->active) {
@@ -1459,7 +1580,9 @@ void magma_dragoon_death_wait_explosion(struct MainObj* self, s32 arg1, s32 arg2
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_death_wait_dialog(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
@@ -1470,6 +1593,7 @@ void magma_dragoon_death_wait_dialog(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
+#endif
 
 #ifdef MMX4_PC
 #define MAGMA_DRAGOON_SMOKE(self, kind)                                  \
@@ -1484,6 +1608,7 @@ void magma_dragoon_death_wait_dialog(struct MainObj* self)
         (self)->y_pos.i.hi + (get_random() & 0x1F), kind)
 #endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_death_smoke(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
@@ -1503,7 +1628,9 @@ void magma_dragoon_death_smoke(struct MainObj* self)
         update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_death_vanish(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
@@ -1524,19 +1651,25 @@ void magma_dragoon_death_vanish(struct MainObj* self)
         update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_death_end(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
         engine_obj.unkF = 1;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_death(struct MainObj* self)
 {
     magma_dragoon_death_funcs[self->unk5](self);
 }
+#endif
 
+#ifndef VERSION_DEMO
 void magma_dragoon_update(struct MainObj* self)
 {
     self->on_screen = 0;
@@ -1545,7 +1678,134 @@ void magma_dragoon_update(struct MainObj* self)
     CollisionRelated((struct PlayerObj*)self);
     magma_dragoon_state_funcs[self->state](self);
 }
+#endif
 
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 magma_dragoon_terrain_box;
+extern struct Unk_unk68 magma_dragoon_hurt_box;
+extern struct Unk_unk68 magma_dragoon_crouch_hurt_box;
+extern struct Unk_unk68 magma_dragoon_attack_box;
+extern struct Unk_unk68 magma_dragoon_leap_attack_box;
+extern struct Unk_unk68 magma_dragoon_punch_attack_box;
+extern struct Unk_unk68 magma_dragoon_dive_kick_attack_box;
+extern union AnimationStep magma_dragoon_anim_0[];
+extern struct Unk_unk68 magma_dragoon_anim_1[32];
+extern union AnimationStep magma_dragoon_anim_2[];
+extern union AnimationStep magma_dragoon_anim_3[];
+extern struct Unk_unk68 magma_dragoon_anim_4[18];
+extern struct Unk_unk68 magma_dragoon_anim_5[19];
+extern union AnimationStep magma_dragoon_anim_7[];
+extern union AnimationStep magma_dragoon_anim_8[];
+extern union AnimationStep magma_dragoon_anim_9[];
+extern union AnimationStep magma_dragoon_anim_10[];
+extern union AnimationStep magma_dragoon_anim_11[];
+extern union AnimationStep magma_dragoon_anim_12[55];
+extern union AnimationStep magma_dragoon_anim_13[];
+extern struct Unk_unk68 magma_dragoon_anim_14[12];
+extern struct Unk_unk68 magma_dragoon_anim_15[3];
+extern union AnimationStep magma_dragoon_anim_16[];
+extern union AnimationStep magma_dragoon_anim_17[];
+extern union AnimationStep magma_dragoon_anim_18[];
+extern struct Unk_unk68 magma_dragoon_anim_19[3];
+extern struct Unk_unk68 magma_dragoon_anim_20[12];
+extern struct Unk_unk68 magma_dragoon_anim_21[29];
+extern u8 magma_dragoon_anim_22[172];
+extern union AnimationStep magma_dragoon_anim_24[];
+extern union AnimationStep magma_dragoon_anim_23[];
+extern struct Unk_unk68 magma_dragoon_anim_25[18];
+extern union AnimationStep magma_dragoon_anim_26[];
+extern union AnimationStep magma_dragoon_anim_27[];
+extern struct Unk_unk68 magma_dragoon_anim_28[11];
+extern struct Unk_unk68 magma_dragoon_anim_29[11];
+extern struct Unk_unk68 magma_dragoon_anim_30[8];
+extern struct Unk_unk68 magma_dragoon_anim_31[5];
+extern union AnimationStep magma_dragoon_anim_32[];
+extern union AnimationStep magma_dragoon_anim_33[];
+extern union AnimationStep magma_dragoon_anim_34[];
+extern struct Unk_unk68 magma_dragoon_anim_35[31];
+extern union AnimationStep magma_dragoon_anim_6[];
+extern union AnimationStep magma_dragoon_anim_36[];
+extern union AnimationStep magma_dragoon_anim_37[];
+extern void* magma_dragoon_animations[38];
+extern struct Unk_unk68 magma_dragoon_fire_volley_debris;
+extern void (*magma_dragoon_intro_funcs[8])();
+extern void (*magma_dragoon_dive_kick_funcs[4])();
+extern void (*magma_dragoon_flame_burst_funcs[2])();
+extern void (*magma_dragoon_fire_volley_funcs[3])();
+extern void (*magma_dragoon_breath_funcs[2])();
+extern void (*magma_dragoon_leap_center_funcs[4])();
+extern void (*magma_dragoon_leap_wall_funcs[3])();
+extern void (*magma_dragoon_fireball_funcs[2])();
+extern void (*magma_dragoon_fireball_low_funcs[2])(struct MainObj*);
+extern void (*magma_dragoon_rising_punch_funcs[5])();
+extern void (*magma_dragoon_stagger_funcs[5])();
+extern void (*magma_dragoon_step_funcs[14])();
+extern void (*magma_dragoon_death_funcs[8])();
+extern void (*magma_dragoon_state_funcs[3])();
+#else
+#ifdef VERSION_DEMO
+extern struct Unk_unk68 magma_dragoon_terrain_box;
+extern struct Unk_unk68 magma_dragoon_hurt_box;
+extern struct Unk_unk68 magma_dragoon_crouch_hurt_box;
+extern struct Unk_unk68 magma_dragoon_attack_box;
+extern struct Unk_unk68 magma_dragoon_leap_attack_box;
+extern struct Unk_unk68 magma_dragoon_punch_attack_box;
+extern struct Unk_unk68 magma_dragoon_dive_kick_attack_box;
+extern union AnimationStep magma_dragoon_anim_0[];
+extern struct Unk_unk68 magma_dragoon_anim_1[32];
+extern union AnimationStep magma_dragoon_anim_2[];
+extern union AnimationStep magma_dragoon_anim_3[];
+extern struct Unk_unk68 magma_dragoon_anim_4[18];
+extern struct Unk_unk68 magma_dragoon_anim_5[19];
+extern union AnimationStep magma_dragoon_anim_7[];
+extern union AnimationStep magma_dragoon_anim_8[];
+extern union AnimationStep magma_dragoon_anim_9[];
+extern union AnimationStep magma_dragoon_anim_10[];
+extern union AnimationStep magma_dragoon_anim_11[];
+extern union AnimationStep magma_dragoon_anim_12[55];
+extern union AnimationStep magma_dragoon_anim_13[];
+extern struct Unk_unk68 magma_dragoon_anim_14[12];
+extern struct Unk_unk68 magma_dragoon_anim_15[3];
+extern union AnimationStep magma_dragoon_anim_16[];
+extern union AnimationStep magma_dragoon_anim_17[];
+extern union AnimationStep magma_dragoon_anim_18[];
+extern struct Unk_unk68 magma_dragoon_anim_19[3];
+extern struct Unk_unk68 magma_dragoon_anim_20[12];
+extern struct Unk_unk68 magma_dragoon_anim_21[29];
+extern u8 magma_dragoon_anim_22[172];
+extern union AnimationStep magma_dragoon_anim_24[];
+extern union AnimationStep magma_dragoon_anim_23[];
+extern struct Unk_unk68 magma_dragoon_anim_25[18];
+extern union AnimationStep magma_dragoon_anim_26[];
+extern union AnimationStep magma_dragoon_anim_27[];
+extern struct Unk_unk68 magma_dragoon_anim_28[11];
+extern struct Unk_unk68 magma_dragoon_anim_29[11];
+extern struct Unk_unk68 magma_dragoon_anim_30[8];
+extern struct Unk_unk68 magma_dragoon_anim_31[5];
+extern union AnimationStep magma_dragoon_anim_32[];
+extern union AnimationStep magma_dragoon_anim_33[];
+extern union AnimationStep magma_dragoon_anim_34[];
+extern struct Unk_unk68 magma_dragoon_anim_35[31];
+extern union AnimationStep magma_dragoon_anim_6[];
+extern union AnimationStep magma_dragoon_anim_36[];
+extern union AnimationStep magma_dragoon_anim_37[];
+extern void* magma_dragoon_animations[38];
+extern struct Unk_unk68 magma_dragoon_fire_volley_debris;
+extern void (*magma_dragoon_intro_funcs[8])();
+extern void (*magma_dragoon_dive_kick_funcs[4])();
+extern void (*magma_dragoon_flame_burst_funcs[2])();
+extern void (*magma_dragoon_fire_volley_funcs[3])();
+extern void (*magma_dragoon_breath_funcs[2])();
+extern void (*magma_dragoon_leap_center_funcs[4])();
+extern void (*magma_dragoon_leap_wall_funcs[3])();
+extern void (*magma_dragoon_fireball_funcs[2])();
+extern void (*magma_dragoon_fireball_low_funcs[2])(struct MainObj*);
+extern void (*magma_dragoon_rising_punch_funcs[5])();
+extern void (*magma_dragoon_stagger_funcs[5])();
+extern void (*magma_dragoon_step_funcs[14])();
+extern void (*magma_dragoon_death_funcs[8])();
+extern void (*magma_dragoon_state_funcs[3])();
+#else
 struct Unk_unk68 magma_dragoon_terrain_box = { -1, 22, 13, 17 };
 
 struct Unk_unk68 magma_dragoon_hurt_box = { -16, -28, 31, 67 };
@@ -2395,3 +2655,5 @@ void (*magma_dragoon_state_funcs[3])() = {
     func_8007FD24,
     magma_dragoon_death,
 };
+#endif
+#endif

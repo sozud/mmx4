@@ -118,7 +118,12 @@ void func_8009E188(struct ShotObj* self)
             goto despawn;
         if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
             spawn_explosion(BASE_OBJECT(self));
+#ifdef VERSION_DEMO
+            self->on_screen = 0;
+            self->state = 2;
+#else
             goto despawn;
+#endif
         }
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20))
@@ -369,7 +374,11 @@ void train_boss_arm_return(struct ShotObj* self)
 
 void train_boss_arm_wait_sync(struct ShotObj* self)
 {
+#ifdef VERSION_DEMO
+    if (((u8)self->unk7C->active & 0xF) == (train_boss_arm_extended_bits[self->unk2] ^ 0xF)) {
+#else
     if ((self->unk7C->active & 7) == ((self->unk7C->active & 0x70) >> 4)) {
+#endif
         self->unk5 = 3;
     }
     if (ARM_OWNER_STATE(self->unk7C) != 4) {

@@ -25,9 +25,19 @@ void func_800CA52C(struct MiscObj* self)
     self->unk40 = OBJECT_STAGE_TEXTURE(1);
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[1];
     self->animation_table = (u32**)stage_portrait_animations;
+#ifdef VERSION_DEMO
+    self->x_pos.val = 0xE40000;
+    self->y_pos.val = 0x1880000;
+#endif
     self->bg_offset = 0;
     self->unk15 = 0;
     self->unk16 = 1;
+#ifdef VERSION_DEMO
+    set_animation_frame(ANIMATED_OBJECT(self), 0, 1);
+    self->unk7 = 1;
+    self->state++;
+    is_on_screen(BASE_OBJECT(self));
+#else
     if (self->unk2 == 0) {
         self->x_pos.val = 0xE40000;
         self->y_pos.val = 0x1880000;
@@ -41,6 +51,7 @@ void func_800CA52C(struct MiscObj* self)
         self->unk42 = OBJECT_PALETTE_FROM_COLOR(0x1F);
         self->state = 2;
     }
+#endif
 }
 
 void stage_portrait_select(struct MiscObj* self)
@@ -58,7 +69,17 @@ void stage_portrait_select(struct MiscObj* self)
         animation = engine_state;
         self->unk7 = animation;
         if (engine_state >= 8) {
+#ifdef VERSION_DEMO
+            if ((u8)engine_obj.sub_tanks[2] < 7U) {
+                animation = 8;
+            } else if ((u8)engine_obj.sub_tanks[2] < 10U) {
+                animation = 9;
+            } else {
+                animation = 10;
+            }
+#else
             animation = engine_obj.unk5F < 7U ? 8 : 9;
+#endif
         }
         set_animation_frame(ANIMATED_OBJECT(self), 0,
             (s8)mission_stage_order[animation] - 1);
@@ -83,18 +104,23 @@ void stage_portrait_select(struct MiscObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifndef VERSION_DEMO
 void stage_portrait_show(struct MiscObj* self)
 {
     is_on_screen(BASE_OBJECT(self));
 }
 
+#endif
+
 void stage_portrait_update(struct MiscObj* self)
 {
+#ifndef VERSION_DEMO
     self->on_screen = 0;
+#endif
     stage_portrait_state_funcs[self->state](self);
 }
 
-union AnimationStep stage_portrait_anim_0[12] = {
+union AnimationStep stage_portrait_anim_0[DEMO_ALT(12, 11)] = {
     { 30, 0, 1, 0x00 },
     { 30, 0, 1, 0x01 },
     { 30, 0, 1, 0x02 },
@@ -105,14 +131,20 @@ union AnimationStep stage_portrait_anim_0[12] = {
     { 30, 0, 1, 0x07 },
     { 30, 0, 1, 0x08 },
     { 30, 0, 1, 0x09 },
+#ifdef VERSION_DEMO
+    { 30, 0, 0, 0x0A },
+#else
     { 30, 0, 1, 0x0A },
     { 30, 0, 1, 0x10 },
+#endif
 };
 
 union AnimationStep* stage_portrait_animations[1] = { stage_portrait_anim_0 };
 
-void (*stage_portrait_state_funcs[3])(struct MiscObj*) = {
+void (*stage_portrait_state_funcs[DEMO_ALT(3, 2)])(struct MiscObj*) = {
     func_800CA52C,
     stage_portrait_select,
+#ifndef VERSION_DEMO
     stage_portrait_show,
+#endif
 };

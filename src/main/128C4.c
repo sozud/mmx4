@@ -27,7 +27,7 @@ extern struct DialogueGlyphData D_801396C8;
 #include <string.h>
 #endif
 void func_80016F0C();
-extern u8 D_800F2B5C[21][12];
+extern u8 D_800F2B5C[DEMO_ALT(21, 16)][12];
 extern u8 D_800F2C58[];
 extern u8 D_800F2D18[];
 extern u32 D_800F2F08[12];
@@ -142,7 +142,19 @@ void func_80022138(void)
         replay->frame += 1;
     }
 }
+
+#ifdef VERSION_DEMO
+void demo_start_dialogue(arg_u16 message, arg_u8 portrait)
+{
+    abc_object.unkC = 0x80;
+    abc_object.unkA = 0x5A;
+    if (0) {
+        demo_start_dialogue(message, portrait);
+    }
+}
+#endif
 // start_dialogue
+#ifndef VERSION_DEMO
 #ifdef MMX4_SATURN
 static void hide_dialogue_part(struct MiscObj* part)
 {
@@ -465,10 +477,27 @@ void func_8002217C(message, portrait, delay_only)
     abc->unkD = 0;
 }
 #endif
+#endif
 void func_8002328C(struct AbcObj*);
 
 #define CONFIG D_801397DC
 
+#ifdef VERSION_DEMO
+#define DEMO_READY_TEXT 0
+
+void func_80022730(struct AbcObj* arg0)
+{
+    u16 value;
+
+    value = --abc_object.unkA;
+    if ((value << 0x10) == 0) {
+        if (DEMO_READY_TEXT) {
+            find_free_misc_obj();
+        }
+        abc_object.unkC = 0;
+    }
+}
+#else
 void func_80022730(struct AbcObj* arg0)
 {
     s32 charOffset;
@@ -876,6 +905,7 @@ void func_80022730(struct AbcObj* arg0)
         break;
     }
 }
+#endif
 
 #ifdef MMX4_SATURN
 void func_8002328C(struct AbcObj* arg0)

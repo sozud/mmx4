@@ -38,7 +38,9 @@ void shell_crawler_shot_init(struct ShotObj* self)
     self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk54 = shell_crawler_shot_hit_box;
     self->unk50.data = shell_crawler_shot_hit_box;
+#ifndef VERSION_DEMO
     self->unk58.data = (u8*)D_80106070;
+#endif
     self->unk68 = 0;
     self->unk60 = 2;
     self->y_pos.i.hi += 3;
@@ -51,9 +53,11 @@ void shell_crawler_shot_fly(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
     func_8002D9BC(self);
 
+#ifndef VERSION_DEMO
     if (func_8002DD04(MAIN_OBJECT(self)) != 0) {
         self->state = 2;
     }
+#endif
 
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
         update_on_screen(BASE_OBJECT(self), 0x10, 0x10);

@@ -133,6 +133,18 @@ void player_script_victory(struct PlayerObj* self);
 
 void player_stage_clear(struct PlayerObj* self);
 
+#ifdef VERSION_DEMO
+u8 player_hurt_animations[4] = { 0, 0x1C, 0x1D, 0x1E };
+
+struct PlayerHurtVelocity player_hurt_velocities[4] = {
+    { 0, 0, 0, 0 },
+    { 0x28000, 0x3000, 0, 0 },
+    { 0xC000, 0, 0x2C000, 0x4200 },
+    { 0, 0, 0, 0 },
+};
+
+u8 player_hurt_invincibility[4] = { 0, 0x4B, 0x64, 0 };
+#else
 u8 player_hurt_animations[5] = { 0, 0x21, 0x22, 0x24, 0x23 };
 
 struct PlayerHurtVelocity player_hurt_velocities[5] = {
@@ -148,6 +160,7 @@ u8 player_hurt_invincibility[5] = { 0, 0x4B, 0x64, 0, 0x4B };
 u8 player_leap_fall_animations[2] = { 0x67, 0x66 };
 
 static u16 s_PlayerEffectIdPad = 0;
+#endif
 
 s32 player_check_dash_jump_walk(struct PlayerObj* self)
 {
@@ -301,6 +314,7 @@ void player_update_double_tap(struct PlayerObj* self)
     }
 }
 
+#ifndef VERSION_DEMO
 s32 player_dash_should_end(struct PlayerObj* self)
 {
     s32 collision_side;
@@ -340,13 +354,18 @@ s32 player_dash_should_end(struct PlayerObj* self)
     }
     return 0;
 }
+#endif
 
 void player_check_capsule(struct PlayerObj* self)
 {
     u32 play_turn;
 
+#ifdef VERSION_DEMO
+    if (self->hurt_phase == 0 && self->capsule_state > 0) {
+#else
     if (self->capsule_state > 0 && self->hurt_phase <= 0) {
         player_clear_attack(self);
+#endif
 
         // maybe these can be combined? couldn't get a match
         play_turn = 0;
@@ -360,7 +379,7 @@ void player_check_capsule(struct PlayerObj* self)
             play_turn = 1;
         }
         if (play_turn) {
-            player_set_animation(self, 0x26);
+            player_set_animation(self, PLAYER_ANIM(0x26));
         }
 
         self->unk15 = PLAYER_FACING_RIGHT;
@@ -376,7 +395,11 @@ void player_check_ride(struct PlayerObj* self)
     if (self->ride_state > 0) {
         player_clear_dash_and_attack(self);
         player_reset_charge_and_weapon(self);
+#ifdef VERSION_DEMO
+        player_clear_weapon(self);
+#else
         player_reset_weapon(self);
+#endif
         self->unk68 = 0;
         self->air_state = 1;
         self->ride_state = -1;
@@ -385,6 +408,30 @@ void player_check_ride(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_DEMO
+s32 func_8003FA78_demo(struct PlayerObj* self)
+{
+    if (self->input_locked != 0) {
+        return 0;
+    }
+    if (self->shot_cooldown != 0) {
+        return 0;
+    }
+    if ((self->armor_parts & 8) == 0) {
+        return 0;
+    }
+    if (self->air_action != 0) {
+        return 0;
+    }
+    if (player_check_dash_input(self) != 0) {
+        player_enter_air_dash(self);
+        return 1;
+    }
+    return 0;
+}
+#endif
+
+#ifndef VERSION_DEMO
 s32 player_check_air_move(struct PlayerObj* self)
 {
     if (self->input_locked != 0) {
@@ -418,6 +465,7 @@ s32 player_check_air_move(struct PlayerObj* self)
     }
     return 0;
 }
+#endif
 
 s32 player_check_wall(struct PlayerObj* self)
 {
@@ -479,14 +527,16 @@ void player_check_damage(struct PlayerObj* self)
             EASY_HP_SET(0);
             self->hp = -0x80;
         }
-        if (self->touching_spikes != 0 && self->invincibility_timer == 0 && self->spike_immune == 0) {
+        if (self->touching_spikes != 0 && self->invincibility_timer == 0 && DEMO_ALT(self->spike_immune == 0, 1)) {
             EASY_HP_SET(0);
             self->hp = -0x80;
         }
         if (self->hp == -0x80) {
             EASY_HP_SET(0);
             self->hp = 0;
+#ifndef VERSION_DEMO
             engine_obj.gameplay_locked = 1;
+#endif
             player_reset_actions(self);
             player_reset_charge_and_weapon(self);
             self->unk68 = 0;
@@ -512,6 +562,9 @@ void player_check_damage(struct PlayerObj* self)
 void player_reset_actions(struct PlayerObj* self)
 {
     self->actions_reset = 1;
+#ifdef VERSION_DEMO
+    self->controlling_clone = 0;
+#endif
     self->dash_momentum = 0;
     self->air_action = 0;
     self->afterimage = 0;
@@ -633,7 +686,7 @@ s32 player_check_ladder_air(struct PlayerObj* self)
         if (self->attacking) {
             player_enter_ladder_shoot(self);
         } else {
-            player_set_animation(self, 0x1F);
+            player_set_animation(self, PLAYER_ANIM(0x1F));
             player_enter_ladder_up(self);
         }
         return 1;
@@ -661,10 +714,14 @@ s32 func_80033FF0(struct PlayerObj* arg0)
     leave = 0;
     if (attribute != 0x20 && attribute != 0x21)
         leave = 1;
-    if (arg0->pressed_input & 0x80)
+    if (arg0->pressed_input & PLAYER_INPUT_JUMP)
         leave = 1;
     if (leave) {
-        player_set_animation(arg0, 0x1E);
+#ifdef VERSION_DEMO
+        player_set_animation(arg0, 0x19);
+#else
+        player_set_animation(arg0, PLAYER_ANIM(0x1E));
+#endif
         arg0->unk5 = 0xE;
         arg0->unk6 = 4;
         return 1;
@@ -724,6 +781,7 @@ void player_script_walk_to_mark(struct PlayerObj* self)
     }
 }
 
+#ifndef VERSION_DEMO
 s32 player_leap_check_peak(struct PlayerObj* self)
 {
     u32 result = 0;
@@ -762,7 +820,9 @@ s32 player_leap_check_peak(struct PlayerObj* self)
         return 0;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_leap_check_wall(struct PlayerObj* self)
 {
     u32 blocked;
@@ -789,7 +849,10 @@ void player_leap_check_wall(struct PlayerObj* self)
         self->unk6++;
     }
 }
+#endif
 
+#ifndef VERSION_DEMO
 void player_noop(void)
 {
 }
+#endif

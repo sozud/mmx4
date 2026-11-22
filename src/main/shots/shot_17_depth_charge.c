@@ -59,7 +59,7 @@ void func_8009C638(struct ShotObj* self)
         set_velocity_from_angle(MOVING_OBJECT(self), direction);
     } else {
         self->unk16 = 0x10;
-        self->unk60 = 3;
+        self->unk60 = DEMO_ALT(3, 2);
         self->unk68 = NULL;
         self->unk58.collision_data = D_80106070;
         set_animation(self, 8);
@@ -106,7 +106,9 @@ void depth_charge_fall(struct ShotObj* self)
     }
     if (self->y_pos.i.hi - background_objects[self->bg_offset].y_pos.i.hi >= 0xAC && self->y_vel.val < 0) {
         set_animation(self, 6);
+#ifndef VERSION_DEMO
         self->unk60 = 4;
+#endif
         self->unk50.data = depth_charge_sink_box;
         self->unk5++;
         self->y_pos.val = (background_objects[self->bg_offset].y_pos.i.hi + 0xAC) << 16;

@@ -64,12 +64,12 @@ void frost_walrus_fx_init(struct VisualObj* self)
     self->unk3C = self->unk50->unk3C;
     self->animation_table = self->unk50->animation_table;
     self->unk40 = self->unk50->unk40;
-    if (self->unk2 == 0x20) {
+    if (DEMO_ALT(self->unk2 == 0x20, 0)) {
         self->unk42 = self->unk50->unk42;
     } else {
         self->unk42 = self->unk50->unk42 & 0x7FFF;
     }
-    self->unk16 = VISUAL_SATURN_LAYER(3);
+    self->unk16 = DEMO_ALT(VISUAL_SATURN_LAYER(3), 4);
     self->bg_offset = (s8)(u8)g_Player.bg_offset;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
@@ -176,6 +176,13 @@ void frost_walrus_fx_blizzard_move(struct VisualObj* arg0)
 
 void frost_walrus_fx_regrow(struct VisualObj* arg0)
 {
+#ifdef VERSION_DEMO
+    animate_object(arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+#else
     arg0->unk42 = arg0->unk50->unk42;
     is_on_screen(BASE_OBJECT(arg0));
     if (g_Player.update_delay == 0) {
@@ -184,8 +191,8 @@ void frost_walrus_fx_regrow(struct VisualObj* arg0)
             ZeroObjectState(OBJECT_HEADER(arg0));
         }
     }
+#endif
 }
-
 void frost_walrus_fx_sparkle(struct VisualObj* arg0)
 {
     frost_walrus_fx_sparkle_funcs[arg0->unk6](arg0);
@@ -219,7 +226,9 @@ void func_800B3B94(struct VisualObj* arg0)
 void frost_walrus_fx_stagger(struct VisualObj* arg0)
 {
     frost_walrus_fx_stagger_funcs[arg0->unk6](arg0);
+#ifndef VERSION_DEMO
     arg0->unk42 = arg0->unk50->unk42;
+#endif
 }
 
 void frost_walrus_fx_stagger_start(struct VisualObj* arg0)

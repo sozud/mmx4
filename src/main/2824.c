@@ -55,6 +55,15 @@ void mmx4_pc_finish_cd_load(void);
 
 void func_80012328(void);
 
+#ifdef VERSION_DEMO
+extern u8 D_8013A858_demo;
+extern u16 D_801F8100;
+extern u16 D_801F8180;
+extern u16 D_801F8200;
+extern u16 D_801F8280;
+void func_8002A160_demo(u8 arg0);
+#endif
+
 // entrypoint
 #ifndef MMX4_SATURN
 void func_80012024(void)
@@ -79,6 +88,11 @@ void func_80012024(void)
         func_80012328();
         clear_vram_rect_ptrs();
         main_bss_state.frame_counter++;
+#ifdef VERSION_DEMO
+        if (D_8013A858_demo != 0 && D_801F8100 == 0 && D_801F8180 == 0 && D_801F8200 == 0 && D_801F8280 == 0) {
+            func_8002A160_demo(D_8013A858_demo - 1);
+        }
+#endif
         func_80012600();
         func_80014780();
         DrawSync(0);
@@ -95,6 +109,11 @@ void func_80012024(void)
 #endif
 
 #ifndef MMX4_SATURN
+#ifdef VERSION_DEMO
+void func_800BD6C0_demo(s32 arg0);
+extern s16 D_800FBCBC_demo;
+#endif
+
 void func_8001213C(void)
 {
 #ifdef VERSION_EU
@@ -106,17 +125,25 @@ void func_8001213C(void)
     func_800E9040();
     SetGeomOffset(0xA0, 0x78);
     SetGeomScreen(0x200);
+#ifdef VERSION_DEMO
+    func_800BD6C0_demo(0);
+#else
     InitPAD(pad_port1_packet, 0x22, &D_8012F46C, 0x22);
     StartPAD();
     InitCARD(1);
     StartCARD();
     _bu_init();
     InitMemcards();
+#endif
     func_80014DC4();
     func_80013588();
+#ifndef VERSION_DEMO
     ChangeClearPAD(0);
+#endif
     ClearImage(&D_800EE450, 0U, 0U, 0U);
+#ifndef VERSION_DEMO
     DrawSync(0);
+#endif
     SetDefDrawEnv(&draw_infos[0].drawenv, 0, 0, 0x140, 0xF0);
     SetDefDispEnv(&draw_infos[0].dispenv, 0, 0xF0, 0x140, 0xF0);
     SetDefDrawEnv(&draw_infos[1].drawenv, 0, 0xF0, 0x140, 0xF0);
@@ -124,11 +151,21 @@ void func_8001213C(void)
     func_800122E0(&draw_infos[0]);
     func_800122E0(&draw_infos[1]);
     func_80012560();
+#ifdef VERSION_DEMO
+    cur_random = 0xD37;
+    D_800FBCBC_demo = 0x78;
+    SP_DRAW_BUFFER = 0;
+    cur_draw_info = &draw_infos[0];
+    D_8013BD44 = 0;
+    D_80141BD2 = 0x2A30;
+    D_8013A858_demo = 0;
+#else
     SP_DRAW_BUFFER = 0;
     cur_draw_info = &draw_infos[0];
     cur_random = 0xD37;
     D_8013BD44 = 0;
     D_80141BD2 = 0x78;
+#endif
     func_80012740(0, &func_8001D064);
 }
 #endif
@@ -157,6 +194,25 @@ void func_800122E0(struct DrawInfo* arg0)
 extern u8 pad_port1_packet[0x22];
 extern struct ControllerButtons D_80166D50;
 
+#ifdef VERSION_DEMO
+u32 func_800BD710_demo(s32 arg0);
+
+void func_80012328(void)
+{
+    u32 pads;
+    u16 buttons;
+
+    pads = func_800BD710_demo(0);
+    buttons = pads;
+    controller_input.previous = controller_input.held;
+    controller_input.held = buttons;
+    controller_input.pressed = buttons & (buttons ^ controller_input.previous);
+    buttons = pads >> 16;
+    D_80166D50.previous = D_80166D50.current;
+    D_80166D50.current = buttons;
+    D_80166D50.pressed = buttons & (buttons ^ D_80166D50.previous);
+}
+#else
 void func_80012328(void)
 {
     s32 raw;
@@ -205,8 +261,30 @@ void func_80012328(void)
     D_80166D50.pressed = buttons & (buttons ^ D_80166D50.previous);
 }
 #endif
+#endif
 
 #ifndef MMX4_SATURN
+#ifdef VERSION_DEMO
+void func_80012454(void)
+{
+    if ((D_8013BD44 != 0) && (main_bss_state.transition.active == 0)) {
+        if ((controller_input.held & (PADstart | PADselect)) == (PADstart | PADselect)) {
+            if (--D_800FBCBC_demo == 0) {
+                D_8013A858_demo = 1;
+            }
+        } else {
+            D_800FBCBC_demo = 0x78;
+        }
+        if (controller_input.held == 0) {
+            if (controller_input.previous == 0 && --D_80141BD2 == 0) {
+                D_8013A858_demo = 1;
+            }
+        } else {
+            D_80141BD2 = 0x2A30;
+        }
+    }
+}
+#else
 void func_80012454(void)
 {
     if ((D_8013BD44 != 0) && (main_bss_state.transition.active == 0)) {
@@ -230,6 +308,30 @@ void func_80012454(void)
             D_80141BD2 = 0x78;
         }
     }
+}
+#endif
+#endif
+
+#ifdef VERSION_DEMO
+extern char* D_800C4EC8_demo[2];
+void func_800BD738_demo(void); // PadStop
+void func_800C47CC_demo(void); // _96_remove
+void func_800C47BC_demo(char* file, u32 stack, u32 stack_size); // LoadExec
+
+void func_8002A160_demo(u8 exec)
+{
+    func_8001D134();
+    func_80015178();
+    DrawSync(0);
+    StopRCnt(RCntCNT0);
+    StopRCnt(RCntCNT1);
+    StopRCnt(RCntCNT2);
+    StopRCnt(RCntCNT3);
+    ResetGraph(3);
+    func_800BD738_demo();
+    StopCallback();
+    func_800C47CC_demo();
+    func_800C47BC_demo(D_800C4EC8_demo[exec], 0x801FFF00, 0);
 }
 #endif
 
@@ -514,7 +616,9 @@ void func_800129F0(s32 amount)
 }
 #endif
 
-#ifdef VERSION_JP
+#ifdef VERSION_DEMO
+char D_800EE40C[36] = "CAPCOM May  8 1997 14:16:53 CAPCOM";
+#elif defined(VERSION_JP)
 char D_800EE40C[36] = "CAPCOM Jun 20 1997 12:14:39 CAPCOM";
 #elif defined(VERSION_EU)
 char D_800EE40C[36] = "CAPCOM Aug  3 1998 09:30:21 CAPCOM";
@@ -546,7 +650,9 @@ u16 D_800EE430[16] = {
     0x4000,
     0x0080,
     0x0010,
+#ifndef VERSION_DEMO
     0x0002,
+#endif
     0x0040,
     0x0020,
     0x0008,
@@ -564,6 +670,12 @@ RECT D_800EE450 = { 0, 0, 1024, 512 };
 #endif
 #ifdef MMX4_WIN32
 u8 pc_2824_data[24] = { 0x48, 0x00, 0x69, 0x00, 0x00, 0xB0, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x02, 0x48, 0x00, 0x69, 0x00, 0x00, 0xB0, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x02 };
+#endif
+
+#ifdef VERSION_DEMO
+char* D_800C4EC8_demo[] = { "cdrom:\\MENU.EXE;1", "cdrom:\\D8.EXE;1" };
+
+const u16 rodata_2824_pad = 0;
 #endif
 
 u32 D_800EE458 = 0;

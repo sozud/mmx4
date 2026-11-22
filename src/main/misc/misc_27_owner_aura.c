@@ -44,7 +44,11 @@ void owner_aura_follow(struct MiscObj* self)
 
 void owner_aura_despawn(struct MiscObj* self)
 {
+#ifdef VERSION_DEMO
+    despawn_object(OBJECT_HEADER(self));
+#else
     ZeroObjectState(OBJECT_HEADER(self));
+#endif
 }
 
 void (*owner_aura_state_funcs[])(struct MiscObj*) = {

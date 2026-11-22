@@ -414,6 +414,67 @@ jobs:
           path: info-reports
           if-no-files-found: error
 
+  build-demo:
+    name: Build PSX (demo)
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    environment:
+      name: ${{ github.event_name == 'pull_request_target' && 'private-ci' || 'ci' }}
+    env:
+      VERSION: demo
+    steps:
+      - name: Install requirements
+        run: sudo apt-get install gcc-mipsel-linux-gnu ninja-build
+      - name: Install python requirements
+        run: pip3 install splat64==0.24.6 spimdisasm==1.26.0 rabbitizer==1.11.0 n64img==0.3.3 pygfxd crunch64 tabulate
+      - name: Clone main repo
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          submodules: true
+          persist-credentials: false
+          allow-unsafe-pr-checkout: true
+      - name: Get dependencies
+        uses: actions/checkout@v7
+        with:
+          repository: sozud/mmx4-deps
+          ref: main
+          token: ${{ secrets.MMX4_DEPS_TOKEN }}
+          path: 'disks/dependencies'
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: exe/X4.EXE
+      - name: Setting up dependencies
+        id: deps
+        run: |
+          if [ -f disks/dependencies/exe/X4.EXE ]; then
+            mkdir -p disks/demo
+            cp disks/dependencies/exe/X4.EXE disks/demo/
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::exe/X4.EXE (SLPM-80121 demo disc) is not in mmx4-deps; skipping the demo build"
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Get Compiler
+        if: steps.deps.outputs.present == 'true'
+        run: sh compiler.sh
+      - name: Split game data
+        if: steps.deps.outputs.present == 'true'
+        run: sh split.sh
+      - name: Build binaries
+        if: steps.deps.outputs.present == 'true'
+        run: sh build.sh
+      - name: Generate progress report
+        if: steps.deps.outputs.present == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: sh progress_report.sh
+      - name: Upload progress report
+        if: steps.deps.outputs.present == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v7
+        with:
+          name: demo_report
+          path: build/demo/report.json
+
   publish-info:
     name: Publish reports to mmx4-info
     needs: [build-linux, oracle-scene-suite, build-and-test]
