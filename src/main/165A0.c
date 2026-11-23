@@ -548,7 +548,6 @@ void func_80026894(s32 layer)
 }
 #endif
 
-#if defined(VERSION_EU) || defined(MMX4_GAMECUBE)
 void func_80026AA0(s32 layer)
 {
     SPRT_16* sprite;
@@ -567,6 +566,8 @@ void func_80026AA0(s32 layer)
     u32 attributes;
     s32 list_layer;
     u32 bucket;
+    u8 tile_v;
+    u8 tile_u;
 
     sprite = SP_BG_PRIM_CURSOR;
     x = background_objects[layer].x_pos.i.hi;
@@ -597,8 +598,10 @@ void func_80026AA0(s32 layer)
                 }
                 sprite->x0 = sprite_x;
                 sprite->y0 = sprite_y;
-                sprite->u0 = (attributes >> 12) & 0xF0;
-                sprite->v0 = (attributes >> 16) & 0xF0;
+                tile_v = (attributes >> 16) & 0xF0;
+                tile_u = (attributes >> 12) & 0xF0;
+                sprite->u0 = tile_u;
+                sprite->v0 = tile_v;
                 bucket = (attributes & 0xFF000000) >> 24;
                 list_layer = layer;
                 if (entry & 0x8000) {
@@ -618,9 +621,6 @@ void func_80026AA0(s32 layer)
     }
     SP_BG_PRIM_CURSOR = sprite;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/165A0", func_80026AA0);
-#endif
 
 void func_80026CEC(s32 arg0)
 {
@@ -708,7 +708,6 @@ void func_80026CEC(s32 arg0)
     }
 }
 
-#if defined(VERSION_EU)
 void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
 {
     SPRT_16* sprite = SP_BG_PRIM_CURSOR;
@@ -732,11 +731,13 @@ void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
             attributes = (SP_BG_TILE_ATTRS + block * 256 + inner_y * 16)[tile_x];
             page = (attributes >> 8) & 0xFF;
             if (page != 0) {
+                u8 tile_v = attributes & 0xF0;
+                u8 tile_u = (attributes & 0xF) << 4;
                 sprite->x0 = sprite_x;
                 sprite->y0 = y;
                 sprite->clut = attributes >> 16;
-                sprite->u0 = (attributes & 0xF) << 4;
-                sprite->v0 = attributes & 0xF0;
+                sprite->u0 = tile_u;
+                sprite->v0 = tile_v;
                 idx = page - 0x15;
                 setaddr(D_8013BD50[buffer][layer][idx], sprite);
                 D_8013BD50[buffer][layer][idx] = (s32*)sprite;
@@ -750,9 +751,7 @@ void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
     }
     SP_BG_PRIM_CURSOR = sprite;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/165A0", func_800270F8);
-#endif
+
 void func_8002728C(void)
 {
     s32 temp_s1;
