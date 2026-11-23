@@ -551,6 +551,9 @@ void func_80026894(s32 layer)
 }
 #endif
 
+#ifdef VERSION_DEMO
+INCLUDE_ASM("main/nonmatchings/165A0", func_80026AA0);
+#else
 void func_80026AA0(s32 layer)
 {
     SPRT_16* sprite;
@@ -645,6 +648,7 @@ void func_80026AA0(s32 layer)
     }
     SP_BG_PRIM_CURSOR = sprite;
 }
+#endif
 
 void func_80026CEC(s32 arg0)
 {
@@ -732,6 +736,9 @@ void func_80026CEC(s32 arg0)
     }
 }
 
+#ifdef VERSION_DEMO
+INCLUDE_ASM("main/nonmatchings/165A0", func_800270F8);
+#else
 void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
 {
     SPRT_16* sprite = SP_BG_PRIM_CURSOR;
@@ -784,6 +791,7 @@ void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
     }
     SP_BG_PRIM_CURSOR = sprite;
 }
+#endif
 
 void func_8002728C(void)
 {

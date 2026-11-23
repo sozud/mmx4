@@ -779,7 +779,7 @@ void func_80028690(struct BackgroundObj* bg)
         }
     }
 }
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) || defined(VERSION_DEMO)
 INCLUDE_ASM("main/nonmatchings/background", func_80028690);
 #else
 // the target reads the player position from memory on every use
