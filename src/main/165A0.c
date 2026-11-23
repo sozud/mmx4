@@ -10,6 +10,9 @@
 
 #ifdef MMX4_PC
 extern void func_80026CEC(s32 arg0);
+extern P_TAG* background_heads[2][6][8];
+extern P_TAG* background_tails[2][6][8];
+int heat_draw_layer(s32 layer);
 #endif
 
 void func_800264D0(s32 layer, s32 x, s32 y);
@@ -566,6 +569,9 @@ void func_80026AA0(s32 layer)
     u32 attributes;
     s32 list_layer;
     u32 bucket;
+#ifdef MMX4_PC
+    int heat;
+#endif
     u8 tile_v;
     u8 tile_u;
 
@@ -577,6 +583,13 @@ void func_80026AA0(s32 layer)
     start_x = -(x & 15);
     tile_y = (y / 16) & 31;
     sprite_y = -(y & 15);
+
+#ifdef MMX4_PC
+    if (mmx4_pc_hide_background) {
+        return;
+    }
+    heat = mmx4_pc_saturn_heat && heat_draw_layer(layer);
+#endif
 
     for (row = 0; row < 16; row++) {
         sprite_x = start_x;
@@ -607,8 +620,19 @@ void func_80026AA0(s32 layer)
                 if (entry & 0x8000) {
                     list_layer += 3;
                 }
+#ifdef MMX4_PC
+                if (!heat) {
+                    if (background_tails[buffer][list_layer][bucket] == NULL) {
+                        background_heads[buffer][list_layer][bucket] = (P_TAG*)sprite;
+                    } else {
+                        setaddr(background_tails[buffer][list_layer][bucket], sprite);
+                    }
+                    background_tails[buffer][list_layer][bucket] = (P_TAG*)sprite;
+                }
+#else
                 setaddr(D_8013BD50[buffer][list_layer][bucket], sprite);
                 D_8013BD50[buffer][list_layer][bucket] = (s32*)sprite;
+#endif
                 sprite++;
             }
             sprite_x += 16;
@@ -739,8 +763,17 @@ void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
                 sprite->u0 = tile_u;
                 sprite->v0 = tile_v;
                 idx = page - 0x15;
+#ifdef MMX4_PC
+                if (background_tails[buffer][layer][idx] == NULL) {
+                    background_heads[buffer][layer][idx] = (P_TAG*)sprite;
+                } else {
+                    setaddr(background_tails[buffer][layer][idx], sprite);
+                }
+                background_tails[buffer][layer][idx] = (P_TAG*)sprite;
+#else
                 setaddr(D_8013BD50[buffer][layer][idx], sprite);
                 D_8013BD50[buffer][layer][idx] = (s32*)sprite;
+#endif
                 sprite++;
             }
             sprite_x += 16;

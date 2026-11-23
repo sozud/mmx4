@@ -334,8 +334,8 @@ void func_80028E24(void)
     }
 }
 
-static P_TAG* background_heads[2][6][8];
-static P_TAG* background_tails[2][6][8];
+P_TAG* background_heads[2][6][8];
+P_TAG* background_tails[2][6][8];
 
 #ifndef MMX4_SATURN
 struct PcSpriteFrame {
@@ -890,7 +890,7 @@ static u16 heat_tile(s32 layer, s32 world_tile_x, s32 world_tile_y)
     return SP_BG_TILE_PIXELS[block * 256 + (world_tile_y & 15) * 16 + (world_tile_x & 15)];
 }
 
-static int heat_draw_layer(s32 layer)
+int heat_draw_layer(s32 layer)
 {
     struct BackgroundObj* bg = &background_objects[layer];
     s32 world_x[HEAT_LINES];
