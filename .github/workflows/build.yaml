@@ -544,6 +544,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+          allow-unsafe-pr-checkout: true
       - name: Install requirements
         run: |
           sudo apt-get update
