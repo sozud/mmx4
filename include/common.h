@@ -79,8 +79,6 @@ __asm__(".include \"macro.inc\"\n");
 
 #define ABS(A, B) (((A) - (B) < 0) ? -((A) - (B)) : (A) - (B))
 
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-
 #define ON_SCREEN_X(X, W) ((u16)((X) + (W)) < (u16)((W) + ((W) + SCREEN_WIDTH)))
 #define ON_SCREEN_Y(Y, H) ((u16)((Y) + (H)) < (u16)((H) + ((H) + SCREEN_HEIGHT)))
 
