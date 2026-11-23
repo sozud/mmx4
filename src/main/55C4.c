@@ -321,7 +321,7 @@ extern u32* D_80137E08;
 s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
 // play_sound
 #ifndef MMX4_PC
-s32 func_800154E8(s32 arg0, s32 arg1, void* source);
+s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source);
 // clang-format off
 s32 func_8001540C(arg0, arg1, arg2)
     u8 arg0;
@@ -366,7 +366,92 @@ s32 func_8001540C(arg0, arg1, arg2)
 INCLUDE_ASM("main/nonmatchings/55C4", func_8001540C);
 #endif
 
-INCLUDE_ASM("main/nonmatchings/55C4", func_800154E8);
+#ifndef MMX4_PC
+s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source)
+{
+    u8 pan;
+    VagAtr tone;
+    u8 priority;
+    u8 fixed_pan;
+    s32 fine;
+    u8 voice;
+    s8 balance;
+    u8 packed3;
+    u8 packed2;
+    s16 vag;
+    u8 packed1;
+    s8 remaining;
+    s16 vab;
+    s16 left;
+    s16 right;
+    s32 note;
+    s32 voice_index;
+    s16 program;
+
+    if (source != NULL) {
+        if (arg0 & 0x80) {
+            pan = source->unk2;
+        } else {
+            s8 background = source->bg_offset;
+            u16 x = source->x_pos.i.hi;
+
+            if (background >= 0) {
+                x -= background_objects[background].x_pos.i.hi;
+            }
+            pan = (s16)x / 10;
+            if ((s8)pan < 5) {
+                pan = 5;
+            }
+            if ((s8)pan >= 0x1C) {
+                pan = 0x1B;
+            }
+        }
+    }
+    packed3 = ((u8*)D_80137E08)[3];
+    packed1 = ((u8*)D_80137E08)[1];
+    packed2 = ((u8*)D_80137E08)[2];
+    fixed_pan = packed1 >> 7;
+    priority = packed2 & 0xF;
+    program = packed2 >> 4;
+    vag = packed1 & 0x7F;
+    remaining = (packed3 & 0x60) >> 5;
+    voice = packed3 & 0x1F;
+    if (remaining >= 0) {
+        vab = arg1 & 0xFF;
+        balance = pan;
+        for (; remaining >= 0; remaining--) {
+            SsUtGetVagAtr(vab, vag, program, &tone);
+            left = right = tone.vol;
+            if (!fixed_pan && source != NULL) {
+                if (balance < 0x10) {
+                    left = balance * ((u32)left >> 4);
+                } else if (balance >= 0x11) {
+                    right = (right >> 4) * (0x20 - balance);
+                }
+            }
+            voice_index = voice;
+            note = tone.min;
+            fine = tone.shift;
+            if (SpuGetKeyStatus(1 << voice_index) == 0) {
+                SsUtKeyOnV(voice, vab, vag, program, note, fine, right, left);
+                D_80139234[voice_index] = priority;
+            } else {
+                if (priority < D_80139234[voice_index]) {
+                    return -4;
+                }
+                SsUtKeyOnV(voice, vab, vag, program, note, fine, right, left);
+                D_80139234[voice_index] = priority;
+            }
+            if (++program >= 0x10) {
+                vag++;
+                program = 0;
+            }
+            voice++;
+        }
+    }
+    return 0;
+}
+#endif
 
 s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source)
 {
