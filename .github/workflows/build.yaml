@@ -533,9 +533,11 @@ jobs:
 
   gamecube:
     name: Build GameCube (x4.rel)
-    if: github.event_name != 'pull_request_target'
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    environment:
+      name: ${{ github.event_name == 'pull_request_target' && 'private-ci' || 'ci' }}
     steps:
       - name: Clone main repo
         uses: actions/checkout@v7
