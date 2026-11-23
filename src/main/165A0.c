@@ -551,9 +551,6 @@ void func_80026894(s32 layer)
 }
 #endif
 
-#ifdef VERSION_DEMO
-INCLUDE_ASM("main/nonmatchings/165A0", func_80026AA0);
-#else
 void func_80026AA0(s32 layer)
 {
     SPRT_16* sprite;
@@ -579,8 +576,8 @@ void func_80026AA0(s32 layer)
     u8 tile_u;
 
     sprite = SP_BG_PRIM_CURSOR;
-    x = background_objects[layer].x_pos.i.hi;
     buffer = SP_DRAW_BUFFER;
+    x = background_objects[layer].x_pos.i.hi;
     y = background_objects[layer].y_pos.i.hi;
     start_tile_x = (x / 16) & 31;
     start_x = -(x & 15);
@@ -600,10 +597,12 @@ void func_80026AA0(s32 layer)
         for (column = 0; column < 21; column++) {
             entry = D_801441C8[layer][tile_y][tile_x];
             if (entry != 0) {
+#ifndef VERSION_DEMO
                 if (SP_BG_SPRITE_COUNT >= 1000) {
                     return;
                 }
                 SP_BG_SPRITE_COUNT++;
+#endif
                 attributes = SP_BG_TILE_ATTRS[entry & 0x3FFF];
                 sprite->clut = ((attributes & 0xF000) >> 6) + 0x7900;
                 sprite->clut |= (attributes & 0xF00) >> 8;
@@ -614,15 +613,16 @@ void func_80026AA0(s32 layer)
                 }
                 sprite->x0 = sprite_x;
                 sprite->y0 = sprite_y;
-                tile_v = (attributes >> 16) & 0xF0;
-                tile_u = (attributes >> 12) & 0xF0;
+                tile_v = (attributes & 0xF00000) >> 16;
+                tile_u = (attributes & 0xF0000) >> 12;
                 sprite->u0 = tile_u;
                 sprite->v0 = tile_v;
+#ifdef MMX4_WIN32
+                bucket = (attributes >> 24) & 7;
+#else
                 bucket = (attributes & 0xFF000000) >> 24;
-                list_layer = layer;
-                if (entry & 0x8000) {
-                    list_layer += 3;
-                }
+#endif
+                list_layer = (entry & 0x8000) ? layer + 3 : layer;
 #ifdef MMX4_PC
                 if (!heat) {
                     if (background_tails[buffer][list_layer][bucket] == NULL) {
@@ -648,7 +648,6 @@ void func_80026AA0(s32 layer)
     }
     SP_BG_PRIM_CURSOR = sprite;
 }
-#endif
 
 void func_80026CEC(s32 arg0)
 {
@@ -736,9 +735,6 @@ void func_80026CEC(s32 arg0)
     }
 }
 
-#ifdef VERSION_DEMO
-INCLUDE_ASM("main/nonmatchings/165A0", func_800270F8);
-#else
 void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
 {
     SPRT_16* sprite = SP_BG_PRIM_CURSOR;
@@ -791,7 +787,6 @@ void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
     }
     SP_BG_PRIM_CURSOR = sprite;
 }
-#endif
 
 void func_8002728C(void)
 {

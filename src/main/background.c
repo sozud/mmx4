@@ -697,115 +697,31 @@ void func_80028658(struct BackgroundObj* arg0)
     func_80028450(arg0);
 }
 
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
-void func_80028690(struct BackgroundObj* bg);
-#endif
-
-#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_GAMECUBE)
-void func_80028690(struct BackgroundObj* bg)
-{
-    s16 target;
-    s16 origin;
-    s16 delta;
-    s16 next;
-
-    target = bg->unk26;
-    if (bg->unk1E != target) {
-        origin = bg->x_pos.i.hi;
-        if (target >= origin) {
-            next = origin + (s8)bg->unk47;
-        } else if ((s16)(g_Player.x_pos.i.hi - origin - bg->unk30 + 2) < 5) {
-            next = target;
-        } else {
-            delta = g_Player.x_pos.i.hi - g_Player.unk18.i.hi;
-            if (delta >= 0)
-                delta = 0;
-            next = delta + origin - (s8)bg->unk47;
-        }
-        bg->unk1E = next < target ? next : target;
-    }
-
-    target = bg->unk24;
-    if (bg->unk1C != target) {
-        origin = bg->x_pos.i.hi;
-        if (target < origin) {
-            next = origin - (s8)bg->unk47;
-            bg->unk1C = next < target ? target : next;
-        } else if ((s16)(g_Player.x_pos.i.hi - origin - bg->unk32 + 2) >= 4) {
-            bg->unk1C = target;
-        } else {
-            delta = g_Player.x_pos.i.hi - g_Player.unk18.i.hi;
-            if (delta < 0)
-                delta = 0;
-            next = delta + origin + (s8)bg->unk47;
-            bg->unk1C = target < next ? next : target;
-        }
-    }
-
-    target = bg->unk2A;
-    if (bg->unk22 != target) {
-        origin = bg->y_pos.i.hi;
-        if (target >= origin) {
-            next = origin + (s8)bg->unk47;
-            bg->unk22 = next < target ? next : target;
-        } else {
-            next = g_Player.y_pos.i.hi - origin - bg->unk2C + 2;
-            if (next < 4) {
-                delta = g_Player.y_pos.i.hi - g_Player.unk1C.i.hi;
-                if (delta >= 0)
-                    delta = 0;
-                next = delta + origin - (s8)bg->unk47;
-                if (next < target)
-                    next = target;
-            }
-            bg->unk22 = next;
-        }
-    }
-
-    target = bg->unk28;
-    if (bg->unk20 != target) {
-        origin = bg->y_pos.i.hi;
-        if (target < origin) {
-            next = origin - (s8)bg->unk47;
-            bg->unk20 = next < target ? target : next;
-        } else if ((s16)(g_Player.y_pos.i.hi - origin - bg->unk2E + 2) >= 4) {
-            bg->unk20 = target;
-        } else {
-            delta = g_Player.y_pos.i.hi - g_Player.unk1C.i.hi;
-            if (delta < 0)
-                delta = 0;
-            next = delta + origin + (s8)bg->unk47;
-            bg->unk20 = next < target ? next : target;
-        }
-    }
-}
-#elif defined(VERSION_EU) || defined(VERSION_DEMO)
-INCLUDE_ASM("main/nonmatchings/background", func_80028690);
-#else
-// the target reads the player position from memory on every use
-static inline volatile s16* player_x_ptr(void) { return &g_Player.x_pos.i.hi; }
-
-static inline volatile s16* player_y_ptr(void) { return &g_Player.y_pos.i.hi; }
-
 void func_80028690(struct BackgroundObj* bg)
 {
     s16 value;
 
     if (bg->unk26 != bg->unk1E) {
         if (bg->unk26 >= bg->x_pos.i.hi) {
-            value = (s8)bg->unk47 + bg->x_pos.i.hi;
+            value = bg->x_pos.i.hi;
+            value += (s8)bg->unk47;
             if (value >= bg->unk26) {
                 bg->unk1E = bg->unk26;
             } else {
                 bg->unk1E = value;
             }
         } else {
-            value = *player_x_ptr();
-            if ((s16)(value - bg->x_pos.i.hi - bg->unk30 + 2) >= 5) {
-                value = *player_x_ptr() - g_Player.unk18.i.hi;
-                if (value >= 0)
+            value = g_Player.x_pos.i.hi;
+            value -= bg->x_pos.i.hi;
+            value -= bg->unk30;
+            value += 2;
+            if (value > 4) {
+                value = g_Player.x_pos.i.hi - g_Player.unk18.i.hi;
+                if (value >= 0) {
                     value = 0;
-                value = value + bg->x_pos.i.hi - (s8)bg->unk47;
+                }
+                value += bg->x_pos.i.hi;
+                value -= (s8)bg->unk47;
                 if (value >= bg->unk26) {
                     bg->unk1E = bg->unk26;
                 } else {
@@ -819,66 +735,90 @@ void func_80028690(struct BackgroundObj* bg)
 
     if (bg->unk24 != bg->unk1C) {
         if (bg->unk24 < bg->x_pos.i.hi) {
-            value = bg->x_pos.i.hi - (s8)bg->unk47;
+            value = bg->x_pos.i.hi;
+            value -= (s8)bg->unk47;
             if (value >= bg->unk24) {
                 bg->unk1C = value;
             } else {
                 bg->unk1C = bg->unk24;
             }
         } else {
-            value = *player_x_ptr();
-            if ((s16)(value - bg->x_pos.i.hi - bg->unk32 + 2) >= 4) {
-                bg->unk1C = bg->unk24;
-            } else {
-                value = *player_x_ptr() - g_Player.unk18.i.hi;
-                value = MAX(value, 0);
+            value = g_Player.x_pos.i.hi;
+            value -= bg->x_pos.i.hi;
+            value -= bg->unk32;
+            value += 2;
+            if (value < 4) {
+                value = g_Player.x_pos.i.hi - g_Player.unk18.i.hi;
+                if (value < 0) {
+                    value = 0;
+                }
                 value += bg->x_pos.i.hi;
                 value += (s8)bg->unk47;
-                if (bg->unk24 < value) {
+                if (value > bg->unk24) {
                     bg->unk1C = value;
                 } else {
                     bg->unk1C = bg->unk24;
                 }
+            } else {
+                bg->unk1C = bg->unk24;
             }
         }
     }
 
     if (bg->unk2A != bg->unk22) {
         if (bg->unk2A >= bg->y_pos.i.hi) {
-            value = (s8)bg->unk47 + bg->y_pos.i.hi;
+            value = bg->y_pos.i.hi;
+            value += (s8)bg->unk47;
             if (value < bg->unk2A) {
                 bg->unk22 = value;
             } else {
                 bg->unk22 = bg->unk2A;
             }
         } else {
-            value = *player_y_ptr();
-            value = value - bg->y_pos.i.hi - bg->unk2C + 2;
-            if (value < 4) {
-                value = *player_y_ptr() - g_Player.unk1C.i.hi;
-                if (value >= 0)
+            value = g_Player.y_pos.i.hi;
+            value -= bg->y_pos.i.hi;
+            value -= bg->unk2C;
+            value += 2;
+            if (value >= 4) {
+                bg->unk22 = value;
+            } else {
+                value = g_Player.y_pos.i.hi - g_Player.unk1C.i.hi;
+                if (value >= 0) {
                     value = 0;
-                value = value + bg->y_pos.i.hi - (s8)bg->unk47;
-                value = MAX(value, bg->unk2A);
+                }
+                value += bg->y_pos.i.hi;
+                value -= (s8)bg->unk47;
+                if (value < bg->unk2A) {
+                    value = bg->unk2A;
+                }
+                bg->unk22 = value;
             }
-            bg->unk22 = value;
         }
     }
 
     if (bg->unk28 != bg->unk20) {
         if (bg->unk28 < bg->y_pos.i.hi) {
-            value = bg->y_pos.i.hi - (s8)bg->unk47;
-            value = MAX(value, bg->unk28);
+            value = bg->y_pos.i.hi;
+            value -= (s8)bg->unk47;
+            if (value < bg->unk28) {
+                value = bg->unk28;
+            }
             bg->unk20 = value;
         } else {
-            value = *player_y_ptr();
-            if ((s16)(value - bg->y_pos.i.hi - bg->unk2E + 2) < 4) {
-                value = *player_y_ptr() - g_Player.unk1C.i.hi;
-                value = MAX(value, 0);
+            value = g_Player.y_pos.i.hi;
+            value -= bg->y_pos.i.hi;
+            value -= bg->unk2E;
+            value += 2;
+            if (value < 4) {
+                value = g_Player.y_pos.i.hi - g_Player.unk1C.i.hi;
+                if (value < 0) {
+                    value = 0;
+                }
                 value += bg->y_pos.i.hi;
                 value += (s8)bg->unk47;
-                if (value >= bg->unk28)
+                if (value >= bg->unk28) {
                     value = bg->unk28;
+                }
                 bg->unk20 = value;
             } else {
                 bg->unk20 = bg->unk28;
@@ -886,7 +826,6 @@ void func_80028690(struct BackgroundObj* bg)
         }
     }
 }
-#endif
 
 void update_screen_shake_x(struct BackgroundObj* arg0)
 {
