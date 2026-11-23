@@ -334,8 +334,8 @@ void func_80028E24(void)
     }
 }
 
-static P_TAG* background_heads[2][6][8];
-static P_TAG* background_tails[2][6][8];
+P_TAG* background_heads[2][6][8];
+P_TAG* background_tails[2][6][8];
 
 #ifndef MMX4_SATURN
 struct PcSpriteFrame {
@@ -890,7 +890,7 @@ static u16 heat_tile(s32 layer, s32 world_tile_x, s32 world_tile_y)
     return SP_BG_TILE_PIXELS[block * 256 + (world_tile_y & 15) * 16 + (world_tile_x & 15)];
 }
 
-static int heat_draw_layer(s32 layer)
+int heat_draw_layer(s32 layer)
 {
     struct BackgroundObj* bg = &background_objects[layer];
     s32 world_x[HEAT_LINES];
@@ -945,102 +945,6 @@ static int heat_draw_layer(s32 layer)
         }
     }
     return 1;
-}
-
-void func_80026AA0(s32 layer)
-{
-    struct BackgroundObj* bg = &background_objects[layer];
-    SPRT_16* sprite = SP_BG_PRIM_CURSOR;
-    s32 tile_x = (bg->x_pos.i.hi / 16) & 31;
-    s32 tile_y = (bg->y_pos.i.hi / 16) & 31;
-    s32 screen_y = -(bg->y_pos.i.hi & 15);
-    s32 row;
-    int heat;
-
-    if (mmx4_pc_hide_background)
-        return;
-    heat = mmx4_pc_saturn_heat && heat_draw_layer(layer);
-
-    for (row = 0; row < 16; row++) {
-        s32 current_tile_x = tile_x;
-        s32 screen_x = -(bg->x_pos.i.hi & 15);
-        s32 column;
-
-        for (column = 0; column < 21; column++) {
-            u16 tile = D_801441C8[layer][tile_y][current_tile_x];
-
-            if (tile != 0) {
-                u32 attributes;
-                s32 ordering_layer;
-                s32 priority;
-                P_TAG* tail;
-
-                if (SP_BG_SPRITE_COUNT >= 1000)
-                    return;
-                SP_BG_SPRITE_COUNT++;
-
-                attributes = SP_BG_TILE_ATTRS[tile & 0x3FFF];
-                sprite->clut = 0x7900 | ((attributes & 0xF000) >> 6) | ((attributes & 0xF00) >> 8);
-                setSemiTrans(sprite, (tile & 0x4000) != 0);
-                setUV0(sprite, (attributes >> 12) & 0xF0,
-                    (attributes >> 16) & 0xF0);
-                setXY0(sprite, screen_x, screen_y);
-
-                ordering_layer = layer + ((tile & 0x8000) != 0 ? 3 : 0);
-                priority = attributes >> 24;
-                if (!heat) {
-                    tail = background_tails[SP_DRAW_BUFFER][ordering_layer][priority];
-                    if (tail == NULL) {
-                        background_heads[SP_DRAW_BUFFER][ordering_layer][priority] = (P_TAG*)sprite;
-                    } else {
-                        setaddr(tail, sprite);
-                    }
-                    background_tails[SP_DRAW_BUFFER][ordering_layer][priority] = (P_TAG*)sprite;
-                }
-                sprite++;
-            }
-
-            screen_x += 16;
-            current_tile_x = (current_tile_x + 1) & 31;
-        }
-
-        screen_y += 16;
-        tile_y = (tile_y + 1) & 31;
-    }
-
-    SP_BG_PRIM_CURSOR = sprite;
-}
-
-void func_800270F8(s32 x, s32 y, s32 tile_x, s32 tile_y)
-{
-    SPRT_16* sprite = SP_BG_PRIM_CURSOR;
-    u32 row, column;
-
-    for (row = 0; row < SP_BG_BLOCK_HEIGHT; row++) {
-        for (column = 0; column < SP_BG_BLOCK_WIDTH; column++) {
-            u32 attributes = SP_BG_TILE_ATTRS[SP_BG_BLOCK * 256
-                + (tile_y + row) * 16 + tile_x + column];
-            u8 page = attributes >> 8;
-
-            if (page != 0) {
-                u16 bucket = page - 0x15;
-                P_TAG* tail = background_tails[SP_DRAW_BUFFER][SP_CUR_BG_INDEX][bucket];
-
-                setXY0(sprite, x + column * 16, y + row * 16);
-                setUV0(sprite, (attributes & 15) * 16, attributes & 0xF0);
-                sprite->clut = attributes >> 16;
-                if (tail == NULL) {
-                    background_heads[SP_DRAW_BUFFER][SP_CUR_BG_INDEX][bucket] = (P_TAG*)sprite;
-                } else {
-                    setaddr(tail, sprite);
-                }
-                background_tails[SP_DRAW_BUFFER][SP_CUR_BG_INDEX][bucket] = (P_TAG*)sprite;
-                sprite++;
-            }
-        }
-    }
-
-    SP_BG_PRIM_CURSOR = sprite;
 }
 #endif
 

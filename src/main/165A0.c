@@ -10,6 +10,9 @@
 
 #ifdef MMX4_PC
 extern void func_80026CEC(s32 arg0);
+extern P_TAG* background_heads[2][6][8];
+extern P_TAG* background_tails[2][6][8];
+int heat_draw_layer(s32 layer);
 #endif
 
 void func_800264D0(s32 layer, s32 x, s32 y);
@@ -548,7 +551,9 @@ void func_80026894(s32 layer)
 }
 #endif
 
-#if defined(VERSION_EU) || defined(MMX4_GAMECUBE)
+#ifdef VERSION_DEMO
+INCLUDE_ASM("main/nonmatchings/165A0", func_80026AA0);
+#else
 void func_80026AA0(s32 layer)
 {
     SPRT_16* sprite;
@@ -567,6 +572,11 @@ void func_80026AA0(s32 layer)
     u32 attributes;
     s32 list_layer;
     u32 bucket;
+#ifdef MMX4_PC
+    int heat;
+#endif
+    u8 tile_v;
+    u8 tile_u;
 
     sprite = SP_BG_PRIM_CURSOR;
     x = background_objects[layer].x_pos.i.hi;
@@ -576,6 +586,13 @@ void func_80026AA0(s32 layer)
     start_x = -(x & 15);
     tile_y = (y / 16) & 31;
     sprite_y = -(y & 15);
+
+#ifdef MMX4_PC
+    if (mmx4_pc_hide_background) {
+        return;
+    }
+    heat = mmx4_pc_saturn_heat && heat_draw_layer(layer);
+#endif
 
     for (row = 0; row < 16; row++) {
         sprite_x = start_x;
@@ -597,15 +614,28 @@ void func_80026AA0(s32 layer)
                 }
                 sprite->x0 = sprite_x;
                 sprite->y0 = sprite_y;
-                sprite->u0 = (attributes >> 12) & 0xF0;
-                sprite->v0 = (attributes >> 16) & 0xF0;
+                tile_v = (attributes >> 16) & 0xF0;
+                tile_u = (attributes >> 12) & 0xF0;
+                sprite->u0 = tile_u;
+                sprite->v0 = tile_v;
                 bucket = (attributes & 0xFF000000) >> 24;
                 list_layer = layer;
                 if (entry & 0x8000) {
                     list_layer += 3;
                 }
+#ifdef MMX4_PC
+                if (!heat) {
+                    if (background_tails[buffer][list_layer][bucket] == NULL) {
+                        background_heads[buffer][list_layer][bucket] = (P_TAG*)sprite;
+                    } else {
+                        setaddr(background_tails[buffer][list_layer][bucket], sprite);
+                    }
+                    background_tails[buffer][list_layer][bucket] = (P_TAG*)sprite;
+                }
+#else
                 setaddr(D_8013BD50[buffer][list_layer][bucket], sprite);
                 D_8013BD50[buffer][list_layer][bucket] = (s32*)sprite;
+#endif
                 sprite++;
             }
             sprite_x += 16;
@@ -618,8 +648,6 @@ void func_80026AA0(s32 layer)
     }
     SP_BG_PRIM_CURSOR = sprite;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/165A0", func_80026AA0);
 #endif
 
 void func_80026CEC(s32 arg0)
@@ -708,7 +736,9 @@ void func_80026CEC(s32 arg0)
     }
 }
 
-#if defined(VERSION_EU)
+#ifdef VERSION_DEMO
+INCLUDE_ASM("main/nonmatchings/165A0", func_800270F8);
+#else
 void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
 {
     SPRT_16* sprite = SP_BG_PRIM_CURSOR;
@@ -732,14 +762,25 @@ void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
             attributes = (SP_BG_TILE_ATTRS + block * 256 + inner_y * 16)[tile_x];
             page = (attributes >> 8) & 0xFF;
             if (page != 0) {
+                u8 tile_v = attributes & 0xF0;
+                u8 tile_u = (attributes & 0xF) << 4;
                 sprite->x0 = sprite_x;
                 sprite->y0 = y;
                 sprite->clut = attributes >> 16;
-                sprite->u0 = (attributes & 0xF) << 4;
-                sprite->v0 = attributes & 0xF0;
+                sprite->u0 = tile_u;
+                sprite->v0 = tile_v;
                 idx = page - 0x15;
+#ifdef MMX4_PC
+                if (background_tails[buffer][layer][idx] == NULL) {
+                    background_heads[buffer][layer][idx] = (P_TAG*)sprite;
+                } else {
+                    setaddr(background_tails[buffer][layer][idx], sprite);
+                }
+                background_tails[buffer][layer][idx] = (P_TAG*)sprite;
+#else
                 setaddr(D_8013BD50[buffer][layer][idx], sprite);
                 D_8013BD50[buffer][layer][idx] = (s32*)sprite;
+#endif
                 sprite++;
             }
             sprite_x += 16;
@@ -750,9 +791,8 @@ void func_800270F8(s32 x, s32 y, s32 inner_x, s32 inner_y)
     }
     SP_BG_PRIM_CURSOR = sprite;
 }
-#else
-INCLUDE_ASM("main/nonmatchings/165A0", func_800270F8);
 #endif
+
 void func_8002728C(void)
 {
     s32 temp_s1;
