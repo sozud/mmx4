@@ -1020,8 +1020,197 @@ __asm__(".pushsection .text\n"
         "\t.set at\n"
         "\t.end\tfunc_80024334\n"
         ".popsection");
-#elif !defined(MMX4_SATURN)
+#elif defined(VERSION_EU) || defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/14A60", func_80024334);
+#elif !defined(MMX4_SATURN)
+void func_80024334(struct VisualObj* obj)
+{
+    POLY_FT4* primitive;
+    DR_TPAGE* draw_mode;
+
+    if (SP_SPRITE_COUNT < 1000) {
+        u8* frame_data;
+        u8 flipped;
+        u16 texture;
+        u16 clut;
+        s16 origin_x;
+        s16 origin_y;
+        s32 frame_count;
+        u16* frame_header;
+
+        if (obj->bg_offset < 0) {
+            origin_x = obj->x_pos.i.hi;
+            origin_y = obj->y_pos.i.hi;
+        } else {
+            origin_x = obj->x_pos.i.hi - background_objects[obj->bg_offset].x_pos.i.hi;
+            origin_y = obj->y_pos.i.hi - background_objects[obj->bg_offset].y_pos.i.hi;
+        }
+
+        frame_header = (u16*)((u8*)obj->unk3C + obj->animation_step.fields.frame_index * 4);
+        frame_count = frame_header[0];
+        frame_data = (u8*)obj->unk3C + frame_header[1] * 4;
+        flipped = obj->unk15;
+        texture = obj->unk40;
+        clut = obj->unk42;
+        primitive = SP_PRIM_CURSOR;
+        draw_mode = SP_DRAW_MODE_CURSOR;
+
+        for (; frame_count; primitive++, draw_mode++, frame_data += 4, frame_count--) {
+            u8 flags;
+            s8 active;
+            s16 x0;
+            s16 x1;
+            s16 y0;
+            s16 y1;
+#if defined(MMX4_WIN32) || defined(MMX4_GAMECUBE) || defined(MMX4_COLLECTION)
+            u16 texture_index;
+            u16 scratch;
+#else
+            u32 texture_index;
+            u32 scratch;
+#endif
+            u16 primitive_clut;
+            u8 u0;
+            u8 u1;
+            u8 v0;
+            u8 v1;
+
+            if (SP_SPRITE_COUNT >= 1000) {
+                return;
+            }
+            SP_SPRITE_COUNT++;
+
+            flags = frame_data[0];
+            x0 = (s8)frame_data[2];
+            if (flipped == 0) {
+                x1 = x0 + 16;
+            } else {
+                x1 = -x0;
+                x0 = -(x0 + 16);
+            }
+            active = obj->active;
+            x0 += origin_x;
+            x1 += origin_x;
+            y0 = origin_y + (s8)frame_data[3];
+            y1 = y0 + 16;
+            texture_index = (u16)(frame_data[1] | ((flags & 3) << 8)) + texture;
+            if (active & 0x40) {
+                scratch = texture_index;
+                texture_index = ((((scratch & 0xFFFF) / 176) & 0xFFFF) << 8) + (scratch & 0xFFFF) % 176 + 0x600;
+            }
+            if (active & 0x20) {
+                scratch = texture_index;
+                texture_index = ((((scratch & 0xFFFF) / 80) & 0xFFFF) << 8) + (scratch & 0xFFFF) % 80 + 0x5B0;
+            }
+            if (clut & 0x8000) {
+                primitive_clut = 0x7840;
+            } else {
+                s32 base = clut + ((flags & 0xC) >> 2);
+
+                primitive_clut = base;
+                if (base & 0x30) {
+                    primitive_clut = base + 0x30;
+                }
+            }
+
+            if (!(flags & 0x80)) {
+                v0 = texture_index & 0xF0;
+                if (((flags & 0x40) ^ flipped) == 0) {
+                    SPRT_16* sprite = (SPRT_16*)primitive;
+
+                    setSprt16(sprite);
+                    setShadeTex(sprite, 1);
+                    setSemiTrans(sprite, obj->active & 0x10);
+                    sprite->clut = primitive_clut;
+                    sprite->x0 = x0;
+                    sprite->y0 = y0;
+                    u1 = texture_index * 16;
+#ifdef MMX4_GAMECUBE
+                    if (flags & 0x10) {
+                        sprite->u0 = u1 + 8;
+                    } else {
+                        sprite->u0 = u1;
+                    }
+#else
+                    sprite->u0 = u1;
+#endif
+                    sprite->v0 = v0;
+                    BG_DRAW_TPAGE(draw_mode, ((u16)texture_index >> 8) | 0x20);
+                    setaddr(draw_mode, sprite);
+                    setaddr(sprite, draw_mode + 1);
+                    continue;
+                }
+                setPolyFT4(primitive);
+                setShadeTex(primitive, 1);
+                setSemiTrans(primitive, obj->active & 0x10);
+                u0 = texture_index * 16 - 1;
+                u1 = u0 + 16;
+                primitive->tpage = ((u16)texture_index >> 8) | 0x20;
+                primitive->clut = primitive_clut;
+                if (u0 == 0xFF) {
+                    u0++;
+                    x1--;
+                }
+                v1 = v0 + 16;
+                if (v1 == 0) {
+                    v1--;
+                    y1--;
+                }
+                setXY4(primitive, x0, y0, x1, y0, x0, y1, x1, y1);
+                setUV4(primitive, u1, v0, u0, v0, u1, v1, u0, v1);
+                BG_DRAW_TPAGE(draw_mode, 0x20);
+                setaddr(draw_mode, primitive);
+                setaddr(primitive, draw_mode + 1);
+            } else {
+                u16 tile;
+
+                setPolyFT4(primitive);
+                setShadeTex(primitive, 1);
+                setSemiTrans(primitive, obj->active & 0x10);
+                tile = texture_index;
+                v1 = (tile & 0xF0) - 1;
+                v0 = v1 + 16;
+                primitive->tpage = ((u16)texture_index >> 8) | 0x20;
+                primitive->clut = primitive_clut;
+                if (v1 == 0xFF) {
+                    v1++;
+                    y1--;
+                }
+                if (((flags & 0x40) ^ flipped) == 0) {
+                    u1 = tile << 4;
+                    u0 = u1 + 16;
+                    if (u0 == 0) {
+                        u0--;
+                        x1--;
+                    }
+                } else {
+                    u0 = (tile << 4) - 1;
+                    u1 = u0 + 16;
+                    if (u0 == 0xFF) {
+                        u0++;
+                        x1--;
+                    }
+                }
+                setXY4(primitive, x0, y0, x1, y0, x0, y1, x1, y1);
+                setUV4(primitive, u1, v0, u0, v0, u1, v1, u0, v1);
+                BG_DRAW_TPAGE(draw_mode, 0x20);
+                setaddr(draw_mode, primitive);
+                setaddr(primitive, draw_mode + 1);
+            }
+        }
+
+        {
+            u8 ordering = obj->unk16;
+            s8 layer = ordering >> 4;
+            s8 slot = ordering & 0xF;
+
+            setaddr(D_8013BC40[SP_DRAW_BUFFER][layer][slot], SP_DRAW_MODE_CURSOR);
+            D_8013BC40[SP_DRAW_BUFFER][layer][slot] = (P_TAG*)(primitive - 1);
+            SP_PRIM_CURSOR = primitive;
+            SP_DRAW_MODE_CURSOR = draw_mode;
+        }
+    }
+}
 #endif
 
 #ifndef MMX4_SATURN
