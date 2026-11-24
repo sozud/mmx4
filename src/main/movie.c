@@ -661,16 +661,16 @@ extern u32 D_8013962C;
 
 extern u32 D_80139630;
 
-extern s32 D_801410B8;
+extern s32 StCdIntrFlag;
 
 void func_80019100(void)
 {
     u32* temp_a0;
 
     D_8013962C += 1;
-    if (D_801410B8 != 0) {
+    if (StCdIntrFlag != 0) {
         StCdInterrupt();
-        D_801410B8 = 0;
+        StCdIntrFlag = 0;
     }
     if (D_80139614 == 0) {
         LoadImage(&D_80139618, D_80139620);

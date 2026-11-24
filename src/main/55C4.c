@@ -193,42 +193,42 @@ void func_80014DC4(void)
     SsFCALL.ccentry[18] = &dmy_SsSetNrpnVabAttr18;
     SsFCALL.ccentry[19] = &dmy_SsSetNrpnVabAttr19;
 #else
-    D_8013DC10 = &_SsNoteOn;
-    D_8013DC14 = &_SsSetProgramChange;
-    D_8013DC1C = &dmy_SsGetMetaEvent;
-    D_8013DC18 = &dmy_SsSetPitchBend;
-    D_8013DC20 = &_SsSetControlChange;
-    D_8013DC24 = &dmy_SsContBankChange;
-    D_8013DC2C = &_SsContMainVol;
-    D_8013DC30 = &dmy_SsContPanpot;
-    D_8013DC34 = &dmy_SsContDamper;
-    D_8013DC38 = &dmy_SsContNrpn1;
-    D_8013DC3C = &dmy_SsContNrpn2;
-    D_8013DC40 = &_SsContRpn1;
-    D_8013DC44 = &dmy_SsContRpn2;
-    D_8013DC48 = &dmy_SsContExternal;
-    D_8013DC4C = &dmy_SsContResetAll;
-    D_8013DC28 = &dmy_SsContDataEntry;
-    D_8013DC54 = &dmy_SsSetNrpnVabAttr0;
-    D_8013DC58 = &dmy_SsSetNrpnVabAttr1;
-    D_8013DC5C = &dmy_SsSetNrpnVabAttr2;
-    D_8013DC60 = &dmy_SsSetNrpnVabAttr3;
-    D_8013DC64 = &dmy_SsSetNrpnVabAttr4;
-    D_8013DC68 = &dmy_SsSetNrpnVabAttr5;
-    D_8013DC6C = &dmy_SsSetNrpnVabAttr6;
-    D_8013DC70 = &dmy_SsSetNrpnVabAttr7;
-    D_8013DC74 = &dmy_SsSetNrpnVabAttr8;
-    D_8013DC78 = &dmy_SsSetNrpnVabAttr9;
-    D_8013DC7C = &dmy_SsSetNrpnVabAttr10;
-    D_8013DC80 = &dmy_SsSetNrpnVabAttr11;
-    D_8013DC84 = &dmy_SsSetNrpnVabAttr12;
-    D_8013DC88 = &dmy_SsSetNrpnVabAttr13;
-    D_8013DC8C = &dmy_SsSetNrpnVabAttr14;
-    D_8013DC90 = &dmy_SsSetNrpnVabAttr15;
-    D_8013DC94 = &dmy_SsSetNrpnVabAttr16;
-    D_8013DC98 = &dmy_SsSetNrpnVabAttr17;
-    D_8013DC9C = &dmy_SsSetNrpnVabAttr18;
-    D_8013DCA0 = &dmy_SsSetNrpnVabAttr19;
+    SsFCALL.noteon = &_SsNoteOn;
+    SsFCALL.programchange = &_SsSetProgramChange;
+    SsFCALL.metaevent = &dmy_SsGetMetaEvent;
+    SsFCALL.pitchbend = &dmy_SsSetPitchBend;
+    SsFCALL.control[0] = &_SsSetControlChange;
+    SsFCALL.control[1] = &dmy_SsContBankChange;
+    SsFCALL.control[3] = &_SsContMainVol;
+    SsFCALL.control[4] = &dmy_SsContPanpot;
+    SsFCALL.control[5] = &dmy_SsContDamper;
+    SsFCALL.control[6] = &dmy_SsContNrpn1;
+    SsFCALL.control[7] = &dmy_SsContNrpn2;
+    SsFCALL.control[8] = &_SsContRpn1;
+    SsFCALL.control[9] = &dmy_SsContRpn2;
+    SsFCALL.control[10] = &dmy_SsContExternal;
+    SsFCALL.control[11] = &dmy_SsContResetAll;
+    SsFCALL.control[2] = &dmy_SsContDataEntry;
+    SsFCALL.ccentry[0] = &dmy_SsSetNrpnVabAttr0;
+    SsFCALL.ccentry[1] = &dmy_SsSetNrpnVabAttr1;
+    SsFCALL.ccentry[2] = &dmy_SsSetNrpnVabAttr2;
+    SsFCALL.ccentry[3] = &dmy_SsSetNrpnVabAttr3;
+    SsFCALL.ccentry[4] = &dmy_SsSetNrpnVabAttr4;
+    SsFCALL.ccentry[5] = &dmy_SsSetNrpnVabAttr5;
+    SsFCALL.ccentry[6] = &dmy_SsSetNrpnVabAttr6;
+    SsFCALL.ccentry[7] = &dmy_SsSetNrpnVabAttr7;
+    SsFCALL.ccentry[8] = &dmy_SsSetNrpnVabAttr8;
+    SsFCALL.ccentry[9] = &dmy_SsSetNrpnVabAttr9;
+    SsFCALL.ccentry[10] = &dmy_SsSetNrpnVabAttr10;
+    SsFCALL.ccentry[11] = &dmy_SsSetNrpnVabAttr11;
+    SsFCALL.ccentry[12] = &dmy_SsSetNrpnVabAttr12;
+    SsFCALL.ccentry[13] = &dmy_SsSetNrpnVabAttr13;
+    SsFCALL.ccentry[14] = &dmy_SsSetNrpnVabAttr14;
+    SsFCALL.ccentry[15] = &dmy_SsSetNrpnVabAttr15;
+    SsFCALL.ccentry[16] = &dmy_SsSetNrpnVabAttr16;
+    SsFCALL.ccentry[17] = &dmy_SsSetNrpnVabAttr17;
+    SsFCALL.ccentry[18] = &dmy_SsSetNrpnVabAttr18;
+    SsFCALL.ccentry[19] = &dmy_SsSetNrpnVabAttr19;
 #endif
 
     SsInit();
@@ -241,7 +241,7 @@ void func_80014DC4(void)
     SsUtSetReverbType(2);
     while (SpuClearReverbWorkArea(2) == -1)
         ;
-    func_800E0D0C();
+    SsUtReverbOn();
     SsUtSetReverbDepth(8, 8);
 #ifdef MMX4_PC
     {

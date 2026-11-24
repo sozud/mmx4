@@ -1009,7 +1009,18 @@ void func_80024260(void)
 }
 #endif
 
-#ifndef MMX4_SATURN
+#if defined(MMX4_PSX_MOD)
+__asm__(".pushsection .text\n"
+        "\t.align\t2\n"
+        "\t.globl\tfunc_80024334\n"
+        "\t.ent\tfunc_80024334\n"
+        "func_80024334:\n"
+        ".include \"src/psx_mod/func_80024334.s\"\n"
+        "\t.set reorder\n"
+        "\t.set at\n"
+        "\t.end\tfunc_80024334\n"
+        ".popsection");
+#elif !defined(MMX4_SATURN)
 INCLUDE_ASM("main/nonmatchings/14A60", func_80024334);
 #endif
 

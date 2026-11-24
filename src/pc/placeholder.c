@@ -948,20 +948,9 @@ int heat_draw_layer(s32 layer)
 }
 #endif
 
-void func_800E0D0C(void)
+void SsUtReverbOn(void)
 {
     SpuSetReverb(1);
-}
-
-void func_800E9040(void)
-{
-    Psyz_GteCtrlWrite(29, 0x155);
-    Psyz_GteCtrlWrite(30, 0x100);
-    Psyz_GteCtrlWrite(26, 0x3E8);
-    Psyz_GteCtrlWrite(27, (u32)-0x1062);
-    Psyz_GteCtrlWrite(28, 0x01400000);
-    Psyz_GteCtrlWrite(24, 0);
-    Psyz_GteCtrlWrite(25, 0);
 }
 
 #define MAIN_37_U8(object, offset) (((u8*)&(object)->ext.main_37)[(offset)-0x80])

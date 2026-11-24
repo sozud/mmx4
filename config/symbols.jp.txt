@@ -486,10 +486,10 @@ misc_objects = 0x80173D58; // size:0x1800
 bar_object = 0x80175558; // size:0x34
 cur_draw_info = 0x80143060;
 
-cur_draw_info_dispenv_disp_w = 0x80143064;
-cur_draw_info_dispenv_screen_x = 0x80143068;
+_svm_vh = 0x80143064;
+_svm_tn = 0x80143068;
 cur_draw_info_dispenv_screen_w = 0x8014306C;
-cur_draw_info_dispenv_isinter = 0x80143070;
+CChannel = 0x80143070;
 cur_draw_info_drawenv = 0x80143074;
 
 temp1 = 0x80149AA8; // size:0xA000

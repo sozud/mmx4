@@ -100,7 +100,7 @@ extern u8 D_800F1FBC[4];
 extern const char D_80010058[];
 extern const char D_8001005C[];
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_PSX_MOD)
 const char D_80010058[4] = "";
 const char D_8001005C[16] = "BASLUS-00561";
 #else
@@ -1332,7 +1332,7 @@ void func_8001B8B0(s16 x, s16 y, u8 arg2)
 struct MemcardSignature {
     u8 bytes[3];
 };
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_PSX_MOD)
 const struct MemcardSignature D_80010090 = { { 's', 'c', 0 } };
 #else
 extern const struct MemcardSignature D_80010090;
