@@ -275,7 +275,6 @@
 #include "main/player_enter.h"
 #include "main/player_special.h"
 #include "main/player_weapon.h"
-#include "main/psxsdk/libgte/msc00.h"
 #include "main/psxsdk/libsnd/dmyprint.h"
 #include "main/quads/quad_00_search_light.h"
 #include "main/quads/quad_01_stage_select_panel.h"

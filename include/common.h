@@ -561,42 +561,6 @@ extern char D_80137E0C[0x1428];
 #endif
 extern s8 D_80139234[24];
 extern u8 D_8013924C[4];
-extern void* D_8013DC10;
-extern void* D_8013DC14;
-extern void* D_8013DC18;
-extern void* D_8013DC1C;
-extern void* D_8013DC20;
-extern void* D_8013DC24;
-extern void* D_8013DC28;
-extern void* D_8013DC2C;
-extern void* D_8013DC30;
-extern void* D_8013DC34;
-extern void* D_8013DC38;
-extern void* D_8013DC3C;
-extern void* D_8013DC40;
-extern void* D_8013DC44;
-extern void* D_8013DC48;
-extern void* D_8013DC4C;
-extern void* D_8013DC54;
-extern void* D_8013DC58;
-extern void* D_8013DC5C;
-extern void* D_8013DC60;
-extern void* D_8013DC64;
-extern void* D_8013DC68;
-extern void* D_8013DC6C;
-extern void* D_8013DC70;
-extern void* D_8013DC74;
-extern void* D_8013DC78;
-extern void* D_8013DC7C;
-extern void* D_8013DC80;
-extern void* D_8013DC84;
-extern void* D_8013DC88;
-extern void* D_8013DC8C;
-extern void* D_8013DC90;
-extern void* D_8013DC94;
-extern void* D_8013DC98;
-extern void* D_8013DC9C;
-extern void* D_8013DCA0;
 extern s8 D_8013E198[6];
 extern s8 D_8013E1C4;
 extern s8 D_8013E1C8[4];
@@ -615,7 +579,7 @@ extern u16 D_80173C84;
 extern u8 D_80173C84;
 #endif
 extern s32 D_80175EE8[];
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_PSX_MOD)
 #define D_8016DEA2 (D_8016DEA0.unk2)
 #define D_8016DEA4 (D_8016DEA0.unk4)
 #else
@@ -694,7 +658,7 @@ extern s8 D_80137CE4;
 extern u8 D_80137CF0;
 extern u8 D_80137CF4;
 extern u8 D_8013BD40;
-#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_PSX_MOD)
 extern struct BootTransitionDataRegion g_BootTransitionDataRegion;
 #define D_800F1C0F (g_BootTransitionDataRegion.stage_map)
 #define D_800F1C10 (g_BootTransitionDataRegion.stage_map + 1)
@@ -925,7 +889,6 @@ void palette_pulse_init(struct EffectObj*);
 void func_800BD080(struct EffectObj*);
 void cyberspace_trial_spawn_rank_warp(struct EffectObj*);
 void func_800D9B48(struct LayerObj*);
-void func_800E0D0C(void);
 void post_boss_cutscene_spawn_afterimages(struct UnkObj*);
 
 #endif

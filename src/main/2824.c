@@ -9,7 +9,6 @@
 #include "main/game_info.h"
 #include "main/menu.h"
 #include "main/objects.h"
-#include "main/psxsdk/libgte/msc00.h"
 #ifdef MMX4_SATURN
 #include "saturn/menu.h"
 #endif
@@ -122,7 +121,7 @@ void func_8001213C(void)
     ResetCallback();
     StopCallback();
     ResetGraph(0);
-    func_800E9040();
+    InitGeom();
     SetGeomOffset(0xA0, 0x78);
     SetGeomScreen(0x200);
 #ifdef VERSION_DEMO

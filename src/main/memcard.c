@@ -32,11 +32,18 @@ extern s32 func_8001CF74(void);
 #include "../pc/memcard.h"
 #endif
 
+#if defined(MMX4_PSX_MOD) && defined(VERSION_US)
+const struct MemcardSaveName D_80010094 = { "bu00:BASLUS-00561" };
+const struct MemcardSaveTitle D_800100A8 = {
+    "\x82\x6C\x82\x64\x82\x66\x82\x60\x82\x6C\x82\x60\x82\x6D\x81\x40\x82\x77\x82\x53"
+};
+#else
 INCLUDE_RODATA("main/nonmatchings/memcard", D_80010094);
 
 INCLUDE_RODATA("main/nonmatchings/memcard", D_800100A8);
+#endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_PSX_MOD)
 const struct MemcardPath D_800100C0 = { "bu00:" };
 #else
 INCLUDE_RODATA("main/nonmatchings/memcard", D_800100C0);

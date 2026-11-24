@@ -52,6 +52,20 @@ sh build.sh
 
 For the other versions, split with `config/SLPS_009.02.splat.yaml` or `config/SLES_011.76.splat.yaml` and run `VERSION=jp sh build.sh` or `VERSION=eu sh build.sh`. `build.sh` checks the result against `check.<version>.txt`.
 
+## Building a modded disc image
+
+The mod build links the game without fixed addresses, so you can change code and data freely; unmodified, it produces the retail US executable.
+
+```
+git submodule update --init tools/maspsx tools/psy-q-decomp
+sh compiler.sh
+python3 tools/psx_mod/configure.py
+ninja -f build/us-mod/build.ninja
+cp disks/mmx4.us.bin build/us-mod/mmx4-mod.bin
+sed 's/mmx4.us.bin/mmx4-mod.bin/' disks/mmx4.us.cue > build/us-mod/mmx4-mod.cue
+python3 tools/psx_mod/inject_exe.py build/us-mod/mmx4-mod.bin build/us-mod/main.exe
+```
+
 ## Building the PC port
 
 ```

@@ -170,7 +170,7 @@ void SsSetTickMode(long tick_mode)
 {
 }
 
-void func_800E0D0C(void)
+void SsUtReverbOn(void)
 {
 }
 

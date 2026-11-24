@@ -891,8 +891,6 @@ extern u32 D_8013962C;
 
 extern u32 D_80139630;
 
-extern s32 D_801410B8;
-
 extern s32 D_80139610;
 
 #ifdef VERSION_JP

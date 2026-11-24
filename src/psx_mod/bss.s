@@ -1,0 +1,1037 @@
+.include "macro.inc"
+
+.section .bss
+glabel D_8012F418
+    .space 0x04
+glabel D_8012F41C
+    .space 0x10
+glabel D_8012F42C
+    .space 0x04
+glabel jtbl_8012F430
+    .space 0x0C
+glabel D_8012F43C
+    .space 0x10
+glabel D_8012F44C
+    .space 0x08
+glabel jtbl_8012F454
+    .space 0x04
+glabel jtbl_8012F458
+    .space 0x14
+glabel D_8012F46C
+    .space 0x01
+glabel D_8012F46D
+    .space 0x01
+glabel D_8012F46E
+    .space 0x01
+glabel D_8012F46F
+    .space 0x21
+glabel D_8012F490
+    .space 0x08
+glabel D_8012F498
+    .space 0x10
+glabel D_8012F4A8
+    .space 0x04
+glabel D_8012F4AC
+    .space 0x04
+glabel D_8012F4B0
+    .space 0x04
+glabel D_8012F4B4
+    .space 0x8000
+glabel D_801374B4
+    .space 0x04
+glabel D_801374B8
+    .space 0x04
+glabel D_801374BC
+    .space 0x800
+glabel D_80137CBC
+    .space 0x04
+glabel D_80137CC0
+    .space 0x04
+glabel D_80137CC4
+    .space 0x04
+glabel D_80137CC8
+    .space 0x04
+glabel D_80137CCC
+    .space 0x04
+glabel D_80137CD0
+    .space 0x04
+glabel D_80137CD4
+    .space 0x01
+glabel D_80137CD5
+    .space 0x01
+glabel D_80137CD6
+    .space 0x02
+glabel D_80137CD8
+    .space 0x04
+glabel D_80137CDC
+    .space 0x04
+glabel D_80137CE0
+    .space 0x04
+glabel D_80137CE4
+    .space 0x04
+glabel D_80137CE8
+    .space 0x04
+glabel D_80137CEC
+    .space 0x04
+glabel D_80137CF0
+    .space 0x04
+glabel D_80137CF4
+    .space 0x04
+glabel D_80137CF8
+    .space 0x04
+glabel D_80137CFC
+    .space 0x02
+glabel D_80137CFE
+    .space 0x02
+glabel D_80137D00
+    .space 0x02
+glabel D_80137D02
+    .space 0x02
+glabel D_80137D04
+    .space 0x01
+glabel D_80137D05
+    .space 0x03
+glabel D_80137D08
+    .space 0x04
+glabel D_80137D0C
+    .space 0xB8
+glabel D_80137DC4
+    .space 0x04
+glabel D_80137DC8
+    .space 0x04
+glabel D_80137DCC
+    .space 0x04
+glabel D_80137DD0
+    .space 0x04
+glabel cd_fade_requested
+    .space 0x04
+glabel D_80137DD8
+    .space 0x04
+glabel D_80137DDC
+    .space 0x04
+glabel D_80137DE0
+    .space 0x04
+glabel D_80137DE4
+    .space 0x04
+glabel D_80137DE8
+    .space 0x14
+glabel D_80137DFC
+    .space 0x01
+glabel D_80137DFD
+    .space 0x03
+glabel D_80137E00
+    .space 0x04
+glabel D_80137E04
+    .space 0x04
+glabel D_80137E08
+    .space 0x04
+glabel D_80137E0C
+    .space 0x206
+glabel D_80138012
+    .space 0x1222
+glabel D_80139234
+    .space 0x18
+glabel D_8013924C
+    .space 0x04
+glabel D_80139250
+    .space 0x18
+glabel D_80139268
+    .space 0x2A8
+glabel D_80139510
+    .space 0x04
+glabel D_80139514
+    .space 0x0C
+glabel D_80139520
+    .space 0x01
+glabel D_80139521
+    .space 0x01
+glabel D_80139522
+    .space 0x01
+glabel D_80139523
+    .space 0x01
+glabel D_80139524
+    .space 0x04
+glabel D_80139528
+    .space 0x04
+glabel D_8013952C
+    .space 0x04
+glabel D_80139530
+    .space 0x04
+glabel D_80139534
+    .space 0x04
+glabel D_80139538
+    .space 0x04
+glabel D_8013953C
+    .space 0x04
+glabel D_80139540
+    .space 0x04
+glabel D_80139544
+    .space 0x10
+glabel D_80139554
+    .space 0x08
+glabel D_8013955C
+    .space 0x04
+glabel D_80139560
+    .space 0x04
+glabel D_80139564
+    .space 0x04
+glabel D_80139568
+    .space 0x04
+glabel D_8013956C
+    .space 0x0C
+glabel D_80139578
+    .space 0x04
+glabel D_8013957C
+    .space 0x04
+glabel D_80139580
+    .space 0x10
+glabel D_80139590
+    .space 0x04
+glabel D_80139594
+    .space 0x04
+glabel D_80139598
+    .space 0x04
+glabel D_8013959C
+    .space 0x04
+glabel D_801395A0
+    .space 0x04
+glabel D_801395A4
+    .space 0x04
+glabel old_dispenv
+    .space 0x14
+glabel D_801395BC
+    .space 0x18
+glabel D_801395D4
+    .space 0x04
+glabel D_801395D8
+    .space 0x04
+glabel D_801395DC
+    .space 0x04
+glabel D_801395E0
+    .space 0x04
+glabel D_801395E4
+    .space 0x04
+glabel D_801395E8
+    .space 0x04
+glabel D_801395EC
+    .space 0x04
+glabel D_801395F0
+    .space 0x08
+glabel D_801395F8
+    .space 0x08
+glabel D_80139600
+    .space 0x10
+glabel D_80139610
+    .space 0x04
+glabel D_80139614
+    .space 0x04
+glabel D_80139618
+    .space 0x02
+glabel D_8013961A
+    .space 0x02
+glabel D_8013961C
+    .space 0x02
+glabel D_8013961E
+    .space 0x02
+glabel D_80139620
+    .space 0x04
+glabel movie_slice_offset
+    .space 0x04
+glabel D_80139628
+    .space 0x04
+glabel D_8013962C
+    .space 0x04
+glabel D_80139630
+    .space 0x04
+glabel D_80139634
+    .space 0x04
+glabel D_80139638
+    .space 0x04
+glabel D_8013963C
+    .space 0x08
+glabel D_80139644
+    .space 0x01
+glabel D_80139645
+    .space 0x01
+glabel D_80139646
+    .space 0x01
+glabel D_80139647
+    .space 0x01
+glabel D_80139648
+    .space 0x05
+glabel D_8013964D
+    .space 0x03
+glabel D_80139650
+    .space 0x04
+glabel D_80139654
+    .space 0x1C
+glabel D_80139670
+    .space 0x04
+glabel D_80139674
+    .space 0x04
+glabel D_80139678
+    .space 0x04
+glabel D_8013967C
+    .space 0x04
+glabel D_80139680
+    .space 0x04
+glabel D_80139684
+    .space 0x04
+glabel D_80139688
+    .space 0x08
+glabel D_80139690
+    .space 0x28
+glabel D_801396B8
+    .space 0x04
+glabel D_801396BC
+    .space 0x04
+glabel D_801396C0
+    .space 0x04
+glabel D_801396C4
+    .space 0x04
+glabel D_801396C8
+    .space 0x02
+glabel D_801396CA
+    .space 0x02
+glabel D_801396CC
+    .space 0x01
+glabel D_801396CD
+    .space 0x01
+glabel D_801396CE
+    .space 0x01
+glabel D_801396CF
+    .space 0xED
+glabel D_801397BC
+    .space 0x04
+glabel D_801397C0
+    .space 0x04
+glabel D_801397C4
+    .space 0x04
+glabel D_801397C8
+    .space 0x04
+glabel D_801397CC
+    .space 0x04
+glabel D_801397D0
+    .space 0x04
+glabel D_801397D4
+    .space 0x04
+glabel D_801397D8
+    .space 0x04
+glabel D_801397DC
+    .space 0x04
+glabel D_801397E0
+    .space 0x04
+glabel D_801397E4
+    .space 0x40
+glabel D_80139824
+    .space 0x04
+glabel D_80139828
+    .space 0x08
+glabel temp3
+    .space 0x200
+glabel D_80139A30
+    .space 0x200
+glabel temp4
+    .space 0x100
+glabel D_80139D30
+    .space 0x100
+glabel temp5
+    .space 0x78
+glabel D_80139EA8
+    .space 0x78
+glabel D_80139F20
+    .space 0x50
+glabel D_80139F70
+    .space 0x30
+glabel D_80139FA0
+    .space 0x03
+glabel D_80139FA3
+    .space 0x01
+glabel D_80139FA4
+    .space 0x0C
+glabel D_80139FB0
+    .space 0x1800
+glabel D_8013B7B0
+    .space 0x20
+glabel D_8013B7D0
+    .space 0x08
+glabel D_8013B7D8
+    .space 0x04
+glabel D_8013B7DC
+    .space 0x04
+glabel D_8013B7E0
+    .space 0x04
+glabel D_8013B7E4
+    .space 0x04
+glabel D_8013B7E8
+    .space 0x04
+glabel D_8013B7EC
+    .space 0x04
+glabel D_8013B7F0
+    .space 0x04
+glabel D_8013B7F4
+    .space 0x04
+glabel D_8013B7F8
+    .space 0x04
+glabel D_8013B7FC
+    .space 0x04
+glabel D_8013B800
+    .space 0x04
+glabel D_8013B804
+    .space 0x04
+glabel D_8013B808
+    .space 0x04
+glabel D_8013B80C
+    .space 0x04
+glabel D_8013B810
+    .space 0x04
+glabel D_8013B814
+    .space 0x04
+glabel D_8013B818
+    .space 0x10
+glabel D_8013B828
+    .space 0x04
+glabel D_8013B82C
+    .space 0x04
+glabel D_8013B830
+    .space 0x04
+glabel D_8013B834
+    .space 0x04
+glabel jet_stingray_bubble_index
+    .space 0x08
+glabel magma_dragoon_arena_right
+    .space 0x04
+glabel magma_dragoon_arena_center
+    .space 0x04
+glabel magma_dragoon_arena_left
+    .space 0x04
+glabel magma_dragoon_arena_floor
+    .space 0x04
+glabel magma_dragoon_arena_ceiling
+    .space 0x08
+glabel D_8013B858
+    .space 0x20
+glabel D_8013B878
+    .space 0x20
+glabel D_8013B898
+    .space 0x04
+glabel D_8013B89C
+    .space 0x04
+glabel D_8013B8A0
+    .space 0x04
+glabel D_8013B8A4
+    .space 0x04
+glabel D_8013B8A8
+    .space 0x04
+glabel sigma_sequencer
+    .space 0x04
+glabel D_8013B8B0
+    .space 0x04
+glabel D_8013B8B4
+    .space 0x04
+glabel D_8013B8B8
+    .space 0x08
+glabel general_fists
+    .space 0x04
+glabel D_8013B8C4
+    .space 0x04
+glabel D_8013B8C8
+    .space 0x04
+glabel D_8013B8CC
+    .space 0x04
+glabel D_8013B8D0
+    .space 0x0C
+glabel D_8013B8DC
+    .space 0x04
+glabel D_8013B8E0
+    .space 0x04
+glabel D_8013B8E4
+    .space 0x04
+glabel boss_warning_tiles
+    .space 0x58
+glabel D_8013B940
+    .space 0x20
+glabel D_8013B960
+    .space 0x08
+glabel _ss_spu_vm_rec
+    .space 0x08
+glabel D_8013B970
+    .space 0x108
+glabel Result
+    .space 0x08
+glabel D_8013BA80
+    .space 0x08
+glabel D_8013BA88
+    .space 0x08
+glabel Alarm
+    .space 0x04
+glabel D_8013BA94
+    .space 0x04
+glabel D_8013BA98
+    .space 0x08
+glabel previous_frame_location
+    .space 0x04
+glabel next_frameid
+    .space 0x04
+glabel HeaderArea.2
+    .space 0x08
+glabel p0.87
+    .space 0x04
+glabel D_8013BAB4
+    .space 0x04
+glabel D_8013BAB8
+    .space 0x04
+glabel D_8013BABC
+    .space 0x04
+glabel D_8013BAC0
+    .space 0x04
+glabel D_8013BAC4
+    .space 0x04
+glabel D_8013BAC8
+    .space 0x04
+glabel D_8013BACC
+    .space 0x04
+glabel D_8013BAD0
+    .space 0x04
+glabel p1.88
+    .space 0x04
+glabel D_8013BAD8
+    .space 0x04
+glabel D_8013BADC
+    .space 0x04
+glabel D_8013BAE0
+    .space 0x14
+glabel ctlbuf
+    .space 0x104
+glabel patch0
+    .space 0x04
+glabel D_8013BBFC
+    .space 0x04
+glabel D_8013BC00
+    .space 0x04
+glabel D_8013BC04
+    .space 0x04
+glabel _svm_okon1
+    .space 0x02
+glabel _svm_okon2
+    .space 0x02
+glabel _svm_orev1
+    .space 0x02
+glabel _svm_orev2
+    .space 0x16
+glabel Stframe_no
+    .space 0x04
+glabel abc_object
+    .space 0x14
+glabel D_8013BC3C
+    .space 0x04
+glabel D_8013BC40
+    .space 0x100
+glabel D_8013BD40
+    .space 0x04
+glabel D_8013BD44
+    .space 0x04
+glabel layout_size
+    .space 0x08
+glabel D_8013BD50
+    .space 0x180
+glabel main_objects
+    .space 0x1D40
+glabel SsFCALL
+    .space 0x98
+glabel _svm_voice
+    .space 0x02
+glabel D_8013DCAA
+    .space 0x02
+glabel D_8013DCAC
+    .space 0x02
+glabel D_8013DCAE
+    .space 0x02
+glabel D_8013DCB0
+    .space 0x02
+glabel D_8013DCB2
+    .space 0x02
+glabel D_8013DCB4
+    .space 0x02
+glabel D_8013DCB6
+    .space 0x02
+glabel D_8013DCB8
+    .space 0x02
+glabel D_8013DCBA
+    .space 0x02
+glabel D_8013DCBC
+    .space 0x02
+glabel D_8013DCBE
+    .space 0x02
+glabel D_8013DCC0
+    .space 0x03
+glabel D_8013DCC3
+    .space 0x01
+glabel D_8013DCC4
+    .space 0x02
+glabel D_8013DCC6
+    .space 0x02
+glabel D_8013DCC8
+    .space 0x02
+glabel D_8013DCCA
+    .space 0x02
+glabel D_8013DCCC
+    .space 0x04
+glabel D_8013DCD0
+    .space 0x02
+glabel D_8013DCD2
+    .space 0x02
+glabel D_8013DCD4
+    .space 0x02
+glabel D_8013DCD6
+    .space 0x02
+glabel D_8013DCD8
+    .space 0x4B0
+glabel D_8013E188
+    .space 0x04
+glabel D_8013E18C
+    .space 0x04
+glabel D_8013E190
+    .space 0x04
+glabel D_8013E194
+    .space 0x04
+glabel D_8013E198
+    .space 0x01
+glabel D_8013E199
+    .space 0x01
+glabel D_8013E19A
+    .space 0x06
+glabel _svm_rattr
+    .space 0x04
+glabel D_8013E1A4
+    .space 0x04
+glabel D_8013E1A8
+    .space 0x02
+glabel D_8013E1AA
+    .space 0x0A
+glabel Stsector_offset
+    .space 0x04
+glabel StRgb24
+    .space 0x04
+glabel g_FilterModeB
+    .space 0x02
+glabel g_FilterAmountB
+    .space 0x02
+glabel StMode
+    .space 0x04
+glabel D_8013E1C4
+    .space 0x04
+glabel D_8013E1C8
+    .space 0x01
+glabel D_8013E1C9
+    .space 0x07
+glabel _svm_sreg_dirty
+    .space 0x18
+glabel D_8013E1E8
+    .space 0x100
+glabel cur_random
+    .space 0x08
+glabel D_8013E2F0
+    .space 0x180
+glabel baz_objects
+    .space 0xA0
+glabel visual_objects
+    .space 0xE00
+glabel D_8013F310
+    .space 0x18
+glabel shot_objects
+    .space 0x1380
+glabel D_801406A8
+    .space 0x04
+glabel D_801406AC
+    .space 0x04
+glabel StFunc1
+    .space 0x04
+glabel StFunc2
+    .space 0x04
+glabel _svm_vab_pg
+    .space 0x40
+glabel weapon_objects
+    .space 0x9C0
+glabel StCdIntrFlag
+    .space 0x08
+glabel unk_objects
+    .space 0x780
+glabel _svm_vab_vh
+    .space 0x40
+glabel _svm_damper
+    .space 0x08
+glabel _svm_vab_tn
+    .space 0x40
+glabel g_Player
+    .space 0xE4
+glabel D_801419AC
+    .space 0x04
+glabel background_objects
+    .space 0xFC
+glabel D_80141AAC
+    .space 0x04
+glabel foo_objects
+    .space 0x120
+glabel D_80141BD0
+    .space 0x02
+glabel D_80141BD2
+    .space 0x02
+glabel D_80141BD4
+    .space 0x04
+glabel main_bss_state
+    .space 0x04
+glabel D_80141BDC
+    .space 0x01
+glabel D_80141BDD
+    .space 0x01
+glabel D_80141BDE
+    .space 0x01
+glabel D_80141BDF
+    .space 0x01
+glabel D_80141BE0
+    .space 0x04
+glabel g_FilterModeG
+    .space 0x02
+glabel g_FilterAmountG
+    .space 0x02
+glabel D_80141BE8
+    .space 0x06
+glabel D_80141BEE
+    .space 0x192
+glabel D_80141D80
+    .space 0x168
+glabel D_80141EE8
+    .space 0x18
+glabel D_80141F00
+    .space 0x04
+glabel lastFilterAmountR
+    .space 0x04
+glabel _spu_RQ
+    .space 0x14
+glabel StCHANNEL
+    .space 0x10
+glabel StStartFrame
+    .space 0x04
+glabel D_80141F30
+    .space 0x08
+glabel D_80141F38
+    .space 0x10
+glabel _svm_stereo_mono
+    .space 0x02
+glabel D_80141F4A
+    .space 0x06
+glabel D_80141F50
+    .space 0x08
+glabel D_80141F58
+    .space 0x10
+glabel vram_rect_ptr
+    .space 0x04
+glabel _snd_ev_flag
+    .space 0x04
+glabel D_80141F70
+    .space 0x1000
+glabel loaded_vab_address
+    .space 0x04
+glabel kMaxPrograms
+    .space 0x04
+glabel _svm_pg
+    .space 0x08
+glabel cur_draw_info
+    .space 0x04
+glabel _svm_vh
+    .space 0x04
+glabel _svm_tn
+    .space 0x04
+glabel cur_draw_info_dispenv_screen_w
+    .space 0x04
+glabel CChannel
+    .space 0x04
+glabel cur_draw_info_drawenv
+    .space 0x04
+glabel effect_objects
+    .space 0x600
+glabel _SsVmMaxVoice
+    .space 0x18
+glabel g_QuadObjects
+    .space 0xC00
+glabel D_801441B0
+    .space 0x04
+glabel D_801441B4
+    .space 0x04
+glabel D_801441B8
+    .space 0x02
+glabel lastFilterAmountB
+    .space 0x02
+glabel StFinalSector
+    .space 0x04
+glabel D_801441C0
+    .space 0x08
+glabel D_801441C8
+    .space 0x1800
+glabel D_801459C8
+    .space 0x04
+glabel D_801459CC
+    .space 0x3FFC
+glabel temp1
+    .space 0xA000
+glabel D_801539C8
+    .space 0x464C
+glabel D_80158014
+    .space 0x59B4
+glabel D_8015D9C8
+    .space 0x08
+glabel D_8015D9D0
+    .space 0x8000
+glabel vram_rect_ptrs
+    .space 0x60
+glabel item_objects
+    .space 0x1180
+glabel need_palette_load
+    .space 0x04
+glabel saved_vab_address
+    .space 0x18
+glabel _snd_openflag
+    .space 0x18
+glabel _autopan
+    .space 0x04
+glabel _svm_cur
+    .space 0x01
+glabel D_80166BE9
+    .space 0x01
+glabel D_80166BEA
+    .space 0x01
+glabel D_80166BEB
+    .space 0x01
+glabel D_80166BEC
+    .space 0x01
+glabel D_80166BED
+    .space 0x01
+glabel D_80166BEE
+    .space 0x01
+glabel D_80166BEF
+    .space 0x03
+glabel D_80166BF2
+    .space 0x01
+glabel D_80166BF3
+    .space 0x01
+glabel D_80166BF4
+    .space 0x01
+glabel D_80166BF5
+    .space 0x01
+glabel D_80166BF6
+    .space 0x01
+glabel D_80166BF7
+    .space 0x01
+glabel D_80166BF8
+    .space 0x01
+glabel D_80166BF9
+    .space 0x01
+glabel D_80166BFA
+    .space 0x01
+glabel D_80166BFB
+    .space 0x01
+glabel D_80166BFC
+    .space 0x02
+glabel D_80166BFE
+    .space 0x02
+glabel D_80166C00
+    .space 0x02
+glabel D_80166C02
+    .space 0x02
+glabel D_80166C04
+    .space 0x02
+glabel D_80166C06
+    .space 0x02
+glabel controller_input
+    .space 0x02
+glabel D_80166C0A
+    .space 0x02
+glabel controller_state
+    .space 0x04
+glabel draw_infos
+    .space 0x10
+glabel draw_infos_0_dispenv_isinter
+    .space 0x01
+glabel draw_infos_0_dispenv_isrgb24
+    .space 0x03
+glabel draw_infos_0_drawenv
+    .space 0x8C
+glabel draw_infos_1_dispenv
+    .space 0x10
+glabel draw_infos_1_dispenv_isinter
+    .space 0x01
+glabel draw_infos_1_dispenv_isrgb24
+    .space 0x8F
+glabel D_80166D50
+    .space 0x08
+glabel _svm_vab_used
+    .space 0x10
+glabel pad_port1_packet
+    .space 0x01
+glabel D_80166D69
+    .space 0x01
+glabel D_80166D6A
+    .space 0x01
+glabel D_80166D6B
+    .space 0x25
+glabel _svm_sreg_buf
+    .space 0x02
+glabel D_80166D92
+    .space 0x02
+glabel D_80166D94
+    .space 0x02
+glabel D_80166D96
+    .space 0x02
+glabel D_80166D98
+    .space 0x02
+glabel D_80166D9A
+    .space 0x26F6
+glabel _autovol
+    .space 0x04
+glabel StEmu_Idx
+    .space 0x04
+glabel D_80169498
+    .space 0x02
+glabel D_8016949A
+    .space 0xB2
+glabel D_8016954C
+    .space 0x764
+glabel _svm_auto_kof_mode
+    .space 0x08
+glabel layer_objects
+    .space 0xC0
+glabel D_80169D78
+    .space 0x20
+glabel temp2
+    .space 0x2000
+glabel D_8016BD98
+    .space 0x2000
+glabel _svm_envx_ptr
+    .space 0x04
+glabel lastFilterAmountG
+    .space 0x104
+glabel D_8016DEA0
+    .space 0x02
+glabel D_8016DEA2
+    .space 0x02
+glabel D_8016DEA4
+    .space 0x04
+glabel player_gfx_buf_0
+    .space 0x1000
+glabel player_gfx_buf_1
+    .space 0x3000
+glabel D_80171EA8
+    .space 0x01
+glabel D_80171EA9
+    .space 0x07
+glabel D_80171EB0
+    .space 0x300
+glabel memcard_menu
+    .space 0x04
+glabel D_801721B4
+    .space 0x01
+glabel D_801721B5
+    .space 0x01
+glabel D_801721B6
+    .space 0x01
+glabel D_801721B7
+    .space 0x01
+glabel D_801721B8
+    .space 0x01
+glabel D_801721B9
+    .space 0x01
+glabel D_801721BA
+    .space 0x02
+glabel D_801721BC
+    .space 0x04
+glabel engine_obj
+    .space 0x64
+glabel layout_width
+    .space 0x04
+glabel _que
+    .space 0x04
+glabel D_8017222C
+    .space 0x04
+glabel D_80172230
+    .space 0x04
+glabel D_80172234
+    .space 0x17F4
+glabel layout_height
+    .space 0x08
+glabel qux_object
+    .space 0xB0
+glabel memcard_files
+    .space 0x18C
+glabel D_80173C6C
+    .space 0x01
+glabel D_80173C6D
+    .space 0x01
+glabel D_80173C6E
+    .space 0x01
+glabel D_80173C6F
+    .space 0x01
+glabel game_info
+    .space 0x10
+glabel D_80173C80
+    .space 0x04
+glabel D_80173C84
+    .space 0x04
+glabel VBLANK_MINUS
+    .space 0x04
+glabel StRingIdx1
+    .space 0x04
+glabel StRingIdx2
+    .space 0x04
+glabel StRingIdx3
+    .space 0x0C
+glabel misc_objects
+    .space 0x1800
+glabel bar_object
+    .space 0x34
+glabel D_801754D4
+    .space 0x04
+glabel _ss_score
+    .space 0x80
+glabel _SsMarkCallback
+    .space 0x800
+glabel g_Entity
+    .space 0xE4
+glabel _snd_seq_s_max
+    .space 0x04
+glabel StEmu_Addr
+    .space 0x04
+glabel _snd_seq_t_max
+    .space 0x04
+glabel StEndFrame
+    .space 0x04
+glabel StSTART_FLAG
+    .space 0x04
+glabel StRingBase
+    .space 0x04
+glabel StRingAddr
+    .space 0x04
+glabel _svm_vab_total
+    .space 0x40
+glabel D_80175E98
+    .space 0x04
+glabel g_FilterModeR
+    .space 0x02
+glabel _svm_vab_count
+    .space 0x02
+glabel g_FilterAmountR
+    .space 0x08
+glabel _svm_vab_start
+    .space 0x40
+glabel D_80175EE8
+    .space 0x01
+glabel D_80175EE9
+    .space 0x07
+glabel _svm_envx_hist
+    .space 0x40
+glabel StRingSize
+    .space 0x04
+glabel _svm_okof1
+    .space 0x02
+glabel _svm_okof2
+    .space 0x02

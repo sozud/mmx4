@@ -414,6 +414,27 @@ jobs:
           path: info-reports
           if-no-files-found: error
 
+  build-psx-mod:
+    name: Build PSX mod build (us)
+    if: github.event_name != 'pull_request_target'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install requirements
+        run: sudo apt-get install --yes gcc-mipsel-linux-gnu ninja-build
+      - name: Clone main repo
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Get submodules
+        run: git submodule update --init tools/maspsx tools/psy-q-decomp
+      - name: Get Compiler
+        run: sh compiler.sh
+      - name: Configure
+        run: python3 tools/psx_mod/configure.py --version us
+      - name: Build
+        run: ninja -f build/us-mod/build.ninja
+
   build-demo:
     name: Build PSX (demo)
     if: github.event_name != 'pull_request'

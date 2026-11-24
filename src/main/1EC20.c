@@ -718,7 +718,7 @@ void func_8002EDD4(struct EngineObj* arg0)
 }
 
 // engine_state_3_update_funcs state 8 (play video)
-#ifndef MMX4_PC
+#if !defined(MMX4_PC) && !defined(MMX4_PSX_MOD)
 extern RECT D_800F4768;
 extern RECT D_800F4770;
 #endif
@@ -785,14 +785,14 @@ void func_8002EF14(struct EngineObj* arg0)
 {
     s8 next;
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_PSX_MOD)
     MoveImage(&mission_route_a_positions, 576, 0);
 #else
     MoveImage(&D_800F4768, 576, 0);
 #endif
     DrawSync(0);
     func_80018000(mission_route_b[arg0->unkE]);
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_PSX_MOD)
     MoveImage(&mission_route_b_positions, 320, 176);
 #else
     MoveImage(&D_800F4770, 320, 176);
