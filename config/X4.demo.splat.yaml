@@ -422,7 +422,7 @@ segments:
       - [0x8CBA0, c, layers/layer_04_volcano_camera]
       - [0x8CE0C, c, layers/layer_05_airship_bob]
       - [0x8D104, c, CB184]
-      - [0x8D60C, asm, data/bss]
+      - [0x8D604, asm, psxsdk/2mbyte]
       - [0x8D6C8, asm, psxsdk/libspu/s_crwa]
       - [0x8E410, asm, psxsdk/libspu/s_ini]
       - [0x8E584, asm, psxsdk/libspu/s_dcb]

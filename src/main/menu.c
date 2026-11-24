@@ -100,13 +100,15 @@ extern u8 D_800F1FBC[4];
 extern const char D_80010058[];
 extern const char D_8001005C[];
 
-#if defined(MMX4_PC) || defined(MMX4_PSX_MOD)
+#ifndef MMX4_SATURN
 const char D_80010058[4] = "";
-const char D_8001005C[16] = "BASLUS-00561";
+#if defined(VERSION_JP)
+const char D_8001005C[16] = "BISLPS-00901";
+#elif defined(VERSION_EU)
+const char D_8001005C[16] = "BESLES-01176";
 #else
-INCLUDE_RODATA("main/nonmatchings/menu", D_80010058);
-
-INCLUDE_RODATA("main/nonmatchings/menu", D_8001005C);
+const char D_8001005C[16] = "BASLUS-00561";
+#endif
 #endif
 
 void func_800193D8(struct EngineObj* arg0)
@@ -1332,12 +1334,7 @@ void func_8001B8B0(s16 x, s16 y, u8 arg2)
 struct MemcardSignature {
     u8 bytes[3];
 };
-#if defined(MMX4_PC) || defined(MMX4_SATURN) || defined(MMX4_PSX_MOD)
 const struct MemcardSignature D_80010090 = { { 's', 'c', 0 } };
-#else
-extern const struct MemcardSignature D_80010090;
-INCLUDE_RODATA("main/nonmatchings/menu", D_80010090);
-#endif
 
 void func_8001BCAC(s16 x, s16 y, u8 arg2)
 {

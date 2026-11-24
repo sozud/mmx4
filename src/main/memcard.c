@@ -32,22 +32,26 @@ extern s32 func_8001CF74(void);
 #include "../pc/memcard.h"
 #endif
 
-#if defined(MMX4_PSX_MOD) && defined(VERSION_US)
+#ifndef MMX4_PC
+#if defined(VERSION_JP)
+const struct MemcardSaveName D_80010094 = { "bu00:BISLPS-00901" };
+const struct MemcardSaveTitle D_800100A8 = {
+    "\x83\x8D\x83\x62\x83\x4E\x83\x7D\x83\x93\x82\x77\x82\x53\x82\xCC\x83\x5A\x81\x5B\x83\x75"
+    "\x83\x66\x81\x5B\x83\x5E\x82\xC5\x82\xB7\x81\x42"
+};
+#else
+#if defined(VERSION_EU)
+const struct MemcardSaveName D_80010094 = { "bu00:BESLES-01176" };
+#else
 const struct MemcardSaveName D_80010094 = { "bu00:BASLUS-00561" };
+#endif
 const struct MemcardSaveTitle D_800100A8 = {
     "\x82\x6C\x82\x64\x82\x66\x82\x60\x82\x6C\x82\x60\x82\x6D\x81\x40\x82\x77\x82\x53"
 };
-#else
-INCLUDE_RODATA("main/nonmatchings/memcard", D_80010094);
-
-INCLUDE_RODATA("main/nonmatchings/memcard", D_800100A8);
+#endif
 #endif
 
-#if defined(MMX4_PC) || defined(MMX4_PSX_MOD)
 const struct MemcardPath D_800100C0 = { "bu00:" };
-#else
-INCLUDE_RODATA("main/nonmatchings/memcard", D_800100C0);
-#endif
 
 void InitMemcards(void)
 {

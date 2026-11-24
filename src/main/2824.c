@@ -44,7 +44,9 @@ void func_800168D8(void);
 s32 func_800169D8(void);
 void load_palette(void);
 void load_vram_rect_ptrs(void);
-void tile_effect_nop(void);
+#ifndef MMX4_PC
+void __main(void);
+#endif
 
 #ifdef MMX4_PC
 #include "../pc/oracle.h"
@@ -67,7 +69,9 @@ void func_8002A160_demo(u8 arg0);
 #ifndef MMX4_SATURN
 void func_80012024(void)
 {
-    tile_effect_nop();
+#ifndef MMX4_PC
+    __main();
+#endif
     func_8001213C();
     while (1) {
 #ifdef MMX4_PC

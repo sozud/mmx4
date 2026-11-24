@@ -390,6 +390,3 @@ void func_800DADA0(struct TileEffectRecord* arg0, u16 arg1, u16 arg2, u8 arg3,
         D_801441C8[arg0->layer][row][col] = arg0->tiles[arg3];
     }
 }
-void tile_effect_nop(void)
-{
-}

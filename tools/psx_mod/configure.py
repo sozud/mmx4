@@ -17,7 +17,7 @@ PSYQ_DIR = "tools/psy-q-decomp"
 SKIP_SOURCES = {"src/main/data/sdk_runtime_data.c", "src/main/data/bss.c"}
 MOD_ASM = [
     ("", "src/psx_mod/bss.s"),
-    ("CB68C", "src/psx_mod/crt0.s"),
+    ("psxsdk/2mbyte", "src/psx_mod/crt0.s"),
     ("psxsdk/libsn/sndef", "src/psx_mod/sndef.s"),
 ]
 EXTRA_SDK = [
