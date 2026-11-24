@@ -990,7 +990,6 @@ extern void final_weapon_bg_cycle_init (struct LayerObj *arg0);
 extern void space_port_parallax_update (struct LayerObj *arg0);
 extern void space_port_parallax_init (struct LayerObj *arg0);
 extern void space_port_parallax_despawn (struct LayerObj *arg0);
-extern void tile_effect_nop (void);
 extern void load_palette (void);
 extern void load_vram_rect_ptrs (void);
 extern void reset_entity (struct PlayerObj *arg0);

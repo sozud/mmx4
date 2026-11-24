@@ -321,7 +321,11 @@ extern u32* D_80137E08;
 s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
 // play_sound
 #ifndef MMX4_PC
-s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source);
+#ifdef MMX4_WIN32
+s8 func_800154E8(u8 arg0, u8 arg1, s32 id, struct BaseObj* source);
+#else
+s32 func_800154E8(u8 arg0, u8 arg1, struct BaseObj* source);
+#endif
 // clang-format off
 s32 func_8001540C(arg0, arg1, arg2)
     u8 arg0;
@@ -358,7 +362,11 @@ s32 func_8001540C(arg0, arg1, arg2)
         ret = func_800157AC(type, arg1, arg2);
 #endif
     } else {
+#ifdef MMX4_WIN32
+        ret = func_800154E8(arg0, arg1, id, arg2);
+#else
         ret = func_800154E8(arg0, id, arg2);
+#endif
     }
     return ret;
 }
@@ -366,89 +374,216 @@ s32 func_8001540C(arg0, arg1, arg2)
 INCLUDE_ASM("main/nonmatchings/55C4", func_8001540C);
 #endif
 
-#ifndef MMX4_PC
-s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source)
+#ifdef MMX4_WIN32
+s8 sub_403980(u8 bank, u16 id, s32 a3, s8 pan, u8 mode, u8 priority, s16 program, s16 vag, s8 remaining, u8 ch);
+void sub_403BA0(u8 ch);
+u8 pc_spu_key_status(u8 voice);
+
+s8 func_800154E8(u8 arg0, u8 arg1, s32 id, struct BaseObj* source)
 {
-    u8 pan;
-    VagAtr tone;
+    s8 pan;
     u8 priority;
     u8 fixed_pan;
-    s32 fine;
     u8 voice;
-    s8 balance;
     u8 packed3;
     u8 packed2;
     s16 vag;
     u8 packed1;
     s8 remaining;
-    s16 vab;
-    s16 left;
-    s16 right;
-    s32 note;
-    s32 voice_index;
     s16 program;
+
+    packed1 = ((u8*)D_80137E08)[1];
+    fixed_pan = packed1 >> 7;
+    packed2 = ((u8*)D_80137E08)[2];
+    priority = packed2 & 0xF;
+    program = packed2 >> 4;
+    vag = packed1 & 0x7F;
+    packed3 = ((u8*)D_80137E08)[3];
+    remaining = (packed3 & 0x60) >> 5;
+    voice = packed3 & 0x1F;
+    if (source != NULL) {
+        if (arg0 & 0x80) {
+            pan = source->unk2;
+        } else {
+            s16 x = source->x_pos.i.hi;
+            s8 background = source->bg_offset;
+
+            if (background >= 0) {
+                x -= background_objects[background].x_pos.i.hi;
+            }
+            pan = x / 10;
+            if (pan < 5) {
+                pan = 5;
+            }
+            if (pan > 0x1B) {
+                pan = 0x1B;
+            }
+        }
+    } else {
+        fixed_pan = 1;
+    }
+    if (!pc_spu_key_status(voice)) {
+        sub_403980(arg0, arg1, id, pan, fixed_pan, priority, program, vag, remaining, voice);
+        D_80139234[voice] = priority;
+        return 0;
+    }
+    if (priority >= D_80139234[voice]) {
+        sub_403BA0(voice);
+        sub_403980(arg0, arg1, id, pan, fixed_pan, priority, program, vag, remaining, voice);
+        D_80139234[voice] = priority;
+        return 0;
+    }
+    return -4;
+}
+#elif !defined(MMX4_PC)
+#if defined(MMX4_GAMECUBE) || defined(MMX4_PS2)
+struct CollectionVagAtr {
+    u32 note;
+    u32 vol;
+};
+#ifdef MMX4_GAMECUBE
+void fn_80055704(struct CollectionVagAtr* tone, s32 vab, s32 prog, s32 tone_index);
+s16 fn_8005543C(s32 voice, s32 vab, s32 prog, s32 tone, s32 note, s32 fine, s32 voll, s32 volr);
+s32 fn_4_D659C(s32 voice_bit);
+#define collection_get_vag_attr fn_80055704
+#define collection_key_on fn_8005543C
+#define SpuGetKeyStatus fn_4_D659C
+#else
+void func_16DB20(struct CollectionVagAtr* tone, s32 vab, s32 prog, s32 tone_index);
+s16 func_16DCF0(s32 voice, s32 vab, s32 prog, s32 tone, s32 note, s32 fine, s32 voll, s32 volr);
+s32 func_1198A0(s64 voice_bit);
+void func_16DE80(s32 voice);
+#define collection_get_vag_attr func_16DB20
+#define collection_key_on func_16DCF0
+#define SpuGetKeyStatus func_1198A0
+#define SsUtKeyOffV func_16DE80
+#endif
+#endif
+
+s32 func_800154E8(u8 arg0, u8 arg1, struct BaseObj* source)
+{
+    s16 program;
+#if defined(MMX4_GAMECUBE) || defined(MMX4_PS2)
+    struct CollectionVagAtr tone;
+#else
+    VagAtr tone;
+#endif
+    u8 priority;
+    u8 fixed_pan;
+    s32 fine;
+    s16 vag;
+    s8 balance;
+    u8 packed3;
+    u8 packed2;
+    s16 left;
+    u8 packed1;
+    s16 right;
+    u8 vab;
+    u8 voice;
+    s8 remaining;
+    s16 note;
+    u8 key;
+    s8 pan;
 
     if (source != NULL) {
         if (arg0 & 0x80) {
             pan = source->unk2;
         } else {
+            s16 x = source->x_pos.i.hi;
             s8 background = source->bg_offset;
-            u16 x = source->x_pos.i.hi;
 
             if (background >= 0) {
                 x -= background_objects[background].x_pos.i.hi;
             }
-            pan = (s16)x / 10;
-            if ((s8)pan < 5) {
+            pan = x / 10;
+            if (pan < 5) {
                 pan = 5;
             }
-            if ((s8)pan >= 0x1C) {
+            if (pan > 0x1B) {
                 pan = 0x1B;
             }
         }
     }
-    packed3 = ((u8*)D_80137E08)[3];
+#ifdef MMX4_GAMECUBE
+    vab = arg1 & 0xFF;
+    balance = pan;
+#endif
     packed1 = ((u8*)D_80137E08)[1];
+    fixed_pan = (packed1 & 0x80) >> 7;
     packed2 = ((u8*)D_80137E08)[2];
-    fixed_pan = packed1 >> 7;
     priority = packed2 & 0xF;
-    program = packed2 >> 4;
+    program = (packed2 & 0xF0) >> 4;
     vag = packed1 & 0x7F;
+    packed3 = ((u8*)D_80137E08)[3];
     remaining = (packed3 & 0x60) >> 5;
     voice = packed3 & 0x1F;
+#if !defined(MMX4_GAMECUBE) && !defined(MMX4_COLLECTION)
     if (remaining >= 0) {
-        vab = arg1 & 0xFF;
+#endif
+#ifndef MMX4_GAMECUBE
+        vab = arg1;
         balance = pan;
-        for (; remaining >= 0; remaining--) {
-            SsUtGetVagAtr(vab, vag, program, &tone);
-            left = right = tone.vol;
+#endif
+        for (; remaining >= 0; remaining--, voice++) {
+#if defined(MMX4_GAMECUBE) || defined(MMX4_PS2)
+            collection_get_vag_attr(&tone, vab, vag, program);
+            key = tone.note;
+#ifdef MMX4_GAMECUBE
+            note = key;
+#endif
+            right = left = (u8)tone.vol;
+#ifdef MMX4_GAMECUBE
+            fine = 0;
+#endif
+#else
+        SsUtGetVagAtr(vab, vag, program, &tone);
+        left = right = tone.vol;
+#endif
             if (!fixed_pan && source != NULL) {
                 if (balance < 0x10) {
-                    left = balance * ((u32)left >> 4);
-                } else if (balance >= 0x11) {
-                    right = (right >> 4) * (0x20 - balance);
+                    left = (left >> 4) * balance;
+                } else if (balance > 0x10) {
+                    right = (left >> 4) * (0x20 - balance);
                 }
             }
-            voice_index = voice;
-            note = tone.min;
-            fine = tone.shift;
-            if (SpuGetKeyStatus(1 << voice_index) == 0) {
-                SsUtKeyOnV(voice, vab, vag, program, note, fine, right, left);
-                D_80139234[voice_index] = priority;
+#if defined(MMX4_GAMECUBE) || defined(MMX4_PS2)
+#ifndef MMX4_GAMECUBE
+            note = key;
+#endif
+#ifndef MMX4_GAMECUBE
+            fine = 0;
+#endif
+#else
+        note = tone.min;
+        fine = tone.shift;
+#endif
+            if (SpuGetKeyStatus(1L << voice) == 0) {
+#if defined(MMX4_GAMECUBE) || defined(MMX4_PS2)
+                SsUtKeyOffV(voice);
+                collection_key_on(voice, vab, vag, program, note, fine, right, left);
+#else
+            SsUtKeyOnV(voice, vab, vag, program, note, fine, right, left);
+#endif
+                D_80139234[voice] = priority;
+            } else if (priority >= D_80139234[voice]) {
+#if defined(MMX4_GAMECUBE) || defined(MMX4_PS2)
+                SsUtKeyOffV(voice);
+                collection_key_on(voice, vab, vag, program, note, fine, right, left);
+#else
+            SsUtKeyOnV(voice, vab, vag, program, note, fine, right, left);
+#endif
+                D_80139234[voice] = priority;
             } else {
-                if (priority < D_80139234[voice_index]) {
-                    return -4;
-                }
-                SsUtKeyOnV(voice, vab, vag, program, note, fine, right, left);
-                D_80139234[voice_index] = priority;
+                return -4;
             }
-            if (++program >= 0x10) {
+            if (++program > 0xF) {
                 vag++;
                 program = 0;
             }
-            voice++;
         }
+#if !defined(MMX4_GAMECUBE) && !defined(MMX4_COLLECTION)
     }
+#endif
     return 0;
 }
 #endif

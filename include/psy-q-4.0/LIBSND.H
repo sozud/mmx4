@@ -226,7 +226,11 @@ extern short SsUtKeyOn(short, short, short, short, short, short, short);
 extern short SsUtKeyOff(short, short, short, short, short);
 extern short SsUtKeyOnV(short voice, short vabId, short prog, short tone, 
                         short note, short fine, short voll, short volr);
+#ifdef MMX4_GAMECUBE
+extern short SsUtKeyOffV(int voice);
+#else
 extern short SsUtKeyOffV(short voice);
+#endif
 extern short SsUtPitchBend(short, short, short, short, short);
 extern short SsUtChangePitch(short, short, short, short, short,
                               short, short);

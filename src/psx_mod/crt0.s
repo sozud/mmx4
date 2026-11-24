@@ -5,6 +5,11 @@
 
 .section .text, "ax"
 
+glabel __main
+    jr      $ra
+    nop
+.size __main, . - __main
+
 glabel __start
     lui     $v0, %hi(__bss_start)
     addiu   $v0, $v0, %lo(__bss_start)
