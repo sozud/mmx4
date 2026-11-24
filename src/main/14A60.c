@@ -1020,7 +1020,7 @@ __asm__(".pushsection .text\n"
         "\t.set at\n"
         "\t.end\tfunc_80024334\n"
         ".popsection");
-#elif defined(VERSION_EU) || defined(MMX4_PC)
+#elif defined(VERSION_EU) || defined(VERSION_DEMO) || defined(MMX4_PC)
 INCLUDE_ASM("main/nonmatchings/14A60", func_80024334);
 #elif !defined(MMX4_SATURN)
 void func_80024334(struct VisualObj* obj)
