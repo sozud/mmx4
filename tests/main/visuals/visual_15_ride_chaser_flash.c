@@ -18,7 +18,7 @@ static u32 flash_case(u32 row)
     rider.x_pos.i.hi = 100;
     rider.y_pos.i.hi = 80;
     ride_chaser_flash_update(&flash);
-    assert(flash.state == 1 && flash.unk54 == 3 && flash.unk16 == 2);
+    assert(flash.state == 1 && flash.unk54 == 3 && flash.unk16 == VISUAL_SATURN_LAYER(2));
     flash.unk54 = row == 2 ? 1 : 3;
     flash.animation_step.fields.relative_step = row >= 2 ? -1 : 1;
     ride_chaser_flash_update(&flash);

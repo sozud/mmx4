@@ -1,0 +1,3 @@
+file	line	function	outcome	class	evidence
+src/main/unks/unk_00_menu_text.c	149	func_800D3798	not-taken	data-dependent	The bit search never runs out: the menu spawner (1A5BC.c, second loop over D_800F4568/D_800F457C) gives state-2 labels unk2 0-6 and stops at 7, and menu_button_bits_a[0-6] each hold exactly one bit below 16.
+src/main/unks/unk_00_menu_text.c	149	func_800D3798	not-taken	unreachable-logic	menu_button_bits_a holds one single-bit mask per button, so the bit search always breaks out before i reaches 16.

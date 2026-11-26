@@ -31,7 +31,7 @@ static u32 test_enemy_hit_reaction(u32 row)
     obj.invincibility_timer = c->obj_invincibility_timer;
     obj.x_pos.val = 0x00681234;
     obj.y_pos.val = 0x00845678;
-    obj.unk16 = 6;
+    obj.unk16 = VISUAL_SATURN_LAYER(6);
     obj.contact_damage = 3;
     obj.animation_table = (const u8* const*)ice_block_animations;
     obj.hurt_box = &D_800FC84C;
@@ -116,12 +116,13 @@ static u32 test_func_80091EC4_1(u32 row)
 }
 
 struct spike_crawler_hit_knockback_case {
-    u32 x_pos, unk63;
+    u32 x_pos, unk63, sliding;
     u32 expected[8];
 };
 static const struct spike_crawler_hit_knockback_case spike_crawler_hit_knockback_cases[] = {
-    { 0, 5, { 0u, 0x11u, 0x8000u, 0u, 1u, 0u, 0u, 0u } },
-    { -1, 6, { 0u, 0u, 0u, 1u, 0u, 0u, 0u, 0u } },
+    { 0, 5, 0, { 0u, 0x11u, 0x8000u, 0u, 1u, 0u, 0u, 0u } },
+    { -1, 6, 0, { 0u, 0u, 0u, 1u, 0u, 0u, 0u, 0u } },
+    { 0, 5, 1, { 0u, 4u, 0u, 0u, 1u, 0u, 0u, 0u } },
 };
 static u32 test_spike_crawler_hit_knockback(u32 row)
 {
@@ -132,7 +133,12 @@ static u32 test_spike_crawler_hit_knockback(u32 row)
     memset(&g_Player, 0, sizeof(g_Player));
     g_Player.x_pos.val = c->x_pos;
     obj.unk63 = c->unk63;
-    obj.collision_flags = 3;
+    obj.collision_flags = c->sliding ? 0 : 3;
+    if (c->sliding) {
+        obj.unk6 = 1;
+        obj.x_speed = 0x1000;
+        obj.invincibility_timer = 5;
+    }
     spike_crawler_hit_knockback(&obj);
     observed_values[0] = (u32)obj.gravity;
     observed_values[1] = (u32)obj.invincibility_timer;
@@ -149,7 +155,7 @@ const struct CTestGroup c_test_groups[] = {
     { "enemy_hit_reaction", 0, 0, 4, test_enemy_hit_reaction },
     { "func_80091EC4_0", 0, 0, 3, test_func_80091EC4_0 },
     { "func_80091EC4_1", 0, 0, 1, test_func_80091EC4_1 },
-    { "spike_crawler_hit_knockback", 0, 0, 2, test_spike_crawler_hit_knockback },
+    { "spike_crawler_hit_knockback", 0, 0, 3, test_spike_crawler_hit_knockback },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 4 + 3 + 1 + 2;
+const u32 c_test_count = 4 + 3 + 1 + 3;

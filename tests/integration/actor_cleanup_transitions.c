@@ -25,7 +25,7 @@ static u32 actor_transition(u32 row)
     obj.unk2 = 1;
     obj.on_screen = 7;
     obj.bg_offset = -1;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = positions[edge][0] * 65536 + 0x1234;
     obj.y_pos.val = positions[edge][1] * 65536 + 0x5678;
     obj.x_speed = 0x13579;

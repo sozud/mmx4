@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/misc/misc_19_title.h"
+#ifndef VERSION_DEMO
 extern struct TitleObjectInit title_object_inits[22];
 
 struct title_draw_case {
@@ -50,16 +51,16 @@ static u32 menu_frame(u32 row)
     obj.state = 1;
     obj.unk2 = 15;
     obj.bg_offset = -1;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 64 * 65536 + 0x5678;
-    obj.unk16 = 3;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.animation_table = title_animations;
     obj.animation_step.fields.frame_index = 2;
     game_info.unk2 = selection;
     info_before = game_info;
     expected = obj;
-    expected.unk16 = 2;
+    expected.unk16 = VISUAL_SATURN_LAYER(2);
     expected.on_screen = 1;
     expected.y_pos.i.hi = 128 + 16 * selection;
     expected.animation_step.fields.frame_index = frames[selection];
@@ -73,9 +74,32 @@ static u32 menu_frame(u32 row)
     return 1;
 }
 
+#include "weapon_resources.h"
+static u32 title_blink(u32 row)
+{
+    struct MiscObj obj;
+    memset(&obj, 0, sizeof(obj));
+    memset(background_objects, 0, sizeof(background_objects));
+    obj.unk2 = row ? 5 : 4;
+    obj.x_pos.i.hi = 0xA0;
+    obj.y_pos.i.hi = 0xA0;
+    WEAPON_FRAME_COUNTER = row ? 0 : 0x10;
+    title_draw(&obj);
+    WEAPON_FRAME_COUNTER = 0;
+    return obj.on_screen;
+}
+static const u32 title_blink_expected[] = { 1u, 0u };
+#endif
 const struct CTestGroup c_test_groups[] = {
+#ifndef VERSION_DEMO
     { "title_draw", 0, 0, 2, test_title_draw },
+    { "title_press_start_blink", NULL, title_blink_expected, COUNT(title_blink_expected), title_blink },
     { "all_three_title_menu_choices_use_shipped_frames", NULL, NULL, 6, menu_frame },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 2 + 6;
+#ifdef VERSION_DEMO
+const u32 c_test_count = 0;
+#else
+const u32 c_test_count = 2 + COUNT(title_blink_expected) + 6;
+#endif

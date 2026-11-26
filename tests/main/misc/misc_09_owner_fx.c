@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 
 #include "support/state_cases.h"
 #include "main/misc/misc_09_owner_fx.h"
@@ -10,7 +11,7 @@ static void ofx_init(void)
 {
     FX(0, 0);
     owner_fx_update(&sm);
-    state_extra = sm.on_screen | sm.unk16 << 8 | (u8)sm.bg_offset << 16;
+    state_extra = sm.on_screen | TEST_PSX_LAYER(sm.unk16) << 8 | (u8)sm.bg_offset << 16;
 }
 static void ofx_hidden(void)
 {

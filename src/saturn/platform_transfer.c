@@ -96,12 +96,13 @@ static inline void
 copy_transfers(volatile SaturnTransferBank* primary, volatile u8* primary_join,
     volatile SaturnTransferBank* secondary, volatile u8* secondary_join)
 {
-    for (unsigned i = 0; i < secondary->command_count; ++i) {
+    unsigned i;
+    for (i = 0; i < secondary->command_count; ++i) {
         primary->commands[i].byte_length = secondary->commands[i].byte_length;
         primary->commands[i].destination = secondary->commands[i].destination;
         primary->commands[i].source_and_group_end = secondary->commands[i].source_and_group_end;
     }
-    for (unsigned i = 0; i < secondary->profile_count; ++i) {
+    for (i = 0; i < secondary->profile_count; ++i) {
         primary->profiles[i].add_a = secondary->profiles[i].add_a;
         primary->profiles[i].add_b = secondary->profiles[i].add_b;
         primary->profiles[i].attribute_a = secondary->profiles[i].attribute_a;
@@ -122,8 +123,9 @@ void saturn_transfer_copy(volatile SaturnTransferBank* primary, volatile u8* pri
 
 static inline void advance_count(volatile u8* count)
 {
+    unsigned next;
     *count = (u8)(*count + 1);
-    unsigned next = *count;
+    next = *count;
     while (next >= SATURN_TRANSFER_SLOTS) {
         next -= SATURN_TRANSFER_SLOTS;
     }

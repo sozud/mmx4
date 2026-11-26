@@ -58,10 +58,142 @@ static void lg_despawn(void)
     state_room.item.backref = NULL;
 }
 
+void layout_gate_wait_hit(struct ItemObj*);
+void func_800C580C(struct ItemObj*);
+void func_800C5994(struct ItemObj*, u8);
+#define lg state_room.item
+#define LG(step) (state_reset(0, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), lg.active = 1, lg.state = 1, lg.unk5 = step, lg.x_pos.i.hi = 0x80, lg.y_pos.i.hi = 0x60, lg.unk5C = 1, SPIKE_IMMUNE_SET(g_Player, 1))
+#define LGX() (state_extra = lg.ext.item_22.collision_side | (u32)lg.unk7C.timer << 8 | (u32)lg.unk2 << 24)
+static void lg_hit_left(void)
+{
+    LG(0), state_hit(MAIN_OBJECT(&lg), 0, 0, 1), layout_gate_wait_hit(&lg), LGX();
+}
+static void lg_hit_right(void) { LG(0), state_hit(MAIN_OBJECT(&lg), 0, 0, 1), weapon_objects[0].x_pos.i.hi += 0x1A0, layout_gate_wait_hit(&lg), LGX(); }
+static void lg_hit_none(void) { LG(0), MAIN_OBJECT(&lg)->hurt_box = &state_hit_box, layout_gate_wait_hit(&lg), LGX(); }
+static void lg_open_rebuild(void) { LG(1), lg.unk7C.timer = 0x1F, lg.unk2 = 3, WEAPON_FRAME_COUNTER = 0, cur_random = 4, layout_width = 16, func_800C580C(&lg), LGX(), state_extra ^= (u32)D_80141BE8[16 + 11] << 4; }
+static void lg_open_wait(void) { LG(1), lg.unk7C.timer = 5, WEAPON_FRAME_COUNTER = 1, func_800C580C(&lg), LGX(); }
+static void lg_open_done(void) { LG(1), lg.unk7C.timer = 1, lg.tail_ext.unk1.unk84.bytes[0] = 5, func_800C580C(&lg), LGX(); }
+#define BLAST(seed, debris) (LG(1), cur_random = seed, func_800C5994(&lg, debris), LGX(), state_extra ^= (u32)(u16)visual_objects[0].x_pos.i.hi << 4)
+static void lg_blast_1(void)
+{
+    BLAST(1, 0);
+}
+static void lg_blast_2(void) { BLAST(2, 0); }
+static void lg_blast_3(void) { BLAST(3, 1); }
 static void (*const layout_gate_misc_cases[])(void) = {
     lg_despawn,
+    lg_hit_left,
+    lg_hit_right,
+    lg_hit_none,
+    lg_open_rebuild,
+    lg_open_wait,
+    lg_open_done,
+    lg_blast_1,
+    lg_blast_2,
+    lg_blast_3,
 };
-static const u32 layout_gate_misc_expected[] = { 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+static const u32 layout_gate_misc_expected[] = {
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x58000u,
+    0x1u,
+    0x2101u,
+    0x101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x58000u,
+    0x2u,
+    0x2101u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x101u,
+    0x301u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x3001A50u,
+    0x41002100u,
+    0x101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x400u,
+    0x0u,
+    0x3u,
+    0x501u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x5000000u,
+    0x0u,
+    0x101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x720u,
+    0x2100u,
+    0x101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x840u,
+    0x2100u,
+    0x101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x41000000u,
+};
 
 static u32 test_layout_gate_misc(u32 row)
 {

@@ -63,7 +63,7 @@ static u32 clone_case(u32 mode, u32 observation)
     g_Player.weapon = 3;
     g_Player.hp = 20;
     g_Player.controlling_clone = 1;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Entity.active = 0x41;
     g_Entity.on_screen = 1;
     g_Entity.state = 3;
@@ -93,7 +93,7 @@ static u32 clone_case(u32 mode, u32 observation)
     memcpy(bg_before, background_objects, sizeof(bg_before));
     soul_body_clone_update();
     player_before.controlling_clone = g_Player.controlling_clone;
-    player_before.spike_immune = g_Player.spike_immune;
+    SPIKE_IMMUNE_SET(player_before, SPIKE_IMMUNE(g_Player));
     entity_before.active = g_Entity.active;
     entity_before.on_screen = g_Entity.on_screen;
     entity_before.x_pos = g_Entity.x_pos;
@@ -114,7 +114,7 @@ static u32 clone_case(u32 mode, u32 observation)
     assert(engine_obj.controlled_player == &g_Player || engine_obj.controlled_player == &g_Entity);
     switch (observation) {
     case 0:
-        actual = (u8)g_Entity.active | ((u32)g_Entity.on_screen << 8) | ((u32)(u8)g_Player.controlling_clone << 16) | ((u32)(u8)g_Player.spike_immune << 24);
+        actual = (u8)g_Entity.active | ((u32)g_Entity.on_screen << 8) | ((u32)(u8)g_Player.controlling_clone << 16) | ((u32)(u8)SPIKE_IMMUNE(g_Player) << 24);
         break;
     case 1:
         actual = g_Entity.x_pos.val;
@@ -140,6 +140,8 @@ static u32 soul_clone_context_cases_row(u32 row)
     return clone_case(row / 6, row % 6);
 }
 
+#ifndef MMX4_SATURN
+#define CLONE_GROUP_CASES (6 + 34 + 4 + 8)
 static struct {
     u32 frames[256];
     u16 stream[6];
@@ -181,7 +183,7 @@ static void clone_reset(u32 background)
     g_Player.weapon = 3;
     g_Player.hp = 20;
     g_Player.controlling_clone = 1;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.x_pos.val = 100 * 65536 + 0x1234;
     g_Player.y_pos.val = 120 * 65536 + 0x5678;
     g_Entity.active = 0x41;
@@ -302,7 +304,7 @@ static u32 test_clone_cancel_guards(u32 row)
         expected.entity.active = 0;
         expected.entity.on_screen = 0;
         expected.player.controlling_clone = 0;
-        expected.player.spike_immune = 0;
+        SPIKE_IMMUNE_SET(expected.player, 0);
     }
     soul_body_clone_update();
     clone_check(&expected);
@@ -360,7 +362,7 @@ static u32 test_clone_timer_boundaries(u32 row)
         expected.entity.unk17 = 0x62;
         expected.entity.unk3C = (u8*)&clone_sprite_archive[1];
         expected.entity.animation_cursor = (u32*)D_80119DF0[0x62];
-        expected.entity.animation_step.packed = 0xD0010003;
+        expected.entity.animation_step.packed = C_TEST_STEP(0xD0010003);
         clone_expect_decode(&expected);
     } else if (index >= 1 && index <= 3) {
         expected.entity.on_screen ^= 1;
@@ -376,14 +378,14 @@ static u32 test_clone_vanish_transitions(u32 row)
     static const u8 durations[8] = { 0, 2, 1, 2, 1, 1, 1, 1 };
     static const u8 ends[8] = { 0, 0, 1, 1, 2, 3, 4, 5 };
     static const u32 frames[8] = {
-        0xD0010002,
-        0xD0010001,
-        0xD1010002,
-        0xD1010001,
-        0xD2010001,
-        0xD3010001,
-        0xD4010001,
-        0xD4000060,
+        C_TEST_STEP(0xD0010002),
+        C_TEST_STEP(0xD0010001),
+        C_TEST_STEP(0xD1010002),
+        C_TEST_STEP(0xD1010001),
+        C_TEST_STEP(0xD2010001),
+        C_TEST_STEP(0xD3010001),
+        C_TEST_STEP(0xD4010001),
+        C_TEST_STEP(0xD4000060),
     };
     struct CloneExpected expected;
     clone_reset(row % 3);
@@ -411,7 +413,7 @@ static u32 test_clone_vanish_transitions(u32 row)
         expected.entity.active = 0;
         expected.entity.on_screen = 0;
         expected.player.controlling_clone = 0;
-        expected.player.spike_immune = 0;
+        SPIKE_IMMUNE_SET(expected.player, 0);
     } else {
         expected.entity.unk70 = 0;
         expected.entity.touching_spikes = 0;
@@ -423,13 +425,99 @@ static u32 test_clone_vanish_transitions(u32 row)
     return 1;
 }
 
+#else
+#define CLONE_GROUP_CASES 0
+#endif
+static u32 soul_paths(u32 index);
 const struct CTestGroup c_test_groups[] = {
+    { "soul_paths", 0, 0, 7, soul_paths },
+#ifndef MMX4_SATURN
     { "clone_cancel_guards", 0, 0, 6, test_clone_cancel_guards },
     { "clone_screen_bounds", 0, 0, 34, test_clone_screen_bounds },
     { "clone_timer_boundaries", 0, 0, 4, test_clone_timer_boundaries },
     { "clone_vanish_transitions", 0, 0, 8, test_clone_vanish_transitions },
+#endif
     { "soul_body_cancellation_dispatch", NULL, soul_body_cancellation_dispatch_cases_expected, COUNT(soul_body_cancellation_dispatch_cases_expected), cancel_case },
     { "soul_clone_context", NULL, soul_clone_context_cases_expected, COUNT(soul_clone_context_cases_expected), soul_clone_context_cases_row },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 6 + 34 + 4 + 8 + COUNT(soul_body_cancellation_dispatch_cases_expected) + COUNT(soul_clone_context_cases_expected);
+const u32 c_test_count = CLONE_GROUP_CASES + COUNT(soul_body_cancellation_dispatch_cases_expected) + COUNT(soul_clone_context_cases_expected) + 7;
+
+#include "weapon_resources.h"
+void soul_body_main(struct WeaponObj*);
+void soul_body_extend(struct WeaponObj*);
+void soul_body_hold(struct WeaponObj*);
+void soul_body_retract(struct WeaponObj*);
+extern u8 soul_body_palettes[8];
+static u16 soul_bank[0x100][16];
+static u16 soul_palette[0x40];
+static u32 soul_paths(u32 index)
+{
+    static const u8 scenarios[] = { 0, 1, 2, 3, 4, 6, 7 };
+    u32 row = scenarios[index];
+    struct WeaponObj obj;
+    u32 i, j;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    for (i = 0; i < 0x100; i++)
+        for (j = 0; j < 16; j++)
+            soul_bank[i][j] = i << 8 | j;
+    memset(soul_palette, 0, sizeof(soul_palette));
+    TEST_PALETTE = (u8*)soul_palette;
+    TEST_PALETTE_BANK = (u8*)soul_bank;
+    g_Player.x_pos.i.hi = 100;
+    g_Player.y_pos.i.hi = 100;
+    obj.active = 0x41;
+    obj.id = 3;
+    obj.state = 1;
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = 100;
+    obj.unk64 = 1;
+    switch (row) {
+    case 0:
+    case 1:
+        WEAPON_FRAME_COUNTER = 1;
+        obj.unk5 = 1;
+        obj.ext.weapon_3.lifetime = 0x40;
+        obj.ext.weapon_3.unk90 = row == 0 ? 5 : 2;
+        obj.unk50 = row == 0 ? (const u8*)soul_bank : NULL;
+        obj.on_screen = row == 0;
+        soul_body_main(&obj);
+        assert(obj.ext.weapon_3.unk90 == (row == 0 ? 0 : 3));
+        assert(soul_palette[16] == soul_body_palettes[row == 0 ? 5 : 2] << 8 && soul_palette[31] == soul_palette[16] + 15);
+        assert(obj.ext.weapon_3.unk91 == (row == 0 ? 8 : 0) && obj.unk64 == (row == 0 ? 2 : 1));
+        assert(obj.on_screen == (row == 0));
+        break;
+    case 2:
+        obj.unk15 = PLAYER_FACING_RIGHT;
+        obj.ext.weapon_3.offset = 0x40;
+        soul_body_extend(&obj);
+        assert(obj.unk5 == 1 && obj.x_pos.i.hi == 100 + 0x40 && obj.ext.weapon_3.offset == 0x40);
+        break;
+    case 3:
+    case 4:
+    case 5:
+        obj.unk5 = 1;
+        obj.unk15 = row == 3 ? PLAYER_FACING_RIGHT : 0;
+        obj.ext.weapon_3.lifetime = row == 3 ? 0 : row == 4 ? 0x10
+                                                            : 0x40;
+        obj.unk50 = (const u8*)soul_bank;
+        obj.on_screen = 1;
+        soul_body_hold(&obj);
+        assert(obj.x_pos.i.hi == (row == 3 ? 100 + 0x40 : 100 - 0x40) && obj.unk5 == (row == 3 ? 2 : 1));
+        assert(obj.on_screen == (row == 4 ? 0 : 1) && (obj.unk50 == NULL) == (row == 3));
+        assert(obj.ext.weapon_3.lifetime == (row == 3 ? 0 : row == 4 ? 0xF
+                                                                     : 0x3F));
+        break;
+    default:
+        obj.unk5 = 2;
+        obj.unk15 = row == 6 ? PLAYER_FACING_RIGHT : 0;
+        obj.ext.weapon_3.offset = row == 6 ? 0 : 0x10;
+        soul_body_retract(&obj);
+        assert(obj.state == (row == 6 ? 3 : 1) && obj.x_pos.i.hi == (row == 6 ? 100 : 100 - 0x10));
+        assert(obj.ext.weapon_3.offset == (row == 6 ? 0 : 8));
+        break;
+    }
+    return 1;
+}

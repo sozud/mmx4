@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_35_wheel_charger.h"
 #include "main/55C4.h"
 extern union AnimationStep* wheel_charger_animations[9];
@@ -63,7 +64,7 @@ static u32 wheel_charger_crash_expiry_pool_crash_case(u32 free_visual)
         effect->y_pos.val = 200 * 65536;
         effect->unk15 = 0;
         effect->bg_offset = 0;
-        effect->unk16 = 1;
+        effect->unk16 = VISUAL_SATURN_LAYER(1);
     }
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
@@ -133,7 +134,7 @@ static u32 wheel_charger_crash_pulse_pool_crash_case(u32 free_visual)
         effect->y_pos.val = 200 * 65536;
         effect->unk15 = 0;
         effect->bg_offset = 0;
-        effect->unk16 = 1;
+        effect->unk16 = VISUAL_SATURN_LAYER(1);
     }
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
@@ -163,7 +164,7 @@ static u32 wheel_case(u32 mode)
     obj.state = 1;
     obj.unk5 = 3;
     obj.unk6 = 1;
-    obj.unk15 = mode == 3 || mode == 5 ? 0x40 : 0;
+    obj.unk15 = mode == 3 || mode == 5 ? PLAYER_FACING_RIGHT : 0;
     obj.collision_flags = landing ? 8 : mode == 4 ? 2
         : mode == 5                               ? 1
         : mode == 7                               ? 3
@@ -185,7 +186,7 @@ static u32 wheel_case(u32 mode)
     obj.unk17 = 0;
     obj.previous_animation_index = 0x27;
     expected = obj;
-    assert(obj.animation_step.packed == 0x05010001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x05010001));
     ANIMATED_OBJECT(&expected)->animation_cursor = (u32*)(wheel_charger_animations[0] + 1);
     expected.animation_step = wheel_charger_animations[0][1];
     if (landing) {
@@ -214,7 +215,7 @@ static u32 wheel_case(u32 mode)
         expected.x_speed += mode == 5 ? 123 : -123;
         expected.y_speed -= 0x4000;
         if (mode == 4) {
-            expected.unk15 = 0x40;
+            expected.unk15 = PLAYER_FACING_RIGHT;
             expected.x_speed = 0x28000;
         } else if (mode == 5) {
             expected.unk15 = 0;
@@ -230,7 +231,7 @@ static u32 wheel_case(u32 mode)
         assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
     for (i = 0; i < 6; i++)
         assert(D_8013E198[i] == -1);
-    return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)obj.unk15 << 16);
+    return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 16);
 }
 static const u32 wheel_charger_landing_wall_context_cases_expected[] = { 0x102u, 0x105u, 0x305u, 0x400305u, 0x400103u, 0x103u, 0x103u, 0x103u };
 
@@ -262,8 +263,8 @@ static u32 test_func_8005ECA8_0(u32 row)
     observed_values[5] = (u32)obj.hp;
     observed_values[6] = (u32)obj.invincibility_timer;
     observed_values[7] = (u32)obj.state;
-    observed_values[8] = (u32)obj.unk15;
-    observed_values[9] = (u32)obj.unk16;
+    observed_values[8] = C_TEST_PSX_FACING(obj.unk15);
+    observed_values[9] = TEST_PSX_LAYER(obj.unk16);
     observed_values[10] = (u32)obj.unk18.val;
     observed_values[11] = (u32)obj.unk1C.val;
     observed_values[12] = (u32)obj.unk5;
@@ -318,7 +319,7 @@ static u32 test_wheel_charger_charge_roll_1(u32 row)
     observed_values[6] = (u32)obj.y_pos.val;
     observed_values[7] = (u32)obj.x_speed;
     observed_values[8] = (u32)obj.collision_flags;
-    observed_values[9] = (u32)obj.animation_step.packed;
+    observed_values[9] = C_TEST_STEP(obj.animation_step.packed);
     return c_test_observe(0, row, observed_values, c->expected, 10);
 }
 
@@ -360,7 +361,7 @@ static u32 test_wheel_charger_charge_spin_1(u32 row)
     observed_values[2] = (u32)obj.x_speed;
     observed_values[3] = (u32)obj.unk7E;
     observed_values[4] = (u32)obj.ext.main_35.sound_timer;
-    observed_values[5] = (u32)obj.animation_step.packed;
+    observed_values[5] = C_TEST_STEP(obj.animation_step.packed);
     return c_test_observe(0, row, observed_values, c->expected, 6);
 }
 
@@ -438,6 +439,205 @@ static u32 test_wheel_charger_main(u32 row)
     return c_test_observe(0, row, observed_values, wheel_charger_main_expected, 12);
 }
 
+#include "support/state_cases.h"
+void wheel_charger_charge_ready(struct MainObj*);
+void wheel_charger_charge_open(struct MainObj*);
+void wheel_charger_wait_for_player(struct MainObj*);
+#define WC(step, sub) (state_reset(step, sub, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), memset(&engine_obj, 0, sizeof(engine_obj)), state_terrain(0), g_Player.unk68 = NULL, so.active = 0x41, so.id = 0x23, so.state = 1, so.x_pos.i.hi = 0x900, so.y_pos.i.hi = 0x100, so.collision_flags = 8, background_objects[0].x_pos.i.hi = 0x880, background_objects[0].y_pos.i.hi = 0x80, g_Player.x_pos.i.hi = 0x950)
+#define WCX() (state_extra = so.ext.main_35.unk80 | so.ext.main_35.sound_timer << 8 | (u32)so.unk7A << 16 | (u32)(so.hurt_box == (const u8*)&wheel_charger_open_hurt_box) << 24, engine_obj.stage = 0)
+extern struct Unk_unk68 wheel_charger_open_hurt_box;
+static void wc_init(u8 kind) { WC(0, 0), so.state = 0, so.unk2 = kind, func_8005ECA8(&so), WCX(); }
+static void wc_init_bounce(void) { wc_init(2); }
+static void wc_init_wait(void) { wc_init(3); }
+static void wc_main_waiting(void) { WC(4, 0), wheel_charger_main(&so), WCX(); }
+static void wc_main_stage3_killed(void) { WC(2, 0), engine_obj.stage = 3, so.hp = 1, state_hit(&so, 0, 0, 1), wheel_charger_main(&so), WCX(); }
+static void wc_main_stage3_off_screen(void) { WC(2, 0), engine_obj.stage = 3, g_Player.x_pos.i.hi = 0xA00, background_objects[0].x_pos.i.hi = 0x400, wheel_charger_main(&so), WCX(); }
+static void wc_main_fall_right(void) { WC(3, 0), so.collision_flags = 0, so.unk15 = PLAYER_FACING_RIGHT, so.ext.main_35.unk80 = 1, wheel_charger_main(&so), WCX(); }
+static void wc_main_lost_floor(void) { WC(2, 0), so.collision_flags = 0, wheel_charger_main(&so), WCX(); }
+static void wc_wait_player_past(void) { WC(4, 0), so.unk7A = 1, g_Player.x_pos.i.hi = 0x9C0, wheel_charger_wait_for_player(&so), WCX(); }
+static void wc_ready(u8 event) { WC(5, 0), so.animation_step.fields.event = event, wheel_charger_charge_ready(&so), WCX(); }
+static void wc_ready_wait(void) { wc_ready(0); }
+static void wc_ready_go(void) { wc_ready(1); }
+static void wc_open(u8 event, u8 timer, s16 px) { WC(5, 1), so.animation_step.fields.event = event, so.unk7C = timer, g_Player.x_pos.i.hi = px, wheel_charger_charge_open(&so), WCX(); }
+static void wc_open_wait(void) { wc_open(0, 5, 0x800); }
+static void wc_open_face_left(void) { wc_open(2, 1, 0x800); }
+static void wc_open_face_right(void) { wc_open(0, 1, 0xA00); }
+static void wc_spin_timers(void) { WC(5, 2), so.terrain_box = &state_hit_box, so.ext.main_35.sound_timer = 1, so.unk7E = 1, wheel_charger_charge_spin(&so), WCX(); }
+static void wc_roll_timers(void) { WC(5, 3), so.terrain_box = &state_hit_box, so.ext.main_35.sound_timer = 1, so.unk7E = 1, so.x_speed = 0x40000, wheel_charger_charge_roll(&so), WCX(); }
+static void (*const wheel_charger_states_cases[])(void) = {
+    wc_init_bounce,
+    wc_init_wait,
+    wc_main_waiting,
+    wc_main_stage3_killed,
+    wc_main_stage3_off_screen,
+    wc_main_fall_right,
+    wc_main_lost_floor,
+    wc_wait_player_past,
+    wc_ready_wait,
+    wc_ready_go,
+    wc_open_wait,
+    wc_open_face_left,
+    wc_open_face_right,
+    wc_spin_timers,
+    wc_roll_timers,
+};
+static const u32 wheel_charger_states_expected[] = {
+    0x2u,
+    0x0u,
+    0x9000000u,
+    0xFFFD8000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x40003u,
+    0x1u,
+    0x41000000u,
+    0x4u,
+    0x0u,
+    0x9000000u,
+    0x28000u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x40003u,
+    0x10001u,
+    0x41000000u,
+    0x4u,
+    0x0u,
+    0x9000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x9000000u,
+    0x0u,
+    0x60000u,
+    0x0u,
+    0x80000000u,
+    0x1u,
+    0x0u,
+    0x41002100u,
+    0x2u,
+    0x0u,
+    0x9000000u,
+    0x0u,
+    0x60000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x3u,
+    0x0u,
+    0x9000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x3u,
+    0x0u,
+    0x9000000u,
+    0x0u,
+    0xFFFFC400u,
+    0x3C0000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x9000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x5u,
+    0x0u,
+    0x9000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x105u,
+    0xAu,
+    0x9000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x105u,
+    0x4u,
+    0x9000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x205u,
+    0x30000u,
+    0x9000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x3u,
+    0x1000000u,
+    0x41000000u,
+    0x205u,
+    0x30000u,
+    0x9000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4002u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x205u,
+    0x30000u,
+    0x9000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1400u,
+    0x41002100u,
+    0x305u,
+    0x20000u,
+    0x9040000u,
+    0x40000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1400u,
+    0x41002100u,
+};
+static u32 test_wheel_charger_states(u32 row)
+{
+    return state_run(wheel_charger_states_cases[row], row, &wheel_charger_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "wheel_charger_crash_expiry_pool", NULL, wheel_charger_crash_expiry_pool_cases_expected, COUNT(wheel_charger_crash_expiry_pool_cases_expected), wheel_charger_crash_expiry_pool_crash_case },
     { "wheel_charger_crash_pulse_pool", NULL, wheel_charger_crash_pulse_pool_cases_expected, COUNT(wheel_charger_crash_pulse_pool_cases_expected), wheel_charger_crash_pulse_pool_crash_case },
@@ -447,6 +647,7 @@ const struct CTestGroup c_test_groups[] = {
     { "wheel_charger_charge_spin_1", 0, 0, 2, test_wheel_charger_charge_spin_1 },
     { "wheel_charger_crash", 0, 0, 2, test_wheel_charger_crash },
     { "wheel_charger_main", 0, 0, 1, test_wheel_charger_main },
+    { "wheel_charger_states", 0, 0, COUNT(wheel_charger_states_cases), test_wheel_charger_states },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(wheel_charger_crash_expiry_pool_cases_expected) + COUNT(wheel_charger_crash_pulse_pool_cases_expected) + COUNT(wheel_charger_landing_wall_context_cases_expected) + 2 + 3 + 2 + 2 + 1;
+const u32 c_test_count = COUNT(wheel_charger_crash_expiry_pool_cases_expected) + COUNT(wheel_charger_crash_pulse_pool_cases_expected) + COUNT(wheel_charger_landing_wall_context_cases_expected) + 2 + 3 + 2 + 2 + 1 + COUNT(wheel_charger_states_cases);

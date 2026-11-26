@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/55C4.h"
+#include "main/object_motion.h"
 extern void* sigma_animations[];
 void func_800B4E34(struct VisualObj*);
 static const u8 cloak_animations[] = { 13, 12, 13, 11 };
@@ -24,8 +25,8 @@ static u32 facing(u32 row)
     owner.active = 0x41;
     owner.id = 68;
     owner.state = 1;
-    owner.unk15 = face ? 0x40 : 0;
-    owner.unk16 = 3;
+    owner.unk15 = face ? PLAYER_FACING_RIGHT : 0;
+    owner.unk16 = VISUAL_SATURN_LAYER(3);
     owner.unk40 = 9;
     owner.unk42 = 0x8123;
     owner.x_pos.val = 160 * 65536 + 0x1234;
@@ -44,7 +45,7 @@ static u32 facing(u32 row)
     expected.unk40 = 9;
     expected.unk42 = 0x8123;
     expected.unk15 = owner.unk15;
-    expected.unk16 = 3;
+    expected.unk16 = VISUAL_SATURN_LAYER(3);
     expected.animation_table = (u32**)owner.animation_table;
     expected.x_pos.val = owner.x_pos.val;
     expected.y_pos.val = owner.y_pos.val;
@@ -61,11 +62,11 @@ static u32 facing(u32 row)
         expected.x_pos.val += face ? -0x160000 : 0x160000;
         expected.y_pos.val += 0x40000;
     }
-    assert(((const union AnimationStep*)sigma_animations[animation])->packed == word);
+    assert(((const union AnimationStep*)sigma_animations[animation])->packed == C_TEST_STEP(word));
     expected.unk17 = animation;
     expected.previous_animation_index = 255;
     expected.animation_cursor = sigma_animations[animation];
-    expected.animation_step.packed = word;
+    expected.animation_step.packed = C_TEST_STEP(word);
     func_800B4E34(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&owner, &owner_before, sizeof(owner));
@@ -107,12 +108,12 @@ static u32 electric(u32 row)
     obj.state = 1;
     obj.unk2 = 4;
     obj.unk50 = PLAYER_OBJECT(&owner);
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.animation_table = (u32**)sigma_animations;
     set_animation_frame(ANIMATED_OBJECT(&obj), 36, 6);
-    assert(obj.animation_step.packed == 0x7D000002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x7D000002));
     expected = obj;
     expected.animation_step.fields.duration = 1;
     expected.unk5 = 1;
@@ -138,9 +139,132 @@ static u32 electric(u32 row)
     return 1;
 }
 
+static u32 fx_paths(u32 row);
 const struct CTestGroup c_test_groups[] = {
+    { "fx_paths", 0, 0, 21, fx_paths },
     { "sigma_cloak_and_electric_effects_inherit_facing", NULL, NULL, 20, facing },
     { "real_electric_terminal_animation_full_pool_last_slot_and_owner_defeat", NULL, NULL, 8, electric },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 20 + 8;
+const u32 c_test_count = 20 + 8 + 21;
+
+void sigma_fx_glow(struct VisualObj*);
+void sigma_cloak_piece_wait(struct VisualObj*);
+void sigma_cloak_piece_blink(struct VisualObj*);
+void sigma_fx_oneshot(struct VisualObj*);
+void sigma_fx_hit_glow(struct VisualObj*);
+void sigma_fx_despawn(struct VisualObj*);
+extern u8 sigma_fx_offsets[2][4];
+static u32 fx_paths(u32 row)
+{
+    static const u8 init_types[] = { 0, 2, 5, 6, 7 }, init_animations[] = { 2, 0xA, 0xA, 0x2A, 0x26 };
+    struct VisualObj obj;
+    struct MainObj owner;
+    struct QuadObj quad;
+    u16 seed = 0x1234;
+    s32 dx;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    memset(&quad, 0, sizeof(quad));
+    memset(background_objects, 0, sizeof(background_objects));
+    owner.active = 0x41;
+    owner.id = 68;
+    owner.state = 1;
+    owner.unk42 = 0x8123;
+    owner.x_pos.i.hi = 160;
+    owner.y_pos.i.hi = 120;
+    owner.animation_table = (const u8* const*)sigma_animations;
+    obj.active = 0x41;
+    obj.id = 32;
+    obj.state = 1;
+    obj.unk50 = PLAYER_OBJECT(&owner);
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = 100;
+    obj.animation_table = (u32**)sigma_animations;
+    set_animation(&obj, 2);
+    obj.animation_step.fields.duration = 2;
+    if (row <= 4) {
+        obj.state = 0;
+        obj.unk2 = init_types[row];
+        owner.unk15 = row == 1 ? PLAYER_FACING_RIGHT : 0;
+        if (row == 4) {
+            quad.unk5C = &owner;
+            quad.x_pos.i.hi = 50;
+            quad.y_pos.i.hi = 60;
+            quad.vertices[2].x.i.hi = 10;
+            quad.vertices[2].y.i.hi = 20;
+            obj.unk50 = (struct PlayerObj*)&quad;
+        }
+        cur_random = seed;
+        dx = (s8)sigma_fx_offsets[0][get_random() & 3];
+        cur_random = seed;
+        func_800B4E34(&obj);
+        assert(obj.state == 1 && obj.unk17 == init_animations[row] && obj.animation_table == (u32**)sigma_animations);
+        assert(obj.unk42 == (row == 3 ? 0x0123 : 0x8123));
+        if (row == 1 || row == 2)
+            assert(obj.x_pos.i.hi == 160 + (row == 1 ? -dx : dx));
+        else
+            assert(obj.x_pos.i.hi == (row == 4 ? 50 + 10 + 4 : 160) && obj.y_pos.i.hi == (row == 4 ? 60 + 20 - 8 : 120));
+        assert(row == 3 || row == 4 ? obj.unk16 == VISUAL_SATURN_LAYER(5) : 1);
+        return 1;
+    }
+    switch (row) {
+    case 5:
+    case 6:
+        owner.state = row == 5 ? 3 : 1;
+        sigma_fx_glow(&obj);
+        assert(obj.state == (row == 5 ? 2 : 1) && obj.on_screen == 1);
+        break;
+    case 7:
+    case 8:
+        obj.unk54 = row == 7 ? 1 : 5;
+        sigma_cloak_piece_wait(&obj);
+        assert(obj.unk5 == (row == 7) && obj.unk54 == (row == 7 ? 30 : 4));
+        break;
+    case 9:
+    case 10:
+        obj.unk5 = 1;
+        obj.unk54 = row == 9 ? 1 : 4;
+        obj.on_screen = 1;
+        sigma_cloak_piece_blink(&obj);
+        assert(obj.state == (row == 9 ? 2 : 1) && obj.on_screen == (row == 10));
+        break;
+    case 11:
+    case 12:
+    case 13:
+        obj.unk2 = row == 13 ? 2 : 5;
+        owner.unk7C = row == 11;
+        obj.animation_step.fields.event = row == 11;
+        sigma_fx_oneshot(&obj);
+        assert(obj.state == (row == 11 ? 2 : 1) && obj.on_screen == (row != 12));
+        break;
+    case 14:
+    case 15:
+    case 16:
+        obj.unk2 = 3;
+        obj.unk5 = row == 16 ? 0 : 1;
+        obj.unk56 = row == 14 ? 1 : 3;
+        obj.animation_step.fields.relative_step = 1;
+        memset(shot_objects, 0, sizeof(shot_objects));
+        sigma_fx_electric(&obj);
+        assert(obj.state == (row == 14 ? 2 : 1) && obj.unk56 == (row == 14 ? 0 : row == 15 ? 2
+                                                                                           : 3));
+        assert(obj.unk5 == (row != 16) && shot_objects[0].active == 0);
+        break;
+    case 17:
+    case 18:
+        owner.ext.main_68.flash_timer = row == 17 ? 0 : 5;
+        obj.unk2 = 6;
+        sigma_fx_hit_glow(&obj);
+        assert(obj.state == (row == 17 ? 2 : 1) && obj.x_pos.i.hi == 160 && obj.y_pos.i.hi == 120);
+        break;
+    default:
+        obj.state = 2;
+        obj.unk2 = row == 19 ? 1 : 0;
+        owner.ext.main_68.count = 3;
+        sigma_fx_despawn(&obj);
+        assert(obj.active == 0 && owner.ext.main_68.count == (row == 19 ? 2 : 3));
+        break;
+    }
+    return 1;
+}

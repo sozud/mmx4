@@ -52,11 +52,11 @@ static u32 hit(u32 row)
     self->active = 0x21;
     self->id = 20;
     self->owner = &g_Player;
-    self->unk15 = 0x40;
+    self->unk15 = PLAYER_FACING_RIGHT;
     self->x_pos.i.hi = 160;
     self->y_pos.i.hi = 120;
     func_800929DC(self);
-    assert(self->state == 1 && self->animation_step.packed == 0x0F010003 && self->unk98 == 0 && self->x_vel.val == 0xB0000);
+    assert(self->state == 1 && self->animation_step.packed == C_TEST_STEP(0x0F010003) && self->unk98 == 0 && self->x_vel.val == 0xB0000);
     D_8013E198[1] = -1;
     func_8002DF7C(self, 0);
     assert(self->unk98 == 1);

@@ -87,7 +87,7 @@ static u32 slope_skier_steps_run(u32 mode)
     u8 next;
     memset(tilemap, 1, sizeof(tilemap));
     memset(tiles, 0, sizeof(tiles));
-    attributes[0] = input->attribute;
+    attributes[0] = C_TEST_PSX_WORD(input->attribute);
     SP_BG_TILEMAP = tilemap;
     layout_width = 16;
     layout_size = 256;
@@ -117,7 +117,7 @@ static u32 slope_skier_steps_run(u32 mode)
     skier.unk6 = 1;
     skier.on_screen = input->on_screen;
     skier.unk15 = input->facing;
-    skier.unk16 = 3;
+    skier.unk16 = VISUAL_SATURN_LAYER(3);
     skier.unk40 = 0x0123;
     skier.unk42 = 0x0456;
     skier.x_pos.val = 0x00801111;
@@ -225,10 +225,10 @@ static void ski_start(void)
     for (i = 0; i < 32; i++)
         visual_objects[i].active = 0x41;
     func_800564B4(&ski);
-    assert(ski.unk15 == 0x40);
+    assert(ski.unk15 == PLAYER_FACING_RIGHT);
     assert(ski.terrain_box != NULL);
     assert(ski.unk5 == 1);
-    ski_attrs[1] = 16;
+    ski_attrs[1] = C_TEST_PSX_WORD(16);
     ski.unk6 = 1;
     ski.x_speed = FIXED(4.5);
     ski.collision_flags = 9;
@@ -286,7 +286,7 @@ static u32 test_func_80056054_1(u32 row)
         trail->id = 3;
         trail->unk2 = 5;
         trail->bg_offset = ski.bg_offset;
-        trail->unk15 = ski.unk15 ^ 0x40;
+        trail->unk15 = ski.unk15 ^ PLAYER_FACING_RIGHT;
         trail->unk40 = ski.unk40;
         trail->unk3C = (void*)ski.sprite_frames;
         trail->animation_table = (u32**)ski.animation_table;
@@ -297,7 +297,7 @@ static u32 test_func_80056054_1(u32 row)
     }
     func_80056054(&ski);
     ski_check();
-    observed = ski.animation_step.packed;
+    observed = C_TEST_STEP(ski.animation_step.packed);
     return c_test_observe(0, row, &observed, func_80056054_1_expected, 1);
 }
 
@@ -315,7 +315,7 @@ static u32 test_func_80056054_2(u32 row)
     ski_expected.unk5 = 1;
     ski_expected.unk6 = 0;
     ski_expected.ext.main_23.unk82 &= 0xFE;
-    ski_expected.unk15 ^= 0x40;
+    ski_expected.unk15 ^= PLAYER_FACING_RIGHT;
     func_80056054(&ski);
     ski_check();
     observed = ski.unk5;
@@ -345,6 +345,7 @@ static void sk_wait_near(void)
 static void sk_main_airborne(void)
 {
     SK(1, 0);
+    state_terrain(0);
     so.air_state = 1;
     so.collision_flags = 8;
     slope_skier_main(&so);
@@ -357,6 +358,7 @@ static void sk_main_ground_lost(void)
 static void sk_main_away(void)
 {
     SK(1, 0);
+    state_terrain(0);
     so.air_state = 1;
     so.x_pos.i.hi = 0x1000;
     slope_skier_main(&so);
@@ -396,7 +398,7 @@ static void sk_turn_spray(void)
 static void sk_turn_spray_right(void)
 {
     SK(6, 1);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.animation_step.fields.event = 2;
     func_80056054(&so);
     state_extra = visual_objects[0].x_pos.i.hi;
@@ -407,6 +409,54 @@ static void sk_idle(void)
     slope_skier_slide_idle();
 }
 
+void slope_skier_read_slope(struct MainObj*);
+void slope_skier_land(struct MainObj*);
+void slope_skier_fall(struct MainObj*);
+void func_80055F1C(struct MainObj*);
+void slope_skier_jump_rise(struct MainObj*);
+void slope_skier_slide_start(struct MainObj*);
+void func_800562AC(struct MainObj*);
+void func_800564B4(struct MainObj*);
+#define SKX() (state_extra = so.ext.main_23.unk80 | (u32)so.ext.main_23.unk81 << 8 | (u32)so.ext.main_23.unk82 << 16 | (u32)so.unk17 << 24)
+static void sk_floor(u8 attr)
+{
+    u32 i;
+    state_terrain(0);
+    for (i = 256 + 8 * 16; i < 512; i++)
+        state_tile_pixels[i] = 1;
+    state_tile_attrs[1] = C_TEST_PSX_WORD(attr);
+}
+static void sk_read_steep_right(void) { SK(1, 0), state_terrain(0x1B), so.unk15 = PLAYER_FACING_RIGHT, slope_skier_read_slope(&so), SKX(); }
+static void sk_land_flip(void) { SK(3, 0), state_terrain(0x1B), slope_skier_land(&so), SKX(); }
+static void sk_land_straight(void) { SK(3, 0), state_terrain(0x11), slope_skier_land(&so), SKX(); }
+static void sk_land_event(void) { SK(3, 1), so.animation_step.fields.event = 1, slope_skier_land(&so); }
+static void sk_land_wait(void) { SK(3, 1), slope_skier_land(&so); }
+static void sk_fall_landed(void) { SK(2, 1), so.collision_flags = 8, slope_skier_fall(&so); }
+static void sk_jump_flipped_right(void) { SK(4, 0), so.ext.main_23.unk80 = 0x81, so.unk15 = PLAYER_FACING_RIGHT, func_80055F1C(&so); }
+static void sk_jump_flipped_left(void) { SK(4, 0), so.ext.main_23.unk80 = 0x81, func_80055F1C(&so); }
+static void sk_jump_left(void) { SK(4, 0), func_80055F1C(&so); }
+static void sk_jump_right_wait(void) { SK(4, 0), so.unk15 = PLAYER_FACING_RIGHT, so.animation_step.fields.relative_step = 1, func_80055F1C(&so); }
+static void sk_jump_rise_peak(void) { SK(4, 1), so.y_speed = 0x100, so.gravity = 0x4200, slope_skier_jump_rise(&so); }
+static void sk_jump_rise(void) { SK(4, 1), so.y_speed = 0x10000, slope_skier_jump_rise(&so); }
+static void sk_slide_start_right(void) { SK(7, 0), state_terrain(0x11), so.unk15 = PLAYER_FACING_RIGHT, slope_skier_slide_start(&so), SKX(); }
+#ifdef MMX4_SATURN
+#define SK_SPRAY_81 0x0B
+#else
+#define SK_SPRAY_81 0x00
+#endif
+static void sk_slide_turn_right(void)
+{
+    SK(7, 1), sk_floor(0x12), so.unk15 = PLAYER_FACING_RIGHT, so.unk7C = 1, func_800562AC(&so), SKX(), state_extra ^= (u32)(u16)visual_objects[0].x_pos.i.hi << 4 ^ (u32)(u16)(visual_objects[0].y_pos.i.hi - SK_SPRAY_81) << 16;
+}
+#define SKI(kind, px) (SK(0, 0), so.state = 0, so.unk2 = kind, g_Player.x_pos.i.hi = px, func_800564B4(&so))
+static void sk_init_toward_player(void)
+{
+    SKI(0, 0x100);
+}
+static void sk_init_toward_player_left(void) { SKI(0, 0x40); }
+static void sk_init_left(void) { SKI(1, 0x100); }
+static void sk_main_grounded(void) { SK(5, 0), state_terrain(0), so.collision_flags = 8, slope_skier_main(&so); }
+static void sk_main_defeated(void) { SK(5, 0), state_terrain(0), so.hp = 1, state_hit(&so, 0, 0, 1), cur_random = 1, slope_skier_main(&so); }
 static void (*const slope_skier_states_cases[])(void) = {
     sk_wait,
     sk_wait_near,
@@ -420,8 +470,338 @@ static void (*const slope_skier_states_cases[])(void) = {
     sk_turn_spray,
     sk_turn_spray_right,
     sk_idle,
+    sk_read_steep_right,
+    sk_land_flip,
+    sk_land_straight,
+    sk_land_event,
+    sk_land_wait,
+    sk_fall_landed,
+    sk_jump_flipped_right,
+    sk_jump_flipped_left,
+    sk_jump_right_wait,
+    sk_jump_rise_peak,
+    sk_jump_rise,
+    sk_slide_start_right,
+    sk_slide_turn_right,
+    sk_init_toward_player,
+    sk_init_toward_player_left,
+    sk_init_left,
+    sk_main_grounded,
+    sk_main_defeated,
+    sk_jump_left,
 };
-static const u32 slope_skier_states_expected[] = { 5u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x1000101u, 0u, 0x800000u, 0xFFFB8000u, 0u, 0u, 7u, 0u, 0u, 0u, 0xFF000102u, 0u, 0x800000u, 0u, 0xFFFFBE00u, 0x420000u, 0u, 0u, 0u, 0u, 0x1000101u, 0u, 0x10000000u, 0xFFFB8000u, 0u, 0u, 7u, 0u, 0u, 0u, 0x106u, 0u, 0x800000u, 0u, 0u, 0u, 0xBu, 0u, 0u, 0u, 0x206u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 2u, 0u, 0x106u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x106u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x620069u, 0x4100u, 0x106u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 0x97u, 0x4100u, 7u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+static const u32 slope_skier_states_expected[] = {
+    5u,
+    0u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    1u,
+    0u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x1000101u,
+    0u,
+    0x800000u,
+    0xFFFB8000u,
+    0u,
+    0u,
+    7u,
+    0u,
+    0u,
+    0u,
+    0xFF000102u,
+    0u,
+    0x800000u,
+    0u,
+    0xFFFFBE00u,
+    0x420000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x1000101u,
+    0u,
+    0x10000000u,
+    0xFFFB8000u,
+    0u,
+    0u,
+    7u,
+    0u,
+    0u,
+    0u,
+    0x106u,
+    0u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0xBu,
+    0u,
+    0u,
+    0u,
+    0x206u,
+    0u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    1u,
+    0u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0x4000u,
+    0u,
+    2u,
+    0u,
+    0x106u,
+    0u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x106u,
+    0u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x620069u,
+    0x4100u,
+    0x106u,
+    0u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0x4000u,
+    0u,
+    0x97u,
+    0x4100u,
+    7u,
+    0u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x103u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4014u,
+    0x0u,
+    0x14000082u,
+    0x0u,
+    0x103u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x13u,
+    0x0u,
+    0x13000001u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x103u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1000104u,
+    0x0u,
+    0x830000u,
+    0x30000u,
+    0x3BE00u,
+    0x420000u,
+    0x4011u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1000104u,
+    0x0u,
+    0x7D0000u,
+    0xFFFD0000u,
+    0x3BE00u,
+    0x420000u,
+    0x11u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1000004u,
+    0x0u,
+    0x848000u,
+    0x48000u,
+    0x33E00u,
+    0x420000u,
+    0x4000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFFBF00u,
+    0x420000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x104u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x10000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x107u,
+    0x0u,
+    0x800000u,
+    0x48000u,
+    0x0u,
+    0x0u,
+    0x4005u,
+    0x0u,
+    0x5000081u,
+    0x0u,
+    0x4u,
+    0x5u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x400Du,
+    0x0u,
+    0xD600501u,
+    0x4100u,
+    0x1u,
+    0xAu,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4004u,
+    0x30003u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0xAu,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x30003u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0xAu,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x30003u,
+    0x0u,
+    0x0u,
+    0x105u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0xAu,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x1u,
+    0x0u,
+    0x2100u,
+    0x1000104u,
+    0x0u,
+    0x7B8000u,
+    0xFFFB8000u,
+    0x33E00u,
+    0x420000u,
+    0x11u,
+    0x0u,
+    0x0u,
+    0x0u,
+};
 
 static u32 test_slope_skier_states(u32 row)
 {

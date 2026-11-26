@@ -137,12 +137,12 @@ s32 func_8002BD58(struct MainObj* arg0, struct MainObj* arg1, s16* arg2, s16* ar
     temp_t0 = ((const struct Unk_unk68*)arg0->attack_box)->unk2 + ((const struct Unk_unk68*)arg1->hurt_box)->unk2;
     temp_t1 = ((const struct Unk_unk68*)arg0->attack_box)->unk2;
     temp_t2 = ((const struct Unk_unk68*)arg1->hurt_box)->unk2;
-    if (arg0->unk15 & 0x40) {
+    if (arg0->unk15 & PLAYER_FACING_RIGHT) {
         var_a2 = arg0->x_pos.i.hi - ((const struct Unk_unk68*)arg0->attack_box)->unk0;
     } else {
         var_a2 = arg0->x_pos.i.hi + ((const struct Unk_unk68*)arg0->attack_box)->unk0;
     }
-    if (arg1->unk15 & 0x40) {
+    if (arg1->unk15 & PLAYER_FACING_RIGHT) {
         var_a0 = arg1->x_pos.i.hi - ((const struct Unk_unk68*)arg1->hurt_box)->unk0;
     } else {
         var_a0 = arg1->x_pos.i.hi + ((const struct Unk_unk68*)arg1->hurt_box)->unk0;
@@ -152,8 +152,8 @@ s32 func_8002BD58(struct MainObj* arg0, struct MainObj* arg1, s16* arg2, s16* ar
         var_a1 = var_a2 - var_a0;
     }
     if (var_a0 < var_a2) {
-        if (arg0->unk15 & 0x40) {
-            if (arg1->unk15 & 0x40) {
+        if (arg0->unk15 & PLAYER_FACING_RIGHT) {
+            if (arg1->unk15 & PLAYER_FACING_RIGHT) {
                 if (var_a1 < temp_t1) {
                     if (var_a2 >= var_a0 && temp_t1 >= (temp_t2 + var_a1)) {
                         *arg2 = var_a0 - (temp_t2 / 2);
@@ -190,7 +190,7 @@ s32 func_8002BD58(struct MainObj* arg0, struct MainObj* arg1, s16* arg2, s16* ar
             return 0;
         }
 
-        if (!(arg1->unk15 & 0x40)) {
+        if (!(arg1->unk15 & PLAYER_FACING_RIGHT)) {
             if (var_a1 < temp_t2) {
                 if (var_a2 >= var_a0 && temp_t2 >= (var_a1 + temp_t1)) {
                     *arg2 = var_a2 + (temp_t1 / 2);
@@ -203,8 +203,8 @@ s32 func_8002BD58(struct MainObj* arg0, struct MainObj* arg1, s16* arg2, s16* ar
         return 0;
     }
 
-    if (arg0->unk15 & 0x40) {
-        if (arg1->unk15 & 0x40) {
+    if (arg0->unk15 & PLAYER_FACING_RIGHT) {
+        if (arg1->unk15 & PLAYER_FACING_RIGHT) {
             if (var_a1 < temp_t2) {
                 if (temp_t2 >= (var_a1 + temp_t1)) {
                     *arg2 = var_a2 - (temp_t1 / 2);
@@ -217,7 +217,7 @@ s32 func_8002BD58(struct MainObj* arg0, struct MainObj* arg1, s16* arg2, s16* ar
         return 0;
     }
 
-    if (arg1->unk15 & 0x40) {
+    if (arg1->unk15 & PLAYER_FACING_RIGHT) {
         if (var_a1 < temp_t0) {
             if (temp_t1 < var_a1) {
                 *arg2 = var_a2 + (temp_t1 / 2);

@@ -33,7 +33,7 @@ static u32 fade(u32 row)
     owner.animation_table = (const u8* const*)sigma_animations;
     owner.unk5 = 7;
     owner.unk6 = 2;
-    owner.unk15 = type >= 2 ? 0x40 : 0;
+    owner.unk15 = type >= 2 ? PLAYER_FACING_RIGHT : 0;
     owner.x_pos.i.hi = 1361;
     owner.y_pos.i.hi = 451;
     owner_before = owner;
@@ -90,8 +90,68 @@ static u32 fade(u32 row)
     return 1;
 }
 
+#include "weapon_resources.h"
+void sigma_beam_sweep(struct QuadObj*);
+static struct QuadObj sb;
+static struct MainObj sb_owner;
+static void sb_reset(u8 step, u8 timer)
+{
+    memset(&sb, 0, sizeof(sb));
+    memset(&sb_owner, 0, sizeof(sb_owner));
+    c_test_zero_words((u32*)shot_objects, sizeof(shot_objects) / 4);
+    sb_owner.state = 1;
+    sb.active = 1;
+    sb.id = 15;
+    sb.state = 1;
+    sb.unk5 = step;
+    sb.bg_offset = -1;
+    sb.unk5C = PLAYER_OBJECT(&sb_owner);
+    sb.ext.unk_ext4.unk3C = timer;
+    WEAPON_FRAME_COUNTER = 4;
+}
+static u32 sb_sweep_trail(void)
+{
+    sb_reset(1, 10);
+    sigma_beam_sweep(&sb);
+    assert(shot_objects[0].active == 0x41 && shot_objects[0].id == 0x2E && shot_objects[0].unk2 == 8 && shot_objects[0].unk7C == (void*)&sb);
+    return sb.ext.unk_ext4.unk3C | (u32)(u16)sb.vertices[2].x.i.hi << 16;
+}
+static u32 sb_close(s16 left, s16 right)
+{
+    sb_reset(2, 0);
+    sb.vertices[0].x.i.hi = sb.vertices[3].x.i.hi = left;
+    sb.vertices[1].x.i.hi = sb.vertices[2].x.i.hi = right;
+    WEAPON_FRAME_COUNTER = 5;
+    sigma_beam_fade(&sb);
+    assert(sb.vertices[3].x.i.hi == sb.vertices[0].x.i.hi && sb.vertices[2].x.i.hi == sb.vertices[1].x.i.hi && shot_objects[0].active == 0);
+    return sb.state | (u32)(u8)sb.vertices[0].x.i.hi << 8 | (u32)(u8)sb.vertices[1].x.i.hi << 16;
+}
+static u32 sb_closing(void) { return sb_close(0, 10); }
+static u32 sb_shut(void) { return sb_close(4, 6); }
+static u32 sb_extending(void)
+{
+    sb_reset(0, 0);
+    sigma_beam_update(&sb);
+    return sb.state | (u32)(u8)sb.vertices[2].y.i.hi << 8;
+}
+static u32 sb_owner_gone(void)
+{
+    sb_reset(0, 0);
+    sb_owner.state = 2;
+    sigma_beam_update(&sb);
+    return sb.state | (u32)(u8)sb.vertices[2].y.i.hi << 8;
+}
+static const CTestCase sigma_beam_paths_cases[] = {
+    sb_sweep_trail,
+    sb_closing,
+    sb_shut,
+    sb_extending,
+    sb_owner_gone,
+};
+static const u32 sigma_beam_paths_cases_expected[] = { 0xFFFA0009u, 0x90101u, 0x50502u, 0x401u, 0x402u };
 const struct CTestGroup c_test_groups[] = {
     { "own_Sigma_eye_beam_extend_sweep_to_periodic_fade_full_shot_pool", NULL, NULL, 16, fade },
+    { "sigma_beam_paths", sigma_beam_paths_cases, sigma_beam_paths_cases_expected, COUNT(sigma_beam_paths_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 16;
+const u32 c_test_count = 16 + COUNT(sigma_beam_paths_cases);

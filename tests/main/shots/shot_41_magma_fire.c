@@ -34,7 +34,7 @@ static u32 fire_case(u32 mode)
     owner.unk40 = 0x2345;
     owner.unk42 = 0x8123;
     owner.bg_offset = -1;
-    owner.unk15 = mode & 1 ? 0x40 : 0;
+    owner.unk15 = mode & 1 ? PLAYER_FACING_RIGHT : 0;
     owner.x_pos.val = 100 * 65536 + 0x1234;
     owner.y_pos.val = 100 * 65536 + 0x5678;
     owner.animation_table = (const u8* const*)magma_dragoon_animations;
@@ -48,7 +48,7 @@ static u32 fire_case(u32 mode)
         : mode == 5                      ? 3
                                          : 0;
     obj.unk15 = 0x20;
-    obj.unk16 = 3;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.unk5C = 9;
     obj.unk60 = 11;
     obj.unk28 = 0x123456;
@@ -65,7 +65,7 @@ static u32 fire_case(u32 mode)
     expected.animation_table = (u32**)magma_dragoon_animations;
     expected.unk3C = (void*)sprites;
     expected.unk5C = 0;
-    expected.unk16 = 1;
+    expected.unk16 = VISUAL_SATURN_LAYER(1);
     expected.unk42 = 0x123;
     expected.bg_offset = -1;
     if (kind < 4) {
@@ -210,14 +210,14 @@ static void mf_column_volcano_right(void)
 {
     PILLAR(0);
     engine_obj.stage = 3;
-    ss.unk15 = 0x40;
+    ss.unk15 = PLAYER_FACING_RIGHT;
     func_800A5E60(&ss);
 }
 static void mf_column_rematch(void)
 {
     PILLAR(0);
     engine_obj.stage = 0xC;
-    ss.unk15 = 0x40;
+    ss.unk15 = PLAYER_FACING_RIGHT;
     func_800A5E60(&ss);
 }
 
@@ -245,8 +245,8 @@ static u32 test_magma_fire_pillar_states(u32 row)
 void magma_fire_burst(struct ShotObj*);
 extern void* magma_dragoon_animations[38];
 static const u32 burst_words[2][5] = {
-    { 0xC6010001, 0xC7010001, 0xC8010001, 0xC9010001, 0xCA000001 },
-    { 0xAB010002, 0x76010001, 0xAB010001, 0xAC010001, 0xADFE0001 },
+    { C_TEST_STEP(0xC6010001), C_TEST_STEP(0xC7010001), C_TEST_STEP(0xC8010001), C_TEST_STEP(0xC9010001), C_TEST_STEP(0xCA000001) },
+    { C_TEST_STEP(0xAB010002), C_TEST_STEP(0x76010001), C_TEST_STEP(0xAB010001), C_TEST_STEP(0xAC010001), C_TEST_STEP(0xADFE0001) },
 };
 static const s16 positions[][2] = { { 160, 120 }, { -49, 120 }, { 368, 120 }, { 160, -49 }, { 160, 288 } };
 static u32 burst(u32 row)
@@ -267,7 +267,7 @@ static u32 burst(u32 row)
     obj.unk6 = 3;
     obj.bg_offset = 0;
     obj.on_screen = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = positions[edge][0] * 65536 + 0x1234;
     obj.y_pos.val = positions[edge][1] * 65536 + 0x5678;
     obj.x_vel.val = facing ? 0x18000 : -0x18000;
@@ -316,7 +316,7 @@ static u32 spread(u32 row)
     engine_obj.stage = 4;
     engine_obj.substage = 1;
     engine_before = engine_obj;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     player_before = g_Player;
     background_objects[layer].x_pos.val = 5333 << 16;
     background_objects[layer].y_pos.val = 526 << 16;
@@ -328,7 +328,7 @@ static u32 spread(u32 row)
     owner.hp = 48;
     owner.unk5 = low ? 11 : 10;
     owner.unk6 = 1;
-    owner.unk15 = face ? 0x40 : 0;
+    owner.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     owner.bg_offset = layer;
     owner.x_pos.i.hi = 5493;
     owner.y_pos.i.hi = 646;
@@ -344,13 +344,13 @@ static u32 spread(u32 row)
     obj->x_pos.i.hi = owner.x_pos.i.hi + (face ? 23 : -23);
     obj->y_pos.i.hi = owner.y_pos.i.hi + (low ? 40 : 0);
     func_800A56E4(obj);
-    assert(obj->state == 1 && obj->unk5 == 5 && obj->timer == 3 && obj->animation_step.packed == 0x84010002);
+    assert(obj->state == 1 && obj->unk5 == 5 && obj->timer == 3 && obj->animation_step.packed == C_TEST_STEP(0x84010002));
     func_800A60D0(obj);
     func_800A60D0(obj);
-    assert(obj->timer == 1 && obj->animation_step.packed == 0x85010002);
+    assert(obj->timer == 1 && obj->animation_step.packed == C_TEST_STEP(0x85010002));
     memcpy(pool_expected, shot_objects, sizeof(pool_expected));
     expected->timer = 0;
-    expected->animation_step.packed = 0x85010001;
+    expected->animation_step.packed = C_TEST_STEP(0x85010001);
     if (free) {
         struct ShotObj* s = &pool_expected[31];
         s->active = 0x41;
@@ -370,7 +370,9 @@ static u32 spread(u32 row)
     return 1;
 }
 
+static u32 fire_paths(u32 index);
 const struct CTestGroup c_test_groups[] = {
+    { "fire_paths", 0, 0, 16, fire_paths },
     { "magma_fire_pillar_states", 0, 0, COUNT(magma_fire_pillar_states_cases), test_magma_fire_pillar_states },
     { "magma_fire_owner_animation_start", NULL, magma_fire_owner_animation_start_cases_expected, COUNT(magma_fire_owner_animation_start_cases_expected), fire_case },
     { "pillar_repeat_ending", pillar_repeat_ending_cases, pillar_repeat_ending_cases_expected, COUNT(pillar_repeat_ending_cases), 0 },
@@ -378,4 +380,143 @@ const struct CTestGroup c_test_groups[] = {
     { "own_Magma_high_low_fire_factory_spread_after_two_ticks_full_shot_pool", NULL, NULL, 24, spread },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(magma_fire_pillar_states_cases) + COUNT(magma_fire_owner_animation_start_cases_expected) + COUNT(pillar_repeat_ending_cases) + 55 + 24;
+const u32 c_test_count = COUNT(magma_fire_pillar_states_cases) + COUNT(magma_fire_owner_animation_start_cases_expected) + COUNT(pillar_repeat_ending_cases) + 55 + 24 + 16;
+
+#include "support/sound_probe.h"
+#include "support/state_cases.h"
+void func_800A56E4(struct ShotObj*);
+void magma_fire_wave(struct ShotObj*);
+void magma_fire_breath_follow(struct ShotObj*);
+void magma_fire_breath_drop(struct ShotObj*);
+void func_800A5E60(struct ShotObj*);
+void magma_fire_breath_rise(struct ShotObj*);
+void magma_fire_breath_exit(struct ShotObj*);
+void func_800A60D0(struct ShotObj*);
+void magma_fire_main(struct ShotObj*);
+static u32 fire_paths(u32 index)
+{
+    static const u8 scenarios[] = { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    u32 row = scenarios[index];
+    struct ShotObj obj;
+    struct WeaponObj owner;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    sound_probe_begin();
+    owner.state = 1;
+    owner.unk5 = 7;
+    owner.x_pos.i.hi = 0x100;
+    owner.y_pos.i.hi = 0x100;
+    owner.animation_table = (u32**)magma_dragoon_animations;
+    obj.active = 0x41;
+    obj.id = 41;
+    obj.state = 1;
+    obj.unk7C = &owner;
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = 200;
+    obj.timer = 5;
+    obj.animation_table = (u32**)magma_dragoon_animations;
+    set_animation(&obj, 0x1F);
+    obj.animation_step.fields.duration = 2;
+    obj.animation_step.fields.relative_step = 1;
+    switch (row) {
+    case 0:
+        obj.state = 0;
+        obj.unk2 = 2;
+        owner.unk15 = PLAYER_FACING_RIGHT;
+        func_800A56E4(&obj);
+        assert(obj.state == 1 && obj.unk5 == 4 && obj.unk15 == PLAYER_FACING_RIGHT && obj.x_vel.val == 0x40000);
+        break;
+    case 1:
+    case 2:
+        obj.timer = row == 1 ? 1 : 5;
+        obj.y_vel.val = 0x20000;
+        if (row == 2)
+            obj.x_pos.i.hi = 0x300;
+        magma_fire_wave(&obj);
+        assert(obj.state == (row == 1 ? 1 : 2) && obj.timer == (row == 1 ? 7 : 4));
+        assert(obj.y_vel.val == (row == 1 ? -0x20000 : 0x20000));
+        break;
+    case 3:
+    case 4:
+        owner.unk5 = row == 3 ? 6 : 7;
+        magma_fire_breath_follow(&obj);
+        assert(obj.state == (row == 3 ? 2 : 1));
+        break;
+    case 5:
+    case 6:
+        obj.unk6 = 1;
+        obj.unk50.data = magma_fire_ember_hit_box;
+        obj.unk70 = row == 5 ? 8 : 0;
+        magma_fire_breath_drop(&obj);
+        assert(obj.unk6 == (row == 5 ? 2 : 1) && obj.unk17 == (row == 5 ? 0x20 : 0x1F));
+        assert(obj.unk50.data == (row == 5 ? NULL : magma_fire_ember_hit_box));
+        break;
+    case 7:
+        engine_obj.stage = 0xC;
+        obj.unk6 = 2;
+        obj.unk15 = 0;
+        obj.animation_step.fields.relative_step = 0;
+        func_800A5E60(&obj);
+        assert(obj.unk6 == 3 && obj.x_pos.i.hi == 0x138 && obj.y_pos.i.hi == 200 + 0x12C && obj.timer == 0xC8);
+        break;
+    case 8:
+    case 9:
+        obj.unk6 = 3;
+        obj.y_pos.i.hi = row == 8 ? 0x70 : 200;
+        obj.y_vel.val = 0x40000;
+        obj.timer = row == 8 ? 1 : 5;
+        obj.unk68 = (struct Unk_unk68*)magma_fire_ember_terrain_box;
+        obj.animation_step.fields.event = row == 8 ? 1 : 2;
+        magma_fire_breath_rise(&obj);
+        assert(obj.unk6 == (row == 8 ? 4 : 3) && obj.y_vel.val == (row == 8 ? -0x40000 : 0x40000));
+        assert(obj.unk68 == (row == 8 ? NULL : (struct Unk_unk68*)magma_fire_ember_terrain_box));
+        SOUND_CHECK(sound_probe_id() == (row == 8 ? 6 : 7));
+        break;
+    case 10:
+    case 11:
+        obj.unk6 = 4;
+        if (row == 10)
+            obj.y_pos.i.hi = -0x200;
+        magma_fire_breath_exit(&obj);
+        assert(obj.state == (row == 10 ? 2 : 1));
+        break;
+    case 12:
+    case 13:
+        obj.unk50.data = magma_fire_burst_hit_box;
+        obj.timer = 1;
+        obj.unk70 = row == 13 ? 1 : 0;
+        obj.animation_step.fields.frame_index = row == 12 ? 0x8A : 0x10;
+        obj.animation_step.fields.relative_step = row == 12 ? 0 : 1;
+        func_800A60D0(&obj);
+        assert(obj.state == (row == 12 ? 2 : 1) && obj.unk50.data == (row == 12 ? NULL : magma_fire_burst_hit_box));
+        assert(shot_objects[0].active == (row == 12 ? 0x41 : 0));
+        break;
+    case 14:
+        obj.unk5 = 2;
+        obj.unk5C = 1;
+        state_hit(MAIN_OBJECT(&obj), 0, 0, 3);
+        magma_fire_main(&obj);
+        assert(obj.state == 2 && visual_objects[1].active == 0x21 && visual_objects[1].id == 4);
+        break;
+    case 15:
+        obj.unk5 = 2;
+        obj.timer = 1;
+        obj.y_vel.val = 0x20000;
+        magma_fire_update(&obj);
+        assert(obj.state == 1 && obj.timer == 7 && obj.y_vel.val == -0x20000);
+        break;
+    default:
+        owner.state = 2;
+        obj.unk5 = 2;
+        magma_fire_update(&obj);
+        assert(obj.active == 0 && obj.state == 0);
+        break;
+    }
+    return 1;
+}

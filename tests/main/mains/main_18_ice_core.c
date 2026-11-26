@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_18_ice_core.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -57,7 +58,7 @@ static u32 ice_core_hit_run(u32 mode)
     for (i = 0; i < 0x20; i++)
         visual_objects[i].active = 1;
     memset(&g_Player, 0, sizeof(g_Player));
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     engine_obj.cur_character = input->character;
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
@@ -124,7 +125,7 @@ static u32 ice_core_hit_run(u32 mode)
     for (i = 0; i < 0x20; i++)
         difference |= visual_objects[i].active ^ 1;
     assert(difference == 0);
-    assert(g_Player.spike_immune == 1 && engine_obj.cur_character == input->character);
+    assert(SPIKE_IMMUNE(g_Player) == 1 && engine_obj.cur_character == input->character);
     i = (u8)core.hp | ((u32)(u8)core.invincibility_timer << 8) | ((u32)core.ext.main_18.state.runtime.unk83 << 16)
         | ((u32)core.ext.main_18.state.runtime.unk80 << 24);
     i ^= (u32)(u8)weapon_objects[0].unk98 << 4 ^ (u32)core.unk42;
@@ -170,7 +171,7 @@ static u32 spray_case(u32 mode)
     obj.unk40 = 0x1234;
     obj.unk42 = 0x4567;
     obj.bg_offset = 1;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.sprite_frames = (void*)sprite_data;
@@ -207,12 +208,9 @@ static u32 spray_case(u32 mode)
         if (shot_objects[i].active == 0x41 && shot_objects[i].id == 12)
             allocated++;
     assert(allocated == expected_count);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)pool_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(shot_objects, pool_before, sizeof(pool_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(D_8013E198[2] == -1);
     return (u8)obj.unk6 | ((u32)obj.ext.main_18.state.runtime.unk86 << 8) | (allocated << 16);
 }
@@ -262,7 +260,7 @@ static u32 test_func_80050874(u32 row)
     obj.ext.main_18.state.runtime.unk87 = 7;
     memset(&g_Player, 0, sizeof(g_Player));
     g_Player.hp = 16;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     engine_obj.cur_character = 1;
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
@@ -281,7 +279,7 @@ static u32 test_func_80050874(u32 row)
     assert(((const u8*)D_80106B74)[c->weapon * 2] == c->damage);
     assert(((const u8*)D_80106B74)[c->weapon * 2 + 1] == c->damage_flags);
     memcpy(func_80050874_weapons_expected, weapon_objects, sizeof(weapon_objects));
-    func_80050874_weapons_expected[0].unk80.word = c->weapon_unk80;
+    TEST_SET_HALVES(func_80050874_weapons_expected[0].unk80, c->weapon_unk80 & 0xFFFF, c->weapon_unk80 >> 16);
     func_80050874_weapons_expected[0].unk98 = 0;
     memcpy(func_80050874_visuals_expected, visual_objects, sizeof(visual_objects));
     expected = obj;
@@ -666,7 +664,7 @@ static u32 test_func_80052218(u32 row)
     player_expected.script_state = 1;
     player_expected.script_action = 0x15;
     player_expected.script_facing = 0;
-    player_expected.spike_immune = 1;
+    SPIKE_IMMUNE_SET(player_expected, 1);
     engine_before = engine_obj;
     engine_before.gameplay_locked = 1;
     func_80052218(&obj);
@@ -796,7 +794,7 @@ static u32 test_ice_core_build_grow(u32 row)
     set_animation(&obj, 1);
     obj.unk5 = 8;
     obj.unk6 = 2;
-    obj.unk7E = c->unk7E;
+    *(u8*)&obj.unk7E = c->unk7E;
     obj.hp = c->obj_hp;
     obj.ext.main_18.state.runtime.unk85 = 3;
     set_animation(&obj, 9);
@@ -849,7 +847,7 @@ static u32 test_ice_core_charge_run(u32 row)
     set_animation(&obj, 1);
     obj.unk5 = 4;
     obj.unk6 = 4;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.collision_flags = 0;
     obj.x_speed = c->x_speed;
     obj.y_speed = 0x10000;
@@ -912,7 +910,7 @@ static u32 test_ice_core_charge_slide_1(u32 row)
     obj.unk5 = 4;
     obj.unk6 = 2;
     obj.unk7C = c->obj_unk7C;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.collision_flags = c->collision_flags;
     obj.x_speed = c->obj_x_speed;
     obj.x_accel = 0x10000;
@@ -1081,7 +1079,7 @@ static u32 test_ice_core_pick_attack(u32 row)
     set_animation(&obj, 1);
     obj.unk5 = 7;
     obj.unk6 = 1;
-    obj.unk7E = c->unk7E;
+    *(u8*)&obj.unk7E = c->unk7E;
     obj.ext.main_18.state.runtime.unk80 = 0x43;
     random_before = cur_random;
     expected = obj;
@@ -1247,7 +1245,7 @@ static u32 saber_meter(u32 row)
     memset(background_objects, 0, sizeof(background_objects));
     memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
     g_Player.hp = 30;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     player_expected = g_Player;
     if (weapon >= 2)
         player_expected.update_delay_request = 1;
@@ -1258,7 +1256,7 @@ static u32 saber_meter(u32 row)
     obj.state = 1;
     obj.unk5 = 1;
     obj.unk6 = 1;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.hp = 40;
     obj.unk42 = 0x9234;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -1272,7 +1270,7 @@ static u32 saber_meter(u32 row)
     obj.ext.main_18.state.runtime.unk83 = meter ? 250 : 0;
     obj.animation_table = (const u8* const*)D_800FC2B4;
     set_animation(&obj, 1);
-    assert(obj.animation_step.packed == 0x00010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x00010002));
     weapon_objects[0].active = 0x21;
     weapon_objects[0].id = 24 + weapon;
     weapon_objects[0].unk50 = (const u8*)&D_800FBEF4;
@@ -1310,6 +1308,584 @@ static u32 saber_meter(u32 row)
     return 1;
 }
 
+#include "support/tile_writes.h"
+void ice_core_death_sink(struct MainObj*);
+void ice_core_drift(struct MainObj*);
+void ice_core_bob(struct MainObj*);
+void ice_core_charge(struct MainObj*);
+void ice_core_stomp(struct MainObj*);
+void ice_core_build(struct MainObj*);
+void ice_core_bounce(struct MainObj*);
+void ice_core_spray(struct MainObj*);
+void ice_core_intro(struct MainObj*);
+void ice_core_fall(struct MainObj*);
+extern struct Unk_unk68 D_800FBF00;
+extern struct Unk_unk68 D_800FBF04;
+extern struct Unk_unk68 D_800FBF08;
+extern struct Unk_unk68 D_800FBF10;
+
+static struct MainObj ic;
+static struct Unk_unk68 ic_box = { -2, -2, 4, 4 };
+static u8 ic_damage[0x80];
+static s32 ic_sprites[4] = { 8, 12, 0, 0 };
+#define IC ic.ext.main_18.state.runtime
+static void ic_reset(u8 state, u8 unk5, u8 unk6)
+{
+    memset(&ic, 0, sizeof(ic));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    TEST_SPRITE_FRAMES = (u8*)ic_sprites;
+    cur_random = 0;
+    engine_obj.cur_character = CHARACTER_X;
+    ic.active = 0x41;
+    ic.id = 18;
+    ic.state = state;
+    ic.unk5 = unk5;
+    ic.unk6 = unk6;
+    ic.x_pos.i.hi = 0x1840;
+    ic.y_pos.i.hi = 0x870;
+    ic.collision_data = D_80106B74;
+    ic.animation_table = (const u8* const*)D_800FC2B4;
+    set_animation(&ic, 0);
+    g_Player.x_pos.i.hi = 0x1800;
+}
+static void ic_step(s8 event)
+{
+    ic.animation_step.fields.duration = 5;
+    ic.animation_step.fields.event = event;
+    ic.animation_step.fields.relative_step = 1;
+}
+
+static void ic_death(void)
+{
+    ic_reset(2, 0, 0);
+    IC.unk82 = 1;
+    ic.y_pos.i.hi = 0x900;
+    ic.unk7C = 2;
+    ic.unk7E = 2;
+    ice_core_update(&ic);
+    assert(ic.y_pos.i.hi == 0x901 && ic.unk7C == 1 && ic.unk7E == 1 && visual_objects[0].active == 0);
+    ice_core_update(&ic);
+    assert(ic.y_pos.i.hi == 0x902 && ic.x_pos.i.hi == 0x1840 && ic.unk7C == 4 && ic.unk7E == 8 && visual_objects[1].active == 0x21);
+    ic.state = 3;
+    IC.unk82 = 0;
+    ice_core_update(&ic);
+    assert(ic.state == 4 && g_Player.script_action == 0x15 && g_Player.script_facing == PLAYER_FACING_RIGHT);
+    g_Player.x_pos.i.hi = 0x18F0;
+    ice_core_update(&ic);
+    assert(ic.active == 0x41 && g_Player.script_state == 1);
+    g_Player.x_pos.i.hi = 0x18F1;
+    engine_obj.unkF = 0;
+    ice_core_update(&ic);
+    assert(g_Player.script_state == 0 && engine_obj.unkF == 0x40 && ic.ext.raw[0] == 0 && ic.ext.raw[5] == 0);
+}
+static void ic_drift(void)
+{
+    static const struct {
+        u8 facing, wall, bobbing;
+    } walls[] = { { 0, 2, 1 }, { 0, 2, 0 }, { 1, 1, 1 }, { 1, 1, 0 } };
+    u32 i;
+    ic_reset(1, 2, 0);
+    ice_core_drift(&ic);
+    assert(ic.unk6 == 1 && ic.x_speed == FIXED(-1.375) && ic.gravity == FIXED(-0.125));
+    ic.unk6 = 0;
+    ic.unk15 = PLAYER_FACING_RIGHT;
+    ice_core_drift(&ic);
+    assert(ic.x_speed == FIXED(1.375));
+    ic.unk15 = 0;
+    ic.y_speed = 0x2E000;
+    ic.gravity = -0x2000;
+    ice_core_drift(&ic);
+    assert(ic.unk6 == 1 && ic.y_speed == 0x30000 && ic.gravity == 0x2000);
+    ic.unk15 = PLAYER_FACING_RIGHT;
+    ic.y_speed = -0x2E000;
+    ice_core_drift(&ic);
+    assert(ic.y_speed == -0x30000 && ic.gravity == -0x2000);
+    for (i = 0; i < COUNT(walls); i++) {
+        ic_reset(1, 2, 1);
+        ic.unk15 = walls[i].facing ? PLAYER_FACING_RIGHT : 0;
+        ic.collision_flags = walls[i].wall;
+        IC.unk84 = walls[i].bobbing;
+        ice_core_drift(&ic);
+        if (walls[i].bobbing)
+            assert(ic.unk5 == 3 && ic.unk6 == 2 && ic.unk17 == 6 && ic.unk15 == 0);
+        else
+            assert(ic.unk5 == 7 && ic.unk6 == 0 && ic.unk15 == (walls[i].facing ? 0 : PLAYER_FACING_RIGHT));
+    }
+}
+static void ic_bob(void)
+{
+    ic_reset(1, 3, 0);
+    ice_core_bob(&ic);
+    assert(ic.unk6 == 1 && IC.unk84 == 1 && ic.unk7C == 1 && ic.gravity == FIXED(0.0625) && ic.unk17 == 1);
+    assert(ic.hurt_box == &D_800FBF00 && ic.attack_box == &D_800FBF00);
+    ic.unk7C = 2;
+    ic.y_speed = -0x17000;
+    ic.gravity = 0x1000;
+    ic_step(0);
+    ice_core_bob(&ic);
+    assert(ic.unk6 == 1 && ic.unk7C == 1 && ic.gravity == -0x1000 && ic.collision_data == D_80106B74);
+    ic.y_speed = -0x17000;
+    ic.gravity = 0x1000;
+    ice_core_bob(&ic);
+    assert(ic.unk7C == 0 && ic.y_speed == 0 && ic.gravity == 0x1000 && ic.unk5 == 7 && ic.unk6 == 0);
+    ic.unk5 = 3;
+    ic.unk6 = 2;
+    ic.collision_data = D_801060F0;
+    ic_step(2);
+    ice_core_bob(&ic);
+    assert(ic.collision_data == D_80106B74 && ic.hurt_box == &D_800FBEF4 && ic.unk6 == 2);
+    IC.unk80 = 0x45;
+    ic_step(1);
+    ice_core_bob(&ic);
+    assert(IC.unk84 == 0 && IC.unk80 == 5 && ic.unk17 == 2 && ic.unk5 == 7 && ic.unk6 == 0);
+}
+static void ic_charge(void)
+{
+    ic_reset(1, 4, 0);
+    ic.x_speed = 0x10000;
+    ice_core_charge(&ic);
+    assert(ic.unk6 == 1 && ic.unk7C == 0x1C && ic.x_speed == 0 && ic.unk15 == 0);
+    ic.unk7C = 2;
+    ice_core_charge(&ic);
+    assert(ic.unk6 == 1 && ic.unk7C == 1);
+    ice_core_charge(&ic);
+    assert(ic.unk6 == 2 && ic.x_speed == FIXED(3) && ic.x_accel == FIXED(0.09375) && ic.unk7C == 0x14);
+    ic.unk6 = 1;
+    ic.unk7C = 1;
+    ic.unk15 = PLAYER_FACING_RIGHT;
+    ice_core_charge(&ic);
+    assert(ic.x_speed == FIXED(-3));
+    ic.unk15 = 0;
+    ic.x_speed = 0x30000;
+    ic.x_accel = 0x1800;
+    ice_core_charge(&ic);
+    assert(ic.unk6 == 2 && ic.x_speed == 0x2E800 && ic.x_accel == 0x1800);
+    ic.unk6 = 3;
+    ic.unk7C = 2;
+    ice_core_charge(&ic);
+    assert(ic.unk6 == 3 && ic.unk7C == 1);
+    ice_core_charge(&ic);
+    assert(ic.unk6 == 4 && ic.x_speed == FIXED(-4) && ic.contact_damage == 6 && IC.unk81 == 1 && ic.unk17 == 3);
+    ic.unk6 = 3;
+    ic.unk7C = 1;
+    ic.unk15 = PLAYER_FACING_RIGHT;
+    ice_core_charge(&ic);
+    assert(ic.x_speed == FIXED(4));
+}
+static void ic_charge_walls(void)
+{
+    ic_reset(1, 4, 4);
+    ic.collision_flags = 2;
+    ic_step(0);
+    ice_core_charge_run(&ic);
+    assert(ic.unk6 == 5 && ic.unk17 == 0xC && ic.hurt_box == NULL);
+    ic.unk6 = 4;
+    ic.unk15 = PLAYER_FACING_RIGHT;
+    ic.collision_flags = 1;
+    ic_step(2);
+    ice_core_charge_run(&ic);
+    assert(ic.unk6 == 5 && ic.hurt_box == &D_800FBEFC && ic.attack_box == &D_800FBEFC);
+    ic.contact_damage = 6;
+    IC.unk81 = 1;
+    IC.unk83 = 7;
+    IC.unk80 = 0x41;
+    ic_step(2);
+    ice_core_charge(&ic);
+    assert(ic.contact_damage == 4 && ic.attack_box == &D_800FBEF4 && ic.hurt_box == &D_800FBEF4 && ic.unk6 == 5);
+    ic_step(1);
+    ice_core_charge(&ic);
+    assert(ic.unk5 == 7 && IC.unk83 == 0 && IC.unk81 == 0 && IC.unk80 == 0 && ic.unk17 == 2);
+}
+static void ic_stomp(void)
+{
+    ic_reset(1, 5, 0);
+    ice_core_stomp(&ic);
+    assert(ic.unk6 == 1 && IC.unk82 == 1 && ic.attack_box == &D_800FBF00 && ic.gravity == FIXED(0.2578125) && ic.unk7C == 0x5A);
+    ic.unk7C = 3;
+    ic.y_pos.i.hi = 0x8B9;
+    ic_step(2);
+    ice_core_stomp(&ic);
+    assert(ic.unk7C == 2 && ic.collision_data == D_801060F0 && ic.y_pos.i.hi == 0x8B9 && ic.y_speed == -FIXED(0.2578125));
+    ic.y_pos.i.hi = 0x8BA;
+    ic_step(0);
+    ice_core_stomp(&ic);
+    assert(ic.unk7C == 1 && ic.y_pos.i.hi == 0x8BA && ic.y_speed == 0 && ic.gravity == 0);
+    ic.unk7C = 2;
+    ic.y_pos.i.hi = 0x8C0;
+    ice_core_stomp(&ic);
+    assert(ic.y_pos.i.hi == 0x8C0);
+    ic.collision_flags = 8;
+    ice_core_stomp(&ic);
+    assert(ic.unk6 == 2 && ic.y_speed == FIXED(6) && ic.unk7C == 0x50 && ic.collision_flags == 0);
+    ic.unk7C = 0x30;
+    ice_core_stomp(&ic);
+    assert(ic.unk6 == 2 && ic.unk7C == 0x2F && ic.y_pos.i.hi == 0x8BA);
+    ic.unk6 = 3;
+    ic.unk7C = 5;
+    ic.collision_flags = 8;
+    ic_step(0);
+    ice_core_stomp(&ic);
+    assert(ic.unk6 == 4 && ic.ext.main_18.shed_timer == 0xA6 && ic.unk17 == 5 && ic.attack_box == &D_800FBF00);
+    ic_step(0);
+    ice_core_stomp(&ic);
+    assert(ic.unk6 == 4);
+    ic_step(1);
+    ice_core_stomp(&ic);
+    assert(ic.unk6 == 5 && ic.unk17 == 6);
+    ic.ext.main_18.ice_pieces = 0x8001;
+    IC.unk85 = 9;
+    ic_step(2);
+    ice_core_stomp(&ic);
+    assert(IC.unk85 == 9 && ic.collision_data == D_80106B74 && ic.unk6 == 5);
+    IC.unk80 = 0x41;
+    ic_step(1);
+    ice_core_stomp(&ic);
+    assert(ic.unk5 == 6 && ic.unk6 == 0 && ic.y_speed == FIXED(2) && ic.gravity == FIXED(0.0625) && IC.unk80 == 0 && ic.unk17 == 2);
+}
+static void ic_build(void)
+{
+    ic_reset(1, 8, 0);
+    ic_step(2);
+    ice_core_build(&ic);
+    assert(ic.unk6 == 0 && ic.attack_box == &D_800FBF04 && ic.hurt_box == &D_800FBF04);
+    ic_step(1);
+    ice_core_build(&ic);
+    assert(ic.unk6 == 1 && ic.unk17 == 8);
+    ic.ext.main_18.ice_pieces = 5;
+    ic_step(3);
+    ice_core_build(&ic);
+    assert(ic.ext.main_18.ice_pieces == 0x83FF && shot_objects[0].unk2 == 1 && shot_objects[1].unk2 == 3 && shot_objects[7].unk2 == 9);
+    assert(shot_objects[8].active == 0 && shot_objects[7].x_pos.val == (9 << 21) + 0x17B10000 && shot_objects[7].y_pos.val == 0x8200000);
+    ic_step(4);
+    ice_core_build(&ic);
+    assert(ic.attack_box == &D_800FBF08 && ic.hurt_box == &D_800FBF08);
+    ic_step(1);
+    ice_core_build(&ic);
+    assert(ic.unk6 == 2 && ic.attack_box == &D_800FBEF8 && ic.unk17 == 0xA && IC.unk85 == 3);
+    ic.unk6 = 1;
+    ic.ext.main_18.unk88 = 1;
+    ic_step(1);
+    ice_core_build(&ic);
+    assert(ic.unk6 == 2 && ic.attack_box == &D_800FBEF4 && ic.unk17 == 9 && ic.unk15 == 0);
+    *(u8*)&ic.unk7E = 0xFF;
+    ic.hp = 5;
+    IC.unk85 = 2;
+    ic_step(0);
+    ice_core_build(&ic);
+    assert(ic.hp == 6 && IC.unk85 == 1 && ic.unk6 == 2);
+    ic_step(3);
+    ice_core_build(&ic);
+    assert(ic.hp == 7 && IC.unk85 == 3 && ic.unk6 == 2);
+    ic.invincibility_timer = -0x80;
+    ic_step(1);
+    ice_core_build(&ic);
+    assert(ic.unk6 == 3 && ic.unk7C == 0x1E && ic.ext.main_18.unk88 == 0 && ic.unk17 == 0 && ic.attack_box == &D_800FBEF4 && ic.invincibility_timer == 0);
+    ic.unk6 = 2;
+    ic_step(1);
+    ice_core_build(&ic);
+    assert(ic.unk6 == 3 && ic.ext.main_18.unk88 == 1 && ic.unk17 == 0xB && ic.attack_box == &D_800FBEF8);
+}
+static void ic_build_wait(void)
+{
+    ic_reset(1, 8, 3);
+    *(u8*)&ic.unk7E = 0xFF;
+    ic.hp = 5;
+    IC.unk85 = 2;
+    ic.unk7C = 3;
+    ice_core_build(&ic);
+    assert(ic.hp == 6 && IC.unk85 == 1 && ic.unk7C == 2);
+    ice_core_build(&ic);
+    assert(ic.hp == 7 && IC.unk85 == 3 && ic.unk7C == 1);
+    *(u8*)&ic.unk7E = 0;
+    ic_step(0);
+    ice_core_build(&ic);
+    assert(ic.hp == 7 && ic.unk7C == 1 && ic.unk6 == 3);
+    *(u8*)&ic.unk7E = 0xFF;
+    ic.hp = 0x30;
+    g_Player.script_state = 1;
+    ic_step(1);
+    ice_core_build(&ic);
+    assert(ic.unk5 == 7 && *(u8*)&ic.unk7E == 0 && g_Player.script_state == 0 && IC.unk85 == 0);
+    ic.unk5 = 8;
+    ic.unk6 = 3;
+    ic.unk7C = 1;
+    *(u8*)&ic.unk7E = 1;
+    g_Player.script_state = 1;
+    ic_step(1);
+    ice_core_build(&ic);
+    assert(ic.unk5 == 7 && *(u8*)&ic.unk7E == 1 && g_Player.script_state == 1);
+    ic.unk5 = 8;
+    ic.unk6 = 3;
+    ic.unk7C = 1;
+    ic.ext.main_18.unk88 = 1;
+    ic_step(1);
+    ice_core_build(&ic);
+    assert(ic.unk5 == 9 && ic.unk6 == 0 && ic.unk17 == 0x10);
+}
+static void ic_bounce(void)
+{
+    ic_reset(1, 9, 0);
+    ice_core_bounce(&ic);
+    assert(ic.unk6 == 1 && IC.unk80 == 0x80 && ic.terrain_box == &D_800FBF10 && ic.unk7C == 0xF0);
+    assert(ic.x_speed == FIXED(-3.53554) && ic.y_speed == FIXED(-3.53554));
+    ic.unk6 = 0;
+    g_Player.x_pos.i.hi = 0x1900;
+    cur_random = 1;
+    ice_core_bounce(&ic);
+    assert(ic.x_speed == FIXED(3.53554) && ic.y_speed == FIXED(3.53554) && ic.unk15 == PLAYER_FACING_RIGHT);
+    ic.unk6 = 2;
+    ic.unk7C = 2;
+    ice_core_bounce(&ic);
+    assert(ic.unk7C == 1 && ic.unk5 == 9);
+    ice_core_bounce(&ic);
+    assert(ic.unk5 == 10 && ic.unk6 == 0);
+    ic.unk5 = 9;
+    ic.unk6 = 3;
+    ic_step(2);
+    ice_core_bounce(&ic);
+    assert(ic.attack_box == &D_800FBF04 && ic.unk6 == 3);
+    IC.unk86 = 2;
+    ic_step(1);
+    ice_core_bounce(&ic);
+    assert(ic.terrain_box == &D_800FBF0C && IC.unk86 == 0 && ic.unk5 == 8 && ic.unk6 == 0);
+}
+static void ic_bounce_move(void)
+{
+    static const s16 spots[][3] = { { 0x1840, 0x870, 1 }, { 0x1840, 0x848, 0 }, { 0x1840, 0x890, 0 }, { 0x17D0, 0x870, 0 }, { 0x18C0, 0x870, 0 } };
+    u32 i;
+    ic_reset(1, 9, 1);
+    ic.x_pos.i.lo = ic.y_pos.i.lo = 0x8000;
+    ic.unk7C = 2;
+    ic.x_speed = -1;
+    ic.y_speed = -1;
+    ic.collision_flags = 2 | 8;
+    ice_core_bounce(&ic);
+    assert(ic.x_speed == 1 && ic.y_speed == 1 && ic.unk15 == PLAYER_FACING_RIGHT && ic.unk7C == 1 && misc_objects[3].active == 0x41);
+    ic.collision_flags = 1 | 4;
+    ic.unk7C = 5;
+    ice_core_bounce(&ic);
+    assert(ic.x_speed == -1 && ic.y_speed == -1 && ic.unk15 == 0);
+    ic.collision_flags = 0;
+    ice_core_bounce(&ic);
+    assert(ic.x_speed == -1 && ic.y_speed == -1 && ic.unk6 == 1);
+    ic.x_speed = ic.y_speed = 1;
+    ice_core_bounce(&ic);
+    assert(ic.x_speed == 1 && ic.y_speed == 1);
+    for (i = 0; i < COUNT(spots); i++) {
+        ic.unk6 = 1;
+        ic.unk7C = 1;
+        ic.x_speed = ic.y_speed = 0;
+        ic.x_pos.i.hi = spots[i][0];
+        ic.y_pos.i.hi = spots[i][1];
+        ice_core_bounce(&ic);
+        assert(ic.unk6 == (spots[i][2] ? 2 : 1) && ic.unk7C == (spots[i][2] ? 0x30 : 1));
+    }
+    ic.unk6 = 1;
+    IC.unk86 = 2;
+    IC.unk87 = 0;
+    ice_core_bounce(&ic);
+    assert(ic.unk6 == 1);
+    IC.unk87 = 1;
+    ice_core_bounce(&ic);
+    assert(ic.unk6 == 3 && ic.unk17 == 0xF);
+}
+static void ic_spray_intro(void)
+{
+    ic_reset(1, 10, 1);
+    ic_step(0);
+    ice_core_spray(&ic);
+    assert(ic.unk6 == 1);
+    ic_step(1);
+    ice_core_spray(&ic);
+    assert(ic.unk6 == 2 && ic.unk7C == 0x30);
+    ic.unk7C = 2;
+    ice_core_spray(&ic);
+    assert(ic.unk7C == 1 && ic.unk5 == 10);
+    ice_core_spray(&ic);
+    assert(ic.unk5 == 9 && ic.unk6 == 0);
+    ic.unk5 = 11;
+    ic.unk6 = 1;
+    g_Player.script_state = 1;
+    ice_core_intro(&ic);
+    assert(ic.unk6 == 1);
+    g_Player.script_state = -1;
+    ice_core_intro(&ic);
+    assert(ic.unk6 == 2);
+    ic.unk7C = 2;
+    ic.y_speed = FIXED(1);
+    ice_core_intro(&ic);
+    assert(ic.unk6 == 2 && ic.y_pos.i.hi == 0x86F);
+    ice_core_intro(&ic);
+    assert(ic.unk6 == 3 && ic.y_speed == 0 && ic.gravity == FIXED(0.0078125) && ic.unk16 == VISUAL_SATURN_LAYER(5));
+}
+static void ic_intro_slow_start(void)
+{
+    ic_reset(1, 11, 3);
+    ic.gravity = FIXED(0.0078125);
+    ic.y_speed = 0x400;
+    ice_core_intro(&ic);
+    assert(ic.unk6 == 3 && ic.y_speed == 0x200);
+    ic.y_speed = 0x200 - FIXED(0.75);
+    ice_core_intro(&ic);
+    assert(ic.unk6 == 4 && ic.y_speed == -FIXED(0.75) && ic.gravity == -FIXED(0.015625) && ic.unk7C == 0x64);
+    ic.unk7C = 2;
+    ic.gravity = 0;
+    ic.y_speed = 0;
+    IC.unk82 = 1;
+    ice_core_intro(&ic);
+    assert(ic.unk7C == 1 && ic.unk5 == 11);
+    engine_obj.enable_boss = 0;
+    ice_core_intro(&ic);
+    assert(ic.unk5 == 8 && ic.unk6 == 0 && IC.unk82 == 0 && engine_obj.enable_boss == 1 && engine_obj.unk25 == 2 && engine_obj.boss_ptr == &ic);
+    ic.unk5 = 6;
+    ic.y_speed = 0x1000;
+    ice_core_fall(&ic);
+    assert(ic.unk5 == 6);
+    ic.y_speed = 0;
+    ice_core_fall(&ic);
+    assert(ic.unk5 == 2 && ic.terrain_box == &D_800FBF0C);
+}
+static void ic_float(void)
+{
+    static const s16 floats[][4] = { { 0x1000, 0, 0x891, 1 }, { 0x1000, 0, 0x890, 0 }, { 0x1000, 1, 0x8B0, 0 }, { 0x1000, 1, 0x8B1, 1 }, { -0x1000, 1, 0x8B0, 0 }, { -0x1000, 1, 0x8AF, 1 }, { -0x1000, 0, 0x88F, 1 }, { -0x1000, 0, 0x890, 0 } };
+    u32 i;
+    for (i = 0; i < COUNT(floats); i++) {
+        ic_reset(1, 7, 0);
+        ic.gravity = floats[i][0];
+        IC.unk84 = floats[i][1];
+        ic.y_pos.i.hi = floats[i][2];
+        ice_core_float(&ic);
+        assert(ic.unk5 == (floats[i][3] ? 2 : 7) && ic.terrain_box == (floats[i][3] ? &D_800FBF0C : NULL));
+    }
+}
+static void ic_pick(void)
+{
+    ic_reset(1, 2, 3);
+    IC.unk80 = 0x41;
+    cur_random = 2;
+    ice_core_pick_attack(&ic);
+    assert(IC.unk80 == 0xC1 && ic.unk5 == 3 && ic.unk6 == 0 && ic.terrain_box == &D_800FBF0C);
+    IC.unk80 = 0x41;
+    cur_random = 0;
+    *(u8*)&ic.unk7E = 0;
+    ice_core_pick_attack(&ic);
+    assert(ic.unk5 == 4 && *(u8*)&ic.unk7E == 1);
+    IC.unk80 = 0x44;
+    ice_core_pick_attack(&ic);
+    assert(ic.unk5 == 5 && ic.unk17 == 4 && *(u8*)&ic.unk7E == 0);
+}
+static void ic_rebuild(void)
+{
+    static const u8 checks[][3] = { { 10, 1, 0 }, { 5, 1, 1 }, { 5, 0, 0 } };
+    u32 i;
+    for (i = 0; i < COUNT(checks); i++) {
+        ic_reset(1, 1, 3);
+        ic.ext.main_18.saved_unk5 = 2;
+        ic.hp = checks[i][0];
+        IC.unk85 = 10;
+        IC.unk87 = checks[i][1];
+        IC.unk82 = 1;
+        ic.ext.main_18.unk88 = checks[i][2];
+        ice_core_update(&ic);
+        assert(ic.unk5 == 2 && ic.unk6 == 3 && IC.unk82 == 1 && IC.unk85 == 10 && ic.unk17 == 0);
+    }
+}
+static void ic_shed(void)
+{
+    ic_reset(1, 2, 3);
+    ic.hp = 5;
+    IC.unk85 = 10;
+    ic.ext.main_18.shed_timer = 0x22;
+    ic.ext.main_18.ice_pieces = 4;
+    ice_core_shed_ice(&ic);
+    assert(ic.ext.main_18.shed_timer == 0x21 && ic.ext.main_18.ice_pieces == 4);
+    cur_random = 0x100;
+    ice_core_shed_ice(&ic);
+    assert(ic.ext.main_18.ice_pieces == 0 && ic.ext.main_18.shed_timer == 0xC && IC.unk85 == 10 && cur_random == 0x90C);
+    ic.ext.main_18.shed_timer = 0x21;
+    ic.ext.main_18.ice_pieces = 0x8200;
+    ice_core_shed_ice(&ic);
+    assert(ic.ext.main_18.ice_pieces == 0x8000 && IC.unk85 == 5 && ic.ext.main_18.shed_timer == 0xC);
+}
+static void ic_run_hits(void)
+{
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    ic_reset(1, 1, 0);
+    SP_CUR_MAIN_OBJ = &ic;
+    ic.hp = 20;
+    ic.ext.main_18.saved_unk5 = 1;
+    ic.collision_data = ic_damage;
+    ic.hurt_box = &ic_box;
+    ic.bg_offset = -1;
+    weapon_objects[0].active = 1;
+    weapon_objects[0].unk50 = &ic_box;
+    weapon_objects[0].bg_offset = -1;
+    weapon_objects[0].x_pos = ic.x_pos;
+    weapon_objects[0].y_pos = ic.y_pos;
+    ic_damage[1] = 1;
+    ic_damage[23 * 2 + 1] = 1;
+    ice_core_update(&ic);
+    assert(ic.hp == 19 && ic.invincibility_timer == 6 && ic.unk42 == 0x8000 && IC.unk87 == 1 && IC.unk80 == 0x41 && IC.unk83 == 0);
+    ic.invincibility_timer = 0;
+    IC.unk80 = 0x80;
+    IC.unk81 = 1;
+    weapon_objects[0].id = 23;
+    engine_obj.cur_character = CHARACTER_ZERO;
+    ice_core_update(&ic);
+    assert(ic.hp == 18 && ic.invincibility_timer == 1 && IC.unk83 == 5 && IC.unk80 == 0x80);
+    ic.invincibility_timer = 0;
+    ic.hp = 1;
+    ice_core_update(&ic);
+    SP_CUR_MAIN_OBJ = current;
+    assert(ic.state == 2 && ic.hp == 0 && ic.unk7C == 4 && ic.unk7E == 8 && ic.terrain_box == NULL && SPIKE_IMMUNE(g_Player) == 1);
+    assert(g_Player.invincibility_timer == 0x7F && ic.ext.main_18.ice_pieces == 0 && misc_objects[3].active == 0x41);
+}
+static void ic_death_sunk(void)
+{
+    ic_reset(2, 0, 0);
+    engine_obj.stage = 2, engine_obj.substage = 0, engine_obj.enable_boss = 1, engine_obj.boss_ptr = &ic;
+    background_objects[0].x_pos.i.hi = 0x1800, background_objects[0].y_pos.i.hi = 0x800;
+    tile_writes_begin();
+    tile_writes_expect(0x17, 0, 0, 1);
+    ic.y_pos.i.hi = 0x930;
+    ice_core_death_sink(&ic);
+    tile_writes_end();
+    assert(tile_write_count == 21);
+    assert(ic.state == 3 && ic.y_pos.i.hi == 0x931 && engine_obj.enable_boss == 0 && engine_obj.boss_ptr == NULL);
+    engine_obj.stage = 0;
+}
+static void (*const ic_cases[])(void) = {
+    ic_death,
+    ic_drift,
+    ic_bob,
+    ic_charge,
+    ic_charge_walls,
+    ic_stomp,
+    ic_build,
+    ic_build_wait,
+    ic_bounce,
+    ic_bounce_move,
+    ic_spray_intro,
+    ic_intro_slow_start,
+    ic_float,
+    ic_pick,
+    ic_rebuild,
+    ic_shed,
+    ic_run_hits,
+    ic_death_sunk,
+};
+static u32 ic_run(u32 row)
+{
+    ic_cases[row]();
+    return 1;
+}
+#undef IC
+
 const struct CTestGroup c_test_groups[] = {
     { "ice_core_hit", NULL, ice_core_hit_cases_expected, COUNT(ice_core_hit_cases_expected), ice_core_hit_run },
     { "ice_core_spray_pool", NULL, ice_core_spray_pool_cases_expected, COUNT(ice_core_spray_pool_cases_expected), spray_case },
@@ -1329,6 +1905,7 @@ const struct CTestGroup c_test_groups[] = {
     { "ice_core_stomp_recover", 0, 0, 1, test_ice_core_stomp_recover },
     { "ice_core_stomp_rise", 0, 0, 2, test_ice_core_stomp_rise },
     { "saber_meter_bonus_and_followup_with_real_damage_table", NULL, NULL, 64, saber_meter },
+    { "ice_core_state_steps", NULL, NULL, COUNT(ic_cases), ic_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ice_core_hit_cases_expected) + COUNT(ice_core_spray_pool_cases_expected) + 2 + 4 + 1 + 4 + 2 + 3 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 1 + 2 + 64;
+const u32 c_test_count = COUNT(ice_core_hit_cases_expected) + COUNT(ice_core_spray_pool_cases_expected) + 2 + 4 + 1 + 4 + 2 + 3 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 1 + 2 + 64 + COUNT(ic_cases);

@@ -2,6 +2,7 @@
 #include "main/mains/main_11_wall_crawler.h"
 #include "main/55C4.h"
 #include "support/state_cases.h"
+#include "support/platform_fixture.h"
 void func_8004B2BC(struct MainObj*);
 void wall_crawler_drop(struct MainObj* arg0);
 void wall_crawler_next_state(struct MainObj*);
@@ -120,11 +121,9 @@ static u32 corner_case(u32 mode, u32 observation)
         before.unk6++;
         context_before.ext.main_11.unk85++;
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(context) / 4; i++)
-        assert(((u32*)&context)[i] == ((u32*)&context_before)[i]);
-    actual = observation == 0 ? obj.unk17 | ((u32)(u8)obj.unk6 << 8) | ((u32)context.ext.main_11.unk85 << 16) : obj.animation_step.packed;
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&context, &context_before, sizeof(context));
+    actual = observation == 0 ? obj.unk17 | ((u32)(u8)obj.unk6 << 8) | ((u32)context.ext.main_11.unk85 << 16) : C_TEST_STEP(obj.animation_step.packed);
     return actual;
 }
 static const u32 wall_crawler_corner_animation_cases_expected[] = { 0x280511u, 0x2010001u, 0x270400u, 0x10001u, 0x280513u, 0xA010001u };
@@ -163,10 +162,8 @@ static u32 pursuit_case(u32 mode)
     ((u8*)&before.ext)[2] = context[2];
     ((u8*)&before.ext)[3] = context[3];
     ((u8*)&before.ext)[4] = context[4];
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(SP_CUR_MAIN_OBJ == &obj);
     actual = *(u16*)(context + 2) | ((u32)context[4] << 16) | ((u32)(u8)obj.unk5 << 24);
     return actual;
@@ -198,7 +195,7 @@ static u32 turn_case(u32 mode)
     obj.unk6 = 9;
     obj.unk2 = mode < 3 ? 0 : mode == 3 ? 1
                                         : -1;
-    obj.unk15 = mode == 2 || mode == 4 ? 0x40 : 0;
+    obj.unk15 = mode == 2 || mode == 4 ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.x_speed = 12345;
@@ -208,7 +205,7 @@ static u32 turn_case(u32 mode)
     obj.animation_step.fields.event = mode == 0 ? 0 : 1;
     expected = obj;
     if (mode) {
-        expected.unk15 ^= 0x40;
+        expected.unk15 ^= PLAYER_FACING_RIGHT;
         expected.unk5 = mode < 3 ? 2 : 4;
         expected.unk17 = 0;
         expected.previous_animation_index = 0xFF;
@@ -216,11 +213,9 @@ static u32 turn_case(u32 mode)
         expected.animation_step = wall_crawler_animations[0][0];
     }
     wall_crawler_turn(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    return obj.unk15 | ((u32)(u8)obj.unk5 << 8) | ((u32)obj.unk17 << 16);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    return C_TEST_PSX_FACING(obj.unk15) | ((u32)(u8)obj.unk5 << 8) | ((u32)obj.unk17 << 16);
 }
 static const u32 wall_crawler_turn_animation_cases_expected[] = { 0x10300u, 0x240u, 0x200u, 0x440u, 0x400u };
 
@@ -264,7 +259,7 @@ static u32 test_func_8004B0A0(u32 row)
         SP_CUR_MAIN_OBJ = &so;                     \
         so.ext.main_11.unk80 = mode;               \
         so.collision_flags = flags;                \
-        so.unk15 = facing;                         \
+        so.unk15 = TEST_FACING(facing);            \
         body;                                      \
         func_8004AE20(&so);                        \
         SP_CUR_MAIN_OBJ = current;                 \
@@ -487,7 +482,7 @@ static u32 test_corner_aim_angles(u32 row)
     context_expected.ext.main_11.angle = row;
     context_expected.ext.main_11.unk85 = 0;
     context_expected.ext.main_11.unk86 = 20;
-    expected.unk15 = facing[row / 2];
+    expected.unk15 = TEST_FACING(facing[row / 2]);
     expected.unk6 = 1;
     if (animation >= 0) {
         expected.unk17 = animation;
@@ -534,7 +529,7 @@ static u32 test_corner_resume_angles(u32 row)
     obj.id = 11;
     obj.state = 1;
     obj.unk6 = 4;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.animation_table = (const u8* const*)wall_crawler_animations;
@@ -568,7 +563,7 @@ static u32 test_corner_resume_angles(u32 row)
 
 extern union AnimationStep* wall_crawler_animations[25];
 static const u8 animations[16] = { 17, 18, 18, 18, 19, 18, 18, 18, 17, 20, 20, 20, 21, 20, 20, 20 };
-static const u32 first_words[] = { 0x02010001, 0x04010001, 0x0A010001, 0x0C010001, 0x0E010001 };
+static const u32 first_words[] = { C_TEST_STEP(0x02010001), C_TEST_STEP(0x04010001), C_TEST_STEP(0x0A010001), C_TEST_STEP(0x0C010001), C_TEST_STEP(0x0E010001) };
 static u32 aim_animation(u32 row)
 {
     struct MainObj obj, expected, context, context_expected;
@@ -668,8 +663,10 @@ static u32 contact_death(u32 row)
         s->unk2 = 9;
         s->unk50.data = s->unk54 = (const u8*)&wall_crawler_terrain_box;
         s->unk68 = &wall_crawler_terrain_box;
-        s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = s->unk72 = s->unk73 = s->unk74 = 7;
-        s->unk76 = s->unk77 = s->unk78 = s->unk62 = s->unk63 = s->unk7A = s->unk75 = 7;
+        s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = s->unk72 = s->unk73 = 7;
+        OBJ_UNK74_SET(*s, 7);
+        s->unk76 = s->unk77 = s->unk62 = s->unk63 = s->unk7A = s->unk75 = 7;
+        OBJ_UNK78_SET(*s, 7);
         visual_objects[i].active = 1;
         visual_objects[i].id = 39;
     }
@@ -682,7 +679,7 @@ static u32 contact_death(u32 row)
     obj.state = 2;
     obj.unk5 = 2;
     obj.unk6 = 9;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = absolute ? -1 : 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
@@ -698,7 +695,7 @@ static u32 contact_death(u32 row)
     g_Player.y_pos = obj.y_pos;
     g_Player.unk15 = obj.unk15;
     g_Player.unk54 = (const u32*)&wall_crawler_terrain_box;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     player_before = g_Player;
     expected = obj;
     expected.unk18 = obj.x_pos;
@@ -720,8 +717,10 @@ static u32 contact_death(u32 row)
         s->y_vel.val = vectors[i][1];
         s->unk50.data = s->unk54 = NULL;
         s->unk68 = NULL;
-        s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = s->unk72 = s->unk73 = s->unk74 = 0;
-        s->unk76 = s->unk77 = s->unk78 = s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
+        s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = s->unk72 = s->unk73 = 0;
+        OBJ_UNK74_SET(*s, 0);
+        s->unk76 = s->unk77 = s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
+        OBJ_UNK78_SET(*s, 0);
     }
     if (visual_free) {
         struct VisualObj* v = &visuals_expected[31];
@@ -731,7 +730,7 @@ static u32 contact_death(u32 row)
         v->unk5C.value = 1;
         v->x_pos.val = 160 * 65536;
         v->y_pos.val = 120 * 65536;
-        v->unk16 = 1;
+        v->unk16 = VISUAL_SATURN_LAYER(1);
     }
     cur_random = 0x1234;
     SP_CUR_MAIN_OBJ = &obj;
@@ -784,7 +783,7 @@ static u32 full(u32 row)
     assert(obj.unk6 == 2 && obj.unk17 == 17 && obj.ext.main_11.angle == 0);
     for (i = 0; i < 6; i++)
         animate_object(ANIMATED_OBJECT(&obj));
-    assert(obj.animation_step.packed == 0x24010201);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x24010201));
     expected = obj;
     cur_random = 0x1234;
     func_8004B514(&obj);
@@ -797,7 +796,292 @@ static u32 full(u32 row)
     return 1;
 }
 
+void wall_crawler_update(struct MainObj*);
+void func_8004A78C(struct MainObj*);
+void func_8004A9F4(struct MainObj*);
+void func_8004AB6C(struct MainObj*);
+void func_8004AD18(struct MainObj*);
+void func_8004B0A0(struct MainObj*);
+void func_8004B2BC(struct MainObj*);
+void func_8004B514(struct MainObj*);
+void wall_crawler_corner_end(struct MainObj*);
+static struct MainObj* wc2_saved_current;
+#define WC2(step, sub) (state_reset(step, sub, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), wc2_saved_current = SP_CUR_MAIN_OBJ, SP_CUR_MAIN_OBJ = &so, so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.terrain_box = &state_hit_box, g_Player.x_pos.i.hi = 0x200, g_Player.y_pos.i.hi = 0x60, engine_obj.character_state.fields.active = 0, SPIKE_IMMUNE_SET(g_Player, 1))
+#define WC2X() (SP_CUR_MAIN_OBJ = wc2_saved_current, engine_obj.character_state.fields.active = 0, state_extra = so.state | so.ext.main_11.unk80 << 8 | (u32)(u8)so.ext.main_11.unk86 << 16 | (u32)(u8)so.ext.main_11.angle << 24)
+static void wc2_update_free(void)
+{
+    WC2(2, 0), so.state = 3, state_terrain(0), wall_crawler_update(&so), WC2X();
+}
+static void wc2_update_spawned_active(void) { WC2(2, 0), so.state = 3, so.unk2 = 1, engine_obj.character_state.fields.active = 1, state_terrain(0), wall_crawler_update(&so), WC2X(); }
+static void wc2_update_spawned(void) { WC2(2, 0), so.state = 3, so.unk2 = 1, wall_crawler_update(&so), WC2X(); }
+static void wc2_init_between(void) { WC2(0, 0), so.state = 0, so.x_pos.i.hi = 0x1800, engine_obj.character_state.fields.active = 1, func_8004A78C(&so), WC2X(); }
+static void wc2_attach_active(void) { WC2(4, 0), engine_obj.character_state.fields.active = 1, func_8004A9F4(&so), WC2X(); }
+static void wc2_attach_spawned(void) { WC2(4, 0), so.unk2 = 1, so.ext.main_11.timer = 5, g_Player.x_pos.i.hi = 0x84, func_8004A9F4(&so), WC2X(); }
+static void wc2_attach_defeat(void) { WC2(4, 0), so.hp = 1, state_hit(&so, 0, 0, 1), func_8004A9F4(&so), WC2X(); }
+static void wc2_attach_away(void) { WC2(4, 0), so.x_pos.i.hi = 0x400, func_8004A9F4(&so), WC2X(); }
+static void wc2_main_fall(void) { WC2(2, 0), so.state = 2, so.gravity = 0x8000, func_8004AB6C(&so), WC2X(); }
+static void wc2_main_away(void) { WC2(2, 0), so.state = 2, so.collision_flags = 8, so.x_pos.i.hi = 0x400, func_8004AB6C(&so), WC2X(); }
+static void wc2_land_wait(void) { WC2(7, 0), state_terrain(0x38), func_8004AD18(&so), WC2X(); }
+static void wc2_land_left(void) { WC2(7, 0), state_terrain(0), g_Player.x_pos.i.hi = 0x40, func_8004AD18(&so), WC2X(); }
+static void wc2_land_right(void) { WC2(7, 0), state_terrain(0), func_8004AD18(&so), WC2X(); }
+static void wc2_pursue_near_below(void) { WC2(4, 0), g_Player.x_pos.i.hi = 0x90, g_Player.y_pos.i.hi = 0x80, func_8004B0A0(&so), WC2X(); }
+#define FIRE(count, left) (WC2(5, 2), so.animation_step.fields.event = 1, so.ext.main_11.unk85 = count, so.ext.main_11.unk86 = left, func_8004B514(&so), WC2X())
+static void wc2_fire_third(void)
+{
+    FIRE(3, 5);
+}
+static void wc2_fire_count(void) { FIRE(1, 2); }
+static void wc2_fire_turn(void) { FIRE(1, 1); }
+#define CORNER_END(kind, flags) (WC2(5, 4), so.unk2 = kind, so.ext.main_11.unk80 = flags, wall_crawler_corner_end(&so), WC2X())
+static void wc2_corner_end_right(void)
+{
+    CORNER_END(0, 2);
+}
+static void wc2_corner_end_left(void) { CORNER_END(0, 1); }
+static void wc2_corner_end_none(void) { CORNER_END(0, 0); }
+static void wc2_corner_end_drop(void) { CORNER_END(1, 0); }
+static void (*const wc2_cases[])(void) = {
+    wc2_update_free,
+    wc2_update_spawned_active,
+    wc2_update_spawned,
+    wc2_init_between,
+    wc2_attach_active,
+    wc2_attach_spawned,
+    wc2_attach_defeat,
+    wc2_attach_away,
+    wc2_main_fall,
+    wc2_main_away,
+    wc2_land_wait,
+    wc2_land_left,
+    wc2_land_right,
+    wc2_pursue_near_below,
+    wc2_fire_third,
+    wc2_fire_count,
+    wc2_fire_turn,
+    wc2_corner_end_right,
+    wc2_corner_end_left,
+    wc2_corner_end_none,
+    wc2_corner_end_drop,
+};
+static const u32 wc2_expected[] = {
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x17FE8000u,
+    0xFFFE8000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x100u,
+    0x41000000u,
+    0x4u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x16u,
+    0x10000u,
+    0x2u,
+    0x41000000u,
+    0x5u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x4u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x1u,
+    0x4u,
+    0x41002100u,
+    0x2u,
+    0x0u,
+    0x4000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFF8000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x4000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x41000000u,
+    0x7u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x7E8000u,
+    0xFFFE8000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x101u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x818000u,
+    0x18000u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x1u,
+    0x201u,
+    0x41000000u,
+    0x5u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x305u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x200001u,
+    0x41000000u,
+    0x205u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10001u,
+    0x41000000u,
+    0x105u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x200001u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x201u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x101u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x6u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x30000u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x401u,
+    0x41000000u,
+};
+static u32 wc2_run(u32 row)
+{
+    return state_run(wc2_cases[row], row, &wc2_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "wall_crawler_branch_steps", 0, 0, COUNT(wc2_cases), wc2_run },
     { "corner_aim_angles", 0, 0, 32, test_corner_aim_angles },
     { "corner_resume_angles", 0, 0, 62, test_corner_resume_angles },
     { "wall_crawler_states", 0, 0, COUNT(wall_crawler_states_cases), test_wall_crawler_states },
@@ -811,4 +1095,4 @@ const struct CTestGroup c_test_groups[] = {
     { "own_corner_animation_event_two_full_32_shot_slots", NULL, NULL, 1, full },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 32 + 62 + COUNT(wall_crawler_states_cases) + COUNT(wall_crawler_cases) + COUNT(wall_crawler_corner_animation_cases_expected) + COUNT(wall_crawler_pursuit_context_cases) + COUNT(wall_crawler_turn_animation_cases_expected) + 3 + 96 + 40 + 1;
+const u32 c_test_count = COUNT(wc2_cases) + 32 + 62 + COUNT(wall_crawler_states_cases) + COUNT(wall_crawler_cases) + COUNT(wall_crawler_corner_animation_cases_expected) + COUNT(wall_crawler_pursuit_context_cases) + COUNT(wall_crawler_turn_animation_cases_expected) + 3 + 96 + 40 + 1;

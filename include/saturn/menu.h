@@ -43,7 +43,7 @@ extern char* saturn_demo_archives[4];
 extern u8 saturn_demo_return;
 extern u8 saturn_soft_reset_mode;
 extern u8 saturn_controller_refresh;
-extern u8 saturn_backup_status;
+extern u8 saturn_backup_cart_status;
 extern u8 saturn_archive_queue_busy;
 extern u16 saturn_pause_request;
 extern u16 saturn_pause_latch;

@@ -71,8 +71,8 @@ static u32 full(u32 row)
     player = g_Player;
     player.script_state = 1;
     player.script_action = 0x14;
-    player.script_facing = 0x40;
-    player.spike_immune = 1;
+    player.script_facing = PLAYER_FACING_RIGHT;
+    SPIKE_IMMUNE_SET(player, 1);
     engine = engine_obj;
     engine.gameplay_locked = 1;
     memcpy(expected_effects, effect_objects, sizeof(expected_effects));

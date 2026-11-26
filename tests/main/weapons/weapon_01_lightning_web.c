@@ -32,7 +32,7 @@ static u32 part_case(u32 mode)
     set_animation(&obj, 6);
     obj.animation_cursor = D_8011C070[6] + 10;
     obj.animation_step = *(union AnimationStep*)obj.animation_cursor;
-    assert(obj.animation_step.packed == 0x20000001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x20000001));
     expected = obj;
     expected.unk17 = 7;
     expected.previous_animation_index = 0xFF;
@@ -49,10 +49,8 @@ static u32 part_case(u32 mode)
         expected.unk5 = 4;
     }
     lightning_web_charged_part_fly(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     return (u8)obj.unk5 | ((u32)obj.ext.weapon_10.timer << 8) | ((u32)obj.unk17 << 16);
 }
 static const u32 lightning_web_part_animation_reset_cases_expected[] = { 0x77804u, 0x70103u };
@@ -118,7 +116,9 @@ static u32 test_lightning_web_charged_vanish(u32 row)
     memset(&background_objects, 0, sizeof(background_objects));
     memset(&player_gfx_buf_0, 0, sizeof(player_gfx_buf_0));
     memset(&player_gfx_buf_1, 0, sizeof(player_gfx_buf_1));
+#ifndef MMX4_SATURN
     memset(&vram_rect_ptr, 0, sizeof(vram_rect_ptr));
+#endif
     obj.animation_step.fields.relative_step = c->relative_step;
     lightning_web_charged_vanish(&obj);
     observed_values[0] = (u32)obj.on_screen;
@@ -153,7 +153,9 @@ static u32 test_lightning_web_update(u32 row)
     memset(&player_gfx_buf_0, 0, sizeof(player_gfx_buf_0));
     memset(&player_gfx_buf_1, 0, sizeof(player_gfx_buf_1));
     memset(&qux_object, 0, sizeof(qux_object));
+#ifndef MMX4_SATURN
     memset(&vram_rect_ptr, 0, sizeof(vram_rect_ptr));
+#endif
     obj.x_pos.val = 0;
     obj.y_pos.val = 0;
     g_Player.input_locked = 0;
@@ -198,7 +200,7 @@ static void (*const lightning_web_charged_init_states_cases[])(void) = {
     lwc_init_right,
     lwc_init_part,
 };
-static const u32 lightning_web_charged_init_states_expected[] = { 1u, 0xFF000201u, 0x640000u, 0xC80000u, 0xFFF80000u, 0u, 0u, 0x27801u, 0x110u, 0u, 1u, 0xFF400201u, 0x640000u, 0xC80000u, 0x80000u, 0u, 0u, 0x27801u, 0x110u, 0u, 1u, 0xFF000301u, 0x640000u, 0xC80000u, 0xFFF80000u, 0u, 0u, 0x27801u, 0x110u, 0u };
+static const u32 lightning_web_charged_init_states_expected[] = { 1u, 0xFF000201u, 0x640000u, 0xC80000u, 0xFFF80000u, 0u, 0u, 0x20000u | OBJECT_CLUT(0x7801), 0x110u, 0u, 1u, 0xFF400201u, 0x640000u, 0xC80000u, 0x80000u, 0u, 0u, 0x20000u | OBJECT_CLUT(0x7801), 0x110u, 0u, 1u, 0xFF000301u, 0x640000u, 0xC80000u, 0xFFF80000u, 0u, 0u, 0x20000u | OBJECT_CLUT(0x7801), 0x110u, 0u };
 
 static u32 test_lightning_web_charged_init_states(u32 row)
 {
@@ -213,10 +215,10 @@ void lightning_web_charged_part_drift(struct WeaponObj*);
 void lightning_web_charged_spread(struct WeaponObj*);
 
 static const u32 web_words[4][11] = {
-    { 0x00010002, 0x04010002, 0x02010002, 0x08010002, 0x01010002, 0x04010002, 0x03010002, 0x08F90002 },
-    { 0x07010001, 0x1E010001, 0x0A010001, 0x1F010001, 0x07010001, 0x1F010001, 0x0A010001, 0x20010001, 0x05010001, 0x20010001, 0x20000001 },
-    { 0x06010001, 0x21010001, 0x09010001, 0x22010001, 0x06010001, 0x21010001, 0x09010001, 0x23F90001 },
-    { 0x20010001, 0x05010001, 0x20010001, 0x0A010001, 0x1F010001, 0x07010001, 0x1F010001, 0x0A010001, 0x1E010001, 0x07010001, 0x07000060 },
+    { C_TEST_STEP(0x00010002), C_TEST_STEP(0x04010002), C_TEST_STEP(0x02010002), C_TEST_STEP(0x08010002), C_TEST_STEP(0x01010002), C_TEST_STEP(0x04010002), C_TEST_STEP(0x03010002), C_TEST_STEP(0x08F90002) },
+    { C_TEST_STEP(0x07010001), C_TEST_STEP(0x1E010001), C_TEST_STEP(0x0A010001), C_TEST_STEP(0x1F010001), C_TEST_STEP(0x07010001), C_TEST_STEP(0x1F010001), C_TEST_STEP(0x0A010001), C_TEST_STEP(0x20010001), C_TEST_STEP(0x05010001), C_TEST_STEP(0x20010001), C_TEST_STEP(0x20000001) },
+    { C_TEST_STEP(0x06010001), C_TEST_STEP(0x21010001), C_TEST_STEP(0x09010001), C_TEST_STEP(0x22010001), C_TEST_STEP(0x06010001), C_TEST_STEP(0x21010001), C_TEST_STEP(0x09010001), C_TEST_STEP(0x23F90001) },
+    { C_TEST_STEP(0x20010001), C_TEST_STEP(0x05010001), C_TEST_STEP(0x20010001), C_TEST_STEP(0x0A010001), C_TEST_STEP(0x1F010001), C_TEST_STEP(0x07010001), C_TEST_STEP(0x1F010001), C_TEST_STEP(0x0A010001), C_TEST_STEP(0x1E010001), C_TEST_STEP(0x07010001), C_TEST_STEP(0x07000060) },
 };
 static const u8 web_animations[] = { 0, 6, 7, 8 };
 static const u8 web_lengths[] = { 8, 11, 8, 11 };
@@ -257,7 +259,7 @@ static u32 charged_web_step(u32 row)
     obj.unk2 = phase == 4 ? 1 : 0;
     obj.state = phase == 4 ? 2 : 1;
     obj.unk5 = phase == 4 ? 2 : phase;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk64 = 1;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
@@ -276,7 +278,7 @@ static u32 charged_web_step(u32 row)
         if (bank == 0)
             expected.animation_step.fields.duration = 1;
         else {
-            i = frame + (s8)(web_words[bank][frame] >> 16);
+            i = frame + (s8)(C_TEST_PSX_WORD(web_words[bank][frame]) >> 16);
             assert(i < web_lengths[bank]);
             expected.animation_cursor = D_8011C070[web_animations[bank]] + i;
             expected.animation_step.packed = web_words[bank][i];
@@ -362,17 +364,17 @@ static u32 init(u32 index)
     part.active = 1;
     part.id = 10;
     part.unk2 = index;
-    part.unk15 = 0x40;
+    part.unk15 = PLAYER_FACING_RIGHT;
     part.x_pos.val = 0x01234567;
     part.y_pos.val = 0x00ABCDEF;
     lightning_web_charged_update(&part);
-    assert(part.state == 1 && part.unk15 == 0 && part.unk16 == 1 && part.unk49 == 2);
-    assert(part.unk40 == 0x540 && part.unk42 == 0x7801 && part.animation_table == (void*)D_8011C070);
+    assert(part.state == 1 && part.unk15 == 0 && part.unk16 == VISUAL_SATURN_LAYER(1) && part.unk49 == 2);
+    assert(part.unk40 == WEAPON_TEXTURE_SPECIAL_2 && part.unk42 == OBJECT_CLUT(0x7801) && part.animation_table == (void*)D_8011C070);
     assert(part.unk38 == (u8*)gfx + 0x48 && part.unk3C == (u8*)frames + 0x68);
     assert(part.x_pos.val == 0x01234567 && part.y_pos.val == 0x00ABCDEF);
     hash = part.x_vel.val;
     hash = hash * 31 + part.y_vel.val;
-    hash = hash * 31 + part.animation_step.packed;
+    hash = hash * 31 + C_TEST_PSX_WORD(part.animation_step.packed);
     return hash * 31 + (u32)((u8*)part.animation_cursor - (u8*)D_8011C070[6]);
 }
 
@@ -395,7 +397,9 @@ static u32 run(u32 row)
     return c_test_observe(0, row, &hash, &expected[row], 1);
 }
 
+static u32 web_paths(u32 index);
 const struct CTestGroup c_test_groups[] = {
+    { "web_paths", 0, 0, 21, web_paths },
     { "lightning_web_charged_init_states", 0, 0, COUNT(lightning_web_charged_init_states_cases), test_lightning_web_charged_init_states },
     { "lightning_web_part_animation_reset", NULL, lightning_web_part_animation_reset_cases_expected, COUNT(lightning_web_part_animation_reset_cases_expected), part_case },
     { "lightning_web_charged_part_fly", 0, 0, 2, test_lightning_web_charged_part_fly },
@@ -408,4 +412,159 @@ const struct CTestGroup c_test_groups[] = {
     { "charged_part_entry_angles", NULL, NULL, 10, run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(lightning_web_charged_init_states_cases) + COUNT(lightning_web_part_animation_reset_cases_expected) + 2 + 2 + 2 + 2 + COUNT(lightning_web_charged_dispatch_cases) + COUNT(charged_vanish_ending_cases) + 60 + 10;
+const u32 c_test_count = COUNT(lightning_web_charged_init_states_cases) + COUNT(lightning_web_part_animation_reset_cases_expected) + 2 + 2 + 2 + 2 + COUNT(lightning_web_charged_dispatch_cases) + COUNT(charged_vanish_ending_cases) + 60 + 10 + 21;
+
+#include "support/player_gfx_archive.h"
+void lightning_web_init(struct WeaponObj*);
+void lightning_web_fly(struct WeaponObj*);
+void lightning_web_main(struct WeaponObj*);
+void lightning_web_spread(struct WeaponObj*);
+void lightning_web_hang(struct WeaponObj*);
+void lightning_web_stuck(struct WeaponObj*);
+void lightning_web_release(struct WeaponObj*);
+void lightning_web_charged_part_wait(struct WeaponObj*);
+void lightning_web_charged_draw(struct WeaponObj*);
+extern union AnimationStep* D_8011C070[];
+static struct {
+    u32 root[9];
+    u32 bank[256];
+    u16 stream[24];
+} web_gfx;
+static s32 web_frames[0x12];
+static u32 web_paths(u32 index)
+{
+    static const u8 scenarios[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21 };
+    u32 row = scenarios[index];
+    struct WeaponObj obj, owner;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&g_Entity, 0, sizeof(g_Entity));
+    memset(&qux_object, 0, sizeof(qux_object));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(D_8013E198, -1, sizeof(D_8013E198));
+    GFX_QUEUE_RESET();
+    gfx_archive_fill();
+    memcpy(web_gfx.bank, gfx_archive.bank, sizeof(web_gfx.bank) + sizeof(web_gfx.stream));
+    web_gfx.root[2] = 0x24;
+    TEST_PLAYER_GFX = (u8*)&web_gfx;
+    TEST_SPRITE_FRAMES = (u8*)web_frames;
+    g_Player.weapon = 1;
+    g_Player.hp = 16;
+    g_Player.shot_count = 2;
+    g_Player.special_shot_count = 1;
+    g_Player.unk71 = 0xF;
+    g_Player.x_pos.i.hi = 100;
+    g_Player.y_pos.i.hi = 100;
+    obj.active = 0x41;
+    obj.id = 1;
+    obj.state = 2;
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = 100;
+    obj.x_vel.val = 0x80000;
+    obj.unk38 = (u8*)web_gfx.bank;
+    obj.animation_table = D_8011C070;
+    set_animation(&obj, 2);
+    obj.previous_animation_index = obj.animation_step.fields.frame_index;
+    obj.animation_step.fields.duration = 2;
+    obj.animation_step.fields.relative_step = 1;
+    obj.unk50 = (const u8*)&state_hit_box;
+    obj.ext.weapon_1.lifetime = 5;
+    obj.ext.weapon_1.timer = 5;
+    switch (row) {
+    case 0:
+    case 1:
+        g_Player.input_locked = row == 0;
+        obj.state = 4;
+        obj.unk75 = row == 1;
+        obj.unk72 = 4;
+        lightning_web_update(&obj);
+        assert(obj.active == (row == 0 ? 0 : 0x41) && g_Player.shot_count == (row == 0 ? 1 : 2));
+        assert(g_Player.unk71 == (row == 1 ? 0xB : 0xF));
+        break;
+    case 2:
+    case 3:
+        obj.state = 0;
+        g_Player.unk15 = row == 2 ? PLAYER_FACING_RIGHT : 0;
+        lightning_web_init(&obj);
+        assert(obj.state == 1 && obj.unk15 == g_Player.unk15 && obj.x_vel.val == (row == 2 ? 0x80000 : -0x80000));
+        assert(obj.ext.weapon_1.lifetime == 0x69 && obj.ext.weapon_1.timer == 0x10 && obj.unk38 == (u8*)web_gfx.bank);
+        break;
+    case 4:
+    case 5:
+        obj.state = 1;
+        obj.ext.weapon_1.timer = row == 4 ? 1 : 5;
+        lightning_web_fly(&obj);
+        assert(obj.state == (row == 4 ? 2 : 1) && obj.unk16 == (row == 4 ? 3 : 0));
+        assert(obj.x_pos.i.hi == (row == 4 ? 100 : 108));
+        break;
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+        if (row == 6)
+            obj.x_pos.i.hi = 0x400;
+        obj.ext.weapon_1.lifetime = row == 7 ? 1 : 5;
+        obj.unk72 = row == 8 ? 8 : 0;
+        obj.unk75 = 1;
+        lightning_web_main(&obj);
+        assert(obj.state == (row == 6 ? 3 : row <= 8 ? 4
+                                                     : 2)
+            && obj.unk75 == (row == 9));
+        assert(obj.unk17 == (row == 7 || row == 8 ? 3 : 2) && obj.ext.weapon_1.lifetime == (row == 6 ? 5 : row == 7 ? 0
+                                                                                                                    : 4));
+        break;
+    case 10:
+        obj.animation_step.fields.relative_step = 0;
+        lightning_web_spread(&obj);
+        assert(obj.unk5 == 1 && obj.unk75 == 1 && obj.unk17 == 2 && obj.unk68 != NULL);
+        break;
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+        obj.unk5 = 1;
+        obj.unk76 = row != 13;
+        obj.unk72 = row == 11 ? 1 : row == 14 ? 0
+                                              : 2;
+        obj.unk15 = row == 11 ? 0 : PLAYER_FACING_RIGHT;
+        lightning_web_hang(&obj);
+        assert(obj.unk5 == (row <= 12 ? 2 : 1) && obj.unk17 == (row <= 12 ? 4 : 2));
+        assert(obj.unk15 == (row == 12 ? 0 : PLAYER_FACING_RIGHT));
+        break;
+    case 15:
+    case 16:
+        obj.unk5 = 2;
+        obj.unk76 = row == 16;
+        lightning_web_stuck(&obj);
+        assert(obj.unk5 == (row == 15 ? 3 : 2) && obj.unk17 == (row == 15 ? 5 : 2));
+        break;
+    case 17:
+    case 18:
+        obj.unk5 = 3;
+        obj.unk75 = 1;
+        obj.animation_step.fields.relative_step = row == 17 ? 0 : 1;
+        lightning_web_release(&obj);
+        assert(obj.state == (row == 17 ? 4 : 2) && obj.unk75 == (row == 18));
+        break;
+    case 20:
+        owner.ext.weapon_10.unk8F = 1;
+        owner.x_pos.i.hi = 140;
+        owner.y_pos.i.hi = 90;
+        obj.owner = (struct MainObj*)&owner;
+        obj.on_screen = 0;
+        lightning_web_charged_part_wait(&obj);
+        assert(obj.on_screen == 1 && obj.x_pos.i.hi == 140 && obj.y_pos.i.hi == 90 && obj.ext.weapon_10.timer == 0x10);
+        break;
+    default:
+        obj.unk2 = 1;
+        obj.previous_animation_index = 0xFF;
+        lightning_web_charged_draw(&obj);
+        assert(obj.previous_animation_index == GFX_DECODED_FRAME(obj.animation_step.fields.frame_index));
+#ifndef MMX4_SATURN
+        assert(vram_rect_ptr == vram_rect_ptrs + 1 && vram_rect_ptrs[0].rect.y == 0x40);
+#endif
+        break;
+    }
+    return 1;
+}

@@ -1199,12 +1199,74 @@ void func_80065168(struct MainObj* arg0, s16 x, s16 y)
     arg0->ext.main_43.move_direction = direction;
 }
 
-#ifdef MMX4_PC
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static u8 web_spider_retail_timer_byte(u8 offset)
 {
     static const u8 bytes[20] = {
-        0x10, 0x14, 0x18, 0x20, 0x5A, 0x50, 0x44, 0x32, 0x0C, 0x53, 0x06, 0x80, 0x7C, 0x53, 0x06, 0x80, 0x58, 0x54, 0x06, 0x80
+#if defined(VERSION_SATURN_PROTO)
+        0x10,
+        0x14,
+        0x18,
+        0x20,
+        0x5A,
+        0x50,
+        0x44,
+        0x32,
+        0x00,
+        0x23,
+        0xEC,
+        0xCC,
+        0x00,
+        0x23,
+        0xED,
+        0x02,
+        0x00,
+        0x23,
+        0xED,
+        0x8C
+#elif defined(MMX4_SATURN)
+        0x10,
+        0x14,
+        0x18,
+        0x20,
+        0x5A,
+        0x50,
+        0x44,
+        0x32,
+        0x00,
+        0x24,
+        0x25,
+        0x84,
+        0x00,
+        0x24,
+        0x25,
+        0xC4,
+        0x00,
+        0x24,
+        0x26,
+        0x4E
+#else
+        0x10,
+        0x14,
+        0x18,
+        0x20,
+        0x5A,
+        0x50,
+        0x44,
+        0x32,
+        0x0C,
+        0x53,
+        0x06,
+        0x80,
+        0x7C,
+        0x53,
+        0x06,
+        0x80,
+        0x58,
+        0x54,
+        0x06,
+        0x80
+#endif
     };
     return bytes[offset];
 }
@@ -1212,7 +1274,7 @@ static u8 web_spider_retail_timer_byte(u8 offset)
 
 void web_spider_set_move_timer(struct MainObj* self)
 {
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
     self->unk7C = web_spider_retail_timer_byte((self->hp & 0x7F) >> 3);
 #else
     self->unk7C = web_spider_move_timers[(self->hp & 0x7F) >> 3];
@@ -1223,7 +1285,7 @@ void web_spider_set_attack_cooldown(struct MainObj* self)
 {
     if (self->ext.main_43.attack_cooldown == 0) {
         int cooldown_index = (self->hp & 0x7F) >> 3;
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
         self->ext.main_43.attack_cooldown = web_spider_retail_timer_byte(cooldown_index + 4);
 #else
         self->ext.main_43.attack_cooldown = web_spider_attack_cooldowns[cooldown_index];

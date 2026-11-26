@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#ifndef VERSION_DEMO
 #include "main/shots/shot_22_web_shot.h"
 #include "main/55C4.h"
 #include "main/mains/main_43_web_spider.h"
@@ -85,8 +86,117 @@ static u32 web_case(u32 mode)
 }
 static const u32 web_shot_owner_and_hit_cases_expected[] = { 0x10001u, 0x1u, 0x10001u, 0x1030302u, 0x1030001u };
 
+static u32 web_steps(u32 index);
 const struct CTestGroup c_test_groups[] = {
+    { "web_steps", 0, 0, 20, web_steps },
     { "web_shot_owner_and_hit", NULL, web_shot_owner_and_hit_cases_expected, COUNT(web_shot_owner_and_hit_cases_expected), web_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(web_shot_owner_and_hit_cases_expected);
+const u32 c_test_count = COUNT(web_shot_owner_and_hit_cases_expected) + 20;
+
+#include "weapon_resources.h"
+#include "main/object_motion.h"
+#include "support/state_cases.h"
+void web_shot_fly(struct ShotObj*);
+void web_shot_home(struct ShotObj*);
+void web_shot_hold(struct ShotObj*);
+void web_shot_fade(struct ShotObj*);
+void web_shot_main(struct ShotObj*);
+void web_shot_despawn(struct ShotObj*);
+static u32 web_steps(u32 index)
+{
+    static const u8 scenarios[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20 };
+    u32 row = scenarios[index];
+    static const u8 home_offsets[] = { 0, 0, 0, 0, 0, 3, 0x1D };
+    struct ShotObj obj;
+    struct WeaponObj owner;
+    s32 target;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    owner.state = 1;
+    obj.active = 0x41;
+    obj.id = 22;
+    obj.state = 1;
+    obj.unk7C = &owner;
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = 100;
+    obj.x_vel.val = 0x10000;
+    obj.unk8C.word = 1;
+    g_Player.hp = 16;
+    g_Player.x_pos.i.hi = 160;
+    g_Player.y_pos.i.hi = 140;
+    if (row == 0) {
+        obj.unk8C.word = 3;
+        obj.timer = 1;
+        web_shot_fly(&obj);
+        assert(obj.unk5 == 1 && obj.timer == 0x28 && obj.x_pos.i.hi == 101);
+    } else if (row <= 6) {
+        obj.unk5 = 1;
+        obj.unk8C.word = row == 1 || row == 3 ? 3 : 1;
+        g_Player.stun_timer = row == 1 ? 5 : 0;
+        obj.timer = row == 2 ? 0 : 5;
+        WEAPON_FRAME_COUNTER = row == 3 ? 1 : 4;
+        target = angle_to_object(OBJECT_HEADER(&obj), OBJECT_HEADER(&g_Player));
+        obj.unk84.value = (target - home_offsets[row]) & 0x1F;
+        web_shot_home(&obj);
+        if (row == 1) {
+            assert(obj.unk5 == 3 && obj.timer == 0x78 && obj.x_vel.val == 0 && obj.unk90.val == 0x30);
+            assert(g_Player.x_pos.val == obj.x_pos.val && g_Player.y_pos.val == obj.y_pos.val);
+        } else {
+            assert(obj.unk5 == 1 && obj.timer == (row == 2 ? 0 : 4));
+            assert(obj.unk84.value == ((target - home_offsets[row] + (row == 5 ? 1 : row == 6 ? -1
+                                                                                              : 0))
+                       & 0x1F));
+            assert(row <= 4 ? obj.x_vel.val == 0x10000 : obj.x_vel.val != 0x10000);
+        }
+    } else if (row <= 9) {
+        obj.unk5 = 3;
+        obj.timer = row == 7 ? 0 : 10;
+        obj.unk90.val = row == 8 ? 1 : 2;
+        obj.unk50.data = (const u8*)&state_hit_box;
+        g_Player.pressed_input = row == 7 ? 1 : 0;
+        g_Player.stun_timer = 5;
+        web_shot_hold(&obj);
+        assert(g_Player.x_pos.val == obj.x_pos.val);
+        assert(obj.unk5 == (row == 7 ? 4 : 3) && obj.timer == (row == 7 ? 0x1E : 9));
+        assert(row == 7 ? obj.unk50.data == NULL && g_Player.stun_timer == 0 : obj.unk50.data != NULL);
+        assert(obj.unk90.val == (row == 8 ? 0x30 : row == 9 ? 1
+                                                            : 2)
+            && (g_Player.hp == 16) == (row != 8));
+    } else if (row <= 12) {
+        obj.unk5 = 4;
+        obj.timer = row == 10 ? 1 : 5;
+        WEAPON_FRAME_COUNTER = row == 11 ? 4 : 5;
+        web_shot_fade(&obj);
+        assert(obj.state == (row == 10 ? 2 : 1));
+        assert(row == 10 || (obj.on_screen == (row == 12) && obj.unk8A == (row == 11)));
+    } else if (row <= 17) {
+        obj.unk5 = 0;
+        obj.timer = 5;
+        obj.unk8C.word = row == 15 ? 3 : 1;
+        g_Player.stun_timer = row == 13 ? 5 : 0;
+        obj.unk50.data = (const u8*)&state_hit_box;
+        if (row == 16)
+            obj.x_pos.i.hi = 0x400;
+        obj.unk8A = row == 17;
+        obj.on_screen = 7;
+        web_shot_main(&obj);
+        assert(obj.state == (row == 16 ? 2 : 1) && obj.unk8C.word == (row == 15 ? 3 : 1));
+        assert(obj.on_screen == (row == 16 ? 7 : row == 17 ? 7
+                                                           : 1));
+    } else {
+        obj.state = 2;
+        obj.unk8C.word = row == 20 ? 1 : 3;
+        g_Player.stun_timer = row == 19 ? 0 : 5;
+        web_shot_despawn(&obj);
+        assert(obj.active == 0 && g_Player.stun_timer == (row == 20 ? 5 : 0));
+    }
+    return 1;
+}
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

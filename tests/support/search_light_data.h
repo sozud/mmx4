@@ -11,7 +11,11 @@ static const struct SearchLightInit shapes[6] = {
 };
 static const s32 speeds[3] = { 0x28000, 0x20000, 0x10000 };
 static const s32 accels[3] = { 0x2000, 0x1000, 0x400 };
+#ifdef MMX4_SATURN
+static const u16 colors[3] = { 0x0771, 0x0772, 0x0773 };
+#else
 static const u16 colors[3] = { 0x33FF, 0x179E, 0xE9C };
+#endif
 static const u8 blends[3] = { 0x10, 0x20, 0x30 };
 struct RandomCase {
     u16 before, after;

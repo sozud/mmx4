@@ -4,12 +4,12 @@
 #include "main/items/item_16_sliding_floor.h"
 
 static struct Main45Ext floor_boss;
-static u8 floor_parameter;
+static u8 floor_parameter, floor_step;
 #define si state_room.item
 #define FLOOR(st, x, ride, climb, held)                  \
     do {                                                 \
         u8 climbable = g_Player.wall_climbable;          \
-        state_reset(0, 0, 0);                            \
+        state_reset(floor_step, 0, 0);                   \
         floor_parameter = 0;                             \
         floor_boss.unk83 = held;                         \
         si.active = 1;                                   \
@@ -34,6 +34,12 @@ static void sf_slide_end(void) { FLOOR(1, 0x1AB0, 0, 0, 0); }
 static void sf_climb(void) { FLOOR(1, 0x1A00, 0, 1, 0); }
 static void sf_ridden(void) { FLOOR(1, 0x1A00, 1, 0, 0); }
 static void sf_boss_hold(void) { FLOOR(1, 0x1A00, 1, 1, 1); }
+static void sf_stopped(void)
+{
+    floor_step = 1;
+    FLOOR(1, 0x1A00, 0, 0, 0);
+    floor_step = 0;
+}
 
 static void (*const sliding_floor_states_cases[])(void) = {
     sf_init,
@@ -42,8 +48,9 @@ static void (*const sliding_floor_states_cases[])(void) = {
     sf_climb,
     sf_ridden,
     sf_boss_hold,
+    sf_stopped,
 };
-static const u32 sliding_floor_states_expected[] = { 1u, 1u, 0x1A000000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 1u, 0x1A010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 1u, 0x1AB00000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 1u, 0x1A010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 1u, 0u, 1u, 1u, 0x1A010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 1u, 0u, 1u, 1u, 0x1A010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u };
+static const u32 sliding_floor_states_expected[] = { 1u, 1u, 0x1A000000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 1u, 0x1A010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 1u, 0x1AB00000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 1u, 0x1A010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 1u, 0u, 1u, 1u, 0x1A010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 1u, 0u, 1u, 1u, 0x1A010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 1u, 0x1A000000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u };
 
 static u32 test_sliding_floor_states(u32 row)
 {

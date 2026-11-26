@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/misc/misc_52_npc_cutscene.h"
 #include "main/55C4.h"
 void npc_cutscene_reply(struct MiscObj*);
@@ -179,7 +180,7 @@ static const struct {
     { 1, 0, 0x80, 1, 0, 1, -1, 1000 },
     { 2, 3, 0, 2, 3, 1, 1, 100 },
 };
-static u32 reply_frame = 5;
+static u32 reply_frame = C_TEST_STEP(5);
 static u32* reply_animations[] = { &reply_frame };
 
 static u32 test_npc_reply(u32 row)
@@ -216,11 +217,13 @@ static u32 test_npc_reply(u32 row)
     assert(abc_object.unkC == reply_cases[row].dialogue);
     assert((u16)abc_object.unk10 == (reply_cases[row].phase == 1 && !reply_cases[row].fade ? 0x8024 : 0x1234));
     assert(main_bss_state.transition.active == reply_cases[row].fade);
-    assert(reply_frame == 5);
+    assert(reply_frame == C_TEST_STEP(5));
     return 1;
 }
 
+static u32 npc_paths(u32 row);
 const struct CTestGroup c_test_groups[] = {
+    { "npc_paths", 0, 0, 8, npc_paths },
     { "npc_reply", 0, 0, COUNT(reply_cases), test_npc_reply },
     { "npc_line_context", NULL, npc_line_context_cases_expected, COUNT(npc_line_context_cases_expected), line_case },
     { "npc_cutscene_talk_line", 0, 0, 2, test_npc_cutscene_talk_line },
@@ -228,4 +231,80 @@ const struct CTestGroup c_test_groups[] = {
     { "npc_cutscene_talk_wait_player", 0, 0, 4, test_npc_cutscene_talk_wait_player },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(reply_cases) + COUNT(npc_line_context_cases_expected) + 2 + 3 + 4;
+const u32 c_test_count = COUNT(reply_cases) + COUNT(npc_line_context_cases_expected) + 2 + 3 + 4 + 8;
+
+void func_800D2190(struct MiscObj*);
+void func_800D26F4(struct MiscObj*);
+extern union AnimationStep* npc_cutscene_animations[2];
+static u32 npc_metadata[64], npc_archive[64];
+static u32 npc_paths(u32 row)
+{
+    struct MiscObj obj, parent;
+    u32 i;
+    memset(&obj, 0, sizeof(obj));
+    memset(&parent, 0, sizeof(parent));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    for (i = 0; i < 64; i++) {
+        npc_metadata[i] = (i + 1) * 128;
+        npc_archive[i] = 256 + i * 4;
+    }
+    test_stage_graphics(npc_metadata);
+    TEST_MENU_FRAMES = (u8*)npc_archive;
+    engine_obj.stage = 6;
+    obj.active = 0x41;
+    obj.id = 0x34;
+    if (row <= 4) {
+        obj.unk2 = row == 0 || row == 4 ? 0 : row == 3 ? 2
+                                                       : 1;
+        engine_obj.substage = row == 0 ? 0 : row == 4 ? 2
+                                                      : 1;
+        engine_obj.character_state.bytes[8] = row == 2 ? 1 : row == 1 ? 0
+                                                                      : 5;
+        engine_obj.character_state.bytes[9] = 5;
+        if (row == 4)
+            for (i = 0; i < COUNT(misc_objects); i++)
+                misc_objects[i].active = 1;
+        func_800D2190(&obj);
+        if (row == 2) {
+            assert(obj.active == 0 && misc_objects[0].active == 0);
+            return 1;
+        }
+        assert(obj.state == 1 && obj.unk17 == (row == 3 ? 1 : 0) && obj.ext.misc_52.unk56 == 7);
+        assert(engine_obj.character_state.bytes[8] == (row == 0 ? 0 : row == 1 ? 1
+                                                                               : 5));
+        assert(engine_obj.character_state.bytes[9] == (row == 0 ? 0 : 5));
+        assert(obj.x_pos.i.hi == (row == 1 ? 0x2A0 : row == 3 ? 0
+                                                              : 0x9A0));
+        assert(g_Player.script_action == (row == 1 ? 20 : 0) && obj.ext.misc_52.timer == (row == 1 ? 30 : 0));
+        if (row <= 1) {
+            assert(misc_objects[0].active == 0x41 && misc_objects[0].id == 0x34 && misc_objects[0].unk2 == 2);
+            assert(misc_objects[0].ext.misc_52.parent == &obj && misc_objects[0].x_pos.i.hi == obj.x_pos.i.hi);
+        } else {
+            assert(misc_objects[0].id == 0);
+        }
+        return 1;
+    }
+    parent.active = row == 5 ? 0 : 0x41;
+    parent.on_screen = row == 5;
+    parent.x_pos.i.hi = 150;
+    parent.y_pos.i.hi = 110;
+    obj.unk2 = 2;
+    obj.state = 1;
+    obj.unk5 = row == 7;
+    obj.on_screen = 1;
+    obj.bg_offset = -1;
+    obj.ext.misc_52.parent = &parent;
+    obj.animation_table = (u32**)npc_cutscene_animations;
+    set_animation(&obj, 1);
+    func_800D26F4(&obj);
+    if (row == 7) {
+        assert(obj.active == 0);
+    } else {
+        assert(obj.x_pos.i.hi == 150 && obj.y_pos.i.hi == 110);
+        assert(obj.on_screen == (row == 5) && obj.unk5 == (row == 5));
+    }
+    return 1;
+}

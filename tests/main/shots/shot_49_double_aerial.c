@@ -16,7 +16,7 @@ static void da_init_left(void)
 static void da_init_right(void)
 {
     AERIAL(0, 0);
-    ss.unk15 = 0x40;
+    ss.unk15 = PLAYER_FACING_RIGHT;
     double_aerial_update(&ss);
     TIMER();
 }
@@ -46,7 +46,7 @@ static void da_aim_right(void)
 {
     AERIAL(1, 1);
     ss.timer = 1;
-    ss.unk15 = 0x40;
+    ss.unk15 = PLAYER_FACING_RIGHT;
     double_aerial_update(&ss);
     TIMER();
 }

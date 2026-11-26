@@ -181,7 +181,7 @@ static void iris_damage_reset(u8 crystal)
     D_8013E198[0] = D_8013E198[1] = -1;
     engine_obj.cur_character = CHARACTER_ZERO;
     g_Player.hp = 32;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     so.active = 0x41;
     so.state = 1;
     so.id = 66;
@@ -266,8 +266,8 @@ static u32 test_iris_damage(u32 row)
     iris_damage_reset(iris_damage_cases[row].crystal);
     so.hp = iris_damage_cases[row].hp;
     if (iris_damage_cases[row].dead)
-        g_Player.spike_immune = 0;
-    so.unk15 = iris_damage_cases[row].facing ? 0x40 : 0;
+        SPIKE_IMMUNE_SET(g_Player, 0);
+    so.unk15 = iris_damage_cases[row].facing ? PLAYER_FACING_RIGHT : 0;
     so.ext.main_66.drone_count = iris_damage_cases[row].drones;
     cur_random = iris_damage_cases[row].seed;
     state_hit(&so, iris_damage_cases[row].weapon, 0, 0);
@@ -285,7 +285,7 @@ static u32 test_iris_damage(u32 row)
     assert(so.state == (iris_damage_cases[row].dead ? 2 : 1));
     if (iris_damage_cases[row].dead) {
         assert(so.unk5 == 0 && iris_partner.state == 3 && iris_partner.unk5 == 0);
-        assert(g_Player.spike_immune == 1);
+        assert(SPIKE_IMMUNE(g_Player) == 1);
     } else {
         assert(iris_partner.state == 1 && iris_partner.unk5 == 3);
         assert(so.ext.main_66.flash_timer == (iris_damage_cases[row].weapon == 24 ? 24 : 0));
@@ -354,21 +354,21 @@ static u32 recover(u32 row)
     obj.unk5 = 4;
     obj.unk6 = 4;
     obj.hp = hp;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = wait ? 2 : 1;
     obj.ext.main_66.hover_timer = 17;
     obj.animation_table = (const u8* const*)iris_animations;
     set_animation(&obj, 6);
-    assert(obj.animation_step.packed == 0x18010001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x18010001));
     expected = obj;
     expected.unk7C--;
     expected.animation_cursor += 4;
-    expected.animation_step.packed = 0x19010001;
+    expected.animation_step.packed = C_TEST_STEP(0x19010001);
     if (!wait) {
         expected.ext.main_66.hover_timer = hp >= 24 ? 240 : 180;
         expected.unk17 = 1;
         expected.animation_cursor = iris_animations[1];
-        expected.animation_step.packed = 0x08010001;
+        expected.animation_step.packed = C_TEST_STEP(0x08010001);
         expected.collision_data = D_80107DFC;
         expected.unk5 = 3;
         expected.unk6 = 0;
@@ -437,7 +437,7 @@ static u32 full(u32 row)
         iris_robot_decide(iris);
         for (i = 0; i < 6; i++)
             func_80081BA0(iris);
-        assert(iris->unk5 == 5 && iris->unk6 == 0 && iris->animation_step.packed == 0xEC010001);
+        assert(iris->unk5 == 5 && iris->unk6 == 0 && iris->animation_step.packed == C_TEST_STEP(0xEC010001));
     } else {
         iris->unk5 = 2;
         iris->unk6 = 1;
@@ -453,10 +453,10 @@ static u32 full(u32 row)
     if (row) {
         expected_mains[0].unk6 = 1;
         expected_mains[0].animation_cursor = (const u8*)iris_animations[32] + 4;
-        expected_mains[0].animation_step.packed = 0xEC000101;
+        expected_mains[0].animation_step.packed = C_TEST_STEP(0xEC000101);
     } else {
         expected_mains[0].unk6 = 3;
-        expected_mains[0].animation_step.packed = 0x28010003;
+        expected_mains[0].animation_step.packed = C_TEST_STEP(0x28010003);
     }
     player = g_Player;
     engine = engine_obj;
@@ -475,6 +475,403 @@ static u32 full(u32 row)
     return 1;
 }
 
+void iris_intro(struct MainObj*);
+void iris_robot_dash(struct MainObj*);
+void iris_robot_release_crystal(struct MainObj*);
+void iris_crystal_drop(struct MainObj*);
+
+static struct MainObj io, ip;
+#define IR_IS(a, b) ((const void*)(a) == (const void*)(b))
+static void ir_reset(u8 unk5, u8 unk6)
+{
+    memset(&io, 0, sizeof(io));
+    memset(&ip, 0, sizeof(ip));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    state_terrain(0);
+    D_80141F50[2] = state_sound_rows;
+    engine_obj.stage = 11;
+    engine_obj.substage = 0;
+    engine_obj.cur_character = CHARACTER_ZERO;
+    g_Player.hp = 32;
+    SPIKE_IMMUNE_SET(g_Player, 1);
+    cur_random = 0;
+    io.active = 0x41;
+    io.id = 66;
+    io.state = 1;
+    io.unk5 = unk5;
+    io.unk6 = unk6;
+    io.hp = 0x30;
+    io.x_pos.i.hi = 0x60;
+    io.y_pos.i.hi = 0x40;
+    io.animation_table = (const u8* const*)iris_animations;
+    set_animation(&io, 0);
+    io.ext.main_66.partner = &ip;
+    ip.active = 0x41;
+    ip.id = 66;
+    ip.state = 1;
+    ip.unk42 = 0x8321;
+    ip.x_pos.i.hi = 0x80;
+    ip.y_pos.i.hi = 0x90;
+    ip.animation_table = io.animation_table;
+    set_animation(&ip, 0);
+    ip.ext.main_66.partner = &io;
+}
+static void ir_step(s8 event)
+{
+    io.animation_step.fields.duration = 5;
+    io.animation_step.fields.event = event;
+    io.animation_step.fields.relative_step = 1;
+}
+
+static void irx_init(void)
+{
+    static u32 pages[8];
+    struct EngineObj engine = engine_obj;
+    u32* saved_pages = D_801406A8;
+    D_801406A8 = pages;
+    ir_reset(0, 0);
+    io.state = 0;
+    engine_obj.cur_character = CHARACTER_X;
+    iris_update(&io);
+    assert(io.active == 0 && io.state == 0);
+    ir_reset(0, 0);
+    io.state = 0;
+    iris_update(&io);
+    assert(io.state == 1 && io.unk5 == 2 && io.unk6 == 0 && io.hp == 0 && io.contact_damage == 4 && IR_IS(io.collision_data, D_80107DFC) && io.unk17 == 9);
+    assert(io.ext.main_66.hover_timer == 0xF0 && io.ext.main_66.release_countdown == 8 && IR_IS(io.hurt_box, &D_801035C0));
+    io.state = 3;
+    io.unk5 = 0;
+    io.unk2 = 1;
+    iris_update(&io);
+    assert(io.active == 0x41 && io.state == 3);
+    io.unk5 = 1;
+    iris_update(&io);
+    assert(io.active == 0 && io.state == 0);
+    engine_obj = engine;
+    D_801406A8 = saved_pages;
+}
+static void irx_intro_arrive(void)
+{
+    struct EngineObj engine = engine_obj;
+    ir_reset(2, 0);
+    g_Player.x_pos.i.hi = 0x80A;
+    iris_intro(&io);
+    assert(io.unk6 == 0);
+    g_Player.x_pos.i.hi = 0x80B;
+    iris_intro(&io);
+    assert(io.unk6 == 1 && background_objects[0].unk26 == 0x7F0 && background_objects[0].unk24 == 0x830);
+    background_objects[0].x_pos.i.hi = 0x7EF;
+    iris_intro(&io);
+    assert(io.unk6 == 1);
+    io.unk6 = 2;
+    g_Player.script_state = 1;
+    iris_intro(&io);
+    assert(io.unk6 == 2);
+    g_Player.script_state = -1;
+    iris_intro(&io);
+    assert(io.unk6 == 3 && effect_objects[0].id == 0x18 && io.ext.main_66.effect == &effect_objects[0]);
+    iris_intro(&io);
+    assert(io.unk6 == 3);
+    effect_objects[0].active = 0;
+    iris_intro(&io);
+    assert(io.unk6 == 4 && engine_obj.enable_boss == 1 && engine_obj.unk25 == 1 && engine_obj.boss_ptr == &io && io.unk7C == 0x3C);
+    io.unk7C = 2;
+    iris_intro(&io);
+    assert(io.unk6 == 4 && io.unk7C == 1);
+    engine_obj.character_state.bytes[9] = 1;
+    abc_object.unkC = 0;
+    iris_intro(&io);
+    assert(io.unk6 == 5 && abc_object.unkC == 0x80 && abc_object.unkA == 0x3C);
+    iris_intro(&io);
+    assert(io.unk6 == 5);
+    abc_object.unkC = 0;
+    iris_intro(&io);
+    assert(io.unk6 == 6 && io.unk7C == 0x28);
+    io.unk7C = 2;
+    iris_intro(&io);
+    assert(io.unk6 == 6 && io.unk7C == 1 && misc_objects[0].active == 0);
+    iris_intro(&io);
+    assert(io.unk6 == 7 && io.unk7C == 0x3E && io.unk17 == 0xA && misc_objects[0].id == 0x27 && misc_objects[0].x_pos.i.hi == 0x5F && misc_objects[0].y_pos.i.hi == 0x21);
+    engine_obj = engine;
+}
+static void irx_intro_transform(void)
+{
+    struct EngineObj engine = engine_obj;
+    ir_reset(2, 7);
+    iris_intro(&io);
+    assert(io.unk6 == 7);
+    io.unk6 = 8;
+    io.unk7C = 2;
+    iris_intro(&io);
+    assert(io.unk6 == 8 && io.unk7C == 1);
+    iris_intro(&io);
+    assert(io.unk6 == 9 && io.unk7C == 0xC8 && io.unk17 == 0x1F);
+    io.unk7C = 2;
+    iris_intro(&io);
+    assert(io.unk6 == 9 && io.unk7C == 1);
+    iris_intro(&io);
+    assert(io.unk6 == 0xA && io.unk17 == 0);
+    ir_step(0);
+    iris_intro(&io);
+    assert(io.unk6 == 0xA);
+    ir_step(2);
+    iris_intro(&io);
+    assert(io.unk6 == 0xA);
+    engine_obj.unk36.value = 0;
+    ir_step(1);
+    iris_intro(&io);
+    assert(io.unk6 == 0xB && io.unk7E == 3 && engine_obj.unk36.value == 1);
+    io.hp = 0x10;
+    D_80173C84 = 0;
+    engine_obj.unk36.timer = 2;
+    iris_intro(&io);
+    assert(io.hp == 0x10 && engine_obj.unk36.timer == 1);
+    engine_obj.unk36.timer = 0;
+    io.unk7E = 2;
+    iris_intro(&io);
+    assert(io.hp == 0x11 && io.unk7E == 1);
+    io.hp = 0x2F;
+    g_Player.script_state = 1;
+    iris_intro(&io);
+    assert(io.hp == 0x30 && io.unk7E == 3 && io.ext.main_66.active == 1 && io.unk17 == 1 && io.unk5 == 3 && io.unk6 == 0 && g_Player.script_state == 0);
+    engine_obj = engine;
+}
+static void irx_run(void)
+{
+    ir_reset(2, 7);
+    io.unk42 = 0x8000;
+    func_80080834(&io);
+    assert(io.unk6 == 7 && io.unk42 == 0x8000 && io.hp == 0x30);
+    ir_reset(3, 0);
+    io.ext.main_66.active = 1;
+    io.ext.main_66.hover_timer = 2;
+    g_Player.x_pos.i.hi = 0x60;
+    g_Player.y_pos.i.hi = 0x150;
+    func_80080834(&io);
+    assert(io.unk5 == 3 && io.ext.main_66.hover_timer == 1);
+    state_hit(&io, 24, 0, 0);
+    io.hurt_box = &D_801035C0;
+    func_80080834(&io);
+    assert(io.unk5 == 4 && io.unk6 == 0 && io.unk17 == 2 && io.y_speed == -0x20000 && IR_IS(io.collision_data, D_80107E84) && io.ext.main_66.flash_timer == 0x18);
+    assert(io.ext.main_66.drone_count == 0 && shot_objects[0].active == 0 && io.hp == 0x30);
+}
+static void irx_hover(void)
+{
+    ir_reset(3, 0);
+    g_Player.x_pos.i.hi = 0x40;
+    g_Player.y_pos.i.hi = 0x160;
+    iris_step_funcs[3](&io);
+    assert(io.unk15 == 0 && io.x_speed < 0 && io.x_pos.i.hi < 0x60 && g_Player.y_pos.i.hi == 0x160);
+    io.x_pos.i.hi = 0x40;
+    io.y_pos.i.hi = 0x40;
+    g_Player.x_pos.i.hi = 0x41;
+    iris_step_funcs[3](&io);
+    assert(io.y_pos.i.hi != 0x40 && io.unk15 == PLAYER_FACING_RIGHT);
+    io.x_pos.i.hi = 0x41;
+    io.y_pos.i.hi = 0x161;
+    io.unk15 = 0;
+    iris_step_funcs[3](&io);
+    assert(io.x_pos.i.hi == 0x41 && io.y_pos.i.hi == 0x161 && io.unk15 == 0);
+}
+static void irx_dash(void)
+{
+    ir_reset(4, 0);
+    io.y_speed = -0x10000;
+    iris_robot_dash(&io);
+    assert(io.unk6 == 0 && io.y_pos.i.hi == 0x41);
+    io.collision_flags = 8;
+    iris_robot_dash(&io);
+    assert(io.unk6 == 1 && io.unk17 == 3 && io.y_speed == 0);
+    ir_step(0);
+    iris_robot_dash(&io);
+    assert(io.unk6 == 1);
+    g_Player.x_pos.i.hi = 0x50;
+    ir_step(1);
+    iris_robot_dash(&io);
+    assert(io.unk6 == 2 && io.unk15 == 0 && io.x_speed == FIXED(4) && io.unk17 == 4);
+    io.unk6 = 1;
+    g_Player.x_pos.i.hi = 0x60;
+    ir_step(1);
+    iris_robot_dash(&io);
+    assert(io.unk15 == PLAYER_FACING_RIGHT && io.x_speed == FIXED(-4));
+    io.x_speed = 0;
+    io.collision_flags = 1;
+    iris_robot_dash(&io);
+    assert(io.unk6 == 2);
+    io.collision_flags = 2;
+    iris_robot_dash(&io);
+    assert(io.unk6 == 3 && io.unk17 == 5);
+    io.unk6 = 2;
+    io.unk15 = 0;
+    iris_robot_dash(&io);
+    assert(io.unk6 == 2);
+    io.collision_flags = 1;
+    iris_robot_dash(&io);
+    assert(io.unk6 == 3);
+    ir_step(0);
+    iris_robot_dash(&io);
+    assert(io.unk6 == 3 && shot_objects[0].active == 0);
+    io.x_speed = 0x10000;
+    ir_step(1);
+    iris_robot_dash(&io);
+    assert(io.unk6 == 4 && io.unk7C == 0xB4 && io.x_speed == 0 && io.unk17 == 6 && shot_objects[1].id == 0x2C && shot_objects[1].unk2 == 1 && shot_objects[1].state == 3);
+}
+static void irx_release(void)
+{
+    u32 i;
+    struct MainObj* body = &main_objects[5];
+    ir_reset(5, 0);
+    for (i = 0; i < COUNT(main_objects); i++)
+        main_objects[i].active = 1;
+    main_objects[5].active = 0;
+    ir_step(1);
+    iris_robot_release_crystal(&io);
+    assert(io.unk6 == 1 && body->active == 0x41 && body->id == 0x42 && body->unk2 == 1 && body->hp == 0x30 && body->unk5 == 5 && body->unk6 == 2 && body->unk7C == 0x60);
+    assert(body->ext.main_66.partner == &io && io.ext.main_66.partner == body && engine_obj.boss_ptr == body && body->ext.main_66.active == 1);
+    memset(main_objects, 0, sizeof(main_objects));
+    ir_reset(5, 2);
+    io.unk2 = 1;
+    io.unk7C = 0x12;
+    io.y_speed = 0x10000;
+    iris_robot_release_crystal(&io);
+    assert(io.unk7C == 0x11 && io.y_pos.i.hi == 0x3F);
+    io.unk7C = 0x10;
+    iris_robot_release_crystal(&io);
+    assert(io.unk7C == 0xF && io.y_pos.i.hi == 0x3F);
+    io.unk7C = 1;
+    iris_robot_release_crystal(&io);
+    assert(io.unk5 == 6 && io.unk6 == 0 && io.y_speed == 0 && io.ext.main_66.trail_write == 0xF && io.ext.main_66.trail_read == 0);
+    assert(ip.ext.main_66.crystal_released == 1 && ip.unk5 == 3 && ip.unk17 == 1 && IR_IS(ip.collision_data, D_80107DFC));
+    assert(D_8013B858[0] == 0x80 && D_8013B858[14] == 0x80 && D_8013B878[14] == 0x40);
+}
+static void irx_follow(void)
+{
+    u32 i;
+    ir_reset(6, 0);
+    io.unk2 = 1;
+    ip.x_pos.i.hi = 0x60;
+    for (i = 0; i < 0x10; i++) {
+        D_8013B858[i] = 0x60;
+        D_8013B878[i] = 0x40;
+    }
+    io.ext.main_66.trail_write = 0xF;
+    io.ext.main_66.trail_read = 0xF;
+    WEAPON_FRAME_COUNTER = 0;
+    func_80081E44(&io);
+    assert(io.ext.main_66.trail_write == 0 && io.ext.main_66.trail_read == 0 && io.ext.main_66.trail_target == 0xF && D_8013B858[0xF] == 0x60 && D_8013B878[0xF] == 0x40);
+    assert(io.x_pos.i.hi == 0x60 && io.y_pos.i.hi == 0x40);
+    func_80081E44(&io);
+    assert(io.ext.main_66.trail_write == 1 && io.ext.main_66.trail_read == 1 && io.ext.main_66.trail_target == 0 && io.x_pos.i.hi == 0x60);
+    WEAPON_FRAME_COUNTER = 1;
+    io.ext.main_66.trail_target = 1;
+    D_8013B858[1] = 0x70;
+    io.x_speed = 0x10000;
+    io.y_speed = 0;
+    func_80081E44(&io);
+    assert(io.x_pos.i.hi == 0x61 && io.ext.main_66.trail_write == 1);
+    io.x_pos.i.hi = 0x80;
+    func_80081E44(&io);
+    assert(io.x_pos.i.hi == 0x81);
+    io.x_pos.i.hi = 0x70;
+    io.y_pos.i.hi = 0x30;
+    func_80081E44(&io);
+    assert(io.x_pos.i.hi == 0x71);
+    io.x_pos.i.hi = 0x70;
+    io.y_pos.i.hi = 0x50;
+    func_80081E44(&io);
+    assert(io.x_pos.i.hi == 0x71);
+    ip.unk5 = 4;
+    io.x_pos.i.hi = 0x70;
+    io.y_pos.i.hi = 0x40;
+    func_80081E44(&io);
+    assert(io.x_pos.i.hi == 0x70 && io.unk5 == 7 && io.unk6 == 0 && io.x_speed == 0 && io.y_speed == -0x40000);
+}
+static void irx_drop(void)
+{
+    ir_reset(7, 0);
+    io.unk2 = 1;
+    io.y_pos.i.hi = 0x1D0;
+    io.y_speed = -0x40000;
+    iris_crystal_drop(&io);
+    assert(io.unk6 == 0 && io.y_pos.i.hi == 0x1D4);
+    io.y_pos.i.hi = 0x1D9;
+    iris_crystal_drop(&io);
+    assert(io.unk6 == 1 && io.y_pos.i.hi == 0x1DC && io.y_speed == 0);
+    WEAPON_FRAME_COUNTER = 0;
+    g_Player.x_pos.i.hi = 0x80;
+    iris_crystal_drop(&io);
+    assert(io.x_speed == FIXED(4) && io.x_pos.i.hi == 0x64 && io.unk6 == 1);
+    g_Player.x_pos.i.hi = 0x40;
+    iris_crystal_drop(&io);
+    assert(io.x_speed == FIXED(-4) && io.x_pos.i.hi == 0x60);
+    WEAPON_FRAME_COUNTER = 1;
+    g_Player.x_pos.i.hi = 0x62;
+    io.x_speed = FIXED(4);
+    ip.unk6 = 4;
+    iris_crystal_drop(&io);
+    assert(io.x_pos.i.hi == 0x60 && io.unk6 == 2 && io.unk7C == 0x3C);
+    io.unk7C = 2;
+    WEAPON_FRAME_COUNTER = 0;
+    g_Player.x_pos.i.hi = 0x80;
+    iris_crystal_drop(&io);
+    assert(io.x_speed == FIXED(4) && io.x_pos.i.hi == 0x64 && io.unk7C == 1);
+    g_Player.x_pos.i.hi = 0x40;
+    iris_crystal_drop(&io);
+    assert(io.x_speed == FIXED(-4) && io.x_pos.i.hi == 0x60 && io.unk6 == 3 && io.unk7C == 0x3C && io.unk17 == 0x11);
+    io.unk6 = 2;
+    io.unk7C = 2;
+    WEAPON_FRAME_COUNTER = 1;
+    g_Player.x_pos.i.hi = 0x61;
+    iris_crystal_drop(&io);
+    assert(io.x_pos.i.hi == 0x60 && io.unk7C == 1);
+    io.unk6 = 3;
+    io.unk7C = 2;
+    iris_crystal_drop(&io);
+    assert(io.unk6 == 3 && io.unk7C == 1 && shot_objects[0].active == 0);
+    iris_crystal_drop(&io);
+    assert(io.unk6 == 4 && io.unk7C == 0x86 && shot_objects[0].id == 0x2C && shot_objects[0].timer == 0x3C && shot_objects[0].state == 6);
+    io.unk7C = 2;
+    iris_crystal_drop(&io);
+    assert(io.unk6 == 4 && io.unk7C == 1);
+    iris_crystal_drop(&io);
+    assert(io.unk5 == 6 && io.unk6 == 0 && io.unk17 == 0x10 && io.ext.main_66.trail_write == 0xF && D_8013B858[3] == 0x80 && D_8013B878[3] == 0x40);
+}
+static void irx_decide(void)
+{
+    ir_reset(1, 0);
+    io.ext.main_66.crystal_released = 1;
+    io.ext.main_66.release_countdown = 1;
+    iris_step_funcs[1](&io);
+    assert(io.unk5 == 3 && io.unk17 == 1 && io.ext.main_66.release_countdown == 1);
+    io.ext.main_66.crystal_released = 0;
+    io.ext.main_66.release_countdown = 2;
+    iris_step_funcs[1](&io);
+    assert(io.unk5 == 3 && io.ext.main_66.release_countdown == 1);
+}
+static void (*const irx_cases[])(void) = {
+    irx_init,
+    irx_intro_arrive,
+    irx_intro_transform,
+    irx_run,
+    irx_hover,
+    irx_dash,
+    irx_release,
+    irx_follow,
+    irx_drop,
+    irx_decide,
+};
+static u32 irx_case(u32 row)
+{
+    irx_cases[row]();
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "iris_flash", 0, 0, COUNT(iris_flash_cases), test_iris_flash },
     { "iris_damage", 0, 0, COUNT(iris_damage_cases), test_iris_damage },
@@ -484,6 +881,7 @@ const struct CTestGroup c_test_groups[] = {
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "actual_laser_recovery_animation_and_hover_health_boundary", NULL, NULL, 12, recover },
     { "Zero_only_Iris_real_script_arrival_warning_or_own_release_event_full_pools", NULL, NULL, 2, full },
+    { "iris_state_steps", NULL, NULL, COUNT(irx_cases), irx_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(iris_flash_cases) + COUNT(iris_damage_cases) + 2 + COUNT(iris_death_explosion_cases) + COUNT(iris_death_states_cases) + COUNT(pool_full_cases) + 12 + 2;
+const u32 c_test_count = COUNT(iris_flash_cases) + COUNT(iris_damage_cases) + 2 + COUNT(iris_death_explosion_cases) + COUNT(iris_death_states_cases) + COUNT(pool_full_cases) + 12 + 2 + COUNT(irx_cases);

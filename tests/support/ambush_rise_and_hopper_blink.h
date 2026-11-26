@@ -41,7 +41,7 @@ static u32 start_case(u32 mode)
         expected.unk17 = 7;
         expected.previous_animation_index = 0xFF;
         expected.animation_cursor = jet_stingray_animations[7];
-        expected.animation_step = *(union AnimationStep*)jet_stingray_animations[7];
+        memcpy(&expected.animation_step, jet_stingray_animations[7], sizeof(expected.animation_step));
     } else if (mode < 3) {
         expected.unk5 = 2;
         expected.unk6 = 0;

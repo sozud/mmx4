@@ -3,6 +3,9 @@
 #include "common.h"
 #include "main/effects/effect_18_world_flip.h"
 #include "main/objects.h"
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#endif
 
 // world_flip_state_funcs
 extern void (*world_flip_state_funcs[])(struct EffectObj*);
@@ -33,6 +36,8 @@ void func_800B96E0(struct EffectObj* self)
     (void)self;
 #ifdef MMX4_GAMECUBE
     if (g_Player.pressed_input & 0x200) {
+#elif defined(MMX4_SATURN)
+    if (g_Player.pressed_input & 0x40) {
 #else
     if (g_Player.pressed_input & 0x20) {
 #endif
@@ -45,9 +50,13 @@ void func_800B96E0(struct EffectObj* self)
         background_objects[1].unk18.val = background_objects[0].unk18.val >> 2;
         background_objects[2].y_pos.val = background_objects[0].y_pos.val >> 2;
         background_objects[2].unk18.val = background_objects[0].unk18.val >> 2;
+#ifdef MMX4_SATURN
+        saturn_background_refresh();
+#else
         background_objects[0].unk4C = 1;
         background_objects[1].unk4C = 1;
         background_objects[2].unk4C = 1;
+#endif
         world_flip_objects();
         engine_obj.character_state.bytes[0] = (u8)(1 - engine_obj.character_state.bytes[0]);
     }

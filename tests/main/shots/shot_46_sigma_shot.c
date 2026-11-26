@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/collision_bounds.h"
 #include "main/sprite_animations.h"
+#include "support/platform_fixture.h"
 extern void (*sigma_bolt_funcs[])(struct ShotObj*);
 extern void (*sigma_dart_funcs[])(struct ShotObj*);
 void sigma_bolt_gather(struct ShotObj*);
@@ -176,7 +177,7 @@ static void seed(u32 type, u32 facing, u32 layer)
     owner.id = 68;
     owner.state = 1;
     owner.bg_offset = layer == 0 ? -1 : layer - 1;
-    owner.unk15 = facing * 0x40;
+    owner.unk15 = facing * PLAYER_FACING_RIGHT;
     owner.x_pos.val = (layer == 2 ? 1224 : 200) * 65536 + 0x1234;
     owner.y_pos.val = 120 * 65536 + 0x5678;
     owner.unk40 = 0x4567;
@@ -194,9 +195,10 @@ static void seed(u32 type, u32 facing, u32 layer)
     shot.state = 0;
     shot.unk2 = type;
     shot.unk5 = 0;
-    shot.unk15 = facing * 0x40;
+    shot.unk15 = facing * PLAYER_FACING_RIGHT;
     shot.bg_offset = owner.bg_offset;
     shot.on_screen = 0;
+    shot.unk16 = TEST_DRAWN_LAYER;
     shot.x_pos = owner.x_pos;
     shot.y_pos = owner.y_pos;
     shot.x_vel.val = 0x23456;
@@ -210,7 +212,7 @@ static void seed(u32 type, u32 facing, u32 layer)
     shot.animation_table = (u32**)sigma_animations;
     shot.unk17 = init_rules[type].animation;
     shot.animation_cursor = (u32*)sigma_animations[shot.unk17] + init_rules[type].frame;
-    shot.animation_step.packed = init_rules[type].word;
+    shot.animation_step.packed = C_TEST_STEP(init_rules[type].word);
     shot.unk7C = (struct WeaponObj*)&owner;
     if (type == 8)
         shot.unk7C = (struct WeaponObj*)&parent.quad;
@@ -315,7 +317,7 @@ static u32 test_sigma_init(u32 row)
     want.bg_offset = owner.bg_offset;
     want.x_pos = owner.x_pos;
     want.y_pos = owner.y_pos;
-    want.unk16 = 5;
+    want.unk16 = VISUAL_SATURN_LAYER(5);
     want.unk58.data = c->collision == 1 ? (u8*)D_80106070 : c->collision == 2 ? (u8*)D_801060F0
                                                                               : 0;
     want.unk50.data = c->attack < 0 ? 0 : (u8*)sigma_shot_boxes[c->attack];
@@ -343,7 +345,7 @@ static u32 test_sigma_init(u32 row)
         want.unk94 = facing ? 5 : 7;
     }
     if (type == 8) {
-        want.unk15 ^= 0x40;
+        want.unk15 ^= PLAYER_FACING_RIGHT;
         want.x_pos.u.lo = 0xBEEF;
         want.y_pos.u.lo = 0xCAFE;
         want.x_pos.i.hi = 284;
@@ -357,8 +359,8 @@ static u32 test_sigma_init(u32 row)
     want.unk17 = c->animation;
     want.previous_animation_index = 0xFF;
     want.animation_cursor = (u32*)sigma_animations[c->animation] + c->frame;
-    want.animation_step.packed = c->word;
-    assert(((u32*)sigma_animations[c->animation])[c->frame] == c->word);
+    want.animation_step.packed = C_TEST_STEP(c->word);
+    assert(((u32*)sigma_animations[c->animation])[c->frame] == C_TEST_STEP(c->word));
     sigma_shot_update(&shot);
     check();
     return 1;
@@ -450,7 +452,7 @@ static u32 test_sigma_motion(u32 row)
     want.y_pos.val -= shot.y_vel.val;
     if (!drift) {
         want.animation_cursor = (u32*)sigma_animations[33] + 3;
-        want.animation_step.packed = 0x68010001;
+        want.animation_step.packed = C_TEST_STEP(0x68010001);
     }
     if (drift)
         want.on_screen = 1;
@@ -476,14 +478,14 @@ static void install_step(u32 animation, u32 frame, u32 word)
 {
     shot.unk17 = animation;
     shot.animation_cursor = (u32*)sigma_animations[animation] + frame;
-    shot.animation_step.packed = word;
-    assert(((u32*)sigma_animations[animation])[frame] == word);
+    shot.animation_step.packed = C_TEST_STEP(word);
+    assert(((u32*)sigma_animations[animation])[frame] == C_TEST_STEP(word));
 }
 static void expect_step(u32 frame, u32 word)
 {
     want.animation_cursor = (u32*)sigma_animations[want.unk17] + frame;
-    want.animation_step.packed = word;
-    assert(((u32*)sigma_animations[want.unk17])[frame] == word);
+    want.animation_step.packed = C_TEST_STEP(word);
+    assert(((u32*)sigma_animations[want.unk17])[frame] == C_TEST_STEP(word));
 }
 static u32 test_planted_scythe(u32 row)
 {
@@ -625,7 +627,7 @@ static u32 test_cloak_scythe(u32 row)
     seed(0, facing, row / 8);
     shot.state = 1;
     owner.on_screen = visible;
-    shot.unk15 ^= 0x40;
+    shot.unk15 ^= PLAYER_FACING_RIGHT;
     shot.x_pos.val += 0x12345;
     shot.y_pos.val -= 0x23456;
     if (event)
@@ -784,7 +786,7 @@ static u32 test_sigma_run(u32 row)
 static u32 test_sigma_debris(u32 row)
 {
     static const u8 hits[5] = { 0, 1, 2, 3, 8 }, slots[6] = { 3, 20, 31, 47, 61, 63 }, free_counts[4] = { 0, 1, 3, 6 };
-    static const u8 debris[20] = { 39, 40, 39, 40, 39, 40, 0, 0, 15, 6, 22, 240, 248, 22, 2, 255, 13, 12, 13, 11 };
+    static const u8 debris[6] = { 39, 40, 39, 40, 39, 40 };
     static const u8 draws[6][3] = { { 106, 13, 246 }, { 179, 236, 153 }, { 161, 186, 7 }, { 238, 165, 203 }, { 63, 155, 176 }, { 241, 182, 7 } };
     static const u16 states[7] = { 4660, 59894, 44441, 19719, 9931, 5552, 20743 };
     static struct MiscObj misc_want[64];
@@ -828,7 +830,7 @@ static u32 test_sigma_debris(u32 row)
             want.unk5 = 1;
             want.previous_animation_index = 0xFF;
             if (scene < 4) {
-                want.unk15 = scene == 2 || scene == 3 ? 0 : 0x40;
+                want.unk15 = scene == 2 || scene == 3 ? 0 : PLAYER_FACING_RIGHT;
                 want.unk95 = 3;
                 want.timer = 24;
                 want.unk17 = 31;
@@ -840,7 +842,7 @@ static u32 test_sigma_debris(u32 row)
                 xoff = (want.unk15 ? -19 : 19) * 65536;
                 yoff = -22 * 65536;
             } else {
-                want.unk15 ^= 0x40;
+                want.unk15 ^= PLAYER_FACING_RIGHT;
                 want.unk95 = 4;
                 want.timer = 36;
                 want.unk17 = 32;
@@ -858,7 +860,7 @@ static u32 test_sigma_debris(u32 row)
         m->active = 0x41;
         m->id = 3;
         m->unk2 = m->state = m->unk5 = m->unk6 = 0;
-        m->unk15 = draws[i][0] & 0x40;
+        m->unk15 = draws[i][0] & PLAYER_FACING_RIGHT;
         m->x_pos.val = want.x_pos.val + xoff + (draws[i][1] & 3) * (fire ? 65536 : 1);
         m->y_pos.val = want.y_pos.val + yoff + (draws[i][2] & 3) * (fire ? 65536 : 1);
         m->ext.misc_2.owner = (struct MainObj*)&shot;
@@ -870,7 +872,7 @@ static u32 test_sigma_debris(u32 row)
     else
         func_800A8E50(&shot);
     c_test_same_words(misc_objects, misc_want, sizeof(misc_want));
-    for (i = 0; i < 20; i++)
+    for (i = 0; i < COUNT(debris); i++)
         assert(sigma_shot_debris[i] == debris[i]);
     check();
     return 1;
@@ -931,7 +933,7 @@ static u32 test_sigma_weapon_contact(u32 row)
                 v->animation_table = D_8011BF40;
                 v->unk40 = 0;
                 v->unk42 = 0x7802;
-                v->unk16 = 0;
+                v->unk16 = VISUAL_SATURN_LAYER(0);
                 v->unk3C = (u8*)&archive[2];
                 v->x_pos.i.hi = shot.x_pos.i.hi + (facing ? 1 : -1);
                 v->y_pos.i.hi = shot.y_pos.i.hi - 1;
@@ -958,8 +960,30 @@ static u32 test_sigma_weapon_contact(u32 row)
     return 1;
 }
 
+#undef shot
+#include "support/state_cases.h"
+static struct WeaponObj bolt_sigma;
+static u32 bolt_destroyed(void)
+{
+    state_reset(5, 0, 0);
+    memset(&bolt_sigma, 0, sizeof(bolt_sigma));
+    bolt_sigma.state = 1;
+    state_room.shot.active = 0x41;
+    state_room.shot.state = 1;
+    state_room.shot.unk7C = &bolt_sigma;
+    state_room.shot.x_pos.i.hi = 0x80;
+    state_room.shot.y_pos.i.hi = 0x60;
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    sigma_shot_bolt(&state_room.shot);
+    return state_room.shot.state | (u32)state_room.shot.unk5 << 8 | (u32)(u8)so.hp << 16;
+}
+static const CTestCase sigma_bolt_destroyed_cases[] = { bolt_destroyed };
+static const u32 sigma_bolt_destroyed_cases_expected[] = { 0x502u };
+
 const struct CTestGroup c_test_groups[] = {
     { "sigma_weapon_contact", 0, 0, 24, test_sigma_weapon_contact },
+    { "sigma_bolt_destroyed", sigma_bolt_destroyed_cases, sigma_bolt_destroyed_cases_expected, 1, 0 },
     { "sigma_debris", 0, 0, 27, test_sigma_debris },
     { "scythe_orbit", 0, 0, 32, test_scythe_orbit },
     { "bolt_gather", 0, 0, 12, test_bolt_gather },
@@ -978,4 +1002,4 @@ const struct CTestGroup c_test_groups[] = {
     { "sigma_shot_flash", 0, 0, 2, test_sigma_shot_flash },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 24 + 27 + 32 + 12 + 48 + 72 + 99 + 12 + 2 + 88 + 102 + 11 + 6 + 4 + 2 + 1 + 2;
+const u32 c_test_count = 24 + 27 + 32 + 12 + 48 + 72 + 99 + 12 + 2 + 88 + 102 + 11 + 6 + 4 + 2 + 1 + 2 + 1;

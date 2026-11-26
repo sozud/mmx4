@@ -174,10 +174,64 @@ static u32 test_quad_is_on_screen(u32 row)
     return c_test_observe(0, row, observed_values, quad_is_on_screen_expected, 1);
 }
 
+static const s16 corner_sets[3][8] = {
+    { 400, 10, 10, 10, 400, 10, 400, 10 },
+    { 400, 10, 10, 300, 10, 10, 400, 10 },
+    { 400, 10, 400, 10, 10, 300, 10, 300 },
+};
+static u32 corners(u32 row)
+{
+    struct QuadObj obj;
+    u32 i;
+    memset(&obj, 0, sizeof(obj));
+    obj.bg_offset = -1;
+    for (i = 0; i < 4; i++) {
+        obj.vertices[i].x.i.hi = corner_sets[row][i * 2];
+        obj.vertices[i].y.i.hi = corner_sets[row][i * 2 + 1];
+    }
+    quad_is_on_screen(&obj);
+    return obj.on_screen;
+}
+static const u32 corners_expected[] = { 1u, 1u, 0u };
+static u32 panel_start(u32 row)
+{
+    struct QuadObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.unk2 = row ? 0x13 : 3;
+    func_800D4334(&obj);
+    assert(obj.state == 1 && obj.ext.quad_1.steps == 0x1E && obj.ext.quad_1.unk42 == 1 && obj.bg_offset == -1);
+    return obj.unk2 | (u32)obj.ext.quad_1.delay << 8;
+}
+static const u32 panel_start_expected[] = { 0x1803u, 0x103u };
+static u32 panel_first_move(u32 row)
+{
+    struct QuadObj obj;
+    u32 i;
+    memset(&obj, 0, sizeof(obj));
+    obj.state = 1;
+    obj.bg_offset = -1;
+    for (i = 0; i < 4; i++) {
+        obj.vertices[i].x.val = 0xA00000;
+        obj.vertices[i].y.val = 0x900000;
+        obj.ext.quad_1.settled[i] = 1;
+    }
+    obj.ext.quad_1.steps = 0x1E;
+    obj.ext.quad_1.unk42 = 1;
+    func_800D43F4(&obj);
+    assert(obj.ext.quad_1.unk42 == 0 && obj.ext.quad_1.steps == 0x1D);
+    for (i = 0; i < 4; i++)
+        assert(obj.ext.quad_1.settled[i] == 0);
+    return (u32)obj.vertices[0].x.val;
+}
+static const u32 panel_first_move_expected[] = { 0x9AEEEFu };
+
 const struct CTestGroup c_test_groups[] = {
     { "stage_panel_interpolation_pools", NULL, stage_panel_interpolation_pools_cases_expected, COUNT(stage_panel_interpolation_pools_cases_expected), panel_case },
     { "stage_select_move_quadrants", NULL, stage_select_move_quadrants_cases_expected, COUNT(stage_select_move_quadrants_cases_expected), stage_select_move_quadrants_cases_row },
     { "quad_is_on_screen", 0, 0, 1, test_quad_is_on_screen },
+    { "quad_screen_corners", NULL, corners_expected, COUNT(corners_expected), corners },
+    { "stage_select_panel_start", NULL, panel_start_expected, COUNT(panel_start_expected), panel_start },
+    { "stage_select_panel_first_move", NULL, panel_first_move_expected, 1, panel_first_move },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(stage_panel_interpolation_pools_cases_expected) + COUNT(stage_select_move_quadrants_cases_expected) + 1;
+const u32 c_test_count = COUNT(stage_panel_interpolation_pools_cases_expected) + COUNT(stage_select_move_quadrants_cases_expected) + 1 + COUNT(corners_expected) + COUNT(panel_start_expected) + 1;

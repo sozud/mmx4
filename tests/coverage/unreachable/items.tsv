@@ -1,0 +1,17 @@
+file	line	function	outcome	class	evidence
+src/main/items/item_01_stage_block.c	172	func_800BEFCC	not-taken	data-dependent	Only kinds 5 and 8 reach this check, and their stage_block_entries flags (0x03, 0x87) never have bit 0x40.
+src/main/items/item_02_pickup.c	530	func_800BF76C	taken	unreachable-logic	Kind 9 comes only from unk2 == 0x11, so 0x4000 << (unk2 - 0x11) is 0x4000 again and the first test already decided it.
+src/main/items/item_02_pickup.c	537	func_800BF76C	taken	unreachable-logic	Kind 10 comes only from unk2 == 0x12, so 0x8000 << (unk2 - 0x12) is 0x8000 again and the first test already decided it.
+src/main/items/item_02_pickup.c	863	func_800C00BC	taken	unreachable-logic	Kind 9 comes only from unk2 == 0x11, so the second test repeats collected_upgrades & 0x4000.
+src/main/items/item_02_pickup.c	872	func_800C00BC	taken	unreachable-logic	Kind 10 comes only from unk2 == 0x12, so the second test repeats collected_upgrades & 0x8000.
+src/main/items/item_04_destructible_core.c	117	destructible_core_main	taken	data-dependent	The implicit default: unk2 picks one of the four cores (destructible_core_data and destructible_core_boxes have 4 entries, and init already indexed them by unk2), so it is 0-3.
+src/main/items/item_08_boss_door.c	197	func_800C1C88	taken	data-dependent	The switch default needs (subtype & 0xF) of 7-15; the stage records place boss doors (item 8) with subtypes 0, 1, 2, 4, 6, 0x15, 0x40 and 0x80 (low nibble 0, 1, 2, 4, 5, 6).
+src/main/items/item_08_boss_door.c	207	func_800C1C88	taken	data-dependent	Case 3 needs (subtype & 0xF) == 3; no boss door record has it (low nibbles 0, 1, 2, 4, 5, 6).
+src/main/items/item_08_boss_door.c	319	func_800C1E7C	taken	platform-only	PC-only NULL guard for the door's box: a door waiting for the player always has boss_door_terrain_box (init sets it for state 1); the PSX code dereferences it unguarded.
+src/main/items/item_08_boss_door.c	319	func_800C1E7C	taken	platform-only	PC-only NULL guard for the player's box (second test of the line); the PSX code dereferences it unguarded.
+src/main/items/item_13_trap_floor.c	101	trap_floor_wait_stand	not-taken	platform-only	PC-only NULL guard of ITEM13_PLAYER_EXTENT for the player's box: a player standing in the stage always has one; the PSX code reads it unguarded.
+src/main/items/item_13_trap_floor.c	111	trap_floor_wait_stand	taken	data-dependent	The one trap floor record (stage_object_records_2_0: item 0x0D at 0x1498, 0x330) has subtype 0.
+src/main/items/item_13_trap_floor.c	141	trap_floor_opened	taken	data-dependent	The trap floor is only placed in the Frost Walrus stage's first part (stage_object_records_2_0), so substage is 0.
+src/main/items/item_19_data_capsule.c	167	func_800C49BC	not-taken	unreachable-logic	The spawn is inside if (self->unk2 == 0), so self->unk2 < 2 is always true.
+src/main/items/item_22_layout_gate.c	214	func_800C5994	taken	unreachable-logic	The switch default: (u8)(get_random_nonzero() % 4) is 0-3 and every value has a case.
+src/main/items/item_27_boss_teleporter.c	305	func_800C71C0	not-taken	unreachable-logic	Saturn machine branch (no llvm-cov branch): the sign fix-up SH-GCC emits for a signed % 16; the dividend is a func_8002938C slot index times 4 plus a constant, never negative.

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_62_flame_jet.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -39,13 +40,13 @@ static u32 flame_case(u32 mode)
     set_animation(&obj, 2);
     obj.animation_cursor = (const u8*)(flame_jet_animations[2] + 1);
     obj.animation_step = flame_jet_animations[2][1];
-    assert(obj.animation_step.packed == 0x03010007);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x03010007));
     weapon_objects[0].active = 1;
     weapon_objects[0].id = ids[mode];
     weapon_objects[0].unk50 = (const u8*)&box;
     weapon_objects[0].x_pos.val = 195 * 65536;
     weapon_objects[0].y_pos.val = 180 * 65536;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     expected = obj;
     player_before = g_Player;
     memcpy(weapons_before, weapon_objects, sizeof(weapons_before));
@@ -57,7 +58,7 @@ static u32 flame_case(u32 mode)
     expected.unk7E = 20;
     expected.state = 2;
     expected.unk42 = 0x1236;
-    weapons_before[0].unk80.word = 195 | (180u << 16);
+    TEST_SET_HALVES(weapons_before[0].unk80, 195, 180);
     if (mode == 2)
         player_before.update_delay_request = 1;
     flame_jet_main(&obj);
@@ -103,7 +104,7 @@ static u32 vent_case(u32 mode)
     if (mode != 0 && mode != 2) {
         signal.animation_cursor = (void*)(flame_jet_animations[0] + 1);
         signal.animation_step = flame_jet_animations[0][1];
-        assert(signal.animation_step.packed == 0x01010101);
+        assert(signal.animation_step.packed == C_TEST_STEP(0x01010101));
     }
     if (mode >= 3) {
         weapon_objects[0].active = 1;
@@ -118,7 +119,7 @@ static u32 vent_case(u32 mode)
     memcpy(weapons_before, weapon_objects, sizeof(weapons_before));
     expected.hurt_box = (const u8*)&flame_jet_vent_box;
     if (mode >= 3)
-        weapons_before[0].unk80.word = 190 | (180u << 16);
+        TEST_SET_HALVES(weapons_before[0].unk80, 190, 180);
     if (mode == 1 || mode == 2) {
         expected.unk5 = 2;
         expected.state = 2;
@@ -159,7 +160,7 @@ static void fj_relight_left(void)
 {
     FJ(0);
     so.unk7E = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.animation_step.fields.frame_index = 3;
     func_8007BE40(&so);
 }
@@ -231,11 +232,11 @@ static u32 jet(u32 row)
     obj.y_pos.val = positions[kind - 1][1] * 65536 + 0x5678;
     expected = obj;
     expected.active = 0x45;
-    expected.unk15 = kind % 2 ? 0x40 : 0;
+    expected.unk15 = kind % 2 ? PLAYER_FACING_RIGHT : 0;
     expected.unk7C = kind < 2 ? 20 : 40;
     expected.ext.main_62.unk80 = available == 2 ? &visual_objects[31] : NULL;
     expected.animation_table = (const u8* const*)flame_jet_animations;
-    expected.unk16 = 2;
+    expected.unk16 = VISUAL_SATURN_LAYER(2);
     expected.collision_data = D_80107C78;
     expected.hp = 127;
     expected.contact_damage = 4;
@@ -260,11 +261,137 @@ static u32 jet(u32 row)
     return 1;
 }
 
+void flame_jet_erupt(struct MainObj*);
+void flame_jet_pause(struct MainObj*);
+void flame_jet_main(struct MainObj*);
+#define FJS(step) (FJ(step), so.state = 1, memset(weapon_objects, 0, sizeof(weapon_objects)), state_terrain(0), g_Player.unk68 = NULL, background_objects[0].x_pos.i.hi = 0, background_objects[0].y_pos.i.hi = 0)
+#define FJSX() (state_extra = so.ext.main_62.unk86 | (u32)(u16)so.unk7E << 8 | (u32)(so.hurt_box != NULL) << 24)
+static void fjs_setup_bare(void)
+{
+    FJS(0), so.state = 0, so.unk2 = 4, func_8007B90C(&so), FJSX();
+}
+static void fjs_erupt_end(void) { FJS(2), so.unk7C = 0x30, flame_jet_erupt(&so), FJSX(); }
+static void fjs_erupt_burn(void) { FJS(2), so.animation_step.fields.relative_step = 1, so.animation_step.fields.frame_index = 3, flame_jet_erupt(&so), FJSX(); }
+static void fjs_pause_count(void) { FJS(3), so.unk7E = 2, flame_jet_pause(&so), FJSX(); }
+static void fjs_pause_blocked(void) { FJS(3), state_hit(&so, 2, 0, 1), weapon_objects[0].x_pos.i.hi = 0x80 + 0x48, flame_jet_pause(&so), FJSX(); }
+static void fjs_pause_relight_seen(void) { FJS(3), so.ext.main_62.unk86 = 1, flame_jet_pause(&so), FJSX(); }
+static void fjs_pause_relight(void) { FJS(3), state_hit(&so, 1, 0, 1), weapon_objects[0].x_pos.i.hi = 0x80 + 0x48, flame_jet_pause(&so), FJSX(); }
+static void fjs_main_no_box(void) { FJS(1), flame_jet_main(&so), FJSX(); }
+static void fjs_main_late(void) { FJS(1), so.animation_step.fields.frame_index = 12, flame_jet_main(&so), FJSX(); }
+static void (*const flame_jet_steps_cases[])(void) = {
+    fjs_setup_bare,
+    fjs_erupt_end,
+    fjs_erupt_burn,
+    fjs_pause_count,
+    fjs_pause_blocked,
+    fjs_pause_relight_seen,
+    fjs_pause_relight,
+    fjs_main_no_box,
+    fjs_main_late,
+};
+static const u32 flame_jet_steps_expected[] = {
+    0x1u,
+    0x14u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100000u,
+    0x7F0000u,
+    0x0u,
+    0x4000000u,
+    0x3u,
+    0x300030u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100000u,
+    0x0u,
+    0x3000u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100000u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x3u,
+    0x10000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100000u,
+    0x0u,
+    0x100u,
+    0x0u,
+    0x3u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100000u,
+    0x1u,
+    0x1000000u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100002u,
+    0x1u,
+    0x1000001u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100002u,
+    0x1u,
+    0x1000000u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100000u,
+    0x0u,
+    0x0u,
+    0x0u,
+};
+static u32 test_flame_jet_steps(u32 row)
+{
+    return state_run(flame_jet_steps_cases[row], row, &flame_jet_steps_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "flame_jet_states", 0, 0, COUNT(flame_jet_states_cases), test_flame_jet_states },
     { "flame_jet_extinguishing_weapons", NULL, flame_jet_extinguishing_weapons_cases_expected, COUNT(flame_jet_extinguishing_weapons_cases_expected), flame_case },
     { "flame_jet_linked_vent_sync", NULL, flame_jet_linked_vent_sync_cases_expected, COUNT(flame_jet_linked_vent_sync_cases_expected), vent_case },
     { "flame_jet_actual_variants_zero_one_two_arm_slots", NULL, NULL, 27, jet },
+    { "flame_jet_steps", 0, 0, COUNT(flame_jet_steps_cases), test_flame_jet_steps },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(flame_jet_states_cases) + COUNT(flame_jet_extinguishing_weapons_cases_expected) + COUNT(flame_jet_linked_vent_sync_cases_expected) + 27;
+const u32 c_test_count = COUNT(flame_jet_states_cases) + COUNT(flame_jet_extinguishing_weapons_cases_expected) + COUNT(flame_jet_linked_vent_sync_cases_expected) + 27 + COUNT(flame_jet_steps_cases);

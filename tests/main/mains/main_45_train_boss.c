@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_45_train_boss.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
@@ -50,8 +51,8 @@ static void script(void)
 {
     want_player.script_state = 1;
     want_player.script_action = 0x14;
-    want_player.script_facing = 0x40;
-    want_player.spike_immune = 1;
+    want_player.script_facing = PLAYER_FACING_RIGHT;
+    SPIKE_IMMUNE_SET(want_player, 1);
     want_engine.gameplay_locked = 1;
 }
 
@@ -82,6 +83,7 @@ static u32 train_boss_exit_run(u32 mode)
     background_objects[0].y_pos.val = 0;
     background_objects[1].x_pos.val = 0x01000000;
     background_objects[1].y_pos.val = 0;
+    test_layer_screens(1, 2, 2);
     memset(&g_Player, 0, sizeof(g_Player));
     g_Player.hp = mode == LEAVE_DEAD_PLAYER ? (s8)0x80 : 0x10;
     g_Player.x_pos.i.hi = mode == DEFEATED_SCRIPT_NEAR ? 0x250 : mode == DEFEATED_SCRIPT_END || mode == LEAVE_DONE_FAR ? 0x1B40
@@ -255,6 +257,7 @@ static u32 exit_case(u32 mode, u32 observation)
     background_objects[0].x_pos.i.hi = 0x400;
     background_objects[0].y_pos.i.hi = 0x180;
     background_objects[1].x_pos.i.hi = 0x200;
+    test_layer_screens(1, 16, 1);
     engine_obj.gameplay_locked = 0x27;
     before = obj;
     player_before = g_Player;
@@ -274,8 +277,7 @@ static u32 exit_case(u32 mode, u32 observation)
     before.unk7C = obj.unk7C;
     before.unk7E = obj.unk7E;
     before.on_screen = obj.on_screen;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
     player_before.x_pos = g_Player.x_pos;
     player_before.y_pos = g_Player.y_pos;
     player_before.unk18 = g_Player.unk18;
@@ -283,20 +285,17 @@ static u32 exit_case(u32 mode, u32 observation)
     player_before.script_state = g_Player.script_state;
     player_before.script_action = g_Player.script_action;
     player_before.script_facing = g_Player.script_facing;
-    player_before.spike_immune = g_Player.spike_immune;
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    SPIKE_IMMUNE_SET(player_before, SPIKE_IMMUNE(g_Player));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     engine_before.gameplay_locked = engine_obj.gameplay_locked;
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    for (i = 0; i < sizeof(bg_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)bg_before)[i]);
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, bg_before, sizeof(bg_before));
     for (i = 0; i < sizeof(train_exit_layout_tilemap); i++)
         if (i < 18 || i > 23)
             assert(train_exit_layout_tilemap[i] == map_before[i]);
     switch (observation) {
     case 0:
-        actual = ((u32*)&obj)[1];
+        actual = C_TEST_LE_WORD((u32*)&obj + 1);
         break;
     case 1:
         actual = (u16)obj.unk7C | ((u32)(u16)obj.unk7E << 16);
@@ -314,7 +313,7 @@ static u32 exit_case(u32 mode, u32 observation)
         actual = g_Player.unk1C.val;
         break;
     case 6:
-        actual = g_Player.script_state | ((u32)(u8)g_Player.script_action << 8) | ((u32)(u8)g_Player.script_facing << 16) | ((u32)g_Player.spike_immune << 24);
+        actual = g_Player.script_state | ((u32)(u8)g_Player.script_action << 8) | ((u32)C_TEST_PSX_FACING(g_Player.script_facing) << 16) | ((u32)SPIKE_IMMUNE(g_Player) << 24);
         break;
     case 7:
         actual = engine_obj.gameplay_locked | ((u32)obj.on_screen << 8);
@@ -367,10 +366,8 @@ static u32 layer_case(u32 mode)
             expected.ext.main_45.unk81 = 0;
     }
     func_80066478(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(bg == (mode == 5 ? 0 : mode < 3 ? 0xFF
                                            : 7));
     assert(parameter == (mode == 1 || mode == 2 ? 1 : 0xA5));
@@ -580,6 +577,32 @@ static void tr_command_part_gone(void)
     PARTS();
 }
 
+static void tr_command_part_attached(void)
+{
+    TB(1, 0);
+    so.ext.main_45.projectile_command = 1;
+    func_8006630C(&so);
+    PARTS();
+}
+#define TR_LAYOUT() (memset(train_boss_exit_tilemap, 0x10, sizeof(train_boss_exit_tilemap)), SP_BG_TILEMAP = train_boss_exit_tilemap, layout_size = 4, layout_width = 2, background_objects[1].x_pos.val = 0x1000000, g_Player.hp = 0x10, g_Player.x_pos.i.hi = 0x1900, g_Player.script_state = 0, engine_obj.gameplay_locked = 0)
+static void tr_station_other_screen(void)
+{
+    TB(0, 0);
+    TR_LAYOUT();
+    so.state = 3;
+    so.unk6 = 1;
+    func_80065EA4(&so);
+    state_extra = train_boss_exit_tilemap[6] | (u8)g_Player.script_state << 8;
+}
+static void tr_leave_player_left(void)
+{
+    TB(0, 0);
+    TR_LAYOUT();
+    so.state = 4;
+    so.unk7C = 5;
+    func_800661AC(&so);
+    state_extra = (u16)g_Player.x_pos.i.hi | (u32)(u8)g_Player.script_state << 16 | (u32)(u8)g_Player.script_action << 24;
+}
 static void (*const train_boss_states_cases[])(void) = {
     tr_init,
     tr_approach,
@@ -604,8 +627,272 @@ static void (*const train_boss_states_cases[])(void) = {
     tr_command_arms_done,
     tr_command_arms,
     tr_command_part_gone,
+    tr_command_part_attached,
+    tr_station_other_screen,
+    tr_leave_player_left,
 };
-static const u32 train_boss_states_expected[] = { 1u, 0xFF000004u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x10000u, 0x80u, 0u, 0x10001u, 0u, 0x19010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 0x20001u, 0u, 0x19B00000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x30001u, 0u, 0x1AB00000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20001u, 0u, 0x19010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 0x30001u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x30001u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0xFFu, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x102u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0x2100u, 0x10102u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x100u, 0x2100u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0x2100u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0x2100u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x7000001u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x80u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x10102u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x1010100u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0xFFu, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 5u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x700000FFu, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x30000004u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x20000FFu, 0u };
+static const u32 train_boss_states_expected[] = {
+    0x1u,
+    0xFF000004u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10000u,
+    0x80u,
+    0x0u,
+    0x10001u,
+    0x0u,
+    0x19010000u,
+    0x800000u,
+    0x10000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x20001u,
+    0x0u,
+    0x19B00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x30001u,
+    0x0u,
+    0x1AB00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x20001u,
+    0x0u,
+    0x19010000u,
+    0x800000u,
+    0x10000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x30001u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x30001u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0xFFu,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x102u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x2100u,
+    0x10102u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x100u,
+    0x2100u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x2100u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x2100u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x7000001u,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x80u,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x10102u,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x1010100u,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0xFFu,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x5u,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x700000FFu,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x30000004u,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x20000FFu,
+    0x0u,
+    0x101u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x1u,
+    0x0u,
+    0x10003u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x10u,
+    0x0u,
+    0x10004u,
+    0x0u,
+    0x19000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x14011900u,
+    0x0u,
+};
 
 static u32 test_train_boss_states(u32 row)
 {

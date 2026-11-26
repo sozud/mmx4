@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/mains/main_08_eregion.h"
 #include "main/55C4.h"
+#include "weapon_resources.h"
 void eregion_pounce_jump(struct MainObj*);
 void eregion_death(struct MainObj* arg0);
 void eregion_pounce(struct MainObj* arg0);
@@ -62,7 +63,7 @@ static u32 eregion_case(u32 mode, u32 observation)
         return cur_random;
     return obj.animation_step.packed;
 }
-static const u32 eregion_choice_context_cases_expected[] = { 0x104u, 0x0u, 0x1010010u, 0x104u, 0x0u, 0x1010010u, 0x105u, 0x6u, 0x1010010u, 0x106u, 0x7u, 0x1010010u };
+static const u32 eregion_choice_context_cases_expected[] = { 0x104u, 0x0u, C_TEST_STEP(0x1010010u), 0x104u, 0x0u, C_TEST_STEP(0x1010010u), 0x105u, 0x6u, C_TEST_STEP(0x1010010u), 0x106u, 0x7u, C_TEST_STEP(0x1010010u) };
 static u32 eregion_choice_context_cases_row(u32 row)
 {
     return eregion_case(row / 3, row % 3);
@@ -104,13 +105,13 @@ static u32 intro_case(u32 mode)
     obj.unk6 = 9;
     obj.unk7 = 7;
     obj.on_screen = 3;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.bg_offset = -1;
     obj.hp = 127;
     obj.contact_damage = 7;
     obj.invincibility_timer = 3;
     obj.air_state = 7;
-    obj.unk16 = 12;
+    obj.unk16 = VISUAL_SATURN_LAYER(12);
     obj.unk40 = 0x1234;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 100 * 65536 + 0x5678;
@@ -118,7 +119,7 @@ static u32 intro_case(u32 mode)
     obj.y_speed = -12345;
     obj.x_accel = 123;
     obj.gravity = -321;
-    obj.animation_step.packed = 0x12345678;
+    obj.animation_step.packed = C_TEST_STEP(0x12345678);
     obj.unk17 = 13;
     obj.previous_animation_index = 14;
     D_801406A8 = graphics_header;
@@ -134,7 +135,7 @@ static u32 intro_case(u32 mode)
     expected.hp = 0;
     expected.contact_damage = 3;
     expected.invincibility_timer = 0;
-    expected.unk16 = 6;
+    expected.unk16 = VISUAL_SATURN_LAYER(6);
     expected.animation_table = (const u8* const*)D_800FAD68;
     expected.terrain_box = (struct Unk_unk68*)&D_800FA724;
     expected.collision_data = (const u16*)D_801066F0;
@@ -143,7 +144,7 @@ static u32 intro_case(u32 mode)
     expected.ext.main_8.unk84 = &D_800FA72C;
     expected.ext.main_8.unk88 = 1;
     expected.ext.main_8.unk80 = NULL;
-    expected.unk40 = 0xE0;
+    expected.unk40 = (u16)(OBJECT_STAGE_TEXTURE(0) + OBJECT_TEXTURE_OFFSET(0xB0));
     expected.animation_cursor = (const u8*)D_800FAD68[0];
     expected.animation_step = *D_800FAD68[0];
     expected.unk17 = 0;
@@ -206,7 +207,7 @@ static u32 leap_case(u32 mode)
     obj.id = 8;
     obj.state = 1;
     obj.unk6 = 1;
-    obj.unk15 = mode == 4 ? 0x40 : 0;
+    obj.unk15 = mode == 4 ? PLAYER_FACING_RIGHT : 0;
     obj.x_speed = 123;
     obj.y_speed = 456;
     obj.x_accel = 789;
@@ -277,7 +278,7 @@ static u32 recoil_case(u32 mode, u32 observation)
     obj.id = 8;
     obj.state = 1;
     obj.unk6 = 0x27;
-    obj.unk15 = mode == 0 ? 0x40 : 0;
+    obj.unk15 = mode == 0 ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.animation_table = (const u8* const*)D_800FAD68;
@@ -305,7 +306,7 @@ static u32 recoil_case(u32 mode, u32 observation)
     actual = observation == 0 ? (u16)obj.x_pos.i.hi | ((u32)(u8)obj.unk6 << 16) : obj.animation_step.packed;
     return actual;
 }
-static const u32 eregion_recoil_frames_cases_expected[] = { 0x28004Eu, 0x1C010003u, 0x28007Au, 0x1D010003u, 0x280064u, 0xC010003u };
+static const u32 eregion_recoil_frames_cases_expected[] = { 0x28004Eu, C_TEST_STEP(0x1C010003u), 0x28007Au, C_TEST_STEP(0x1D010003u), 0x280064u, C_TEST_STEP(0xC010003u) };
 static u32 eregion_recoil_frames_cases_row(u32 row)
 {
     return recoil_case(row / 2, row % 2);
@@ -325,7 +326,7 @@ static u32 recovery_case(u32 mode)
     obj.unk5 = 4;
     obj.unk6 = 5;
     obj.unk7 = 6;
-    obj.unk15 = mode & 1 ? 0 : 0x40;
+    obj.unk15 = mode & 1 ? 0 : PLAYER_FACING_RIGHT;
     obj.x_speed = 300;
     obj.unk7C = mode & 1 ? 7 : 0;
     obj.x_pos.val = 50 * 65536 + 0xBEEF;
@@ -363,9 +364,9 @@ static u32 recovery_case(u32 mode)
         assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
     for (i = 0; i < sizeof(g_Player) / 4; i++)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    assert(D_800FAD68[10][0].packed == 0x1C010003);
-    assert(D_800FAD68[10][3].packed == 0x1D010003);
-    assert(D_800FAD68[10][4].packed == 0x0C010105);
+    assert(D_800FAD68[10][0].packed == C_TEST_STEP(0x1C010003));
+    assert(D_800FAD68[10][3].packed == C_TEST_STEP(0x1D010003));
+    assert(D_800FAD68[10][4].packed == C_TEST_STEP(0x0C010105));
     return (u8)obj.state | ((u32)(u8)obj.unk5 << 8) | ((u32)(u16)obj.unk7C << 16);
 }
 static const u32 eregion_recovery_animation_cases_expected[] = { 0x403u, 0x70403u, 0x2B0501u, 0x10101u, 0x2B0501u, 0x70403u };
@@ -396,7 +397,9 @@ static u32 wing_case(u32 mode)
         s->unk54 = (const u8*)&box;
         s->unk68 = &box;
         s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 7;
-        s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = s->unk78 = 7;
+        s->unk72 = s->unk73 = s->unk76 = s->unk77 = 7;
+        OBJ_UNK78_SET(*s, 7);
+        OBJ_UNK74_SET(*s, 7);
         s->unk62 = s->unk63 = s->unk7A = s->unk75 = 7;
         visual_objects[i].active = 1;
         visual_objects[i].id = 39;
@@ -443,7 +446,9 @@ static u32 wing_case(u32 mode)
         s->unk54 = NULL;
         s->unk68 = NULL;
         s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 0;
-        s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = s->unk78 = 0;
+        s->unk72 = s->unk73 = s->unk76 = s->unk77 = 0;
+        OBJ_UNK78_SET(*s, 0);
+        OBJ_UNK74_SET(*s, 0);
         s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
     }
     if (mode & 2) {
@@ -584,7 +589,7 @@ static u32 pool_full_eregion_intro_warning(void)
     pf_prepare();
     pf_snapshot();
     eregion_intro_warning(&pf_self);
-    pf_expected.unk15 = 0x40;
+    pf_expected.unk15 = PLAYER_FACING_RIGHT;
     pf_expected.unk6++;
     pf_script(0x15, 0);
     actual = pf_finish(0);
@@ -644,7 +649,7 @@ static struct Unk_unk68 eregion_feet = { 0, 16, 16, 8 };
 static void ee_death_start(void)
 {
     ER(2, 0);
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     eregion_death(&so);
 }
 static void ee_death_blink_spawn(void)
@@ -704,7 +709,7 @@ static void ee_crouch_left(void)
 static void ee_crouch_right(void)
 {
     ER(3, 0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     eregion_pounce(&so);
 }
 static void ee_rise_wait(void)
@@ -724,7 +729,7 @@ static void ee_rise_top_right(void)
 {
     ER(3, 1);
     so.y_pos.i.hi = 0x80;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     eregion_pounce(&so);
 }
 static void ee_jump_left(void)
@@ -737,7 +742,7 @@ static void ee_jump_right(void)
 {
     ER(3, 2);
     so.animation_step.fields.event = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     eregion_pounce(&so);
 }
 static void ee_jump_roar(void)
@@ -759,7 +764,7 @@ static void ee_stomp_right_behind(void)
     ER(5, 0);
     so.terrain_box = &eregion_feet;
     so.collision_flags = 8;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     g_Player.x_pos.i.hi = 0x1000;
     eregion_stomp_land(&so);
 }
@@ -768,7 +773,7 @@ static void ee_stomp_right_ahead(void)
     ER(5, 0);
     so.terrain_box = &eregion_feet;
     so.collision_flags = 8;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     g_Player.x_pos.i.hi = 0x1300;
     eregion_stomp_land(&so);
 }
@@ -798,7 +803,7 @@ static void ee_swipe_right(void)
 {
     ER(6, 0);
     so.x_speed = 0x1234;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.animation_step.fields.event = 2;
     func_80048B04(&so);
 }
@@ -834,7 +839,7 @@ static void ee_pick_near_right(void)
 {
     ER(1, 0);
     so.hp = 0x20;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_pos.i.hi = 0x1250;
     g_Player.x_pos.i.hi = 0x1280;
     func_800480D0(&so);
@@ -843,7 +848,7 @@ static void ee_pick_near_right_edge(void)
 {
     ER(1, 0);
     so.hp = 0x20;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_pos.i.hi = 0x11B0;
     g_Player.x_pos.i.hi = 0x11D0;
     func_800480D0(&so);
@@ -913,6 +918,118 @@ static void ee_pick_weak_far_b(void)
     func_800480D0(&so);
 }
 
+void eregion_roar(struct MainObj*);
+void eregion_roar_wait(struct MainObj*);
+void eregion_stomp(struct MainObj*);
+void eregion_stomp_step(struct MainObj*);
+void eregion_stomp_follow(struct MainObj*);
+void eregion_stomp_advance(struct MainObj*);
+void eregion_stomp_drop(struct MainObj*);
+void eregion_leap(struct MainObj*);
+void eregion_leap_jump(struct MainObj*);
+void eregion_leap_rise(struct MainObj*);
+void eregion_fall(struct MainObj*);
+void eregion_land(struct MainObj*);
+void eregion_wing_slash(struct MainObj*);
+void eregion_fireball(struct MainObj*);
+void eregion_spread(struct MainObj*);
+void eregion_intro(struct MainObj*);
+void func_8004970C(struct MainObj*);
+static void ee_update(u8 sound) { ER(2, 2), BLAST(1, 0), so.unk7E = 3, so.state = 2, so.ext.main_8.queued_sound = sound, eregion_update(&so), state_extra = so.ext.main_8.queued_sound; }
+static void ee_update_quiet(void) { ee_update(0xFF); }
+static void ee_update_sound(void) { ee_update(5); }
+#define RUN(step, sub) (ER(step, sub), so.state = 1, so.hp = 0x20, so.unk7C = 5, memset(weapon_objects, 0, sizeof(weapon_objects)), SPIKE_IMMUNE_SET(g_Player, 1), engine_obj.cur_character = 0)
+#define RUNX() (state_extra = (u8)so.unk7C | (u8)SPIKE_IMMUNE(g_Player) << 8 | (u8)so.invincibility_timer << 16 | (u32)(u8)so.hp << 24)
+static void ee_run_frame(u8 frame)
+{
+    RUN(1, 0), so.animation_step.fields.frame_index = frame, func_80047E58(&so), RUNX();
+}
+static void ee_run_crouch_frame(void) { ee_run_frame(0x16); }
+static void ee_run_crouch_frame_2(void) { ee_run_frame(0x17); }
+static void ee_run_wing_frame_2(void) { ee_run_frame(0x20); }
+static void ee_run_zero_wing_frame_blink(void)
+{
+    RUN(1, 0);
+    engine_obj.cur_character = 1;
+    so.animation_step.fields.frame_index = 0x1F;
+    so.invincibility_timer = 3;
+    so.ext.main_8.unk88 = 1;
+    so.ext.main_8.unk80 = &state_hit_box;
+    so.ext.main_8.unk84 = &state_hit_box;
+    func_80047E58(&so);
+    RUNX();
+}
+static void ee_run_blink_end(void) { RUN(1, 0), so.animation_step.fields.frame_index = 5, so.invincibility_timer = 1, so.unk42 = 0x8000, func_80047E58(&so), RUNX(); }
+static void ee_run_hit_recoil(void) { RUN(1, 0), state_hit(&so, 0, 0, 1), func_80047E58(&so), RUNX(); }
+static void ee_run_hit_roaring(void) { RUN(2, 0), so.unk7C = 0, state_hit(&so, 0, 0, 1), func_80047E58(&so), RUNX(); }
+static void ee_run_defeated(void) { RUN(1, 0), so.hp = 1, SPIKE_IMMUNE_SET(g_Player, 0), state_hit(&so, 0, 0, 1), func_80047E58(&so), RUNX(); }
+static void ee_roar_sound(void) { ER(2, 1), so.animation_step.fields.event = 2, eregion_roar_wait(&so); }
+static void ee_roar_done(void) { ER(2, 1), so.animation_step.fields.event = 1, eregion_roar_wait(&so); }
+static void ee_stomp_lift_right(void) { ER(3, 0), so.unk15 = PLAYER_FACING_RIGHT, eregion_stomp(&so); }
+static void ee_stomp_lift_left(void) { ER(3, 0), eregion_stomp(&so); }
+#define STEP(ev, face, vx) (ER(3, 1), so.ext.main_8.unk88 = 1, so.animation_step.fields.event = ev, so.unk15 = face, so.x_speed = vx, so.y_speed = ev ? 0x18000 : 0, eregion_stomp_step(&so), state_extra = so.ext.main_8.unk88)
+static void ee_stomp_step_wait(void)
+{
+    STEP(0, 0, 0);
+}
+static void ee_stomp_step_right(void) { STEP(1, PLAYER_FACING_RIGHT, 0x8000); }
+static void ee_stomp_step_left(void) { STEP(1, 0, -0x8000); }
+static void ee_stomp_follow_end(void) { ER(3, 2), so.animation_step.fields.event = 1, so.animation_step.fields.relative_step = -1, so.x_speed = 0x10000, eregion_stomp_follow(&so); }
+static void ee_stomp_follow_wait(void) { ER(3, 2), eregion_stomp_follow(&so); }
+static void ee_stomp_advance_end(void) { ER(3, 3), so.animation_step.fields.relative_step = -1, eregion_stomp_advance(&so); }
+static void ee_stomp_advance_wait(void) { ER(3, 3), eregion_stomp_advance(&so); }
+static void ee_stomp_drop_right(void) { ER(3, 4), so.animation_step.fields.event = 1, so.unk15 = PLAYER_FACING_RIGHT, eregion_stomp_drop(&so); }
+static void ee_stomp_drop_left(void) { ER(3, 4), so.animation_step.fields.event = 1, eregion_stomp_drop(&so); }
+static void ee_stomp_drop_wait(void) { ER(3, 4), eregion_stomp_drop(&so); }
+static void ee_leap_crouch(void) { ER(4, 0), eregion_leap(&so); }
+static void ee_leap_jump_wait(void) { ER(4, 1), eregion_leap_jump(&so); }
+static void ee_leap_jump(void) { ER(4, 1), so.animation_step.fields.event = 1, so.y_speed = 0xC000, so.x_accel = 0x1000, eregion_leap_jump(&so); }
+static void ee_leap_rise(void) { ER(4, 2), eregion_leap_rise(&so), state_extra = so.unk7E; }
+static void ee_leap_top_right(void) { ER(4, 2), so.y_pos.i.hi = 0x80, so.unk15 = PLAYER_FACING_RIGHT, eregion_leap_rise(&so), state_extra = so.unk7E; }
+static void ee_leap_top_left(void) { ER(4, 2), so.y_pos.i.hi = 0x80, eregion_leap_rise(&so), state_extra = so.unk7E; }
+static void ee_fall_hover(void) { ER(4, 3), so.unk7E = 2, eregion_fall(&so), state_extra = so.unk7E; }
+static void ee_fall_landed(void) { ER(4, 3), so.collision_flags = 8, eregion_fall(&so), state_extra = so.unk7E; }
+static void ee_fall(void) { ER(4, 3), eregion_fall(&so), state_extra = so.unk7E; }
+static void ee_land_shake(void) { ER(4, 4), so.terrain_box = &eregion_feet, so.animation_step.fields.event = 1, eregion_land(&so); }
+static void ee_land_done(void) { ER(4, 4), so.animation_step.fields.event = -1, eregion_land(&so); }
+static void ee_wing_slash(void) { ER(5, 0), eregion_wing_slash(&so); }
+static void ee_fireball_open(void) { ER(8, 0), eregion_fireball(&so); }
+static void ee_fireball_fire(void) { ER(8, 1), so.animation_step.fields.event = 2, eregion_fireball_fire(&so); }
+static void ee_spread_open(void) { ER(7, 0), eregion_spread(&so); }
+static void ee_spread_fire(void) { ER(7, 1), so.animation_step.fields.event = 3, eregion_spread_fire(&so); }
+static void ee_recoil_blink(void)
+{
+    ER(0, 1);
+    so.state = 3;
+    so.animation_step.fields.frame_index = 5;
+    so.x_speed = 0x1200;
+    so.ext.main_9.animation_timer = 1;
+    so.ext.main_9.animation_1 = (const u8*)&state_hit_box;
+    so.ext.main_9.animation_2 = (const u8*)&state_hit_box;
+    so.invincibility_timer = 3;
+    SPIKE_IMMUNE_SET(g_Player, 1);
+    eregion_recoil(&so);
+    state_extra = so.invincibility_timer;
+}
+static void ee_intro_warning(void) { ER(9, 0), eregion_intro(&so); }
+static void ee_intro_rise_fall(void) { ER(9, 2), so.y_speed = 0x10000, so.gravity = -0x1800, eregion_intro_rise(&so); }
+#define INTRO_LAND() (state_extra = so.unk7E | engine_obj.enable_boss << 8)
+static void ee_intro_land_hover(void)
+{
+    ER(9, 4), so.unk7E = 2, func_8004970C(&so), INTRO_LAND();
+}
+static void ee_intro_land_shake(void) { ER(9, 4), so.terrain_box = &eregion_feet, so.animation_step.fields.event = 1, func_8004970C(&so), INTRO_LAND(); }
+static void ee_intro_land_done(void) { ER(9, 4), so.animation_step.fields.event = -1, func_8004970C(&so), INTRO_LAND(); }
+#define FILL(hp_value, count) (ER(9, 5), so.hp = hp_value, so.unk7E = count, eregion_intro(&so), state_extra = so.unk7E | (u8)so.hp << 16)
+static void ee_intro_fill(void)
+{
+    FILL(0x10, 2);
+}
+static void ee_intro_fill_tick(void) { FILL(0x10, 1); }
+static void ee_intro_fill_done(void) { FILL(0x30, 0); }
+static void ee_pick_far_turn(void) { ER(1, 0), so.hp = 0x20, so.unk15 = PLAYER_FACING_RIGHT, g_Player.x_pos.i.hi = 0x1000, cur_random = 1, func_800480D0(&so); }
+static void ee_fireball_wait(void) { ER(8, 1), eregion_fireball_fire(&so); }
+static void ee_spread_wait(void) { ER(7, 1), eregion_spread_fire(&so); }
 static void (*const eregion_states_cases[])(void) = {
     ee_death_start,
     ee_death_blink_spawn,
@@ -951,8 +1068,951 @@ static void (*const eregion_states_cases[])(void) = {
     ee_pick_weak_near_b,
     ee_pick_weak_far_a,
     ee_pick_weak_far_b,
+    ee_update_quiet,
+    ee_update_sound,
+    ee_run_crouch_frame,
+    ee_run_crouch_frame_2,
+    ee_run_wing_frame_2,
+    ee_run_zero_wing_frame_blink,
+    ee_run_blink_end,
+    ee_run_hit_recoil,
+    ee_run_hit_roaring,
+    ee_run_defeated,
+    ee_roar_sound,
+    ee_roar_done,
+    ee_stomp_lift_right,
+    ee_stomp_lift_left,
+    ee_stomp_step_wait,
+    ee_stomp_step_right,
+    ee_stomp_step_left,
+    ee_stomp_follow_end,
+    ee_stomp_follow_wait,
+    ee_stomp_advance_end,
+    ee_stomp_advance_wait,
+    ee_stomp_drop_right,
+    ee_stomp_drop_left,
+    ee_stomp_drop_wait,
+    ee_leap_crouch,
+    ee_leap_jump_wait,
+    ee_leap_jump,
+    ee_leap_rise,
+    ee_leap_top_right,
+    ee_leap_top_left,
+    ee_fall_hover,
+    ee_fall_landed,
+    ee_fall,
+    ee_land_shake,
+    ee_land_done,
+    ee_wing_slash,
+    ee_fireball_open,
+    ee_fireball_fire,
+    ee_spread_open,
+    ee_spread_fire,
+    ee_recoil_blink,
+    ee_intro_warning,
+    ee_intro_rise_fall,
+    ee_intro_land_hover,
+    ee_intro_land_shake,
+    ee_intro_land_done,
+    ee_intro_fill,
+    ee_intro_fill_tick,
+    ee_intro_fill_done,
+    ee_pick_far_turn,
+    ee_fireball_wait,
+    ee_spread_wait,
 };
-static const u32 eregion_states_expected[] = { 0x1010200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 1u, 0x10200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x58000u, 0x14u, 0u, 0x10200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x58000u, 2u, 0u, 0x20200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 0x20200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x80020200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 0x41000000u, 0x10300u, 0xFF000000u, 0x12000000u, 0x1000000u, 0x30000u, 0x18000u, 0u, 0x50000u, 0u, 0u, 0x10300u, 0xFF400000u, 0x12000000u, 0x1000000u, 0xFFFD0000u, 0x18000u, 0u, 0x50000u, 0u, 0u, 0x20300u, 0xFF000000u, 0x12000000u, 0x1000000u, 0xFFF78000u, 0xFFFC0000u, 0xFFD00000u, 0x50000u, 0u, 0u, 0x10300u, 0u, 0x12000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10300u, 0x400000u, 0x12000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x20300u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x20300u, 0x400000u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x20300u, 0u, 0x12010000u, 0x1000000u, 0x10000u, 0u, 0u, 0x40000u, 0u, 0u, 0x500u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x400u, 0x400000u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x500u, 0x400000u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x500u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x400u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x600u, 0u, 0x123C0000u, 0x1000000u, 0x1234u, 0u, 0u, 0x40000u, 0u, 0u, 0x600u, 0x400000u, 0x122C0000u, 0x1000000u, 0x1234u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x12340000u, 0x1000000u, 0x1234u, 0u, 0u, 0x40000u, 0u, 0u, 0x100u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x600u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x400u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x400u, 0x400000u, 0x12500000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x500u, 0x400000u, 0x11B00000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x400u, 0u, 0x11C00000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x500u, 0u, 0x12900000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x300u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x800u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x700u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x500u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x700u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x700u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u };
+static const u32 eregion_states_expected[] = {
+    0x1010200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x20200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    1u,
+    0x10200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x58000u,
+    0x14u,
+    0u,
+    0x10200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x58000u,
+    2u,
+    0u,
+    0x20200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x58000u,
+    0u,
+    0u,
+    0x20200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x80020200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0x41000000u,
+    0x10300u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0x30000u,
+    0x18000u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x10300u,
+    0xFF400000u,
+    0x12000000u,
+    0x1000000u,
+    0xFFFD0000u,
+    0x18000u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x20300u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0xFFF78000u,
+    0xFFFC0000u,
+    0xFFD00000u,
+    0x50000u,
+    0u,
+    0u,
+    0x10300u,
+    0u,
+    0x12000000u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10300u,
+    0x400000u,
+    0x12000000u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20300u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20300u,
+    0x400000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20300u,
+    0u,
+    0x12010000u,
+    0x1000000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x500u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x2100u,
+    0x400u,
+    0x400000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x2100u,
+    0x500u,
+    0x400000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x2100u,
+    0x500u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x2100u,
+    0x400u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x2100u,
+    0x600u,
+    0u,
+    0x123C0000u,
+    0x1000000u,
+    0x1234u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x600u,
+    0x400000u,
+    0x122C0000u,
+    0x1000000u,
+    0x1234u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x12340000u,
+    0x1000000u,
+    0x1234u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x100u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x600u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x400u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x400u,
+    0x400000u,
+    0x12500000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x500u,
+    0x400000u,
+    0x11B00000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x400u,
+    0u,
+    0x11C00000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x500u,
+    0u,
+    0x12900000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x300u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x800u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x700u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x500u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x700u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x700u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20202u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xFFu,
+    0u,
+    0x20202u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xFFu,
+    0u,
+    0x101u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20000104u,
+    0u,
+    0x101u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20000104u,
+    0u,
+    0x101u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20000104u,
+    0u,
+    0x101u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x48000u,
+    0x20020104u,
+    0u,
+    0x101u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20000104u,
+    0u,
+    0x103u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x58000u,
+    0x1F1D012Bu,
+    0x2100u,
+    0x10201u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x58000u,
+    0x1F1D0100u,
+    0x2100u,
+    2u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x58000u,
+    0x105u,
+    0x2100u,
+    0x10200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10300u,
+    0xFF400000u,
+    0x12000000u,
+    0x1000000u,
+    0x8000u,
+    0x18000u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x10300u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0xFFFF8000u,
+    0x18000u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x10300u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    1u,
+    0u,
+    0x20300u,
+    0xFF400000u,
+    0x12008000u,
+    0xFE8000u,
+    0x18000u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x20300u,
+    0xFF000000u,
+    0x11FF8000u,
+    0xFE8000u,
+    0xFFFE8000u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x30300u,
+    0u,
+    0x12010000u,
+    0x1000000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20300u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x40300u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x30300u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x50300u,
+    0xFF400000u,
+    0x12000000u,
+    0x1000000u,
+    0xC000u,
+    0xFFFE8000u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x50300u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0xFFFF4000u,
+    0xFFFE8000u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x40300u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10400u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0xC000u,
+    0x1000u,
+    0x50000u,
+    0u,
+    0u,
+    0x10400u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20400u,
+    0xFF000000u,
+    0x12000000u,
+    0xFF4000u,
+    0xFFFFF000u,
+    0x30000u,
+    0x1000u,
+    0x50000u,
+    0u,
+    0u,
+    0x20400u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x30400u,
+    0u,
+    0x12B00000u,
+    0x800000u,
+    0u,
+    0xFFFD8000u,
+    0u,
+    0x40000u,
+    0x3Cu,
+    0u,
+    0x30400u,
+    0x400000u,
+    0x11A00000u,
+    0x800000u,
+    0u,
+    0xFFFD8000u,
+    0u,
+    0x40000u,
+    0x3Cu,
+    0u,
+    0x30400u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    1u,
+    0u,
+    0x40400u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x30400u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x40400u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x2100u,
+    0x200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10500u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0x1200u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0x414100u,
+    0x10800u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0x4100u,
+    0x10800u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x410000u,
+    0x10700u,
+    0xFF000000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0x4100u,
+    0x10700u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x410000u,
+    0x10003u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0x1200u,
+    0u,
+    0u,
+    0x48000u,
+    2u,
+    0u,
+    0x10900u,
+    0x400000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    1u,
+    0x20900u,
+    0u,
+    0x12000000u,
+    0xFF0000u,
+    0u,
+    0x11800u,
+    0xFFE80000u,
+    0x50000u,
+    0u,
+    0u,
+    0x40900u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    1u,
+    0u,
+    0x40900u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x2100u,
+    0x50900u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x103u,
+    0u,
+    0x50900u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x110001u,
+    0u,
+    0x50900u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x110003u,
+    0u,
+    0x200u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x300000u,
+    0u,
+    0x400u,
+    0x400000u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10800u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10700u,
+    0u,
+    0x12000000u,
+    0x1000000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+};
 
 static u32 test_eregion_states(u32 row)
 {
@@ -984,7 +2044,7 @@ static void er_rise_top_right(void)
 {
     ER_SUB(2);
     so.y_pos.i.hi = 0x80;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     eregion_pounce_rise(&so);
 }
 static void er_jump_wait(void)
@@ -1008,7 +2068,7 @@ static void er_jump_right(void)
 {
     ER_SUB(1);
     so.animation_step.fields.event = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     eregion_pounce_jump(&so);
 }
 

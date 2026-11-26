@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_34_highway_trooper.h"
 #include "main/195B4.h"
 #include "main/55C4.h"
@@ -18,6 +19,7 @@ static u32 test_func_8005E5C0(u32 row)
 {
     const struct func_8005E5C0_case* c = &func_8005E5C0_cases[row];
     u32 observed_values[16];
+    u32 expected[16];
     struct MainObj obj;
     struct PlayerObj player_before;
     struct EngineObj engine_before;
@@ -42,7 +44,7 @@ static u32 test_func_8005E5C0(u32 row)
     frames[5] = 64;
     metadata[5] = 0x1680;
     TEST_MENU_FRAMES = (u8*)frames;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     engine_obj.stage = 0;
     engine_obj.substage = 0;
     g_Player.bg_offset = 1;
@@ -61,7 +63,7 @@ static u32 test_func_8005E5C0(u32 row)
     observed_values[0] = (u32)obj.state;
     observed_values[1] = (u32)obj.unk5;
     observed_values[2] = (u32)obj.bg_offset;
-    observed_values[3] = (u32)obj.unk16;
+    observed_values[3] = TEST_PSX_LAYER(obj.unk16);
     observed_values[4] = (u32)obj.unk40;
     observed_values[5] = (u32)obj.unk42;
     observed_values[6] = (u32)obj.x_pos.val;
@@ -70,11 +72,14 @@ static u32 test_func_8005E5C0(u32 row)
     observed_values[9] = (u32)obj.unk1C.val;
     observed_values[10] = (u32)obj.x_speed;
     observed_values[11] = (u32)obj.y_speed;
-    observed_values[12] = (u32)obj.animation_step.packed;
+    observed_values[12] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[13] = (u32)(obj.terrain_box == NULL);
     observed_values[14] = (u32)(obj.sprite_frames == (u8*)frames + 64);
     observed_values[15] = (u32)obj.hp;
-    return c_test_observe(0, row, observed_values, c->expected, 16);
+    memcpy(expected, c->expected, sizeof(expected));
+    expected[4] = (u16)OBJECT_STAGE_TEXTURE(5);
+    expected[5] = OBJECT_PALETTE_FROM_COLOR(func_8002938C(0x22) * 4 + 0x1A);
+    return c_test_observe(0, row, observed_values, expected, 16);
 }
 
 struct highway_trooper_attack_fire_1_case {
@@ -266,7 +271,7 @@ static u32 test_highway_trooper_attack_ready_jump_1(u32 row)
     c_test_same_words(&highway_trooper_terrain_box, &terrain_before, sizeof(highway_trooper_terrain_box));
     observed_values[0] = (u32)obj.unk6;
     observed_values[1] = (u32)obj.unk17;
-    observed_values[2] = (u32)obj.animation_step.packed;
+    observed_values[2] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[3] = (u32)(obj.terrain_box == &highway_trooper_terrain_box);
     return c_test_observe(1, row, observed_values, highway_trooper_attack_ready_jump_1_expected, 4);
 }
@@ -327,11 +332,167 @@ static u32 test_highway_trooper_wait_1(u32 row)
     return 1;
 }
 
+#include "support/state_cases.h"
+void highway_trooper_main(struct MainObj*);
+void highway_trooper_attack_land(struct MainObj*);
+void highway_trooper_fall_away(struct MainObj*);
+#define HT(kind, step, sub) (state_reset(step, sub, 0), so.active = 0x41, so.id = 0x22, so.state = 1, so.unk2 = kind, so.x_pos.i.hi = 0x9D0, so.y_pos.i.hi = 0x100, so.x_speed = -0x10000, background_objects[0].x_pos.i.hi = 0x900, background_objects[0].y_pos.i.hi = 0x80)
+#define HTX() (state_extra = so.ext.main_34.unk80 | so.ext.main_34.unk82 << 8 | (u32)(so.terrain_box != NULL) << 16 | (u32)(u16)so.y_pos.i.hi << 20)
+static void ht_run(void (*step)(struct MainObj*))
+{
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    SP_CUR_MAIN_OBJ = &so;
+    step(&so);
+    SP_CUR_MAIN_OBJ = current;
+    HTX();
+}
+static void ht_ride_stop(void) { HT(0, 0, 0), ht_run(highway_trooper_main); }
+static void ht_ride_off_screen(void) { HT(0, 0, 0), so.x_pos.i.hi = 0xC00, ht_run(highway_trooper_main); }
+static void ht_fire_wait(void) { HT(0, 2, 0), so.animation_step.fields.event = 0, ht_run(highway_trooper_attack_fire); }
+static void ht_land_air(void) { HT(0, 2, 3), so.y_speed = 0x10000, so.gravity = 0x2000, ht_run(highway_trooper_attack_land); }
+static void ht_land_again(void) { HT(0, 2, 3), so.collision_flags = 8, so.ext.main_34.unk82 = 0, ht_run(highway_trooper_attack_land); }
+static void ht_land_last(void) { HT(0, 2, 3), so.collision_flags = 8, so.ext.main_34.unk82 = 2, ht_run(highway_trooper_attack_land); }
+static void ht_hit_wait(void) { HT(0, 3, 0), so.ext.main_34.unk80 = 2, so.terrain_box = &state_hit_box, ht_run(func_8005EB40); }
+static void ht_hit_fall(void) { HT(0, 3, 0), so.ext.main_34.unk80 = 1, so.terrain_box = &state_hit_box, ht_run(func_8005EB40); }
+static void ht_hit_drift(void) { HT(1, 3, 0), so.ext.main_34.unk80 = 1, so.terrain_box = &state_hit_box, ht_run(func_8005EB40); }
+static void ht_fall(void) { HT(0, 4, 0), so.y_pos.i.hi = 0x200, so.y_speed = -0x40000, ht_run(highway_trooper_fall_away); }
+static void ht_fall_out(void) { HT(0, 4, 0), so.y_pos.i.hi = 0x20E, so.y_speed = -0x40000, ht_run(highway_trooper_fall_away); }
+static void (*const highway_trooper_states_cases[])(void) = {
+    ht_ride_stop,
+    ht_ride_off_screen,
+    ht_fire_wait,
+    ht_land_air,
+    ht_land_again,
+    ht_land_last,
+    ht_hit_wait,
+    ht_hit_fall,
+    ht_hit_drift,
+    ht_fall,
+    ht_fall_out,
+};
+static const u32 highway_trooper_states_expected[] = {
+    0x101u,
+    0xFF000041u,
+    0x9CF0000u,
+    0x1000000u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x40000u,
+    0x10000001u,
+    0x0u,
+    0x2u,
+    0x41u,
+    0xBFF0000u,
+    0x1000000u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x10000000u,
+    0x0u,
+    0x201u,
+    0x41u,
+    0x9D00000u,
+    0x1000000u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x10000000u,
+    0x0u,
+    0x30201u,
+    0x41u,
+    0x9CF0000u,
+    0xFF0000u,
+    0xFFFF0000u,
+    0xE000u,
+    0x200000u,
+    0x50000u,
+    0xFF00000u,
+    0x0u,
+    0x20201u,
+    0x41u,
+    0x9CF0000u,
+    0x1000000u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x10000100u,
+    0x0u,
+    0x40201u,
+    0x41u,
+    0x9CF0000u,
+    0x1000000u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x10000300u,
+    0x0u,
+    0x301u,
+    0x41u,
+    0x9D00000u,
+    0x1000000u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x10010001u,
+    0x0u,
+    0x401u,
+    0xFF000041u,
+    0x9D00000u,
+    0x1000000u,
+    0xFFFE4000u,
+    0xC000u,
+    0x200000u,
+    0x50000u,
+    0x10000000u,
+    0x0u,
+    0x501u,
+    0xFF400141u,
+    0x9D00000u,
+    0x1000000u,
+    0x38000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x10000000u,
+    0x0u,
+    0x401u,
+    0x41u,
+    0x9CF0000u,
+    0x2040000u,
+    0xFFFF0000u,
+    0xFFFC0000u,
+    0x0u,
+    0x50000u,
+    0x20400000u,
+    0x0u,
+    0x2u,
+    0x41u,
+    0x9CF0000u,
+    0x2120000u,
+    0xFFFF0000u,
+    0xFFFC0000u,
+    0x0u,
+    0x50000u,
+    0x21200000u,
+    0x0u,
+};
+static u32 test_highway_trooper_states(u32 row)
+{
+    return object_run(highway_trooper_states_cases[row], row, &highway_trooper_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "func_8005E5C0", 0, 0, 4, test_func_8005E5C0 },
     { "highway_trooper_attack_fire_1", 0, 0, 2, test_highway_trooper_attack_fire_1 },
     { "highway_trooper_attack_ready_jump", 0, 0, 3, test_highway_trooper_attack_ready_jump },
     { "highway_trooper_wait_1", 0, 0, 5, test_highway_trooper_wait_1 },
+    { "highway_trooper_states", 0, 0, COUNT(highway_trooper_states_cases), test_highway_trooper_states },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 4 + 2 + 3 + 5;
+const u32 c_test_count = 4 + 2 + 3 + 5 + COUNT(highway_trooper_states_cases);

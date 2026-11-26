@@ -15,7 +15,7 @@ static u32 falling(u32 row)
     obj.unk6 = 1;
     obj.air_state = airborne;
     obj.collision_flags = grounded ? 8 : 0;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.hp = 20;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;

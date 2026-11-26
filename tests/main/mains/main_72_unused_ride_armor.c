@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#ifndef VERSION_DEMO
 #include "main/mains/main_72_unused_ride_armor.h"
 #include "main/collision_bounds.h"
 #include "main/55C4.h"
@@ -24,10 +25,10 @@ static void initialize(struct Fixture* fixture, u32 mode)
     memset(background_objects, 0, sizeof(background_objects));
     memset(shot_objects, 0, sizeof(shot_objects));
     memset(&engine_obj, 0, sizeof(engine_obj));
-    fixture->frames[0] = mode == 1 ? 0x04000302 : 0x04010302;
-    fixture->frames[1] = 0x06000103;
+    fixture->frames[0] = C_TEST_STEP(mode == 1 ? 0x04000302 : 0x04010302);
+    fixture->frames[1] = C_TEST_STEP(0x06000103);
     if (mode == 2)
-        fixture->frames[0] = 0x04010301;
+        fixture->frames[0] = C_TEST_STEP(0x04010301);
     for (i = 0; i < COUNT(fixture->table); i++)
         fixture->table[i] = (const u8*)fixture->frames;
     fixture->obj.animation_table = fixture->table;
@@ -99,8 +100,8 @@ static u32 animation_run(u32 row)
     animations[row].function(obj);
     assert(obj->animation_table == fixture.table);
     assert(obj->animation_cursor == (const u8*)(fixture.frames + (animations[row].finished == 2)));
-    hash = (u8)obj->unk5 | ((u32)(u8)obj->unk6 << 8) | ((u32)obj->unk15 << 16) | ((u32)(u8)obj->air_state << 24);
-    hash = hash * 31 + obj->animation_step.packed;
+    hash = (u8)obj->unk5 | ((u32)(u8)obj->unk6 << 8) | ((u32)C_TEST_PSX_FACING(obj->unk15) << 16) | ((u32)(u8)obj->air_state << 24);
+    hash = hash * 31 + C_TEST_PSX_WORD(obj->animation_step.packed);
     hash = hash * 31 + obj->x_speed;
     hash = hash * 31 + obj->y_speed;
     hash = hash * 31 + obj->gravity;
@@ -181,7 +182,7 @@ static u32 root(u32 row)
     layout_width = layout_height = 16;
     layout_size = 256;
     memset(&g_Player, 0, sizeof(g_Player));
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     player_before = g_Player;
     memset(background_objects, 0, sizeof(background_objects));
     background_objects[0].x_pos.val = background_objects[0].y_pos.val = 512 * 65536;
@@ -207,14 +208,16 @@ static u32 root(u32 row)
     obj.unk6 = 9;
     obj.bg_offset = 0;
     obj.on_screen = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.hp = hit == 2 ? 2 : 10;
     obj.x_pos.val = (screen_positions[edge][0] + 512) * 65536 + 0x1234;
     obj.y_pos.val = (screen_positions[edge][1] + 512) * 65536 + 0x5678;
     obj.unk18.val = 0x1234;
     obj.unk1C.val = 0x5678;
     obj.collision_flags = 15;
+#ifndef VERSION_SATURN_PROTO
     obj.unk79 = 1;
+#endif
     obj.hurt_box = &unused_ride_armor_hit_box;
     obj.attack_box = &unused_ride_armor_hit_box;
     obj.terrain_box = &unused_ride_armor_terrain_box;
@@ -238,7 +241,10 @@ static u32 root(u32 row)
     expected.unk1C = obj.y_pos;
     expected.unk5 = 2;
     expected.unk6 = 0;
-    expected.collision_flags = expected.unk79 = 0;
+    expected.collision_flags = 0;
+#ifndef VERSION_SATURN_PROTO
+    expected.unk79 = 0;
+#endif
     expected.unk6C = obj.x_pos.i.hi & 15;
     expected.unk6E = (obj.y_pos.i.hi + 48) & 15;
     expected.unk42 = 0x1234;
@@ -270,10 +276,268 @@ static u32 root(u32 row)
     return 1;
 }
 
+#include "support/state_cases.h"
+void func_8008B020(struct MainObj*);
+void func_8008B188(struct MainObj*);
+void func_8008B4B8(struct MainObj*);
+void func_8008B69C(struct MainObj*);
+#define RA2(step, sub) (state_reset(step, sub, 0), so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, g_Player.x_pos.i.hi = 0x200, g_Player.y_pos.i.hi = 0x60, cur_random = 0)
+#define RA2X() (state_extra = so.ext.main_72.lifetime | so.ext.main_72.spawn_timer << 8 | (u32)(u16)so.ext.main_72.unk84 << 16)
+#define IDLE(px, py, seed) (RA2(2, 1), g_Player.x_pos.i.hi = px, g_Player.y_pos.i.hi = py, cur_random = seed, func_8008B020(&so), RA2X())
+static void ra2_idle_start(void)
+{
+    RA2(2, 0), cur_random = 5, func_8008B020(&so), RA2X();
+}
+static void ra2_idle_below_odd(void) { IDLE(0x70, 0xA0, 1); }
+static void ra2_idle_below_even(void) { IDLE(0x90, 0xA0, 0); }
+static void ra2_idle_near_odd(void) { IDLE(0x90, 0x60, 1); }
+static void ra2_idle_near_even(void) { IDLE(0x70, 0x60, 0); }
+static void ra2_idle_far_odd(void) { IDLE(0x200, 0x60, 1); }
+static void ra2_idle_far_even(void) { IDLE(0x200, 0x60, 0); }
+static void ra2_walk_start(void) { RA2(3, 0), so.animation_step.fields.event = 1, func_8008B188(&so), RA2X(); }
+static void ra2_walk_left(void) { RA2(3, 1), so.ext.main_72.lifetime = 5, so.animation_step.fields.event = 1, func_8008B188(&so), RA2X(); }
+static void ra2_walk_end_ground(void) { RA2(3, 1), so.ext.main_72.lifetime = 1, so.collision_flags = 8, func_8008B188(&so), RA2X(); }
+static void ra2_walk_end_air(void) { RA2(3, 1), so.ext.main_72.lifetime = 1, func_8008B188(&so), RA2X(); }
+static void ra2_dash_right(void) { RA2(6, 0), g_Player.x_pos.i.hi = 0xC0, func_8008B4B8(&so), RA2X(); }
+static void ra2_dash_left(void) { RA2(6, 0), g_Player.x_pos.i.hi = 0x40, func_8008B4B8(&so), RA2X(); }
+static void ra2_dash_end(void) { RA2(6, 1), so.ext.main_72.lifetime = 1, func_8008B4B8(&so), RA2X(); }
+static void ra2_jump_shoot_land(void) { RA2(9, 0), so.collision_flags = 8, func_8008B69C(&so), RA2X(); }
+static void ra2_jump_shoot_high(void) { RA2(9, 1), g_Player.y_pos.i.hi = 0x40, func_8008B69C(&so), RA2X(); }
+#define DROP(speed, left, spawn) (RA2(9, 1), g_Player.y_pos.i.hi = 0xA0, so.y_speed = speed, so.gravity = 0x4200, so.air_state = 1, so.ext.main_72.lifetime = left, so.ext.main_72.spawn_timer = spawn, func_8008B69C(&so), RA2X(), state_extra ^= (u32)shot_objects[0].active << 4)
+static void ra2_jump_shoot_fast(void)
+{
+    DROP(-0x70000, 5, 2);
+}
+static void ra2_jump_shoot_fall(void) { DROP(0, 5, 0x11); }
+static void ra2_jump_shoot_done(void) { DROP(0, 1, 2); }
+static void (*const ra2_cases[])(void) = {
+    ra2_idle_start,
+    ra2_idle_below_odd,
+    ra2_idle_below_even,
+    ra2_idle_near_odd,
+    ra2_idle_near_even,
+    ra2_idle_far_odd,
+    ra2_idle_far_even,
+    ra2_walk_start,
+    ra2_walk_left,
+    ra2_walk_end_ground,
+    ra2_walk_end_air,
+    ra2_dash_right,
+    ra2_dash_left,
+    ra2_dash_end,
+    ra2_jump_shoot_land,
+    ra2_jump_shoot_high,
+    ra2_jump_shoot_fast,
+    ra2_jump_shoot_fall,
+    ra2_jump_shoot_done,
+};
+static const u32 ra2_expected[] = {
+    0x1000102u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4008u,
+    0x0u,
+    0x4u,
+    0x41000000u,
+    0x9u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0xAu,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x8u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x6u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x8u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x3u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x103u,
+    0x0u,
+    0x816000u,
+    0x16000u,
+    0x0u,
+    0x0u,
+    0x4008u,
+    0x0u,
+    0x160003Fu,
+    0x41000000u,
+    0x103u,
+    0x0u,
+    0x7EA000u,
+    0xFFFEA000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x41000000u,
+    0x5u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x106u,
+    0x0u,
+    0x842000u,
+    0x42000u,
+    0x0u,
+    0x0u,
+    0x4007u,
+    0x0u,
+    0x420000Fu,
+    0x41000000u,
+    0x106u,
+    0x0u,
+    0x7BE000u,
+    0xFFFBE000u,
+    0x0u,
+    0x0u,
+    0x7u,
+    0x0u,
+    0x420000Fu,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x1000005u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x420000u,
+    0x4003u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x1000109u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFF9DE00u,
+    0x420000u,
+    0x0u,
+    0x0u,
+    0x514u,
+    0x41410000u,
+    0x1000109u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFFBE00u,
+    0x420000u,
+    0x0u,
+    0x0u,
+    0x1004u,
+    0x41000000u,
+    0x1000002u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFFBE00u,
+    0x420000u,
+    0x0u,
+    0x0u,
+    0x200u,
+    0x41000000u,
+};
+static u32 ra2_run(u32 row)
+{
+    return state_run(ra2_cases[row], row, &ra2_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "unused_ride_armor_branch_steps", 0, 0, COUNT(ra2_cases), ra2_run },
     { "ride_armor_animation", NULL, NULL, COUNT(animations), animation_run },
     { "unused_ride_armor_jump", 0, 0, 4, test_unused_ride_armor_jump },
     { "root_real_weapon_hits_and_bounds", NULL, NULL, 30, root },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(animations) + 4 + 30;
+const u32 c_test_count = COUNT(ra2_cases) + COUNT(animations) + 4 + 30;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

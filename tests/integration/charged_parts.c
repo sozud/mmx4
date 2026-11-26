@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/sprite_animations.h"
 #include "main/player_check.h"
 #include "main/player.h"
@@ -165,9 +166,9 @@ static void expect_animation(u32** table, u32 animation)
 static const s8 part_types[] = { 1, 2, -126, 3, -125, 4, -124, 5, -123 };
 static const u16 part_offsets[] = { 0, 0, 64, 96, 40, 112 };
 static const u32 frost_animation[] = {
-    0x09010001, 0x0A010001, 0x0B010001, 0x0C010001, 0x09010001, 0x0A010001, 0x0B010001, 0x0C010001,
-    0x09010001, 0x0D010001, 0x0E010001, 0x0F010001, 0x10010002, 0x11010002, 0x12010002, 0x13010002,
-    0x1401010F, 0x14010202, 0x14000060
+    C_TEST_STEP(0x09010001), C_TEST_STEP(0x0A010001), C_TEST_STEP(0x0B010001), C_TEST_STEP(0x0C010001), C_TEST_STEP(0x09010001), C_TEST_STEP(0x0A010001), C_TEST_STEP(0x0B010001), C_TEST_STEP(0x0C010001),
+    C_TEST_STEP(0x09010001), C_TEST_STEP(0x0D010001), C_TEST_STEP(0x0E010001), C_TEST_STEP(0x0F010001), C_TEST_STEP(0x10010002), C_TEST_STEP(0x11010002), C_TEST_STEP(0x12010002), C_TEST_STEP(0x13010002),
+    C_TEST_STEP(0x1401010F), C_TEST_STEP(0x14010202), C_TEST_STEP(0x14000060)
 };
 
 static u32 test_frost_init(u32 row)
@@ -177,14 +178,14 @@ static u32 test_frost_init(u32 row)
     u16 base;
     prepare(&obj, layer, row / (3 * COUNT(part_types)));
     obj.unk2 = part_types[type];
-    g_Player.unk15 = row % 2 ? 0x40 : 0;
+    g_Player.unk15 = row % 2 ? PLAYER_FACING_RIGHT : 0;
     capture(&obj);
     expected.on_screen = 1;
     expected.unk38 = (u8*)gfx + 0x8C;
     expected.unk3C = (u8*)frames + 0xAC;
-    expected.unk40 = 0x520;
-    expected.unk42 = 0x7801;
-    expected.unk16 = 1;
+    expected.unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    expected.unk42 = WEAPON_PALETTE_1;
+    expected.unk16 = VISUAL_SATURN_LAYER(1);
     expected.unk15 = 0;
     base = background_objects[layer].x_pos.u.hi + 160;
     expected.x_pos.u.hi = base + (part_types[type] < 0 ? -part_offsets[part_types[type] & 0x7F] : part_offsets[part_types[type]]);
@@ -250,6 +251,7 @@ static u32 test_frost_lifecycle(u32 row)
     frost_tower_charged_update(&obj);
     capture(&obj);
     for (tick = 0; tick < count; tick++) {
+        test_next_frame();
         expect_frost_tick();
         frost_tower_charged_update(&obj);
         assert(c_test_word_difference((const u32*)&obj,
@@ -309,7 +311,7 @@ static u32 test_nova_hitbox(u32 row)
     obj.ext.raw[0] = row < 12 ? 0xA5 : timer;
     obj.unk64 = row < 12 ? 0xA5 : counter;
     g_Player.unk17 = cancellation ? (row % 2 ? 5 : 0xB) : 0x6A;
-    g_Player.unk15 = facing ? 0x40 : 0;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     capture(&obj);
     if (cancellation) {
         memset(&expected, 0, 8);
@@ -345,20 +347,20 @@ static u32 test_hunter_init(u32 row)
     obj.id = 14;
     obj.unk2 = type;
     g_Player.weapon = 5;
-    g_Player.unk15 = facing ? 0x40 : 0;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     g_Player.animation_step.fields.frame_index = frame;
     capture(&obj);
     expected.on_screen = 1;
     expected.unk38 = (u8*)gfx + 0x98;
     expected.unk3C = (u8*)frames + 0xB8;
-    expected.unk40 = 0x520;
-    expected.unk42 = 0x7801;
+    expected.unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    expected.unk42 = WEAPON_PALETTE_1;
     expected.x_vel.val = expected.unk28.val = expected.y_vel.val = expected.unk2C = 0;
     expected.unk15 = g_Player.unk15;
     expect_animation(D_8011C0C8, type + 3);
     expected.state = 1;
     if (type == 0) {
-        expected.unk16 = 0;
+        expected.unk16 = VISUAL_SATURN_LAYER(0);
         expected.unk50 = ground_hunter_charged_hit_box;
         expected.unk64 = 1;
         dx = D_8011B230.components[frame * 2];
@@ -369,7 +371,7 @@ static u32 test_hunter_init(u32 row)
         expected.unk5 = 0;
     } else {
         expected.unk50 = ground_hunter_charged_shot_box;
-        expected.unk16 = 1;
+        expected.unk16 = VISUAL_SATURN_LAYER(1);
         expected.unk64 = 0;
         expected.y_vel.val = type == 1 ? 0x80000 : -0x80000;
         expected.unk5 = 2;
@@ -439,7 +441,7 @@ static u32 test_hunter_wait(u32 row)
     obj.id = 14;
     obj.unk2 = 0;
     g_Player.weapon = 5;
-    g_Player.unk15 = row / (COUNT(hunter_edges) * COUNT(inputs)) ? 0x40 : 0;
+    g_Player.unk15 = row / (COUNT(hunter_edges) * COUNT(inputs)) ? PLAYER_FACING_RIGHT : 0;
     ground_hunter_charged_update(&obj);
     obj.x_pos.i.hi = background_objects[layer].x_pos.i.hi + hunter_edges[edge].x;
     obj.y_pos.i.hi = background_objects[layer].y_pos.i.hi + hunter_edges[edge].y;
@@ -460,7 +462,7 @@ static u32 test_hunter_shot(u32 row)
     obj.id = 14;
     obj.unk2 = type;
     g_Player.weapon = 5;
-    g_Player.unk15 = row / (4 * COUNT(hunter_edges)) ? 0x40 : 0;
+    g_Player.unk15 = row / (4 * COUNT(hunter_edges)) ? PLAYER_FACING_RIGHT : 0;
     ground_hunter_charged_update(&obj);
     obj.x_pos.i.hi = background_objects[layer].x_pos.i.hi + hunter_edges[edge].x;
     obj.y_pos.i.hi = background_objects[layer].y_pos.i.hi + hunter_edges[edge].y;

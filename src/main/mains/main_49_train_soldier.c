@@ -194,18 +194,18 @@ void train_soldier_wait_for_player(struct MainObj* self)
 {
     s8 temp_a2;
     u8 temp_v0;
-    u8* temp_v1;
+    struct MainObj* temp_v1;
 
     if (self->unk6 == 0) {
         temp_a2 = self->unk2;
         if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) >= main49_activation_distances[temp_a2 - 6]) {
-            temp_v1 = (u8*)SP_CUR_MAIN_OBJ;
-            temp_v1[0x81] = (u8)((temp_a2 - 6) * 0x10);
+            temp_v1 = SP_CUR_MAIN_OBJ;
+            temp_v1->ext.main_49.index = (u8)((temp_a2 - 6) * 0x10);
             self->unk6++;
         }
     } else {
-        temp_v1 = (u8*)SP_CUR_MAIN_OBJ;
-        temp_v0 = temp_v1[0x81];
+        temp_v1 = SP_CUR_MAIN_OBJ;
+        temp_v0 = temp_v1->ext.main_49.index;
         if (temp_v0 == 0) {
             self->state = 1;
             self->unk5 = 2;
@@ -220,7 +220,7 @@ void train_soldier_wait_for_player(struct MainObj* self)
             self->unk15 = PLAYER_FACING_RIGHT;
             return;
         }
-        temp_v1[0x81] = temp_v0 - 1;
+        temp_v1->ext.main_49.index = temp_v0 - 1;
     }
 }
 

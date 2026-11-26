@@ -178,7 +178,7 @@ void func_800A8628(struct ShotObj* self)
     switch (subtype) {
     case 0:
         self->unk60 = 9;
-        self->unk16 = 5;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
         set_animation(self, 5);
         break;
     case 1:

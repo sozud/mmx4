@@ -26,7 +26,7 @@ static u32 track_case(u32 mode, u32 observation)
     obj.y_vel.val = -0x1234;
     obj.unk28 = 0x100;
     obj.unk2C = 0x200;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.unk17 = 10;
     obj.previous_animation_index = 0xA5;
     obj.animation_table = (u32**)cyber_peacock_animations;
@@ -73,10 +73,10 @@ static u32 track_case(u32 mode, u32 observation)
         actual = obj.unk54 | ((u32)obj.unk56 << 16);
         break;
     case 5:
-        actual = ((u32*)&obj)[1];
+        actual = C_TEST_LE_WORD((u32*)&obj + 1);
         break;
     case 6:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     default:
         actual = cursor | ((u32)obj.unk17 << 8) | ((u32)obj.previous_animation_index << 16);
@@ -167,7 +167,7 @@ static u32 test_peacock_target_track(u32 row)
 
 void peacock_target_main(struct VisualObj*);
 static const s16 positions[5][2] = { { 160, 120 }, { -32, 120 }, { 352, 120 }, { 160, -32 }, { 160, 272 } };
-static const u32 hold_words[] = { 0x58010001, 0x59FF0001 };
+static const u32 hold_words[] = { C_TEST_STEP(0x58010001), C_TEST_STEP(0x59FF0001) };
 static u32 target_lifecycle(u32 row)
 {
     struct VisualObj obj, expected;

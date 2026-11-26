@@ -53,7 +53,7 @@ static u32 bob_case_with_sound(u32 mode, u32 loop_sound)
     obj.state = 1;
     obj.unk5 = 2;
     obj.unk6 = loop_sound ? 1 : 9;
-    obj.unk15 = mode & 1 ? 0x40 : 0;
+    obj.unk15 = mode & 1 ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = timers[mode];
     obj.ext.main_5.unk80 = mode & 1;
     obj.ext.main_5.unk81 = mode & 1;
@@ -108,8 +108,8 @@ static u32 bob_case_with_sound(u32 mode, u32 loop_sound)
     for (i = 0; i < sizeof(g_Player) / 4; i++)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
     assert(D_800FA130[0] == -0x8000 && D_800FA130[1] == 0x8000);
-    assert(robot_bee_animations[1][0].packed == 0x00010001);
-    assert(robot_bee_animations[2][0].packed == 0x10010002);
+    assert(robot_bee_animations[1][0].packed == C_TEST_STEP(0x00010001));
+    assert(robot_bee_animations[2][0].packed == C_TEST_STEP(0x10010002));
     actual = (u8)obj.unk5 | ((u32)(u16)obj.unk7C << 8) | ((u32)obj.ext.main_5.unk81 << 24);
     return actual;
 }
@@ -148,7 +148,7 @@ static void rb_start_left(void)
 static void rb_start_right(void)
 {
     STING(0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     robot_bee_sting(&so);
 }
 static void rb_approach_far(void)
@@ -186,7 +186,7 @@ static void rb_brake_right(void)
 {
     STING(2);
     so.unk7C = 4;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     robot_bee_sting(&so);
 }
 static void rb_lunge(void)
@@ -224,7 +224,7 @@ static void rb_loop_two(void)
     STING(4);
     so.unk7C = 3;
     so.ext.main_5.unk80 = 2;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     robot_bee_sting(&so);
     ARC();
 }
@@ -241,7 +241,7 @@ static void rb_loop_four(void)
     STING(4);
     so.unk7C = 3;
     so.ext.main_5.unk80 = 4;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     robot_bee_sting(&so);
     ARC();
 }
@@ -284,7 +284,7 @@ static void rb_return_one(void)
     STING(6);
     so.unk7C = 3;
     so.ext.main_5.unk80 = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     robot_bee_sting(&so);
     ARC();
 }
@@ -301,7 +301,7 @@ static void rb_return_three(void)
     STING(6);
     so.unk7C = 3;
     so.ext.main_5.unk80 = 3;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     robot_bee_sting(&so);
     ARC();
 }
@@ -332,6 +332,95 @@ static void rb_resume(void)
     robot_bee_resume_step(&so);
 }
 
+void robot_bee_main(struct MainObj*);
+void robot_bee_despawn(struct MainObj*);
+void robot_bee_dash(struct MainObj*);
+void robot_bee_dash_wind_up(struct MainObj*);
+void robot_bee_dash_charge(struct MainObj*);
+void robot_bee_dash_accelerate(struct MainObj*);
+void robot_bee_glide(struct MainObj*);
+void robot_bee_glide_move(struct MainObj*);
+void robot_bee_swarm(struct MainObj*);
+void robot_bee_swarm_fly(struct MainObj*);
+void robot_bee_swarm_hover(struct MainObj*);
+void robot_bee_swarm_return(struct MainObj*);
+void robot_bee_swarm_return_fly(struct MainObj*);
+void robot_bee_swarm_return_hover(struct MainObj*);
+void robot_bee_drop(struct MainObj*);
+static struct MainObj rb_hive;
+#define RB(step, sub) (state_reset(step, sub, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, memset(weapon_objects, 0, sizeof(weapon_objects)), SPIKE_IMMUNE_SET(g_Player, 1))
+#define RB_TIMER() (state_extra = (u16)so.unk7C)
+static void rb_init(u8 kind)
+{
+    RB(0, 0), so.unk2 = kind, func_80044F88(&so);
+}
+static void rb_init_sting(void) { rb_init(1); }
+static void rb_init_circle(void) { rb_init(2); }
+static void rb_init_swarm_return(void) { rb_init(4); }
+static void rb_main_on_screen(void) { RB(1, 0), so.state = 1, robot_bee_main(&so), state_extra = so.ext.main_5.saved_unk5; }
+static void rb_main_defeated(void) { RB(1, 0), so.state = 1, so.hp = 1, state_hit(&so, 0, 0, 1), cur_random = 1, robot_bee_main(&so), state_extra = so.ext.main_5.saved_unk5; }
+static void rb_dive(s16 px, s16 py) { RB(3, 0), g_Player.x_pos.i.hi = px, g_Player.y_pos.i.hi = py, robot_bee_check_dive(&so), RB_TIMER(); }
+static void rb_dive_right(void) { rb_dive(0x100, 0x60); }
+static void rb_dive_left(void) { rb_dive(0, 0x60); }
+static void rb_dive_too_high(void) { rb_dive(0x100, 0x100); }
+static void rb_despawn(u8 kind)
+{
+    RB(1, 0);
+    so.state = 2;
+    so.active = 0x41;
+    so.unk2 = kind;
+    memset(&rb_hive, 0, sizeof(rb_hive));
+    rb_hive.active = 1;
+    rb_hive.id = 0x16;
+    rb_hive.ext.main_22.parts_mask = 0xF;
+    so.ext.main_5.owner = &rb_hive;
+    so.ext.main_5.part_index = 2;
+    robot_bee_update(&so);
+    state_extra = rb_hive.ext.main_22.parts_mask;
+}
+static void rb_despawn_hive_part(void) { rb_despawn(4); }
+static void rb_despawn_loose(void) { rb_despawn(1); }
+static void rb_dash_start(void) { RB(4, 0), robot_bee_dash(&so), RB_TIMER(); }
+static void rb_dash_wind_up_done(void) { RB(4, 1), so.unk7C = 4, robot_bee_dash_wind_up(&so), RB_TIMER(); }
+static void rb_dash_wind_up(void) { RB(4, 1), so.unk7C = 6, robot_bee_dash_wind_up(&so), RB_TIMER(); }
+static void rb_dash_charge_end(void) { RB(4, 2), so.unk15 = PLAYER_FACING_RIGHT, so.x_speed = 0x10000, robot_bee_dash_charge(&so), RB_TIMER(); }
+static void rb_dash_charge(void) { RB(4, 2), so.unk7C = 3, robot_bee_dash_charge(&so), RB_TIMER(); }
+static void rb_dash_top_speed(void) { RB(4, 3), so.unk15 = PLAYER_FACING_RIGHT, so.x_speed = 0x150000, so.x_accel = 0x3000, robot_bee_dash_accelerate(&so), RB_TIMER(); }
+static void rb_dash_speed_up(void) { RB(4, 3), so.unk15 = PLAYER_FACING_RIGHT, so.x_accel = 0x3000, robot_bee_dash_accelerate(&so), RB_TIMER(); }
+static void rb_glide_start(void) { RB(3, 0), robot_bee_glide(&so), RB_TIMER(); }
+static void rb_glide_move(void) { RB(3, 1), robot_bee_glide_move(&so), RB_TIMER(); }
+static void rb_wait_start(void) { RB(2, 0), robot_bee_wait(&so), RB_TIMER(); }
+static void rb_circle_start(void) { RB(6, 0), robot_bee_circle(&so), RB_TIMER(); }
+static void rb_drop_fall(void) { RB(7, 1), robot_bee_drop(&so), RB_TIMER(); }
+static void rb_loop_one_right(void) { STING(4), so.unk7C = 3, so.ext.main_5.unk80 = 1, so.unk15 = PLAYER_FACING_RIGHT, robot_bee_sting(&so), ARC(); }
+static void rb_loop_three_right(void) { STING(4), so.unk7C = 3, so.ext.main_5.unk80 = 3, so.unk15 = PLAYER_FACING_RIGHT, robot_bee_sting(&so), ARC(); }
+#define SWARM(step, face, part, run) (RB(step, 0), so.unk15 = face, so.ext.main_5.part_index = part, so.ext.main_5.target_y = 0x100, so.ext.main_5.target_x = 0x60, run(&so), RB_TIMER())
+static void rb_swarm_left_odd(void)
+{
+    SWARM(8, 0, 1, robot_bee_swarm);
+}
+static void rb_swarm_left_even(void) { SWARM(8, 0, 0, robot_bee_swarm); }
+static void rb_swarm_right_even(void) { SWARM(8, PLAYER_FACING_RIGHT, 0, robot_bee_swarm); }
+static void rb_swarm_right_odd(void) { SWARM(8, PLAYER_FACING_RIGHT, 1, robot_bee_swarm); }
+#define FLY(step, timer, seed, run) (RB(step, 1), so.x_speed = 0x10000, so.unk7C = timer, cur_random = seed, run(&so), RB_TIMER())
+static void rb_swarm_fly(void)
+{
+    FLY(8, 2, 1, robot_bee_swarm_fly);
+}
+static void rb_swarm_fly_short_hover(void) { FLY(8, 1, 1, robot_bee_swarm_fly); }
+static void rb_swarm_fly_long_hover(void) { FLY(8, 1, 0x174, robot_bee_swarm_fly); }
+static void rb_swarm_hover(void) { RB(8, 2), so.unk7C = 2, robot_bee_swarm_hover(&so), RB_TIMER(); }
+static void rb_swarm_hover_done(void) { RB(8, 2), so.unk7C = 1, robot_bee_swarm_hover(&so), RB_TIMER(); }
+static void rb_return_left_odd(void) { SWARM(9, 0, 1, robot_bee_swarm_return); }
+static void rb_return_left_even(void) { SWARM(9, 0, 0, robot_bee_swarm_return); }
+static void rb_return_right_even(void) { SWARM(9, PLAYER_FACING_RIGHT, 0, robot_bee_swarm_return); }
+static void rb_return_right_odd(void) { SWARM(9, PLAYER_FACING_RIGHT, 1, robot_bee_swarm_return); }
+static void rb_return_fly(void) { FLY(9, 2, 1, robot_bee_swarm_return_fly); }
+static void rb_return_fly_short_hover(void) { FLY(9, 1, 1, robot_bee_swarm_return_fly); }
+static void rb_return_fly_long_hover(void) { FLY(9, 1, 0x174, robot_bee_swarm_return_fly); }
+static void rb_return_hover(void) { RB(9, 2), so.unk7C = 2, robot_bee_swarm_return_hover(&so), RB_TIMER(); }
+static void rb_main_hit_reaction(void) { RB(0, 0), so.state = 1, so.unk63 = 1, robot_bee_main(&so), state_extra = so.ext.main_5.saved_unk5 | (u32)so.unk63 << 8; }
+static void rb_return_hover_done(void) { RB(9, 2), so.unk7C = 1, robot_bee_swarm_return_hover(&so), RB_TIMER(); }
 static void (*const robot_bee_sting_states_cases[])(void) = {
     rb_start_left,
     rb_start_right,
@@ -360,8 +449,752 @@ static void (*const robot_bee_sting_states_cases[])(void) = {
     rb_return_exit,
     rb_fly_off,
     rb_resume,
+    rb_init_sting,
+    rb_init_circle,
+    rb_init_swarm_return,
+    rb_main_on_screen,
+    rb_main_defeated,
+    rb_dive_right,
+    rb_dive_left,
+    rb_dive_too_high,
+    rb_despawn_hive_part,
+    rb_despawn_loose,
+    rb_dash_start,
+    rb_dash_wind_up_done,
+    rb_dash_wind_up,
+    rb_dash_charge_end,
+    rb_dash_charge,
+    rb_dash_top_speed,
+    rb_dash_speed_up,
+    rb_glide_start,
+    rb_glide_move,
+    rb_wait_start,
+    rb_circle_start,
+    rb_drop_fall,
+    rb_loop_one_right,
+    rb_loop_three_right,
+    rb_swarm_left_odd,
+    rb_swarm_left_even,
+    rb_swarm_right_even,
+    rb_swarm_right_odd,
+    rb_swarm_fly,
+    rb_swarm_fly_short_hover,
+    rb_swarm_fly_long_hover,
+    rb_swarm_hover,
+    rb_swarm_hover_done,
+    rb_return_left_odd,
+    rb_return_left_even,
+    rb_return_right_even,
+    rb_return_right_odd,
+    rb_return_fly,
+    rb_return_fly_short_hover,
+    rb_return_fly_long_hover,
+    rb_return_hover,
+    rb_return_hover_done,
+    rb_main_hit_reaction,
 };
-static const u32 robot_bee_sting_states_expected[] = { 0x10500u, 0xFF000000u, 0u, 0u, 0xFFFE0000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10500u, 0xFF400000u, 0u, 0u, 0x20000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10500u, 0u, 0x7F0000u, 0u, 0xFFFF0000u, 0u, 0u, 0x40000u, 0u, 0u, 0x20500u, 0xFF000000u, 0x200000u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20500u, 0xFF000000u, 0xFFE00000u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20500u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x30500u, 0u, 0u, 0u, 0xFFFD0000u, 0u, 0u, 0x40000u, 0u, 0u, 0x30500u, 0x400000u, 0u, 0u, 0x30000u, 0u, 0u, 0x40000u, 0u, 0u, 0x30500u, 0u, 0x40000u, 0u, 0x40000u, 0u, 0u, 0x40000u, 0u, 0u, 0x40500u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0x80000u, 0u, 0x40500u, 0u, 0x400000u, 0x300000u, 0u, 0u, 0u, 0x40000u, 0x20001u, 0u, 0x40500u, 0u, 0xFFD51F69u, 0x1F270Du, 0u, 0u, 0u, 0x40000u, 0x20001u, 0u, 0x40500u, 0x400000u, 0x2376BCu, 0xFFD89D2Au, 0u, 0u, 0u, 0x40000u, 0x20002u, 0u, 0x40500u, 0u, 0x2AE097u, 0xFFE0D8F3u, 0u, 0u, 0u, 0x40000u, 0x20003u, 0u, 0x40500u, 0x400000u, 0xFFDC8944u, 0x2762D6u, 0u, 0u, 0u, 0x40000u, 0x20004u, 0u, 0x40500u, 0u, 0xFFFA75D6u, 0xFFCB4A53u, 0u, 0u, 0u, 0x40000u, 0x70003u, 0u, 0x50500u, 0u, 0x58A2Au, 0x34B5ADu, 0xFFF9E000u, 0x40000u, 0u, 0x40000u, 0x170000u, 0u, 0x50500u, 0u, 0xFFFF0000u, 0u, 0xFFFF0000u, 0u, 0u, 0x40000u, 0u, 0u, 0x60500u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x60500u, 0u, 0x400000u, 0u, 0u, 0u, 0u, 0x40000u, 0x20001u, 0u, 0x60500u, 0x400000u, 0x2AE097u, 0xFFE0D8F3u, 0u, 0u, 0u, 0x40000u, 0x20001u, 0u, 0x60500u, 0u, 0xFFDC8944u, 0x2762D6u, 0u, 0u, 0u, 0x40000u, 0x20002u, 0u, 0x60500u, 0x400000u, 0xFFD51F69u, 0x1F270Du, 0u, 0u, 0u, 0x40000u, 0x20003u, 0u, 0x60500u, 0u, 0xFFCB4A53u, 0xFFFA75D6u, 0u, 0u, 0u, 0x40000u, 0x70002u, 0u, 0x70500u, 0u, 0x34B5ADu, 0x58A2Au, 0u, 0x50000u, 0u, 0x40000u, 0x70003u, 0u, 0x70500u, 0u, 0u, 0xFFFB0000u, 0u, 0x50000u, 0u, 0x40000u, 0u, 0u, 0x400u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+static const u32 robot_bee_sting_states_expected[] = {
+    0x10500u,
+    0xFF000000u,
+    0u,
+    0u,
+    0xFFFE0000u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x10500u,
+    0xFF400000u,
+    0u,
+    0u,
+    0x20000u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x10500u,
+    0u,
+    0x7F0000u,
+    0u,
+    0xFFFF0000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20500u,
+    0xFF000000u,
+    0x200000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x20500u,
+    0xFF000000u,
+    0xFFE00000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x20500u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x30500u,
+    0u,
+    0u,
+    0u,
+    0xFFFD0000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x30500u,
+    0x400000u,
+    0u,
+    0u,
+    0x30000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x30500u,
+    0u,
+    0x40000u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x40500u,
+    0xFF000000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x80000u,
+    0u,
+    0x40500u,
+    0u,
+    0x400000u,
+    0x300000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20001u,
+    0u,
+    0x40500u,
+    0u,
+    0xFFD51F69u,
+    0x1F270Du,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20001u,
+    0u,
+    0x40500u,
+    0x400000u,
+    0x2376BCu,
+    0xFFD89D2Au,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20002u,
+    0u,
+    0x40500u,
+    0u,
+    0x2AE097u,
+    0xFFE0D8F3u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20003u,
+    0u,
+    0x40500u,
+    0x400000u,
+    0xFFDC8944u,
+    0x2762D6u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20004u,
+    0u,
+    0x40500u,
+    0u,
+    0xFFFA75D6u,
+    0xFFCB4A53u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x70003u,
+    0u,
+    0x50500u,
+    0u,
+    0x58A2Au,
+    0x34B5ADu,
+    0xFFF9E000u,
+    0x40000u,
+    0u,
+    0x40000u,
+    0x170000u,
+    0u,
+    0x50500u,
+    0u,
+    0xFFFF0000u,
+    0u,
+    0xFFFF0000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x60500u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x60500u,
+    0u,
+    0x400000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20001u,
+    0u,
+    0x60500u,
+    0x400000u,
+    0x2AE097u,
+    0xFFE0D8F3u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20001u,
+    0u,
+    0x60500u,
+    0u,
+    0xFFDC8944u,
+    0x2762D6u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20002u,
+    0u,
+    0x60500u,
+    0x400000u,
+    0xFFD51F69u,
+    0x1F270Du,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20003u,
+    0u,
+    0x60500u,
+    0u,
+    0xFFCB4A53u,
+    0xFFFA75D6u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x70002u,
+    0u,
+    0x70500u,
+    0u,
+    0x34B5ADu,
+    0x58A2Au,
+    0u,
+    0x50000u,
+    0u,
+    0x40000u,
+    0x70003u,
+    0u,
+    0x70500u,
+    0u,
+    0u,
+    0xFFFB0000u,
+    0u,
+    0x50000u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x400u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x501u,
+    0xFF000100u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x10000u,
+    0u,
+    0u,
+    0x601u,
+    0xFF000200u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x10000u,
+    0u,
+    0u,
+    0x901u,
+    0xFF000400u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x10000u,
+    0u,
+    0u,
+    0x101u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    1u,
+    0u,
+    0x102u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x58000u,
+    1u,
+    0x41002100u,
+    0x400u,
+    0xFF400000u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xFu,
+    0u,
+    0x400u,
+    0xFF000000u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xFu,
+    0u,
+    0x300u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xBu,
+    0u,
+    0u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xFu,
+    0u,
+    0x10400u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20400u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    3u,
+    0u,
+    0x10400u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    5u,
+    0u,
+    0x30400u,
+    0xFF400000u,
+    0x810000u,
+    0x600000u,
+    0x30000u,
+    0u,
+    0xFFF83000u,
+    0x50000u,
+    0xFFFFu,
+    0u,
+    0x20400u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0xFFFD0000u,
+    0u,
+    0u,
+    0x40000u,
+    2u,
+    0u,
+    0x30400u,
+    0x400000u,
+    0x950000u,
+    0x600000u,
+    0x153000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x30400u,
+    0x400000u,
+    0x800000u,
+    0x600000u,
+    0x3000u,
+    0u,
+    0x3000u,
+    0x40000u,
+    0u,
+    0u,
+    0x10300u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0x10000u,
+    0x10000u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10300u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0xFFFFFA00u,
+    0xFFFFF500u,
+    0xB0600u,
+    0x40000u,
+    0u,
+    0u,
+    0x10200u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10600u,
+    0xFF000000u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0xFFFF8000u,
+    0xFFFC0400u,
+    0x50000u,
+    0x3Cu,
+    0u,
+    0x10700u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x40500u,
+    0x400000u,
+    0x2AE097u,
+    0x1F270Du,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20001u,
+    0u,
+    0x40500u,
+    0x400000u,
+    0xFFD51F69u,
+    0xFFE0D8F3u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20003u,
+    0u,
+    0x10800u,
+    0xFF000000u,
+    0x800000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0x16u,
+    0u,
+    0x10800u,
+    0xFF000000u,
+    0x800000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0x14u,
+    0u,
+    0x10800u,
+    0xFF400000u,
+    0x800000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0x16u,
+    0u,
+    0x10800u,
+    0xFF400000u,
+    0x800000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0x14u,
+    0u,
+    0x10800u,
+    0u,
+    0x810000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    1u,
+    0u,
+    0x20800u,
+    0u,
+    0x810000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x79u,
+    0u,
+    0x20800u,
+    0u,
+    0x810000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x78u,
+    0u,
+    0x20800u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    1u,
+    0u,
+    0x300u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10900u,
+    0xFF000000u,
+    0x800000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0x16u,
+    0u,
+    0x10900u,
+    0xFF000000u,
+    0x800000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0x14u,
+    0u,
+    0x10900u,
+    0xFF400000u,
+    0x800000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0x16u,
+    0u,
+    0x10900u,
+    0xFF400000u,
+    0x800000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0x14u,
+    0u,
+    0x10900u,
+    0u,
+    0x820000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x30000u,
+    1u,
+    0u,
+    0x20900u,
+    0u,
+    0x810000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x30000u,
+    0x79u,
+    0u,
+    0x20900u,
+    0u,
+    0x810000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x30000u,
+    0x78u,
+    0u,
+    0x20900u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    1u,
+    0u,
+    0x700u,
+    0xFF000000u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x10001u,
+    0x0u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x58000u,
+    0x100u,
+    0x0u,
+};
 
 static u32 test_robot_bee_sting_states(u32 row)
 {
@@ -388,7 +1221,7 @@ static u32 test_wait_active_sound(u32 row)
     obj.id = 5;
     obj.state = 1;
     obj.unk5 = obj.unk6 = 1;
-    obj.unk15 = row & 1 ? 0x40 : 0;
+    obj.unk15 = row & 1 ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 300 * 65536 + 0x1234;
     obj.y_pos.val = 100 * 65536 + 0x5678;
     obj.x_speed = 0x18000;
@@ -432,6 +1265,38 @@ static u32 test_circle_active_sound(u32 row)
     assert(D_80137E08 == before);
     assert(SpuGetKeyStatus(1u << voice) != 0);
     assert(commands[0x13] == voice << 24);
+    return 1;
+}
+static const struct {
+    void (*step)(struct MainObj*);
+    u8 unk5, unk6, keyed, queues;
+} active_voice_steps[] = {
+    { robot_bee_glide, 3, 1, 2, 0 },
+    { robot_bee_dash, 4, 1, 4, 0 },
+    { robot_bee_swarm, 8, 2, 2, 0 },
+    { robot_bee_swarm_return, 9, 2, 2, 0 },
+};
+static u32 test_active_voice_steps(u32 row)
+{
+    static u32 voice_commands[0x15];
+    u32* before = D_80137E08;
+    state_reset(active_voice_steps[row].unk5, active_voice_steps[row].unk6, 0);
+    so.animation_table = (const u8* const*)robot_bee_animations;
+    so.animation_cursor = (const u8*)robot_bee_animations[1];
+    so.animation_step = *robot_bee_animations[1];
+    Psyz_SpuInit();
+    memset(voice_commands, 0, sizeof(voice_commands));
+    voice_commands[0x13] = 1u << 24;
+    voice_commands[0x14] = 2u << 24;
+    D_80141F50[2] = (u8*)voice_commands;
+    if (active_voice_steps[row].keyed)
+        SpuSetKey(SPU_ON, active_voice_steps[row].keyed);
+    assert(is_sound_finished(0x13, &so) == !(active_voice_steps[row].keyed & 2));
+    assert(is_sound_finished(0x14, &so) == !(active_voice_steps[row].keyed & 4));
+    active_voice_steps[row].step(&so);
+    assert((D_80137E08 != before) == active_voice_steps[row].queues);
+    assert(so.unk5 == active_voice_steps[row].unk5);
+    D_80137E08 = before;
     return 1;
 }
 #define ACTIVE_SOUND_CASES 16
@@ -541,18 +1406,18 @@ static const struct Fraction fractions[] = {
     { 0, 65536, 8 },
 };
 static const u32 circle_words[] = {
-    0x10010002,
-    0x11010009,
-    0x12010001,
-    0x13010001,
-    0x14010001,
-    0x15000001,
+    C_TEST_STEP(0x10010002),
+    C_TEST_STEP(0x11010009),
+    C_TEST_STEP(0x12010001),
+    C_TEST_STEP(0x13010001),
+    C_TEST_STEP(0x14010001),
+    C_TEST_STEP(0x15000001),
 };
 static const u32 drop_words[4][5] = {
-    { 0x16010002, 0x25010002, 0x24010002, 0x23010002, 0x22000002 },
-    { 0x16010002, 0x25010002, 0x24010002, 0x23000002, 0 },
-    { 0x16010002, 0x25010002, 0x24000002, 0, 0 },
-    { 0x16010002, 0x25000002, 0, 0, 0 },
+    { C_TEST_STEP(0x16010002), C_TEST_STEP(0x25010002), C_TEST_STEP(0x24010002), C_TEST_STEP(0x23010002), C_TEST_STEP(0x22000002) },
+    { C_TEST_STEP(0x16010002), C_TEST_STEP(0x25010002), C_TEST_STEP(0x24010002), C_TEST_STEP(0x23000002), C_TEST_STEP(0) },
+    { C_TEST_STEP(0x16010002), C_TEST_STEP(0x25010002), C_TEST_STEP(0x24000002), C_TEST_STEP(0), C_TEST_STEP(0) },
+    { C_TEST_STEP(0x16010002), C_TEST_STEP(0x25000002), C_TEST_STEP(0), C_TEST_STEP(0), C_TEST_STEP(0) },
 };
 static const s32 x_table[9] = { 0, 0x31F1, 0x61F7, 0x8E39, 0xB505, 0xD4DB, 0xEC83, 0xFB14, 0x10000 };
 static const s32 y_table[9] = { 0x10000, 0xFB14, 0xEC83, 0xD4DB, 0xB505, 0x8E39, 0x61F7, 0x31F1, 0 };
@@ -575,7 +1440,7 @@ static void prepare(s32 dx, s32 dy, u32 facing, u32 animation_mode, s16 timer)
     obj.state = 1;
     obj.unk5 = 7;
     obj.unk6 = 0;
-    obj.unk15 = facing * 0x40;
+    obj.unk15 = facing * PLAYER_FACING_RIGHT;
     obj.bg_offset = facing;
     obj.unk7C = timer;
     obj.x_pos.val = 200 * 65536 + 0x1234;
@@ -599,15 +1464,17 @@ static void prepare(s32 dx, s32 dy, u32 facing, u32 animation_mode, s16 timer)
     g_Player.x_pos.val = obj.x_pos.val - dx;
     g_Player.y_pos.val = obj.y_pos.val - dy;
     g_Player.bg_offset = 2;
+    need_palette_load = 0x20;
+    cur_random = 0x1234;
+#ifndef MMX4_SATURN
     controller_input.held = 0x1234;
     controller_input.previous = 0x5678;
     controller_input.pressed = 0x840;
-    need_palette_load = 0x20;
-    cur_random = 0x1234;
     for (i = 0; i < 6; i++)
         D_8013E198[i] = -1;
     sound_command = 0xA5A51234;
     D_80137E08 = &sound_command;
+#endif
     expected = obj;
     player_before = g_Player;
     engine_before = engine_obj;
@@ -628,11 +1495,13 @@ static void check(void)
     c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
     assert(c_test_word_difference((const u32*)weapon_objects, (const u32*)weapons_before, sizeof(weapons_before) / 4) == 0);
     assert(c_test_word_difference((const u32*)visual_objects, (const u32*)visuals_before, sizeof(visuals_before) / 4) == 0);
-    assert(controller_input.held == 0x1234 && controller_input.previous == 0x5678 && controller_input.pressed == 0x840);
     assert(cur_random == 0x1234 && need_palette_load == 0x20);
+#ifndef MMX4_SATURN
+    assert(controller_input.held == 0x1234 && controller_input.previous == 0x5678 && controller_input.pressed == 0x840);
     assert(D_80137E08 == &sound_command && sound_command == 0xA5A51234);
     for (i = 0; i < 6; i++)
         assert(D_8013E198[i] == -1);
+#endif
     for (i = 0; i < 6; i++)
         assert(robot_bee_animations[2][i].packed == circle_words[i]);
     for (i = 0; i < 4; i++)
@@ -649,14 +1518,14 @@ static void expect_animate(void)
     expected.animation_step.fields.duration--;
     if (expected.animation_step.fields.duration == 0) {
         expected.animation_cursor = (const u8*)robot_bee_animations[2] + 4;
-        expected.animation_step.packed = 0x11010009;
+        expected.animation_step.packed = C_TEST_STEP(0x11010009);
     }
 }
 
 static void expect_launch(u32 direction, u32 facing)
 {
     const struct Aim* aim = &aims[direction];
-    expected.unk15 = aim->facing[facing];
+    expected.unk15 = aim->facing[facing] ? PLAYER_FACING_RIGHT : 0;
     expected.x_speed = aim->x_speed[facing];
     expected.y_speed = aim->y_speed;
     expected.x_accel = (expected.x_speed < 0 ? -expected.x_speed : expected.x_speed) / 64;
@@ -664,7 +1533,7 @@ static void expect_launch(u32 direction, u32 facing)
     if (aim->animation) {
         expected.unk17 = aim->animation;
         expected.animation_cursor = (const u8*)robot_bee_animations[aim->animation];
-        expected.animation_step.packed = 0x16010002;
+        expected.animation_step.packed = C_TEST_STEP(0x16010002);
         expected.previous_animation_index = 0xFF;
     } else {
         expected.unk5 = 4;
@@ -739,6 +1608,7 @@ static u32 test_countdown_sequence(u32 row)
 }
 
 void robot_bee_sting(struct MainObj* arg0);
+#ifndef MMX4_SATURN
 #ifdef MMX4_PC
 #include <libspu.h>
 #include <psyz/spu.h>
@@ -799,7 +1669,7 @@ static u32 sting(u32 row)
     obj.state = 1;
     obj.unk5 = 5;
     obj.unk6 = 7;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = 7;
     obj.ext.main_5.unk80 = 3;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -807,13 +1677,13 @@ static u32 sting(u32 row)
     obj.y_speed = 5 * 65536;
     obj.animation_table = (const u8* const*)robot_bee_animations;
     set_animation(&obj, 11);
-    assert(obj.animation_step.packed == 0x16010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x16010002));
     obj.animation_step.fields.duration = tick ? 1 : 2;
     expected = obj;
     expected.y_pos.val -= 5 * 65536;
     if (tick) {
         expected.animation_cursor += 4;
-        expected.animation_step.packed = 0x17010002;
+        expected.animation_step.packed = C_TEST_STEP(0x17010002);
     } else
         expected.animation_step.fields.duration = 1;
     robot_bee_sting(&obj);
@@ -827,10 +1697,30 @@ static u32 sting(u32 row)
     assert((SpuGetKeyStatus(1u << voice[0]) != 0) == !!(active & 1) && (SpuGetKeyStatus(1u << voice[1]) != 0) == !!(active & 2));
     return 1;
 }
+#endif
+
+static u32 arc_third_right(u32 row)
+{
+    struct MainObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 5;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.unk7C = 5;
+    obj.ext.main_5.unk80 = 2;
+    ((s32*)&obj.ext)[1] = 0x1000000;
+    ((s32*)&obj.ext)[2] = 0x800000;
+    obj.animation_step.fields.duration = 2;
+    func_80045DD8(&obj);
+    assert(obj.x_pos.val == 0x1000000 + 0xE9DE * 53 && obj.y_pos.val == 0x800000 + 0x681F * 53);
+    assert(obj.unk7C == 4 && obj.ext.main_5.unk80 == 2);
+    return obj.unk7C;
+}
 
 const struct CTestGroup c_test_groups[] = {
     { "robot_bee_sting_states", 0, 0, COUNT(robot_bee_sting_states_cases), test_robot_bee_sting_states },
     { "robot_bee_arc_default", robot_bee_arc_default_cases, robot_bee_arc_default_cases_expected, COUNT(robot_bee_arc_default_cases), 0 },
+    { "arc_third_right", 0, 0, 1, arc_third_right },
     { "robot_bee_bob_player_distance", NULL, robot_bee_bob_player_distance_cases_expected, COUNT(robot_bee_bob_player_distance_cases_expected), bob_case },
     { "func_80045940", 0, 0, 1, test_func_80045940 },
     { "compass", 0, 0, 32, test_compass },
@@ -838,16 +1728,23 @@ const struct CTestGroup c_test_groups[] = {
     { "fractional_axis", 0, 0, COUNT(fractions) * 4, test_fractional_axis },
     { "wait", 0, 0, 3, test_wait },
     { "countdown_sequence", 0, 0, 32 * 2, test_countdown_sequence },
+#ifndef MMX4_SATURN
     { "SDK_key_on_status_14_then_13_fallback_with_real_sting_exit_animation", NULL, NULL, 16, sting },
+#endif
 #ifdef MMX4_PC
     { "wait_active_sound", 0, 0, 8, test_wait_active_sound },
     { "circle_active_sound", 0, 0, 8, test_circle_active_sound },
+    { "active_voice_steps", 0, 0, COUNT(active_voice_steps), test_active_voice_steps },
 #endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(robot_bee_sting_states_cases) + COUNT(robot_bee_arc_default_cases) + COUNT(robot_bee_bob_player_distance_cases_expected) + 1 + 32 + COUNT(boundaries) * 4 + COUNT(fractions) * 4 + 3 + 32 * 2 + 16
+const u32 c_test_count = COUNT(robot_bee_sting_states_cases) + COUNT(robot_bee_arc_default_cases) + 1 + COUNT(robot_bee_bob_player_distance_cases_expected) + 1 + 32 + COUNT(boundaries) * 4 + COUNT(fractions) * 4 + 3 + 32 * 2
+#ifndef MMX4_SATURN
+    + 16
+#endif
 #ifdef MMX4_PC
     + 8
     + 8
+    + COUNT(active_voice_steps)
 #endif
     ;

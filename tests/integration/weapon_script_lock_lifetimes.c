@@ -57,7 +57,7 @@ static void prepare(u32 character)
         tiles[i] = i >= 256 && (i & 255) / 16 >= 14;
     c_test_copy_words((u32*)tiles_before, (u32*)tiles, sizeof(tiles) / 4);
     attributes[0] = 0;
-    attributes[1] = 0x38;
+    attributes[1] = TEST_DISC32(0x38);
     SP_BG_TILEMAP = map;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -80,7 +80,7 @@ static void prepare(u32 character)
     g_Player.voice_timer = 1;
     g_Player.x_pos.i.hi = 2254;
     g_Player.y_pos.i.hi = character ? 202 : 203;
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     g_Player.animation_table = (u32**)(character ? D_8011AFF0 : D_80119DF0);
     g_Player.unk38 = (u8*)gfx + 64;
     player_enter_idle(&g_Player);
@@ -131,7 +131,7 @@ static void check(void)
     assert(c_test_word_difference((u32*)weapon_objects, (u32*)weapons, sizeof(weapons) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, sizeof(visuals) / 4) == 0);
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
     assert(cur_random == rng && need_palette_load == dirty);
-    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == 0 && attributes[1] == 0x38);
+    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == 0 && attributes[1] == TEST_DISC32(0x38));
     for (i = 0; i < COUNT(map_words); i += 8)
         assert(((map_words[i] ^ 0x01010101) | (map_words[i + 1] ^ 0x01010101) | (map_words[i + 2] ^ 0x01010101) | (map_words[i + 3] ^ 0x01010101) | (map_words[i + 4] ^ 0x01010101) | (map_words[i + 5] ^ 0x01010101) | (map_words[i + 6] ^ 0x01010101) | (map_words[i + 7] ^ 0x01010101)) == 0);
     assert(c_test_word_difference((u32*)tiles, (u32*)tiles_before, sizeof(tiles) / 4) == 0);

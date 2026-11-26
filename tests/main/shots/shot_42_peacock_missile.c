@@ -79,7 +79,7 @@ static u32 explosion(u32 row)
     owner.id = 64;
     owner.state = 1;
     owner.hp = 48;
-    owner.unk15 = face ? 0x40 : 0;
+    owner.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     owner.x_pos.i.hi = 1248;
     owner.y_pos.i.hi = 2424;
     owner.animation_table = (const u8* const*)cyber_peacock_animations;
@@ -98,11 +98,11 @@ static u32 explosion(u32 row)
     func_800A63B0(&obj);
     peacock_missile_explode_start(&obj);
     set_animation_frame(ANIMATED_OBJECT(&obj), 31, 2);
-    assert(obj.animation_step.packed == 0x84FE0002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x84FE0002));
     obj.timer = 57;
     expected = obj;
     expected.timer = 56;
-    expected.animation_step.packed = 0x84FE0001;
+    expected.animation_step.packed = C_TEST_STEP(0x84FE0001);
     cur_random = seed;
     if (free) {
         struct MiscObj* m = &pool_expected[63];
@@ -156,7 +156,7 @@ static u32 owner_death(u32 row)
     owner.id = 64;
     owner.state = 1;
     owner.hp = 48;
-    owner.unk15 = face ? 0x40 : 0;
+    owner.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     owner.x_pos.i.hi = 1248;
     owner.y_pos.i.hi = 2424;
     owner.animation_table = (const u8* const*)cyber_peacock_animations;
@@ -182,7 +182,7 @@ static u32 owner_death(u32 row)
     expected.unk17 = 31;
     expected.previous_animation_index = 255;
     expected.animation_cursor = cyber_peacock_animations[31];
-    expected.animation_step.packed = 0x82010001;
+    expected.animation_step.packed = C_TEST_STEP(0x82010001);
     peacock_missile_explode_start(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&owner, &owner_expected, sizeof(owner));
@@ -191,11 +191,119 @@ static u32 owner_death(u32 row)
     return 1;
 }
 
+static u32 missile_paths(u32 index);
 const struct CTestGroup c_test_groups[] = {
+    { "missile_paths", 0, 0, 14, missile_paths },
     { "peacock_missile_collision", NULL, peacock_missile_collision_cases_expected, COUNT(peacock_missile_collision_cases_expected), missile_case },
     { "peacock_missile_hit_target", 0, 0, 1, test_peacock_missile_hit_target },
     { "own_Peacock_explosion_fourth_tick_full_misc_pool_preserves_RNG", NULL, NULL, 8, explosion },
     { "own_Peacock_eight_missile_launches_explosion_collision_after_owner_death", NULL, NULL, 32, owner_death },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(peacock_missile_collision_cases_expected) + 1 + 8 + 32;
+const u32 c_test_count = COUNT(peacock_missile_collision_cases_expected) + 1 + 8 + 32 + 14;
+
+#include "weapon_resources.h"
+#include "main/object_motion.h"
+#include "support/state_cases.h"
+void func_800A6510(struct ShotObj*);
+void func_800A666C(struct ShotObj*, s32, s32);
+void peacock_missile_explode(struct ShotObj*);
+void peacock_missile_main(struct ShotObj*);
+static u32 missile_paths(u32 index)
+{
+    static const u8 scenarios[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    u32 row = scenarios[index];
+    static const u8 home_offsets[] = { 0, 0, 0, 3, 0x1D };
+    struct ShotObj obj;
+    struct WeaponObj target;
+    s32 angle;
+    u32 seed, r[4];
+    memset(&obj, 0, sizeof(obj));
+    memset(&target, 0, sizeof(target));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    target.active = 1;
+    target.id = 0x17;
+    target.x_pos.i.hi = 200;
+    target.y_pos.i.hi = 150;
+    obj.active = 0x41;
+    obj.id = 42;
+    obj.state = 1;
+    obj.unk7C = &target;
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = 100;
+    obj.x_vel.val = 0x10000;
+    obj.timer = 5;
+    obj.unk90.val = 5;
+    obj.animation_table = (u32**)cyber_peacock_animations;
+    set_animation(&obj, 0xD);
+    obj.animation_step.fields.duration = 2;
+    g_Player.x_pos.i.hi = 300;
+    if (row <= 4) {
+        obj.timer = row == 0 ? 5 : 0;
+        WEAPON_FRAME_COUNTER = row == 1 ? 1 : 2;
+        angle = angle_to_object(OBJECT_HEADER(&obj), OBJECT_HEADER(&target));
+        obj.unk84.value = (angle - home_offsets[row]) & 0x1F;
+        func_800A6510(&obj);
+        assert(obj.timer == (row == 0 ? 4 : 0));
+        assert(obj.unk84.value == ((angle - home_offsets[row] + (row == 3 ? 1 : row == 4 ? -1
+                                                                                         : 0))
+                   & 0x1F));
+        assert(row <= 2 ? obj.x_vel.val == 0x10000 && obj.unk17 == 0xD : obj.unk17 == (obj.unk84.value >> 1) + 0xD);
+        return 1;
+    }
+    if (row == 5) {
+        for (seed = 0;; seed++) {
+            cur_random = seed;
+            r[0] = get_random();
+            r[1] = get_random();
+            r[2] = get_random();
+            r[3] = get_random();
+            if (!(r[1] & 1) && !(r[3] & 1) && (r[0] & 0x10) && (r[2] & 0x10))
+                break;
+        }
+        cur_random = seed;
+        func_800A666C(&obj, 0x10, 0x10);
+        assert(misc_objects[0].active == 0x41 && misc_objects[0].id == 0x31 && misc_objects[0].unk2 == 4);
+        assert(misc_objects[0].x_pos.i.hi == 100 - (u8)(r[0] & 0x10) && misc_objects[0].y_pos.i.hi == 100 - (u8)(r[2] & 0x10));
+        return 1;
+    }
+    if (row <= 7) {
+        obj.unk5 = 2;
+        obj.timer = row == 6 ? 1 : 3;
+        peacock_missile_explode(&obj);
+        assert(obj.state == (row == 6 ? 2 : 1) && obj.timer == (row == 6 ? 0 : 2) && misc_objects[0].active == 0);
+        return 1;
+    }
+    if (row == 8) {
+        target.active = 0;
+        assert(peacock_missile_hit_target(&obj) == 0 && obj.unk5 == 1);
+        return 1;
+    }
+    obj.unk8C.word = row == 9;
+    obj.unk90.val = row == 13 ? 0 : 5;
+    obj.unk5C = 1;
+    if (row == 10)
+        state_hit(MAIN_OBJECT(&obj), 0, 0, 3);
+    if (row == 11) {
+        obj.unk50.data = (const u8*)&state_hit_box;
+        MAIN_OBJECT(&g_Player)->hurt_box = (const u8*)&state_hit_box;
+        g_Player.x_pos = obj.x_pos;
+        g_Player.y_pos = obj.y_pos;
+        SPIKE_IMMUNE_SET(g_Player, 1);
+    }
+    if (row == 12) {
+        obj.unk68 = &state_hit_box;
+        target.unk68 = &state_hit_box;
+        target.x_pos = obj.x_pos;
+        target.y_pos = obj.y_pos;
+    }
+    peacock_missile_main(&obj);
+    assert(obj.unk5 == (row >= 10 && row <= 13 ? 1 : 0) && obj.unk90.val == (row == 13 ? 0 : row == 14 ? 4
+                                                                                                       : 5));
+    assert(visual_objects[1].active == (row == 10 ? 0x21 : 0));
+    return 1;
+}

@@ -57,6 +57,7 @@ static u32 disabled(void)
 static const CTestCase rising_fire_disable_state_cases[] = { disabled };
 static const u32 rising_fire_disable_state_cases_expected[] = { 0x102u };
 
+#ifndef VERSION_DEMO
 #define sw state_room.weapon
 #define FLARE(step, pose, setup) (player_reset(1, 0, 0), memset(&state_room, 0, sizeof(state_room)), memset(&shot_objects[0], 0, sizeof(shot_objects[0])), memset(&effect_objects[0], 0, sizeof(effect_objects[0])), pl.unk17 = pose, sw.active = 1, sw.state = 1, sw.id = 0xD, sw.unk5 = step, sw.x_pos.i.hi = 100, sw.y_pos.i.hi = 200, sw.y_vel.val = -0x20000, setup, rising_fire_charged_main(&sw), state_extra = sw.ext.weapon_13.timer | (u8)sw.unk64 << 8 | (sw.unk50 != NULL) << 16)
 static void rfc_follow(void)
@@ -79,6 +80,12 @@ static u32 test_rising_fire_charged_states(u32 row)
 {
     return object_run(rising_fire_charged_states_cases[row], row, &rising_fire_charged_states_expected[row * 10]);
 }
+#define CHARGED_STATES COUNT(rising_fire_charged_states_cases)
+#define CANCEL_CASES 22
+#else
+#define CHARGED_STATES 0
+#define CANCEL_CASES 15
+#endif
 
 extern u32* D_8011C0B0[6];
 extern struct Unk_unk68 rising_fire_hit_box[];
@@ -94,8 +101,13 @@ static struct {
 static u32 sprites[32];
 static struct WeaponObj obj, expected;
 static struct PlayerObj player_expected;
+#ifndef MMX4_SATURN
 static struct RectPtrPair uploads_expected[8];
 static u32 queue_expected;
+#define QUEUED() (u32)(vram_rect_ptr - vram_rect_ptrs)
+#else
+#define QUEUED() 0u
+#endif
 
 static void build_archive(void)
 {
@@ -121,11 +133,15 @@ static void prepare(u32 facing, u32 layer, u32 queue)
     c_test_zero_words((u32*)&obj, sizeof(obj) / 4);
     c_test_zero_words((u32*)&g_Player, sizeof(g_Player) / 4);
     c_test_zero_words((u32*)background_objects, sizeof(background_objects) / 4);
+#ifndef MMX4_SATURN
     c_test_zero_words((u32*)vram_rect_ptrs, sizeof(uploads_expected) / 4);
+#endif
     for (i = 0; i < 24; i++)
         ((u16*)player_gfx_buf_1)[i] = 0xEEEE;
     build_archive();
+#ifndef MMX4_SATURN
     vram_rect_ptr = &vram_rect_ptrs[queue];
+#endif
     sprites[13] = 0x40;
     TEST_PLAYER_GFX = (u8*)&archive;
     TEST_SPRITE_FRAMES = (u8*)sprites;
@@ -138,12 +154,12 @@ static void prepare(u32 facing, u32 layer, u32 queue)
     obj.unk50 = rising_fire_hit_box;
     obj.x_pos.i.hi = 100 + (layer == 1 ? 1024 : 0);
     obj.y_pos.i.hi = 200;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     g_Player.active = 0x41;
     g_Player.state = PLAYER_STATE_NORMAL;
     g_Player.weapon = 4;
     g_Player.bg_offset = layer;
-    g_Player.unk15 = facing ? 0x40 : 0;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     g_Player.x_pos.i.hi = 160 + (layer == 1 ? 1024 : 0);
     g_Player.y_pos.i.hi = 120;
     g_Player.shot_count = 3;
@@ -156,18 +172,23 @@ static void capture(void)
 {
     expected = obj;
     player_expected = g_Player;
+#ifndef MMX4_SATURN
     queue_expected = vram_rect_ptr - vram_rect_ptrs;
     c_test_copy_words((u32*)uploads_expected, (const u32*)vram_rect_ptrs, sizeof(uploads_expected) / 4);
+#endif
 }
 
 static void check(void)
 {
     c_test_same_words(&obj, &expected, sizeof(expected));
     c_test_same_words(&g_Player, &player_expected, sizeof(player_expected));
+#ifndef MMX4_SATURN
     c_test_same_words(vram_rect_ptrs, uploads_expected, sizeof(uploads_expected));
     assert(vram_rect_ptr == &vram_rect_ptrs[queue_expected]);
+#endif
 }
 
+#ifndef MMX4_SATURN
 static void expect_animation(u32 animation, u32 frame)
 {
     expected.unk17 = animation;
@@ -185,7 +206,7 @@ static void expect_init(u32 charged)
     expected.animation_table = D_8011C0B0;
     expected.unk40 = 0x520;
     expected.unk42 = 0x7801;
-    expected.unk16 = 1;
+    expected.unk16 = VISUAL_SATURN_LAYER(1);
     expected.unk3C = (u8*)sprites + 0x40;
     expected.x_vel.val = 0;
     expected.y_vel.val = 0x70000;
@@ -251,6 +272,7 @@ static u32 init(u32 row)
     check_pixels(obj.animation_step.fields.frame_index);
     return 1;
 }
+#endif
 
 static u32 cancel(u32 row)
 {
@@ -268,14 +290,17 @@ static u32 cancel(u32 row)
     expected.unk50 = NULL;
     player_expected.shot_count--;
     player_expected.special_shot_count--;
+#ifndef VERSION_DEMO
     if (charged)
         rising_fire_charged_update(&obj);
     else
+#endif
         rising_fire_update(&obj);
     check();
     return 1;
 }
 
+#ifndef MMX4_SATURN
 static u32 charged_frame(u32 row)
 {
     static const u8 timers[] = { 0, 1, 4 };
@@ -328,13 +353,52 @@ static u32 charged_frame(u32 row)
         check_pixels(obj.animation_step.fields.frame_index);
     return 1;
 }
+#endif
+
+void rising_fire_main(struct WeaponObj*);
+static u32 rf_step = C_TEST_STEP(5);
+static u32 rising(s16 x)
+{
+    prepare(0, 0, 0);
+    obj.state = 1;
+    obj.x_pos.i.hi = x;
+    obj.y_vel.val = 0x70000;
+    obj.animation_cursor = (const u8*)&rf_step;
+    obj.animation_step.packed = rf_step;
+    obj.unk38 = (u8*)archive.bank;
+    rising_fire_update(&obj);
+    return obj.state | (u32)(u8)obj.on_screen << 8 | (u32)(u16)obj.y_pos.i.hi << 16;
+}
+static u32 rf_rising(void)
+{
+    u32 seen = rising(100);
+    seen |= QUEUED() << 24 | (u32)obj.animation_step.fields.duration << 28;
+    return seen;
+}
+static u32 rf_gone(void) { return rising(0x1000); }
+static const CTestCase rising_fire_flight_cases[] = {
+    rf_rising,
+    rf_gone,
+};
+static const u32 rising_fire_flight_cases_expected[] = { 0x40C10101u, 0x00C80003u };
 
 const struct CTestGroup c_test_groups[] = {
+#ifndef VERSION_DEMO
     { "rising_fire_charged_states", 0, 0, COUNT(rising_fire_charged_states_cases), test_rising_fire_charged_states },
+#endif
     { "rising_fire_disable_state", rising_fire_disable_state_cases, rising_fire_disable_state_cases_expected, COUNT(rising_fire_disable_state_cases), 0 },
+#ifndef MMX4_SATURN
     { "rising_fire_initialization", NULL, NULL, 38, init },
-    { "rising_fire_cancellation", NULL, NULL, 22, cancel },
+#endif
+    { "rising_fire_cancellation", NULL, NULL, CANCEL_CASES, cancel },
+    { "rising_fire_flight", rising_fire_flight_cases, rising_fire_flight_cases_expected, COUNT(rising_fire_flight_cases), 0 },
+#ifndef MMX4_SATURN
     { "rising_fire_charged_frames", NULL, NULL, 31, charged_frame },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(rising_fire_charged_states_cases) + COUNT(rising_fire_disable_state_cases) + 38 + 22 + 31;
+const u32 c_test_count = CHARGED_STATES + COUNT(rising_fire_disable_state_cases) + 38 + CANCEL_CASES + 31 + COUNT(rising_fire_flight_cases)
+#ifdef MMX4_SATURN
+    - 38 - 31
+#endif
+    ;

@@ -67,8 +67,23 @@ static u32 flash_case(u32 mode)
 }
 static const u32 web_flash_pointer_views_cases_expected[] = { 0x10141u, 0x0u, 0x10141u, 0x10141u, 0x0u, 0x0u, 0x0u };
 
+static u32 flash_start_second(void)
+{
+    struct VisualObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.unk2 = 1;
+    obj.unk54 = 7;
+    obj.animation_table = (const u8* const*)web_spider_animations;
+    web_flash_update(&obj);
+    return obj.state | (u32)obj.unk17 << 8 | (u32)obj.unk54 << 16 | (u32)(u8)obj.on_screen << 24;
+}
+static const CTestCase web_flash_start_cases[] = { flash_start_second };
+static const u32 web_flash_start_cases_expected[] = { 0x01001501u };
+
 const struct CTestGroup c_test_groups[] = {
+    { "web_flash_start", web_flash_start_cases, web_flash_start_cases_expected, COUNT(web_flash_start_cases), 0 },
     { "web_flash_pointer_views", NULL, web_flash_pointer_views_cases_expected, COUNT(web_flash_pointer_views_cases_expected), flash_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(web_flash_pointer_views_cases_expected);
+const u32 c_test_count = COUNT(web_flash_pointer_views_cases_expected) + COUNT(web_flash_start_cases);

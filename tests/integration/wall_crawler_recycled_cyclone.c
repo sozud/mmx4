@@ -75,7 +75,7 @@ static u32 recycled_slot(u32 row)
     func_8004B418(&crawler);
     for (i = 0; i < 6; i++)
         animate_object(ANIMATED_OBJECT(&crawler));
-    assert(crawler.animation_step.packed == 0x24010201 && crawler.ext.main_11.angle == 0 && crawler.unk15 == 0x40);
+    assert(crawler.animation_step.packed == C_TEST_STEP(0x24010201) && crawler.ext.main_11.angle == 0 && crawler.unk15 == PLAYER_FACING_RIGHT);
     func_8004B514(&crawler);
     background_objects[0].x_pos.i.hi = 1000;
     background_objects[0].y_pos.i.hi = 0;
@@ -97,19 +97,19 @@ static u32 recycled_slot(u32 row)
     expected[0].state = 1;
     expected[0].unk28 = expected[0].unk2C = 0;
     expected[0].unk5C = 1;
-    expected[0].unk16 = 0;
+    expected[0].unk16 = VISUAL_SATURN_LAYER(0);
     expected[0].unk60 = 2;
     expected[0].x_vel.val = 3 * 65536;
     expected[0].x_pos.i.hi += 13;
     expected[0].unk17 = 11;
     expected[0].previous_animation_index = 255;
     expected[0].animation_cursor = (u32*)wall_crawler_animations[11];
-    expected[0].animation_step.packed = 0x10010001;
+    expected[0].animation_step.packed = C_TEST_STEP(0x10010001);
     wall_crawler_shot_update(&shot_objects[0]);
     assert(c_test_word_difference((u32*)shot_objects, (u32*)expected, sizeof(expected) / 4) == 0 && c_test_word_difference((u32*)weapon_objects, (u32*)weapons, sizeof(weapons) / 4) == 0 && c_test_word_difference((u32*)misc_objects, (u32*)misc, sizeof(misc) / 4) == 0);
     expected[0].x_pos.val += 3 * 65536;
     expected[0].animation_cursor = (u32*)wall_crawler_animations[11] + 1;
-    expected[0].animation_step.packed = 0x11010001;
+    expected[0].animation_step.packed = C_TEST_STEP(0x11010001);
     expected[0].state = 2;
     wall_crawler_shot_update(&shot_objects[0]);
     assert(c_test_word_difference((u32*)shot_objects, (u32*)expected, sizeof(expected) / 4) == 0 && c_test_word_difference((u32*)weapon_objects, (u32*)weapons, sizeof(weapons) / 4) == 0 && c_test_word_difference((u32*)misc_objects, (u32*)misc, sizeof(misc) / 4) == 0);

@@ -17,7 +17,7 @@ static u32 test_train_tunnel_accelerate_0(u32 row)
     background_objects[0].x_pos.i.hi = -16640;
     background_objects[0].unk26 = 16384;
     obj.unk18.val = 524288;
-    g_Player.spike_immune = 7;
+    SPIKE_IMMUNE_SET(g_Player, 7);
     engine_obj.gameplay_locked = 0x27;
     player_before = g_Player;
     engine_before = engine_obj;
@@ -45,14 +45,14 @@ static u32 test_train_tunnel_accelerate_1(u32 row)
     memset(&g_Player, 0, sizeof(g_Player));
     memset(&engine_obj, 0, sizeof(engine_obj));
     g_Player.script_state = -128;
-    g_Player.spike_immune = 7;
+    SPIKE_IMMUNE_SET(g_Player, 7);
     engine_obj.gameplay_locked = 0x27;
     player_before = g_Player;
     engine_before = engine_obj;
     memcpy(background_before, background_objects, sizeof(background_before));
     train_tunnel_accelerate(&obj);
     player_before.script_state = 0;
-    player_before.spike_immune = 0;
+    SPIKE_IMMUNE_SET(player_before, 0);
     engine_before.gameplay_locked = 0;
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
@@ -205,8 +205,8 @@ static void script(struct PlayerObj* p, struct EngineObj* e)
 {
     p->script_state = 1;
     p->script_action = 0x14;
-    p->script_facing = 0x40;
-    p->spike_immune = 1;
+    p->script_facing = PLAYER_FACING_RIGHT;
+    SPIKE_IMMUNE_SET(*p, 1);
     e->gameplay_locked = 1;
 }
 static u32 stop(u32 row)
@@ -307,7 +307,9 @@ static u32 departure(u32 row)
     return 1;
 }
 
+static u32 tunnel_paths(u32 index);
 const struct CTestGroup c_test_groups[] = {
+    { "tunnel_paths", 0, 0, 16, tunnel_paths },
     { "train_tunnel_accelerate", 0, 0, 2, test_train_tunnel_accelerate },
     { "train_tunnel_player_at_lock", 0, 0, 1, test_train_tunnel_player_at_lock },
     { "train_tunnel_update_section", 0, 0, 1, test_train_tunnel_update_section },
@@ -318,4 +320,115 @@ const struct CTestGroup c_test_groups[] = {
     { "normal_and_checkpoint_three_departure_script_effects", NULL, NULL, 8, departure },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 2 + 1 + 1 + COUNT(train_tunnel_sections_cases) + 12 + 12 + 14 + 8;
+const u32 c_test_count = 2 + 1 + 1 + COUNT(train_tunnel_sections_cases) + 12 + 12 + 14 + 8 + 16;
+
+void train_tunnel_main(struct LayerObj*);
+void train_tunnel_section_0(struct LayerObj*);
+void train_tunnel_section_1(struct LayerObj*);
+void train_tunnel_section_2(struct LayerObj*);
+void train_tunnel_accelerate(struct LayerObj*);
+void train_tunnel_shake_running(struct LayerObj*);
+void train_tunnel_shake_braking(struct LayerObj*);
+void func_800D9B48(struct LayerObj*);
+static u8 tunnel_map[48];
+static u32 tunnel_paths(u32 index)
+{
+    static const u8 scenarios[] = { 0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
+    u32 row = scenarios[index];
+    static const u8 light_bytes1[] = { 0, 0, 2, 2, 0xFF, 1, 1, 1 }, light_screens[] = { 0x20, 0x1D, 0x18, 0x20, 0x20, 0x20, 0x21, 0x21 };
+    struct LayerObj obj;
+    memset(&obj, 0, sizeof(obj));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(tunnel_map, 0, sizeof(tunnel_map));
+    SP_BG_TILEMAP = tunnel_map;
+    layout_width = 4;
+    layout_size = 16;
+    engine_obj.stage = 8;
+    obj.active = 1;
+    obj.id = 2;
+    obj.state = 1;
+    obj.unk16 = 5;
+    switch (row) {
+    case 0:
+        g_Player.x_pos.i.hi = 0x100;
+        obj.unk18.val = 0x20000;
+        train_tunnel_main(&obj);
+        assert(obj.unk16 == 5 && background_objects[1].x_pos.val == 0x20000 && background_objects[2].x_pos.val == 0x10000);
+        break;
+    case 1:
+    case 2:
+        obj.unk6 = row == 2;
+        train_tunnel_section_0(&obj);
+        assert(obj.unk5 == (row == 2 ? 5 : 0) && obj.unk6 == (row == 1));
+        break;
+    case 3:
+    case 4:
+        obj.unk5 = 1;
+        obj.unk6 = 2;
+        obj.unk7 = row == 4;
+        obj.unk18.val = 0x10000;
+        background_objects[0].x_pos.val = 0x30000;
+        train_tunnel_section_1(&obj);
+        assert(obj.unk18.val == (row == 3 ? 0xF800 : 0x10000));
+        assert(background_objects[1].x_pos.val == (row == 4 ? 0x30000 : 0) && background_objects[2].x_pos.val == (row == 4 ? 0x18000 : 0));
+        break;
+    case 5:
+    case 6:
+        obj.unk5 = 2;
+        obj.unk6 = row == 6;
+        obj.unk18.val = 0x20000;
+        engine_obj.checkpoint = 3;
+        train_tunnel_section_2(&obj);
+        assert(obj.unk6 == 1 && obj.unk18.val == (row == 5 ? 0x80000 : 0x20400) && obj.unk17 == (row == 5));
+        break;
+    case 7:
+        background_objects[0].unk26 = 0x1DE0;
+        background_objects[0].x_pos.i.hi = 0x1DE0;
+        g_Player.script_state = 1;
+        g_Player.script_action = 0x14;
+        obj.unk18.val = 0x20000;
+        train_tunnel_accelerate(&obj);
+        assert(g_Player.script_state == 1 && g_Player.script_action == 0x14 && obj.unk18.val == 0x20400);
+        break;
+    case 8:
+    case 9:
+        obj.unk16 = 1;
+        if (row == 8)
+            train_tunnel_shake_running(&obj);
+        else
+            train_tunnel_shake_braking(&obj);
+        assert(obj.unk16 == (row == 8 ? 0x78 : 0x1E) && background_objects[0].unk37 == (row == 8 ? 0x30 : 0x10));
+        break;
+    default:
+        engine_obj.character_state.fields.flags = row != 10;
+        obj.private_state.bytes[1] = light_bytes1[row - 10];
+        obj.private_state.bytes[2] = row == 13 ? 0x10 : 0x20;
+        memset(tunnel_map + 16, light_screens[row - 10], sizeof(tunnel_map) - 16);
+        background_objects[1].unk4E = row == 16 ? 0x1C : 3;
+        background_objects[1].unk4D = 3;
+        func_800D9B48(&obj);
+        switch (row) {
+        case 10:
+        case 14:
+            assert(obj.private_state.bytes[1] == light_bytes1[row - 10] && background_objects[1].unk4E == 3);
+            break;
+        case 11:
+        case 12:
+        case 13:
+            assert(obj.private_state.bytes[1] == (row == 13 ? 1 : 2) && obj.private_state.bytes[2] == 0x20);
+            break;
+        case 15:
+            assert(obj.private_state.bytes[1] == 1 && background_objects[1].unk4E == 3);
+            break;
+        default:
+            assert(obj.private_state.bytes[2] == 0x21 && background_objects[1].unk4D == 4);
+            assert(background_objects[1].unk4E == (row == 16 ? 0x1D : 4) && obj.private_state.bytes[1] == (row == 16 ? 0xFF : 1));
+            break;
+        }
+        break;
+    }
+    return 1;
+}

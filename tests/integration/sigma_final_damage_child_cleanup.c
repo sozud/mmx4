@@ -65,7 +65,7 @@ static u32 lethal_cleanup(u32 row)
     owner.id = 74;
     owner.state = 1;
     owner.unk5 = 4;
-    owner.unk16 = 6;
+    owner.unk16 = VISUAL_SATURN_LAYER(6);
     owner.unk40 = 0xB0;
     owner.ext.main_74.pattern_index = 7;
     engine_obj.boss_ptr = &owner;
@@ -101,7 +101,7 @@ static u32 lethal_cleanup(u32 row)
     g_Player.hp = 24;
     g_Player.x_pos.i.hi = 1348;
     g_Player.y_pos.i.hi = 575;
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     g_Player.animation_table = (u32**)D_80119DF0;
     player_enter_idle(&g_Player);
     g_Player.input.buttons.held = PLAYER_INPUT_SHOOT;

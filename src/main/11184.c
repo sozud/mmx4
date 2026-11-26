@@ -334,7 +334,7 @@ void func_80020B1C(struct EngineObj* arg0)
     func_8001C3E8();
     saturn_title_upload_window();
     func_800129A4(8);
-    if ((saturn_backup_status & SATURN_BACKUP_UNAVAILABLE) == SATURN_BACKUP_UNAVAILABLE) {
+    if ((saturn_backup_cart_status & SATURN_BACKUP_UNAVAILABLE) == SATURN_BACKUP_UNAVAILABLE) {
         arg0->unk8 = func_8001E850(D_800F2310, 1);
         arg0->unk1 += 3;
     } else {

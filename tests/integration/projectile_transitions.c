@@ -77,9 +77,10 @@ static void prepare(struct WeaponObj* obj, u32 layer, u32 facing)
     obj->id = 5;
     obj->unk2 = 0;
     obj->on_screen = 1;
+    obj->unk16 = 0;
     obj->state = 1;
     obj->bg_offset = layer;
-    obj->unk15 = facing ? 0x40 : 0;
+    obj->unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj->x_pos.val = (cameras[layer].x + 160) * 65536 + 0x1234;
     obj->y_pos.val = (cameras[layer].y + 120) * 65536 + 0x5678;
     obj->unk50 = ground_hunter_crawl_box;
@@ -331,9 +332,9 @@ static void orb_birth(u32 direction)
     expected.on_screen = 1;
     expected.unk50 = rakuhouha_orb_box;
     expected.animation_table = D_8011C018;
-    expected.unk42 = 0x7803;
-    expected.unk16 = 1;
-    expected.unk40 = 0;
+    expected.unk42 = WEAPON_PALETTE_3;
+    expected.unk16 = VISUAL_SATURN_LAYER(1);
+    expected.unk40 = WEAPON_TEXTURE_BASE;
     expected.unk3C = (u8*)sprite_archive + 0x98;
     expected.x_pos.u.hi = player_expected.x_pos.u.hi;
     expected.y_pos.u.hi = player_expected.y_pos.u.hi + 21;
@@ -343,7 +344,7 @@ static void orb_birth(u32 direction)
     expected.unk17 = direction + 10;
     expected.previous_animation_index = 0xFF;
     expected.animation_cursor = D_8011C018[direction + 10];
-    expected.animation_step.packed = orb_frame(direction, 0);
+    expected.animation_step.packed = C_TEST_STEP(orb_frame(direction, 0));
     expected.x_pos.val += expected.x_vel.val * 3;
     expected.y_pos.val -= expected.y_vel.val * 3;
     expected.state = 1;
@@ -360,7 +361,7 @@ static void orb_tick(u32 direction)
     frame = expected.animation_cursor - (u32*)D_8011C018[direction + 10];
     frame = frame == 5 ? 2 : frame + 1;
     expected.animation_cursor = D_8011C018[direction + 10] + frame;
-    expected.animation_step.packed = orb_frame(direction, frame);
+    expected.animation_step.packed = C_TEST_STEP(orb_frame(direction, frame));
     expected.x_pos.val += expected.x_vel.val;
     expected.y_pos.val -= expected.y_vel.val;
     expected.on_screen = visible(&expected, 32, 32);
@@ -403,7 +404,7 @@ static u32 test_orb_timeline(u32 row)
     if (count == 60)
         assert(obj.active == 0 && obj.on_screen == 0);
     for (frame = 0; frame < 6; frame++)
-        assert(D_8011C018[direction + 10][frame].packed == orb_frame(direction, frame));
+        assert(D_8011C018[direction + 10][frame].packed == C_TEST_STEP(orb_frame(direction, frame)));
     return 1;
 }
 

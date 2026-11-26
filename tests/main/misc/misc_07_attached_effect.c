@@ -17,7 +17,7 @@ static u32 trail(u32 row)
     obj.active = 0x41;
     obj.id = 7;
     obj.unk2 = kind;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = layer;
     obj.animation_table = (u32**)jet_drone_animations;
     obj.ext.misc_7.position = &position;
@@ -28,7 +28,7 @@ static u32 trail(u32 row)
     expected.unk17 = 10;
     expected.previous_animation_index = 255;
     expected.animation_cursor = (u32*)jet_drone_animations[10];
-    expected.animation_step.packed = 0x10010001;
+    expected.animation_step.packed = C_TEST_STEP(0x10010001);
     attached_effect_update(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
     position.x += 65536;
@@ -37,7 +37,7 @@ static u32 trail(u32 row)
     expected.x_pos.val += 65536;
     expected.y_pos.val += 2 * 65536;
     expected.animation_cursor++;
-    expected.animation_step.packed = 0x1C010001;
+    expected.animation_step.packed = C_TEST_STEP(0x1C010001);
     expected.on_screen = 1;
     attached_effect_update(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
@@ -47,6 +47,30 @@ static u32 trail(u32 row)
     c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
     return 1;
 }
-const struct CTestGroup c_test_groups[] = { { "actual_jet_drone_trail_facing_and_moving_position_source", NULL, NULL, 12, trail } };
+static u32 at_step = C_TEST_STEP(5);
+static u32 trail_event(void)
+{
+    struct MiscObj obj;
+    struct FixedPointPosition position;
+    memset(&obj, 0, sizeof(obj));
+    memset(background_objects, 0, sizeof(background_objects));
+    position.x = 160 * 65536;
+    position.y = 120 * 65536;
+    obj.active = 0x41;
+    obj.state = 1;
+    obj.ext.misc_7.position = &position;
+    obj.animation_cursor = (const u8*)&at_step;
+    obj.animation_step.packed = at_step;
+    obj.animation_step.fields.event = 1;
+    attached_effect_update(&obj);
+    return obj.state | (u32)(u16)obj.x_pos.i.hi << 16;
+}
+static const CTestCase attached_effect_event_cases[] = { trail_event };
+static const u32 attached_effect_event_cases_expected[] = { 0xA00002u };
+
+const struct CTestGroup c_test_groups[] = {
+    { "attached_effect_event", attached_effect_event_cases, attached_effect_event_cases_expected, COUNT(attached_effect_event_cases), 0 },
+    { "actual_jet_drone_trail_facing_and_moving_position_source", NULL, NULL, 12, trail },
+};
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 12;
+const u32 c_test_count = 12 + COUNT(attached_effect_event_cases);

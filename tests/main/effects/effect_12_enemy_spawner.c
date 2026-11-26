@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/effects/effect_12_enemy_spawner.h"
 #include "main/195B4.h"
 
@@ -62,7 +63,7 @@ static u32 spawner_case(u32 mode)
         + 0xBEEF;
     engine_obj.stage = 11;
     engine_obj.substage = 1;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)frames;
     if (mode == 14)
         obj.unk5 = -128;
@@ -90,8 +91,8 @@ static u32 spawner_case(u32 mode)
             pool_expected[47].unk2 = 7;
             pool_expected[47].x_pos.val = obj.x_pos.val;
             pool_expected[47].y_pos.val = obj.y_pos.val;
-            pool_expected[47].unk40 = 9;
-            pool_expected[47].unk42 = 0x784C;
+            pool_expected[47].unk40 = OBJECT_STAGE_TEXTURE(1);
+            pool_expected[47].unk42 = OBJECT_CLUT(0x784C);
             pool_expected[47].sprite_frames = (u8*)frames + 20;
         }
         if (mode == 8 || mode == 15) {
@@ -108,18 +109,12 @@ static u32 spawner_case(u32 mode)
     }
     assert(s_StageMainIds[11][1][1] == 0x86 && (u8)func_8002938C(0x86) == 1);
     func_800B8114(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(pool_expected) / 4; i++)
-        assert(((u32*)main_objects)[i] == ((u32*)pool_expected)[i]);
-    for (i = 0; i < sizeof(inactive_child) / 4; i++)
-        assert(((u32*)&inactive_child)[i] == ((u32*)&inactive_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_expected)[i]);
-    for (i = 0; i < sizeof(backgrounds_expected) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_expected)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(main_objects, pool_expected, sizeof(pool_expected));
+    c_test_same_words(&inactive_child, &inactive_before, sizeof(inactive_child));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_expected, sizeof(backgrounds_expected));
     for (i = 0; i < 4; i++) {
         assert(frames[i] == 16 + i * 4 && frames[i + 4] == i + 1);
         assert(metadata[i] == 0x400 + i * 0x80);
@@ -130,8 +125,22 @@ static u32 spawner_case(u32 mode)
 }
 static const u32 enemy_spawner_child_graph_cases_expected[] = { 0x0u, 0x1u, 0x0u, 0x1u, 0x1002001u, 0x1u, 0x1001E01u, 0x1002002u, 0x3u, 0x4000002u, 0x4000000u, 0x4000003u, 0x4000004u, 0x4000000u, 0xFFFFFF80u, 0x3u };
 
+s32 func_800B8490(struct EffectObj*);
+static const s16 spawner_offsets[3][2] = { { -0x41, 0 }, { 0, 0x130 }, { 0, -0x41 } };
+static u32 spawner_away(u32 row)
+{
+    struct EffectObj obj;
+    memset(&obj, 0, sizeof(obj));
+    background_objects[0].x_pos.i.hi = 0x400;
+    background_objects[0].y_pos.i.hi = 0x200;
+    obj.x_pos.i.hi = 0x400 + spawner_offsets[row][0];
+    obj.y_pos.i.hi = 0x200 + spawner_offsets[row][1];
+    return func_800B8490(&obj);
+}
+static const u32 spawner_away_expected[] = { 1u, 1u, 1u };
 const struct CTestGroup c_test_groups[] = {
     { "enemy_spawner_child_graph", NULL, enemy_spawner_child_graph_cases_expected, COUNT(enemy_spawner_child_graph_cases_expected), spawner_case },
+    { "enemy_spawner_away_bounds", NULL, spawner_away_expected, COUNT(spawner_away_expected), spawner_away },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(enemy_spawner_child_graph_cases_expected);
+const u32 c_test_count = COUNT(enemy_spawner_child_graph_cases_expected) + COUNT(spawner_away_expected);

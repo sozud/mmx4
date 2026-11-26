@@ -1,5 +1,6 @@
 #ifndef MMX4_TESTS_PROJECTILE_DAMAGE_H
 #define MMX4_TESTS_PROJECTILE_DAMAGE_H
+#include "support/platform_fixture.h"
 
 extern u8* dragon_spread_shot_animations[16];
 extern void* frost_walrus_animations[39];
@@ -53,7 +54,7 @@ static u32 damage_case(u32 mode)
     owner.state = hit ? 1 : 2;
     owner.unk5 = hit ? 8 : 7;
     obj.unk7C = &owner;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     if (hit) {
         weapon_objects[0].active = 1;
         weapon_objects[0].id = 0;
@@ -98,7 +99,7 @@ static u32 damage_case(u32 mode)
         before.unk68 = &walrus_ice_lob_terrain_box;
         before.unk54 = (const u8*)&walrus_ice_icicle_hurt_box;
         before.unk50.data = (const u8*)&walrus_ice_icicle_attack_box;
-        before.unk16 = 2;
+        before.unk16 = VISUAL_SATURN_LAYER(2);
         before.unk5 = 1;
         before.unk17 = 10;
         before.previous_animation_index = 0xFF;
@@ -110,7 +111,7 @@ static u32 damage_case(u32 mode)
                                              : 7;
         before.unk42 = kind == 0 || !fatal ? 0x9234 : 0x1234;
         weapons_before[0].unk98 = 1;
-        weapons_before[0].unk80.word = (u16)(x + (kind == 0 || kind == 2 || mode == 9 ? 1 : 0)) | ((u32)y << 16);
+        TEST_SET_HALVES(weapons_before[0].unk80, x + (kind == 0 || kind == 2 || mode == 9 ? 1 : 0), y);
     } else
         before.unk42 = 0x1234;
     if (kind == 0) {

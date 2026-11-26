@@ -6,6 +6,7 @@
 #include "main/objects.h"
 #include "main/menu.h"
 #include "main/1AC84.h"
+#include "support/test_pad.h"
 extern void func_80020DEC(u8* arg0, s16 arg1);
 void func_80020ED4(struct EngineObj*);
 void func_80020F24(struct EngineObj*);
@@ -21,7 +22,9 @@ extern u8 D_800F2468[], D_800F247C[], D_800F2490[];
 extern u16 D_800EE430[16];
 
 static struct UnkObj expected_unknown[UNK_OBJECT_COUNT];
+static u8 expected_palette_load;
 
+#ifndef MMX4_SATURN
 static void check_bytes(const void* actual, const void* expected, u32 size)
 {
     const u8* a = actual;
@@ -53,6 +56,7 @@ static void expect_labels(u32 confirmation)
     expected_unknown[5].link.data = D_800F2490;
     expected_unknown[5].x_pos.i.hi = confirmation ? 0x78 : 0x40;
 }
+#endif
 
 static void prepare_menu(struct EngineObj* obj, u32 phase, u32 cursor, u16 input, s8 fade)
 {
@@ -66,13 +70,13 @@ static void prepare_menu(struct EngineObj* obj, u32 phase, u32 cursor, u16 input
     obj->unk6 = 2;
     obj->unk7 = 1;
     obj->character_state.fields.menu_state = phase;
-    controller_input.held = controller_input.pressed = input;
+    TEST_PAD_HELD = TEST_PAD_PRESSED = input;
     main_bss_state.frame_counter = 0x13572468;
     main_bss_state.transition.suspended = 1;
     main_bss_state.transition.selection = cursor;
     main_bss_state.transition.fade_amount = 5;
     D_8013E198[0] = -1;
-    need_palette_load = 0x20;
+    need_palette_load = expected_palette_load = 0x20;
 #ifdef MMX4_PC
     mmx4_pc_threads_init();
     ResetGraph(0);
@@ -97,8 +101,11 @@ static void check_menu(const struct EngineObj* obj, const struct EngineObj* expe
     assert(c_test_word_difference((const u32*)unk_objects,
                (const u32*)expected_unknown, sizeof(expected_unknown) / 4)
         == 0);
-    assert(controller_input.held == input && controller_input.pressed == input);
-    assert(controller_input.previous == 0 && need_palette_load == 0x20);
+    assert(TEST_PAD_HELD == input && TEST_PAD_PRESSED == input);
+    assert(controller_input.previous == 0 && need_palette_load == expected_palette_load);
+#ifdef MMX4_SATURN
+    assert(saturn_display_mode == (expected_palette_load & 1 ? 15 : 0));
+#endif
 #ifdef MMX4_PC
     {
         struct GameThread threads[4];
@@ -111,6 +118,15 @@ static void check_menu(const struct EngineObj* obj, const struct EngineObj* expe
 #endif
 }
 
+static void expect_title_restore(u32 restored)
+{
+#ifdef MMX4_SATURN
+    if (restored)
+        expected_palette_load |= 1;
+#endif
+}
+
+#ifndef MMX4_SATURN
 static u32 test_entry(u32 row)
 {
     static const u8 fill[] = { 0, 0x25, 0xA5 };
@@ -245,6 +261,10 @@ static u32 test_resume_completion(u32 row)
     check_menu(&obj, &expected, &global, &player, &main, 0);
     return 1;
 }
+#define PAUSE_QUIT_CASES (3 + COUNT(inputs) + 3 + 6)
+#else
+#define PAUSE_QUIT_CASES 0
+#endif
 
 static u32 test_retry_without_reload(u32 row)
 {
@@ -275,12 +295,14 @@ static u32 test_retry_without_reload(u32 row)
     global = engine_obj;
     player = g_Player;
     main = main_bss_state;
+    expect_title_restore(!fade);
     func_80020A08(&obj);
     check_menu(&obj, &expected, &global, &player, &main, 0);
     assert(D_80171EA8 == 0);
     return 1;
 }
 
+#ifndef MMX4_SATURN
 static u32 test_label_allocation(u32 row)
 {
     static const u8 available[] = { 0, 1, 1, 4, 5, 6, 6, 7 };
@@ -321,6 +343,10 @@ static u32 test_label_allocation(u32 row)
     check_bytes(source, program, sizeof(program));
     return 1;
 }
+#define LABEL_CASES 8
+#else
+#define LABEL_CASES 0
+#endif
 
 static u32 test_menu_navigation(u32 row)
 {
@@ -335,17 +361,17 @@ static u32 test_menu_navigation(u32 row)
         u8 cursor, limit, next_cursor, confirm;
     } cases[] = {
         { 0, 0, 0, 1, 0, 0 },
-        { PAD_CONFIRM, 0, 0, 1, 0, 1 },
-        { PAD_CONFIRM, 0, 1, 1, 1, 1 },
-        { PADLup, 0, 0, 1, 1, 0 },
-        { PADLdown, 0, 1, 1, 0, 0 },
-        { PADLup | PAD_CONFIRM, 0, 0, 1, 1, 1 },
-        { PADLdown | PAD_CONFIRM, 0, 1, 1, 0, 1 },
-        { PADLup | PADLdown | PAD_CONFIRM, 0, 1, 1, 1, 1 },
-        { PAD_CONFIRM, 1, 0, 1, 0, 0 },
-        { PAD_CONFIRM, -1, 1, 1, 1, 0 },
-        { PADLdown | PAD_CONFIRM, 0, 2, 2, 0, 1 },
-        { PADLup, 0, 0, 2, 2, 0 },
+        { TEST_PAD_CONFIRM, 0, 0, 1, 0, 1 },
+        { TEST_PAD_CONFIRM, 0, 1, 1, 1, 1 },
+        { TEST_PAD_UP, 0, 0, 1, 1, 0 },
+        { TEST_PAD_DOWN, 0, 1, 1, 0, 0 },
+        { TEST_PAD_UP | TEST_PAD_CONFIRM, 0, 0, 1, 1, 1 },
+        { TEST_PAD_DOWN | TEST_PAD_CONFIRM, 0, 1, 1, 0, 1 },
+        { TEST_PAD_UP | TEST_PAD_DOWN | TEST_PAD_CONFIRM, 0, 1, 1, 1, 1 },
+        { TEST_PAD_CONFIRM, 1, 0, 1, 0, 0 },
+        { TEST_PAD_CONFIRM, -1, 1, 1, 1, 0 },
+        { TEST_PAD_DOWN | TEST_PAD_CONFIRM, 0, 2, 2, 0, 1 },
+        { TEST_PAD_UP, 0, 0, 2, 2, 0 },
     };
     struct EngineObj obj, expected, global;
     struct PlayerObj player;
@@ -362,8 +388,8 @@ static u32 test_menu_navigation(u32 row)
     if (cases[index].confirm) {
         expected.unk1++;
         if (handler != 1 || cases[index].next_cursor != 0) {
-            main.transition.active = -1;
-            main.transition.fade_amount = 8;
+            main.transition.active = TEST_FADE_OUT_ACTIVE;
+            main.transition.fade_amount = TEST_FADE_OUT_AMOUNT(8, main.transition.fade_amount);
         }
     }
     handlers[handler](&obj);
@@ -397,6 +423,7 @@ static u32 test_menu_route(u32 row)
             expected.unk4 = obj.state;
         expected.unk1 = expected.unk2 = expected.unk3 = 0;
     }
+    expect_title_restore(!fade && (handler || cursor != 0));
     if (handler)
         func_80020D3C(&obj);
     else
@@ -701,12 +728,16 @@ static u32 test_retry_title(u32 row)
 #endif
 
 const struct CTestGroup c_test_groups[] = {
+#ifndef MMX4_SATURN
     { "pause_transition_entry", 0, 0, 3, test_entry },
     { "pause_transition_input", 0, 0, COUNT(inputs), test_input },
     { "pause_transition_blocked", 0, 0, 3, test_blocked_input },
     { "pause_transition_resume", 0, 0, 6, test_resume_completion },
+#endif
     { "retry_without_reload", 0, 0, 10, test_retry_without_reload },
+#ifndef MMX4_SATURN
     { "menu_label_allocation", 0, 0, 8, test_label_allocation },
+#endif
     { "menu_navigation", 0, 0, 36, test_menu_navigation },
     { "menu_route", 0, 0, 13, test_menu_route },
 #ifdef MMX4_PC
@@ -716,7 +747,7 @@ const struct CTestGroup c_test_groups[] = {
 #endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 3 + COUNT(inputs) + 3 + 6 + 10 + 8 + 36 + 13
+const u32 c_test_count = PAUSE_QUIT_CASES + 10 + LABEL_CASES + 36 + 13
 #ifdef MMX4_PC
     + 8
     + 2

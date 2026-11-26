@@ -49,6 +49,35 @@ static u32 crumble(u32 row)
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     return 1;
 }
-const struct CTestGroup c_test_groups[] = { { "six_original_trigger_box_sets_full_last_effect_slot", NULL, NULL, 12, crumble } };
+static u32 crumble_miss(u32 row)
+{
+    struct ItemObj obj, expected;
+    u32 kind = row ? 3 : 0;
+    engine_obj.stage = 2;
+    engine_obj.substage = 0;
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.active = 0x41;
+    g_Player.hp = 24;
+    g_Player.x_pos.i.hi = 0x100;
+    g_Player.y_pos.i.hi = 0x100;
+    player_set_collision_bounds(&g_Player);
+    c_test_zero_words((u32*)effect_objects, sizeof(effect_objects) / 4);
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 1;
+    obj.id = 17;
+    obj.unk2 = kind;
+    crumble_trigger_init(&obj);
+    expected = obj;
+    expected.unk68 = &obj.unk7C.bounds[row ? 0 : 3];
+    crumble_trigger_wait_player(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    assert(effect_objects[0].active == 0 && obj.state == 1);
+    engine_obj.stage = 0;
+    return 1;
+}
+const struct CTestGroup c_test_groups[] = {
+    { "six_original_trigger_box_sets_full_last_effect_slot", NULL, NULL, 12, crumble },
+    { "crumble_trigger_miss", NULL, NULL, 2, crumble_miss },
+};
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 12;
+const u32 c_test_count = 14;

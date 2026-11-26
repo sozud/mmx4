@@ -14,6 +14,7 @@ extern struct Unk_unk68 aiming_laser_charged_box[];
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 
+#ifndef VERSION_DEMO
 static u32 lock_case(u32 mode, u32 observation)
 {
     struct WeaponObj obj, expected_weapon, before_weapons[16];
@@ -43,11 +44,15 @@ static u32 lock_case(u32 mode, u32 observation)
     obj.x_pos.val = target.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = target.y_pos.val = 100 * 65536 + 0x2468;
     obj.unk50 = &box;
-    target.active = 1;
+    target.active = mode == 8 ? 5 : 1;
     target.hp = mode == 3 ? 0 : 16;
     target.unk7A = mode == 2;
     target.hurt_box = &box;
     player.special_shot_count = 3;
+    if (mode == 7)
+        player.weapon_06_slots[0] = &target;
+    if (mode == 9)
+        target.x_pos.val += 0x400000;
     if (mode < 2)
         player.weapon_06_slots[mode + 1] = &target;
     if (mode == 4 || mode == 6) {
@@ -65,7 +70,7 @@ static u32 lock_case(u32 mode, u32 observation)
     assert(box.unk0 == 0 && box.unk1 == 0 && box.unk2 == 4 && box.unk3 == 4);
     assert(obj.active == 1 && obj.id == 6 && obj.bg_offset == -1);
     assert(obj.x_pos.val == 100 * 65536 + 0x1234 && obj.y_pos.val == 100 * 65536 + 0x2468);
-    assert(obj.unk50 == (mode >= 5 ? NULL : &box));
+    assert(obj.unk50 == (mode == 5 || mode == 6 ? NULL : &box));
     for (i = 0; i < sizeof(target); i++)
         assert(((u8*)&target)[i] == ((u8*)&before_target)[i]);
     for (i = 0; i < 3; i++)
@@ -102,17 +107,24 @@ MODE(3)
 MODE(4)
 MODE(5)
 MODE(6)
+OBSERVE(7, 0)
+OBSERVE(8, 0)
+OBSERVE(9, 0)
 #define ENTRY(mode, field) aiming_lock_slots_lock_##mode##_##field,
 #define ENTRIES(mode) ENTRY(mode, 0) ENTRY(mode, 1) ENTRY(mode, 2)
 static const CTestCase aiming_lock_slots_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) ENTRIES(3) ENTRIES(4) ENTRIES(5) ENTRIES(6) };
-static const u32 aiming_lock_slots_cases_expected[] = { 0x0u, 0x103u, 0x1u, 0x0u, 0x103u, 0x1u, 0x0u, 0x103u, 0x1u, 0x0u, 0x103u, 0x1u, 0x0u, 0x103u, 0x1u, 0x1u, 0x103u, 0x1u, 0x1u, 0x104u, 0xFF020601u };
+    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) ENTRIES(3) ENTRIES(4) ENTRIES(5) ENTRIES(6) ENTRY(7, 0) ENTRY(8, 0) ENTRY(9, 0) };
+static const u32 aiming_lock_slots_cases_expected[] = { 0x0u, 0x103u, 0x1u, 0x0u, 0x103u, 0x1u, 0x0u, 0x103u, 0x1u, 0x0u, 0x103u, 0x1u, 0x0u, 0x103u, 0x1u, 0x1u, 0x103u, 0x1u, 0x1u, 0x104u, 0xFF020601u, 0x0u, 0x0u, 0x0u };
+#define LOCK_SLOT_CASES COUNT(aiming_lock_slots_cases)
+#else
+#define LOCK_SLOT_CASES 0
+#endif
 #undef OBSERVE
 #undef MODE
 #undef ENTRY
 #undef ENTRIES
 
-static u32 aiming_marker_dispatch_keyframe = 0x2A010102u;
+static u32 aiming_marker_dispatch_keyframe = C_TEST_STEP(0x2A010102u);
 static s32 gfx_archive[16], sprite_archive[32];
 static struct Unk_unk68 aiming_marker_dispatch_sentinel = { 0, 0, 4, 4 };
 
@@ -202,13 +214,13 @@ static u32 marker_case(u32 mode, u32 observation)
         assert(gfx_archive[i] == (i == 7 ? 32 : 0x11223344));
     for (i = 0; i < COUNT(sprite_archive); i++)
         assert(sprite_archive[i] == (i == 15 ? 64 : 0x55667788));
-    assert(aiming_marker_dispatch_keyframe == 0x2A010102u && aiming_marker_dispatch_sentinel.unk2 == 4 && aiming_marker_dispatch_sentinel.unk3 == 4);
+    assert(aiming_marker_dispatch_keyframe == C_TEST_STEP(0x2A010102u) && aiming_marker_dispatch_sentinel.unk2 == 4 && aiming_marker_dispatch_sentinel.unk3 == 4);
     if (observation == 0)
         return (u8)obj.active | ((u32)(u8)obj.id << 8) | ((u32)(u8)obj.state << 16) | ((u32)(u8)obj.on_screen << 24);
     if (observation == 1)
         return obj.ext.weapon_6.lifetime | ((u32)obj.ext.weapon_6.timer << 8) | ((u32)(u8)obj.unk64 << 16);
     if (observation == 2)
-        return obj.animation_step.packed;
+        return C_TEST_STEP(obj.animation_step.packed);
     actual = (u8)g_Player.special_shot_count | ((u32)(u8)g_QuadObjects[7].active << 8) | ((u32)(u8)g_QuadObjects[7].id << 16) | ((u32)(u8)g_QuadObjects[7].unk2 << 24);
     return actual;
 }
@@ -232,7 +244,7 @@ static const u32 aiming_marker_dispatch_cases_expected[] = { 0x10601u, 0x90607u,
 #undef ENTRY
 #undef ENTRIES
 
-static u32 aiming_reticle_hiding_keyframe = 0x2A010102u;
+static u32 aiming_reticle_hiding_keyframe = C_TEST_STEP(0x2A010102u);
 static struct Unk_unk68 box = { -20, -20, 40, 40 };
 
 static u32 reticle_case(u32 mode, u32 observation)
@@ -257,7 +269,7 @@ static u32 reticle_case(u32 mode, u32 observation)
     obj.unk50 = &box;
     obj.animation_cursor = &aiming_reticle_hiding_keyframe;
     obj.animation_step.packed = aiming_reticle_hiding_keyframe;
-    player.unk15 = 0x40;
+    player.unk15 = PLAYER_FACING_RIGHT;
     player.x_pos.val = 100 * 65536 + 0x5678;
     player.y_pos.val = 100 * 65536 + 0x6789;
     player.weapon_energy[6] = mode == 0 ? threshold - 1 : threshold;
@@ -268,7 +280,7 @@ static u32 reticle_case(u32 mode, u32 observation)
     assert(obj.active == 1 && obj.id == 6 && obj.state == 1 && obj.unk2 == 3);
     assert(obj.bg_offset == -1 && obj.animation_cursor == &aiming_reticle_hiding_keyframe);
     assert(obj.unk50 == (mode == 1 ? NULL : &box));
-    assert(aiming_reticle_hiding_keyframe == 0x2A010102u);
+    assert(aiming_reticle_hiding_keyframe == C_TEST_STEP(0x2A010102u));
     assert(box.unk0 == -20 && box.unk1 == -20 && box.unk2 == 40 && box.unk3 == 40);
     for (i = 0; i < sizeof(player); i++)
         assert(((u8*)&player)[i] == ((u8*)&before_player)[i]);
@@ -280,7 +292,7 @@ static u32 reticle_case(u32 mode, u32 observation)
         assert(obj.on_screen == 0 && obj.animation_step.packed == aiming_reticle_hiding_keyframe);
     }
     if (observation == 0)
-        return (u8)obj.on_screen | ((u32)obj.ext.weapon_6.direction << 8) | ((u32)obj.ext.weapon_6.adjusted_direction << 16) | ((u32)(u8)obj.unk15 << 24);
+        return (u8)obj.on_screen | ((u32)obj.ext.weapon_6.direction << 8) | ((u32)obj.ext.weapon_6.adjusted_direction << 16) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 24);
     if (observation == 1)
         return (u32)obj.x_pos.val;
     if (observation == 2)
@@ -289,7 +301,7 @@ static u32 reticle_case(u32 mode, u32 observation)
         return (u32)obj.x_vel.val;
     if (observation == 4)
         return (u32)obj.y_vel.val;
-    return obj.animation_step.packed;
+    return C_TEST_STEP(obj.animation_step.packed);
 }
 #define OBSERVE(mode, field)                                        \
     static u32 aiming_reticle_hiding_reticle_##mode##_##field(void) \
@@ -334,7 +346,7 @@ static u32 threshold_case(u32 mode, u32 observation)
     obj.ext.weapon_6.lifetime = mode == 0 ? 211 : mode == 1 ? 31
                                                             : 60;
     obj.ext.weapon_6.timer = 6;
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     g_Player.animation_step.fields.frame_index = 4;
     g_Player.x_pos.val = 300 * 65536 + 0x5678;
     g_Player.y_pos.val = 400 * 65536 + 0x6789;
@@ -347,7 +359,7 @@ static u32 threshold_case(u32 mode, u32 observation)
     for (i = 0; i < sizeof(g_Player); i++)
         assert(((u8*)&g_Player)[i] == ((u8*)&before_player)[i]);
     if (observation == 0)
-        return (u8)obj.state | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)obj.unk64 << 16) | ((u32)(u8)obj.unk15 << 24);
+        return (u8)obj.state | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)obj.unk64 << 16) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 24);
     if (observation == 1)
         return obj.ext.weapon_6.direction | ((u32)obj.ext.weapon_6.adjusted_direction << 8) | ((u32)obj.ext.weapon_6.lifetime << 16) | ((u32)obj.ext.weapon_6.timer << 24);
     if (observation == 2)
@@ -472,10 +484,10 @@ static u32 beam(u32 row)
     g_Player.active = 0x41;
     g_Player.weapon = 6;
     g_Player.hp = 24;
-    g_Player.unk15 = face ? 0x40 : 0;
+    g_Player.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     g_Player.animation_table = (u32**)D_80119DF0;
     set_animation(ANIMATED_OBJECT(&g_Player), 0);
-    assert(g_Player.animation_step.packed == 0x0001000B);
+    assert(g_Player.animation_step.packed == C_TEST_STEP(0x0001000B));
     g_Player.x_pos.i.hi = 160;
     g_Player.y_pos.i.hi = 120;
     player_before = g_Player;
@@ -517,8 +529,142 @@ static u32 beam(u32 row)
     return 1;
 }
 
+void aiming_laser_marker_fire(struct WeaponObj*);
+static struct WeaponObj ap_w;
+static struct MainObj ap_owner;
+static u32 ap_step = C_TEST_STEP(5);
+static struct Unk_unk68 ap_box = { -8, -8, 16, 16 };
+static void ap_reset(u8 kind, u8 state)
+{
+    memset(&ap_w, 0, sizeof(ap_w));
+    memset(&ap_owner, 0, sizeof(ap_owner));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(main_objects, 0, sizeof(main_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(g_QuadObjects, 0, sizeof(g_QuadObjects));
+    g_Player.weapon = 6;
+    g_Player.hp = 16;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
+    g_Player.x_pos.i.hi = 0x80;
+    g_Player.y_pos.i.hi = 0x60;
+    g_Player.weapon_energy[6] = player_weapon_energy.charge.initial_thresholds[0];
+    ap_w.active = 1;
+    ap_w.id = 6;
+    ap_w.unk2 = kind;
+    ap_w.state = state;
+    ap_w.ext.weapon_6.direction = 8;
+    ap_w.animation_cursor = &ap_step;
+    ap_w.animation_step.packed = ap_step;
+}
+#define AP_RETICLE() (func_800963E8(&ap_w, &g_Player), (u8)ap_w.on_screen | (u32)ap_w.ext.weapon_6.direction << 8 | (u32)ap_w.ext.weapon_6.adjusted_direction << 16 | (u32)(ap_w.unk50 == NULL) << 24)
+static u32 ap_reticle_off(void)
+{
+    ap_reset(3, 1);
+    g_Player.weapon = 5;
+    func_800961B0(&ap_w);
+    return (u8)ap_w.active | (u32)ap_w.state << 8 | (u32)ap_w.unk2 << 16;
+}
+static u32 ap_reticle_armor(void)
+{
+    ap_reset(3, 1);
+    g_Player.weapon_energy[6] = 1;
+    g_Player.armor_parts = 1;
+    return AP_RETICLE();
+}
+static u32 ap_reticle_firing(void)
+{
+    ap_reset(3, 1);
+    g_Player.attacking = 1;
+    g_Player.last_shot_type = 6;
+    return AP_RETICLE();
+}
+static u32 ap_reticle_up(void)
+{
+    ap_reset(3, 1);
+    g_Player.input.buttons.held = 4;
+    return AP_RETICLE();
+}
+static u32 ap_reticle_down(void)
+{
+    ap_reset(3, 1);
+    g_Player.input.buttons.held = 8;
+    return AP_RETICLE();
+}
+static u32 ap_reticle_lock(void)
+{
+    u32 seen;
+    ap_reset(3, 1);
+    main_objects[0].active = 1;
+    main_objects[0].hp = 4;
+    main_objects[0].hurt_box = &ap_box;
+    main_objects[0].x_pos.i.hi = 0x80 + 0x60;
+    main_objects[0].y_pos.i.hi = 0x60;
+    seen = AP_RETICLE();
+    assert(g_Player.weapon_06_slots[0] == &main_objects[0] && g_Player.weapon_06_slots[1] == NULL);
+    assert(weapon_objects[0].active == 1 && weapon_objects[0].id == 6 && weapon_objects[0].unk2 == 0);
+    assert(weapon_objects[0].owner == PLAYER_OBJECT(&main_objects[0]));
+    return seen ^ (u32)g_Player.special_shot_count << 28;
+}
+static u32 ap_marker_owner_dead(void)
+{
+    ap_reset(1, 1);
+    ap_owner.active = 1;
+    ap_w.owner = PLAYER_OBJECT(&ap_owner);
+    g_Player.weapon_06_slots[1] = &ap_owner;
+    g_Player.special_shot_count = 2;
+    func_800961B0(&ap_w);
+    assert(g_Player.weapon_06_slots[1] == NULL);
+    return (u8)ap_w.active | (u32)ap_w.state << 8 | (u32)(u8)g_Player.special_shot_count << 16;
+}
+static u32 ap_marker_no_shot(void)
+{
+    ap_reset(1, 1);
+    g_Player.shot_type = 6;
+    aiming_laser_marker_wait_fire(&ap_w, &g_Player, PLAYER_OBJECT(&ap_owner));
+    assert(g_QuadObjects[0].active == 0);
+    return ap_w.state | (u32)ap_w.ext.weapon_6.lifetime << 8 | (u32)(ap_w.unk50 == NULL) << 16;
+}
+#define AP_FIRE(t) (ap_reset(1, 2), ap_w.unk64 = 3, ap_w.ext.weapon_6.lifetime = 7, ap_w.ext.weapon_6.timer = t, aiming_laser_marker_fire(&ap_w), ap_w.ext.weapon_6.lifetime | (u32)ap_w.ext.weapon_6.timer << 8 | (u32)(u8)ap_w.unk64 << 16 | (u32)ap_w.state << 24)
+static u32 ap_fire_pulse(void)
+{
+    return AP_FIRE(0);
+}
+static u32 ap_fire_count(void) { return AP_FIRE(3); }
+static u32 ap_reticle_top(void)
+{
+    ap_reset(3, 1);
+    ap_w.ext.weapon_6.direction = 0;
+    g_Player.input.buttons.held = 4;
+    return AP_RETICLE();
+}
+static u32 ap_reticle_bottom(void)
+{
+    ap_reset(3, 1);
+    ap_w.ext.weapon_6.direction = 0x10;
+    g_Player.input.buttons.held = 8;
+    return AP_RETICLE();
+}
+static const CTestCase aiming_paths_cases[] = {
+    ap_reticle_off,
+    ap_reticle_armor,
+    ap_reticle_firing,
+    ap_reticle_up,
+    ap_reticle_down,
+    ap_reticle_lock,
+    ap_marker_owner_dead,
+    ap_marker_no_shot,
+    ap_fire_pulse,
+    ap_fire_count,
+    ap_reticle_top,
+    ap_reticle_bottom,
+};
+static const u32 aiming_paths_cases_expected[] = { 0u, 0x1080801u, 0x1000800u, 0x1070701u, 0x1090901u, 0x11080801u, 0x10000u, 0x10001u, 0x2040606u, 0x2030206u, 0x1000001u, 0x1101001u };
+
 const struct CTestGroup c_test_groups[] = {
+#ifndef VERSION_DEMO
     { "aiming_lock_slots", aiming_lock_slots_cases, aiming_lock_slots_cases_expected, COUNT(aiming_lock_slots_cases), 0 },
+#endif
     { "aiming_marker_dispatch", aiming_marker_dispatch_cases, aiming_marker_dispatch_cases_expected, COUNT(aiming_marker_dispatch_cases), 0 },
     { "aiming_reticle_hiding", aiming_reticle_hiding_cases, aiming_reticle_hiding_cases_expected, COUNT(aiming_reticle_hiding_cases), 0 },
     { "charged_aiming_thresholds", charged_aiming_thresholds_cases, charged_aiming_thresholds_cases_expected, COUNT(charged_aiming_thresholds_cases), 0 },
@@ -527,6 +673,7 @@ const struct CTestGroup c_test_groups[] = {
     { "aiming_laser_charged_dispatch", aiming_laser_charged_dispatch_cases, aiming_laser_charged_dispatch_cases_expected, COUNT(aiming_laser_charged_dispatch_cases), 0 },
     { "aiming_laser_cancellation", aiming_laser_cancellation_cases, aiming_laser_cancellation_cases_expected, COUNT(aiming_laser_cancellation_cases), 0 },
     { "X_aiming_laser_both_facings_zero_to_four_beam_slots", NULL, NULL, 10, beam },
+    { "aiming_paths", aiming_paths_cases, aiming_paths_cases_expected, COUNT(aiming_paths_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(aiming_lock_slots_cases) + COUNT(aiming_marker_dispatch_cases) + COUNT(aiming_reticle_hiding_cases) + COUNT(charged_aiming_thresholds_cases) + 2 + 6 + COUNT(aiming_laser_charged_dispatch_cases) + COUNT(aiming_laser_cancellation_cases) + 10;
+const u32 c_test_count = LOCK_SLOT_CASES + COUNT(aiming_marker_dispatch_cases) + COUNT(aiming_reticle_hiding_cases) + COUNT(charged_aiming_thresholds_cases) + 2 + 6 + COUNT(aiming_laser_charged_dispatch_cases) + COUNT(aiming_laser_cancellation_cases) + 10 + COUNT(aiming_paths_cases);

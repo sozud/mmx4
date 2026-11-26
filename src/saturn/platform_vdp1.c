@@ -35,17 +35,26 @@ static const SaturnVdp1State vdp1_state = {
 static void vdp1_quad(volatile SaturnSpriteCommand* command, u16 color,
     const s16 coordinates[8])
 {
+    unsigned i;
     command->words[0] = 4;
     command->words[2] = 0xC0;
     command->words[3] = color;
-    for (unsigned i = 0; i < 8; ++i)
+    for (i = 0; i < 8; ++i)
         command->words[6 + i] = (u16)coordinates[i];
     command->words[14] = 0xFFFF;
 }
 
 void saturn_vdp1_init_state(const SaturnVdp1State* state)
 {
+    static const s16 lower_quad[8] = { 0, 110, 319, 110, 319, 239, 0, 239 };
+    static const s16 borders[4][8] = {
+        { -16, -16, 336, -16, 336, -1, -16, -1 },
+        { 320, 0, 336, 0, 336, 239, 320, 239 },
+        { -16, 240, 336, 240, 336, 256, -16, 256 },
+        { -16, 0, -1, 0, -1, 256, -16, 256 }
+    };
     volatile SaturnSpriteCommand* commands = state->commands;
+    unsigned i;
     commands[0].words[0] = 9;
     commands[0].words[10] = 319;
     commands[0].words[11] = 239;
@@ -57,24 +66,17 @@ void saturn_vdp1_init_state(const SaturnVdp1State* state)
     commands[2].words[0] = 10;
     commands[2].words[6] = 0;
     commands[2].words[7] = 0;
-    static const s16 lower_quad[8] = { 0, 110, 319, 110, 319, 239, 0, 239 };
     vdp1_quad(&commands[3], 0, lower_quad);
     commands[4].words[0] = 10;
     commands[4].words[6] = *state->local_x;
     commands[4].words[7] = *state->local_y;
-    for (unsigned i = 0; i < 16; ++i) {
+    for (i = 0; i < 16; ++i) {
         unsigned slot = i + 5;
         commands[slot].words[0] = 0x5000;
         commands[slot].words[1] = (u16)((u32)(state->video_commands + (slot + 1) * 32) >> 3);
         state->link_slots[i] = (u16)slot;
     }
-    static const s16 borders[4][8] = {
-        { -16, -16, 336, -16, 336, -1, -16, -1 },
-        { 320, 0, 336, 0, 336, 239, 320, 239 },
-        { -16, 240, 336, 240, 336, 256, -16, 256 },
-        { -16, 0, -1, 0, -1, 256, -16, 256 }
-    };
-    for (unsigned i = 0; i < 4; ++i)
+    for (i = 0; i < 4; ++i)
         vdp1_quad(&commands[21 + i], 0x8000, borders[i]);
     commands[25].words[0] = 0x8000;
     *state->count = 26;

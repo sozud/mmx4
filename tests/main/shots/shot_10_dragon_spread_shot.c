@@ -38,9 +38,27 @@ DAMAGE_CASE(1)
 static const CTestCase dragon_spread_shot_damage_cases[] = { DAMAGE_ENTRY(0) DAMAGE_ENTRY(1) };
 
 static const u32 dragon_spread_shot_damage_cases_expected[] = { 0x12340A02u, 0x92340002u };
+#include "support/state_cases.h"
+static u32 spread_shot_down_early(void)
+{
+    state_reset(0, 0, 0);
+    state_room.shot.active = 0x41;
+    state_room.shot.state = 1;
+    state_room.shot.unk84.value = 2;
+    state_room.shot.x_pos.i.hi = 0x80;
+    state_room.shot.y_pos.i.hi = 0x60;
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    dragon_spread_shot_fly(&state_room.shot);
+    return state_room.shot.state | (u32)(visual_objects[0].active != 0) << 8 | (u32)(visual_objects[1].active != 0) << 9;
+}
+static const CTestCase dragon_spread_shot_early_cases[] = { spread_shot_down_early };
+static const u32 dragon_spread_shot_early_cases_expected[] = { 0x102u };
+
 const struct CTestGroup c_test_groups[] = {
+    { "dragon_spread_shot_early", dragon_spread_shot_early_cases, dragon_spread_shot_early_cases_expected, COUNT(dragon_spread_shot_early_cases), 0 },
     { "dragon_spread_shot_fly", 0, 0, 1, test_dragon_spread_shot_fly },
     { "dragon_spread_shot_damage", dragon_spread_shot_damage_cases, dragon_spread_shot_damage_cases_expected, COUNT(dragon_spread_shot_damage_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1 + COUNT(dragon_spread_shot_damage_cases);
+const u32 c_test_count = 1 + COUNT(dragon_spread_shot_damage_cases) + COUNT(dragon_spread_shot_early_cases);

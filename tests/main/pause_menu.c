@@ -1,3 +1,272 @@
+// saturn-capability: sh2_dma
+#ifdef MMX4_SATURN
+#include "test_runtime.h"
+#include "support/test_pad.h"
+#include "main/pause_menu.h"
+#include "saturn/platform.h"
+#include "saturn/game_low.h"
+
+#define PAUSE_OBSERVED 26
+
+extern struct BarObj bar_object;
+extern u16 saturn_vdp2_shadow[];
+extern u16 saturn_color_ram_shadow[];
+extern u16 saturn_pause_palette_save[];
+extern u16 saturn_pause_shadow_save[];
+extern u8 saturn_pause_sprite_counts_save[];
+extern u32 saturn_pause_sprite_lists_save[];
+extern u8 saturn_sprite_list_counts[];
+extern u32 saturn_sprite_object_lists[];
+extern u8 saturn_pause_weapon;
+
+#define DEBUG_TEXT_BYTES 0x2000
+
+struct PauseCase {
+    u8 state, unk5, unk6, unk2;
+    s8 unk14;
+    u8 calls;
+    u16 pad;
+    u16 items;
+    u8 player_unk2;
+    s8 ride_state;
+    u8 stage, checkpoint;
+    u16 upgrades;
+    u8 boss_flags, armor_parts, palette_flags;
+    s8 weapon;
+    s8 tanks[3];
+    s8 hp, max_hp;
+    s8 energy;
+    s32 unk28, unk2C, unk30;
+    u8 transition, latch, request;
+    u32 frame;
+};
+
+static u8 sound_queue[0x800] __attribute__((aligned(4)));
+
+static u32 hash(const void* data, u32 bytes)
+{
+    const u8* b = data;
+    u32 h = 2166136261u, i;
+    for (i = 0; i < bytes; i++)
+        h = (h ^ b[i]) * 16777619u;
+    return h;
+}
+
+static void seed(void* data, u32 bytes, u8 value)
+{
+    u8* b = data;
+    u32 i;
+    for (i = 0; i < bytes; i++)
+        b[i] = (u8)(value + i * 7);
+}
+
+static void pause_setup(const struct PauseCase* c)
+{
+    u32 i;
+    memset(&bar_object, 0, sizeof(bar_object));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    seed(saturn_vdp2_shadow, 0x100, 0x11);
+    seed(saturn_color_ram_shadow, 0x400, 0x23);
+    memset(saturn_pause_palette_save, 0, 0x400);
+    memset(saturn_pause_shadow_save, 0, 0x120);
+    memset(saturn_pause_sprite_counts_save, 0, 20);
+    memset(saturn_pause_sprite_lists_save, 0, 0x280);
+    memset((void*)saturn_sprite_list_counts, 0, 20);
+    memset((void*)saturn_sprite_object_lists, 0, 0xC00);
+    memset(sound_queue, 0, sizeof(sound_queue));
+    memset(saturn_sound_requests, 0, sizeof(saturn_sound_requests));
+    memset(saturn_sound_effect_requests, 0, sizeof(saturn_sound_effect_requests));
+    memset(saturn_sound_channel_effects, 0, sizeof(saturn_sound_channel_effects));
+    saturn_sound_request_read = saturn_sound_request_write = 0;
+    saturn_sound_effect_request_read = saturn_sound_effect_request_write = 0;
+    saturn_sound_last_group = -1;
+    memset(saturn_debug_text, 0, DEBUG_TEXT_BYTES);
+    saturn_sound_driver_area = NULL;
+    saturn_sound_command_queue = sound_queue;
+    saturn_sound_command_slot = sound_queue;
+    saturn_debug_column = saturn_debug_row = saturn_debug_margin = saturn_debug_top = 0;
+    saturn_text_dirty_b = 0;
+    saturn_pause_weapon = 0;
+    saturn_pause_latch = c->latch;
+    saturn_pause_request = c->request;
+    saturn_pad_pressed = c->pad;
+    bar_object.state = c->state;
+    bar_object.unk5 = c->unk5;
+    bar_object.unk6 = c->unk6;
+    bar_object.unk2 = c->unk2;
+    bar_object.unk14 = c->unk14;
+    bar_object.unk28 = c->unk28;
+    bar_object.unk2C = c->unk2C;
+    bar_object.unk30 = c->unk30;
+    for (i = 0; i < 15; i++)
+        bar_object.options.items[i] = (c->items >> i) & 1;
+    g_Player.unk2 = c->player_unk2;
+    g_Player.ride_state = c->ride_state;
+    g_Player.boss_flags = c->boss_flags;
+    g_Player.armor_parts = c->armor_parts;
+    g_Player.weapon = c->weapon;
+    g_Player.hp = c->hp;
+    for (i = 0; i < 9; i++)
+        g_Player.weapon_energy[i] = c->energy + (s8)i;
+    engine_obj.stage = c->stage;
+    engine_obj.checkpoint = c->checkpoint;
+    engine_obj.collected_upgrades = c->upgrades;
+    engine_obj.palette_flags = c->palette_flags;
+    engine_obj.max_hp = c->max_hp;
+    for (i = 0; i < 3; i++)
+        engine_obj.sub_tanks[i] = c->tanks[i];
+    main_bss_state.frame_counter = c->frame;
+    main_bss_state.transition.active = c->transition;
+}
+
+static void pause_observe(u32* observed)
+{
+    u32 i;
+    for (i = 0; i < 13; i++)
+        observed[i] = ((u32*)&bar_object)[i];
+    observed[13] = (u8)g_Player.weapon | (u32)(u8)g_Player.hp << 8 | (u32)(u8)g_Player.unk2 << 16 | (u32)(u8)engine_obj.max_hp << 24;
+    observed[14] = (u8)engine_obj.sub_tanks[0] | (u32)(u8)engine_obj.sub_tanks[1] << 8 | (u32)(u8)engine_obj.sub_tanks[2] << 16;
+    observed[15] = hash(g_Player.weapon_energy, sizeof(g_Player.weapon_energy));
+    observed[16] = hash(&engine_obj, sizeof(engine_obj));
+    observed[17] = hash(&g_Player, sizeof(g_Player));
+    observed[18] = hash(saturn_vdp2_shadow, 0x100);
+    observed[19] = hash(saturn_color_ram_shadow, 0x400);
+    observed[20] = hash(saturn_pause_palette_save, 0x400) ^ hash(saturn_pause_shadow_save, 0x120)
+        ^ hash(saturn_pause_sprite_counts_save, 20) ^ hash(saturn_pause_sprite_lists_save, 0x280);
+    observed[21] = hash(sound_queue, sizeof(sound_queue)) ^ hash(saturn_sound_requests, sizeof(saturn_sound_requests))
+        ^ hash(saturn_sound_effect_requests, sizeof(saturn_sound_effect_requests))
+        ^ hash(saturn_sound_channel_effects, sizeof(saturn_sound_channel_effects))
+        ^ (u32)saturn_sound_request_write << 8 ^ (u32)saturn_sound_effect_request_write << 16
+        ^ (u32)(saturn_sound_command_slot - (volatile u8*)sound_queue);
+    observed[22] = saturn_pause_weapon | (u32)(u8)saturn_pause_latch << 8 | (u32)saturn_text_dirty_b << 16 | (u32)(u8)saturn_pause_request << 24;
+    observed[23] = hash(&main_bss_state, sizeof(main_bss_state));
+    observed[24] = hash(saturn_debug_text, DEBUG_TEXT_BYTES);
+    observed[25] = saturn_debug_column | saturn_debug_row << 8 | saturn_debug_margin << 16 | saturn_debug_top << 24;
+}
+
+static const struct PauseCase pause_cases[] = {
+    { .state = 0, .unk5 = 0 },
+    { .state = 0, .unk5 = 1, .transition = 1 },
+    { .state = 0, .unk5 = 1, .stage = 3, .upgrades = 0x1000, .boss_flags = 0xA5, .armor_parts = 0x02, .palette_flags = 0x04, .weapon = 3 },
+    { .state = 0, .unk5 = 2, .transition = 1 },
+    { .state = 0, .unk5 = 2 },
+    { .state = 0, .unk5 = 2, .latch = 1 },
+    { .state = 1, .unk5 = 0, .unk14 = 5, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 4, .pad = 0x0800, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 6, .pad = 0x0200, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 6, .pad = 0x0400, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 7, .pad = 0x1000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 2, .pad = 0x2000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 2, .pad = 0x8000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 3, .pad = 0x4000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 1, .unk14 = 10, .pad = 0x0800, .items = 0x7FFF },
+    { .state = 1, .unk5 = 1, .unk14 = 10, .pad = 0x0200, .items = 0x7FFF, .tanks = { 32, 0, 0 } },
+    { .state = 1, .unk5 = 1, .unk14 = 12, .pad = 0x0400, .items = 0x7FFF, .tanks = { 0, 0, 32 } },
+    { .state = 1, .unk5 = 1, .unk14 = 11, .pad = 0x1000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 1, .unk14 = 10, .pad = 0x8000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 1, .unk14 = 11, .pad = 0x4000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 13, .pad = 0x0800, .items = 0x7FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 13, .pad = 0x0200, .items = 0x7FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 14, .pad = 0x0400, .items = 0x7FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 14, .pad = 0x1000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 13, .pad = 0x2000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 13, .pad = 0x4000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 3, .unk14 = 10, .tanks = { 7, 0, 0 }, .hp = 12, .max_hp = 32, .frame = 0 },
+    { .state = 1, .unk5 = 4, .tanks = { 0, 0, 9 }, .energy = 10, .frame = 0 },
+    { .state = 1, .unk5 = 5, .unk6 = 0 },
+    { .state = 1, .unk5 = 5, .unk6 = 1, .transition = 1 },
+    { .state = 1, .unk5 = 5, .unk6 = 1 },
+    { .state = 1, .unk5 = 5, .unk6 = 3 },
+    { .state = 1, .unk5 = 5, .unk6 = 4, .transition = 1 },
+    { .state = 1, .unk5 = 5, .unk6 = 4 },
+    { .state = 1, .unk5 = 6, .unk6 = 0 },
+    { .state = 1, .unk5 = 6, .unk6 = 1, .unk28 = 5 },
+    { .state = 1, .unk5 = 6, .unk6 = 1, .unk28 = 1 },
+    { .state = 1, .unk5 = 6, .unk6 = 2, .unk28 = 5 },
+    { .state = 1, .unk5 = 6, .unk6 = 2, .unk28 = 1 },
+    { .state = 1, .unk5 = 6, .unk6 = 3, .pad = 0x0800 },
+    { .state = 1, .unk5 = 6, .unk6 = 3, .pad = 0x0800, .request = 1 },
+    { .state = 1, .unk5 = 6, .unk6 = 3, .pad = 0x0200 },
+    { .state = 1, .unk5 = 6, .unk6 = 4, .unk28 = 5 },
+    { .state = 1, .unk5 = 6, .unk6 = 4, .unk28 = 1 },
+    { .state = 1, .unk5 = 6, .unk6 = 5, .unk28 = 5 },
+    { .state = 1, .unk5 = 6, .unk6 = 5, .unk28 = 1, .request = 1 },
+    { .state = 1, .unk5 = 6, .unk6 = 6 },
+    { .state = 1, .unk5 = 6, .unk6 = 0, .calls = 40 },
+    { .state = 2, .unk5 = 0 },
+    { .state = 2, .unk5 = 1, .transition = 1 },
+    { .state = 2, .unk5 = 1 },
+    { .state = 2, .unk5 = 2, .weapon = 3 },
+    { .state = 2, .unk5 = 2, .weapon = 0 },
+    { .state = 2, .unk5 = 2, .player_unk2 = 1, .weapon = 3 },
+    { .state = 2, .unk5 = 2, .unk30 = 1 },
+    { .state = 2, .unk5 = 3, .transition = 1 },
+    { .state = 2, .unk5 = 3 },
+    { .state = 2, .unk5 = 3, .unk30 = 1 },
+    { .state = 2, .unk5 = 3, .ride_state = -1, .stage = 5, .checkpoint = 0 },
+    { .state = 2, .unk5 = 3, .ride_state = 0, .stage = 5, .checkpoint = 0 },
+    { .state = 1, .unk5 = 1, .unk14 = 10, .pad = TEST_PAD_UP, .items = 0x7C01 },
+    { .state = 1, .unk5 = 1, .unk14 = 12, .pad = TEST_PAD_RIGHT, .items = 0x5FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 13, .items = 0x7FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 13, .pad = TEST_PAD_UP, .items = 0x7C01 },
+    { .state = 1, .unk5 = 2, .unk14 = 13, .pad = TEST_PAD_UP, .items = 0x7FFE, .player_unk2 = 1 },
+    { .state = 1, .unk5 = 2, .unk2 = 1, .unk14 = 14, .pad = TEST_PAD_UP, .items = 0x5FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 14, .pad = TEST_PAD_DOWN, .items = 0x7FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 13, .pad = TEST_PAD_LEFT, .items = 0x6FFF },
+    { .state = 1, .unk5 = 2, .unk14 = 13, .pad = TEST_PAD_LEFT, .items = 0x6FFF, .player_unk2 = 1 },
+    { .state = 1, .unk5 = 2, .unk2 = 1, .unk14 = 13, .pad = TEST_PAD_LEFT, .items = 0x6401 },
+    { .state = 1, .unk5 = 2, .unk2 = 1, .unk14 = 13, .pad = TEST_PAD_LEFT, .items = 0x6001 },
+    { .state = 1, .unk5 = 4, .unk2C = 1, .tanks = { 0, 0, 9 }, .energy = 10, .frame = 0 },
+    { .state = 1, .unk5 = 4, .tanks = { 0, 0, 9 }, .energy = 47, .frame = 0 },
+    { .state = 0, .unk5 = 1, .player_unk2 = 1, .boss_flags = 0x5A, .upgrades = 0xE000 },
+    { .state = 0, .unk5 = 1, .stage = 5, .checkpoint = 0, .boss_flags = 0x01 },
+    { .state = 0, .unk5 = 1, .ride_state = -1, .stage = 0, .upgrades = 0x1000 },
+    { .state = 0, .unk5 = 2, .unk2 = 1, .unk14 = 10 },
+    { .state = 1, .unk5 = 0, .unk14 = 1, .pad = 0x0200, .items = 0x7FFF, .weapon = 4 },
+    { .state = 1, .unk5 = 0, .unk14 = 1, .pad = 0x1000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 8, .pad = 0x2000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 8, .pad = 0x2000, .items = 0x03FF },
+    { .state = 1, .unk5 = 0, .unk14 = 3, .pad = 0x8000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 0, .unk14 = 2, .pad = 0x8000, .items = 0x7FF7 },
+    { .state = 1, .unk5 = 0, .unk14 = 6, .pad = 0x8000, .items = 0x7D7F },
+    { .state = 1, .unk5 = 0, .unk14 = 5, .pad = 0x4000, .items = 0x7FEF },
+    { .state = 1, .unk5 = 0, .unk14 = 5, .pad = 0x4000, .items = 0x7FEA },
+    { .state = 1, .unk5 = 1, .unk14 = 11, .pad = 0x0200, .items = 0x7FFF, .tanks = { 0, 32, 0 } },
+    { .state = 1, .unk5 = 1, .unk14 = 10, .pad = 0x4000, .items = 0x7FFF },
+    { .state = 1, .unk5 = 3, .unk14 = 10, .tanks = { 3, 0, 0 }, .hp = 32, .max_hp = 32, .frame = 0 },
+    { .state = 1, .unk5 = 3, .unk14 = 10, .tanks = { 0, -123, 0 }, .hp = 12, .max_hp = 32 },
+    { .state = 1, .unk5 = 3, .unk14 = 10, .unk28 = 1, .tanks = { 4, 0, 0 }, .hp = 32, .max_hp = 32, .frame = 2 },
+    { .state = 1, .unk5 = 3, .unk14 = 10, .unk28 = 1, .tanks = { 0, 0, 0 }, .hp = 10, .max_hp = 32, .frame = 0 },
+    { .state = 1, .unk5 = 3, .unk14 = 10, .unk28 = 1, .tanks = { 0, -123, 0 }, .hp = 32, .max_hp = 32, .frame = 2 },
+    { .state = 1, .unk5 = 4, .unk2C = 1, .tanks = { 0, 0, 9 }, .energy = 48, .frame = 0 },
+    { .state = 1, .unk5 = 4, .unk2C = 1, .tanks = { 0, 0, 0 }, .energy = 48, .frame = 0 },
+};
+
+static const u32 pause_expected[][PAUSE_OBSERVED] = {
+#include "pause_menu_saturn_expected.inc"
+};
+
+static u32 test_pause(u32 row)
+{
+    const struct PauseCase* c = &pause_cases[row];
+    u32 observed[PAUSE_OBSERVED];
+    u32 i;
+    pause_setup(c);
+    for (i = 0; i < (c->calls ? c->calls : 1); i++)
+        func_8002FCAC();
+    pause_observe(observed);
+    return c_test_observe(0, row, observed, row < COUNT(pause_expected) ? pause_expected[row] : pause_expected[0],
+        PAUSE_OBSERVED);
+}
+
+const struct CTestGroup c_test_groups[] = {
+    { "saturn_pause_states", 0, 0, COUNT(pause_cases), test_pause },
+};
+const u32 c_test_group_count = COUNT(c_test_groups);
+const u32 c_test_count = COUNT(pause_cases);
+#else
 #include "test_runtime.h"
 #include "main/pause_menu.h"
 #include "main/144A4.h"
@@ -917,7 +1186,7 @@ static u32 exit_pause(u32 row)
     engine_obj.unk13 = 13;
     engine_obj.unk14 = 14;
     engine_obj.unk15 = 15;
-    engine_obj.unk16 = 16;
+    engine_obj.unk16 = VISUAL_SATURN_LAYER(16);
     engine_obj.unk17 = 17;
     engine_expected = engine_obj;
     main_bss_state.transition.active = row;
@@ -937,6 +1206,325 @@ static u32 exit_pause(u32 row)
     return 1;
 }
 
+#include "support/sound_probe.h"
+void func_80030DF8(struct BarObj*);
+void func_80031014(struct BarObj*);
+void func_80031064(struct BarObj*);
+enum { PP_FD70_FADING,
+    PP_READY_FADING,
+    PP_READY_PLAYER2,
+    PP_READY_PLAIN,
+    PP_W_START,
+    PP_W_BUSTER,
+    PP_W_WEAPON,
+    PP_W_UP_TOP,
+    PP_W_UP_SKIP,
+    PP_W_UP_ZERO,
+    PP_W_RIGHT,
+    PP_W_LEFT_ODD,
+    PP_W_LEFT,
+    PP_W_LEFT_SKIP,
+    PP_T_START,
+    PP_T_TANK_FULL,
+    PP_T_UP_PLAYER2,
+    PP_T_UP_WEAPON,
+    PP_T_DOWN,
+    PP_T_LEFT,
+    PP_H_TANK_CLAMP,
+    PP_H_TANK_STEP,
+    PP_H_EMPTY_STEP,
+    PP_H_MERGE,
+    PP_DF8_DEFAULT,
+    PP_EC8_DEFAULT,
+    PP_LEAVE_FADING,
+    PP_LEAVE,
+    PP_RESUME_EXIT,
+    PP_RESUME_PLAYER2,
+    PP_RESUME_SAME,
+    PP_RESUME_CHANGED,
+    PP_EXIT_RESUME,
+    PP_COUNT };
+static u16 pause_paths_palette[0x400], pause_paths_palette_bank[0x400];
+static u32 pause_paths(u32 row)
+{
+    struct BarObj expected;
+    struct PlayerObj player_expected;
+    u32 i;
+    s32 sound = -1;
+    memset(&bar_object, 0x35, sizeof(bar_object));
+    memset(bar_object.options.items, 0, sizeof(bar_object.options.items));
+    bar_object.unk2 = 0;
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    memset(&controller_input, 0, sizeof(controller_input));
+    memset(unk_objects, 0, sizeof(unk_objects));
+    memset(&pause_action_selection_drawing, 0, sizeof(pause_action_selection_drawing));
+    memset(pause_action_selection_tiles, 0, sizeof(pause_action_selection_tiles));
+    memset(pause_action_selection_title_frames, 0, sizeof(pause_action_selection_title_frames));
+    TEST_ARC_34 = (u8*)pause_action_selection_tiles;
+    TEST_TITLE_FRAMES = (u8*)pause_action_selection_title_frames;
+    SP_DRAW_BUFFER = 0;
+    cur_draw_info = &pause_action_selection_drawing;
+    func_80023D30();
+    sound_probe_begin_group(0);
+    for (i = 1; i < 6; i++)
+        D_80141F50[i] = (u8*)sound_probe_rows;
+    TEST_PALETTE = (u8*)pause_paths_palette;
+    TEST_PALETTE_BANK = (u8*)pause_paths_palette_bank;
+    memset(background_objects, 0, sizeof(background_objects));
+    for (i = 0; i < 3; i++)
+        background_objects[i].x_pos.i.hi = background_objects[i].y_pos.i.hi = -0x200;
+    g_Player.hp = 16;
+    g_Player.weapon = 5;
+    engine_obj.max_hp = 16;
+    switch (row) {
+    case PP_FD70_FADING:
+    case PP_READY_FADING:
+    case PP_LEAVE_FADING:
+        main_bss_state.transition.active = 1;
+        break;
+    case PP_READY_PLAYER2:
+        g_Player.unk2 = 1;
+        bar_object.unk14 = 12;
+        break;
+    case PP_READY_PLAIN:
+        bar_object.unk14 = 13;
+        break;
+    case PP_W_START:
+    case PP_T_START:
+        controller_input.pressed = PADstart;
+        break;
+    case PP_W_BUSTER:
+        bar_object.unk14 = 1;
+        controller_input.pressed = PAD_CONFIRM;
+        break;
+    case PP_W_WEAPON:
+        bar_object.unk14 = 5;
+        controller_input.pressed = PAD_CONFIRM;
+        break;
+    case PP_W_UP_TOP:
+        bar_object.unk14 = 1;
+        controller_input.pressed = PADLup;
+        break;
+    case PP_W_UP_SKIP:
+        bar_object.unk14 = 6;
+        bar_object.options.items[2] = 1;
+        controller_input.pressed = PADLup;
+        break;
+    case PP_W_UP_ZERO:
+        bar_object.unk14 = 4;
+        controller_input.pressed = PADLup;
+        break;
+    case PP_W_RIGHT:
+        bar_object.unk14 = 2;
+        bar_object.options.items[3] = 1;
+        controller_input.pressed = PADLright;
+        break;
+    case PP_W_LEFT_ODD:
+        bar_object.unk14 = 2;
+        controller_input.pressed = PADLleft;
+        break;
+    case PP_W_LEFT:
+        bar_object.unk14 = 3;
+        bar_object.options.items[2] = 1;
+        controller_input.pressed = PADLleft;
+        break;
+    case PP_W_LEFT_SKIP:
+        bar_object.unk14 = 5;
+        bar_object.options.items[2] = 1;
+        controller_input.pressed = PADLleft;
+        break;
+    case PP_T_TANK_FULL:
+        bar_object.unk14 = 10;
+        engine_obj.sub_tanks[0] = 0xA0;
+        controller_input.pressed = PAD_CONFIRM;
+        break;
+    case PP_T_UP_PLAYER2:
+        g_Player.unk2 = 1;
+        bar_object.unk14 = 11;
+        controller_input.pressed = PADLup;
+        break;
+    case PP_T_UP_WEAPON:
+        bar_object.unk14 = 11;
+        bar_object.options.items[7] = 1;
+        controller_input.pressed = PADLup;
+        break;
+    case PP_T_DOWN:
+        bar_object.unk14 = 11;
+        controller_input.pressed = PADLdown;
+        break;
+    case PP_T_LEFT:
+        bar_object.unk14 = 12;
+        bar_object.options.items[11] = 1;
+        controller_input.pressed = PADLleft;
+        break;
+    case PP_H_TANK_CLAMP:
+    case PP_H_TANK_STEP:
+        bar_object.unk14 = 10;
+        bar_object.unk28 = 1;
+        engine_obj.sub_tanks[0] = 0x85;
+        if (row == PP_H_TANK_STEP) {
+            g_Player.hp = 5;
+            main_bss_state.frame_counter = 2;
+        }
+        break;
+    case PP_H_EMPTY_STEP:
+        bar_object.unk14 = 10;
+        bar_object.unk28 = 1;
+        engine_obj.sub_tanks[0] = 0x80;
+        g_Player.hp = 5;
+        main_bss_state.frame_counter = 2;
+        break;
+    case PP_H_MERGE:
+        bar_object.unk14 = 10;
+        bar_object.unk28 = 1;
+        engine_obj.sub_tanks[0] = 0x80;
+        engine_obj.sub_tanks[1] = 0x85;
+        break;
+    case PP_DF8_DEFAULT:
+    case PP_EC8_DEFAULT:
+        bar_object.unk6 = 5;
+        break;
+    case PP_RESUME_EXIT:
+        bar_object.unk30 = 1;
+        break;
+    case PP_RESUME_PLAYER2:
+        g_Player.unk2 = 1;
+        bar_object.unk30 = 0;
+        break;
+    case PP_RESUME_SAME:
+    case PP_RESUME_CHANGED:
+        bar_object.unk30 = 0;
+        g_Player.stock_charge = 3;
+        D_8013B818[0] = row == PP_RESUME_SAME ? 5 : 2;
+        if (row == PP_RESUME_CHANGED)
+            g_Player.weapon = 3;
+        break;
+    case PP_EXIT_RESUME:
+        bar_object.unk30 = 0;
+        engine_obj.unk1 = 4;
+        bar_object.state = 2;
+        break;
+    }
+    expected = bar_object;
+    player_expected = g_Player;
+    switch (row) {
+    case PP_FD70_FADING:
+        func_8002FD70(&bar_object);
+        break;
+    case PP_READY_FADING:
+    case PP_READY_PLAYER2:
+    case PP_READY_PLAIN:
+        func_800300AC(&bar_object);
+        if (row != PP_READY_FADING) {
+            expected.state = 1;
+            expected.unk5 = row == PP_READY_PLAYER2;
+        }
+        break;
+    case PP_W_START:
+    case PP_W_BUSTER:
+    case PP_W_WEAPON:
+    case PP_W_UP_TOP:
+    case PP_W_UP_SKIP:
+    case PP_W_UP_ZERO:
+    case PP_W_RIGHT:
+    case PP_W_LEFT_ODD:
+    case PP_W_LEFT:
+    case PP_W_LEFT_SKIP:
+        func_800301BC(&bar_object);
+        if (row == PP_W_START) {
+            expected.state = 2;
+            expected.unk5 = 0;
+        } else if (row == PP_W_BUSTER || row == PP_W_WEAPON) {
+            player_expected.weapon = row == PP_W_BUSTER ? 0 : 4;
+            sound = 0x22;
+        } else if (row != PP_W_UP_TOP && row != PP_W_LEFT_ODD) {
+            expected.unk14 = row == PP_W_UP_ZERO ? 0 : row == PP_W_RIGHT ? 3
+                                                                         : 2;
+            sound = 0xC;
+        }
+        break;
+    case PP_T_START:
+    case PP_T_TANK_FULL:
+    case PP_T_UP_PLAYER2:
+    case PP_T_UP_WEAPON:
+    case PP_T_DOWN:
+    case PP_T_LEFT:
+        func_800304E4(&bar_object);
+        if (row == PP_T_START) {
+            expected.state = 2;
+            expected.unk5 = 0;
+        } else if (row == PP_T_TANK_FULL) {
+            expected.unk5 = 3;
+            expected.unk28 = 1;
+            expected.unk2C = 0;
+        } else if (row == PP_T_UP_WEAPON) {
+            expected.unk5 = 0;
+            expected.unk14 = 7;
+            sound = 0xC;
+        } else if (row == PP_T_LEFT) {
+            expected.unk14 = 11;
+            sound = 0xC;
+        }
+        break;
+    case PP_H_TANK_CLAMP:
+    case PP_H_TANK_STEP:
+    case PP_H_EMPTY_STEP:
+    case PP_H_MERGE:
+        func_80030A2C(&bar_object);
+        if (row == PP_H_MERGE) {
+            expected.unk5 = 1;
+            expected.unk28 = 0;
+            assert(engine_obj.sub_tanks[0] == (s8)0x85 && engine_obj.sub_tanks[1] == (s8)0x80);
+        } else {
+            player_expected.hp = row == PP_H_TANK_CLAMP ? 16 : 6;
+            assert(engine_obj.sub_tanks[0] == (s8)(row == PP_H_EMPTY_STEP ? 0x80 : 0x84));
+            if (row == PP_H_TANK_CLAMP)
+                sound = 0x17;
+        }
+        break;
+    case PP_DF8_DEFAULT:
+        func_80030DF8(&bar_object);
+        break;
+    case PP_EC8_DEFAULT:
+        func_80030EC8(&bar_object);
+        break;
+    case PP_LEAVE_FADING:
+    case PP_LEAVE:
+        func_80031014(&bar_object);
+        if (row == PP_LEAVE) {
+            expected.unk5 = 2;
+            assert(need_palette_load & 1);
+        }
+        break;
+    case PP_RESUME_EXIT:
+    case PP_RESUME_PLAYER2:
+    case PP_RESUME_SAME:
+    case PP_RESUME_CHANGED:
+        need_palette_load = 0;
+        func_80031064(&bar_object);
+        expected.unk5 = 3;
+        assert(main_bss_state.transition.active == (row == PP_RESUME_EXIT ? 0 : 1));
+        if (row == PP_RESUME_SAME || row == PP_RESUME_CHANGED)
+            assert(g_Player.stock_charge == (row == PP_RESUME_SAME ? 3 : 0));
+        if (row == PP_RESUME_EXIT)
+            c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+        break;
+    case PP_EXIT_RESUME:
+        func_80031130(&bar_object);
+        expected.state = 0;
+        expected.unk5 = 0;
+        assert(engine_obj.unk1 == 0);
+        break;
+    }
+    c_test_same_words(&bar_object, &expected, sizeof(expected));
+    if (row < PP_RESUME_EXIT || row > PP_RESUME_CHANGED)
+        c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    SOUND_CHECK(sound_probe_id() == sound);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "pause_submenu_phases", 0, 0, 4 * COUNT(submenu_phases), test_pause_submenu_phases },
     { "pause_action_selection", NULL, pause_action_selection_cases_expected, COUNT(pause_action_selection_cases_expected), pause_action_selection_cases_row },
@@ -951,6 +1539,8 @@ const struct CTestGroup c_test_groups[] = {
     { "actual_X_pause_navigation_partial_first_health_full_second_health_full_weapon_and_available_escape", NULL, NULL, 4, confirm },
     { "weapon_tank_frame_mode_capacity_and_completion", NULL, NULL, 44, refill },
     { "pause_exit_waits_then_resets_stage_state", NULL, NULL, 2, exit_pause },
+    { "pause_paths", NULL, NULL, PP_COUNT, pause_paths },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 4 * COUNT(submenu_phases) + COUNT(pause_action_selection_cases_expected) + COUNT(pause_availability_cases_expected) + COUNT(pause_navigation_edges_cases) + COUNT(pause_restricted_ready_cases) + COUNT(pause_weapon_boundary_cases_expected) + 5 + 6 + 8 + COUNT(cases) + 4 + 44 + 2;
+const u32 c_test_count = 4 * COUNT(submenu_phases) + COUNT(pause_action_selection_cases_expected) + COUNT(pause_availability_cases_expected) + COUNT(pause_navigation_edges_cases) + COUNT(pause_restricted_ready_cases) + COUNT(pause_weapon_boundary_cases_expected) + 5 + 6 + 8 + COUNT(cases) + 4 + 44 + 2 + PP_COUNT;
+#endif

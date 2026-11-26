@@ -440,7 +440,7 @@ void general_fly_descend(struct MainObj* self)
 void general_fly_start(struct MainObj* self)
 {
     s16 var_a0;
-    struct WeaponObj* weapon;
+    struct ShotObj* weapon;
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
@@ -450,7 +450,7 @@ void general_fly_start(struct MainObj* self)
         set_animation(self->ext.main_75.thruster, 5);
         func_8001540C(2, SATURN_SOUND(1, 0xDB), self);
         self->x_speed = self->unk15 != 0 ? FIXED(2) : FIXED(-2);
-        weapon = (struct WeaponObj*)self->ext.main_75.thruster;
+        weapon = self->ext.main_75.thruster;
         self->terrain_box = &D_801059D8;
         self->y_speed = 0;
         var_a0 = self->unk15 != 0 ? -0x18 : 0x18;

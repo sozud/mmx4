@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_67_gunship.h"
 #include "main/55C4.h"
 void gunship_boost(struct MainObj* arg0);
@@ -37,10 +38,8 @@ static u32 wait_case(u32 mode, u32 observation)
     before.unk7C = obj.unk7C;
     before.ext.main_67.unk8D = obj.ext.main_67.unk8D;
     before.animation_step = obj.animation_step;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(obj.animation_table == (u32**)gunship_animations && obj.animation_cursor == gunship_animations[1]);
     assert(*(u32*)gunship_animations[1] == script_before);
     if (observation == 0)
@@ -48,7 +47,7 @@ static u32 wait_case(u32 mode, u32 observation)
     else if (observation == 1)
         actual = (u16)obj.unk7C;
     else
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
     return actual;
 }
 static const u32 gunship_wait_context_cases_expected[] = { 0x4u, 0x0u, 0x10001u, 0x12702u, 0x1u, 0x10001u };
@@ -149,7 +148,7 @@ static void gp_missiles_launch(void)
     state_reset(4, 2, 0);
     so.unk7C = 1;
     gunship_missiles(&so);
-    state_extra = shot_objects[3].active | shot_objects[3].unk16 << 8;
+    state_extra = shot_objects[3].active | TEST_PSX_LAYER(shot_objects[3].unk16) << 8;
 }
 static void gp_missiles_aim(void)
 {
@@ -312,7 +311,7 @@ static u32 gun(u32 row)
     obj.state = 1;
     obj.unk5 = 3;
     obj.unk6 = mode;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = 1;
     obj.unk40 = 8;
     obj.unk42 = 0x9234;
@@ -320,7 +319,7 @@ static u32 gun(u32 row)
     obj.ext.main_67.unk8A = mode ? 3 : 2;
     obj.animation_table = (const u8* const*)gunship_animations;
     set_animation(&obj, 0);
-    assert(obj.animation_step.packed == 0x00000001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x00000001));
     expected = obj;
     if (!mode) {
         expected.ext.main_67.unk8A++;
@@ -335,7 +334,7 @@ static u32 gun(u32 row)
             shots_expected[31].animation_table = (u32**)gunship_animations;
             shots_expected[31].unk40 = 8;
             shots_expected[31].unk15 = obj.unk15;
-            shots_expected[31].unk16 = 4;
+            shots_expected[31].unk16 = VISUAL_SATURN_LAYER(4);
         }
     } else {
         expected.unk6 = 0;
@@ -383,7 +382,7 @@ static u32 interrupt(u32 row)
     memset(&obj, 0, sizeof(obj));
     memset(&g_Player, 0, sizeof(g_Player));
     g_Player.hp = 24;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     player_before = g_Player;
     if (hits[hit].weapon == 32)
         player_before.update_delay_request = 1;
@@ -409,7 +408,7 @@ static u32 interrupt(u32 row)
     obj.unk6 = 9;
     obj.bg_offset = 0;
     obj.on_screen = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x9234;
     obj.hp = hits[hit].lethal ? 1 : 30;
     obj.unk75 = 1;
@@ -481,6 +480,157 @@ static u32 interrupt(u32 row)
     return 1;
 }
 
+void gunship_destroyed_sink(struct MainObj*);
+#define GS(step, sub) (state_reset(step, sub, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), state_terrain(0), g_Player.unk68 = NULL, so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.ext.main_67.unk89 = 1)
+#define GSX() (state_extra = so.ext.main_67.saved_unk5 | so.ext.main_67.unk8A << 8 | (u32)so.ext.main_67.unk8D << 16)
+static void gs_main_reacting(void)
+{
+    GS(0, 0), so.unk63 = 1, so.unk7C = 5, so.ext.main_67.saved_unk5 = 3, func_80082574(&so), GSX();
+}
+#define SINK(a, b) (GS(0, 1), so.state = 2, so.unk7C = a, so.unk7E = b, gunship_destroyed_sink(&so), GSX())
+static void gs_sink_end(void)
+{
+    SINK(1, 3);
+}
+static void gs_sink_sparks(void) { SINK(3, 1); }
+static void gs_sink(void) { SINK(3, 3); }
+static void gs_choose_gun(void) { GS(2, 0), so.unk7C = 1, g_Player.x_pos.i.hi = 0x40, g_Player.y_pos.i.hi = 0x60, func_800828B4(&so), GSX(); }
+static void gs_gun_pause(void) { GS(3, 2), so.unk7C = 2, gunship_gun_wait(&so), GSX(); }
+static void gs_gun_next(void) { GS(3, 2), so.unk7C = 1, so.ext.main_67.unk8A = 1, gunship_gun_wait(&so), GSX(); }
+static void gs_bob_rise(void) { GS(2, 0), so.ext.main_67.vertical_speed = 0x2000, gunship_bob(&so), BOB(); }
+static void gs_bob_sink(void) { GS(2, 0), so.ext.main_67.direction = 1, so.ext.main_67.vertical_speed = -0x2000, gunship_bob(&so), BOB(); }
+static void gs_within_below(void) { GS(2, 0), state_extra = gunship_is_within(&so, so.x_pos.val, so.y_pos.val + 0x20000); }
+static void gs_within_far_below(void) { GS(2, 0), state_extra = gunship_is_within(&so, so.x_pos.val, so.y_pos.val + 0x40000); }
+static void (*const gunship_steps_cases[])(void) = {
+    gs_main_reacting,
+    gs_sink_end,
+    gs_sink_sparks,
+    gs_sink,
+    gs_choose_gun,
+    gs_gun_pause,
+    gs_gun_next,
+    gs_bob_rise,
+    gs_bob_sink,
+    gs_within_below,
+    gs_within_far_below,
+};
+static const u32 gunship_steps_expected[] = {
+    0x100u,
+    0x5u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x2700u,
+    0x3u,
+    0x41000000u,
+    0x101u,
+    0x30000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x100u,
+    0x50002u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41002100u,
+    0x100u,
+    0x20002u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x3u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x203u,
+    0x1u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x3u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x2400u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x100DC00u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+};
+static u32 test_gunship_steps(u32 row)
+{
+    return state_run(gunship_steps_cases[row], row, &gunship_steps_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "gunship_states", 0, 0, COUNT(gunship_states_cases), test_gunship_states },
     { "gunship_wait_context", NULL, gunship_wait_context_cases_expected, COUNT(gunship_wait_context_cases_expected), gunship_wait_context_cases_row },
@@ -488,6 +638,7 @@ const struct CTestGroup c_test_groups[] = {
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "character_specific_gun_burst_delays_and_real_pool_capacity", NULL, NULL, 16, gun },
     { "weapon_character_boost_and_bounds", NULL, NULL, COUNT(hits) * 16, interrupt },
+    { "gunship_steps", 0, 0, COUNT(gunship_steps_cases), test_gunship_steps },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(gunship_states_cases) + COUNT(gunship_wait_context_cases_expected) + 5 + COUNT(pool_full_cases) + 16 + COUNT(hits) * 16;
+const u32 c_test_count = COUNT(gunship_states_cases) + COUNT(gunship_wait_context_cases_expected) + 5 + COUNT(pool_full_cases) + 16 + COUNT(hits) * 16 + COUNT(gunship_steps_cases);

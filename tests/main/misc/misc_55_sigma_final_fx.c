@@ -57,6 +57,31 @@ static void sf_charge_done(void)
     sigma_final_fx_charge(&sm);
 }
 
+void sigma_final_fx_gust(struct MiscObj*);
+static void sf_follow_near(void)
+{
+    SFX(0);
+    sm.state = 4;
+    background_objects[0].x_pos.i.hi = background_objects[0].y_pos.i.hi = 0;
+    sigma_final_fx_follow(&sm);
+}
+static void sf_gust(void)
+{
+    SFX(0);
+    sm.state = 3;
+    sm.x_pos.i.hi = 0x80;
+    sm.y_pos.i.hi = 0x60;
+    sm.unk2C = 0x2000;
+    background_objects[0].x_pos.i.hi = background_objects[0].y_pos.i.hi = 0;
+    sigma_final_fx_gust(&sm);
+}
+static void sf_gust_away(void)
+{
+    SFX(0);
+    sm.state = 3;
+    sm.unk2C = 0x2000;
+    sigma_final_fx_gust(&sm);
+}
 static void (*const sigma_final_fx_states_cases[])(void) = {
     sf_init_low,
     sf_init_high,
@@ -67,8 +92,132 @@ static void (*const sigma_final_fx_states_cases[])(void) = {
     sf_follow_away,
     sf_charge,
     sf_charge_done,
+    sf_follow_near,
+    sf_gust,
+    sf_gust_away,
 };
-static const u32 sigma_final_fx_states_expected[] = { 1u, 0xFF000001u, 0x4FF0000u, 0x2790000u, 0u, 0u, 0u, 0x50010u, 0u, 0u, 1u, 0xFF000101u, 0x4FD0000u, 0x2590000u, 0u, 0u, 0u, 0x50010u, 0u, 0u, 3u, 0xFF000201u, 0x3E00000u, 0x26A0000u, 0x30000u, 0u, 0xFFFFF000u, 0x50013u, 0u, 0u, 4u, 0xFF000301u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50010u, 0u, 0u, 2u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 1u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u };
+static const u32 sigma_final_fx_states_expected[] = {
+    1u,
+    0xFF000001u,
+    0x4FF0000u,
+    0x2790000u,
+    0u,
+    0u,
+    0u,
+    0x50010u,
+    0u,
+    0u,
+    1u,
+    0xFF000101u,
+    0x4FD0000u,
+    0x2590000u,
+    0u,
+    0u,
+    0u,
+    0x50010u,
+    0u,
+    0u,
+    3u,
+    0xFF000201u,
+    0x3E00000u,
+    0x26A0000u,
+    0x30000u,
+    0u,
+    0xFFFFF000u,
+    0x50013u,
+    0u,
+    0u,
+    4u,
+    0xFF000301u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50010u,
+    0u,
+    0u,
+    2u,
+    1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    2u,
+    1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    2u,
+    1u,
+    0x10000000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0u,
+    1u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    2u,
+    1u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    4u,
+    1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    3u,
+    1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0xFFFFE000u,
+    0x200000u,
+    0x40000u,
+    0u,
+    0u,
+    2u,
+    1u,
+    0u,
+    0u,
+    0u,
+    0xFFFFE000u,
+    0x200000u,
+    0x40000u,
+    0u,
+    0u,
+};
 
 static u32 test_sigma_final_fx_states(u32 row)
 {

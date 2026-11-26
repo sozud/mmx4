@@ -38,7 +38,7 @@ struct Effect17SpawnRecord {
 // freeze_blast_flash_init
 struct Effect17SpawnGroup {
     struct Effect17SpawnRecord* records;
-    u32 count;
+    u8 count;
 };
 
 extern u8 freeze_blast_tile_patches[4][6];
@@ -57,7 +57,7 @@ struct Effect17SpawnRecordPC {
 };
 struct Effect17SpawnGroupPC {
     struct Effect17SpawnRecordPC* records;
-    u32 count;
+    u8 count;
 };
 extern ret_u8 func_8002938C(s32);
 #endif
@@ -184,7 +184,8 @@ void func_800B9354(struct EffectObj* self)
 void func_800B94B8(struct EffectObj* self)
 {
     struct Effect17SpawnGroupPC* group = &((struct Effect17SpawnGroupPC*)freeze_blast_spawn_groups)[(s8)self->unk2];
-    for (u32 i = 0; i < (u8)group->count; i++) {
+    u32 i;
+    for (i = 0; i < (u8)group->count; i++) {
         struct Effect17SpawnRecordPC* record = &group->records[i];
         u32 j;
         for (j = 0; j < record->count; j++) {

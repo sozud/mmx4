@@ -1,0 +1,6 @@
+file	line	function	outcome	class	evidence
+src/main/visuals/visual_08_ice_shard.c	53	func_800B08CC	not-taken	unreachable-logic	Saturn machine branch (no llvm-cov branch): the sign fix-up SH-GCC emits for get_random_nonzero() % 32; get_random_nonzero() returns 1..255, so the dividend is never negative.
+src/main/visuals/visual_08_ice_shard.c	57	func_800B08CC	not-taken	unreachable-logic	Saturn machine branch (no llvm-cov branch): the sign fix-up SH-GCC emits for get_random_nonzero() % 32; get_random_nonzero() returns 1..255, so the dividend is never negative.
+src/main/visuals/visual_08_ice_shard.c	61	func_800B08CC	not-taken	unreachable-logic	Saturn machine branch (no llvm-cov branch): the sign fix-up SH-GCC emits for get_random_nonzero() % 32; get_random_nonzero() returns 1..255, so the dividend is never negative.
+src/main/visuals/visual_08_ice_shard.c	65	func_800B08CC	not-taken	unreachable-logic	Saturn machine branch (no llvm-cov branch): the sign fix-up SH-GCC emits for get_random_nonzero() % 32; get_random_nonzero() returns 1..255, so the dividend is never negative.
+src/main/visuals/visual_08_ice_shard.c	66	func_800B08CC	not-taken	unreachable-logic	Saturn machine branch (no llvm-cov branch): the sign fix-up SH-GCC emits for get_random_nonzero() % 32; get_random_nonzero() returns 1..255, so the dividend is never negative.

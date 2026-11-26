@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
+#ifndef VERSION_DEMO
 #include "main/1FD10.h"
 #include "main/55C4.h"
 #include "main/2824.h"
@@ -62,14 +64,10 @@ static u32 transition_case(u32 mode)
         }
     }
     func_8002F5E8(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(expected_pool) / 4; i++)
-        assert(((u32*)misc_objects)[i] == ((u32*)expected_pool)[i]);
-    for (i = 0; i < sizeof(abc_object) / 4; i++)
-        assert(((u32*)&abc_object)[i] == ((u32*)&abc_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(misc_objects, expected_pool, sizeof(expected_pool));
+    c_test_same_words(&abc_object, &abc_before, sizeof(abc_object));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     actual = (u8)obj.unk1 | ((u32)(u8)obj.unk3 << 8) | ((u32)misc_objects[61].active << 16) | ((u32)misc_objects[63].active << 24);
     return actual;
 }
@@ -262,16 +260,18 @@ static u32 test_countdown_particles(u32 row)
     return 1;
 }
 
+#ifdef MMX4_SATURN
+#define CURTAIN_STEP 0x50000
+#else
+#define CURTAIN_STEP 0x81000
+#endif
 static const struct {
     s32 upper, lower, next_upper, next_lower;
     u8 complete;
 } curtain_positions[] = {
-    { 0x82000, 0x12345, 0x1000, 0x93345, 0 },
-    { 0x81000, 0x12345, 0, 0x93345, 0 },
-    { 0x80FFF, 0x12345, 0, 0x1000000, 1 },
-    { 0x1000, 0x12345, 0, 0x1000000, 1 },
-    { 0, 0x12345, 0, 0x1000000, 1 },
-    { 0x1000000, 0x12345, 0xF7F000, 0x93345, 0 },
+    { CURTAIN_STEP + 0x1000, 0x12345, 0x1000, 0x12345 + CURTAIN_STEP, 0 },
+    { CURTAIN_STEP, 0x12345, 0, 0x12345 + CURTAIN_STEP, 0 },
+    { CURTAIN_STEP - 1, 0x12345, 0, 0x1000000, 1 },
 };
 
 static u32 test_curtain_motion(u32 row)
@@ -291,7 +291,15 @@ static u32 test_curtain_motion(u32 row)
     background_objects[1].y_pos.val = curtain_positions[index].upper;
     background_objects[2].y_pos.val = curtain_positions[index].lower;
     D_80173C84 = ready;
+#ifdef MMX4_SATURN
+    if (ready == 2)
+        obj.unk4 = 0;
+#endif
     expected = obj;
+#ifdef MMX4_SATURN
+    if (ready != 2)
+        expected.unk4--;
+#endif
     memcpy(backgrounds_expected, background_objects, sizeof(backgrounds_expected));
     backgrounds_expected[0].unk14 = backgrounds_expected[0].x_pos;
     backgrounds_expected[0].unk18 = backgrounds_expected[0].y_pos;
@@ -381,9 +389,15 @@ static u32 test_flash_completion(u32 row)
     assert(g_FilterAmountG == (complete ? 0 : 7));
     assert(g_FilterAmountB == (complete ? 0 : 9));
     assert(g_FilterModeR == 1 && g_FilterModeG == 2 && g_FilterModeB == 3);
+#ifdef MMX4_SATURN
+    assert(need_palette_load == 0x80);
+    for (i = 0; i < 4; i++)
+        assert(D_8013E188[i] == (complete && i == 0 ? 0 : 9));
+#else
     assert(need_palette_load == (complete ? 0x81 : 0x80));
     for (i = 0; i < 4; i++)
         assert(D_8013E188[i] == (complete ? 0 : 9));
+#endif
     return 1;
 }
 
@@ -427,7 +441,7 @@ static u32 test_boss_intro_banner(u32 row)
     expected.unk2 = 2;
     main_expected = main_bss_state;
     main_expected.transition.active = 1;
-    main_expected.transition.fade_amount = 8;
+    main_expected.transition.fade_amount = TEST_FADE_AMOUNT(8, main_expected.transition.fade_amount);
     memcpy(backgrounds_expected, background_objects, sizeof(backgrounds_expected));
     backgrounds_expected[2].unk4C = 1;
     memcpy(expected_misc, misc_objects, sizeof(expected_misc));
@@ -470,8 +484,8 @@ static u32 test_intro_fade_out(u32 row)
     if (row % 2 == 0) {
         expected.unk2 = 9;
         if (row < 2) {
-            main_expected.transition.active = -1;
-            main_expected.transition.fade_amount = 8;
+            main_expected.transition.active = TEST_FADE_OUT_ACTIVE;
+            main_expected.transition.fade_amount = TEST_FADE_AMOUNT(8, main_expected.transition.fade_amount);
         }
     }
     func_8002FAE4(&obj);
@@ -483,6 +497,7 @@ static u32 test_intro_fade_out(u32 row)
     return 1;
 }
 
+#ifndef MMX4_SATURN
 static u16 scene_cd_enabled(void)
 {
 #ifdef MMX4_PC
@@ -554,6 +569,10 @@ static u32 test_intro_music_start(u32 row)
     assert(scene_cd_enabled() == !waiting);
     return 1;
 }
+#define INTRO_MUSIC_CASES 4
+#else
+#define INTRO_MUSIC_CASES 0
+#endif
 
 #ifdef MMX4_PC
 static void intro_fill_pools(u8 value)
@@ -716,14 +735,21 @@ const struct CTestGroup c_test_groups[] = {
     { "flash_completion", 0, 0, 6, test_flash_completion },
     { "boss_intro_banner", 0, 0, 3, test_boss_intro_banner },
     { "intro_fade_out", 0, 0, 4, test_intro_fade_out },
+#ifndef MMX4_SATURN
     { "intro_music_start", 0, 0, 4, test_intro_music_start },
+#endif
 #ifdef MMX4_PC
     { "intro_restore", 0, 0, INTRO_RESTORE_CASE_COUNT, test_intro_restore },
 #endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(engine_transition_two_misc_pool_cases_expected) + 1 + 3 + 3 + 14 + 9 + 4 + 6 + 3 + 4 + 4
+const u32 c_test_count = COUNT(engine_transition_two_misc_pool_cases_expected) + 1 + 3 + 3 + 14 + 9 + 4 + 6 + 3 + 4 + INTRO_MUSIC_CASES
 #ifdef MMX4_PC
     + INTRO_RESTORE_CASE_COUNT
 #endif
     ;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

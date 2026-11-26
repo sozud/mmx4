@@ -74,7 +74,7 @@ static void prepare(u32 row)
         tiles[i] = i >= 256 && (i & 255) / 16 >= (row ? 6 : 14);
     c_test_copy_words((u32*)tiles_before, (u32*)tiles, sizeof(tiles) / 4);
     attributes[0] = 0;
-    attributes[1] = 0x38;
+    attributes[1] = TEST_DISC32(0x38);
     SP_BG_TILEMAP = map;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -101,7 +101,7 @@ static void prepare(u32 row)
     g_Player.voice_timer = 1;
     g_Player.x_pos.i.hi = row ? 1383 : 7250;
     g_Player.y_pos.i.hi = row ? 586 : 458;
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     g_Player.animation_table = (u32**)D_8011AFF0;
     g_Player.unk38 = (u8*)gfx + 64;
     player_enter_idle(&g_Player);
@@ -147,7 +147,7 @@ static void check(void)
     assert(c_test_word_difference((u32*)weapon_objects, (u32*)weapons, 2 * sizeof(weapons[0]) / 4) == 0 && zero_difference((u32*)&weapon_objects[2], 14 * sizeof(weapons[0]) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, 2 * sizeof(visuals[0]) / 4) == 0 && zero_difference((u32*)&visual_objects[2], 30 * sizeof(visuals[0]) / 4) == 0);
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
     assert(cur_random == rng && need_palette_load == dirty);
-    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 32 && layout_height == 16 && layout_size == 512 && attributes[0] == 0 && attributes[1] == 0x38);
+    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 32 && layout_height == 16 && layout_size == 512 && attributes[0] == 0 && attributes[1] == TEST_DISC32(0x38));
     for (i = 0; i < COUNT(map_words); i += 8)
         assert(((map_words[i] ^ 0x01010101) | (map_words[i + 1] ^ 0x01010101) | (map_words[i + 2] ^ 0x01010101) | (map_words[i + 3] ^ 0x01010101) | (map_words[i + 4] ^ 0x01010101) | (map_words[i + 5] ^ 0x01010101) | (map_words[i + 6] ^ 0x01010101) | (map_words[i + 7] ^ 0x01010101)) == 0);
     assert(c_test_word_difference((u32*)tiles, (u32*)tiles_before, sizeof(tiles) / 4) == 0);
@@ -179,7 +179,7 @@ static u32 hit_stop(u32 row)
     boss->state = 1;
     boss->hp = 48;
     boss->unk5 = row ? 9 : 11;
-    boss->unk42 = 0x7800;
+    boss->unk42 = OBJECT_CLUT(0x7800);
     boss->x_pos.i.hi = row ? 1383 : 7288;
     boss->y_pos.i.hi = row ? 647 : 414;
     boss->animation_table = (const u8* const*)(row ? sigma_final_animations : frost_walrus_animations);

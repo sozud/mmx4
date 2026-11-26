@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
+#ifndef VERSION_DEMO
 #include "main/mains/main_64_cyber_peacock.h"
 #include "support/state_cases.h"
 #include "main/55C4.h"
@@ -10,7 +12,8 @@ static u32 peacock_case(u32 mode, u32 observation)
     struct EffectObj child, child_before, pool_before[32];
     struct PlayerObj player_before;
     struct EngineObj engine_before;
-    u32 resources[1] = { 0x10000 }, i;
+    static u32 resources[1];
+    u32 i;
     s32 archive[128];
     memset(&obj, 0, sizeof(obj));
     memset(&child, 0, sizeof(child));
@@ -19,7 +22,8 @@ static u32 peacock_case(u32 mode, u32 observation)
     memset(effect_objects, 0, sizeof(effect_objects));
     memset(archive, 0, sizeof(archive));
     archive[4] = 64;
-    D_801406A8 = resources;
+    resources[0] = 0x10000;
+    test_stage_graphics(resources);
     TEST_MENU_FRAMES = (u8*)archive;
     for (i = 0; i < 32; i++) {
         effect_objects[i].active = 1;
@@ -43,7 +47,7 @@ static u32 peacock_case(u32 mode, u32 observation)
     obj.bg_offset = 0;
     obj.unk40 = 0x7777;
     obj.unk42 = 0x6666;
-    obj.unk16 = 0x24;
+    obj.unk16 = VISUAL_SATURN_LAYER(0x24);
     obj.unk62 = 0x23;
     obj.unk63 = 0x22;
     g_Player.capsule_state = mode == 0 ? 1 : 0;
@@ -65,19 +69,19 @@ static u32 peacock_case(u32 mode, u32 observation)
         before.unk7 = 0;
         player_before.script_state = 1;
         player_before.script_action = 0x14;
-        player_before.script_facing = 0x40;
-        player_before.spike_immune = 1;
+        player_before.script_facing = PLAYER_FACING_RIGHT;
+        SPIKE_IMMUNE_SET(player_before, 1);
         engine_before.gameplay_locked = 1;
     } else if (mode == 2 || mode == 3) {
         before.unk6 = 2;
         before.bg_offset = 2;
-        before.unk40 = (0x10000 >> 7) + (mode == 3 ? 0x160 : 0xB0);
+        before.unk40 = OBJECT_STAGE_TEXTURE(0) + OBJECT_TEXTURE_OFFSET(mode == 3 ? 0x160 : 0xB0);
         if (mode == 3) {
             before.sprite_frames = (u8*)archive + 64;
-            before.unk42 = 0x7888;
+            before.unk42 = OBJECT_CLUT(0x7888);
         }
         before.animation_table = (const u8* const*)cyber_peacock_animations;
-        before.unk16 = 4;
+        before.unk16 = VISUAL_SATURN_LAYER(4);
         before.hp = 0;
         before.contact_damage = 5;
         before.invincibility_timer = -0x80;
@@ -95,25 +99,26 @@ static u32 peacock_case(u32 mode, u32 observation)
             before.unk7 = 0;
         }
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(child) / 4; i++)
-        assert(((u32*)&child)[i] == ((u32*)&child_before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)effect_objects)[i] == ((u32*)pool_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&child, &child_before, sizeof(child));
+    c_test_same_words(effect_objects, pool_before, sizeof(pool_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     assert(resources[0] == 0x10000);
     for (i = 0; i < 128; i++)
         assert(archive[i] == (i == 4 ? 64 : 0));
     return observation == 0 ? (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u16)obj.unk7C << 16) : (u16)obj.unk40 | ((u32)(u16)obj.unk42 << 16);
 }
-static const u32 cyber_peacock_intro_context_cases_expected[] = { 0x20001u, 0x66667777u, 0x20101u, 0x66667777u, 0x200201u, 0x666602B0u, 0x200201u, 0x78880360u, 0x2u, 0x66667777u, 0x10201u, 0x66667777u, 0x2FF01u, 0x66667777u, 0x20301u, 0x66667777u };
+static const u32 cyber_peacock_intro_context_cases_expected[] = { 0x20001u, 0x66667777u, 0x20101u, 0x66667777u, 0x200201u, 0, 0x200201u, 0, 0x2u, 0x66667777u, 0x10201u, 0x66667777u, 0x2FF01u, 0x66667777u, 0x20301u, 0x66667777u };
 static u32 cyber_peacock_intro_context_cases_row(u32 row)
 {
-    return peacock_case(row / 2, row % 2);
+    u32 actual = peacock_case(row / 2, row % 2), expected = cyber_peacock_intro_context_cases_expected[row];
+    if (row == 5)
+        expected = (u16)(OBJECT_STAGE_TEXTURE(0) + OBJECT_TEXTURE_OFFSET(0xB0)) | 0x6666u << 16;
+    if (row == 7)
+        expected = (u16)(OBJECT_STAGE_TEXTURE(0) + OBJECT_TEXTURE_OFFSET(0x160)) | (u32)(u16)OBJECT_CLUT(0x7888) << 16;
+    assert(actual == expected);
+    return actual;
 }
 
 #include "support/pool_full.h"
@@ -295,7 +300,7 @@ static u32 hit_count_reactions(u32 row)
     obj.unk7 = 9;
     obj.unk7C = 2;
     obj.on_screen = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x9234;
     obj.hp = hits[hit].lethal ? 1 : 48;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -310,7 +315,7 @@ static u32 hit_count_reactions(u32 row)
     obj.ext.main_64.saved_health = obj.hp;
     obj.animation_table = (const u8* const*)cyber_peacock_animations;
     set_animation(&obj, 34);
-    assert(obj.animation_step.packed == 0x34000004);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x34000004));
     if (hits[hit].weapon != 255) {
         weapon_objects[0].active = 0x21;
         weapon_objects[0].id = hits[hit].weapon;
@@ -339,7 +344,7 @@ static u32 hit_count_reactions(u32 row)
         expected.unk17 = 32;
         expected.previous_animation_index = 0xFF;
         expected.animation_cursor = (const u8*)cyber_peacock_animations[32];
-        expected.animation_step.packed = 0x87010002;
+        expected.animation_step.packed = C_TEST_STEP(0x87010002);
     } else {
         expected.unk7C = 1;
         expected.animation_step.fields.duration = 3;
@@ -358,7 +363,7 @@ static u32 hit_count_reactions(u32 row)
                         expected.state = 2;
                         expected.unk5 = expected.unk6 = 0;
                         expected.unk42 &= 0x7FFF;
-                        player_expected.spike_immune = 1;
+                        SPIKE_IMMUNE_SET(player_expected, 1);
                     } else {
                         expected.ext.main_64.flash_timer = 64;
                         expected.ext.main_64.saved_health = expected.hp;
@@ -396,11 +401,345 @@ static u32 hit_count_reactions(u32 row)
     return 1;
 }
 
+void cyber_peacock_intro(struct MainObj*);
+extern struct Unk_unk68 cyber_peacock_hit_box;
+
+static struct MainObj po;
+#define PO_IS(a, b) ((const void*)(a) == (const void*)(b))
+static void po_reset(u8 unk5, u8 unk6)
+{
+    memset(&po, 0, sizeof(po));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(item_objects, 0, sizeof(item_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    D_80141F50[2] = state_sound_rows;
+    engine_obj.stage = 6;
+    cur_random = 0;
+    po.active = 0x41;
+    po.id = 64;
+    po.state = 1;
+    po.unk5 = unk5;
+    po.unk6 = unk6;
+    po.hp = 0x30;
+    po.x_pos.i.hi = 0x480;
+    po.y_pos.i.hi = 0x660;
+    po.ext.main_64.arena_x = 0x410;
+    po.ext.main_64.arena_y = 0x600;
+    po.animation_table = (const u8* const*)cyber_peacock_animations;
+    set_animation(&po, 1);
+}
+static void po_step(s8 event, s8 relative)
+{
+    po.animation_step.fields.duration = 5;
+    po.animation_step.fields.event = event;
+    po.animation_step.fields.relative_step = relative;
+}
+
+static void pcx_death(void)
+{
+    struct EngineObj engine = engine_obj;
+    po_reset(0, 0);
+    po.state = 2;
+    po.unk42 = 0x8123;
+    cyber_peacock_update(&po);
+    assert(po.unk5 == 1 && po.unk7C == 0x7F && po.unk7E == 0x19 && po.ext.main_64.flash_timer == 0x19 && po.unk42 == 0x123 && po.unk17 == 0x20 && g_Player.script_action == 0x14);
+    po.unk7C = 1;
+    po.unk7E = 0;
+    cyber_peacock_update(&po);
+    assert(po.unk5 == 2 && effect_objects[0].id == 0x1A && po.ext.main_64.object == &effect_objects[0] && po.ext.main_64.flash_timer == 0x14 && po.unk7E == 0x14 && po.unk42 == 0x8123);
+    po.unk5 = 1;
+    po.unk7C = 5;
+    po.unk7E = 0;
+    po.ext.main_64.flash_timer = 3;
+    cyber_peacock_update(&po);
+    assert(po.unk5 == 1 && po.ext.main_64.flash_timer == 0 && po.unk7E == 5);
+    po.unk5 = 2;
+    effect_objects[0].unk7 = 1;
+    po.unk7E = 0;
+    cyber_peacock_update(&po);
+    assert(po.unk7E == 0 && po.unk42 == 0x123);
+    effect_objects[0].unk7 = 0;
+    cyber_peacock_update(&po);
+    assert(po.unk7E == 5 && po.unk42 == 0x8123);
+    cyber_peacock_update(&po);
+    assert(po.unk7E == 4);
+    effect_objects[0].active = 0;
+    engine_obj.unkF = 0;
+    cyber_peacock_update(&po);
+    assert(po.active == 0 && engine_obj.unkF == 0x10);
+    po_reset(2, 0);
+    po.state = 2;
+    po.ext.main_64.object = &effect_objects[0];
+    engine_obj.stage = 0xC;
+    engine_obj.checkpoint = 0;
+    engine_obj.character_state.bytes[6] = 0;
+    cyber_peacock_update(&po);
+    assert(po.active == 0 && (u8)engine_obj.unkF == 0x80 && engine_obj.character_state.bytes[6] == 1 && engine_obj.checkpoint == 9);
+    engine_obj = engine;
+}
+static void pcx_intro(void)
+{
+    struct EngineObj engine = engine_obj;
+    po_reset(1, 0);
+    po.state = 0;
+    cyber_peacock_intro(&po);
+    assert(po.unk6 == 1 && effect_objects[0].id == 0x18 && po.ext.main_64.object == &effect_objects[0] && g_Player.script_action == 0x14);
+    cyber_peacock_intro(&po);
+    assert(po.unk6 == 1);
+    po.unk5 = 2;
+    po.unk6 = 0;
+    cyber_peacock_intro(&po);
+    assert(po.unk6 == 1 && po.unk17 == 0);
+    po_step(1, 1);
+    cyber_peacock_intro(&po);
+    assert(po.unk6 == 1 && po.animation_step.fields.event == 0);
+    cyber_peacock_intro(&po);
+    assert(po.unk6 == 1);
+    engine_obj.character_state.bytes[8] = 1;
+    abc_object.unkC = 0;
+    po_step(0, 0);
+    cyber_peacock_intro(&po);
+    assert(po.unk6 == 2 && po.unk7C == 2 && abc_object.unkC == 0x80 && abc_object.unkA == 0x3C);
+    engine_obj.stage = 0xC;
+    abc_object.unkC = 0;
+    po.unk6 = 1;
+    cyber_peacock_intro(&po);
+    assert(po.unk6 == 2 && abc_object.unkC == 0);
+    abc_object.unkC = 0x80;
+    cyber_peacock_intro(&po);
+    assert(po.unk6 == 2);
+    abc_object.unkC = 0;
+    engine_obj.enable_boss = 0;
+    engine_obj.unk36.value = 0;
+    cyber_peacock_intro(&po);
+    assert(po.unk6 == 3 && po.unk17 == 1 && engine_obj.enable_boss == 1 && engine_obj.unk36.value == 0x3C);
+    po.hp = 0x10;
+    D_80173C84 = 0;
+    engine_obj.unk36.timer = 2;
+    cyber_peacock_intro(&po);
+    assert(po.hp == 0x10 && engine_obj.unk36.timer == 1);
+    engine_obj.unk36.timer = 0;
+    po_step(1, 1);
+    cyber_peacock_intro(&po);
+    assert(po.hp == 0x10 && po.animation_step.fields.event == 0);
+    cyber_peacock_intro(&po);
+    assert(po.hp == 0x10);
+    po_step(0, 0);
+    po.unk7C = 2;
+    cyber_peacock_intro(&po);
+    assert(po.hp == 0x11 && po.unk7C == 1);
+    cyber_peacock_intro(&po);
+    assert(po.hp == 0x12 && po.unk7C == 2);
+    po.hp = 0x30;
+    g_Player.script_state = 1;
+    cyber_peacock_intro(&po);
+    assert(po.state == 1 && po.unk5 == 2 && po.unk6 == 0 && po.ext.main_64.saved_health == 0x30 && g_Player.script_state == 0);
+    engine_obj = engine;
+}
+static void pcx_teleport(void)
+{
+    static const struct {
+        u8 skip, laser, random;
+        s16 player_x;
+        u8 step, animation, unk2, facing;
+        s16 x, y;
+    } picks[] = {
+        { 1, 0, 0, 0x500, 2, 3, 0, 1, 0x480, 0x660 },
+        { 0, 0, 2, 0x440, 3, 0x23, 0, 0, 0x480, 0x6B3 },
+        { 0, 0, 16, 0x440, 3, 3, 1, 1, 0x4A0, 0x6B3 },
+        { 0, 0, 16, 0x500, 3, 3, 1, 0, 0x4F0, 0x6B3 },
+        { 0, 1, 0, 0x500, 3, 8, 2, 1, 0x460, 0x670 },
+    };
+    u32 i;
+    po_reset(2, 0);
+    po.ext.main_64.skip_attack = 1;
+    cyber_peacock_teleport(&po);
+    assert(po.unk6 == 1 && po.unk17 == 2 && po.ext.main_64.skip_attack == 0 && po.ext.main_64.target_x == 0x480 && po.x_accel == FIXED(1) && po.hurt_box == NULL);
+    po_step(0, 1);
+    WEAPON_FRAME_COUNTER = 1;
+    cyber_peacock_teleport(&po);
+    assert(po.x_speed == FIXED(1) && po.x_pos.i.hi == 0x481);
+    WEAPON_FRAME_COUNTER = 0;
+    cyber_peacock_teleport(&po);
+    assert(po.x_speed == FIXED(2) && po.x_pos.i.hi == 0x47E);
+    po_step(0, 0);
+    cyber_peacock_teleport(&po);
+    assert(po.unk6 == 2 && po.unk7C == 0x50 && po.unk17 == 0x22);
+    po.unk7C = 5;
+    cyber_peacock_teleport(&po);
+    assert(po.unk6 == 2 && po.unk7C == 4);
+    for (i = 0; i < COUNT(picks); i++) {
+        po_reset(2, 2);
+        po.unk7C = 1;
+        po.ext.main_64.target_x = 0x480;
+        po.ext.main_64.target_y = 0x660;
+        po.ext.main_64.skip_attack = picks[i].skip;
+        po.ext.main_64.force_laser = picks[i].laser;
+        cur_random = picks[i].random;
+        g_Player.x_pos.i.hi = picks[i].player_x;
+        cyber_peacock_teleport(&po);
+        assert(po.unk6 == 3 && po.ext.main_64.next_step == picks[i].step && po.unk17 == picks[i].animation && po.unk2 == picks[i].unk2);
+        assert(po.x_pos.i.hi == picks[i].x && po.y_pos.i.hi == picks[i].y && po.ext.main_64.target_y == picks[i].y && po.unk15 == (picks[i].facing ? PLAYER_FACING_RIGHT : 0));
+    }
+    po.x_accel = FIXED(1);
+    po.x_speed = FIXED(2);
+    po_step(0, 1);
+    WEAPON_FRAME_COUNTER = 1;
+    cyber_peacock_teleport(&po);
+    assert(po.x_speed == FIXED(1) && po.x_pos.i.hi == 0x461);
+    WEAPON_FRAME_COUNTER = 0;
+    cyber_peacock_teleport(&po);
+    assert(po.x_speed == 0 && po.x_pos.i.hi == 0x460);
+    po_step(0, 0);
+    cyber_peacock_teleport(&po);
+    assert(po.unk6 == 4 && po.unk7C == 0x14 && PO_IS(po.hurt_box, &cyber_peacock_hit_box) && po.contact_damage == 5);
+    po.unk7C = 2;
+    cyber_peacock_teleport(&po);
+    assert(po.unk6 == 4 && po.unk7C == 1);
+    po.ext.main_64.hit_count = 3;
+    cyber_peacock_teleport(&po);
+    assert(po.unk5 == 3 && po.unk6 == 0 && po.ext.main_64.hit_count == 0);
+}
+static void pcx_kick(void)
+{
+    po_reset(3, 0);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 1 && po.unk17 == 4 && po.contact_damage == 6);
+    po_step(0, 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 1);
+    po_step(1, 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 2 && po.air_state == 1 && po.y_speed == FIXED(8) && po.gravity == FIXED(0.34375));
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 2 && po.y_speed == FIXED(8) - FIXED(0.34375) && po.y_pos.i.hi == 0x658);
+    po.y_speed = -1;
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 3 && po.unk17 == 5);
+    po_step(0, 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 3);
+    po_step(0, 0);
+    cyber_peacock_attack(&po);
+    assert(po.unk5 == 2 && po.unk6 == 1 && po.x_speed == FIXED(22) && po.air_state == 0 && po.unk17 == 0x22 && po.contact_damage == 5);
+}
+static void pcx_slash(void)
+{
+    po_reset(3, 0);
+    po.unk2 = 1;
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 1 && po.unk7C == 0 && po.unk17 == 6 && po.contact_damage == 9);
+    po_step(1, 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 1 && po.animation_step.fields.event == 0 && !PO_IS(po.hurt_box, NULL));
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 1);
+    po.unk7C = 2;
+    po_step(0, -1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 1 && po.unk7C == 3);
+    po.unk7C = 3;
+    po_step(0, -1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 2 && po.unk17 == 7);
+    po_step(0, 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 2);
+    po_step(0, 0);
+    cyber_peacock_attack(&po);
+    assert(po.unk5 == 2 && po.unk6 == 1 && po.x_speed == FIXED(22) && po.unk17 == 0x22 && po.contact_damage == 5);
+}
+static void pcx_laser(void)
+{
+    po_reset(3, 0);
+    po.unk2 = 2;
+    po.ext.main_64.shot_count = 5;
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 1 && po.ext.main_64.shot_count == 0 && po.unk17 == 0x25);
+    po_step(0, 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 1);
+    po_step(0, 0);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 2 && po.unk7C == 0x1E && po.unk17 == 9);
+    po_step(0, 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 2 && item_objects[0].active == 0);
+    po_step(0, 0);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 3 && po.unk17 == 0x24 && item_objects[0].active == 0x41 && item_objects[0].id == 0x17 && po.ext.main_64.object == &item_objects[0]);
+    po.unk7C = 2;
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 3 && po.unk7C == 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 4 && po.unk17 == 0xC);
+    po_step(0, 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 4 && shot_objects[0].active == 0);
+    po_step(0, 0);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 5 && shot_objects[0].active == 0x41 && shot_objects[0].id == 0x2A && shot_objects[0].unk7C == (void*)&item_objects[0]);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 3 && po.unk7C == 0x5A && po.ext.main_64.shot_count == 1 && po.unk17 == 9);
+    po.unk6 = 5;
+    po.ext.main_64.shot_count = 7;
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 6 && po.unk7C == 0x3C && po.ext.main_64.shot_count == 8 && po.unk17 == 2);
+    po_step(0, 1);
+    cyber_peacock_attack(&po);
+    assert(po.unk6 == 6);
+    po_step(0, 0);
+    cyber_peacock_attack(&po);
+    assert(po.unk5 == 2 && po.unk6 == 1 && po.unk2 == 0 && po.ext.main_64.shot_count == 0 && po.x_speed == FIXED(22));
+}
+static void pcx_guard(void)
+{
+    po_reset(5, 0);
+    po.unk7C = 5;
+    po.ext.main_64.shot_count = 2;
+    po.hurt_box = &cyber_peacock_hit_box;
+    func_8007D710(&po);
+    assert(po.unk6 == 1 && po.unk7C == 0 && po.ext.main_64.shot_count == 0 && po.unk17 == 0x21 && po.hurt_box == NULL && po.attack_box == NULL);
+    po_step(0, 1);
+    func_8007D710(&po);
+    assert(po.unk6 == 1 && po.unk7C == 0);
+    po_step(0, -1);
+    func_8007D710(&po);
+    assert(po.unk6 == 1 && po.unk7C == 1);
+    po.unk7C = 3;
+    func_8007D710(&po);
+    assert(po.unk6 == 2 && po.unk7C == 0x3C && po.unk17 == 0x22);
+    po.ext.main_64.flash_timer = 9;
+    func_8007D710(&po);
+    assert(po.unk5 == 2 && po.unk6 == 1 && po.x_speed == 0x160000 && po.ext.main_64.flash_timer == 0);
+}
+static void (*const pcx_cases[])(void) = {
+    pcx_death,
+    pcx_intro,
+    pcx_teleport,
+    pcx_kick,
+    pcx_slash,
+    pcx_laser,
+    pcx_guard,
+};
+static u32 pcx_run(u32 row)
+{
+    pcx_cases[row]();
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "cyber_peacock_states", 0, 0, COUNT(cyber_peacock_states_cases), test_cyber_peacock_states },
-    { "cyber_peacock_intro_context", NULL, cyber_peacock_intro_context_cases_expected, COUNT(cyber_peacock_intro_context_cases_expected), cyber_peacock_intro_context_cases_row },
+    { "cyber_peacock_intro_context", NULL, NULL, COUNT(cyber_peacock_intro_context_cases_expected), cyber_peacock_intro_context_cases_row },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "hit_count_reset_both_weaknesses_parry_and_flash", NULL, NULL, COUNT(hits) * 12, hit_count_reactions },
+    { "cyber_peacock_state_steps", NULL, NULL, COUNT(pcx_cases), pcx_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(cyber_peacock_states_cases) + COUNT(cyber_peacock_intro_context_cases_expected) + COUNT(pool_full_cases) + COUNT(hits) * 12;
+const u32 c_test_count = COUNT(cyber_peacock_states_cases) + COUNT(cyber_peacock_intro_context_cases_expected) + COUNT(pool_full_cases) + COUNT(hits) * 12 + COUNT(pcx_cases);
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

@@ -65,7 +65,7 @@ static struct RideArmorObj* chaser(void)
     for (x = 0; x < 16; x++)
         tiles[1][14][x] = tiles[1][15][x] = 1;
     attributes[0] = 0;
-    attributes[1] = 0x38;
+    attributes[1] = C_TEST_PSX_WORD(0x38);
     SP_BG_TILEMAP = tilemap;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -80,7 +80,7 @@ static struct RideArmorObj* chaser(void)
     bike.unk5 = 1;
     bike.on_screen = 1;
     bike.hp = 24;
-    bike.unk16 = 4;
+    bike.unk16 = VISUAL_SATURN_LAYER(4);
     bike.unk40 = 123;
     bike.unk3C = frames;
     bike.unk68 = (struct Unk_unk68*)D_800F9068;
@@ -469,7 +469,7 @@ static u32 startup(u32 row)
     func_8003BB20(b);
     switch (row) {
     case 0:
-        assert(b->unk6 == 1 && b->unk15 == 0x40 && weapon_objects[0].id == 0x39);
+        assert(b->unk6 == 1 && b->unk15 == PLAYER_FACING_RIGHT && weapon_objects[0].id == 0x39);
         break;
     case 1:
     case 10:
@@ -503,7 +503,7 @@ static u32 viewport(u32 row)
     static const s16 x[] = { 120, 12, 0, 270, 20 };
     struct RideArmorObj* b = chaser();
     b->x_pos.i.hi = x[row % 5];
-    b->unk15 = row == 5 ? 0x40 : 0;
+    b->unk15 = row == 5 ? PLAYER_FACING_RIGHT : 0;
     b->unk70 = row == 2 || row == 4;
     g_Player.hp = 9;
     func_8003D01C(b);
@@ -557,11 +557,11 @@ static u32 rider_gravity(u32 row)
 static u32 terrain(u32 row)
 {
     struct RideArmorObj* b = chaser();
-    attributes[1] = row < 2 ? 0x24 : 0x38;
+    attributes[1] = C_TEST_PSX_WORD(row < 2 ? 0x24 : 0x38);
     b->x_pos.i.hi = 256;
     b->y_pos.i.hi = 213;
     b->saved_x_vel = row == 1 ? 2 : 0;
-    b->unk15 = row == 3 ? 0x40 : 0;
+    b->unk15 = row == 3 ? PLAYER_FACING_RIGHT : 0;
     if (row < 3) {
         func_8003B694(b);
         assert(b->saved_x_vel == (row == 0 ? 2 : row == 1 ? 1
@@ -650,6 +650,52 @@ static u32 despawn(u32 row)
     return 1;
 }
 
+static u32 start_pool_full(u32 row)
+{
+    struct RideArmorObj* b = chaser();
+    u32 i;
+    for (i = 0; i < 16; i++) {
+        weapon_objects[i].active = 1;
+        weapon_objects[i].id = 0x11;
+    }
+    background_objects[0].unk47 = 9;
+    func_8003C08C(b);
+    assert(b->unk6 == 1 && b->spawned_parts == 1 && background_objects[0].unk47 == 8);
+    for (i = 0; i < 16; i++)
+        assert(weapon_objects[i].active == 1 && weapon_objects[i].id == 0x11);
+    return 1;
+}
+
+static u32 land_form(u32 row)
+{
+    static const u8 expected[] = { 0x44, 0x42, 0x77 };
+    struct RideArmorObj* b = chaser();
+    b->unk6 = 3;
+    b->unk70 = 8;
+    b->unk80.bytes.unk82 = row + 1;
+    b->unk28 = b->unk2C = 0x1234;
+    g_Player.ride_animation = 0x77;
+    g_Player.unk6 = 9;
+    func_8003C08C(b);
+    assert(b->unk6 == 4 && b->unk67 == 0 && b->unk28 == 0 && b->spawned_parts == 0);
+    assert((u8)g_Player.ride_animation == expected[row] && g_Player.unk6 == (row < 2 ? 0 : 9));
+    return expected[row];
+}
+
+static u32 left_edge_exact(u32 row)
+{
+    struct RideArmorObj* b = chaser();
+    s16 x = D_800F9068[2] - (s8)D_800F9068[0];
+    b->x_pos.i.hi = x;
+    g_Player.hp = 9;
+    func_8003D01C(b);
+    assert(b->x_pos.i.hi == x && b->hp == 24 && g_Player.hp == 9);
+    b->x_pos.i.hi = x - 1;
+    func_8003D01C(b);
+    assert(b->x_pos.i.hi == x && b->hp == 24 && g_Player.hp == 9);
+    return x;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "departure", NULL, NULL, 4, departure },
     { "invincibility", NULL, NULL, 5, invincibility },
@@ -675,6 +721,9 @@ const struct CTestGroup c_test_groups[] = {
     { "initialize", NULL, NULL, 3, initialize },
     { "update", NULL, NULL, 10, update },
     { "despawn", NULL, NULL, 1, despawn },
+    { "start_pool_full", NULL, NULL, 1, start_pool_full },
+    { "land_form", NULL, NULL, 3, land_form },
+    { "left_edge_exact", NULL, NULL, 1, left_edge_exact },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 4 + 5 + 5 + 5 + 8 + 6 + 12 + 6 + 6 + 5 + 3 + 5 + 7 + 21 + 4 + 13 + 6 + 4 + 3 + 2 + 5 + 3 + 10 + 1;
+const u32 c_test_count = 1 + 3 + 1 + 4 + 5 + 5 + 5 + 8 + 6 + 12 + 6 + 6 + 5 + 3 + 5 + 7 + 21 + 4 + 13 + 6 + 4 + 3 + 2 + 5 + 3 + 10 + 1;

@@ -1,0 +1,15 @@
+file	line	function	outcome	class	evidence
+src/main/shots/shot_39_mushroom_shot.c	358	func_800A5194	taken	unreachable-logic	The x speed is (player x - shot x) / steps with steps = 42 - (205 - |dx|) / 6 (5 more each pass), so |dx| / steps stays below 6 pixels for every dx; only the y term can repeat the loop.
+src/main/shots/shot_34_ray_trap.c	97	func_800A16FC	taken	unreachable-logic	The switch (unk2) covers the four ray trap types 0-3; ray_trap_animations[0..1][unk2], indexed right after it, has only those four entries.
+src/main/shots/shot_34_ray_trap.c	393	func_800A2098	taken	unreachable-logic	The death switch (unk2) covers the four ray trap types 0-3, the only ones func_800A16FC can set up.
+src/main/shots/shot_41_magma_fire.c	95	func_800A56E4	taken	unreachable-logic	Type 1 (the wave of pillars) sets unk15 = 0 two statements earlier, so the facing test is always false and the velocity always positive.
+src/main/shots/shot_53_sigma_head.c	269	func_800AB050	taken	unreachable-logic	The switch (unk2) covers Sigma heads 0-2; the body spawns exactly three heads (sigma_head_formation_end has three entries per formation).
+src/main/shots/shot_43_gunship_shot.c	87	func_800A699C	taken	unreachable-logic	The implicit default of switch (unk2) in the missile branch (unk2 >= 2): gunship_spawn_missiles spawns exactly unk2 = 2-5, all named.
+src/main/shots/shot_43_gunship_shot.c	269	func_800A6DF4	taken	unreachable-logic	The implicit default of switch (next): next is masked with & 0x1F on every path, and cases 0-31 are all named.
+src/main/shots/shot_54_sigma_final_shot.c	86	func_800ABE08	taken	unreachable-logic	The implicit default of switch (unk2): kinds 0-7 are all named, and the spawners (the Sigma heads, sigma_lightning_fly, func_8008EC48) set only those.
+src/main/shots/shot_16_linked_spark.c	77	func_8009C45C	not-taken	data-dependent	PC-only guard (index > 0): the beam animations 6, 9 and 12 (pod_spawner_anim_6/9/12) carry events 1-12 on every step, so the event is never 0 before the hold animation starts.
+src/main/shots/shot_16_linked_spark.c	77	func_8009C45C	not-taken	data-dependent	PC-only guard (index <= 12): the beam animations 6, 9 and 12 carry events 1-12 on every step, so the PSX/Saturn table read turret_laser_beam_boxes[event - 1] never leaves the table.
+src/main/shots/shot_21_cannon_shell.c	78	func_8009D23C	not-taken	unreachable-logic	The init sets x_vel = -0x28000 a few statements earlier, so distance = x_vel is always negative and always negated.
+src/main/shots/shot_46_sigma_shot.c	178	func_800A8628	taken	unreachable-logic	The implicit default of switch (subtype): kinds 0-10 are all named, and the spawners (main_68_sigma, quad_15_sigma_beam, visual_32_sigma_fx) set only those.
+src/main/shots/shot_56_sigma_spit.c	88	func_800ADF30	taken	unreachable-logic	The implicit default of switch (get_random() & 3): the masked roll is 0-3, all named.
+src/main/shots/shot_38_owl_cyclone.c	57	func_800A42C8	taken	unreachable-logic	The implicit default of switch (unk2): Storm Owl spawns its cyclones with unk2 0-5, all named.

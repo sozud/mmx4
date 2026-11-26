@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_61_split_mushroom.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -61,7 +62,7 @@ static u32 hop_case(u32 observation)
     case 4:
         return obj.gravity;
     default:
-        return obj.animation_step.packed;
+        return C_TEST_STEP(obj.animation_step.packed);
     }
 }
 static const u32 mushroom_hop_signed_speed_cases_expected[] = { 0x1471234u, 0xC85678u, 0xE30000u, 0xFFFFC800u, 0x3800u, 0x10101u };
@@ -89,10 +90,8 @@ static u32 reunion_case(u32 mode, u32 observation)
     before.y_pos = obj.y_pos;
     before.x_speed = obj.x_speed;
     before.y_speed = obj.y_speed;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(partner) / 4; i++)
-        assert(((u32*)&partner)[i] == ((u32*)&partner_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&partner, &partner_before, sizeof(partner));
     if (observation == 0)
         return obj.x_pos.val;
     if (observation == 1)
@@ -146,8 +145,8 @@ static u32 intro_case(u32 mode)
         before.unk6 = 1;
         player_before.script_state = 1;
         player_before.script_action = 0x14;
-        player_before.script_facing = mode < 4 ? 0 : 0x40;
-        player_before.spike_immune = 1;
+        player_before.script_facing = mode < 4 ? 0 : PLAYER_FACING_RIGHT;
+        SPIKE_IMMUNE_SET(player_before, 1);
         engine_before.gameplay_locked = 1;
         if (free_slot) {
             before.ext.main_61.data.effect = &effect_objects[17];
@@ -155,15 +154,11 @@ static u32 intro_case(u32 mode)
             pool_before[17].id = 0x18;
         }
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)effect_objects)[i] == ((u32*)pool_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    return (u8)obj.unk6 | ((u32)(u8)g_Player.script_facing << 8) | ((u32)effect_objects[17].id << 16);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(effect_objects, pool_before, sizeof(pool_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    return (u8)obj.unk6 | ((u32)C_TEST_PSX_FACING(g_Player.script_facing) << 8) | ((u32)effect_objects[17].id << 16);
 }
 static const u32 split_mushroom_intro_pools_cases_expected[] = { 0x272700u, 0x272700u, 0x270001u, 0x180001u, 0x274001u, 0x184001u };
 
@@ -214,13 +209,14 @@ static u32 test_split_mushroom_face_player(u32 row)
     obj.x_pos.val = c->x_pos;
     g_Player.x_pos.val = 0;
     split_mushroom_face_player(&obj);
-    observed_values[0] = (u32)obj.unk15;
+    observed_values[0] = C_TEST_PSX_FACING(obj.unk15);
     return c_test_observe(0, row, observed_values, c->expected, 1);
 }
 
 #include "support/boss_death_flash.h"
 BOSS_DEATH_FLASH_TESTS(split_mushroom_death_flash, split_mushroom_death_explode, 2)
 
+#ifndef VERSION_DEMO
 #include "support/pool_full.h"
 static u32 pool_full_split_mushroom_spawn_afterimage(void)
 {
@@ -234,9 +230,13 @@ static u32 pool_full_split_mushroom_spawn_afterimage(void)
 static const CTestCase pool_full_cases[] = {
     pool_full_split_mushroom_spawn_afterimage,
 };
+static const u32 pool_full_cases_expected[] = { 0x50000u };
+#define POOL_FULL_CASES COUNT(pool_full_cases)
+#else
+#define POOL_FULL_CASES 0
+#endif
 
 static const u32 split_mushroom_death_flash_cases_expected[] = { 0x10501u, 0x10502u, 0x10502u, 0x50001u, 0xF0F01u, 0x5FB01u, 0x50001u };
-static const u32 pool_full_cases_expected[] = { 0x50000u };
 #include "support/state_cases.h"
 
 static struct MainObj mushroom_partner;
@@ -249,7 +249,7 @@ static Palette mushroom_palettes[70];
 static void sm_init_highway(void)
 {
     SPLIT(0, 0);
-    D_801406A8 = mushroom_pages;
+    test_stage_graphics(mushroom_pages);
     TEST_PALETTE_BANK = (u8*)mushroom_bank;
     TEST_PALETTE = (u8*)mushroom_palettes;
     engine_obj.stage = 3;
@@ -259,7 +259,7 @@ static void sm_init_highway(void)
 static void sm_init_rematch(void)
 {
     SPLIT(0, 0);
-    D_801406A8 = mushroom_pages;
+    test_stage_graphics(mushroom_pages);
     TEST_MENU_FRAMES = (u8*)mushroom_frames;
     TEST_PALETTE_BANK = (u8*)mushroom_bank;
     TEST_PALETTE = (u8*)mushroom_palettes;
@@ -306,7 +306,7 @@ static void sm_stun_wait_clone_merge(void)
     so.ext.main_61.split = 1;
     so.unk2 = 1;
     mushroom_partner.ext.main_61.merge = 1;
-    mushroom_partner.unk15 = 0x40;
+    mushroom_partner.unk15 = PLAYER_FACING_RIGHT;
     split_mushroom_stun(&so);
     MUSHROOM();
 }
@@ -374,7 +374,7 @@ static void sm_split_mirror(void)
     SPLIT(2, 6);
     so.unk7C = 1;
     mushroom_partner.unk5 = 6;
-    mushroom_partner.unk15 = 0x40;
+    mushroom_partner.unk15 = PLAYER_FACING_RIGHT;
     split_mushroom_stun(&so);
 }
 static void sm_split_wait(void)
@@ -447,7 +447,7 @@ static void sm_hop_wall_right(void)
     SPLIT(6, 1);
     so.ext.main_61.combo_count = 1;
     so.unk7E = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.collision_flags = 1;
     split_mushroom_combo(&so);
 }
@@ -505,7 +505,7 @@ static void sm_wall_air_right(void)
 {
     SPLIT(7, 1);
     so.unk7 = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.collision_flags = 1;
     split_mushroom_wall_jump(&so);
 }
@@ -563,7 +563,7 @@ static void (*const split_mushroom_states_cases[])(void) = {
     sm_wall_shot,
     sm_wall_shot_last,
 };
-static const u32 split_mushroom_states_expected[] = { 0x101u, 0xFF400000u, 0u, 0u, 0u, 0u, 0x380000u, 0x20000u, 0u, 0u, 0x101u, 0xFF000000u, 0u, 0u, 0u, 0u, 0x380000u, 0x27888u, 0u, 0u, 0x10200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x200u, 0x100u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20200u, 0u, 0u, 0u, 0u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x30200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x40200u, 0x400100u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0xFF0001u, 0u, 0x50200u, 0x100u, 0u, 0u, 0u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x700u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20200u, 0u, 0u, 0x10000u, 0u, 0xFFFF0000u, 0u, 0x50000u, 0u, 0u, 0x20200u, 0u, 0u, 0u, 0u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x30200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x60200u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x50200u, 0u, 0u, 0x10000u, 0u, 0xFFFF0000u, 0u, 0x50000u, 0u, 0u, 0x70600u, 0xFF400000u, 0x400000u, 0u, 0u, 0u, 0u, 0x50000u, 1u, 0u, 0x70600u, 0xFF000000u, 0x1000000u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x70600u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x60200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x40500u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x40500u, 0x100u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0x5000000u, 0u, 0x50600u, 0x100u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1050600u, 0xFF400000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1050600u, 0xFF400000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1010600u, 0xFF000000u, 0u, 0xFFFF0000u, 0u, 0x10000u, 0u, 0x50000u, 0u, 0u, 0x20600u, 0u, 0x100000u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x600u, 0x400000u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0x41000000u, 0x600u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0x41000000u, 0x30300u, 0xFF400000u, 0u, 0u, 0xFFFD4000u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x30300u, 0xFF000000u, 0u, 0u, 0x2C000u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x20300u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10700u, 0x400000u, 0x448000u, 0xFFF8F956u, 0x48000u, 0x6CEAAu, 0x380000u, 0x40000u, 0u, 0u, 0x10700u, 0u, 0xFB9556u, 0xFFF8F956u, 0xFFFB9556u, 0x6CEAAu, 0x380000u, 0x40000u, 0u, 0u, 0x1010700u, 0xFF000000u, 0u, 0xFFFF0000u, 0u, 0xFFFF0000u, 0x2000000u, 0x40000u, 0u, 0u, 0x1020700u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1020700u, 0xFF400000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x30700u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0x410000u, 0x40700u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+static const u32 split_mushroom_states_expected[] = { 0x101u, 0xFF400000u, 0u, 0u, 0u, 0u, 0x380000u, 0x20000u, 0u, 0u, 0x101u, 0xFF000000u, 0u, 0u, 0u, 0u, 0x380000u, 0x20000u | OBJECT_CLUT(0x7888), 0u, 0u, 0x10200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x200u, 0x100u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20200u, 0u, 0u, 0u, 0u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x30200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x40200u, 0x400100u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0xFF0001u, 0u, 0x50200u, 0x100u, 0u, 0u, 0u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x700u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20200u, 0u, 0u, 0x10000u, 0u, 0xFFFF0000u, 0u, 0x50000u, 0u, 0u, 0x20200u, 0u, 0u, 0u, 0u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x30200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x60200u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x50200u, 0u, 0u, 0x10000u, 0u, 0xFFFF0000u, 0u, 0x50000u, 0u, 0u, 0x70600u, 0xFF400000u, 0x400000u, 0u, 0u, 0u, 0u, 0x50000u, 1u, 0u, 0x70600u, 0xFF000000u, 0x1000000u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x70600u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x60200u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x40500u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x40500u, 0x100u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0x5000000u, 0u, 0x50600u, 0x100u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1050600u, 0xFF400000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1050600u, 0xFF400000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1010600u, 0xFF000000u, 0u, 0xFFFF0000u, 0u, 0x10000u, 0u, 0x50000u, 0u, 0u, 0x20600u, 0u, 0x100000u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x600u, 0x400000u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0x41000000u, 0x600u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0x41000000u, 0x30300u, 0xFF400000u, 0u, 0u, 0xFFFD4000u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x30300u, 0xFF000000u, 0u, 0u, 0x2C000u, 0u, 0x380000u, 0x50000u, 0u, 0u, 0x20300u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10700u, 0x400000u, 0x448000u, 0xFFF8F956u, 0x48000u, 0x6CEAAu, 0x380000u, 0x40000u, 0u, 0u, 0x10700u, 0u, 0xFB9556u, 0xFFF8F956u, 0xFFFB9556u, 0x6CEAAu, 0x380000u, 0x40000u, 0u, 0u, 0x1010700u, 0xFF000000u, 0u, 0xFFFF0000u, 0u, 0xFFFF0000u, 0x2000000u, 0x40000u, 0u, 0u, 0x1020700u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1020700u, 0xFF400000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x30700u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0x410000u, 0x40700u, 0xFF000000u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
 
 static u32 test_split_mushroom_states(u32 row)
 {
@@ -572,7 +572,7 @@ static u32 test_split_mushroom_states(u32 row)
 
 #define MAIN(setup)                                                                                                                                       \
     do {                                                                                                                                                  \
-        u8 immune = g_Player.spike_immune, delay = g_Player.update_delay_request;                                                                         \
+        u8 immune = SPIKE_IMMUNE(g_Player), delay = g_Player.update_delay_request;                                                                        \
         SPLIT(2, 1);                                                                                                                                      \
         mushroom_partner.animation_table = so.animation_table;                                                                                            \
         so.unk7C = 5;                                                                                                                                     \
@@ -586,7 +586,7 @@ static u32 test_split_mushroom_states(u32 row)
         func_800788E4(&so);                                                                                                                               \
         state_extra = so.ext.main_61.flash_timer | so.ext.main_61.hit_lock << 8 | so.ext.main_61.stunned << 16 | (u32)so.ext.main_61.merge << 24;         \
         state_extra ^= so.ext.main_61.speed_level << 4 | (u32)mushroom_partner.unk5 << 12 | (u32)so.on_screen << 20 | (u32)mushroom_partner.active << 28; \
-        g_Player.spike_immune = immune;                                                                                                                   \
+        SPIKE_IMMUNE_SET(g_Player, immune);                                                                                                               \
         g_Player.update_delay_request = delay;                                                                                                            \
     } while (0)
 static void smm_idle(void)
@@ -650,9 +650,9 @@ static u32 test_split_mushroom_main(u32 row)
     return object_run(split_mushroom_main_cases[row], row, &split_mushroom_main_expected[row * 10]);
 }
 
+#ifndef VERSION_DEMO
 void func_8007AE2C(struct MainObj*);
 void split_mushroom_combo_swing(struct MainObj*);
-extern void* split_mushroom_animations[26];
 static struct MiscObj misc_expected[64];
 static struct ShotObj shots_expected[32];
 static u32 attack(u32 row)
@@ -684,7 +684,7 @@ static u32 attack(u32 row)
     obj.hp = slam ? 24 : 48;
     obj.ext.main_61.split = 1;
     obj.ext.main_61.active = 1;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = layer;
     obj.x_pos.i.hi = 5972;
     obj.y_pos.i.hi = 363;
@@ -712,14 +712,14 @@ static u32 attack(u32 row)
         set_animation(&obj, 7);
         for (i = 0; i < 20; i++)
             split_mushroom_combo_swing(&obj);
-        assert(obj.unk5 == 6 && obj.unk6 == 3 && obj.animation_step.packed == 0x23000101 && obj.gravity == 0x3800);
+        assert(obj.unk5 == 6 && obj.unk6 == 3 && obj.animation_step.packed == C_TEST_STEP(0x23000101) && obj.gravity == 0x3800);
         obj.collision_flags = 8;
     }
     expected = obj;
     expected.unk7C = slam ? 48 : 0;
     expected.unk6 = slam ? 4 : 1;
     expected.animation_cursor = (const u8*)split_mushroom_animations[slam ? 9 : 5] + (slam ? 0 : 16);
-    expected.animation_step.packed = slam ? 0x24010002 : 0x1C010002;
+    expected.animation_step.packed = C_TEST_STEP(slam ? 0x24010002 : 0x1C010002);
     if (slam) {
         expected.unk17 = 9;
         expected.previous_animation_index = 255;
@@ -759,14 +759,14 @@ static u32 attack(u32 row)
             m->animation_table = (u32**)obj.animation_table;
             m->unk40 = obj.unk40;
             m->unk3C = (void*)obj.sprite_frames;
-            m->unk16 = 5;
+            m->unk16 = VISUAL_SATURN_LAYER(5);
             m->ext.misc_22.owner = &obj;
             m->ext.misc_22.timer = 36;
             m->unk42 = obj.unk42 & 0x7FFF;
             m->unk17 = 24;
             m->previous_animation_index = 255;
             m->animation_cursor = split_mushroom_animations[24];
-            m->animation_step.packed = 0x78010001;
+            m->animation_step.packed = C_TEST_STEP(0x78010001);
             m->unk6 = 1;
         }
     }
@@ -784,6 +784,10 @@ static u32 attack(u32 row)
     assert(D_8013E198[2] == -1);
     return 1;
 }
+#define ATTACK_CASES 36
+#else
+#define ATTACK_CASES 0
+#endif
 
 extern struct Unk_unk68 D_80107BF8[];
 static const u8 weapons[] = { 0, 24, 25 };
@@ -818,7 +822,7 @@ static u32 hit_visual_exhaustion(u32 row)
     obj.unk6 = 1;
     obj.unk7C = 2;
     obj.on_screen = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x9234;
     obj.hp = low ? 31 : 48;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -866,7 +870,6 @@ static u32 hit_visual_exhaustion(u32 row)
     return 1;
 }
 
-extern void* split_mushroom_animations[26];
 static struct ShotObj pool_expected[32];
 static u32 spores(u32 row)
 {
@@ -892,11 +895,11 @@ static u32 spores(u32 row)
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.animation_table = (const u8* const*)split_mushroom_animations;
     set_animation_frame(ANIMATED_OBJECT(&obj), 17, 3);
-    assert(obj.animation_step.packed == 0x4D010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x4D010002));
     obj.animation_step.fields.duration = 1;
     expected = obj;
     expected.animation_cursor += 4;
-    expected.animation_step.packed = 0x4F010101;
+    expected.animation_step.packed = C_TEST_STEP(0x4F010101);
     for (i = 0; i < slots; i++) {
         struct ShotObj* s = &pool_expected[32 - slots + i];
         s->active = 0x41;
@@ -919,7 +922,6 @@ static u32 spores(u32 row)
 
 void split_mushroom_spore_rain_split(struct MainObj*);
 void split_mushroom_wall_jump_cling(struct MainObj*);
-extern void* split_mushroom_animations[26];
 static struct MainObj expected_mains[48];
 static struct ShotObj expected_shots[32];
 static struct VisualObj expected_visuals[32];
@@ -980,7 +982,7 @@ static u32 full(u32 row)
         assert(obj->unk6 == 3 && obj->unk7C == 40 && obj->unk7E == 6);
         for (i = 0; i < 39; i++)
             func_8007B418(obj);
-        assert(obj->unk7C == 1 && obj->animation_step.packed == 0x76010016);
+        assert(obj->unk7C == 1 && obj->animation_step.packed == C_TEST_STEP(0x76010016));
     }
     memcpy(expected_mains, main_objects, sizeof(expected_mains));
     cur_random = 0x1234;
@@ -1002,7 +1004,7 @@ static u32 full(u32 row)
     } else {
         expected_mains[0].unk7C = 40;
         expected_mains[0].unk7E = 5;
-        expected_mains[0].animation_step.packed = 0x76010015;
+        expected_mains[0].animation_step.packed = C_TEST_STEP(0x76010015);
         func_8007B418(obj);
     }
     assert(c_test_word_difference((u32*)main_objects, (u32*)expected_mains, sizeof(expected_mains) / 4) == 0);
@@ -1015,6 +1017,548 @@ static u32 full(u32 row)
     return 1;
 }
 
+void split_mushroom_update(struct MainObj*);
+void split_mushroom_intro(struct MainObj*);
+void split_mushroom_walk(struct MainObj*);
+void split_mushroom_dash(struct MainObj*);
+
+static struct MainObj mo, mp;
+static s8 mo_script;
+static void mo_reset(u8 unk5, u8 unk6)
+{
+    memset(&mo, 0, sizeof(mo));
+    memset(&mp, 0, sizeof(mp));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    background_objects[0].x_pos.i.hi = 0x16B4;
+    background_objects[0].y_pos.i.hi = 0xF3;
+    engine_obj.stage = 3;
+    cur_random = 0;
+    D_80141F50[2] = state_sound_rows;
+    mo.active = 0x41;
+    mo.id = 61;
+    mo.state = 1;
+    mo.unk5 = unk5;
+    mo.unk6 = unk6;
+    mo.hp = 0x30;
+    mo.x_pos.i.hi = 0x1754;
+    mo.y_pos.i.hi = 0x16B;
+    mo.animation_table = (const u8* const*)split_mushroom_animations;
+    set_animation(&mo, 0);
+    mo.ext.main_61.partner = &mp;
+    mp.active = 0x41;
+    mp.id = 61;
+    mp.unk2 = 1;
+    mp.state = 1;
+    mp.hp = 0x30;
+    mp.animation_table = mo.animation_table;
+    mp.ext.main_61.partner = &mo;
+}
+static void mo_step(s8 event)
+{
+    mo.animation_step.fields.duration = 5;
+    mo.animation_step.fields.event = event;
+    mo.animation_step.fields.relative_step = 1;
+}
+
+static void smx_death(void)
+{
+    struct EngineObj engine = engine_obj;
+    mo_reset(0, 0);
+    mo.state = 2;
+    mo.unk42 = 0x8123;
+    g_Player.stun_timer = 3;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
+    split_mushroom_update(&mo);
+    assert(mo.unk5 == 1 && mo.unk17 == 0x15 && mo.unk7C == 0x7F && mo.unk7E == 0x19 && mo.invincibility_timer == 0x19 && mo.unk42 == 0x123);
+    assert(g_Player.stun_timer == 0 && g_Player.script_action == 0x14 && g_Player.script_facing == PLAYER_FACING_RIGHT);
+    mo.unk5 = 2;
+    mo.unk7E = 0;
+    mo.ext.main_61.data.effect = &effect_objects[5];
+    effect_objects[5].active = 1;
+    effect_objects[5].unk7 = 1;
+    split_mushroom_update(&mo);
+    assert(mo.unk7E == 0 && mo.unk42 == 0x123 && mo.active == 0x41);
+    effect_objects[5].unk7 = 0;
+    split_mushroom_update(&mo);
+    assert(mo.unk7E == 5 && mo.unk42 == 0x8123);
+    split_mushroom_update(&mo);
+    assert(mo.unk7E == 4 && mo.unk42 == 0x8123);
+    effect_objects[5].active = 0;
+    engine_obj.enable_boss = 1;
+    engine_obj.boss_ptr = &mo;
+    engine_obj.unkF = 0;
+    split_mushroom_update(&mo);
+    assert(mo.active == 0 && mo.state == 0 && mo.ext.raw[0] == 0 && engine_obj.enable_boss == 0 && engine_obj.boss_ptr == NULL && engine_obj.unkF == 0x10);
+    mo_reset(2, 0);
+    mo.state = 2;
+    mo.ext.main_61.data.effect = &effect_objects[5];
+    engine_obj.stage = 0xC;
+    engine_obj.checkpoint = 0;
+    engine_obj.character_state.bytes[6] = 0;
+    split_mushroom_update(&mo);
+    assert(mo.active == 0 && (u8)engine_obj.unkF == 0x80 && engine_obj.character_state.bytes[6] == 1 && engine_obj.checkpoint == 9);
+    engine_obj = engine;
+}
+static void smx_intro_drop(void)
+{
+    struct EngineObj engine = engine_obj;
+    mo_reset(1, 1);
+    mo_script = 1;
+    mo.ext.main_61.data.script = &mo_script;
+    engine_obj.enable_boss = 0;
+    split_mushroom_intro(&mo);
+    assert(mo.unk6 == 1 && engine_obj.enable_boss == 0);
+    mo_script = 0;
+    engine_obj.unk25 = 1;
+    split_mushroom_intro(&mo);
+    assert(mo.unk6 == 2 && engine_obj.enable_boss == 1 && engine_obj.unk25 == 0 && engine_obj.boss_ptr == &mo);
+    assert(mo.y_pos.i.hi == 0xD3 && mo.ext.main_61.active == 1 && mo.unk7C == 2);
+    engine_obj = engine;
+    mo.y_speed = 0x10000;
+    mo.gravity = 0x3800;
+    split_mushroom_intro(&mo);
+    assert(mo.unk7C == 2 && mo.unk6 == 2 && mo.y_speed == 0xC800);
+    mo.collision_flags = 8;
+    split_mushroom_intro(&mo);
+    assert(mo.unk7C == 1 && mo.y_speed == 0x5C800);
+    mo.unk7C = 0;
+    mo.collision_flags = 0;
+    mo.y_speed = 0x10000;
+    split_mushroom_intro(&mo);
+    assert(mo.unk7C == 0 && mo.unk17 == 0);
+    mo.y_speed = -0x10000;
+    mo.collision_flags = 8;
+    split_mushroom_intro(&mo);
+    assert(mo.unk7C == 0xFF && mo.unk17 == 0xA && mo.unk6 == 3 && mo.y_speed == -0x13800);
+    mo_step(0);
+    split_mushroom_intro(&mo);
+    assert(mo.unk6 == 3);
+    mo_step(1);
+    split_mushroom_intro(&mo);
+    assert(mo.unk6 == 4 && mo.unk17 == 17);
+}
+static void smx_intro_talk(void)
+{
+    struct EngineObj engine = engine_obj;
+    mo_reset(1, 4);
+    engine_obj.character_state.bytes[8] = 1;
+    abc_object.unkC = 0;
+    mo_step(2);
+    split_mushroom_intro(&mo);
+    assert(mo.unk6 == 5 && abc_object.unkC == 0x80 && abc_object.unkA == 0x3C && engine_obj.character_state.bytes[8] == 1);
+    abc_object.unkC = 0;
+    engine_obj.stage = 0xC;
+    mo.unk6 = 4;
+    mo_step(2);
+    split_mushroom_intro(&mo);
+    assert(mo.unk6 == 5 && abc_object.unkC == 0);
+    abc_object.unkC = 0x80;
+    split_mushroom_intro(&mo);
+    assert(mo.unk6 == 5);
+    abc_object.unkC = 0;
+    engine_obj.unk36.value = 0;
+    split_mushroom_intro(&mo);
+    assert(mo.unk6 == 6 && mo.unk17 == 0 && mo.unk7E == 3 && engine_obj.unk36.value == 0x3C);
+    mo.hp = 0x10;
+    D_80173C84 = 0;
+    engine_obj.unk36.timer = 2;
+    split_mushroom_intro(&mo);
+    assert(mo.hp == 0x10 && engine_obj.unk36.timer == 1 && mo.unk7E == 3);
+    engine_obj.unk36.timer = 0;
+    split_mushroom_intro(&mo);
+    assert(mo.hp == 0x11 && mo.unk7E == 2);
+    mo.unk7E = 1;
+    mo.hp = 0x2F;
+    g_Player.script_state = 1;
+    split_mushroom_intro(&mo);
+    assert(mo.hp == 0x30 && mo.unk7E == 3 && mo.unk17 == 2 && mo.unk5 == 7 && mo.unk6 == 0 && g_Player.script_state == 0);
+    engine_obj = engine;
+}
+static void smx_main_hits(void)
+{
+    u32 i;
+    mo_reset(6, 5);
+    mo.unk7C = 5;
+    mo.ext.main_61.active = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
+    state_hit(&mo, 0, 0, 1);
+    cur_random = 0;
+    func_800788E4(&mo);
+    assert(mo.unk7C == 4 && mo.unk5 == 6 && mo.ext.main_61.flash_timer == 0x40 && mo.collision_data == D_801060F0 && shot_objects[0].active == 0 && cur_random == 0);
+    assert(visual_objects[1].active == 0x41 && visual_objects[1].id == 0x22);
+    mo_reset(2, 1);
+    mo.unk7C = 5;
+    mo.ext.main_61.active = 1;
+    for (i = 0; i < COUNT(shot_objects); i++)
+        shot_objects[i].active = 1;
+    state_hit(&mo, 0, 0, 1);
+    cur_random = 0;
+    func_800788E4(&mo);
+    assert(mo.ext.main_61.flash_timer == 0x40 && shot_objects[0].id == 0 && shot_objects[31].id == 0 && visual_objects[1].active == 0x41);
+}
+static void smx_stun_counts(void)
+{
+    mo_reset(2, 0);
+    mo.unk7E = 2;
+    mo_step(0);
+    split_mushroom_stun(&mo);
+    assert(mo.unk7E == 1 && mo.unk6 == 0);
+    mo_reset(2, 1);
+    mo.unk7C = 1;
+    mo.ext.main_61.split = 1;
+    split_mushroom_stun(&mo);
+    assert(mo.unk6 == 5 && mo.gravity == 0x3800 && mo.ext.main_61.blink_timer == 0);
+}
+static void smx_spore_rain(void)
+{
+    mo_reset(3, 1);
+    mo.unk7C = 1;
+    mo.unk42 = 0x8123;
+    split_mushroom_spore_rain(&mo);
+    assert(mo.unk6 == 2 && mo.unk7C == 0xF0 && mo.unk17 == 4);
+    assert(visual_objects[29].active == 0x41 && visual_objects[30].active == 0 && misc_objects[29].active == 0x41 && misc_objects[30].active == 0);
+    assert(visual_objects[0].x_pos.i.hi == 0x16A4 && visual_objects[0].y_pos.i.hi == 0xD3 && visual_objects[0].unk16 == 0x13 && visual_objects[0].unk42 == 0x123);
+    assert(visual_objects[4].x_pos.i.hi == 0x18A4 && visual_objects[0].unk50 == (struct PlayerObj*)&mo && visual_objects[0].unk5C.fields.unk5E == 0x104);
+    assert(visual_objects[15].x_pos.i.hi == 0x16C4 && visual_objects[15].y_pos.i.hi == 0x73 && visual_objects[15].unk16 == 0x12);
+    assert(misc_objects[0].x_pos.i.hi == 0x16E4 && misc_objects[0].unk16 == 0x13 && misc_objects[0].id == 0x1E && misc_objects[0].ext.misc_30.owner == &mo);
+    assert(misc_objects[15].x_pos.i.hi == 0x1704 && misc_objects[15].unk16 == 0x12 && misc_objects[15].ext.misc_30.unk56 == 0x164);
+}
+static void smx_spore_land(void)
+{
+    mo_reset(3, 3);
+    split_mushroom_spore_rain(&mo);
+    assert(mo.unk6 == 3);
+    mo.collision_flags = 8;
+    split_mushroom_spore_rain(&mo);
+    assert(mo.unk6 == 4 && mo.unk17 == 0xA);
+    mo_step(0);
+    split_mushroom_spore_rain(&mo);
+    assert(mo.unk6 == 4);
+    mo.ext.main_61.blink_timer = 5;
+    mo_step(1);
+    split_mushroom_spore_rain(&mo);
+    assert(mo.unk6 == 5 && mo.unk7C == 0x1E && mo.unk17 == 0 && mo.ext.main_61.blink_timer == 0);
+    mo.unk7C = 2;
+    mo.y_speed = 0x1000;
+    split_mushroom_spore_rain(&mo);
+    assert(mo.unk6 == 5 && mo.unk7C == 1 && mo.y_speed == 0x1000);
+    split_mushroom_spore_rain(&mo);
+    assert(mo.unk5 == 4 && mo.unk6 == 0 && mo.unk7C == 6 && mo.y_speed == 0);
+    mo.unk2 = 1;
+    mo.unk5 = 3;
+    mo.unk6 = 5;
+    mo.unk7C = 1;
+    split_mushroom_spore_rain(&mo);
+    assert(mo.unk5 == 4 && mo.unk6 == 2 && mo.unk7C == 6 && mo.unk17 == 2);
+}
+static void smx_walk(void)
+{
+    mo_reset(4, 0);
+    mo.ext.main_61.speed_level = 1;
+    split_mushroom_walk(&mo);
+    assert(mo.unk6 == 1 && mo.unk17 == 1 && mo.x_speed == -FIXED(4.5));
+    mo.unk6 = 0;
+    mo.unk15 = PLAYER_FACING_RIGHT;
+    mo.ext.main_61.speed_level = 2;
+    split_mushroom_walk(&mo);
+    assert(mo.x_speed == FIXED(6));
+    mo.unk15 = 0;
+    mo.x_speed = -0x10000;
+    mo.collision_flags = 1;
+    split_mushroom_walk(&mo);
+    assert(mo.x_pos.i.hi == 0x1753 && mo.unk15 == 0 && mo.unk6 == 1);
+    mo.collision_flags = 2;
+    mo.unk7C = 2;
+    split_mushroom_walk(&mo);
+    assert(mo.unk15 == PLAYER_FACING_RIGHT && mo.unk7C == 1 && mo.unk6 == 2 && mo.unk17 == 2);
+    mo.unk15 = 0;
+    mo.unk6 = 1;
+    split_mushroom_walk(&mo);
+    assert(mo.unk15 == PLAYER_FACING_RIGHT && mo.unk5 == 5 && mo.unk6 == 0 && mo.unk7C == 0x28 && mo.unk7E == 3 && mo.contact_damage == 6);
+    mo.unk5 = 4;
+    mo.unk6 = 1;
+    split_mushroom_walk(&mo);
+    assert(mo.unk15 == PLAYER_FACING_RIGHT && mo.unk5 == 4 && mo.unk6 == 1);
+    mo.collision_flags = 1;
+    mo.unk7C = 2;
+    split_mushroom_walk(&mo);
+    assert(mo.unk15 == 0 && mo.unk7C == 1 && mo.unk6 == 2);
+    mo.unk15 = PLAYER_FACING_RIGHT;
+    mo.unk6 = 1;
+    mo.hp = 0x18;
+    split_mushroom_walk(&mo);
+    assert(mo.unk15 == 0 && mo.unk5 == 6 && mo.unk6 == 0 && mo.unk7C == 0x28 && mo.unk7E == 1 && mo.ext.main_61.combo_count == 2 && mo.contact_damage == 9);
+}
+static void smx_walk_hop(void)
+{
+    mo_reset(4, 2);
+    mo.unk15 = PLAYER_FACING_RIGHT;
+    mo_step(0);
+    split_mushroom_walk(&mo);
+    assert(mo.unk6 == 2 && mo.x_speed == 0);
+    mo_step(1);
+    split_mushroom_walk(&mo);
+    assert(mo.unk6 == 3 && mo.unk7 == 0 && mo.x_speed == 0x38C00 && mo.y_speed == 0x6E400 && mo.gravity == 0x3800);
+    split_mushroom_walk(&mo);
+    assert(mo.unk7 == 0 && mo.y_speed == 0x6AC00);
+    mo.y_speed = 0x1000;
+    split_mushroom_walk(&mo);
+    assert(mo.unk7 == 1 && mo.unk17 == 3);
+    mo.collision_flags = 8;
+    split_mushroom_walk(&mo);
+    assert(mo.unk17 == 0xA && mo.unk6 == 4);
+    mo_step(0);
+    split_mushroom_walk(&mo);
+    assert(mo.unk6 == 4 && mo.unk15 == PLAYER_FACING_RIGHT);
+    mo.unk7C = 2;
+    mo_step(1);
+    split_mushroom_walk(&mo);
+    assert(mo.unk6 == 0 && mo.unk15 == 0 && mo.unk7C == 1);
+    mo.unk2 = 1;
+    mo.unk6 = 4;
+    mp.hp = 0x10;
+    mo_step(1);
+    split_mushroom_walk(&mo);
+    assert(mo.unk15 == PLAYER_FACING_RIGHT && mo.unk5 == 6 && mo.unk7C == 0x50 && mo.contact_damage == 9);
+}
+static void smx_dash(void)
+{
+    mo_reset(5, 0);
+    mo.unk7C = 1;
+    mo.unk7E = 2;
+    split_mushroom_dash(&mo);
+    assert(mo.unk6 == 1 && mo.x_speed == (s32)0xFFF9B1C8 && mo.y_speed == 0x5D31C && mo.gravity == 0x3800 && misc_objects[0].active == 0);
+    mo.x_speed = 0;
+    mo.y_speed = 0;
+    mo.gravity = 0;
+    mo.collision_flags = 1;
+    split_mushroom_dash(&mo);
+    assert(mo.unk6 == 1 && mo.unk7E == 2);
+    mo.collision_flags = 2;
+    split_mushroom_dash(&mo);
+    assert(mo.unk15 == PLAYER_FACING_RIGHT && mo.unk7E == 1 && mo.unk7C == 0xA && mo.unk6 == 0 && misc_objects[0].id == 0x16 && misc_objects[0].ext.misc_22.timer == 0xA);
+    assert(background_objects[0].unk36 == 0x10);
+    mo.unk15 = 0;
+    mo.unk6 = 1;
+    background_objects[0].unk36 = 0;
+    split_mushroom_dash(&mo);
+    assert(mo.unk15 == PLAYER_FACING_RIGHT && mo.unk17 == 3 && mo.unk6 == 2 && mo.gravity == 0x3800 && background_objects[0].unk36 == 0);
+    mo.unk6 = 1;
+    mo.unk7E = 2;
+    mo.gravity = 0;
+    split_mushroom_dash(&mo);
+    assert(mo.unk6 == 1 && mo.unk7E == 2);
+    mo.collision_flags = 1;
+    split_mushroom_dash(&mo);
+    assert(mo.unk15 == 0 && mo.unk7E == 1 && mo.unk6 == 0 && background_objects[0].unk36 == 0);
+    mo.unk15 = PLAYER_FACING_RIGHT;
+    mo.unk6 = 1;
+    background_objects[0].unk34 = 0;
+    split_mushroom_dash(&mo);
+    assert(mo.unk15 == 0 && mo.unk6 == 2 && background_objects[0].unk36 == 0x10);
+    mo.collision_flags = 0;
+    split_mushroom_dash(&mo);
+    assert(mo.unk6 == 2);
+    mo.collision_flags = 8;
+    split_mushroom_dash(&mo);
+    assert(mo.unk6 == 3 && mo.unk17 == 0xA);
+    mo_step(0);
+    split_mushroom_dash(&mo);
+    assert(mo.unk6 == 3);
+    mo_step(1);
+    split_mushroom_dash(&mo);
+    assert(mo.unk6 == 4 && mo.contact_damage == 5 && mo.unk17 == 0 && mo.unk7C == 0x28);
+    mo.unk7C = 2;
+    split_mushroom_dash(&mo);
+    assert(mo.unk6 == 4 && mo.unk7C == 1);
+    split_mushroom_dash(&mo);
+    assert(mo.unk5 == 4 && mo.unk6 == 0 && mo.unk7C == 6);
+    mo.unk2 = 1;
+    mo.unk5 = 5;
+    mo.unk6 = 4;
+    mo.unk7C = 1;
+    split_mushroom_dash(&mo);
+    assert(mo.unk5 == 4 && mo.unk6 == 2 && mo.unk7C == 6 && mo.unk17 == 2);
+}
+static void smx_combo_jump(void)
+{
+    static const struct {
+        s8 count;
+        u8 right;
+        s32 x_speed, y_speed;
+    } jumps[] = { { 0, 0, -0x26AAA, 0x52400 }, { 0, 1, 0x28000, 0x52400 }, { 1, 0, -0x338E3, 0x59B1C }, { 1, 1, 0x35555, 0x59B1C } };
+    u32 i;
+    mo_reset(6, 0);
+    mo.unk7C = 2;
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 0 && mo.unk7C == 1 && mo.x_speed == 0);
+    for (i = 0; i < COUNT(jumps); i++) {
+        mo_reset(6, 0);
+        mo.unk7C = 1;
+        mo.unk7 = 1;
+        mo.ext.main_61.combo_count = jumps[i].count;
+        mo.unk15 = jumps[i].right ? PLAYER_FACING_RIGHT : 0;
+        split_mushroom_combo(&mo);
+        assert(mo.unk6 == 1 && mo.unk7 == 0 && mo.x_speed == jumps[i].x_speed && mo.y_speed == jumps[i].y_speed && mo.gravity == 0x3800);
+    }
+}
+static void smx_combo_dash(void)
+{
+    mo_reset(6, 1);
+    mo.unk7 = 1;
+    mo.ext.main_61.stunned = 1;
+    mo.y_speed = -0x1000;
+    split_mushroom_combo(&mo);
+    assert(mo.ext.main_61.stunned == 0 && mo.unk6 == 1);
+    mo_reset(6, 1);
+    mo.ext.main_61.combo_count = 1;
+    mo.unk15 = PLAYER_FACING_RIGHT;
+    mo.collision_flags = 2;
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 1 && mo.unk7C == 0);
+    background_objects[0].unk34 = 0x10;
+    mo.unk7E = 1;
+    mo.collision_flags = 1;
+    split_mushroom_combo(&mo);
+    assert(mo.unk15 == 0 && mo.unk7E == 0 && mo.unk7C == 0xA && mo.unk6 == 0 && misc_objects[0].id == 0x16 && background_objects[0].unk36 == 0);
+    mo.unk6 = 1;
+    mo.unk7E = 1;
+    mo.collision_flags = 2;
+    split_mushroom_combo(&mo);
+    assert(mo.unk15 == PLAYER_FACING_RIGHT && mo.unk7E == 0 && mo.unk6 == 0 && misc_objects[1].id == 0x16 && background_objects[0].unk36 == 0);
+}
+static void smx_combo_slam(void)
+{
+    mo_reset(6, 3);
+    mo.unk2 = 1;
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 3 && shot_objects[0].active == 0);
+    background_objects[0].unk34 = 1;
+    mo.collision_flags = 8;
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 4 && mo.unk7C == 0x30 && mo.unk17 == 9 && background_objects[0].unk37 == 0);
+    assert(shot_objects[3].active == 0x41 && shot_objects[3].unk2 == 3 && shot_objects[3].unk7C == (struct WeaponObj*)&mp && shot_objects[4].active == 0);
+    mo.unk7C = 2;
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 4 && mo.unk7C == 1);
+    mo.ext.main_61.combo_count = 2;
+    split_mushroom_combo(&mo);
+    assert(mo.ext.main_61.combo_count == 1 && mo.unk17 == 5 && mo.unk6 == 0 && mo.unk7C == 0x28 && mo.unk7E == 1);
+    mo.unk6 = 4;
+    mo.unk7C = 1;
+    split_mushroom_combo(&mo);
+    assert(mo.ext.main_61.combo_count == 0 && mo.unk17 == 0xF && mo.unk6 == 6);
+    mo_step(0);
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 6);
+    mo_step(1);
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 7 && mo.unk17 == 2);
+    mo_step(0);
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 7);
+    mo_step(1);
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 0 && mo.unk7C == 1);
+    mo.unk2 = 0;
+    mo.unk6 = 5;
+    mo.unk7C = 3;
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 5 && mo.unk7C == 2);
+    mo.unk2 = 1;
+    mp.unk5 = 6;
+    mp.unk6 = 4;
+    split_mushroom_combo(&mo);
+    assert(mo.unk6 == 5 && mo.unk7C == 1 && mp.unk6 == 4);
+}
+static void smx_wall_jump(void)
+{
+    mo_reset(7, 0);
+    mo_step(0);
+    split_mushroom_wall_jump(&mo);
+    assert(mo.unk6 == 0 && mo.terrain_box == NULL);
+    mo.unk6 = 1;
+    mo.unk15 = PLAYER_FACING_RIGHT;
+    mo.y_speed = 0x10000;
+    split_mushroom_wall_jump(&mo);
+    assert(mo.unk6 == 1 && mo.unk7 == 0);
+    mo.unk2 = 1;
+    mo.unk6 = 3;
+    mo.unk7C = 1;
+    mo.unk7E = 2;
+    split_mushroom_wall_jump(&mo);
+    assert(mo.unk7C == 0x28 && mo.unk7E == 1 && shot_objects[0].unk7C == (struct WeaponObj*)&mp && shot_objects[0].state == 4 && shot_objects[0].unk15 == 0);
+    assert(shot_objects[0].unk42 == OBJECT_CLUT(0x78CC));
+    mo.unk6 = 4;
+    mo_step(0);
+    split_mushroom_wall_jump(&mo);
+    assert(mo.unk6 == 4);
+    mo.x_speed = 0x10000;
+    mo_step(1);
+    split_mushroom_wall_jump(&mo);
+    assert(mo.unk6 == 5 && mo.unk15 == 0 && mo.x_speed == 0 && mo.gravity == FIXED(0.21875) && mo.unk17 == 3);
+    split_mushroom_wall_jump(&mo);
+    assert(mo.unk6 == 5);
+    mo.collision_flags = 8;
+    split_mushroom_wall_jump(&mo);
+    assert(mo.unk6 == 6);
+    mo_step(0);
+    split_mushroom_wall_jump(&mo);
+    assert(mo.unk6 == 6);
+    mo_step(1);
+    split_mushroom_wall_jump(&mo);
+    assert(mo.unk5 == 3 && mo.unk6 == 0 && mo.unk17 == 2);
+}
+static void (*const smx_cases[])(void) = {
+    smx_death,
+    smx_intro_drop,
+    smx_intro_talk,
+    smx_main_hits,
+    smx_stun_counts,
+    smx_spore_rain,
+    smx_spore_land,
+    smx_walk,
+    smx_walk_hop,
+    smx_dash,
+    smx_combo_jump,
+    smx_combo_dash,
+    smx_combo_slam,
+    smx_wall_jump,
+};
+static u32 smx_run(u32 row)
+{
+    smx_cases[row]();
+    return 1;
+}
+
+void func_8007AB1C(struct MainObj*);
+static void smb_combo_player_right(void) { SPLIT(5, 4), so.ext.main_61.combo_count = 1, so.x_pos.i.hi = 0x80, g_Player.x_pos.i.hi = 0x9B, so.unk15 = PLAYER_FACING_RIGHT, func_8007AB1C(&so), MUSHROOM(); }
+static void (*const split_mushroom_combo_cases[])(void) = {
+    smb_combo_player_right,
+};
+static const u32 split_mushroom_combo_expected[] = {
+    0x205u,
+    0x14u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x0u,
+    0x0u,
+};
+static u32 test_split_mushroom_combo(u32 row)
+{
+    return state_run(split_mushroom_combo_cases[row], row, &split_mushroom_combo_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "split_mushroom_main", 0, 0, COUNT(split_mushroom_main_cases), test_split_mushroom_main },
     { "split_mushroom_states", 0, 0, COUNT(split_mushroom_states_cases), test_split_mushroom_states },
@@ -1024,11 +1568,15 @@ const struct CTestGroup c_test_groups[] = {
     { "func_80079824", 0, 0, 3, test_func_80079824 },
     { "split_mushroom_face_player", 0, 0, 2, test_split_mushroom_face_player },
     { "split_mushroom_death_flash", split_mushroom_death_flash_cases, split_mushroom_death_flash_cases_expected, COUNT(split_mushroom_death_flash_cases), 0 },
+#ifndef VERSION_DEMO
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "own_Mushroom_dash_first_smoke_and_grounded_combo_slam_full_partial_pools", NULL, NULL, 36, attack },
+#endif
     { "full_visual_pool_with_normal_and_short_hit_flashes", NULL, NULL, 12, hit_visual_exhaustion },
     { "actual_intro_talk_animation_event_zero_one_five_spore_slots", NULL, NULL, 3, spores },
     { "own_Mushroom_wall_first_shot_or_spore_split_clock_full_32_shot_or_48_main_slots", NULL, NULL, 2, full },
+    { "split_mushroom_state_steps", NULL, NULL, COUNT(smx_cases), smx_run },
+    { "split_mushroom_combo", 0, 0, COUNT(split_mushroom_combo_cases), test_split_mushroom_combo },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(split_mushroom_main_cases) + COUNT(split_mushroom_states_cases) + COUNT(mushroom_hop_signed_speed_cases_expected) + COUNT(mushroom_reunion_vertical_cases_expected) + COUNT(split_mushroom_intro_pools_cases_expected) + 3 + 2 + COUNT(split_mushroom_death_flash_cases) + COUNT(pool_full_cases) + 36 + 12 + 3 + 2;
+const u32 c_test_count = COUNT(split_mushroom_main_cases) + COUNT(split_mushroom_states_cases) + COUNT(mushroom_hop_signed_speed_cases_expected) + COUNT(mushroom_reunion_vertical_cases_expected) + COUNT(split_mushroom_intro_pools_cases_expected) + 3 + 2 + COUNT(split_mushroom_death_flash_cases) + POOL_FULL_CASES + ATTACK_CASES + 12 + 3 + 2 + COUNT(smx_cases) + COUNT(split_mushroom_combo_cases);

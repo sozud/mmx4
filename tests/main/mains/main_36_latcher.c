@@ -3,6 +3,7 @@
 #include "main/195B4.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
+#include "support/platform_fixture.h"
 extern struct Unk_unk68 latcher_hurt_box;
 extern struct Unk_unk68 D_801073F4[];
 extern u32* D_80137E08;
@@ -99,7 +100,7 @@ static u32 hit_case(u32 mode)
                                                  : 0;
     obj.animation_table = (const u8* const*)latcher_animations;
     set_animation(&obj, 0);
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.x_pos.i.hi = mode >= 5 ? 110 : 90;
     if (mode != 0) {
         weapon_objects[0].active = 1;
@@ -116,7 +117,7 @@ static u32 hit_case(u32 mode)
     expected.unk42 = mode == 0 ? 0x1234 : 0x9234;
     if (mode != 0) {
         weapons_before[0].unk98 = 1;
-        weapons_before[0].unk80.word = 100 | (200u << 16);
+        TEST_SET_HALVES(weapons_before[0].unk80, 100, 200);
         if (mode == 1) {
             expected.hp = 0;
             expected.unk5 = 3;
@@ -138,16 +139,11 @@ static u32 hit_case(u32 mode)
         }
     }
     latcher_check_hit(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(context) / 4; i++)
-        assert(((u32*)&context)[i] == ((u32*)&context_before)[i]);
-    for (i = 0; i < sizeof(weapons_before) / 4; i++)
-        assert(((u32*)weapon_objects)[i] == ((u32*)weapons_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(visuals_before) / 4; i++)
-        assert(((u32*)visual_objects)[i] == ((u32*)visuals_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&context, &context_before, sizeof(context));
+    c_test_same_words(weapon_objects, weapons_before, sizeof(weapons_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(visual_objects, visuals_before, sizeof(visuals_before));
     assert(SP_CUR_MAIN_OBJ == &context && D_8013E198[0] == -1);
     return (u8)obj.hp | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)obj.unk6 << 16) | ((u32)obj.unk17 << 24);
 }
@@ -210,7 +206,7 @@ static u32 test_func_8005F558(u32 row)
     frames[1] = 64;
     metadata[1] = 0x1680;
     TEST_MENU_FRAMES = (u8*)frames;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     engine_obj.stage = 6;
     engine_obj.substage = 0;
     g_Player.bg_offset = 1;
@@ -218,12 +214,12 @@ static u32 test_func_8005F558(u32 row)
     assert(s_StageMainIds[6][0][1] == 0x24);
     assert((u8)func_8002938C(0x24) == 1);
     expected = obj;
-    expected.unk40 = 0x2D;
-    expected.unk42 = 0x784C;
+    expected.unk40 = OBJECT_STAGE_TEXTURE(1);
+    expected.unk42 = OBJECT_STAGE_CLUT(0x24);
     expected.sprite_frames = (u8*)frames + 64;
     expected.attack_box = &latcher_hurt_box;
     expected.hurt_box = &latcher_hurt_box;
-    expected.unk16 = 6;
+    expected.unk16 = VISUAL_SATURN_LAYER(6);
     expected.unk62 = 3;
     expected.collision_data = D_801073F4;
     expected.hp = 16;
@@ -262,7 +258,7 @@ static u32 test_func_8005F558(u32 row)
         set_animation(&expected, 1);
     }
     if (obj.unk2 == 2) {
-        expected.unk15 = 0x40;
+        expected.unk15 = PLAYER_FACING_RIGHT;
     }
     if (obj.unk2 == 2) {
         expected.x_speed = -0x18000;
@@ -416,7 +412,7 @@ static u32 test_latcher_grab_home(u32 row)
     misc_objects[63].active = 0x41;
     misc_objects[63].id = 11;
     misc_objects[63].state = 1;
-    misc_objects[63].unk16 = 1;
+    misc_objects[63].unk16 = VISUAL_SATURN_LAYER(1);
     misc_objects[63].unk40 = obj.unk40;
     misc_objects[63].unk42 = obj.unk42;
     misc_objects[63].unk3C = obj.sprite_frames;
@@ -505,7 +501,7 @@ static u32 test_latcher_main(u32 row)
     g_Player.y_pos = obj.y_pos;
     g_Player.unk54 = (const u32*)&latcher_hurt_box;
     immune = c->immune;
-    g_Player.spike_immune = immune;
+    SPIKE_IMMUNE_SET(g_Player, immune);
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
     FILL_ACTIVE(weapon_objects, 16, 0);
@@ -539,8 +535,149 @@ static u32 test_latcher_main(u32 row)
     observed_values[1] = (u32)g_Player.hp;
     observed_values[2] = (u32)g_Player.hurt_type;
     observed_values[3] = (u32)obj.ext.main_36.unk8D;
-    observed_values[4] = (u32)obj.animation_step.packed;
+    observed_values[4] = C_TEST_STEP(obj.animation_step.packed);
     return c_test_observe(0, row, observed_values, c->expected, 5);
+}
+
+#include "support/state_cases.h"
+void latcher_grab_release(struct MainObj*);
+#define LA(step, sub) (state_reset(step, sub, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), state_terrain(0), g_Player.unk68 = NULL, g_Player.stun_timer = 0, g_Player.hp = 24, so.active = 0x41, so.id = 0x24, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, g_Player.x_pos.i.hi = 0x40, g_Player.y_pos.i.hi = 0x60, misc_objects[5].active = 0x41, misc_objects[5].animation_table = state_table, so.ext.main_36.unk84 = &misc_objects[5])
+#define LAX() (state_extra = so.ext.main_36.unk8C | so.ext.main_36.unk8D << 8 | (u32)(u8)g_Player.hp << 16 | (u32)(u8)g_Player.stun_timer << 24, g_Player.stun_timer = 0)
+static void la_run(void (*step)(struct MainObj*))
+{
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    SP_CUR_MAIN_OBJ = &so;
+    step(&so);
+    SP_CUR_MAIN_OBJ = current;
+    LAX();
+}
+static void la_main_latched_off_screen(void) { LA(2, 0), so.ext.main_36.unk8D = 1, so.x_pos.i.hi = 0x300, la_run(latcher_main); }
+static void la_main_player_stunned(void) { LA(2, 0), g_Player.stun_timer = 5, la_run(latcher_main); }
+static void la_drift_latch(void) { LA(2, 0), so.ext.main_36.unk8D = 1, g_Player.stun_timer = 5, la_run(latcher_drift); }
+static void la_home_far(void) { LA(3, 0), la_run(latcher_grab_home); }
+static void la_clamp_wait(void) { LA(3, 1), so.animation_step.fields.event = 0, la_run(latcher_grab_clamp); }
+static void la_clamp_jaw(void) { LA(3, 1), so.animation_step.fields.event = 1, so.ext.main_36.unk8C = 1, la_run(latcher_grab_clamp); }
+static void la_drain_bite(void) { LA(3, 2), so.ext.main_36.unk8C = 1, so.ext.main_36.unk8A = 0x41, la_run(latcher_grab_drain); }
+static void la_drain(void) { LA(3, 2), so.ext.main_36.unk8C = 1, so.ext.main_36.unk8A = 0x43, la_run(latcher_grab_drain); }
+static void la_release_wait(void) { LA(3, 3), so.animation_step.fields.event = 0, la_run(latcher_grab_release); }
+static void la_release(void) { LA(3, 3), so.animation_step.fields.event = 1, la_run(latcher_grab_release); }
+static void (*const latcher_states_cases[])(void) = {
+    la_main_latched_off_screen,
+    la_main_player_stunned,
+    la_drift_latch,
+    la_home_far,
+    la_clamp_wait,
+    la_clamp_jaw,
+    la_drain_bite,
+    la_drain,
+    la_release_wait,
+    la_release,
+};
+static const u32 latcher_states_expected[] = {
+    0x2u,
+    0x0u,
+    0x3000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x180100u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x5180000u,
+    0x41000000u,
+    0x3u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x5180101u,
+    0x41000000u,
+    0x3u,
+    0x0u,
+    0x7F0000u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x180000u,
+    0x41000000u,
+    0x103u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x180000u,
+    0x41000000u,
+    0x203u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x0u,
+    0x180001u,
+    0x41000000u,
+    0x203u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0xFF940001u,
+    0x41000000u,
+    0x203u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x180001u,
+    0x41000000u,
+    0x303u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x180000u,
+    0x41000000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x180000u,
+    0x41000000u,
+};
+static u32 test_latcher_states(u32 row)
+{
+    return state_run(latcher_states_cases[row], row, &latcher_states_expected[row * 10]);
 }
 
 const struct CTestGroup c_test_groups[] = {
@@ -552,6 +689,7 @@ const struct CTestGroup c_test_groups[] = {
     { "latcher_grab_drain", 0, 0, 1, test_latcher_grab_drain },
     { "latcher_grab_home", 0, 0, 4, test_latcher_grab_home },
     { "latcher_main", 0, 0, 3, test_latcher_main },
+    { "latcher_states", 0, 0, COUNT(latcher_states_cases), test_latcher_states },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(latcher_drain_release_animation_cases_expected) + COUNT(latcher_weapon_responses_cases_expected) + 5 + 2 + 1 + 1 + 4 + 3;
+const u32 c_test_count = COUNT(latcher_drain_release_animation_cases_expected) + COUNT(latcher_weapon_responses_cases_expected) + 5 + 2 + 1 + 1 + 4 + 3 + COUNT(latcher_states_cases);

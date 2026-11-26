@@ -193,10 +193,125 @@ static u32 ready_vertex_cases_row(u32 row)
     return vertex_case(row / 4, row % 4);
 }
 
+static u32 line_steps(u32 index);
 const struct CTestGroup c_test_groups[] = {
+    { "line_steps", 0, 0, 14, line_steps },
     { "ready_line_sweep_pool_edges", NULL, ready_line_sweep_pool_edges_cases_expected, COUNT(ready_line_sweep_pool_edges_cases_expected), sweep_case },
     { "ready_shutter_close_and_default", NULL, ready_shutter_close_and_default_cases_expected, COUNT(ready_shutter_close_and_default_cases_expected), shutter_case },
     { "ready_vertex", NULL, ready_vertex_cases_expected, COUNT(ready_vertex_cases_expected), ready_vertex_cases_row },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ready_line_sweep_pool_edges_cases_expected) + COUNT(ready_shutter_close_and_default_cases_expected) + COUNT(ready_vertex_cases_expected);
+const u32 c_test_count = COUNT(ready_line_sweep_pool_edges_cases_expected) + COUNT(ready_shutter_close_and_default_cases_expected) + COUNT(ready_vertex_cases_expected) + 14;
+
+void ready_line_init(struct QuadObj*);
+void ready_line_shutter(struct QuadObj*);
+void ready_line_streak(struct QuadObj*);
+extern s16 ready_line_shutter_columns[10];
+extern s16 ready_line_shutter_open_vertices[10][4][2];
+extern s16 ready_line_streak_vertices[3][4][2];
+extern u8 ready_line_streak_shapes[];
+static u32 line_steps(u32 index)
+{
+    static const u8 scenarios[] = { 0, 1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+    u32 row = scenarios[index];
+    struct QuadObj obj;
+    struct EffectObj owner;
+    u32 i, seed, r[4];
+    u8 before[sizeof(obj.vertices)];
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    obj.active = 1;
+    obj.id = 7;
+    obj.state = 1;
+    obj.link.owner = &owner;
+    owner.ext.unk_effect.unk14 = 3;
+    if (row <= 1) {
+        obj.state = 0;
+        obj.unk2 = row;
+        obj.x_pos.val = 0x12345;
+        ready_line_init(&obj);
+        assert(obj.state == 1 && obj.unk36 == (row == 0 ? 0x10 : 0x13) && obj.unk34 == 5 && obj.x_pos.val == 0);
+        return 1;
+    }
+    if (row <= 7) {
+        obj.unk2 = 1;
+        obj.unk7 = row == 3 ? 6 : 2;
+        obj.unk5 = row <= 3 ? 0 : row <= 5 ? 1
+            : row == 6                     ? 2
+                                           : 3;
+        obj.runtime.legacy.unk50 = row == 5 ? 1 : 2;
+        if (row == 4 || row == 6) {
+            obj.unk5 = 0;
+            ready_line_shutter(&obj);
+            assert(obj.unk5 == 1 && obj.runtime.legacy.unk50 == 8 && obj.vertices[2].y.i.hi == 0);
+            assert(obj.vertices[1].x.i.hi == ready_line_shutter_columns[2] + 63);
+            if (row == 6) {
+                obj.runtime.legacy.unk50 = 1;
+                ready_line_shutter(&obj);
+                assert(obj.unk5 == 2 && obj.runtime.legacy.unk50 == 8);
+                assert(obj.vertices[0].x.i.hi == ready_line_shutter_open_vertices[2][0][0]);
+                assert(obj.vertices[3].y.i.hi == ready_line_shutter_open_vertices[2][3][1]);
+            }
+            obj.runtime.legacy.unk50 = 2;
+            memcpy(before, obj.vertices, sizeof(before));
+        }
+        ready_line_shutter(&obj);
+        if (row <= 3) {
+            assert(obj.unk5 == 1 && obj.runtime.legacy.unk50 == 8);
+            assert(obj.vertices[0].x.i.hi == ready_line_shutter_columns[obj.unk7]);
+            assert(obj.vertices[1].x.i.hi == ready_line_shutter_columns[obj.unk7] + 63);
+            assert(obj.vertices[2].y.i.hi == (row == 2 ? 0 : 240));
+        } else if (row == 5) {
+            assert(obj.unk5 == 2 && obj.runtime.legacy.unk50 == 8);
+            assert(obj.vertices[0].x.i.hi == ready_line_shutter_open_vertices[2][0][0]);
+            assert(obj.vertices[3].y.i.hi == ready_line_shutter_open_vertices[2][3][1]);
+        } else if (row == 7) {
+            assert(obj.state == 2 && obj.unk5 == 0 && owner.ext.unk_effect.unk14 == 0);
+        } else {
+            assert(obj.unk5 == (row == 4 ? 1 : 2) && obj.runtime.legacy.unk50 == 1);
+            assert(memcmp(before, obj.vertices, sizeof(before)) != 0);
+        }
+        return 1;
+    }
+    obj.unk2 = 2;
+    if (row <= 9) {
+        for (seed = 0;; seed++) {
+            cur_random = seed;
+            for (i = 0; i < 4; i++)
+                r[i] = get_random();
+            if ((r[1] & 1) == (r[2] & 1) && (r[1] & 1) == (row == 8))
+                break;
+        }
+        cur_random = seed;
+        obj.unk7 = 3;
+        ready_line_streak(&obj);
+        assert(obj.unk5 == 1 && obj.runtime.legacy.unk52 == 24);
+        assert(obj.vertices[0].x.i.hi == ready_line_streak_vertices[ready_line_streak_shapes[r[0] & 0xF]][0][0]);
+        assert(obj.vertices[3].y.i.hi == ready_line_streak_vertices[ready_line_streak_shapes[r[0] & 0xF]][3][1]);
+        assert(obj.x_pos.i.hi == (row == 8 ? -176 : 496) && obj.runtime.legacy.unk48 == (row == 9));
+        assert(obj.ext.ready_line.x_vel.val == (row == 8 ? 48 << 16 : -24 << 16));
+        assert(obj.y_pos.i.hi == (s16)((r[3] & 7) * 4 + 104));
+        return 1;
+    }
+    if (row <= 14) {
+        obj.unk5 = 1;
+        obj.runtime.legacy.unk52 = row == 10;
+        obj.runtime.legacy.unk48 = row >= 13;
+        obj.x_pos.i.hi = row == 11 ? 320 : row == 12 ? 300
+            : row == 13                              ? -177
+                                                     : 0;
+        obj.ext.ready_line.x_vel.val = row >= 13 ? -0x180000 : 0x180000;
+        ready_line_streak(&obj);
+        assert(obj.runtime.legacy.unk52 == 0);
+        assert(obj.unk5 == (row == 11 || row == 13 ? 2 : 1));
+        assert(obj.x_pos.i.hi == (row == 10 ? 0 : row == 11 ? 320
+                       : row == 12                          ? 324
+                       : row == 13                          ? -177
+                                                            : -24));
+        return 1;
+    }
+    obj.unk5 = 2;
+    ready_line_streak(&obj);
+    assert(obj.state == 2 && obj.unk5 == 0 && owner.ext.unk_effect.unk14 == 2);
+    return 1;
+}

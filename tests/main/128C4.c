@@ -1,8 +1,18 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/128C4.h"
 #include "main/55C4.h"
 extern union MainPaletteData D_800F1660;
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#define TALK_PRESSED SATURN_PAD_A
+#define TALK_PALETTE_WORD saturn_color_ram[SATURN_DIALOGUE_PALETTE]
+#else
+#define TALK_PRESSED 1
+#define TALK_PALETTE_WORD talk_palette[0x150]
+#endif
 
+#ifndef VERSION_DEMO
 static u32 dialogue_case(u32 mode, u32 observation)
 {
     struct MiscObj parts[6], before[6], pool_expected;
@@ -95,14 +105,10 @@ static u32 dialogue_case(u32 mode, u32 observation)
         if (parts[i].active)
             active_mask |= 1 << i;
     }
-    for (i = 0; i < sizeof(parts) / 4; i++)
-        assert(((u32*)parts)[i] == ((u32*)before)[i]);
-    for (i = 0; i < sizeof(abc_object) / 4; i++)
-        assert(((u32*)&abc_object)[i] == ((u32*)&dialogue_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(parts, before, sizeof(parts));
+    c_test_same_words(&abc_object, &dialogue_before, sizeof(abc_object));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     for (i = 0; i < 64; i++)
         for (j = 0; j < sizeof(pool_expected) / 4; j++)
             assert(((u32*)&misc_objects[i])[j] == ((u32*)&pool_expected)[j]);
@@ -113,10 +119,16 @@ static u32 dialogue_case(u32 mode, u32 observation)
     actual = observation == 0 ? abc_object.unkC | ((u32)abc_object.unkD << 8) | ((u32)abc_object.unkA << 16) : (u16)abc_object.unk10 | (active_mask << 16);
     return actual;
 }
+#ifdef MMX4_SATURN
+static const u32 dialogue_interrupt_pool_full_cases_expected[] = { 0x270480u, 0x3F9234u, 0x270480u, 0x2B9234u, 0x270480u, 0x9234u, 0x270480u, 0x3F9234u };
+#define POOL_FULL_MODE(row) ((row) / 2 + ((row) >= 4))
+#else
 static const u32 dialogue_interrupt_pool_full_cases_expected[] = { 0x270480u, 0x3F9234u, 0x270480u, 0x2B9234u, 0x270080u, 0x3F0000u, 0x270480u, 0x9234u, 0x270480u, 0x3F9234u };
+#define POOL_FULL_MODE(row) ((row) / 2)
+#endif
 static u32 dialogue_interrupt_pool_full_cases_row(u32 row)
 {
-    return dialogue_case(row / 2, row % 2);
+    return dialogue_case(POOL_FULL_MODE(row), row % 2);
 }
 
 static struct Func80022730Config talk_config;
@@ -133,7 +145,7 @@ static void talk_reset(u8 step, u16 timer, u8 portrait)
     abc_object.unkA = timer;
     D_801397D8 = portrait;
     D_801397DC = &talk_config;
-    D_801406A8 = talk_pages;
+    test_stage_graphics(talk_pages);
     TEST_MENU_FRAMES = (u8*)talk_frames;
     TEST_PALETTE = (u8*)talk_palette;
     D_801397BC = D_801397C0 = D_801397C4 = D_801397C8 = NULL;
@@ -141,8 +153,11 @@ static void talk_reset(u8 step, u16 timer, u8 portrait)
     engine_obj.cur_character = 0;
     engine_obj.armor_parts = 0;
     engine_obj.stage = 0;
-    controller_input.pressed = 0;
+    TEST_PAD_PRESSED = 0;
     need_palette_load = 0;
+#ifdef MMX4_SATURN
+    TALK_PALETTE_WORD = 0;
+#endif
 }
 
 static u32 talk_run(void (*run)(void), u32 row, const u32* expected)
@@ -155,7 +170,7 @@ static u32 talk_run(void (*run)(void), u32 row, const u32* expected)
     seen[1] = abc_object.unkE | abc_object.unkF << 8 | (u32)(u16)abc_object.unk6 << 16;
     seen[2] = active | (D_801397C8 != NULL) << 8 | (D_801397D0 != NULL) << 9 | (D_801397CC != NULL) << 10 | (D_801397D4 != NULL) << 11;
     seen[3] = misc_objects[0].unk2 | misc_objects[0].ext.title_logo.palette_shift_speed << 8 | (u32)(u16)misc_objects[0].x_pos.i.hi << 16;
-    seen[4] = need_palette_load | engine_obj.enable_boss << 8 | talk_palette[0x150] << 16;
+    seen[4] = need_palette_load | engine_obj.enable_boss << 8 | TALK_PALETTE_WORD << 16;
     return c_test_observe(0, row, seen, expected, 5);
 }
 
@@ -209,7 +224,7 @@ static void t_pause_skip(void)
 {
     talk_reset(2, 3, 0);
     abc_object.unkF = 1;
-    controller_input.pressed = 1;
+    TEST_PAD_PRESSED = TALK_PRESSED;
     func_80022730(&abc_object);
 }
 static void t_pause_done(void)
@@ -226,7 +241,7 @@ static void t_wait_close(void)
 {
     talk_reset(3, 0, 0);
     abc_object.unk4 = 0x8000;
-    controller_input.pressed = 1;
+    TEST_PAD_PRESSED = TALK_PRESSED;
     D_801397C4 = &misc_objects[1];
     misc_objects[1].id = 0x16;
     misc_objects[1].active = 1;
@@ -317,7 +332,7 @@ static void t_wait_close_all(void)
 {
     talk_reset(3, 0, 0);
     abc_object.unk4 = 0x8000;
-    controller_input.pressed = 1;
+    TEST_PAD_PRESSED = TALK_PRESSED;
     talk_portraits(0x16);
     func_80022730(&abc_object);
 }
@@ -325,7 +340,7 @@ static void t_wait_close_reused(void)
 {
     talk_reset(3, 0, 0);
     abc_object.unk4 = 0x8000;
-    controller_input.pressed = 1;
+    TEST_PAD_PRESSED = TALK_PRESSED;
     talk_portraits(0x17);
     func_80022730(&abc_object);
 }
@@ -386,8 +401,8 @@ static u32 test_dialogue_window(u32 row)
     assert(window == &misc_objects[0]);
     assert(window->active == 1 && window->id == 0x16 && window->unk2 == 2);
     assert(window->x_pos.i.hi == 0xA0 && window->y_pos.i.hi == new_dialogues[row].expected_y);
-    assert(window->bg_offset == -1 && window->unk42 == 0x7846);
-    assert(window->unk40 == 0x1E00 && window->unk16 == 0x11);
+    assert(window->bg_offset == -1 && window->unk42 == OBJECT_CLUT(0x7846));
+    assert(window->unk40 == 0x1E00 && window->unk16 == VISUAL_SATURN_LAYER(0x11));
     assert(abc_object.unk0 == &messages[1] && abc_object.unk4 == messages[1]);
     assert(abc_object.unkC == 0x80 && abc_object.unkD == 0 && abc_object.unkA == 0x27);
     assert(abc_object.unk6 == -0x78 && abc_object.unk8 == 0x1D && abc_object.unkF == 1);
@@ -398,6 +413,25 @@ static u32 test_dialogue_window(u32 row)
         assert(D_801397E4[i] == 0x1234);
     return (u16)window->y_pos.i.hi;
 }
+#ifdef MMX4_SATURN
+#define WINDOW_CASES 0
+#else
+#define WINDOW_CASES COUNT(new_dialogues)
+#endif
+#define DIALOGUE_CASES (WINDOW_CASES + COUNT(dialogue_portraits_cases) + COUNT(talk_cases) + COUNT(dialogue_interrupt_pool_full_cases_expected))
+#else
+static u32 demo_talk_countdown(u32 row)
+{
+    memset(&abc_object, 0, sizeof(abc_object));
+    abc_object.unkC = 0x80;
+    abc_object.unkA = 2 - row;
+    func_80022730(&abc_object);
+    assert(abc_object.unkA == 1 - row);
+    assert(abc_object.unkC == (row ? 0 : 0x80));
+    return abc_object.unkC;
+}
+#define DIALOGUE_CASES 2
+#endif
 
 void func_800220C4(void);
 void func_80022138(void);
@@ -411,6 +445,30 @@ static struct PlayerObj player_before;
 static s32 clock_before;
 static u16 random_before;
 
+#ifdef VERSION_DEMO
+#define ENGINE_RECORD sizeof(struct EngineObj)
+#else
+#define ENGINE_RECORD 0x64
+#endif
+#define REPLAY_INPUTS (0xC + 2 * ENGINE_RECORD)
+#ifdef MMX4_BIG_ENDIAN
+static void put16(u8* dest, u32 value)
+{
+    dest[0] = value >> 8;
+    dest[1] = value;
+}
+
+static void put32(u8* dest, u32 value)
+{
+    put16(dest, value >> 16);
+    put16(dest + 2, value);
+}
+
+static u16 get16(const u8* source)
+{
+    return ((u16)source[0] << 8) | source[1];
+}
+#else
 static void put16(u8* dest, u32 value)
 {
     dest[0] = value;
@@ -427,6 +485,7 @@ static u16 get16(const u8* source)
 {
     return source[0] | ((u16)source[1] << 8);
 }
+#endif
 
 static void prepare(u32 salt)
 {
@@ -462,13 +521,17 @@ static void check(void)
 
 static u32 snapshot(u32 row)
 {
-    u8 image[0x64];
+    u8 image[ENGINE_RECORD];
     u32 pattern = row / 3, boss = row % 3, i;
     prepare(row);
     for (i = 0; i < sizeof(image); i++)
         image[i] = pattern == 0 ? 0 : pattern == 1 ? 0xFF
                                                    : (i * 73 + 0x35);
+#ifdef MMX4_SATURN
+    put32(image + 0x20, boss == 0 ? 0 : (u32)&main_objects[boss == 1 ? 0 : 47]);
+#else
     put32(image + 0x20, boss == 0 ? 0 : 0x8013BED0u + (boss == 1 ? 0 : 47 * 0x9C));
+#endif
     put32(image + 0x38, 0);
     put32(image + 0x3C, 0);
     engine_obj.state = image[0x00];
@@ -512,7 +575,9 @@ static u32 snapshot(u32 row)
     engine_obj.arm_type = image[0x48];
     engine_obj.palette_flags = image[0x59];
     engine_obj.unk5F = image[0x5F];
+#ifndef VERSION_DEMO
     engine_obj.unk60 = image[0x60];
+#endif
     engine_obj.unk4 = get16(image + 0x04);
     engine_obj.unk8 = get16(image + 0x08);
     engine_obj.unkA = get16(image + 0x0A);
@@ -534,7 +599,9 @@ static u32 snapshot(u32 row)
     }
     for (i = 0; i < 3; i++) {
         engine_obj.sub_tanks[i] = image[0x5C + i];
+#ifndef VERSION_DEMO
         engine_obj.pad61[i] = image[0x61 + i];
+#endif
     }
     memcpy(expected.bytes + 0xC + 0x38, image + 0x38, 8);
     seal();
@@ -560,7 +627,7 @@ static u32 append(u32 row)
     g_Player.pressed_input = 0x5AA5;
     seal();
     if (position < 3600) {
-        put16(expected.bytes + 0xD4 + position * 2, held);
+        put16(expected.bytes + REPLAY_INPUTS + position * 2, held);
         put32(expected.bytes, position + 1);
     }
     func_80022138();
@@ -579,7 +646,7 @@ static u32 final_inputs(void)
         g_Player.input.buttons.held = inputs[i];
         player_before.input.buttons.held = inputs[i];
         if (i < 3) {
-            put16(expected.bytes + 0xD4 + (3597 + i) * 2, inputs[i]);
+            put16(expected.bytes + REPLAY_INPUTS + (3597 + i) * 2, inputs[i]);
             put32(expected.bytes, 3598 + i);
         }
         func_80022138();
@@ -598,10 +665,14 @@ static u32 native_snapshot(u32 row)
 #endif
 
 const struct CTestGroup c_test_groups[] = {
-    { "dialogue_window", 0, 0, COUNT(new_dialogues), test_dialogue_window },
+#ifdef VERSION_DEMO
+    { "demo_talk_countdown", NULL, NULL, 2, demo_talk_countdown },
+#else
+    { "dialogue_window", 0, 0, WINDOW_CASES, test_dialogue_window },
     { "dialogue_portraits", 0, 0, COUNT(dialogue_portraits_cases), test_dialogue_portraits },
     { "dialogue_states", 0, 0, COUNT(talk_cases), test_dialogue_states },
     { "dialogue_interrupt_pool_full", NULL, dialogue_interrupt_pool_full_cases_expected, COUNT(dialogue_interrupt_pool_full_cases_expected), dialogue_interrupt_pool_full_cases_row },
+#endif
     { "replay_snapshot", NULL, NULL, 9, snapshot },
     { "replay_append", NULL, NULL, 90, append },
     { "replay_full_buffer", final_cases, final_expected, COUNT(final_cases), 0 },
@@ -610,7 +681,7 @@ const struct CTestGroup c_test_groups[] = {
 #endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(new_dialogues) + COUNT(dialogue_portraits_cases) + COUNT(talk_cases) + COUNT(dialogue_interrupt_pool_full_cases_expected) + 9 + 90 + COUNT(final_cases)
+const u32 c_test_count = DIALOGUE_CASES + 9 + 90 + COUNT(final_cases)
 #ifdef MMX4_PC
     + 2
 #endif

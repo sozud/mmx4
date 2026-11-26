@@ -1,10 +1,12 @@
 #include "test_runtime.h"
 #include "main/items/item_02_pickup.h"
+#include "weapon_resources.h"
 #include "support/state_cases.h"
 #include "main/55C4.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 
+#ifndef VERSION_DEMO
 static u32 pickup_case(u32 mode)
 {
     struct ItemObj obj, before;
@@ -224,6 +226,10 @@ static u32 test_pickup_collect_health(u32 row)
     observed_values[10] = (u32)obj.unk6;
     return c_test_observe(0, row, observed_values, pickup_collect_health_expected, 11);
 }
+#define COLLECT_STEP_CASES (COUNT(energy_selection_context_cases_expected) + COUNT(pickup_health_tank_limits_cases_expected) + 3 + 1)
+#else
+#define COLLECT_STEP_CASES 0
+#endif
 
 static struct Unk_unk68 pickup_box = { 0, 0, 8, 8 };
 static struct PlayerObj pickup_player;
@@ -231,7 +237,7 @@ static struct EngineObj pickup_engine;
 static u8 pickup_qux_hp;
 static u8* pickup_frames;
 #define sp state_room.item
-#define PICKUP_AT(kind, upgrades, lives) (pickup_player = g_Player, pickup_engine = engine_obj, pickup_qux_hp = qux_object.hp, pickup_frames = TEST_SPRITE_FRAMES, TEST_SPRITE_FRAMES = (u8*)state_sprite_frames, state_reset(0, 0, 0), engine_obj.collected_upgrades = upgrades, engine_obj.player_lives = lives, sp.active = 1, sp.state = 1, sp.unk2 = kind, sp.x_pos.i.hi = 0x80, sp.y_pos.i.hi = 0x80)
+#define PICKUP_AT(kind, upgrades, lives) (pickup_player = g_Player, pickup_engine = engine_obj, pickup_qux_hp = qux_object.hp, pickup_frames = TEST_SPRITE_FRAMES, TEST_SPRITE_FRAMES = (u8*)state_sprite_frames, state_reset(0, 0, 0), engine_obj.collected_upgrades = upgrades, engine_obj.player_lives = lives, sp.active = 1, sp.state = 1, sp.unk2 = kind, sp.x_pos.i.hi = 0x80, sp.y_pos.i.hi = 0x80, SP_CUR_ITEM_OBJ = &sp)
 #define PICKUP(kind, upgrades) PICKUP_AT(kind, upgrades, 2)
 #define DONE() (state_extra = sp.unk7C.value | engine_obj.collected_upgrades << 8 | (u32)(u8)engine_obj.player_lives << 24, g_Player = pickup_player, engine_obj = pickup_engine, qux_object.hp = pickup_qux_hp, TEST_SPRITE_FRAMES = pickup_frames)
 #define INIT(kind, upgrades) (PICKUP(kind, upgrades), func_800BF76C(&sp), DONE())
@@ -314,7 +320,12 @@ static void (*const pickup_states_cases[])(void) = {
     pk_grab_extra_tank_taken,
     pk_grab_other,
 };
-static const u32 pickup_states_expected[] = { 1u, 0xFF000421u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x6780Bu, 0x2000004u, 0u, 1u, 0xFF000921u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x67807u, 0x2000007u, 0u, 3u, 0x921u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x57807u, 0x2000407u, 0u, 3u, 0x921u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x57807u, 0x200FF07u, 0u, 1u, 0xFF001021u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x37807u, 0x2000008u, 0u, 3u, 0x1021u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x57807u, 0x2200008u, 0u, 1u, 0xFF001121u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x37807u, 0x2000009u, 0u, 3u, 0x1121u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x57807u, 0x2400009u, 0u, 1u, 0xFF001221u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x5780Bu, 0x200000Au, 0u, 3u, 0x1221u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, 0x5780Bu, 0x280000Au, 0u, 1u, 0xFF000121u, 0x800000u, 0x800000u, 0u, 0u, 0x800000u, 0x37807u, 0x2000001u, 0u, 1u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000004u, 0u, 1u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000004u, 0u, 1u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000004u, 0u, 3u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x3000004u, 0u, 3u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x9000004u, 0u, 3u, 0x901u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000407u, 0u, 3u, 0x901u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000407u, 0u, 3u, 0x901u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x200FF07u, 0u, 3u, 0xF01u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2100008u, 0u, 1u, 0xF01u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2100008u, 0u, 1u, 0xF01u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2300008u, 0u, 3u, 0x1101u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2400009u, 0u, 1u, 0x1101u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2400009u, 0u, 3u, 0x1201u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x280000Au, 0u, 1u, 0x1201u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x280000Au, 0u, 3u, 0x1301u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x200000Bu, 0u };
+#ifdef VERSION_SATURN_PROTO
+#define PK_KIND12_CLUT OBJECT_CLUT(0x7807)
+#else
+#define PK_KIND12_CLUT OBJECT_CLUT(0x780B)
+#endif
+static const u32 pickup_states_expected[] = { 1u, 0xFF000421u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x60000u | OBJECT_CLUT(0x780B)), 0x2000004u, 0u, 1u, 0xFF000921u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x60000u | OBJECT_CLUT(0x7807)), 0x2000007u, 0u, 3u, 0x921u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x50000u | OBJECT_CLUT(0x7807)), 0x2000407u, 0u, 3u, 0x921u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x50000u | OBJECT_CLUT(0x7807)), 0x200FF07u, 0u, 1u, 0xFF001021u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x30000u | OBJECT_CLUT(0x7807)), 0x2000008u, 0u, 3u, 0x1021u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x50000u | OBJECT_CLUT(0x7807)), 0x2200008u, 0u, 1u, 0xFF001121u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x30000u | OBJECT_CLUT(0x7807)), 0x2000009u, 0u, 3u, 0x1121u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x50000u | OBJECT_CLUT(0x7807)), 0x2400009u, 0u, 1u, 0xFF001221u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x50000u | PK_KIND12_CLUT), 0x200000Au, 0u, 3u, 0x1221u, 0x800000u, 0x800000u, 0u, 0x80000u, 0x800000u, (0x50000u | PK_KIND12_CLUT), 0x280000Au, 0u, 1u, 0xFF000121u, 0x800000u, 0x800000u, 0u, 0u, 0x800000u, (0x30000u | OBJECT_CLUT(0x7807)), 0x2000001u, 0u, 1u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000004u, 0u, 1u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000004u, 0u, 1u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000004u, 0u, 3u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x3000004u, 0u, 3u, 0x401u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x9000004u, 0u, 3u, 0x901u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000407u, 0u, 3u, 0x901u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2000407u, 0u, 3u, 0x901u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x200FF07u, 0u, 3u, 0xF01u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2100008u, 0u, 1u, 0xF01u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2100008u, 0u, 1u, 0xF01u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2300008u, 0u, 3u, 0x1101u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2400009u, 0u, 1u, 0x1101u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2400009u, 0u, 3u, 0x1201u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x280000Au, 0u, 1u, 0x1201u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x280000Au, 0u, 3u, 0x1301u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x200000Bu, 0u };
 
 static u32 test_pickup_states(u32 row)
 {
@@ -392,13 +403,371 @@ static u32 collect(u32 row)
     return 1;
 }
 
+void pickup_main(struct ItemObj*);
+void func_800BFBD0(struct ItemObj*);
+static u32 pk_seen;
+#define PMX() (pk_seen = sp.unk67 | (u8)sp.unk70 << 8 | (u32)sp.ext.item_2.unk82 << 16 | (u32)sp.on_screen << 24, DONE(), state_extra = pk_seen)
+#define PMAIN(setup) (PICKUP(0, 0), sp.unk68 = &pickup_box, sp.ext.item_2.unk82 = 0x40, sp.unk2C = 0x8000, g_Player.x_pos.i.hi = 0x200, setup, pickup_main(&sp), PMX())
+static void pk_main_bounce(void)
+{
+    PMAIN((state_terrain(0x38), sp.unk67 = 1, sp.y_vel.val = 0x20000));
+}
+static void pk_main_bounce_back(void) { PMAIN((state_terrain(0x38), sp.unk67 = 1, sp.y_vel.val = -0x20000)); }
+static void pk_main_settle(void) { PMAIN((state_terrain(0x38), sp.unk67 = 1, sp.unk6 = 1)); }
+static void pk_main_fall(void) { PMAIN((state_terrain(0), sp.unk67 = 1, sp.y_vel.val = -0x10000)); }
+static void pk_main_drop(void) { PMAIN((state_terrain(0), sp.y_vel.val = -0x10000)); }
+static void pk_main_rest(void) { PMAIN((state_terrain(0x38), sp.ext.item_2.unk82 = 0x3B, WEAPON_FRAME_COUNTER = 0)); }
+static void pk_main_blink(void) { PMAIN((state_terrain(0x38), sp.ext.item_2.unk82 = 0x3B, WEAPON_FRAME_COUNTER = 0xFF)); }
+static void pk_main_expire(void) { PMAIN((state_terrain(0x38), sp.ext.item_2.unk82 = 1)); }
+static void pk_main_carried_away(void) { PMAIN((state_terrain(0x38), sp.backref = (void*)&pickup_box, sp.x_pos.i.hi = 0x400)); }
+static void pk_main_away(void) { PMAIN((state_terrain(0x38), sp.x_pos.i.hi = 0x400)); }
+#define REFILL(sub, delay, count, health) (PICKUP(1, 0), sp.unk6 = sub, sp.ext.item_2.unk81 = delay, sp.ext.item_2.unk80 = count, engine_obj.max_hp = 0x10, g_Player.hp = health, func_800BFBD0(&sp), pk_seen = sp.ext.item_2.unk80 | sp.ext.item_2.unk81 << 8 | (u32)g_Player.hp << 16, DONE(), state_extra = pk_seen)
+static void pk_refill_delay(void)
+{
+    REFILL(0, 2, 2, 8);
+}
+static void pk_refill_step(void) { REFILL(0, 1, 2, 8); }
+static void pk_refill_full(void) { REFILL(0, 1, 1, 0x10); }
+static void pk_refill_end(void) { REFILL(1, 1, 1, 8); }
+static void pk_grab_small(void) { GRAB(0, 0, 0, 0, 8); }
+static void pk_grab_large(void) { GRAB(1, 1, 0, 0, 8); }
+static void pk_grab_energy_small(void) { GRAB(2, 2, 0, 0, 8); }
+static void pk_grab_energy_large(void) { GRAB(3, 3, 0, 0, 8); }
+static void pk_grab_full(void) { GRAB(5, 5, 0, 0, 8); }
+static void pk_grab_energy_full(void) { GRAB(6, 6, 0, 0, 8); }
+static void pk_init_tanks_full(void) { INIT(0x10, 0x3000); }
+#ifndef VERSION_DEMO
+#define ENERGY(kind, who, held, owned, e0, e1, e2, setup) (PICKUP(kind, 0), engine_obj.cur_character = who, g_Player.weapon = held, g_Player.boss_flags = owned, g_Player.weapon_energy[0] = e0, g_Player.weapon_energy[1] = e1, g_Player.weapon_energy[2] = e2, setup, func_800BFCC0(&sp, kind), pk_seen = (u8)g_Player.weapon_energy[0] | (u8)g_Player.weapon_energy[1] << 8 | (u32)(u8)g_Player.weapon_energy[2] << 16, DONE(), state_extra = pk_seen)
+static void pk_energy_no_weapons(void)
+{
+    ENERGY(6, 0, 0, 0, 0x2F, 0x10, 0x10, 0);
+}
+static void pk_energy_lowest_first(void) { ENERGY(2, 0, 0, 3, 0x30, 0x10, 0x20, 0); }
+static void pk_energy_current_over(void) { ENERGY(6, 0, 2, 2, 0x30, 0x30, 0x20, 0); }
+static void pk_energy_current_fill(void) { ENERGY(2, 0, 2, 2, 0x30, 0x30, 0x2C, 0); }
+static void pk_energy_current_full(void) { ENERGY(2, 0, 2, 2, 0x30, 0x30, 0x31, 0); }
+static void pk_energy_zero_full(void) { ENERGY(2, 1, 1, 1, 0x30, 0x31, 0x30, 0); }
+#endif
+static void (*const pickup_more_cases[])(void) = {
+    pk_main_bounce,
+    pk_main_bounce_back,
+    pk_main_settle,
+    pk_main_fall,
+    pk_main_drop,
+    pk_main_rest,
+    pk_main_blink,
+    pk_main_expire,
+    pk_main_carried_away,
+    pk_main_away,
+    pk_refill_delay,
+    pk_refill_step,
+    pk_refill_full,
+    pk_refill_end,
+    pk_grab_small,
+    pk_grab_large,
+    pk_grab_energy_small,
+    pk_grab_energy_large,
+    pk_grab_full,
+    pk_grab_energy_full,
+    pk_init_tanks_full,
+#ifndef VERSION_DEMO
+    pk_energy_no_weapons,
+    pk_energy_lowest_first,
+    pk_energy_current_over,
+    pk_energy_current_fill,
+    pk_energy_current_full,
+    pk_energy_zero_full,
+#endif
+};
+static const u32 pickup_more_expected[] = {
+    0x10001u,
+    0x1u,
+    0x800000u,
+    0x7E0000u,
+    0x0u,
+    0xC000u,
+    0x800000u,
+    0x50000u,
+    0x13F0F01u,
+    0x0u,
+    0x10001u,
+    0x1u,
+    0x800000u,
+    0x820000u,
+    0x0u,
+    0x14000u,
+    0x800000u,
+    0x50000u,
+    0x13F0F01u,
+    0x0u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0xFFFF8000u,
+    0x800000u,
+    0x50000u,
+    0x13F0F00u,
+    0x0u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x810000u,
+    0x0u,
+    0xFFFE8000u,
+    0x800000u,
+    0x50000u,
+    0x13F0001u,
+    0x0u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x40000u,
+    0x13F0001u,
+    0x0u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x40000u,
+    0x13A0F00u,
+    0x0u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x40000u,
+    0x3A0F00u,
+    0x0u,
+    0x3u,
+    0x1u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x40000u,
+    0xF00u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x40000u,
+    0x400F00u,
+    0x0u,
+    0x3u,
+    0x1u,
+    0x4000000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x40000u,
+    0x3F0F00u,
+    0x0u,
+    0x1u,
+    0x101u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x80102u,
+    0x0u,
+    0x1u,
+    0x101u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x90201u,
+    0x0u,
+    0x10001u,
+    0x101u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x100200u,
+    0x0u,
+    0x10003u,
+    0x101u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x80101u,
+    0x0u,
+    0x3u,
+    0x1u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x2000000u,
+    0x0u,
+    0x3u,
+    0x101u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x2000001u,
+    0x0u,
+    0x3u,
+    0x201u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x2000002u,
+    0x0u,
+    0x3u,
+    0x301u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x2000003u,
+    0x0u,
+    0x3u,
+    0x501u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x2000005u,
+    0x0u,
+    0x3u,
+    0x601u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x2000006u,
+    0x0u,
+    0x3u,
+    0x1021u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x80000u,
+    0x800000u,
+    (0x50000u | OBJECT_CLUT(0x7807)),
+    0x2300008u,
+    0x0u,
+#ifndef VERSION_DEMO
+    0x1u,
+    0x601u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x101030u,
+    0x0u,
+    0x1u,
+    0x201u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x201430u,
+    0x0u,
+    0x1u,
+    0x601u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x303030u,
+    0x0u,
+    0x1u,
+    0x201u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x303030u,
+    0x0u,
+    0x1u,
+    0x201u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x303030u,
+    0x0u,
+    0x1u,
+    0x201u,
+    0x800000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x303030u,
+    0x0u,
+#endif
+};
+static u32 test_pickup_more(u32 row)
+{
+    return object_run(pickup_more_cases[row], row, &pickup_more_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "pickup_more_states", 0, 0, COUNT(pickup_more_cases), test_pickup_more },
     { "pickup_states", 0, 0, COUNT(pickup_states_cases), test_pickup_states },
+#ifndef VERSION_DEMO
     { "energy_selection_context", NULL, energy_selection_context_cases_expected, COUNT(energy_selection_context_cases_expected), pickup_case },
     { "pickup_health_tank_limits", NULL, pickup_health_tank_limits_cases_expected, COUNT(pickup_health_tank_limits_cases_expected), health_case },
     { "func_800BFCC0", 0, 0, 3, test_func_800BFCC0 },
     { "pickup_collect_health", 0, 0, 1, test_pickup_collect_health },
+#endif
     { "original_Jet_stage_second_health_tank_collects_from_real_ride_chaser", NULL, NULL, 1, collect },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(pickup_states_cases) + COUNT(energy_selection_context_cases_expected) + COUNT(pickup_health_tank_limits_cases_expected) + 3 + 1 + 1;
+const u32 c_test_count = COUNT(pickup_more_cases) + COUNT(pickup_states_cases) + COLLECT_STEP_CASES + 1;

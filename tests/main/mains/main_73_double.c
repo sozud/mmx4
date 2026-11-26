@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_73_double.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -12,7 +13,7 @@ static u32 wall_left(void)
     obj.collision_flags = 1;
     obj.unk15 = 0xA5;
     double_face_player(&obj);
-    return obj.unk15;
+    return C_TEST_PSX_FACING(obj.unk15);
 }
 
 static u32 wall_right(void)
@@ -22,7 +23,7 @@ static u32 wall_right(void)
     obj.collision_flags = 2;
     obj.unk15 = 0xA5;
     double_face_player(&obj);
-    return obj.unk15;
+    return C_TEST_PSX_FACING(obj.unk15);
 }
 
 static u32 player_right(void)
@@ -33,7 +34,7 @@ static u32 player_right(void)
     g_Player.x_pos.i.hi = 101;
     obj.unk15 = 0xA5;
     double_face_player(&obj);
-    return obj.unk15;
+    return C_TEST_PSX_FACING(obj.unk15);
 }
 
 static u32 player_level(void)
@@ -44,7 +45,7 @@ static u32 player_level(void)
     g_Player.x_pos.i.hi = 100;
     obj.unk15 = 0xA5;
     double_face_player(&obj);
-    return obj.unk15;
+    return C_TEST_PSX_FACING(obj.unk15);
 }
 static const CTestCase double_cases[] = {
     wall_left,
@@ -101,7 +102,7 @@ static u32 intro_case(u32 mode)
     g_Player.script_state = 0;
     g_Player.script_action = 0;
     g_Player.script_facing = 0x22;
-    g_Player.spike_immune = 0;
+    SPIKE_IMMUNE_SET(g_Player, 0);
     engine_obj.enable_boss = 1;
     engine_obj.unk25 = 0x33;
     engine_obj.boss_ptr = NULL;
@@ -122,8 +123,8 @@ static u32 intro_case(u32 mode)
         expected.unk7 = 0;
         player_expected.script_state = 1;
         player_expected.script_action = 0x14;
-        player_expected.script_facing = 0x40;
-        player_expected.spike_immune = 1;
+        player_expected.script_facing = PLAYER_FACING_RIGHT;
+        SPIKE_IMMUNE_SET(player_expected, 1);
         engine_expected.gameplay_locked = 1;
     } else if (mode == 2) {
         expected.contact_damage = 6;
@@ -145,18 +146,12 @@ static u32 intro_case(u32 mode)
         }
     }
     func_8008BB6C(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(linked) / 4; i++)
-        assert(((u32*)&linked)[i] == ((u32*)&linked_before)[i]);
-    for (i = 0; i < sizeof(pool_expected) / 4; i++)
-        assert(((u32*)effect_objects)[i] == ((u32*)pool_expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_expected)[i]);
-    for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&linked, &linked_before, sizeof(linked));
+    c_test_same_words(effect_objects, pool_expected, sizeof(pool_expected));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
     i = (u8)obj.unk6 | ((u32)(u16)obj.unk7C << 8) | ((u32)(u8)obj.hp << 24);
     return i;
 }
@@ -451,7 +446,7 @@ static u32 slide(u32 row)
     obj.unk5 = 4;
     obj.unk6 = 5;
     obj.unk7C = waiting ? 2 : 1;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.x_speed = 0x12345;
@@ -460,7 +455,7 @@ static u32 slide(u32 row)
     obj.gravity = 0x4567;
     obj.animation_table = (const u8* const*)double_animations;
     set_animation(&obj, 6);
-    assert(obj.animation_step.packed == 0x23010004);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x23010004));
     obj.collision_flags = wall;
     g_Player.hp = 30;
     g_Player.x_pos.val = obj.x_pos.val + (right ? 16 : -16) * 65536;
@@ -472,14 +467,14 @@ static u32 slide(u32 row)
         expected.animation_step.fields.duration = 3;
     else {
         expected.unk6 = 6;
-        expected.unk15 = direction_right ? 0x40 : 0;
+        expected.unk15 = direction_right ? PLAYER_FACING_RIGHT : 0;
         expected.x_speed = direction_right ? 0x80000 : -0x80000;
         expected.y_speed = expected.x_accel = expected.gravity = 0;
         expected.x_pos.val += expected.x_speed;
         expected.unk17 = 7;
         expected.previous_animation_index = 255;
         expected.animation_cursor = (const u8*)double_animations[7];
-        expected.animation_step.packed = 0x25010002;
+        expected.animation_step.packed = C_TEST_STEP(0x25010002);
         expected.hurt_box = &double_slide_hurt_box;
         expected.attack_box = &double_slide_attack_box;
     }
@@ -575,7 +570,7 @@ static u32 weapon_blink(u32 row)
     obj.unk1C.val = 0x5678;
     obj.unk40 = 0x2345;
     obj.unk42 = 0x9234;
-    obj.unk16 = 6;
+    obj.unk16 = VISUAL_SATURN_LAYER(6);
     obj.hp = inputs[input].lethal ? 1 : 48;
     obj.attack_box = &double_attack_box;
     obj.hurt_box = &double_hurt_box;
@@ -590,7 +585,7 @@ static u32 weapon_blink(u32 row)
     if (inputs[input].weapon != 255) {
         weapon_objects[0].active = 0x21;
         weapon_objects[0].id = inputs[input].weapon;
-        weapon_objects[0].unk15 = facing ? 0x40 : 0;
+        weapon_objects[0].unk15 = facing ? PLAYER_FACING_RIGHT : 0;
         weapon_objects[0].x_pos = obj.x_pos;
         weapon_objects[0].y_pos = obj.y_pos;
         weapon_objects[0].unk50 = (const u8*)&double_hurt_box;
@@ -599,7 +594,7 @@ static u32 weapon_blink(u32 row)
     expected = obj;
     expected.unk18 = obj.x_pos;
     expected.unk1C = obj.y_pos;
-    expected.unk15 = facing ? 0x40 : 0;
+    expected.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     expected.unk6 = 1;
     expected.unk7 = 0;
     expected.unk7C = 60;
@@ -608,7 +603,7 @@ static u32 weapon_blink(u32 row)
     expected.unk17 = 1;
     expected.previous_animation_index = 0xFF;
     expected.animation_cursor = (const u8*)double_animations[1];
-    expected.animation_step.packed = 0x0C01000C;
+    expected.animation_step.packed = C_TEST_STEP(0x0C01000C);
     expected.unk6C = 0;
     expected.unk6E = 11;
     if (inputs[input].weapon != 255) {
@@ -633,7 +628,7 @@ static u32 weapon_blink(u32 row)
         expected.state = 2;
         expected.unk5 = expected.unk6 = 0;
         expected.unk42 &= 0x7FFF;
-        player_expected.spike_immune = 1;
+        SPIKE_IMMUNE_SET(player_expected, 1);
     } else if (inputs[input].kind == 0 && inputs[input].weapon != 255) {
         expected.collision_data = D_801060F0;
         expected.ext.main_73.blink_delay = 64;
@@ -651,7 +646,7 @@ static u32 weapon_blink(u32 row)
             s->animation_table = (u32**)double_animations;
             s->unk40 = obj.unk40;
             s->unk42 = 0x1234;
-            s->unk16 = 6;
+            s->unk16 = VISUAL_SATURN_LAYER(6);
         }
         for (i = 0; i < free; i++) {
             struct MiscObj* m = &misc_expected[64 - free + i];
@@ -663,7 +658,7 @@ static u32 weapon_blink(u32 row)
             m->animation_table = (u32**)double_animations;
             m->unk40 = obj.unk40;
             m->unk42 = 0x1234;
-            m->unk16 = 6;
+            m->unk16 = VISUAL_SATURN_LAYER(6);
             m->ext.pointer.unk50 = &obj;
         }
     }
@@ -683,6 +678,296 @@ static u32 weapon_blink(u32 row)
     return 1;
 }
 
+void double_update(struct MainObj*);
+void double_intro(struct MainObj*);
+void double_wait(struct MainObj*);
+void double_energy_ball(struct MainObj*);
+void double_dive(struct MainObj*);
+void double_aerial_shot(struct MainObj*);
+void double_death(struct MainObj*);
+void func_8008CD80(struct MainObj*);
+extern struct Unk_unk68 double_dive_hurt_box;
+extern u8 double_script_0_0[8], double_script_1_0[8];
+
+static struct MainObj dw;
+#define DW_IS(a, b) ((const void*)(a) == (const void*)(b))
+static void dw_reset(u8 unk5, u8 unk6)
+{
+    memset(&dw, 0, sizeof(dw));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.x_pos.i.hi = 0x200;
+    g_Player.y_pos.i.hi = 0x100;
+    D_80141F50[2] = state_sound_rows;
+    engine_obj.stage = 0xC;
+    engine_obj.substage = 0;
+    engine_obj.cur_character = CHARACTER_X;
+    cur_random = 0;
+    dw.active = 0x41;
+    dw.id = 73;
+    dw.state = 1;
+    dw.unk5 = unk5;
+    dw.unk6 = unk6;
+    dw.hp = 0x30;
+    dw.x_pos.i.hi = 0x300;
+    dw.y_pos.i.hi = 0x100;
+    dw.animation_table = (const u8* const*)double_animations;
+    set_animation(&dw, 0);
+}
+static void dw_step(s8 event, s8 relative)
+{
+    dw.animation_step.fields.duration = 5;
+    dw.animation_step.fields.event = event;
+    dw.animation_step.fields.relative_step = relative;
+}
+
+static void dbx_intro(void)
+{
+    static u32 pages[8];
+    struct EngineObj engine = engine_obj;
+    u32* saved_pages = D_801406A8;
+    test_stage_graphics(pages);
+    dw_reset(0, 0);
+    dw.state = 0;
+    engine_obj.cur_character = CHARACTER_ZERO;
+    double_update(&dw);
+    assert(dw.active == 0);
+    dw_reset(0, 0);
+    dw.state = 0;
+    double_update(&dw);
+    assert(dw.state == 0 && dw.unk5 == 1 && dw.unk7C == 0x80 && dw.contact_damage == 6 && DW_IS(dw.hurt_box, &double_hurt_box) && DW_IS(dw.collision_data, D_80108204));
+    test_stage_graphics(saved_pages);
+    dw.unk5 = 2;
+    engine_obj.character_state.bytes[9] = 1;
+    abc_object.unkC = 0;
+    double_intro(&dw);
+    assert(dw.unk6 == 1 && dw.unk7C == 2 && abc_object.unkC == 0x80 && abc_object.unkA == 0x3C);
+    double_intro(&dw);
+    assert(dw.unk6 == 1);
+    abc_object.unkC = 0;
+    engine_obj.enable_boss = 0;
+    double_intro(&dw);
+    assert(dw.unk6 == 2 && engine_obj.enable_boss == 1);
+    dw_step(0, 1);
+    double_intro(&dw);
+    assert(dw.unk6 == 2);
+    engine_obj.unk36.value = 0;
+    dw_step(0, 0);
+    double_intro(&dw);
+    assert(dw.unk6 == 3 && engine_obj.unk36.value == 1);
+    dw.hp = 0x10;
+    D_80173C84 = 0;
+    engine_obj.unk36.timer = 2;
+    double_intro(&dw);
+    assert(dw.hp == 0x10 && engine_obj.unk36.timer == 1);
+    engine_obj.unk36.timer = 0;
+    dw_step(0, 1);
+    double_intro(&dw);
+    assert(dw.hp == 0x10);
+    dw_step(0, 0);
+    dw.unk7C = 2;
+    double_intro(&dw);
+    assert(dw.hp == 0x11 && dw.unk7C == 1);
+    double_intro(&dw);
+    assert(dw.hp == 0x12 && dw.unk7C == 2);
+    dw.hp = 0x30;
+    g_Player.script_state = 1;
+    dw.ext.main_73.cycle_step = 3;
+    double_intro(&dw);
+    assert(dw.state == 1 && dw.unk5 == 2 && dw.unk6 == 0 && dw.ext.main_73.cycle_step == 0 && g_Player.script_state == 0);
+    engine_obj = engine;
+}
+static void dbx_pick(void)
+{
+    dw_reset(2, 1);
+    dw.unk7C = 2;
+    double_wait(&dw);
+    assert(dw.unk7C == 1 && dw.unk5 == 2);
+    dw.unk7C = 0;
+    double_wait(&dw);
+    assert(dw.ext.main_73.cycle_script == double_script_0_0 && dw.ext.main_73.cycle_step == 1 && dw.unk5 == 3 && dw.unk6 == 0);
+    dw.unk5 = 2;
+    dw.unk6 = 1;
+    dw.ext.main_73.cycle_step = 3;
+    double_wait(&dw);
+    assert(dw.unk5 == 2 && dw.unk6 == 0 && dw.ext.main_73.cycle_step == 0);
+    dw.unk6 = 1;
+    dw.hp = 0x18;
+    double_wait(&dw);
+    assert(dw.ext.main_73.cycle_script == double_script_1_0 && dw.unk5 == 3);
+}
+static void dbx_ball(void)
+{
+    dw_reset(3, 0);
+    double_energy_ball(&dw);
+    assert(dw.unk6 == 1 && dw.unk17 == 3);
+    dw_step(0, 1);
+    double_energy_ball(&dw);
+    assert(dw.unk6 == 1 && shot_objects[0].active == 0);
+    dw.collision_flags = 2;
+    dw_step(1, 1);
+    double_energy_ball(&dw);
+    assert(dw.unk15 == PLAYER_FACING_RIGHT && shot_objects[0].id == 0x30 && shot_objects[0].unk15 == PLAYER_FACING_RIGHT);
+    dw.collision_flags = 1;
+    dw_step(0, 0);
+    double_energy_ball(&dw);
+    assert(dw.unk6 == 2 && dw.unk7C == 0x32 && dw.unk15 == 0);
+    dw.unk7C = 1;
+    dw.collision_flags = 0;
+    g_Player.x_pos.i.hi = 0x400;
+    double_energy_ball(&dw);
+    assert(dw.unk6 == 2 && dw.unk7C == 0);
+    double_energy_ball(&dw);
+    assert(dw.unk5 == 2 && dw.unk6 == 1 && dw.unk15 == PLAYER_FACING_RIGHT);
+}
+static void dbx_dive(void)
+{
+    dw_reset(4, 0);
+    double_dive(&dw);
+    assert(dw.unk6 == 1 && dw.y_speed == FIXED(8) && dw.contact_damage == 9 && dw.unk17 == 4);
+    dw_step(0, 1);
+    double_dive(&dw);
+    assert(dw.unk6 == 1);
+    dw_step(1, 1);
+    double_dive(&dw);
+    assert(dw.unk6 == 2);
+    double_dive(&dw);
+    assert(dw.unk6 == 2 && dw.y_pos.i.hi == 0xF8);
+    dw.collision_flags = 4;
+    double_dive(&dw);
+    assert(dw.unk6 == 3 && dw.unk17 == 5);
+    dw_step(0, 1);
+    double_dive(&dw);
+    assert(dw.unk6 == 3);
+    dw.collision_flags = 0;
+    dw_step(0, -1);
+    double_dive(&dw);
+    assert(dw.unk6 == 4 && dw.unk15 == 0 && dw.x_speed < 0 && DW_IS(dw.hurt_box, &double_dive_hurt_box));
+    dw.unk6 = 3;
+    dw_step(0, -1);
+    g_Player.x_pos.i.hi = 0x340;
+    g_Player.y_pos.i.hi = 0x300;
+    double_dive(&dw);
+    assert(dw.unk6 == 4 && dw.unk15 == PLAYER_FACING_RIGHT && dw.y_speed < 0);
+    dw.unk6 = 3;
+    dw_step(0, -1);
+    g_Player.x_pos.i.hi = 0x200;
+    g_Player.y_pos.i.hi = dw.y_pos.i.hi;
+    double_dive(&dw);
+    assert(dw.unk6 == 4 && dw.unk15 == 0 && dw.y_speed < 0);
+    dw.unk6 = 3;
+    dw_step(0, -1);
+    g_Player.x_pos.i.hi = dw.x_pos.i.hi + 0x100;
+    g_Player.y_pos.i.hi = dw.y_pos.i.hi + 0x40;
+    double_dive(&dw);
+    assert(dw.unk6 == 4 && dw.unk15 == PLAYER_FACING_RIGHT && dw.x_speed == 0xB505 * 8);
+    dw.unk15 = 0;
+    dw.x_speed = -0x10000;
+    dw.collision_flags = 2;
+    double_dive(&dw);
+    assert(dw.unk6 == 4 && dw.x_speed == -0x10000);
+    dw.collision_flags = 1;
+    double_dive(&dw);
+    assert(dw.x_speed == 0);
+    dw.unk15 = PLAYER_FACING_RIGHT;
+    dw.x_speed = 0x10000;
+    dw.collision_flags = 2;
+    double_dive(&dw);
+    assert(dw.x_speed == 0);
+    dw.collision_flags = 8;
+    double_dive(&dw);
+    assert(dw.unk6 == 5 && dw.unk7C == 0x1E && dw.unk17 == 6 && DW_IS(dw.hurt_box, &double_hurt_box));
+}
+static void dbx_slide(void)
+{
+    static const struct {
+        s16 x, y;
+        u8 right;
+    } spots[] = { { 0x380, 0x180, 1 }, { 0x380, 0x080, 1 }, { 0x280, 0x180, 0 }, { 0x280, 0x080, 0 } };
+    u32 i;
+    for (i = 0; i < COUNT(spots); i++) {
+        dw_reset(4, 5);
+        dw.unk7C = 1;
+        g_Player.x_pos.i.hi = spots[i].x;
+        g_Player.y_pos.i.hi = spots[i].y;
+        double_dive(&dw);
+        assert(dw.unk6 == 6 && dw.unk17 == 7 && dw.unk15 == (spots[i].right ? PLAYER_FACING_RIGHT : 0) && (spots[i].right ? dw.x_speed > 0 : dw.x_speed < 0));
+    }
+    dw.collision_flags = 0;
+    dw.x_speed = 0;
+    dw.y_speed = 0;
+    double_dive(&dw);
+    assert(dw.unk6 == 6);
+    dw.collision_flags = 1;
+    double_dive(&dw);
+    assert(dw.unk6 == 7 && dw.unk7C == 0x1E && dw.unk17 == 8 && background_objects[0].unk36 == 8);
+    dw.unk7C = 1;
+    double_dive(&dw);
+    assert(dw.unk6 == 7 && dw.unk7C == 0);
+    double_dive(&dw);
+    assert(dw.unk6 == 8 && dw.gravity == FIXED(0.2578125) && dw.x_speed == 0);
+    dw.collision_flags = 0;
+    double_dive(&dw);
+    assert(dw.unk6 == 8);
+    dw.collision_flags = 8;
+    dw.contact_damage = 9;
+    double_dive(&dw);
+    assert(dw.unk5 == 2 && dw.unk6 == 1 && dw.contact_damage == 6);
+}
+static void dbx_hits(void)
+{
+    static const u8 weapons[] = { 0x13, 0x15 };
+    u32 i;
+    for (i = 0; i < COUNT(weapons); i++) {
+        dw_reset(2, 1);
+        dw.unk7C = 5;
+        SPIKE_IMMUNE_SET(g_Player, 1);
+        state_hit(&dw, weapons[i], 0, 1);
+        func_8008CD80(&dw);
+        assert(dw.ext.main_73.blink_delay == 0x40 && DW_IS(dw.collision_data, D_801060F0) && shot_objects[0].active == 0 && misc_objects[0].active == 0);
+    }
+    dw_reset(5, 3);
+    dw.unk7C = 5;
+    dw.ext.main_73.effect.position.y = 0xF0;
+    double_aerial_shot(&dw);
+    assert(dw.y_pos.i.hi == 0xF0 && dw.unk7C == 4);
+    dw.ext.main_73.effect.position.y = 0x110;
+    dw.y_speed = 0;
+    dw.gravity = 0x1000;
+    double_aerial_shot(&dw);
+    assert(dw.y_speed == -0x1000 && dw.unk7C == 3);
+    dw_reset(5, 0);
+    dw.state = 2;
+    dw.unk7E = 0;
+    dw.on_screen = 1;
+    dw.ext.main_73.unk80.effect = &effect_objects[0];
+    effect_objects[0].active = 1;
+    effect_objects[0].unk7 = 1;
+    double_death(&dw);
+    assert(dw.unk7E == 0 && dw.unk5 == 5 && dw.on_screen == 0);
+    effect_objects[0].unk7 = 0;
+    dw.unk7E = 3;
+    double_death(&dw);
+    assert(dw.unk7E == 2 && dw.unk42 == 0);
+}
+static void (*const dbx_cases[])(void) = {
+    dbx_intro,
+    dbx_pick,
+    dbx_ball,
+    dbx_dive,
+    dbx_slide,
+    dbx_hits,
+};
+static u32 dbx_run(u32 row)
+{
+    dbx_cases[row]();
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "double_states", 0, 0, COUNT(double_states_cases), test_double_states },
     { "double", double_cases, double_cases_expected, COUNT(double_cases), 0 },
@@ -690,6 +975,7 @@ const struct CTestGroup c_test_groups[] = {
     { "double_death_blink", 0, 0, 1, test_double_death_blink },
     { "dive_slide_wall_facing_overrides_both_downward_aims", NULL, NULL, 24, slide },
     { "weapon_blink_retaliation_and_death", NULL, NULL, COUNT(inputs) * 4, weapon_blink },
+    { "double_state_steps", NULL, NULL, COUNT(dbx_cases), dbx_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(double_states_cases) + COUNT(double_cases) + COUNT(double_intro_effect_pool_defaults_cases_expected) + 1 + 24 + COUNT(inputs) * 4;
+const u32 c_test_count = COUNT(double_states_cases) + COUNT(double_cases) + COUNT(double_intro_effect_pool_defaults_cases_expected) + 1 + 24 + COUNT(inputs) * 4 + COUNT(dbx_cases);

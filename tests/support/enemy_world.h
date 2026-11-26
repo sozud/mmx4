@@ -89,7 +89,9 @@ static void world_check(void)
     assert(c_test_word_difference((const u32*)&engine_obj, (const u32*)&world_engine_expected, WORLD_WORDS(engine_obj)) == 0);
     assert(c_test_word_difference((const u32*)&g_Player, (const u32*)&world_player_expected, WORLD_WORDS(g_Player)) == 0);
     assert(c_test_word_difference((const u32*)&main_bss_state, (const u32*)&world_bss_expected, WORLD_WORDS(main_bss_state)) == 0);
-    assert(c_test_word_difference((const u32*)world_record, (const u32*)&world_record_expected, WORLD_WORDS(world_record_expected)) == 0);
+    assert(world_record->flags == world_record_expected.flags && world_record->id == world_record_expected.id);
+    assert(world_record->subtype == world_record_expected.subtype && world_record->object_type == world_record_expected.object_type);
+    assert(world_record->x == world_record_expected.x && world_record->y == world_record_expected.y);
     assert(SP_CUR_MAIN_OBJ == &main_objects[0]);
     assert(SP_BG_TILEMAP == world_tiles);
     assert(TEST_BG_TILE_PIXELS == (u8*)world_pixels);

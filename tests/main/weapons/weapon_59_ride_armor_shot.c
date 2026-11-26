@@ -56,10 +56,10 @@ static const s16 edges[17][2] = {
     { 160, 256 },
 };
 static const u32 animation_words[2][2][4] = {
-    { { 0x3D010002, 0x3E010002, 0x3F010002, 0x40FD0002 },
-        { 0x41010002, 0x42010002, 0x43010002, 0x44FD0002 } },
-    { { 0x44010002, 0x46010002, 0x45010002, 0x47FD0002 },
-        { 0x48010002, 0x49010002, 0x4A010002, 0x4BFD0002 } },
+    { { C_TEST_STEP(0x3D010002), C_TEST_STEP(0x3E010002), C_TEST_STEP(0x3F010002), C_TEST_STEP(0x40FD0002) },
+        { C_TEST_STEP(0x41010002), C_TEST_STEP(0x42010002), C_TEST_STEP(0x43010002), C_TEST_STEP(0x44FD0002) } },
+    { { C_TEST_STEP(0x44010002), C_TEST_STEP(0x46010002), C_TEST_STEP(0x45010002), C_TEST_STEP(0x47FD0002) },
+        { C_TEST_STEP(0x48010002), C_TEST_STEP(0x49010002), C_TEST_STEP(0x4A010002), C_TEST_STEP(0x4BFD0002) } },
 };
 
 static void prepare(u32 variant)
@@ -87,7 +87,7 @@ static void prepare(u32 variant)
     shot.id = 47;
     shot.unk2 = variant % 2;
     shot.bg_offset = layer;
-    shot.unk15 = facing ? 0x40 : 0;
+    shot.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     shot.x_pos.val = (cameras[layer][0] + 160) * 65536 + 0x1234;
     shot.y_pos.val = (cameras[layer][1] + 120) * 65536 + 0x5678;
     shot.animation_table = (u32**)unused_ride_armor_animations;
@@ -96,14 +96,14 @@ static void prepare(u32 variant)
     shot.unk65 = 0x37;
     shot.unk40 = 0x1234;
     shot.unk42 = 0x9234;
-    shot.unk16 = 5;
+    shot.unk16 = VISUAL_SATURN_LAYER(5);
     shot.unk3C = D_800F965C;
     shot.owner = &g_Player;
     g_Player.active = 0x41;
     g_Player.state = PLAYER_STATE_NORMAL;
     g_Player.x_pos.val = (cameras[layer][0] + 1000) * 65536;
     g_Player.y_pos.val = (cameras[layer][1] + 120) * 65536;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.hp = 24;
     g_Player.air_action = 3;
     controller_input.held = 0x1234;
@@ -155,7 +155,7 @@ static void expect_init(void)
 {
     s32 subtype = expected.unk2, facing = expected.unk15 != 0;
     expected.state = expected.on_screen = 1;
-    expected.unk16 = 3;
+    expected.unk16 = VISUAL_SATURN_LAYER(3);
     expected.unk68 = NULL;
     expected.unk54 = NULL;
     expected.unk50 = ride_armor_shot_hit_box;
@@ -238,7 +238,7 @@ static u32 test_contact(u32 row)
     u32 variant = row % 12, mode = row % 6, character = row / 12;
     prepare(variant);
     init_enemy();
-    g_Player.spike_immune = mode == 1;
+    SPIKE_IMMUNE_SET(g_Player, mode == 1);
     g_Player.hp = mode == 2 ? (s8)0x98 : 24;
     g_Player.hurt_phase = mode == 3;
     g_Player.invincibility_timer = mode == 5;
@@ -372,6 +372,49 @@ static u32 test_target_selection(u32 row)
     return 1;
 }
 
+#include "support/state_cases.h"
+static struct WeaponObj ras;
+static u32 ride_shot(u8 stop, s16 x)
+{
+    memset(&ras, 0, sizeof(ras));
+    memset(background_objects, 0, sizeof(background_objects));
+    ras.active = 1;
+    ras.id = 0x3B;
+    ras.state = 1;
+    ras.on_screen = 1;
+    ras.unk50 = ride_armor_shot_hit_box;
+    ras.animation_cursor = (const u8*)state_step;
+    ras.animation_step.packed = state_step[0];
+    ras.x_pos.i.hi = x;
+    ras.y_pos.i.hi = 0x60;
+    ras.x_vel.val = 0x80000;
+    ras.unk98 = stop;
+    ride_armor_shot_update(&ras);
+    return ras.state | (u32)ras.on_screen << 8 | (u32)(ras.unk50 != NULL) << 16 | (u32)(u16)ras.x_pos.i.hi << 20;
+}
+static u32 ras_flying(void) { return ride_shot(0, 0x80); }
+static u32 ras_stopped(void) { return ride_shot(1, 0x80); }
+static u32 ras_gone(void) { return ride_shot(0, 0x1000); }
+static u32 ras_enemy_destroyed(void)
+{
+    state_reset(0, 0, 0);
+    state_room.shot.active = 0x41;
+    state_room.shot.state = 1;
+    state_room.shot.x_pos.i.hi = 0x80;
+    state_room.shot.y_pos.i.hi = 0x60;
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    enemy_ride_armor_shot_update(&state_room.shot);
+    return (u8)state_room.shot.active | (u32)state_room.shot.on_screen << 8 | (u32)visual_objects[0].active << 16;
+}
+static const CTestCase ride_armor_shot_paths_cases[] = {
+    ras_flying,
+    ras_stopped,
+    ras_gone,
+    ras_enemy_destroyed,
+};
+static const u32 ride_armor_shot_paths_cases_expected[] = { 0x08810101u, 0x08800002u, 0x00800002u, 0x00210000u };
+
 const struct CTestGroup c_test_groups[] = {
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "ride_armor_shot_init", 0, 0, 24, test_init },
@@ -379,7 +422,8 @@ const struct CTestGroup c_test_groups[] = {
     { "enemy_shot_contact", 0, 0, 36, test_contact },
     { "ride_armor_shot_smoke", 0, 0, 36, test_smoke },
     { "ride_armor_shot_despawn", 0, 0, 24, test_despawn },
+    { "ride_armor_shot_paths", ride_armor_shot_paths_cases, ride_armor_shot_paths_cases_expected, COUNT(ride_armor_shot_paths_cases), 0 },
     { "ride_armor_missile_target", 0, 0, 12, test_target_selection },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(pool_full_cases) + 24 + 17 + 36 + 36 + 24 + 12;
+const u32 c_test_count = COUNT(pool_full_cases) + 24 + 17 + 36 + 36 + 24 + 12 + COUNT(ride_armor_shot_paths_cases);

@@ -27,7 +27,7 @@ static u32 dragon_case(u32 mode)
     owner.active = 0x41;
     owner.id = 0;
     owner.state = 1;
-    owner.unk15 = mode == 3 || mode == 5 ? 0x40 : 0;
+    owner.unk15 = mode == 3 || mode == 5 ? PLAYER_FACING_RIGHT : 0;
     owner.unk40 = 0x1234;
     owner.unk42 = 0x9234;
     owner.unk7E = mode == 7 ? -1 : 0;
@@ -44,7 +44,7 @@ static u32 dragon_case(u32 mode)
     obj.unk5 = 9;
     obj.unk17 = 0;
     obj.previous_animation_index = 9;
-    obj.unk16 = 22;
+    obj.unk16 = VISUAL_SATURN_LAYER(22);
     obj.animation_table = owner.animation_table;
     obj.animation_cursor = (const u8*)D_800F9934[0];
     obj.animation_step = *D_800F9934[0];
@@ -73,7 +73,7 @@ static u32 dragon_case(u32 mode)
         expected.x_pos = owner.x_pos;
         expected.y_pos = owner.y_pos;
         expected.unk60 = 5;
-        expected.unk16 = kind == 4 ? 6 : 1;
+        expected.unk16 = kind == 4 ? VISUAL_SATURN_LAYER(6) : 1;
         if (kind <= 1) {
             expected.bg_offset = owner.bg_offset;
             expected.state = kind + 1;
@@ -106,18 +106,13 @@ static u32 dragon_case(u32 mode)
         expected.animation_cursor = (const u8*)D_800F9934[animation];
         expected.animation_step = *D_800F9934[animation];
     }
-    expected.on_screen = 1;
+    expected.on_screen = C_TEST_VISIBLE(expected.unk16);
     func_800994DC(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(owner) / 4; i++)
-        assert(((u32*)&owner)[i] == ((u32*)&expected_owner)[i]);
-    for (i = 0; i < sizeof(expected_backgrounds) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)expected_backgrounds)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&owner, &expected_owner, sizeof(owner));
+    c_test_same_words(background_objects, expected_backgrounds, sizeof(expected_backgrounds));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     actual = (u8)obj.state | ((u32)obj.unk17 << 8) | ((u32)(u16)obj.x_pos.i.hi << 16);
     return actual;
 }
@@ -133,12 +128,182 @@ static void dsp_glow(void)
 static void dsp_strike(void) { PULSE(1, 1); }
 static void dsp_end(void) { PULSE(0, -1); }
 
+extern u8 dragon_shot_flame_hit_box[4], dragon_shot_burn_box[4];
+void dragon_shot_flame(struct ShotObj*);
+void dragon_shot_bomb(struct ShotObj*);
+void dragon_shot_follow_owner(struct ShotObj*);
+#define OWNED(st, ev, rel) (state_reset(0, 0, 0), memset(&pulse_owner, 0, sizeof(pulse_owner)), pulse_owner.x_pos.i.hi = 0x80, pulse_owner.y_pos.i.hi = 0x60, pulse_owner.unk42 = 0x8004, ss.active = 1, ss.state = st, ss.unk7C = &pulse_owner, ss.animation_step.fields.event = ev, ss.animation_step.fields.relative_step = rel)
+static void dsp_flame_strike(void)
+{
+    OWNED(1, 1, 1), dragon_shot_flame(&ss), state_extra = ss.unk50.data == dragon_shot_flame_box;
+}
+static void dsp_flame_end(void) { OWNED(1, 0, -1), dragon_shot_flame(&ss), state_extra = ss.unk50.data == NULL; }
+static void dsp_follow(void) { OWNED(5, 0, 1), ss.unk5 = 1, dragon_shot_follow_owner(&ss); }
+static void dsp_follow_end(void) { OWNED(5, 0, -1), ss.unk5 = 1, dragon_shot_follow_owner(&ss); }
+#define BOMB(sub, ground, rel, setup) (state_reset(sub, 0, 0), setup, ss.active = 1, ss.state = 3, ss.unk7C = &pulse_owner, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.y_vel.val = 0x20000, ss.unk2C = 0x4000, ss.unk60 = 3, ss.unk70 = ground, ss.animation_step.fields.relative_step = rel, cur_random = 0x1234, dragon_shot_bomb(&ss), state_extra = ss.unk17 | (u32)ss.unk60 << 8 | (u32)(ss.unk50.data == dragon_shot_burn_box) << 16 | (u32)misc_objects[0].id << 24)
+static void dsp_bomb_fall(void)
+{
+    BOMB(0, 0, 1, 0);
+}
+static void dsp_bomb_land(void) { BOMB(0, 8, 1, 0); }
+static void dsp_bomb_land_slope(void) { BOMB(0, 9, 1, 0); }
+static void dsp_bomb_burn(void) { BOMB(1, 0, 1, 0); }
+static void dsp_bomb_burn_end(void) { BOMB(1, 0, -1, 0); }
+static void fill_misc(void)
+{
+    u32 i;
+    for (i = 0; i < COUNT(misc_objects); i++)
+        misc_objects[i].active = 1;
+    misc_objects[0].id = 0x33;
+}
+static void dsp_bomb_land_full(void) { BOMB(0, 8, 1, fill_misc()); }
 static void (*const dragon_shot_pulse_states_cases[])(void) = {
     dsp_glow,
     dsp_strike,
     dsp_end,
+    dsp_flame_strike,
+    dsp_flame_end,
+    dsp_follow,
+    dsp_follow_end,
+    dsp_bomb_fall,
+    dsp_bomb_land,
+    dsp_bomb_land_slope,
+    dsp_bomb_land_full,
+    dsp_bomb_burn,
+    dsp_bomb_burn_end,
 };
-static const u32 dragon_shot_pulse_states_expected[] = { 3u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48004u, 0u, 0u, 3u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48004u, 1u, 0u, 4u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48004u, 0u, 0u };
+static const u32 dragon_shot_pulse_states_expected[] = {
+    3u,
+    1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x48004u,
+    0u,
+    0u,
+    3u,
+    1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x48004u,
+    1u,
+    0u,
+    4u,
+    1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x48004u,
+    0u,
+    0u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x48004u,
+    0x1u,
+    0u,
+    0x4u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x48004u,
+    0x1u,
+    0u,
+    0x105u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x48004u,
+    0u,
+    0u,
+    0x4u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x48004u,
+    0u,
+    0u,
+    0x3u,
+    0x1u,
+    0x800000u,
+    0x5E0000u,
+    0u,
+    0x1C000u,
+    0x400000u,
+    0x40000u,
+    0x300u,
+    0u,
+    0x103u,
+    0xFF000001u,
+    0x800000u,
+    0x5E0000u,
+    0u,
+    0x1C000u,
+    0x400000u,
+    0x50000u,
+    0x401050Bu,
+    0x41000000u,
+    0x103u,
+    0xFF000001u,
+    0x800000u,
+    0x5E0000u,
+    0u,
+    0x1C000u,
+    0x400000u,
+    0x50000u,
+    0x1050Bu,
+    0u,
+    0x103u,
+    0xFF000001u,
+    0x800000u,
+    0x5E0000u,
+    0u,
+    0x1C000u,
+    0x400000u,
+    0x50000u,
+    0x3301050Bu,
+    0x1000000u,
+    0x103u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0x20000u,
+    0x400000u,
+    0x40000u,
+    0x300u,
+    0u,
+    0x4u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0x20000u,
+    0x400000u,
+    0x40000u,
+    0x300u,
+    0u,
+};
 
 static u32 test_dragon_shot_pulse_states(u32 row)
 {

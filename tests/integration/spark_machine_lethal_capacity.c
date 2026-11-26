@@ -68,7 +68,9 @@ static u32 full(u32 row)
     fire_archive.stream[0] = 0x8000;
     TEST_PLAYER_GFX = (u8*)&fire_archive;
     TEST_SPRITE_FRAMES = (u8*)sprites;
+#ifndef MMX4_SATURN
     vram_rect_ptr = vram_rect_ptrs;
+#endif
     weapon_objects[0].active = 0x41;
     weapon_objects[0].id = 4;
     weapon_objects[0].owner = &g_Player;
@@ -78,7 +80,7 @@ static u32 full(u32 row)
     expected.unk5C = 0;
     expected.unk63 = 0;
     expected.unk65 = 1;
-    expected.unk42 = 0x78CC;
+    expected.unk42 = OBJECT_CLUT(0x78CC);
     expected.state = 2;
     expected.on_screen = 1;
     expected.tail_ext.unk1.unk84.bytes[3] = 120;

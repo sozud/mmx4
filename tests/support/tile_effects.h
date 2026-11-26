@@ -10,6 +10,17 @@ static u16 tiles[6];
 static u8 tilemap[1];
 static u16 pixels[258];
 static s32 script[6];
+#ifdef MMX4_SATURN
+#define TILE_CACHE_WRITTEN(mode) 0
+#define TILE_SCREEN_WRITTEN(mode) ((mode) != 3 && (mode) < 8)
+#else
+#define TILE_CACHE_WRITTEN(mode) ((mode) != 3 && (mode) < 8)
+#define TILE_SCREEN_WRITTEN(mode) ((mode) == 4 || (mode) == 5 || (mode) == 7)
+#endif
+
+#ifdef MMX4_SATURN
+static u32 cells[0x2126];
+#endif
 
 static u32 tile_case(u32 mode, u32 observation)
 {
@@ -17,8 +28,11 @@ static u32 tile_case(u32 mode, u32 observation)
     struct TileEffectRecord** saved_table;
     u8* saved_map;
     u16* saved_pixels;
+#ifdef MMX4_SATURN
+    u32* saved_cells;
+#endif
     u32 i, j, k, actual, cache, archive, cursor, tile_x, tile_y;
-    u8 id, width;
+    u8 id, width, height;
     u16 size;
 
     memset(&obj, 0, sizeof(obj));
@@ -32,21 +46,27 @@ static u32 tile_case(u32 mode, u32 observation)
     saved_map = SP_BG_TILEMAP;
     saved_pixels = SP_BG_TILE_PIXELS;
     width = layout_width;
+    height = layout_height;
     size = layout_size;
     tile_effect_tables[0] = table;
     SP_BG_TILEMAP = tilemap;
     TEST_BG_TILE_PIXELS = (u8*)&pixels[1];
     tilemap[0] = 0;
+#ifdef MMX4_SATURN
+    saved_cells = SP_BG_TILE_ATTRS;
+    SP_BG_TILE_ATTRS = cells;
+#endif
     layout_width = 1;
+    layout_height = 1;
     layout_size = 1;
     for (i = 0; i < 6; i++) {
         tiles[i] = 0xA120 + i;
         records[i].packed_count = 3;
         records[i].tiles = &tiles[i];
         table[i] = &records[i];
-        script[i] = (s32)(0x00010009u | (i << 24));
+        script[i] = (s32)C_TEST_PSX_WORD(0x00010009u | (i << 24));
     }
-    script[5] = (s32)0x05FB0009u;
+    script[5] = (s32)C_TEST_PSX_WORD(0x05FB0009u);
     for (i = 0; i < COUNT(pixels); i++)
         pixels[i] = 0xBEEF;
     for (i = 0; i < 3; i++)
@@ -73,7 +93,7 @@ static u32 tile_case(u32 mode, u32 observation)
         obj.ext.effect_40.palette.fields.timer = mode == 3 ? 2 : 1;
         tile_loop_anim_step(&obj);
         id = mode == 4 ? 1 : 0;
-        actual = (u32)obj.ext.effect_40.palette.packed;
+        actual = C_TEST_PSX_WORD(obj.ext.effect_40.palette.packed);
         assert(obj.ext.effect_40.palette_source.words == &script[mode == 4 ? 1 : 0]);
         cursor = obj.ext.effect_40.palette_source.words - script;
     } else {
@@ -91,18 +111,22 @@ static u32 tile_case(u32 mode, u32 observation)
     for (i = 0; i < 3; i++)
         for (j = 0; j < 32; j++)
             for (k = 0; k < 32; k++)
-                assert(D_801441C8[i][j][k] == (mode != 3 && mode < 8 && i == 0 && j == tile_y && k == tile_x ? tiles[id] : 0xCAFE));
+                assert(D_801441C8[i][j][k] == (TILE_CACHE_WRITTEN(mode) && i == 0 && j == tile_y && k == tile_x ? tiles[id] : 0xCAFE));
     for (i = 0; i < COUNT(pixels); i++)
-        assert(pixels[i] == ((mode == 4 || mode == 5 || mode == 7) && i == 1 + tile_y * 16 + tile_x ? tiles[id] : 0xBEEF));
+        assert(pixels[i] == (TILE_SCREEN_WRITTEN(mode) && i == 1 + tile_y * 16 + tile_x ? tiles[id] : 0xBEEF));
     assert(engine_obj.stage == 0 && engine_obj.substage == 0 && tilemap[0] == 0);
     for (i = 0; i < 6; i++) {
         assert(tiles[i] == 0xA120 + i);
-        assert(script[i] == (s32)(i == 5 ? 0x05FB0009u : 0x00010009u | (i << 24)));
+        assert(script[i] == (s32)C_TEST_PSX_WORD(i == 5 ? 0x05FB0009u : 0x00010009u | (i << 24)));
     }
     tile_effect_tables[0] = saved_table;
     SP_BG_TILEMAP = saved_map;
     TEST_BG_TILE_PIXELS = (u8*)saved_pixels;
+#ifdef MMX4_SATURN
+    SP_BG_TILE_ATTRS = saved_cells;
+#endif
     layout_width = width;
+    layout_height = height;
     layout_size = size;
     if (observation == 1)
         return cache;

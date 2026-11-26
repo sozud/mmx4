@@ -62,7 +62,7 @@ static void prepare(u32 profile)
         ((u16*)bank)[i] = 0x1200 + i;
     for (i = 0; i < COUNT(palette); i++)
         palette[i] = palette_expected[i] = 0xBEEF;
-    attributes[0] = 0x20;
+    attributes[0] = TEST_DISC32(0x20);
     TEST_PLAYER_GFX = (u8*)gfx;
     TEST_SPRITE_FRAMES = (u8*)sprites;
     TEST_PALETTE = (u8*)&palette[1];
@@ -88,7 +88,7 @@ static void prepare(u32 profile)
     g_Player.active = 0x41;
     g_Player.state = PLAYER_STATE_NORMAL;
     g_Player.hp = 24;
-    g_Player.unk15 = profile % 2 ? 0x40 : 0;
+    g_Player.unk15 = profile % 2 ? PLAYER_FACING_RIGHT : 0;
     g_Player.bg_offset = profile % 3;
     g_Player.x_pos.val = (100 + profile % 3 * 16) * 65536 + 0x1234;
     g_Player.y_pos.val = 200 * 65536 + 0x5678;
@@ -161,7 +161,7 @@ static void check(void)
         assert(gfx[i] == (i < 2 ? 0x20 + 4 * i : 0));
         assert(sprites[i] == (i < 6 ? 0x20 + 4 * i : 0));
     }
-    assert(attributes[0] == 0x20 && bounds.unk0 == 0 && bounds.unk1 == 0 && bounds.unk2 == 4 && bounds.unk3 == 4);
+    assert(attributes[0] == TEST_DISC32(0x20) && bounds.unk0 == 0 && bounds.unk1 == 0 && bounds.unk2 == 4 && bounds.unk3 == 4);
     assert(controller_input.held == 0x1234 && controller_input.previous == 0x5678 && controller_input.pressed == 0x840);
     assert(cur_random == expected_random && need_palette_load == palette_dirty);
     for (i = 0; i < 6; i++)
@@ -175,11 +175,11 @@ static void check(void)
 
 static void expect_animation(u32 animation, u32 word)
 {
-    assert(D_80119DF0[animation][0].packed == word);
+    assert(D_80119DF0[animation][0].packed == C_TEST_STEP(word));
     expected.unk17 = animation;
     expected.previous_animation_index = 0xFF;
     expected.animation_cursor = (u32*)D_80119DF0[animation];
-    expected.animation_step.packed = word;
+    expected.animation_step.packed = C_TEST_STEP(word);
     expected.unk3C = (u8*)sprites + 0x20;
 }
 
@@ -237,7 +237,8 @@ static u32 test_nova_handoff(u32 row)
     expected.shot_types[0] = expected.shot_types[1] = 0;
     expected.dash_momentum = expected.afterimage = expected.hurt_phase = expected.invincibility_timer = 0;
     expected.air_action = 5;
-    expected.air_state = expected.spike_immune = expected.nova_strike_active = 1;
+    expected.air_state = expected.nova_strike_active = 1;
+    SPIKE_IMMUNE_SET(expected, expected.nova_strike_active = 1);
     expected.nova_strike_timer = 24;
     expected.weapon_energy[0] = engine_obj.unk37 ? 48 : 0;
     expected.x_vel.val = g_Player.unk15 ? 0x28000 : -0x28000;
@@ -257,7 +258,7 @@ static u32 test_nova_handoff(u32 row)
     palette_dirty |= 1;
     handoff->run(&g_Player);
     check();
-    assert(D_80119DF0[0x6A][0].packed == 0xD5010003 && D_80119DF0[0x63][0].packed == 0xE7010002);
+    assert(D_80119DF0[0x6A][0].packed == C_TEST_STEP(0xD5010003) && D_80119DF0[0x63][0].packed == C_TEST_STEP(0xE7010002));
     return 1;
 }
 
@@ -296,14 +297,15 @@ static u32 test_emitted_shot_pose(u32 row)
             expect_animation(type == 7 ? 0x68 : 0x69, 0x61010002);
         else if (type == 12) {
             expect_animation(0x60, 0x8A010004);
-            expected.controlling_clone = expected.spike_immune = 1;
+            expected.controlling_clone = 1;
+            SPIKE_IMMUNE_SET(expected, 1);
             expected.invincibility_timer = expected.hurt_phase = 0;
             expected.unk5 = PLAYER_SOUL_BODY;
         } else {
             expect_animation(airborne ? 0x66 : 0x65, airborne ? 0x64010001 : 0x51010002);
             expected.shot_count = 3;
             expected.special_shot_count = 2;
-            expected.spike_immune = 1;
+            SPIKE_IMMUNE_SET(expected, 1);
             expected.unk5 = PLAYER_RISING_FIRE_CHARGED;
             if (allocation) {
                 weapons_expected[15].active = 1;

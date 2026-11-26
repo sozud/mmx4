@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
+#ifndef VERSION_DEMO
 #include "main/mains/main_60_storm_owl.h"
 #include "main/effects/effect_38_cyberspace_trial.h"
 #include "main/collision_bounds.h"
@@ -40,8 +42,7 @@ static u32 script_case(u32 mode)
         before.ext.main_60.pattern = ((u8**)storm_owl_patterns[0])[0];
     } else
         assert(obj.ext.main_60.pattern == sentinel);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
     assert(cur_random == 0 && sentinel[0] == 0x27 && sentinel[1] == 0x28 && sentinel[2] == 0x29 && sentinel[3] == 0xFF);
     for (i = 0; i < 12; i++)
         assert(((u8*)storm_owl_pattern_weights)[i] == (mode == 1 && i < 3 ? 0 : ((u8*)weights_before)[i]));
@@ -74,7 +75,7 @@ static u32 test_func_8007651C(u32 row)
     obj.x_pos.i.hi = c->obj_x_pos_hi;
     background_objects[0].x_pos.i.hi = c->v_0_x_pos_hi;
     obj.x_speed = c->x_speed;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     func_8007651C(&obj);
     observed_values[0] = (u32)obj.unk6;
     observed_values[1] = (u32)obj.unk7C;
@@ -114,8 +115,8 @@ static u32 test_func_80078314(u32 row)
     observed_values[3] = (u32)visual_objects[0].active;
     observed_values[4] = (u32)visual_objects[0].bg_offset;
     observed_values[5] = (u32)visual_objects[0].id;
-    observed_values[6] = (u32)visual_objects[0].unk15;
-    observed_values[7] = (u32)visual_objects[0].unk16;
+    observed_values[6] = C_TEST_PSX_FACING(visual_objects[0].unk15);
+    observed_values[7] = TEST_PSX_LAYER(visual_objects[0].unk16);
     observed_values[8] = (u32)visual_objects[0].unk2;
     observed_values[9] = (u32)visual_objects[0].unk40;
     observed_values[10] = (u32)visual_objects[0].unk42;
@@ -136,7 +137,7 @@ static u32 test_storm_owl_reenter_warp(u32 row)
     obj.ext.main_60.corner = 255;
     storm_owl_reenter_warp(&obj);
     observed_values[0] = (u32)obj.active;
-    observed_values[1] = (u32)obj.unk15;
+    observed_values[1] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[2] = (u32)obj.unk6;
     observed_values[3] = (u32)obj.unk7C;
     observed_values[4] = (u32)obj.x_pos.i.hi;
@@ -156,8 +157,8 @@ static u32 test_storm_owl_spawn_hit_flash(u32 row)
     observed_values[0] = (u32)visual_objects[0].active;
     observed_values[1] = (u32)visual_objects[0].bg_offset;
     observed_values[2] = (u32)visual_objects[0].id;
-    observed_values[3] = (u32)visual_objects[0].unk15;
-    observed_values[4] = (u32)visual_objects[0].unk16;
+    observed_values[3] = C_TEST_PSX_FACING(visual_objects[0].unk15);
+    observed_values[4] = TEST_PSX_LAYER(visual_objects[0].unk16);
     observed_values[5] = (u32)visual_objects[0].unk2;
     observed_values[6] = (u32)visual_objects[0].unk40;
     observed_values[7] = (u32)visual_objects[0].unk42;
@@ -484,7 +485,7 @@ static void o_ground_takeoff_right(void)
 {
     GROUND(5);
     so.unk7C = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     storm_owl_ground_cyclone(&so);
 }
 static void o_ground_takeoff_wait(void)
@@ -701,12 +702,12 @@ static u32 owl_pages[8];
         so.y_pos.i.hi = 0x60;              \
         g_Player.x_pos.i.hi = px;          \
         engine_obj.stage = stage_id;       \
-        D_801406A8 = owl_pages;            \
+        test_stage_graphics(owl_pages);    \
         TEST_MENU_FRAMES = (u8*)owl_pages; \
         func_800751AC(&so);                \
         so.unk42 = 0;                      \
         engine_obj.stage = stage;          \
-        D_801406A8 = pages;                \
+        test_stage_graphics(pages);        \
         TEST_MENU_FRAMES = frames;         \
     } while (0)
 static void sow_init(void)
@@ -788,7 +789,7 @@ static u32 test_owl_damage(u32 row)
     memset(weapon_objects, 0, sizeof(weapon_objects));
     engine_obj.cur_character = owl_damage_cases[row].character;
     g_Player.unk2 = owl_damage_cases[row].character;
-    g_Player.spike_immune = owl_damage_cases[row].fatal ? 0 : 1;
+    SPIKE_IMMUNE_SET(g_Player, owl_damage_cases[row].fatal ? 0 : 1);
     so.active = 0x41;
     so.state = 1;
     so.hp = 32;
@@ -813,7 +814,7 @@ static u32 test_owl_damage(u32 row)
     assert(so.ext.main_60.saved_unk5 == (owl_damage_cases[row].step ? owl_damage_cases[row].step : 0x55));
     assert(so.state == (owl_damage_cases[row].fatal ? 2 : 1));
     if (owl_damage_cases[row].fatal) {
-        assert(so.unk6 == 0 && g_Player.spike_immune == 1 && (so.unk42 & 0x8000) == 0);
+        assert(so.unk6 == 0 && SPIKE_IMMUNE(g_Player) == 1 && (so.unk42 & 0x8000) == 0);
     } else if (owl_damage_cases[row].character == 0 && (owl_damage_cases[row].weapon == 6 || owl_damage_cases[row].weapon == 15)) {
         assert(so.active == 0x45);
         if (owl_damage_cases[row].weapon == 15)
@@ -831,7 +832,7 @@ static u32 test_owl_voice_timer(u32 row)
     state_reset(10, 1, 0);
     memset(weapon_objects, 0, sizeof(weapon_objects));
     memset(&g_Player, 0, sizeof(g_Player));
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     so.active = 1;
     so.hp = 32;
     so.bg_offset = -1;
@@ -858,7 +859,7 @@ static void animation(struct MainObj* obj, u8 index, u32 word)
     obj->unk17 = index;
     obj->previous_animation_index = 255;
     obj->animation_cursor = (const u8*)storm_owl_animations[index];
-    obj->animation_step.packed = word;
+    obj->animation_step.packed = C_TEST_STEP(word);
 }
 static u32 entry(u32 row)
 {
@@ -881,28 +882,28 @@ static u32 entry(u32 row)
                                         : 11;
     obj.unk6 = mode == 1 ? 2 : mode == 3 ? 1
                                          : 0;
-    obj.unk15 = side ? 0x40 : 0;
+    obj.unk15 = side ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = 1 + wait;
     obj.x_pos.val = (camera * 256 + 160 + (side ? 16 : -16)) * 65536;
     obj.y_pos.val = (camera * 256 + 112) * 65536;
     obj.animation_table = (const u8* const*)storm_owl_animations;
     set_animation(&obj, initial);
-    assert(obj.animation_step.packed == (mode == 1 ? 0x13010004 : mode == 3 ? 0x68010003
-                                                                            : 0x00010004));
+    assert(obj.animation_step.packed == C_TEST_STEP(mode == 1 ? 0x13010004 : mode == 3 ? 0x68010003
+                                                                                       : 0x00010004));
     g_Player.x_pos.val = obj.x_pos.val + (side ? 1 : -1) * 65536;
     player_before = g_Player;
     expected = obj;
     expected.animation_step.fields.duration--;
     if (!mode) {
         animation(&expected, 3, 0x13010004);
-        expected.unk15 = side ? 0x40 : 0;
+        expected.unk15 = side ? PLAYER_FACING_RIGHT : 0;
         expected.unk7C = 31;
         expected.unk6++;
     } else if (mode == 2) {
         animation(&expected, 0, 0x06010006);
         expected.x_speed = side ? -0x20000 : 0x20000;
         expected.y_speed = 0;
-        expected.unk15 = side ? 0 : 0x40;
+        expected.unk15 = side ? 0 : PLAYER_FACING_RIGHT;
         expected.unk6++;
     } else {
         expected.unk7C--;
@@ -912,7 +913,7 @@ static u32 entry(u32 row)
             expected.y_speed = 0x30000;
             if (mode == 1) {
                 expected.ext.main_60.corner = (side ? 0 : 2) + seed;
-                expected.unk15 = side ? 0 : 0x40;
+                expected.unk15 = side ? 0 : PLAYER_FACING_RIGHT;
                 expected.x_speed = side ? -0x20000 : 0x20000;
             } else {
                 expected.collision_data = D_80107B78;
@@ -957,9 +958,9 @@ static u32 swoop(u32 row)
     obj.state = 1;
     obj.unk5 = 7;
     obj.unk6 = 3;
-    obj.unk16 = 2;
+    obj.unk16 = VISUAL_SATURN_LAYER(2);
     obj.unk62 = 3;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.terrain_box = &storm_owl_grab_terrain_box;
     obj.attack_box = &storm_owl_grab_attack_box;
     obj.x_pos.val = (far ? 384 : 160) * 65536 + 0x1234 - 0x18000;
@@ -971,7 +972,7 @@ static u32 swoop(u32 row)
     obj.ext.main_60.corner = 7;
     obj.animation_table = (const u8* const*)storm_owl_animations;
     set_animation(&obj, 7);
-    assert(obj.animation_step.packed == 0x0C010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x0C010002));
     g_Player.hp = 24;
     g_Player.stun_timer = stunned ? 5 : 0;
     g_Player.x_pos.val = (far ? 384 : 160) * 65536 + 0x1234 + player_dx[dx] * 65536;
@@ -988,7 +989,7 @@ static u32 swoop(u32 row)
         expected.unk17 = 1;
         expected.previous_animation_index = 0xFF;
         expected.animation_cursor = (const u8*)storm_owl_animations[1];
-        expected.animation_step.packed = 0x00010004;
+        expected.animation_step.packed = C_TEST_STEP(0x00010004);
     } else if (stunned) {
         expected.x_speed = dx == 0 ? -65536 : dx == 4 ? 65536
                                                       : 0;
@@ -1005,7 +1006,7 @@ static u32 swoop(u32 row)
         expected.terrain_box = &storm_owl_slam_terrain_box;
         expected.attack_box = &storm_owl_attack_box;
         expected.unk62 = 0;
-        expected.unk16 = 5;
+        expected.unk16 = VISUAL_SATURN_LAYER(5);
     }
     D_8013E198[2] = -1;
     cur_random = 0x1234;
@@ -1043,7 +1044,7 @@ static u32 rain(u32 row)
     obj.unk5 = 9;
     obj.unk6 = 3;
     obj.unk7C = 1;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = layer;
     obj.x_pos.i.hi = 2384;
     obj.y_pos.i.hi = 640;
@@ -1067,7 +1068,7 @@ static u32 rain(u32 row)
         s->unk3C = (void*)obj.sprite_frames;
         s->unk40 = obj.unk40;
         s->bg_offset = layer;
-        s->unk16 = 5;
+        s->unk16 = VISUAL_SATURN_LAYER(5);
         s->unk15 = obj.unk15;
     }
     func_80078180(&obj);
@@ -1098,7 +1099,7 @@ static u32 owl(u32 row)
     obj.state = 1;
     obj.unk5 = center ? 9 : 7;
     obj.unk6 = center ? 1 : 4;
-    obj.unk15 = variant & 2 ? 0x40 : 0;
+    obj.unk15 = variant & 2 ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = (112 + (center ? heights[index] : 0)) * 65536 + 0x5678;
     background_objects[0].x_pos.val = 0x1234;
@@ -1110,7 +1111,7 @@ static u32 owl(u32 row)
     }
     obj.animation_table = (const u8* const*)storm_owl_animations;
     set_animation(&obj, 1);
-    assert(obj.animation_step.packed == 0x00010004);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x00010004));
     obj.ext.main_60.feather_mask = center ? 0 : mask;
     obj.ext.main_60.feathers_holding = 1;
     obj.x_speed = obj.y_speed = 0;
@@ -1123,17 +1124,17 @@ static u32 owl(u32 row)
         expected.y_speed = heights[index] < 0 ? -0x20000 : 0x20000;
         if (index == 2 || index == 3) {
             expected.animation_cursor = (const u8*)storm_owl_animations[6];
-            expected.animation_step.packed = 0x26010006;
+            expected.animation_step.packed = C_TEST_STEP(0x26010006);
             expected.previous_animation_index = 0xFF;
             expected.unk17 = 6;
             expected.unk6++;
         }
     } else if (!mask) {
         expected.ext.main_60.feathers_holding = 0;
-        expected.animation_step.packed = 0x00010004;
+        expected.animation_step.packed = C_TEST_STEP(0x00010004);
         expected.animation_cursor = (const u8*)storm_owl_animations[1];
         expected.previous_animation_index = 0xFF;
-        expected.unk15 = index == 2 ? 0 : 0x40;
+        expected.unk15 = index == 2 ? 0 : PLAYER_FACING_RIGHT;
         expected.x_speed = index == 2 ? -0x20000 : 0x20000;
         expected.y_speed = 0x30000;
         expected.unk6++;
@@ -1166,7 +1167,7 @@ static u32 slam(u32 row)
     memset(map, 1, sizeof(map));
     memset(pixels, 0, sizeof(pixels));
     attributes[0] = 0;
-    attributes[1] = 0x38;
+    attributes[1] = C_TEST_PSX_WORD(0x38);
     if (floor)
         for (i = 8 * 16; i < 16 * 16; i++)
             ((u16*)pixels[1])[i] = 1;
@@ -1185,7 +1186,7 @@ static u32 slam(u32 row)
     obj.unk5 = 4;
     obj.unk6 = 4;
     obj.unk62 = 3;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.air_state = -1;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 75 * 65536 + 0x5678;
@@ -1198,7 +1199,7 @@ static u32 slam(u32 row)
     obj.attack_box = &storm_owl_grab_attack_box;
     obj.animation_table = (const u8* const*)storm_owl_animations;
     set_animation(&obj, 8);
-    assert(obj.animation_step.packed == 0x0E010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x0E010002));
     g_Player.hp = 30;
     g_Player.armor_parts = armor ? 2 : 0;
     g_Player.stun_timer = 3;
@@ -1223,7 +1224,7 @@ static u32 slam(u32 row)
         expected.unk17 = 1;
         expected.previous_animation_index = 255;
         expected.animation_cursor = (const u8*)storm_owl_animations[1];
-        expected.animation_step.packed = 0x00010004;
+        expected.animation_step.packed = C_TEST_STEP(0x00010004);
         expected.x_speed = face ? 0x20000 : -0x20000;
         expected.y_speed = -0x10000;
         expected.terrain_box = &storm_owl_slam_terrain_box;
@@ -1246,7 +1247,463 @@ static u32 slam(u32 row)
     assert(cur_random == 0x1234 && D_8013B7D8 == 0 && D_8013B7DC == (floor ? 8 : 0) && D_8013B800 == 0 && D_8013B804 == 0);
     for (i = 0; i < 256; i++)
         assert(map[i] == 1 && pixels[0][i / 16][i % 16] == 0 && pixels[1][i / 16][i % 16] == (floor && i >= 128));
-    assert(attributes[0] == 0 && attributes[1] == 0x38 && SP_BG_TILEMAP == map && TEST_BG_TILE_PIXELS == (u8*)pixels && TEST_BG_TILE_ATTRS == (u8*)attributes && layout_width == 16 && layout_height == 16 && layout_size == 256);
+    assert(attributes[0] == 0 && attributes[1] == C_TEST_PSX_WORD(0x38) && SP_BG_TILEMAP == map && TEST_BG_TILE_PIXELS == (u8*)pixels && TEST_BG_TILE_ATTRS == (u8*)attributes && layout_width == 16 && layout_height == 16 && layout_size == 256);
+    return 1;
+}
+
+void storm_owl_patrol(struct MainObj*);
+void storm_owl_reenter(struct MainObj*);
+void storm_owl_feather(struct MainObj*);
+void storm_owl_feather_volley(struct MainObj*);
+extern u8 storm_owl_pattern_0[4];
+extern struct Unk_unk68 storm_owl_grab_attack_box, storm_owl_grab_terrain_box;
+
+static struct MainObj ow;
+#define OW_IS(a, b) ((const void*)(a) == (const void*)(b))
+static void ow_reset(u8 unk5, u8 unk6)
+{
+    memset(&ow, 0, sizeof(ow));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    background_objects[0].x_pos.i.hi = 0x900;
+    background_objects[0].y_pos.i.hi = 0x600;
+    D_80141F50[2] = state_sound_rows;
+    engine_obj.stage = 7;
+    cur_random = 0;
+    ow.active = 0x41;
+    ow.id = 60;
+    ow.state = 1;
+    ow.unk5 = unk5;
+    ow.unk6 = unk6;
+    ow.hp = 0x30;
+    ow.x_pos.i.hi = 0x980;
+    ow.y_pos.i.hi = 0x660;
+    ow.animation_table = (const u8* const*)storm_owl_animations;
+    set_animation(&ow, 1);
+}
+static void ow_ground(u8 solid)
+{
+    u32 i;
+    memset(map, 1, sizeof(map));
+    memset(pixels, 0, sizeof(pixels));
+    attributes[0] = 0;
+    attributes[1] = C_TEST_PSX_WORD(0x38);
+    for (i = 8 * 16; i < 16 * 16; i++)
+        ((u16*)pixels[1])[i] = solid;
+    SP_BG_TILEMAP = map;
+    TEST_BG_TILE_PIXELS = (u8*)pixels;
+    TEST_BG_TILE_ATTRS = (u8*)attributes;
+    layout_width = layout_height = 16;
+    layout_size = 256;
+    background_objects[0].x_pos.i.hi = 0;
+    background_objects[0].y_pos.i.hi = 0;
+}
+static void ow_floor(s16 y)
+{
+    ow_ground(1);
+    ow.terrain_box = &storm_owl_slam_terrain_box;
+    ow.x_pos.i.hi = 160;
+    ow.y_pos.i.hi = y;
+    ow.unk18 = ow.x_pos;
+    ow.unk1C = ow.y_pos;
+    ow.air_state = -1;
+    ow.x_speed = 0;
+    ow.y_speed = -0x10000;
+}
+
+static void sox_death(void)
+{
+    struct EngineObj engine = engine_obj;
+    ow_reset(0, 0);
+    ow.state = 2;
+    ow.unk42 = 0x8123;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
+    storm_owl_update(&ow);
+    assert(ow.unk5 == 1 && ow.unk17 == 0xB && ow.unk7C == 0x7F && ow.unk7E == 0x19 && ow.invincibility_timer == 0x19 && ow.unk42 == 0x123);
+    assert(g_Player.script_action == 0x14 && g_Player.script_facing == PLAYER_FACING_RIGHT);
+    ow.unk5 = 2;
+    ow.unk7E = 3;
+    ow.ext.main_60.effect = &effect_objects[0];
+    effect_objects[0].active = 1;
+    storm_owl_update(&ow);
+    assert(ow.unk7E == 2 && ow.unk42 == 0x123 && ow.active == 0x41);
+    engine_obj = engine;
+}
+static void sox_start(void)
+{
+    struct EngineObj engine = engine_obj;
+    ow_reset(1, 0);
+    ow.state = 0;
+    storm_owl_update(&ow);
+    assert(ow.unk5 == 2 && effect_objects[0].active == 1 && effect_objects[0].id == 0x18 && ow.ext.main_60.effect == &effect_objects[0]);
+    storm_owl_update(&ow);
+    assert(ow.unk5 == 2);
+    effect_objects[0].active = 0;
+    storm_owl_update(&ow);
+    assert(ow.unk5 == 3);
+    engine_obj = engine;
+}
+static void sox_intro(void)
+{
+    struct EngineObj engine = engine_obj;
+    ow_reset(2, 1);
+    ow_floor(40);
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 1 && ow.y_pos.i.hi == 41);
+    ow_floor(103);
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 2 && ow.unk17 == 9 && ow.unk7C == 0x49);
+    background_objects[0].x_pos.i.hi = 0x900;
+    background_objects[0].y_pos.i.hi = 0x600;
+    ow.x_pos.i.hi = 0x980;
+    ow.y_pos.i.hi = 0x661;
+    ow.unk7C = 2;
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 2 && ow.unk7C == 1 && visual_objects[0].active == 0);
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 3 && ow.unk7C == 0x2F && background_objects[0].unk37 == 0x18 && visual_objects[0].active == 0x41 && visual_objects[0].id == 0x1C && visual_objects[0].unk2 == 0);
+    engine_obj.stage = 0xC;
+    abc_object.unkC = 0;
+    ow.unk7C = 2;
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 3 && ow.unk7C == 1);
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 4 && abc_object.unkC == 0);
+    abc_object.unkC = 0x80;
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 4 && engine_obj.boss_ptr != &ow);
+    abc_object.unkC = 0;
+    engine_obj.unk36.value = 0;
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 5 && engine_obj.boss_ptr == &ow && engine_obj.enable_boss == 1 && engine_obj.unk25 == 1 && ow.unk7C == 3 && engine_obj.unk36.value == 0x3C);
+    ow.hp = 0x10;
+    D_80173C84 = 0;
+    engine_obj.unk36.timer = 2;
+    storm_owl_intro(&ow);
+    assert(ow.hp == 0x10 && engine_obj.unk36.timer == 1);
+    engine_obj.unk36.timer = 0;
+    ow.unk7C = 2;
+    storm_owl_intro(&ow);
+    assert(ow.hp == 0x11 && ow.unk7C == 1);
+    ow.hp = 0x2F;
+    g_Player.script_state = 1;
+    storm_owl_intro(&ow);
+    assert(ow.hp == 0x30 && ow.unk7C == 3 && ow.unk6 == 6 && g_Player.script_state == 0 && ow.ext.main_60.pattern == storm_owl_pattern_0);
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 7 && ow.ext.main_60.corner == 2 && ow.unk17 == 1);
+    engine_obj.stage = 7;
+    ow.unk6 = 6;
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 7 && ow.ext.main_60.corner == 0 && ow.x_speed < 0);
+    ow.x_speed = 0;
+    ow.y_speed = 0x10000;
+    storm_owl_intro(&ow);
+    assert(ow.unk6 == 7 && ow.y_pos.i.hi == 0x660);
+    ow.y_pos.i.hi = 0x628;
+    storm_owl_intro(&ow);
+    assert(ow.unk5 == 3 && ow.unk6 == 2 && ow.y_speed == 0 && ow.y_pos.i.hi == 0x627);
+    engine_obj = engine;
+}
+static void sox_patrol_fly(void)
+{
+    static u8 used_up[1] = { 0xFF };
+    ow_reset(3, 0);
+    g_Player.x_pos.i.hi = 0xA00;
+    storm_owl_patrol(&ow);
+    assert(ow.unk6 == 1 && ow.unk15 == PLAYER_FACING_RIGHT && ow.unk17 == 1);
+    ow.unk6 = 0;
+    g_Player.x_pos.i.hi = 0x900;
+    storm_owl_patrol(&ow);
+    assert(ow.unk15 == 0);
+    ow.unk6 = 1;
+    storm_owl_patrol(&ow);
+    assert(ow.unk6 == 1 && ow.unk5 == 3 && ow.x_speed < 0);
+    ow.x_pos.i.hi = 0x918;
+    storm_owl_patrol(&ow);
+    assert(ow.unk6 == 1 && ow.unk5 == 3 && ow.x_speed == 0);
+    ow.ext.main_60.pattern = used_up;
+    ow.x_pos.i.hi = 0x915;
+    ow.y_pos.i.hi = 0x625;
+    storm_owl_patrol(&ow);
+    assert(ow.unk5 == 3 && ow.unk6 == 2 && ow.x_speed == 0 && ow.y_speed == 0 && ow.ext.main_60.pattern == &storm_owl_pattern_0[1]);
+    ow.unk6 = 1;
+    ow.ext.main_60.pattern = &storm_owl_pattern_0[2];
+    ow.x_pos.i.hi = 0x91B;
+    ow.y_pos.i.hi = 0x62B;
+    storm_owl_patrol(&ow);
+    assert(ow.unk5 == 8 && ow.unk6 == 0 && ow.ext.main_60.pattern == &storm_owl_pattern_0[3]);
+}
+static void sox_patrol_swoop(void)
+{
+    ow_reset(3, 2);
+    ow.ext.main_60.patrol_delay = 2;
+    ow.ext.main_60.corner = 1;
+    storm_owl_patrol(&ow);
+    assert(ow.unk6 == 2 && ow.ext.main_60.patrol_delay == 1);
+    ow.ext.main_60.patrol_delay = 0;
+    storm_owl_patrol(&ow);
+    assert(ow.unk6 == 3 && ow.x_speed == 0x28000 && ow.y_speed == 0x800 && ow.x_accel == FIXED(0.015625) && ow.unk15 == PLAYER_FACING_RIGHT);
+    ow.unk6 = 2;
+    ow.ext.main_60.corner = 2;
+    storm_owl_patrol(&ow);
+    assert(ow.x_speed == -0x20000 && ow.unk15 == 0);
+    ow.x_speed = 0;
+    ow.y_speed = 0;
+    ow.x_accel = 0;
+    g_Player.x_pos.i.hi = 0x9C0;
+    g_Player.y_pos.i.hi = 0x6C0;
+    storm_owl_patrol(&ow);
+    assert(ow.unk5 == 3 && ow.unk6 == 3 && ow.y_speed == 0x400);
+    g_Player.x_pos.i.hi = 0x9B0;
+    storm_owl_patrol(&ow);
+    assert(ow.unk5 == 4 && ow.unk6 == 0 && ow.y_speed == 0);
+    ow.unk5 = 3;
+    ow.unk6 = 3;
+    g_Player.x_pos.i.hi = 0x960;
+    g_Player.y_pos.i.hi = 0x600;
+    storm_owl_patrol(&ow);
+    assert(ow.unk5 == 6 && ow.unk6 == 0);
+    ow.unk5 = 3;
+    ow.unk6 = 3;
+    cur_random = 5;
+    storm_owl_patrol(&ow);
+    assert(ow.unk5 == 3 && ow.unk6 == 4 && ow.ext.main_60.corner == 0);
+    ow.x_speed = 0;
+    ow.y_speed = 0;
+    storm_owl_patrol(&ow);
+    assert(ow.unk6 == 4 && ow.y_speed == FIXED(0.015625));
+    ow.x_pos.i.hi = 0x938;
+    storm_owl_patrol(&ow);
+    assert(ow.unk6 == 0 && ow.ext.main_60.patrol_delay == 0x14 && ow.y_speed == 0);
+    ow.unk6 = 4;
+    ow.ext.main_60.patrol_delay = 0;
+    ow.x_pos.i.hi = 0x8F8;
+    storm_owl_patrol(&ow);
+    assert(ow.unk6 == 0 && ow.ext.main_60.patrol_delay == 0x14);
+}
+static void sox_grab(void)
+{
+    ow_reset(4, 0);
+    ow_ground(0);
+    ow.x_pos.i.hi = 0x80;
+    ow.y_pos.i.hi = 0x40;
+    g_Player.x_pos.i.hi = 0x40;
+    g_Player.y_pos.i.hi = 0x80;
+    storm_owl_grab(&ow);
+    assert(ow.unk6 == 1 && ow.x_speed < 0 && ow.unk17 == 7 && ow.unk62 == 3 && ow.contact_damage == 0 && OW_IS(ow.attack_box, &storm_owl_grab_attack_box));
+    ow.unk6 = 0;
+    ow.unk15 = PLAYER_FACING_RIGHT;
+    g_Player.x_pos.i.hi = 0xC0;
+    storm_owl_grab(&ow);
+    assert(ow.unk6 == 1 && ow.x_speed > 0);
+    ow.unk6 = 2;
+    ow.unk15 = PLAYER_FACING_RIGHT;
+    ow.x_speed = 0x10000;
+    ow.y_speed = 0;
+    g_Player.x_pos.i.hi = 0x83;
+    storm_owl_grab(&ow);
+    assert(ow.unk6 == 3 && ow.x_speed == 0x10000 && ow.y_speed == 0x10000 && ow.unk7C == 0x3C);
+    ow.unk15 = 0;
+    ow.unk7C = 2;
+    ow.x_speed = 0;
+    storm_owl_grab(&ow);
+    assert(ow.unk6 == 3 && ow.unk7C == 1 && ow.y_speed == 0x10000 && g_Player.x_pos.i.hi == 0x77 && g_Player.y_pos.i.hi == 0x5D);
+    ow.unk15 = PLAYER_FACING_RIGHT;
+    storm_owl_grab(&ow);
+    assert(ow.unk6 == 4 && ow.unk17 == 8 && ow.y_speed == FIXED(-4) && g_Player.x_pos.i.hi == 0x8B);
+    ow.unk6 = 5;
+    ow.x_speed = 0;
+    ow.y_speed = 0;
+    ow.unk62 = 3;
+    ow.contact_damage = 0;
+    storm_owl_grab(&ow);
+    assert(ow.unk6 == 5 && ow.y_speed == FIXED(0.125));
+    ow.y_speed = FIXED(3);
+    ow.y_pos.i.hi = 0x500;
+    storm_owl_grab(&ow);
+    assert(ow.y_speed == FIXED(3) && ow.unk5 == 5 && ow.unk6 == 0 && ow.unk62 == 0 && ow.contact_damage == 6 && OW_IS(ow.attack_box, &storm_owl_attack_box));
+    ow_reset(4, 3);
+    ow_floor(128);
+    ow.terrain_box = &storm_owl_grab_terrain_box;
+    ow.y_speed = 0x10000;
+    ow.gravity = 0x1000;
+    ow.unk7C = 5;
+    storm_owl_grab(&ow);
+    assert(ow.unk6 == 3 && ow.unk7C == 4 && ow.y_speed == 0 && ow.gravity == 0 && ow.y_pos.i.hi == 127);
+}
+static void sox_reenter(void)
+{
+    static const s16 spots[][2] = { { -0x40, 0x10 }, { -0x40, 0xC8 }, { 0x180, 0x10 }, { 0x180, 0xC8 } };
+    u32 i;
+    for (i = 0; i < COUNT(spots); i++) {
+        ow_reset(5, 0);
+        g_Player.x_pos.i.hi = 0x900;
+        ow.ext.main_60.corner = i;
+        storm_owl_reenter(&ow);
+        assert(ow.x_pos.i.hi == 0x900 + spots[i][0] && ow.y_pos.i.hi == 0x600 + spots[i][1] && ow.unk6 == 1 && ow.unk7C == 0x3C);
+        assert(ow.unk15 == (i >= 2 ? 0 : PLAYER_FACING_RIGHT));
+    }
+    ow.ext.main_60.flash_mode = 1;
+    ow.unk7C = 2;
+    storm_owl_reenter(&ow);
+    assert(ow.unk7C == 1 && OW_IS(ow.collision_data, D_801060F0));
+    ow.ext.main_60.flash_mode = 0;
+    storm_owl_reenter(&ow);
+    assert(ow.unk5 == 3 && ow.unk6 == 0 && OW_IS(ow.collision_data, D_80107B78));
+}
+static void sox_feather(void)
+{
+    ow_reset(6, 1);
+    ow.unk7C = 2;
+    storm_owl_feather(&ow);
+    assert(ow.unk6 == 1 && ow.unk7C == 1 && shot_objects[0].active == 0);
+    storm_owl_feather(&ow);
+    assert(ow.unk6 == 2 && ow.unk7C == 0x1C && shot_objects[0].active == 0x41 && shot_objects[0].id == 0x25 && shot_objects[0].unk2 == 0 && shot_objects[0].unk7C == (struct WeaponObj*)&ow);
+    ow.unk6 = 3;
+    storm_owl_feather(&ow);
+    assert(ow.unk5 == 6 && ow.unk6 == 3);
+    ow.x_pos.i.hi = 0x800;
+    storm_owl_feather(&ow);
+    assert(ow.unk5 == 5 && ow.unk6 == 0);
+}
+static void sox_volley(void)
+{
+    ow_reset(7, 0);
+    ow.ext.main_60.corner = 2;
+    ow.ext.main_60.shot_count = 3;
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk6 == 1 && ow.unk15 == 0 && ow.unk7C == 0x1C && ow.ext.main_60.shot_count == 0 && ow.unk17 == 3 && OW_IS(ow.collision_data, D_80107B78));
+    ow.unk6 = 0;
+    ow.ext.main_60.corner = 1;
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk15 == PLAYER_FACING_RIGHT);
+    ow.unk7C = 2;
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk6 == 1 && ow.unk7C == 1);
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk6 == 1 && ow.unk7C == 0x3D && ow.ext.main_60.shot_count == 1 && shot_objects[0].id == 0x25 && shot_objects[0].unk2 == 1);
+    ow.unk7C = 1;
+    ow.ext.main_60.shot_count = 3;
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk6 == 2 && ow.unk7C == 0x3C && ow.ext.main_60.shot_count == 4 && shot_objects[1].unk2 == 4);
+    ow.unk7C = 2;
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk6 == 2 && ow.unk7C == 1);
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk6 == 3 && ow.unk7C == 0x3C && ow.unk17 == 6);
+    ow.unk7C = 2;
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk6 == 3 && ow.unk7C == 1 && ow.ext.main_60.feathers_holding == 0);
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk6 == 4 && ow.unk7C == 0x78 && ow.ext.main_60.feathers_holding == 1);
+    ow.unk6 = 5;
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk5 == 7 && ow.unk6 == 5);
+    ow.x_pos.i.hi = 0x800;
+    g_Player.x_pos.i.hi = 0x900;
+    storm_owl_feather_volley(&ow);
+    assert(ow.unk5 == 5 && ow.unk6 == 0 && ow.ext.main_60.corner == 0);
+}
+static void sox_cyclone(void)
+{
+    ow_reset(8, 0);
+    storm_owl_cyclone(&ow);
+    assert(ow.unk6 == 1 && ow.unk17 == 4 && ow.unk15 == PLAYER_FACING_RIGHT && ow.unk7C == 0x63);
+    ow.unk6 = 0;
+    ow.ext.main_60.corner = 3;
+    storm_owl_cyclone(&ow);
+    assert(ow.unk17 == 5 && ow.unk15 == 0);
+    ow.unk7C = 0x30;
+    storm_owl_cyclone(&ow);
+    assert(ow.unk7C == 0x2F && shot_objects[0].active == 0);
+    ow.unk7C = 0x29;
+    storm_owl_cyclone(&ow);
+    assert(ow.unk7C == 0x28 && shot_objects[0].active == 0);
+    storm_owl_cyclone(&ow);
+    assert(ow.unk6 == 1 && ow.unk7C == 0x27 && shot_objects[2].id == 0x26 && shot_objects[0].unk2 == 0 && shot_objects[2].unk2 == 2 && shot_objects[3].active == 0);
+    ow.unk7C = 1;
+    storm_owl_cyclone(&ow);
+    assert(ow.unk6 == 2 && ow.unk7C == 0x1E && shot_objects[5].active == 0x41);
+    ow.unk7C = 2;
+    storm_owl_cyclone(&ow);
+    assert(ow.unk6 == 2 && ow.unk7C == 1);
+    ow.ext.main_60.pattern = &storm_owl_pattern_0[2];
+    g_Player.x_pos.i.hi = 0x900;
+    storm_owl_cyclone(&ow);
+    assert(ow.unk6 == 3 && ow.unk15 == PLAYER_FACING_RIGHT && ow.x_speed == FIXED(2) && ow.y_speed == FIXED(3));
+    ow.x_speed = 0;
+    ow.y_speed = 0;
+    storm_owl_cyclone(&ow);
+    assert(ow.unk5 == 8 && ow.unk6 == 3);
+    ow.x_pos.i.hi = 0xB00;
+    storm_owl_cyclone(&ow);
+    assert(ow.unk5 == 5 && ow.unk6 == 0 && ow.ext.main_60.corner == 2);
+}
+static void sox_stagger(void)
+{
+    ow_reset(0xB, 0);
+    ow.collision_data = (const u16*)D_80107B78;
+    shot_objects[0].active = 0x41;
+    shot_objects[0].id = 0x25;
+    shot_objects[1].active = 0x41;
+    shot_objects[1].id = 0x26;
+    shot_objects[1].unk2 = 5;
+    ow.ext.main_60.feather_mask = 3;
+    storm_owl_stagger(&ow);
+    assert(ow.unk6 == 1 && ow.unk7C == 0x28 && ow.unk17 == 0xC && ow.ext.main_60.feather_mask == 0 && shot_objects[0].active == 0 && shot_objects[1].active == 0x41);
+    ow.unk6 = 2;
+    storm_owl_stagger(&ow);
+    assert(ow.unk5 == 0xB && ow.unk6 == 2);
+    ow.x_pos.i.hi = 0x800;
+    ow.ext.main_60.feather_mask = 1;
+    storm_owl_stagger(&ow);
+    assert(ow.unk5 == 0xB && ow.unk6 == 2);
+    ow.ext.main_60.feather_mask = 0;
+    storm_owl_stagger(&ow);
+    assert(ow.unk5 == 5 && ow.unk6 == 0);
+}
+static void sox_ground_cyclone(void)
+{
+    ow_reset(0xC, 1);
+    ow_floor(103);
+    storm_owl_ground_cyclone(&ow);
+    assert(ow.unk6 == 2 && ow.unk17 == 9 && ow.unk7C == 0x1E);
+    background_objects[0].x_pos.i.hi = 0x900;
+    background_objects[0].y_pos.i.hi = 0x600;
+    ow.unk6 = 3;
+    ow.unk7C = 1;
+    g_Player.x_pos.i.hi = 0x9A0;
+    storm_owl_ground_cyclone(&ow);
+    assert(ow.unk6 == 4 && ow.unk7C == 0xA && visual_objects[0].x_pos.i.hi == 0x9A0 && visual_objects[1].x_pos.i.hi == 0x970 && visual_objects[2].x_pos.i.hi == 0x9D0 && visual_objects[2].y_pos.i.hi == 0x660);
+    assert(shot_objects[0].id == 0x26 && shot_objects[0].unk2 == 5 && shot_objects[0].timer == 0x20 && shot_objects[2].x_pos.i.hi == 0x9D0 && shot_objects[2].timer == 0x28 && shot_objects[2].y_pos.i.hi == 0x750);
+    ow_reset(9, 6);
+    ow.unk7C = 2;
+    ow.unk7E = 5;
+    storm_owl_storm(&ow);
+    assert(ow.unk6 == 6 && ow.unk7C == 1 && ow.unk7E == 0xA);
+}
+static void (*const sox_cases[])(void) = {
+    sox_death,
+    sox_start,
+    sox_intro,
+    sox_patrol_fly,
+    sox_patrol_swoop,
+    sox_grab,
+    sox_reenter,
+    sox_feather,
+    sox_volley,
+    sox_cyclone,
+    sox_stagger,
+    sox_ground_cyclone,
+};
+static u32 sox_run(u32 row)
+{
+    sox_cases[row]();
     return 1;
 }
 
@@ -1268,6 +1725,12 @@ const struct CTestGroup c_test_groups[] = {
     { "release_facing_and_center_vertical_four_pixel_edges", NULL, NULL, 30, owl },
     { "actual_floor_landing_arena_edges_facing_and_armor_damage", NULL, NULL, 48, slam },
     { "owl_damage", 0, 0, COUNT(owl_damage_cases), test_owl_damage },
+    { "storm_owl_state_steps", NULL, NULL, COUNT(sox_cases), sox_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 3 + COUNT(storm_owl_init_rain_cases) + COUNT(owl_cases) + COUNT(storm_owl_pattern_exhaustion_cases_expected) + 6 + 1 + 1 + 1 + COUNT(storm_owl_death_flash_cases) + COUNT(pool_full_cases) + COUNT(storm_owl_clear_shots_pool_cases) + 96 + COUNT(player_dx) * 16 + 18 + 30 + 48 + COUNT(owl_damage_cases);
+const u32 c_test_count = 3 + COUNT(storm_owl_init_rain_cases) + COUNT(owl_cases) + COUNT(storm_owl_pattern_exhaustion_cases_expected) + 6 + 1 + 1 + 1 + COUNT(storm_owl_death_flash_cases) + COUNT(pool_full_cases) + COUNT(storm_owl_clear_shots_pool_cases) + 96 + COUNT(player_dx) * 16 + 18 + 30 + 48 + COUNT(owl_damage_cases) + COUNT(sox_cases);
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

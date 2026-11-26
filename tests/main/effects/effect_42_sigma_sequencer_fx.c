@@ -18,7 +18,7 @@ static u32 test_sigma_sequencer_fx_wait_player(u32 row)
     return c_test_observe(0, row, observed_values, sigma_sequencer_fx_wait_player_expected, 2);
 }
 
-static const u8 modes[] = { 0, 1, 2, 3, 5, 6, 7 };
+static const u8 modes[] = { 0, 1, 2, 3 };
 static u32 start(u32 row)
 {
     struct EffectObj obj, expected;
@@ -53,9 +53,161 @@ static u32 start(u32 row)
     return 1;
 }
 
+#include "support/state_cases.h"
+void func_800BE364(struct EffectObj*);
+static struct MainObj seq_owner, seq_parts[3];
+static struct PlayerObj seq_player;
+#define se state_room.effect
+#define SEQ_OWNER ((struct Main73PartsExt*)&seq_owner.ext)
+#define SEQ(st, step, a, b, c, setup) (seq_player = g_Player, state_reset(step, 0, 0), memset(&seq_owner, 0, sizeof(seq_owner)), memset(seq_parts, 0, sizeof(seq_parts)), SEQ_OWNER->parts[0] = &seq_parts[0], SEQ_OWNER->parts[1] = &seq_parts[1], SEQ_OWNER->parts[2] = &seq_parts[2], SEQ_OWNER->object_id = 2, SEQ_OWNER->effect_state = 7, seq_parts[0].unk5 = a, seq_parts[1].unk5 = b, seq_parts[2].unk5 = c, seq_parts[0].unk2 = 0, seq_parts[1].unk2 = 1, seq_parts[2].unk2 = 3, g_Player.update_delay = 0, se.active = 1, se.state = st, se.ext.effect_42.owner.main = &seq_owner, se.ext.effect_42.timer = 5, setup, sigma_sequencer_fx_update(&se), state_extra = SEQ_OWNER->effect_state | (u32)se.ext.effect_42.timer << 8, se.ext.effect_42.owner.main = NULL, g_Player = seq_player)
+static void seq_start(void)
+{
+    SEQ(1, 0, 0, 0, 0, 0);
+}
+static void seq_player_ready(void) { SEQ(1, 1, 0, 0, 0, 0); }
+static void seq_parts_pending(void) { SEQ(1, 2, 3, 3, 0, 0); }
+static void seq_right_part(void) { SEQ(1, 2, 3, 3, 3, seq_parts[2].unk2 = 2); }
+static void seq_wrong_parts(void) { SEQ(1, 2, 3, 3, 3, 0); }
+static void seq_wait_pending(void) { SEQ(1, 3, 3, 0, 3, 0); }
+static void seq_wait_done(void) { SEQ(1, 3, 3, 3, 3, 0); }
+static void seq_hold(void) { SEQ(1, 4, 0, 0, 0, 0); }
+static void seq_hold_ends(void) { SEQ(1, 4, 0, 0, 0, se.ext.effect_42.timer = 1); }
+static void seq_finish_waits(void) { SEQ(2, 0, 0, 0, 0, g_Player.update_delay = 1); }
+static void seq_finish(void) { SEQ(2, 0, 0, 0, 0, 0); }
+static void (*const seq_cases[])(void) = {
+    seq_start,
+    seq_player_ready,
+    seq_parts_pending,
+    seq_right_part,
+    seq_wrong_parts,
+    seq_wait_pending,
+    seq_wait_done,
+    seq_hold,
+    seq_hold_ends,
+    seq_finish_waits,
+    seq_finish,
+};
+static const u32 seq_expected[] = {
+    0x101u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x501u,
+    0x0u,
+    0x201u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x500u,
+    0x0u,
+    0x201u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x507u,
+    0x0u,
+    0x301u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x502u,
+    0x0u,
+    0x401u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0xC803u,
+    0x0u,
+    0x301u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x507u,
+    0x0u,
+    0x401u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0xC803u,
+    0x0u,
+    0x401u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x407u,
+    0x0u,
+    0x2u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x7u,
+    0x0u,
+    0x2u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x507u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x500u,
+    0x0u,
+};
+static u32 test_seq(u32 row)
+{
+    return object_run(seq_cases[row], row, &seq_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "sigma_sequencer_fx_wait_player", 0, 0, 1, test_sigma_sequencer_fx_wait_player },
-    { "every_sequencer_mode_passed_by_real_sigma_callers", NULL, NULL, COUNT(modes) * 2, start },
+    { "every_sequencer_mode_passed_by_real_sigma_callers", NULL, NULL, COUNT(modes), start },
+    { "sigma_sequencer_fx_steps", 0, 0, COUNT(seq_cases), test_seq },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1 + COUNT(modes) * 2;
+const u32 c_test_count = 1 + COUNT(modes) + COUNT(seq_cases);

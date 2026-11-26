@@ -1,6 +1,15 @@
 #include "test_runtime.h"
+#ifndef VERSION_DEMO
 #include "main/engine.h"
 #include "main/1AC84.h"
+#include "support/test_pad.h"
+#ifndef MMX4_SATURN
+#include <unistd.h>
+#include <stdlib.h>
+#include <psyz/cd.h>
+#include <psyz/spu.h>
+#include "archive_memory.h"
+#endif
 extern struct MiscObj* D_801396C0;
 extern struct MiscObj* D_801396C4;
 s32 func_8001F8FC(struct GameInfo*);
@@ -16,7 +25,7 @@ static u32 test_func_8001F6E8(u32 row)
     memset(&child_0, 0, sizeof(child_0));
     memset(&child_1, 0, sizeof(child_1));
     memset(&controller_input, 0, sizeof(controller_input));
-    controller_input.pressed = 255;
+    TEST_PAD_PRESSED = 255;
     D_801396C0 = &child_0;
     D_801396C4 = &child_1;
     func_8001F6E8(&obj);
@@ -31,6 +40,7 @@ static u32 test_func_8001F6E8(u32 row)
 }
 #undef controller_input
 
+#ifndef MMX4_SATURN
 struct func_8001F8FC_case {
     u32 unk6;
     u32 expected[2];
@@ -61,6 +71,25 @@ static u32 test_func_8001F8FC(u32 row)
     observed_values[0] = (u32)return_value;
     observed_values[1] = (u32)obj.unk6;
     return c_test_observe(0, row, observed_values, c->expected, 2);
+}
+#endif
+
+static u32 test_func_8001F798(u32 row)
+{
+    struct EngineObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.unk2 = 3;
+    obj.unk3 = 7;
+    obj.unk4 = 1;
+    obj.cur_character = row;
+    g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 9;
+    need_palette_load = 0x10;
+    func_8001F798(&obj);
+    assert(obj.unk2 == 4 && obj.unk3 == 0 && obj.unk4 == 0xF0);
+    assert(*(s16*)&obj.unk6 == (row ? 0x46 : 0x3C));
+    assert(g_FilterAmountR == 0 && g_FilterAmountG == 0 && g_FilterAmountB == 0);
+    assert(need_palette_load == 0x11);
+    return 1;
 }
 
 struct func_8001FA24_case {
@@ -150,7 +179,7 @@ static u32 scroll_case(u32 row, u32 direct)
     memcpy(backgrounds_expected, background_objects, sizeof(backgrounds_expected));
     controller_input.held = 0x1357;
     controller_input.previous = 0x2468;
-    controller_input.pressed = presses[press];
+    TEST_PAD_PRESSED = presses[press];
     input_before = controller_input;
     D_801396B8 = velocity;
     g_FilterModeR = 1;
@@ -190,7 +219,11 @@ static u32 scroll_case(u32 row, u32 direct)
     assert(controller_input.held == input_before.held && controller_input.previous == input_before.previous && controller_input.pressed == input_before.pressed);
     assert(D_801396C0 == &children[0] && D_801396C4 == &children[1] && D_801396B8 == velocity);
     for (i = 0; i < 4; i++)
+#ifdef MMX4_SATURN
+        assert(D_8013E188[i] == (finished && i == 0 ? 0x7F : (s32)(10 + i)));
+#else
         assert(D_8013E188[i] == (finished ? -1 : (s32)(10 + i)));
+#endif
     assert(g_FilterModeR == (finished ? 0 : 1) && g_FilterModeG == (finished ? 0 : 2) && g_FilterModeB == (finished ? 0 : 3));
     assert(g_FilterAmountR == (finished ? 0 : 4) && g_FilterAmountG == (finished ? 0 : 5) && g_FilterAmountB == (finished ? 0 : 6));
     return 1;
@@ -204,6 +237,7 @@ extern struct MiscObj *D_801396C0, *D_801396C4;
 extern s32 D_801396B8, D_80139530, D_80141BD4;
 extern u8 D_80139524, D_80139528;
 static struct MiscObj expected_pool[64];
+#ifndef MMX4_SATURN
 static u32 enter(u32 row)
 {
     struct EngineObj expected;
@@ -252,6 +286,7 @@ static u32 enter(u32 row)
     assert(D_80139524 == 0x70 && D_80139528 == 0x70 && D_80141BD4 == 2 && D_80173C84 == 1 && D_80139530 == 7);
     return 1;
 }
+#endif
 static u32 label_capacity(u32 row)
 {
     struct EngineObj engine_before = engine_obj;
@@ -275,14 +310,240 @@ static u32 label_capacity(u32 row)
     return 1;
 }
 
+static u32 flash_countdown_row(u32 row)
+{
+    static const u8 timers[] = { 1, 1, 3, 4 };
+    struct EngineObj obj;
+    u16 white = row == 2;
+    memset(&obj, 0, sizeof(obj));
+    obj.unk2 = 2;
+    obj.unk3 = 5;
+    obj.unk4 = timers[row];
+    obj.character_state.bytes[2] = row == 1;
+    g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 9;
+    need_palette_load = 0x10;
+    func_8001F634(&obj);
+    assert(need_palette_load == 0x11);
+    if (row < 2) {
+        assert(g_FilterAmountR == 0 && g_FilterAmountG == 0 && g_FilterAmountB == 0 && obj.unk3 == 0);
+        assert(obj.unk2 == (row ? 4 : 3) && obj.unk4 == (row ? 0x78 : 0x1E) && obj.character_state.bytes[1] == !row);
+    } else {
+        assert(obj.unk2 == 2 && obj.unk3 == 5 && obj.unk4 == timers[row] - 1);
+        assert(g_FilterAmountR == (white ? 0x1F : 0) && g_FilterAmountG == (white ? 0x3E0 : 0) && g_FilterAmountB == (white ? 0x7C00 : 0));
+    }
+    return obj.unk2;
+}
+static u32 flash_countdown(u32 row)
+{
+    static const u8 kept[] = { 0, 1, 3 };
+    return flash_countdown_row(kept[row]);
+}
+
+static u32 labels_wait(u32 row)
+{
+    struct EngineObj obj;
+    struct MiscObj first, second;
+    memset(&obj, 0, sizeof(obj));
+    memset(&first, 0, sizeof(first));
+    memset(&second, 0, sizeof(second));
+    memset(&controller_input, 0, sizeof(controller_input));
+    first.unk5 = 2;
+    second.unk5 = row ? 1 : 2;
+    D_801396C0 = &first;
+    D_801396C4 = &second;
+    obj.unk2 = 3;
+    obj.unk3 = 7;
+    func_8001F6E8(&obj);
+    assert(obj.unk2 == (row ? 3 : 4) && obj.unk3 == (row ? 7 : 0) && obj.unk4 == (row ? 0 : 6));
+    assert(first.state == 0 && second.state == 0 && first.unk5 == 2 && second.unk5 == (row ? 1 : 2));
+    return obj.unk2;
+}
+
+static u32 slide_flash(u32 row)
+{
+    struct EngineObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.unk2 = 3;
+    obj.unk4 = 3;
+    g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 9;
+    need_palette_load = 0x10;
+    func_8001F798(&obj);
+    assert(obj.unk2 == 3 && obj.unk4 == 2 && need_palette_load == 0x11);
+    assert(g_FilterAmountR == 0x1F && g_FilterAmountG == 0x3E0 && g_FilterAmountB == 0x7C00);
+    return 1;
+}
+
+extern u32* D_80137E08;
+static u16 weapon_messages[0x20];
+static u32 voice_table[8], message_pages[0x40];
+static s32 message_frames[0x200];
+static u16 message_palette[0x400];
+static struct Func80022730Config message_config;
+static u32 weapon_message(u32 row)
+{
+    struct EngineObj obj;
+    u32 i;
+    memset(&obj, 0, sizeof(obj));
+    memset(&abc_object, 0, sizeof(abc_object));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(&message_config, 0, sizeof(message_config));
+    D_801397BC = D_801397C0 = D_801397C4 = D_801397C8 = NULL;
+    D_801397CC = D_801397D0 = D_801397D4 = NULL;
+    D_801397DC = &message_config;
+    D_801406A8 = message_pages;
+    TEST_MENU_FRAMES = (u8*)message_frames;
+    TEST_PALETTE = (u8*)message_palette;
+    for (i = 0; i < 0x14; i++)
+        weapon_messages[i] = 0x28;
+    weapon_messages[0x14] = 0x800;
+    TEST_ARC_48 = (u8*)weapon_messages;
+    obj.unk2 = 5;
+    obj.character_state.bytes[0] = 3;
+    *(s16*)&obj.unk6 = 0x3C;
+    obj.unk4 = row == 0 ? 1 : row == 1 ? 0xF0 - 0x3C + 1
+                                       : 0x50;
+#ifndef MMX4_SATURN
+    for (i = 0; i < 8; i++)
+        voice_table[i] = 0;
+    D_8013E198[5] = 0;
+    D_80141F50[5] = (u8*)voice_table;
+    D_80141EE8[5] = (u8*)&voice_table[8];
+    D_80137E08 = NULL;
+#endif
+    func_8001F850(&obj);
+    assert(obj.unk2 == (row == 0 ? 6 : 5));
+    if (row == 0) {
+        assert(D_801397BC == &misc_objects[0] && D_801397D8 == 0x80);
+#ifndef MMX4_SATURN
+        assert(abc_object.unk0 == &weapon_messages[0x14]);
+#endif
+    } else
+        assert(obj.unk4 == (row == 1 ? 0xF0 - 0x3C : 0x4F) && D_801397BC == NULL);
+#ifndef MMX4_SATURN
+    assert(D_80137E08 == (row == 1 ? &voice_table[3] : NULL));
+    D_8013E198[5] = -1;
+#endif
+    return obj.unk2;
+}
+
+static u32 waits(u32 row)
+{
+    struct EngineObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.unk2 = 7;
+    if (row < 2) {
+        abc_object.unkC = row;
+        func_8001F93C(&obj);
+        assert(obj.unk2 == (row ? 7 : 8) && obj.unk4 == (row ? 0 : 0x3C));
+    } else {
+#ifdef MMX4_SATURN
+        if (row == 2)
+            c_test_skip();
+#endif
+        main_bss_state.transition.active = row == 3;
+        func_8001F9DC(&obj);
+        assert(obj.unk2 == (row == 3 ? 7 : 8));
+        main_bss_state.transition.active = 0;
+    }
+    return obj.unk2;
+}
+
+static u32 last_weapon(u32 row)
+{
+    struct EngineObj obj;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    obj.palette_flags = 0x7F;
+    obj.character_state.bytes[0] = 8;
+    g_Player.boss_flags = 0x7F;
+    func_8001FA24(&obj);
+    assert((u8)obj.palette_flags == 0xFF && obj.unk5F == 5 && (u8)g_Player.boss_flags == 0xFF && obj.state == 9);
+    return obj.unk5F;
+}
+
+#ifndef MMX4_SATURN
+void func_8001F198(struct EngineObj*);
+void func_80014DC4(void);
+void func_80013588(void);
+void func_80012E38(void);
+static u32 weapon_screen(u32 row)
+{
+    static struct DrawInfo draw;
+    char cue[sizeof(__FILE__) + 32];
+    char* suffix;
+    u32 i, same = 0;
+    strcpy(cue, __FILE__);
+    suffix = strstr(cue, "/tests/main/engine.c");
+    assert(suffix != NULL);
+    strcpy(suffix, "/disks/mmx4.us.cue");
+    if (access(cue, R_OK) != 0)
+        c_test_skip();
+    assert(setenv("SDL_AUDIODRIVER", "dummy", 1) == 0);
+    assert(Psyz_CdSetDiskPath(cue) == 0);
+    Psyz_SpuInit();
+    ResetGraph(0);
+    func_80014DC4();
+    func_80013588();
+    func_80012E38();
+    D_80173C80 = MAIN_ARCHIVE_ARENA;
+    memset(&draw, 0, sizeof(draw));
+    cur_draw_info = &draw;
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    engine_obj.stage = 3;
+    engine_obj.substage = 1;
+    engine_obj.checkpoint = 2;
+    engine_obj.enable_boss = engine_obj.unk1F = 1;
+    engine_obj.cur_character = row;
+    engine_obj.character_state.bytes[5] = 9;
+    need_palette_load = 0x10;
+    func_8001F198(&engine_obj);
+    assert(engine_obj.stage == 0xF && engine_obj.substage == 0 && engine_obj.checkpoint == 0);
+    assert(engine_obj.unk1F == 0 && engine_obj.enable_boss == 0 && engine_obj.unkE == 0);
+    assert(engine_obj.unk2 == 1 && engine_obj.unk3 == 0 && engine_obj.cur_character == row);
+    for (i = 0; i < 0x10; i++)
+        assert(engine_obj.character_state.bytes[i] == (i == 0 ? 3 : 0));
+    for (i = 0; i < 0x30; i++)
+        same += SP_PALETTE_WORDS[0xAE0 / 4 + i] == SP_ARC_30[2 * 0x30 + i];
+    assert(same == (row ? same : 0x30) && (row == 0 || same < 0x30));
+    if (row == 0)
+        assert(need_palette_load & 1);
+    return same;
+}
+#define WEAPON_SCREEN_CASES 2
+#else
+#define weapon_screen NULL
+#define WEAPON_SCREEN_CASES 0
+#endif
+
 const struct CTestGroup c_test_groups[] = {
     { "func_8001F6E8", 0, 0, 1, test_func_8001F6E8 },
+#ifndef MMX4_SATURN
     { "func_8001F8FC", 0, 0, 2, test_func_8001F8FC },
+#endif
+    { "func_8001F798", 0, 0, 2, test_func_8001F798 },
     { "func_8001FA24", 0, 0, 2, test_func_8001FA24 },
     { "scroll_confirmation_and_exact_fixed_point_thresholds", NULL, NULL, 24, scroll },
     { "completion_uses_selected_character_background", NULL, NULL, 2, complete },
+#ifndef MMX4_SATURN
     { "both_characters_eight_boss_rewards_normal_screen_setup", NULL, NULL, 16, enter },
+#endif
     { "public_label_allocation_API_full_and_last_slot_X_Zero_headers", NULL, NULL, 4, label_capacity },
+    { "flash_countdown", NULL, NULL, 3, flash_countdown },
+    { "labels_wait", NULL, NULL, 2, labels_wait },
+    { "slide_flash", NULL, NULL, 1, slide_flash },
+    { "weapon_message", NULL, NULL, 3, weapon_message },
+    { "message_and_fade_waits", NULL, NULL, 4, waits },
+    { "last_weapon", NULL, NULL, 1, last_weapon },
+    { "weapon_screen_setup", NULL, NULL, WEAPON_SCREEN_CASES, weapon_screen },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1 + 2 + 2 + 24 + 2 + 16 + 4;
+const u32 c_test_count = 1 + 2 + 2 + 2 + 24 + 2 + 16 + 4 + 3 + 2 + 1 + 3 + 4 + 1 + WEAPON_SCREEN_CASES
+#ifdef MMX4_SATURN
+    - 2 - 16
+#endif
+    ;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

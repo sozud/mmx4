@@ -1,16 +1,26 @@
 #include "test_runtime.h"
+#ifndef VERSION_DEMO
+#include "support/test_pad.h"
 #include "main/323C.h"
 #include "main/55C4.h"
 #include "main/3D88.h"
 extern u8 mission_palette_order[8];
 void func_8002F2A0(struct EngineObj* arg0);
+void func_8002E5E0(void);
+void func_8002F1B4(struct EngineObj* arg0);
+void func_8002F264(struct EngineObj* arg0);
+void func_8002F47C(struct EngineObj* arg0);
+extern u8* D_800F4834[10];
 #include "main/1EC20.h"
 #ifdef MMX4_PC
 #include <unistd.h>
 #include <stdlib.h>
 #include <psyz/cd.h>
 #include <psyz/spu.h>
+#include <psyz/video.h>
 #include "archive_memory.h"
+void func_8001213C(void);
+void func_8002EF14(struct EngineObj* arg0);
 #endif
 
 static u32 briefing_case(u32 mode)
@@ -114,17 +124,17 @@ static struct RouteInput {
     u8 progress;
 };
 static const struct RouteInput inputs[] = {
-    { PADLup | PADLright, 0, 4 },
-    { PADLup, 0, 4 },
-    { PADLup, 4, 4 },
-    { PADLup, 8, 5 },
-    { PADLup, 0, 5 },
-    { PADLdown, 0, 5 },
-    { PADLdown, 4, 5 },
-    { PADLdown, 4, 4 },
-    { PADLright, 3, 4 },
-    { PADLleft, 0, 4 },
-    { PADLleft, 1, 4 },
+    { TEST_PAD_UP | TEST_PAD_RIGHT, 0, 4 },
+    { TEST_PAD_UP, 0, 4 },
+    { TEST_PAD_UP, 4, 4 },
+    { TEST_PAD_UP, 8, 5 },
+    { TEST_PAD_UP, 0, 5 },
+    { TEST_PAD_DOWN, 0, 5 },
+    { TEST_PAD_DOWN, 4, 5 },
+    { TEST_PAD_DOWN, 4, 4 },
+    { TEST_PAD_RIGHT, 3, 4 },
+    { TEST_PAD_LEFT, 0, 4 },
+    { TEST_PAD_LEFT, 1, 4 },
 };
 static u32 route_case(u32 mode, u32 observation)
 {
@@ -138,6 +148,7 @@ static u32 route_case(u32 mode, u32 observation)
     memset(background_objects, 0, sizeof(background_objects));
     memset(&controller_input, 0, sizeof(controller_input));
     controller_input.held = controller_input.previous = input->held;
+    TEST_PAD_HELD = input->held;
     obj.unk3 = input->selection;
     obj.unk5F = input->progress;
     obj.unkA = 3;
@@ -247,7 +258,7 @@ static u32 test_func_8002E7BC(u32 row)
     memset(&controller_input, 0, sizeof(controller_input));
     memset(&g_QuadObjects, 0, sizeof(g_QuadObjects));
     memset(&misc_objects, 0, sizeof(misc_objects));
-    controller_input.pressed = 64;
+    TEST_PAD_PRESSED = TEST_PAD_CONFIRM;
     pool_0_full = c->pool_0_full;
     pool_1_full = c->pool_1_full;
     obj.unk5F = 6;
@@ -324,6 +335,10 @@ static u32 test_mission_entry(u32 row)
 #ifdef MMX4_PC
     unsetenv("MMX4_ORACLE_SCENE");
     unsetenv("MMX4_DIRECT_LOADOUT");
+#endif
+#ifdef MMX4_SATURN
+    if (!mission_entries[row].fade)
+        c_test_skip();
 #endif
     mission_entry_reset(mission_entries[row].character, mission_entries[row].stage,
         mission_entries[row].story, mission_entries[row].video, mission_entries[row].defeated, mission_entries[row].fade);
@@ -430,9 +445,9 @@ static u32 test_briefing_exit(u32 row)
     assert(engine_obj.unkE == briefing_exits[row].route);
     assert(engine_obj.unk5F == briefing_exits[row].next_story);
     assert(engine_obj.stage == briefing_exits[row].stage && engine_obj.substage == briefing_exits[row].substage);
-    assert(main_bss_state.transition.active == (briefing_exits[row].fade ? -1 : 0));
+    assert(main_bss_state.transition.active == (briefing_exits[row].fade ? TEST_FADE_OUT_ACTIVE : 0));
     if (briefing_exits[row].fade)
-        assert(main_bss_state.transition.fade_amount == 8);
+        assert(main_bss_state.transition.fade_amount == TEST_FADE_OUT_AMOUNT(8, 0));
     for (i = 0; i < COUNT(misc_objects); i++)
         icons += misc_objects[i].active && misc_objects[i].id == 0xD;
     for (i = 0; i < COUNT(g_QuadObjects); i++)
@@ -582,6 +597,59 @@ static u32 test_briefing_initialization(u32 row)
     }
     return 1;
 }
+
+static const struct {
+    u8 video, character, next_video, step, story, stage;
+} mission_routes[] = {
+    { 0, 0, 10, 1, 0x33, 13 },
+    { 1, 0, 5, 1, 0x33, 13 },
+    { 2, 0, 1, 1, 0x33, 13 },
+    { 2, 1, 6, 1, 0x33, 13 },
+    { 3, 0, 0, 7, 9, 11 },
+    { 4, 0, 0, 7, 4, 9 },
+    { 5, 0, 5, 0x22, 0x33, 13 },
+};
+
+static u32 test_mission_route(u32 row)
+{
+    char cue[sizeof(__FILE__) + 32];
+    char* suffix;
+    strcpy(cue, __FILE__);
+    suffix = strstr(cue, "/tests/main/1EC20.c");
+    assert(suffix != NULL);
+    strcpy(suffix, "/disks/mmx4.us.cue");
+    if (access(cue, R_OK) != 0)
+        c_test_skip();
+    assert(setenv("SDL_AUDIODRIVER", "dummy", 1) == 0);
+    assert(Psyz_CdSetDiskPath(cue) == 0);
+    Psyz_SpuInit();
+    assert(Psyz_VideoSetVsyncMode(PSYZ_VSYNC_LIMITLESS) == 0);
+    func_8001213C();
+    D_80173C80 = MAIN_ARCHIVE_ARENA;
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    engine_obj.state = 3;
+    engine_obj.unk1 = 0x22;
+    engine_obj.unk2 = 4;
+    engine_obj.stage = 13;
+    engine_obj.substage = 0;
+    engine_obj.unk5F = 0x33;
+    engine_obj.cur_character = mission_routes[row].character;
+    engine_obj.unkE = mission_routes[row].video;
+    func_8002EF14(&engine_obj);
+    assert(engine_obj.state == 3 && engine_obj.unk2 == 0);
+    assert(engine_obj.unkE == mission_routes[row].next_video && engine_obj.unk1 == mission_routes[row].step);
+    assert(engine_obj.unk5F == mission_routes[row].story && engine_obj.stage == mission_routes[row].stage);
+    assert(engine_obj.substage == 0);
+    assert(engine_obj.cur_character == mission_routes[row].character);
+    if (mission_routes[row].video == 3) {
+        assert(main_bss_state.transition.active == -1 && main_bss_state.transition.fade_amount == 8);
+        assert(mmx4_pc_thread_slot(2)->state != 0);
+        memset(mmx4_pc_thread_slot(2), 0, sizeof(struct GameThread));
+    } else
+        assert(main_bss_state.transition.active == 0);
+    return 1;
+}
 #define MISSION_INITIALIZATION_COUNT (COUNT(mission_initializations) + COUNT(briefing_initializations))
 #else
 #define MISSION_INITIALIZATION_COUNT 0
@@ -687,7 +755,7 @@ static u32 test_confirm_route(u32 row)
     g_Player.unk2 = character;
     D_8013B810 = 1;
     D_8013B814 = substage;
-    controller_input.pressed = row & 1 ? PADstart : PAD_CONFIRM;
+    TEST_PAD_PRESSED = row & 1 ? TEST_PAD_START : TEST_PAD_CONFIRM;
     controller_input.held = controller_input.pressed;
     input_before = controller_input;
     player_before = g_Player;
@@ -729,7 +797,7 @@ static u32 test_grid_navigation(u32 row)
     engine_obj.unk2 = 7;
     engine_obj.unk3 = selection;
     engine_obj.unk5F = 4;
-    controller_input.held = row < 4 ? PADLdown : PADLright;
+    TEST_PAD_HELD = row < 4 ? TEST_PAD_DOWN : TEST_PAD_RIGHT;
     input_before = controller_input;
     player_before = g_Player;
     expected = engine_obj;
@@ -743,7 +811,130 @@ static u32 test_grid_navigation(u32 row)
     return 1;
 }
 
+static const struct {
+    u16 held, pressed;
+    u8 cursor, delay, repeats, story, next_cursor, next_delay, next_repeats;
+} grid_repeats[] = {
+    { TEST_PAD_UP, TEST_PAD_UP, 5, 0, 0, 4, 5, 0, 0 },
+    { TEST_PAD_UP, 0, 5, 3, 0, 4, 5, 2, 0 },
+    { TEST_PAD_UP, 0, 5, 0, 0, 5, 8, 30, 1 },
+    { TEST_PAD_DOWN, TEST_PAD_DOWN, 1, 0, 0, 4, 1, 0, 0 },
+    { TEST_PAD_DOWN, 0, 1, 2, 0, 4, 1, 1, 0 },
+    { TEST_PAD_DOWN, 0, 8, 0, 0, 5, 4, 30, 1 },
+    { TEST_PAD_RIGHT, TEST_PAD_RIGHT, 1, 0, 0, 4, 1, 0, 0 },
+    { TEST_PAD_RIGHT, 0, 1, 4, 0, 4, 1, 3, 0 },
+    { TEST_PAD_RIGHT, 0, 8, 0, 0, 5, 8, 30, 1 },
+    { TEST_PAD_LEFT, TEST_PAD_LEFT, 2, 0, 0, 4, 2, 0, 0 },
+    { TEST_PAD_LEFT, 0, 2, 1, 0, 4, 2, 0, 0 },
+    { TEST_PAD_LEFT, 0, 2, 0, 0, 4, 1, 30, 1 },
+    { TEST_PAD_LEFT, 0, 8, 0, 5, 5, 8, 10, 6 },
+};
+
+static u32 test_grid_repeat(u32 row)
+{
+    u32 seen[2], expected[2];
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&controller_input, 0, sizeof(controller_input));
+    engine_obj.state = 3;
+    engine_obj.unk1 = 4;
+    engine_obj.unk3 = grid_repeats[row].cursor;
+    engine_obj.unk8 = grid_repeats[row].delay;
+    engine_obj.unkA = grid_repeats[row].repeats;
+    engine_obj.unk5F = grid_repeats[row].story;
+    TEST_PAD_HELD = grid_repeats[row].held;
+    TEST_PAD_PRESSED = grid_repeats[row].pressed;
+    func_8002E994(&engine_obj);
+    seen[0] = (u8)engine_obj.unk3 | (u32)(u8)engine_obj.unk8 << 8 | (u32)(u8)engine_obj.unkA << 16;
+    seen[1] = (u8)engine_obj.unk1 | (u32)(u8)engine_obj.unk5F << 8;
+    expected[0] = grid_repeats[row].next_cursor | (u32)grid_repeats[row].next_delay << 8 | (u32)grid_repeats[row].next_repeats << 16;
+    expected[1] = 4 | (u32)grid_repeats[row].story << 8;
+    return c_test_observe(0, row, seen, expected, 2);
+}
+
+static Palette grey_palettes[8];
+
+static u32 test_mission_palette_grey(u32 row)
+{
+    u32 i, j, seen[8];
+    static const u32 expected[8] = {
+        0x5294294Au,
+        0x7C1F03E0u,
+        0x7C1F03E0u,
+        0x7C1F03E0u,
+        0x5294294Au,
+        0x7C1F03E0u,
+        0x7C1F03E0u,
+        0x5294294Au,
+    };
+    for (i = 0; i < 8; i++)
+        for (j = 0; j < 16; j++)
+            grey_palettes[i][j] = j == 0 ? 0x03E0 : j == 1 ? 0x7C1F
+                                                           : 0x0123;
+    TEST_PALETTE = (u8*)grey_palettes;
+    engine_obj.palette_flags = 0x13;
+    func_8002E5E0();
+    for (i = 0; i < 8; i++)
+        seen[i] = grey_palettes[i][0] | (u32)grey_palettes[i][1] << 16;
+    for (i = 0; i < 8; i++)
+        for (j = 2; j < 16; j++)
+            assert(grey_palettes[i][j] == (seen[i] == 0x5294294Au ? 0x1084 : 0x0123));
+    return c_test_observe(0, row, seen, expected, 8);
+}
+
+static u16 briefing_palette[0x400];
+static u16 briefing_messages[0x40];
+
+static u32 test_briefing_scroll(u32 row)
+{
+    static const u32 expected[2][3] = { { 0x00650000u, 0x07000000u, 0 }, { 0x01100100u, 0x08000080u, 0x0001FF01u } };
+    u32 i, seen[3];
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&abc_object, 0, sizeof(abc_object));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&controller_input, 0, sizeof(controller_input));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    for (i = 0; i < COUNT(misc_objects); i++)
+        misc_objects[i].active = 1;
+    TEST_PALETTE = (u8*)briefing_palette;
+    TEST_ARC_48 = (u8*)briefing_messages;
+    D_8013B80C = NULL;
+    D_801397D8 = 0;
+    engine_obj.unkE = 2;
+    engine_obj.unk2 = 7;
+    background_objects[0].y_pos.i.hi = 100;
+    TEST_PAD_PRESSED = row == 1 ? TEST_PAD_CONFIRM : 0;
+    func_8002F1B4(&engine_obj);
+    seen[0] = (u16)background_objects[0].y_pos.i.hi << 16 | (u32)(u8)background_objects[0].unk4C << 8;
+    seen[1] = (u32)(u8)engine_obj.unk2 << 24 | abc_object.unkC;
+    seen[2] = (u32)(D_8013B80C == D_800F4834[1]) << 16 | (u32)D_801397D8 << 8 | (u8)abc_object.unkF;
+    return c_test_observe(0, row, seen, expected[row], 3);
+}
+
+static u8 briefing_script[2];
+
+static u32 test_briefing_dialogue_wait(u32 row)
+{
+    static const u8 states[5] = { 0x80, 0, 1, 0x80, 0 };
+    static const u32 expected[5] = { 0x0500u, 0x0601u, 0x0401u, 0x0401u, 0x0500u };
+    u32 seen;
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&abc_object, 0, sizeof(abc_object));
+    D_8013B80C = briefing_script;
+    engine_obj.unk2 = 5;
+    abc_object.unkC = states[row];
+    if (row < 2)
+        func_8002F264(&engine_obj);
+    else
+        func_8002F47C(&engine_obj);
+    seen = (u32)(u8)engine_obj.unk2 << 8 | (u32)(D_8013B80C - briefing_script);
+    return c_test_observe(0, row, &seen, &expected[row], 1);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "grid_repeat", 0, 0, COUNT(grid_repeats), test_grid_repeat },
+    { "mission_palette_grey", 0, 0, 1, test_mission_palette_grey },
+    { "briefing_scroll", 0, 0, 2, test_briefing_scroll },
+    { "briefing_dialogue_wait", 0, 0, 5, test_briefing_dialogue_wait },
     { "briefing_exit", 0, 0, COUNT(briefing_exits), test_briefing_exit },
     { "briefing_script_pools", NULL, briefing_script_pools_cases_expected, COUNT(briefing_script_pools_cases_expected), briefing_case },
     { "mission_route_navigation", NULL, mission_route_navigation_cases_expected, COUNT(mission_route_navigation_cases_expected), mission_route_navigation_cases_row },
@@ -759,15 +950,75 @@ const struct CTestGroup c_test_groups[] = {
 #ifdef MMX4_PC
     { "mission_initialization", 0, 0, COUNT(mission_initializations), test_mission_initialization },
     { "briefing_initialization", 0, 0, COUNT(briefing_initializations), test_briefing_initialization },
+    { "mission_route", 0, 0, COUNT(mission_routes), test_mission_route },
 #endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(briefing_exits) + COUNT(briefing_script_pools_cases_expected) + COUNT(mission_route_navigation_cases_expected) + COUNT(mission_select_spawn_prefixes_cases_expected) + 2 + 1 + 86 + 12 + COUNT(mission_entries)
+const u32 c_test_count = COUNT(grid_repeats) + 1 + 2 + 5 + COUNT(briefing_exits) + COUNT(briefing_script_pools_cases_expected) + COUNT(mission_route_navigation_cases_expected) + COUNT(mission_select_spawn_prefixes_cases_expected) + 2 + 1 + 86 + 12 + COUNT(mission_entries)
 #ifdef MMX4_PC
     + COUNT(briefing_overrides)
 #endif
 #ifdef MMX4_PC
     + COUNT(mission_initializations)
     + COUNT(briefing_initializations)
+    + COUNT(mission_routes)
 #endif
     ;
+#else
+#include "support/test_pad.h"
+static const struct {
+    u8 menu_state;
+    u16 held, pressed;
+    u8 cursor, delay, repeats;
+} demo_grid_rows[] = {
+    { 1, TEST_PAD_UP, 0, 5, 0, 0 },
+    { 2, 0, 0, 5, 5, 2 },
+    { 2, TEST_PAD_UP, TEST_PAD_UP, 5, 0, 0 },
+    { 2, TEST_PAD_UP, 0, 5, 3, 0 },
+    { 2, TEST_PAD_UP, 0, 5, 0, 0 },
+    { 2, TEST_PAD_UP, 0, 1, 0, 3 },
+    { 2, TEST_PAD_DOWN, TEST_PAD_DOWN, 1, 0, 0 },
+    { 2, TEST_PAD_DOWN, 0, 1, 2, 0 },
+    { 2, TEST_PAD_DOWN, 0, 1, 0, 0 },
+    { 2, TEST_PAD_DOWN, 0, 5, 0, 3 },
+    { 2, TEST_PAD_RIGHT, TEST_PAD_RIGHT, 1, 0, 0 },
+    { 2, TEST_PAD_RIGHT, 0, 1, 0, 0 },
+    { 2, TEST_PAD_RIGHT, 0, 3, 0, 3 },
+    { 2, TEST_PAD_RIGHT, 0, 1, 4, 0 },
+    { 2, TEST_PAD_LEFT, TEST_PAD_LEFT, 2, 0, 0 },
+    { 2, TEST_PAD_LEFT, 0, 2, 1, 0 },
+    { 2, TEST_PAD_LEFT, 0, 2, 0, 0 },
+    { 2, TEST_PAD_LEFT, 0, 4, 0, 3 },
+    { 2, 0, TEST_PAD_START, 0, 0, 0 },
+    { 2, 0, TEST_PAD_START, 1, 0, 0 },
+};
+static const u32 demo_grid_expected[COUNT(demo_grid_rows)][2] = {
+#include "1EC20_demo_grid_expected.inc"
+};
+static u32 demo_grid(u32 row)
+{
+    struct BaseObj menu;
+    u32 seen[2];
+    memset(&menu, 0, sizeof(menu));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&controller_input, 0, sizeof(controller_input));
+    menu.state = demo_grid_rows[row].menu_state;
+    engine_obj.state = 3;
+    engine_obj.unk1 = 4;
+    engine_obj.unk3C = &menu;
+    engine_obj.unk3 = demo_grid_rows[row].cursor;
+    engine_obj.unk8 = demo_grid_rows[row].delay;
+    engine_obj.unkA = demo_grid_rows[row].repeats;
+    TEST_PAD_HELD = demo_grid_rows[row].held;
+    TEST_PAD_PRESSED = demo_grid_rows[row].pressed;
+    func_8002E994(&engine_obj);
+    seen[0] = (u8)engine_obj.unk3 | (u32)(u8)engine_obj.unk8 << 8 | (u32)(u8)engine_obj.unkA << 16;
+    seen[1] = (u8)engine_obj.unk1 | (u32)engine_obj.stage << 8 | (u32)engine_obj.substage << 16;
+    return c_test_observe(0, row, seen, demo_grid_expected[row], 2);
+}
+const struct CTestGroup c_test_groups[] = {
+    { "proto_stage_select_cursor", 0, 0, COUNT(demo_grid_rows), demo_grid },
+};
+const u32 c_test_group_count = COUNT(c_test_groups);
+const u32 c_test_count = COUNT(demo_grid_rows);
+#endif

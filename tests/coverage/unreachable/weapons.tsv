@@ -1,0 +1,4 @@
+file	line	function	outcome	class	evidence
+src/main/weapons/weapon_60_ride_armor_missile.c	55	func_80098F88	taken	data-dependent	The implicit default: the only spawner, func_8003D8A8 (mech.c) with variant 1, passes kind i = 0-2 from its three-part loop, and cases 0-2 are all named.
+src/main/weapons/weapon_02_frost_tower.c	295	func_800942E8	taken	unreachable-logic	The implicit default of switch (ext[3]): ext[3] starts at 0 and the fourth wave (ext[3] reaching 4) hides the controller (state 3), so the main never runs with ext[3] >= 4.
+src/main/weapons/weapon_60_ride_armor_missile.c	55	func_80098F88	taken	unreachable-logic	The implicit default of switch (unk2): the ride armor spawns its missiles with unk2 0-2, all named.

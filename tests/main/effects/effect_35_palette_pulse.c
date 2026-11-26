@@ -35,10 +35,10 @@ static u32 full(u32 row)
     expected.state = 1;
     expected.ext.unk_effect.unk14 = 7;
     expected.ext.unk_effect.unk15 = 1;
-    expected.ext.effect_4.unk16 = 35;
+    expected.ext.effect_4.unk16 = VISUAL_SATURN_LAYER(35);
     cur_random = 0x1234;
     palette_pulse_update(&obj);
-    assert(obj.state == 1 && obj.ext.unk_effect.unk14 == 1 && obj.ext.effect_4.unk16 == 32);
+    assert(obj.state == 1 && obj.ext.unk_effect.unk14 == 1 && obj.ext.effect_4.unk16 == VISUAL_SATURN_LAYER(32));
     c_test_same_words(palette, expected_palette, sizeof(palette));
     palette_pulse_update(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
@@ -86,10 +86,10 @@ static u32 full_palette_pulse_scroll_cap(u32 row)
     expected.state = 1;
     expected.ext.unk_effect.unk14 = 7;
     expected.ext.unk_effect.unk15 = 0;
-    expected.ext.effect_4.unk16 = 113;
+    expected.ext.effect_4.unk16 = VISUAL_SATURN_LAYER(113);
     cur_random = 0x1234;
     palette_pulse_update(&obj);
-    assert(obj.state == 1 && obj.ext.unk_effect.unk14 == 1 && obj.ext.effect_4.unk16 == 32);
+    assert(obj.state == 1 && obj.ext.unk_effect.unk14 == 1 && obj.ext.effect_4.unk16 == VISUAL_SATURN_LAYER(32));
     assert(c_test_word_difference(palette_palette_pulse_scroll_cap, expected_palette_palette_pulse_scroll_cap, COUNT(palette_palette_pulse_scroll_cap)) == 0);
     for (i = 0; i < 190; i++)
         palette_pulse_update(&obj);

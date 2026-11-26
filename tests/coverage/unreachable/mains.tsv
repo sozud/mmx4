@@ -1,0 +1,71 @@
+file	line	function	outcome	class	evidence
+src/main/mains/main_00_background_dragon.c	258	func_80040ABC	taken	data-dependent	background_dragon_attack_map holds only 0-3 and 5-8, so the attack-map case 4 is never read.
+src/main/mains/main_00_background_dragon.c	272	func_80040ABC	not-taken	unreachable-logic	value = get_random_nonzero() % 4 is never negative, so after value < 3 and !(value > 0) it is always 0.
+src/main/mains/main_00_background_dragon.c	286	func_80040ABC	taken	unreachable-logic	The inner default: get_random_nonzero() % 3 is 0-2 and every value has a case.
+src/main/mains/main_00_background_dragon.c	725	background_dragon_sequence	not-taken	unreachable-logic	The sequence sub-step unk6 is only ever 0, 1 or 2, so state <= 1 with state != 1 means state == 0.
+src/main/mains/main_00_background_dragon.c	839	background_dragon_fly_offscreen	taken	unreachable-logic	The switch default: unk2 is only set by func_80040ABC as get_random() & 1, and both values have a case.
+src/main/mains/main_00_background_dragon.c	879	background_dragon_fly_offscreen	taken	unreachable-logic	unk2 == 2 never holds: unk2 is get_random() & 1.
+src/main/mains/main_00_background_dragon.c	879	background_dragon_fly_offscreen	taken	unreachable-logic	unk2 == 3 (second test of the same line) never holds: unk2 is get_random() & 1.
+src/main/mains/main_00_background_dragon.c	908	background_dragon_fly_to_staging_position	taken	unreachable-logic	unk2 == 2 never holds: unk2 is get_random() & 1.
+src/main/mains/main_00_background_dragon.c	908	background_dragon_fly_to_staging_position	taken	unreachable-logic	unk2 == 3 (second test of the same line) never holds: unk2 is get_random() & 1.
+src/main/mains/main_04_drill_copter.c	228	drill_copter_sway_move	not-taken	unreachable-logic	The second distance test recomputes the distance of line 220 from the same x_pos (nothing moves in between), so it is always above 64 when reached.
+src/main/mains/main_05_robot_bee.c	641	robot_bee_drop	taken	unreachable-logic	The drop steps leave unk6 at 0 or 1 (func_80046400 steps it 0 to 1 and robot_bee_drop_fall keeps it), and unk6 > 1 would index past the two-entry robot_bee_drop_funcs.
+src/main/mains/main_05_robot_bee.c	642	robot_bee_drop	both	unreachable-logic	Only evaluated when unk6 > 1 (line 641), which the drop steps never leave.
+src/main/mains/main_05_robot_bee.c	644	robot_bee_drop	both	unreachable-logic	Only evaluated when unk6 > 1 (line 641), which the drop steps never leave.
+src/main/mains/main_05_robot_bee.c	775	robot_bee_swarm_fly	taken	unreachable-logic	unk7C = get_random() & 0x7F, plus 0x78 when below 0x78, is at most 0xEF, so it is never above 0xF0.
+src/main/mains/main_05_robot_bee.c	841	robot_bee_swarm_return_fly	taken	unreachable-logic	unk7C = get_random() & 0x7F, plus 0x78 when below 0x78, is at most 0xEF, so it is never above 0xF0.
+src/main/mains/main_11_wall_crawler.c	405	func_8004B2BC	taken	unreachable-logic	The switch default: angle_to_object returns one of 32 directions (0-0x1F), so angle & 0xFE is an even 0-30 and every one has a case.
+src/main/mains/main_12_hover_sentry.c	201	func_8004BCFC	taken	unreachable-logic	The switch default: the drop step only ever sets unk6 to 0, 1 or 2, all cased.
+src/main/mains/main_12_hover_sentry.c	352	func_8004BF5C	taken	unreachable-logic	The switch default (PC/PSX copy): the dive step only ever sets unk6 to 0-4, all cased.
+src/main/mains/main_13_heavy_mech.c	237	heavy_mech_throw_anim	not-taken	unreachable-logic	Inside case 2 of switch (event) the step's event is 2, so event != 0 always holds.
+src/main/mains/main_19_surface_hopper.c	121	func_800528BC	taken	unreachable-logic	surface_hopper_update runs this init only for unk2 < 3, and cases 0, 1 and 2 cover every such subtype.
+src/main/mains/main_19_surface_hopper.c	738	func_80053EB8	taken	unreachable-logic	unk80 is a 0-3 surface index (only ever set to 0-3 or masked with & 3) and 2 is excluded just before, so cases 0, 1 and 3 cover it.
+src/main/mains/main_19_surface_hopper.c	851	func_8005402C	taken	data-dependent	mask is read from D_800FC80C, which holds only 1, 2, 4 and 8, each with its own case.
+src/main/mains/main_20_ice_block.c	190	func_800548B8	taken	unreachable-logic	The switch default: flags is built from 0 by + 1 and + 2, so it is 0-3 and each value has a case (case 0 shares the default's body).
+src/main/mains/main_27_dash_gunner.c	211	func_80058740	taken	data-dependent	The switch default needs subtype 12 or above; the stage records place dash gunners (main 0x1B) only with subtypes 0, 2, 4, 7 and 8.
+src/main/mains/main_27_dash_gunner.c	303	func_80058740	not-taken	data-dependent	subtype <= 11 is false only for subtypes 12 and above, which no stage record places (0, 2, 4, 7, 8).
+src/main/mains/main_27_dash_gunner.c	342	func_80058AC8	not-taken	unreachable-logic	func_80058AC8 is the state-1 routine and no step function changes state before this test, so state != 2 always holds.
+src/main/mains/main_27_dash_gunner.c	370	func_80058AC8	taken	unreachable-logic	The only state = 2 store (the defeat) returns immediately, so state == 2 is never seen here.
+src/main/mains/main_29_pod_spawner.c	216	func_8005AA14	not-taken	platform-only	PC-only NULL guard on the pod made at init (missing only if the main pool was full then); the PSX and Saturn code stores through the pointer unguarded.
+src/main/mains/main_29_pod_spawner.c	314	func_8005AD00	taken	unreachable-logic	The switch default: the state-3 routine only ever sets unk5 to 0, 1 or 2, all cased.
+src/main/mains/main_29_pod_spawner.c	491	func_8005AF5C	taken	unreachable-logic	The switch default: the copy routine only ever sets unk6 to 0-4, all cased.
+src/main/mains/main_37_rocket_spiker.c	146	func_8005FE1C	taken	unreachable-logic	MAIN_37_U8(0x81) is 0 or 1 plus 0, 2 or 4, so it is always 0-5 and every value has a case.
+src/main/mains/main_40_breakable_terrain.c	219	relative_bounds_or_zero	not-taken	platform-only	PC-only NULL guard: the block and the player always have a terrain box when the check runs, and the PSX/Saturn builds read the box without one.
+src/main/mains/main_48_sentry_drone.c	227	func_800678F8	taken	unreachable-logic	angle_to_object returns 0-0x1F, so (angle & 0xFE) is an even value 0-30 and every one of them has a case.
+src/main/mains/main_53_wave_rider.c	76	func_8006AF70	taken	data-dependent	The default (shared with case 4) needs a subtype above 4; the stage records place wave riders (main 0x35) only with subtypes 2, 3 and 4.
+src/main/mains/main_54_slash_beast.c	1822	slash_beast_pick_pattern	not-taken	unreachable-logic	pattern_set is only ever 0, 1 or 2 and each of those rows of slash_beast_pattern_weights ends at 0x10, above any (get_random() & 0xF), so the loop always returns before it runs out.
+src/main/mains/main_56_jet_stingray.c	411	jet_stingray_choose_pattern	not-taken	unreachable-logic	The loop exit: for hp 1-48 the last weight is 0x10 and the roll is at most 15, so the third iteration always returns (hp above 48 would index the zero row past the boss's 0x30 hp).
+src/main/mains/main_56_jet_stingray.c	502	jet_stingray_land	taken	unreachable-logic	The landing step unk6 starts at 0 and only case 1 raises it (to 2; case 2 leaves the step), so cases 0-2 cover every value.
+src/main/mains/main_56_jet_stingray.c	807	func_800710D4	taken	unreachable-logic	jet_stingray_check_surface returns only 0-3, 0 returns before the switch, and 1-3 all have cases.
+src/main/mains/main_56_jet_stingray.c	814	func_800710D4	taken	platform-only	PC-only NULL guard for a full main pool; the PSX/Saturn code writes through the returned pointer.
+src/main/mains/main_56_jet_stingray.c	978	func_80071740	taken	unreachable-logic	The missile step unk7 only counts 0, 1, 2 within this function and is reset to 0 by jet_stingray_missiles_repeat, so cases 0-2 cover it.
+src/main/mains/main_60_storm_owl.c	1710	func_80078314	taken	unreachable-logic	The switch default: i only runs 0-2 and each value has a case.
+src/main/mains/main_60_storm_owl.c	1740	func_80078314	taken	unreachable-logic	The switch default: i only runs 0-2 and each value has a case.
+src/main/mains/main_61_split_mushroom.c	221	func_800788E4	not-taken	unreachable-logic	hit is only computed when unk2 == 0 (line 213), so a hit < 0 always has unk2 == 0.
+src/main/mains/main_61_split_mushroom.c	252	func_800788E4	not-taken	unreachable-logic	Inside if (hit != 0), and hit is only computed when unk2 == 0 (line 213).
+src/main/mains/main_61_split_mushroom.c	296	func_800788E4	not-taken	unreachable-logic	Inside if (hit != 0), and hit is only computed when unk2 == 0 (line 213), so the partner branch never runs.
+src/main/mains/main_61_split_mushroom.c	301	func_800788E4	both	unreachable-logic	In the unk2 != 0 branch of line 296, which needs a hit, and hit is only computed when unk2 == 0 (line 213).
+src/main/mains/main_61_split_mushroom.c	331	func_800788E4	taken	unreachable-logic	The else of hp <= 0x1F: hp < 0x10 there is impossible.
+src/main/mains/main_61_split_mushroom.c	521	func_800793AC	not-taken	unreachable-logic	The intro steps run only for the first mushroom (unk2 0); the split copy (unk2 1, line 816) starts at step 3.
+src/main/mains/main_64_cyber_peacock.c	342	func_8007CA68	taken	unreachable-logic	The inner switch's default: inside (attack & 0xFF) != 0 the attack is 1-4, all cased.
+src/main/mains/main_64_cyber_peacock.c	343	func_8007CA68	taken	unreachable-logic	Case 0 inside the (attack & 0xFF) != 0 branch can never be entered.
+src/main/mains/main_64_cyber_peacock.c	679	func_8007D5D0	taken	unreachable-logic	The switch default: the hit vanish only ever sets unk6 to 0-2, all cased.
+src/main/mains/main_64_cyber_peacock.c	716	func_8007D710	taken	unreachable-logic	The switch default: unk6 never passes 2, all cased.
+src/main/mains/main_65_magma_dragoon.c	259	func_8007DD0C	both	dead-code	func_8007DD0C is never called; only its address is compared with NULL (func_8007F404).
+src/main/mains/main_65_magma_dragoon.c	259	func_8007DD0C	both	dead-code	Second condition of the same line in the uncalled func_8007DD0C.
+src/main/mains/main_65_magma_dragoon.c	261	func_8007DD0C	both	dead-code	func_8007DD0C is never called; only its address is compared with NULL (func_8007F404).
+src/main/mains/main_65_magma_dragoon.c	261	func_8007DD0C	both	dead-code	Second condition of the same line in the uncalled func_8007DD0C.
+src/main/mains/main_65_magma_dragoon.c	553	func_8007E4C8	taken	unreachable-logic	The switch default: the attack roll above only assigns 0-6, all cased.
+src/main/mains/main_65_magma_dragoon.c	1498	magma_dragoon_death_smoke	taken	unreachable-logic	(unk7C & 3) == 4 can never hold.
+src/main/mains/main_65_magma_dragoon.c	1519	magma_dragoon_death_vanish	taken	unreachable-logic	(unk7C & 3) == 4 can never hold.
+src/main/mains/main_68_sigma.c	925	func_80084B14	taken	unreachable-logic	The eye-laser jump step unk7 only counts 0-4 here (case 4 resets it to 0), and cases 0-4 cover it.
+src/main/mains/main_70_drone_pod.c	436	func_80089588	taken	data-dependent	D_801049B8 holds only parts 0-5 before its 0xFF end mark, which the launch index wraps before reading; every part has a case.
+src/main/mains/main_70_drone_pod.c	469	drone_pod_random_explosion	taken	unreachable-logic	The switch default: unk85 = get_random_nonzero() % 4 is 0-3, all cased.
+src/main/mains/main_75_general.c	104	general_pick_script	not-taken	unreachable-logic	general_script_weights' second entry is 0x10 for both rows, above any (roll >> 2) & 0xF, so the loop always returns.
+src/main/mains/main_75_general.c	104	general_pick_script	not-taken	unreachable-logic	The loop exit: the roll is (get_random() >> 2) & 0xF, at most 15, below the last weight 0x10, so the second iteration always returns.
+src/main/mains/main_75_general.c	529	general_punch_launch	not-taken	crashes-everywhere	With the shot pool full the code then writes first->unk8C through the NULL pointer on every version.
+src/main/mains/main_75_general.c	537	general_punch_launch	not-taken	crashes-everywhere	With no second shot slot the code then writes second->unk8C through the NULL pointer on every version.
+src/main/mains/main_69_colonel.c	1512	func_800889DC	not-taken	unreachable-logic	The loop never ends by its condition: the second threshold of each D_801044F4 row is 0x10 and the roll is get_random() & 0xF, so the second iteration always returns.
+src/main/mains/main_75_general.c	369	func_8009027C	taken	unreachable-logic	The implicit default of switch (unk6): general_move only steps unk6 through 0-2 and the script resets it to 0, so no other value reaches it.
+src/main/mains/main_00_background_dragon.c	267	func_80040ABC	not-taken	unreachable-logic	Saturn machine branch (no llvm-cov branch): the sign fix-up SH-GCC emits for a signed %; get_random_nonzero() returns 1..255, so the dividend is never negative.
+src/main/mains/main_70_drone_pod.c	468	drone_pod_random_explosion	not-taken	unreachable-logic	Saturn machine branch (no llvm-cov branch): the sign fix-up SH-GCC emits for a signed %; get_random_nonzero() returns 1..255, so the dividend is never negative.

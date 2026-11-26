@@ -2,6 +2,7 @@
 #include "main/55C4.h"
 #include "main/player_animations.h"
 #include "main/player_common.h"
+#ifndef MMX4_SATURN
 void func_800257BC(struct PlayerObj*);
 static u32 frames[247], frames_before[247];
 static POLY_FT4 primitives[3], primitives_expected[3];
@@ -27,7 +28,7 @@ static u32 render(u32 row)
     g_Player.arm_type = 1;
     g_Player.unk40 = 0x500;
     g_Player.unk42 = 0x7800;
-    g_Player.unk16 = 2;
+    g_Player.unk16 = VISUAL_SATURN_LAYER(2);
     g_Player.x_pos.i.hi = 160;
     g_Player.y_pos.i.hi = 120;
     g_Player.animation_table = (u32**)D_80119DF0;
@@ -88,3 +89,8 @@ static u32 render(u32 row)
 const struct CTestGroup c_test_groups[] = { { "actual_X_stock_buster_arm_upgrade_own_idle_two_original_US_armor_sprites", NULL, NULL, 1, render } };
 const u32 c_test_group_count = COUNT(c_test_groups);
 const u32 c_test_count = 1;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

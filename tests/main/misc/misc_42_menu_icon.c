@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#ifndef MMX4_SATURN
 #include "main/misc/misc_42_menu_icon.h"
 #include "main/misc/misc_31_option_toggle.h"
 #include "support/state_cases.h"
@@ -51,7 +52,7 @@ static u32 lifecycle_case(u32 mode, u32 observation)
     obj.x_pos.i.hi = 0x40;
     obj.y_pos.i.hi = 0x44;
     obj.unk15 = 0xAB;
-    obj.unk16 = 0x22;
+    obj.unk16 = VISUAL_SATURN_LAYER(0x22);
     obj.unk17 = 0x35;
     obj.previous_animation_index = 0xA5;
     obj.unk40 = 0x2468;
@@ -117,13 +118,13 @@ static u32 lifecycle_case(u32 mode, u32 observation)
     archive_offset = obj.unk3C ? (u8*)obj.unk3C - WINDOW_ARCHIVE_DATA : 0xFFFF;
     switch (observation) {
     case 0:
-        actual = ((u32*)&obj)[0];
+        actual = C_TEST_LE_WORD((u32*)&obj + 0);
         break;
     case 1:
-        actual = ((u32*)&obj)[1];
+        actual = C_TEST_LE_WORD((u32*)&obj + 1);
         break;
     case 2:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     case 3:
         actual = (u16)obj.x_pos.i.hi | ((u32)(u16)obj.y_pos.i.hi << 16);
@@ -300,3 +301,8 @@ const struct CTestGroup c_test_groups[] = {
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
 const u32 c_test_count = COUNT(menu_icon_states_cases) + COUNT(menu_icon_displayed_frame_cases_expected) + COUNT(menu_icon_lifecycle_cases_expected) + 5;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

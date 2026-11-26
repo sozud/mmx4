@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_48_sentry_drone.h"
 #include "support/state_cases.h"
 #include "support/drone_burst_data.h"
@@ -110,7 +111,7 @@ static u32 sentry_drone_steps_run(u32 mode)
         palette[i] = 0x12345 + i * 0x1111;
         frames[i] = 0x100 + i * 8;
     }
-    D_801406A8 = palette;
+    test_stage_graphics(palette);
     TEST_MENU_FRAMES = (u8*)frames;
     memset(&g_Player, 0, sizeof(g_Player));
     g_Player.bg_offset = 1;
@@ -129,7 +130,7 @@ static u32 sentry_drone_steps_run(u32 mode)
         : mode == INIT_AIR_GUARD                              ? 0x81
         : mode == DASH_STILL                                  ? 2
                                                               : 0;
-    drone.unk15 = mode == DRIFT_RIGHT || mode == DASH_RIGHT || mode == INIT_GROUND ? 0x40 : 0;
+    drone.unk15 = mode == DRIFT_RIGHT || mode == DASH_RIGHT || mode == INIT_GROUND ? PLAYER_FACING_RIGHT : 0;
     drone.x_speed = 0x1111;
     drone.y_speed = 0x2222;
     drone.x_accel = 0x3333;
@@ -149,11 +150,11 @@ static u32 sentry_drone_steps_run(u32 mode)
         func_8006738C(&drone);
         expected.bg_offset = 1;
         expected.x_speed = expected.y_speed = expected.x_accel = expected.gravity = 0;
-        expected.unk40 = palette[resource] >> 7;
+        expected.unk40 = OBJECT_STAGE_TEXTURE(resource);
         expected.sprite_frames = (u8*)frames + frames[resource];
-        expected.unk42 = ((resource * 4 + 0x18) % 16) | (((resource + 6) / 4 + 0x1E0) << 6);
+        expected.unk42 = OBJECT_CLUT(((resource * 4 + 0x18) % 16) | (((resource + 6) / 4 + 0x1E0) << 6));
         expected.animation_table = (u32**)sentry_drone_animations;
-        expected.unk16 = 4;
+        expected.unk16 = VISUAL_SATURN_LAYER(4);
         expected.terrain_box = (struct Unk_unk68*)D_800FFAD0;
         expected.attack_box = D_800FFAD4;
         expected.hurt_box = D_800FFACC;
@@ -208,11 +209,11 @@ static u32 sentry_drone_steps_run(u32 mode)
             expected.unk6 = 3;
             if (r <= 30) {
                 if (r == 0 || (r >= 2 && r <= 6))
-                    expected.unk15 = 0x40;
+                    expected.unk15 = PLAYER_FACING_RIGHT;
                 if (r == 16 || (r >= 10 && r <= 14) || (r >= 18 && r <= 22))
                     expected.unk15 = 0;
                 if (r >= 26)
-                    expected.unk15 = 0x40;
+                    expected.unk15 = PLAYER_FACING_RIGHT;
                 animation(r == 8 ? 2 : r == 24 ? 3
                         : r == 0 || r == 16    ? 1
                         : r <= 14              ? 4
@@ -233,12 +234,10 @@ static u32 sentry_drone_steps_run(u32 mode)
         owner.ext.main_48.collision_result = 0;
         owner.ext.main_48.unk86 = owner.ext.main_48.unk87 = owner.ext.main_48.unk88 = 0;
     }
-    for (i = 0; i < sizeof(drone) / 4; i++)
-        difference |= ((u32*)&drone)[i] ^ ((u32*)&expected)[i];
-    assert(difference == 0);
+    c_test_same_words(&drone, &expected, sizeof(drone));
     assert(owner.ext.main_48.saved_unk5 == 7 && owner.ext.main_48.unk80 == 1);
     if (mode != DIRECTIONS)
-        result ^= (u8)drone.unk5 | ((u32)(u8)drone.unk6 << 8) | ((u32)(u8)drone.unk15 << 16) | ((u32)drone.unk17 << 24);
+        result ^= (u8)drone.unk5 | ((u32)(u8)drone.unk6 << 8) | ((u32)C_TEST_PSX_FACING(drone.unk15) << 16) | ((u32)drone.unk17 << 24);
     result ^= (u32)drone.x_speed;
     return result;
 }
@@ -291,11 +290,77 @@ static void sd_wake(void)
     sentry_drone_wait_for_player(&so);
 }
 
+void sentry_drone_main(struct MainObj*);
+#define SDM(setup) (state_reset(1, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), state_terrain(0), g_Player.unk68 = NULL, g_Player.x_pos.i.hi = 0x400, g_Player.y_pos.i.hi = 0x400, so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.ext.main_48.saved_unk5 = 1, setup, sd_run(sentry_drone_main), state_extra = so.ext.main_48.saved_unk5)
+static void sd_run(void (*step)(struct MainObj*))
+{
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    SP_CUR_MAIN_OBJ = &so;
+    step(&so);
+    SP_CUR_MAIN_OBJ = current;
+}
+static void sd_main_killed(void) { SDM((so.hp = 1, state_hit(&so, 0, 0, 1))); }
+static void sd_main_on_screen(void) { SDM(0); }
+static void sd_main_off_screen(void) { SDM(so.x_pos.i.hi = 0x300); }
 static void (*const sentry_drone_misc_cases[])(void) = {
     sd_wait,
     sd_wake,
+    sd_main_killed,
+    sd_main_on_screen,
+    sd_main_off_screen,
 };
-static const u32 sentry_drone_misc_expected[] = { 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 3u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 0u, 0u };
+static const u32 sentry_drone_misc_expected[] = {
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x1u,
+    0x1u,
+    0x41002100u,
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x1u,
+    0x0u,
+    0x3000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+};
 
 static u32 test_sentry_drone_misc(u32 row)
 {
@@ -368,7 +433,7 @@ static void prepare(u32 direction, u32 facing, u32 layer, u32 shot_mode, u32 mis
     obj.state = 1;
     obj.unk5 = 4;
     obj.bg_offset = layer;
-    obj.unk15 = facing * 0x40;
+    obj.unk15 = facing * PLAYER_FACING_RIGHT;
     obj.x_pos.val = (cameras[layer][0] + 200) * 65536 + 0x1234;
     obj.y_pos.val = (cameras[layer][1] + 120) * 65536 + 0x5678;
     obj.x_speed = -0x23456;
@@ -414,8 +479,10 @@ static void prepare(u32 direction, u32 facing, u32 layer, u32 shot_mode, u32 mis
         s->unk54 = (u8*)D_800FFACC;
         s->unk68 = (struct Unk_unk68*)D_800FFAD0;
         s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 1;
-        s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = 1;
-        s->unk78 = s->unk62 = s->unk63 = s->unk7A = s->unk75 = 1;
+        s->unk72 = s->unk73 = s->unk76 = s->unk77 = 1;
+        OBJ_UNK74_SET(*s, 1);
+        s->unk62 = s->unk63 = s->unk7A = s->unk75 = 1;
+        OBJ_UNK78_SET(*s, 1);
         s->unk60 = 0x12;
         s->unk67 = 0x23;
         s->unk70 = 0x34;
@@ -526,8 +593,10 @@ static void expect_fire(s32 shot_index, s32 misc_index, u32 direction)
         s->unk54 = 0;
         s->unk68 = 0;
         s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 0;
-        s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = 0;
-        s->unk78 = s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
+        s->unk72 = s->unk73 = s->unk76 = s->unk77 = 0;
+        OBJ_UNK74_SET(*s, 0);
+        s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
+        OBJ_UNK78_SET(*s, 0);
         s->active = 0x41;
         s->id = 0x1A;
         s->unk2 = direction;
@@ -835,7 +904,7 @@ static u32 test_wait_player(u32 row)
     g_Player.x_pos.val = obj.x_pos.val + distances[d] * 65536;
     capture();
     if (d >= 4) {
-        expected_sentry_drone_burst.unk15 = 0x40;
+        expected_sentry_drone_burst.unk15 = PLAYER_FACING_RIGHT;
         expected_sentry_drone_burst.state = 1;
         expected_sentry_drone_burst.unk5 = 3;
     }
@@ -857,7 +926,7 @@ static u32 test_despawn(u32 row)
     expected_sentry_drone_burst.ext.main_48.saved_unk5 = expected_sentry_drone_burst.ext.main_48.collision_result = expected_sentry_drone_burst.ext.main_48.unk86 = expected_sentry_drone_burst.ext.main_48.unk87 = expected_sentry_drone_burst.ext.main_48.unk88 = 0;
     expected_sentry_drone_burst.active = expected_sentry_drone_burst.id = expected_sentry_drone_burst.unk2 = expected_sentry_drone_burst.on_screen = expected_sentry_drone_burst.state = expected_sentry_drone_burst.unk5 = expected_sentry_drone_burst.unk6 = expected_sentry_drone_burst.unk7 = 0;
     if (!air && ref)
-        backref_expected &= 0xFFFFFF70;
+        ((u8*)&backref_expected)[0] &= 0x70;
     sentry_drone_update(&obj);
     check();
     return 1;

@@ -133,7 +133,7 @@ record:
     ext->unk1C = g_Player.unk5;
 facing:
     if (g_Player.x_pos.val != g_Player.unk18.val)
-        ext->unk1E = (g_Player.x_pos.val >= g_Player.unk18.val) << 6;
+        ext->unk1E = g_Player.x_pos.val >= g_Player.unk18.val ? PLAYER_FACING_RIGHT : 0;
 }
 #elif defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/effects/effect_05_tile_scanner", func_800B60BC);

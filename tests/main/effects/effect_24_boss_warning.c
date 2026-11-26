@@ -2,6 +2,7 @@
 #include "main/effects/effect_24_boss_warning.h"
 #include "main/mains/main_69_colonel.h"
 
+#ifndef VERSION_DEMO
 #define WARNING_CASE(name, id_value, active_value, last_phase, field)            \
     static u32 name(void)                                                        \
     {                                                                            \
@@ -47,6 +48,7 @@ static const CTestCase boss_warning_cases[] = {
 };
 static const u32 boss_warning_cases_expected[] = { 0x8u, 0x0u, 0x8u, 0x0u, 0x7u, 0x15u, 0x7u, 0x15u };
 #undef WARNING_CASE
+#endif
 
 static struct EffectObj expected_effects[32];
 static struct QuadObj expected_quads[32];
@@ -98,9 +100,123 @@ static u32 full(u32 row)
     return 1;
 }
 
+static u32 warning_paths(u32 index);
+#ifdef VERSION_DEMO
+#define WARNING_PATHS 7
+#define BOSS_WARNING_CASES 0
+#else
+#define WARNING_PATHS 13
+#define BOSS_WARNING_CASES COUNT(boss_warning_cases)
+#endif
 const struct CTestGroup c_test_groups[] = {
+    { "warning_paths", 0, 0, WARNING_PATHS, warning_paths },
+#ifndef VERSION_DEMO
     { "boss_warning", boss_warning_cases, boss_warning_cases_expected, COUNT(boss_warning_cases), 0 },
+#endif
     { "Colonel_actual_warning_factory_full_effect_or_full_quad_pool", NULL, NULL, 2, full },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(boss_warning_cases) + 2;
+const u32 c_test_count = BOSS_WARNING_CASES + 2 + WARNING_PATHS;
+
+void func_800BABA8(struct EffectObj*);
+void func_800BAC58(struct EffectObj*);
+void boss_warning_wait(struct EffectObj*);
+void boss_warning_advance_tiles(struct EffectObj*);
+void boss_warning_finish(struct EffectObj*);
+void boss_warning_main(struct EffectObj*);
+extern struct EffectObj* boss_warning_tiles[0x16];
+static struct EffectObj warning_tiles[0x16];
+static u32 warning_paths(u32 index)
+{
+#ifdef VERSION_DEMO
+    static const u8 scenarios[] = { 2, 3, 4, 7, 8, 14, 15 };
+#else
+    static const u8 scenarios[] = { 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14 };
+#endif
+    u32 row = scenarios[index];
+    struct EffectObj obj;
+    u32 i;
+    memset(&obj, 0, sizeof(obj));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(g_QuadObjects, 0, sizeof(g_QuadObjects));
+    memset(warning_tiles, 0, sizeof(warning_tiles));
+    memset(D_8013E198, -1, sizeof(D_8013E198));
+    for (i = 0; i < 0x16; i++)
+        boss_warning_tiles[i] = &warning_tiles[i];
+    obj.active = 1;
+    obj.id = 24;
+    obj.state = 1;
+    engine_obj.stage = 2;
+    if (row <= 2 || row == 13) {
+        obj.state = 0;
+        engine_obj.stage = row == 0 ? 10 : row == 13 ? 0
+                                                     : 2;
+        engine_obj.palette_flags = row == 1 ? 2 : 0;
+        func_800BABA8(&obj);
+        assert(obj.state == (row == 1 ? 0 : 1) && engine_obj.unkF == (row == 1));
+        assert(effect_objects[0].active == (row != 1) && obj.ext.effect_24.unk1A == (row == 1 ? 0 : 5));
+        return 1;
+    }
+    switch (row) {
+    case 3:
+    case 4:
+        obj.ext.effect_24.unk1B = row == 3 ? 0x15 : 3;
+        func_800BAC58(&obj);
+        assert(g_QuadObjects[0].active == (s8)0x83 && g_QuadObjects[0].id == 3);
+        assert(g_QuadObjects[0].unk2 == (row == 3 ? 0x15 : 3) && boss_warning_tiles[row == 3 ? 0x15 : 3] == (struct EffectObj*)&g_QuadObjects[0]);
+        assert(obj.ext.effect_24.unk1B == (row == 3 ? 0 : 4) && obj.ext.effect_24.timer == (row == 3 ? DEMO_ALT(0xB4, 120) : 2));
+        assert(obj.unk5 == (row == 3));
+        break;
+    case 7:
+    case 8:
+        obj.unk5 = 3;
+        obj.ext.effect_24.unk1B = row == 7 ? 0x15 : 3;
+        boss_warning_advance_tiles(&obj);
+#ifdef VERSION_DEMO
+        assert(warning_tiles[row == 7 ? 0x15 : 3].unk5 == 1 && obj.unk5 == 3 && obj.state == (row == 7 ? 2 : 1));
+        assert(obj.ext.effect_24.unk1B == (row == 7 ? 0x16 : 4) && obj.ext.effect_24.timer == 2);
+#else
+        assert(warning_tiles[row == 7 ? 0x15 : 3].unk5 == 1 && obj.unk5 == (row == 7 ? 4 : 3));
+        assert(obj.ext.effect_24.timer == (row == 7 ? 0x3C : 0));
+#endif
+        break;
+    case 14:
+        obj.ext.effect_24.timer = 2;
+        func_800BAC58(&obj);
+        assert(obj.ext.effect_24.timer == 1 && g_QuadObjects[0].active == 0);
+        break;
+#ifdef VERSION_DEMO
+    case 15:
+        obj.unk5 = 1;
+        obj.ext.effect_24.unk1B = 3;
+        obj.ext.effect_24.timer = 2;
+        boss_warning_advance_tiles(&obj);
+        assert(obj.ext.effect_24.timer == 1 && obj.ext.effect_24.unk1B == 3 && warning_tiles[3].unk5 == 0);
+        break;
+#else
+    case 5:
+    case 6:
+        obj.unk5 = 1;
+        obj.ext.effect_24.timer = row == 5 ? 1 : 5;
+        boss_warning_wait(&obj);
+        assert(obj.unk5 == (row == 5 ? 2 : 1));
+        break;
+    case 9:
+    case 10:
+        obj.unk5 = 4;
+        obj.ext.effect_24.timer = row == 9 ? 1 : 5;
+        boss_warning_finish(&obj);
+        assert(obj.state == (row == 9 ? 2 : 1) && obj.ext.effect_24.unk1A == 0xA);
+        break;
+    default:
+        obj.unk5 = 1;
+        obj.ext.effect_24.timer = 5;
+        obj.ext.effect_24.unk1A = row == 11 ? 0 : 3;
+        boss_warning_main(&obj);
+        assert(obj.ext.effect_24.unk1A == (row == 11 ? 0x3C : 2));
+        break;
+#endif
+    }
+    return 1;
+}

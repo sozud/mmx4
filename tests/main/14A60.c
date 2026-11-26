@@ -1,6 +1,8 @@
 #include "test_runtime.h"
+#ifndef MMX4_SATURN
 #include "main/14A60.h"
 #include "main/1AC84.h"
+#include "main/player_weapon.h"
 #include "support/sprite_render_fixture.h"
 
 static u32 subtract_all_channels(void)
@@ -219,6 +221,213 @@ static u32 readonly_renderer_guard(u32 row)
 }
 #endif
 
+#ifndef MMX4_SATURN
+static const struct {
+    u16 r, g, b;
+    u8 stage, substage, color;
+    u32 expected;
+} filter_rows[] = {
+    { 2, 2 << 5, 2 << 10, 2, 1, 0, 24 | 231 << 8 | 82 << 16 },
+    { 0x1F, 0x1F << 5, 0x1F << 10, 0, 0, 0, 255 | 255 << 8 | 255 << 16 },
+    { 1, 2 << 5, 1 << 10, 0, 0, 0, 8 | 214 << 8 | 66 << 16 },
+    { 1, 1 << 5, 2 << 10, 0, 0, 0, 8 | 214 << 8 | 66 << 16 },
+};
+static u32 filter_add(u32 row)
+{
+    POLY_F4 primitive;
+    struct DrawInfo draw;
+    u32 actual;
+    memset(&primitive, 0, sizeof(primitive));
+    memset(&draw, 0, sizeof(draw));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    cur_draw_info = &draw;
+    SP_AUX_CURSOR = &primitive;
+    engine_obj.stage = filter_rows[row].stage;
+    engine_obj.substage = filter_rows[row].substage;
+    g_FilterAmountR = filter_rows[row].r;
+    g_FilterAmountG = filter_rows[row].g;
+    g_FilterAmountB = filter_rows[row].b;
+    g_FilterModeR = g_FilterModeG = g_FilterModeB = 0;
+    func_80025588(1, 2, 3, 4, filter_rows[row].color);
+    assert(nextPrim(&draw.ordering_table.unk3) == &primitive);
+    actual = primitive.r0 | ((u32)primitive.g0 << 8) | ((u32)primitive.b0 << 16);
+    assert(actual == filter_rows[row].expected);
+    return actual;
+}
+
+static u8 hud_archive[8 + 256 * 4 + 256 * 4];
+static SPRT_16 hud_sprites[10];
+static DR_TPAGE hud_modes[10];
+static POLY_F4 hud_bars[6];
+static void hud_archive_setup(void)
+{
+    u32 i;
+    memset(hud_archive, 0, sizeof(hud_archive));
+    *(s32*)(hud_archive + 4) = 8;
+    for (i = 0; i < 256; i++) {
+        u8* entry = hud_archive + 8 + i * 4;
+        u8* piece = hud_archive + 8 + (256 + i) * 4;
+        *(u16*)entry = 1;
+        *(u16*)(entry + 2) = 256 + i;
+        piece[2] = i;
+    }
+}
+static const u32 hud_expected[4][9] = {
+    { 2, 1, 0x00580064, 0x00380065, 0, 0, 0, 0, 0 },
+    { 6, 2, 0x00580064, 0x00380065, 0x00160050, 0x00160058, 0x00140076, 0x0038006E, 0 },
+    { 7, 3, 0x00580064, 0x00380065, 0x00160050, 0x00160058, 0x00140074, 0x0038006E, 0x0041017C },
+    { 2, 1, 0x00580064, 0x00380065, 0, 0, 0, 0, 0 },
+};
+static u32 hud_status(u32 row)
+{
+    struct DrawInfo draw;
+    u32 observed[9], i, n;
+    s8 divisor;
+    hud_archive_setup();
+    memset(&draw, 0, sizeof(draw));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    c_test_zero_words((u32*)&g_Player, sizeof(g_Player) / 4);
+    c_test_zero_words((u32*)main_objects, sizeof(main_objects) / 4);
+    g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
+    cur_draw_info = &draw;
+    TEST_SPRITE_FRAMES = hud_archive;
+    SP_BG_PRIM_CURSOR = hud_sprites;
+    SP_OT_CURSOR = hud_modes;
+    SP_AUX_CURSOR = hud_bars;
+    SP_SPRITE_COUNT = 0;
+    engine_obj.unk1F = 1;
+    engine_obj.player_lives = 2;
+    engine_obj.max_hp = 0x20;
+    g_Player.hp = ((struct MainObj*)&g_Player)->unk5D = 10;
+    g_Player.shot_types[0] = 1;
+    divisor = player_weapon_energy.hud.health_divisors[1];
+    assert(divisor > 0 && divisor <= 40);
+    if (row == 1 || row == 2) {
+        g_Player.weapon = row == 1 ? 3 : 1;
+        g_Player.weapon_energy[g_Player.weapon] = divisor * 3;
+    }
+    if (row == 2) {
+        engine_obj.enable_boss = 1;
+        engine_obj.boss_ptr = &main_objects[0];
+        main_objects[0].hp = main_objects[0].unk5D = 20;
+    }
+    if (row == 3)
+        g_Player.unk2 = 1;
+    func_80024E70();
+    n = (SPRT_16*)SP_BG_PRIM_CURSOR - hud_sprites;
+    assert(n == (u32)SP_SPRITE_COUNT && (DR_TPAGE*)SP_OT_CURSOR == &hud_modes[n]);
+    observed[0] = n;
+    observed[1] = (POLY_F4*)SP_AUX_POLY_F4_CURSOR - hud_bars;
+    for (i = 0; i < 7; i++)
+        observed[2 + i] = i < n ? (u16)hud_sprites[i].x0 | (u32)(u16)hud_sprites[i].y0 << 16 : 0;
+    return c_test_observe(2, row, observed, hud_expected[row], 9);
+}
+
+static u32 armor_archive[32];
+static POLY_FT4 armor_prims[5];
+static DR_TPAGE armor_modes[5];
+static P_TAG armor_tail;
+static void armor_setup(void)
+{
+    u32 part;
+    memset(armor_archive, 0, sizeof(armor_archive));
+    for (part = 0; part < 4; part++) {
+        u16* header = (u16*)&armor_archive[16 + part * 2];
+        u8* piece = (u8*)&armor_archive[17 + part * 2];
+        armor_archive[5 + part] = (16 + part * 2) * 4;
+        header[0] = 1;
+        header[1] = 1;
+        piece[2] = part * 4;
+    }
+    TEST_SPRITE_FRAMES = (u8*)armor_archive;
+    memset(&armor_tail, 0, sizeof(armor_tail));
+    D_8013BC40[0][0][0] = &armor_tail;
+    SP_DRAW_BUFFER = 0;
+    SP_PRIM_CURSOR = armor_prims;
+    SP_DRAW_MODE_CURSOR = armor_modes;
+}
+static const u32 armor_expected[2][4] = {
+    { 3, 0x784300AC, 0x784300A0, 0x784300A4 },
+    { 1, 0x784400A8, 0, 0 },
+};
+static u32 armor_parts(u32 row)
+{
+    u32 observed[4], i, n;
+    c_test_zero_words((u32*)&g_Player, sizeof(g_Player) / 4);
+    memset(background_objects, 0, sizeof(background_objects));
+    armor_setup();
+    g_Player.active = 1;
+    g_Player.bg_offset = -1;
+    g_Player.x_pos.i.hi = 160;
+    g_Player.y_pos.i.hi = 120;
+    g_Player.armor_parts = row == 0 ? 0xB : 4;
+    g_Player.arm_type = row == 0 ? 0 : 2;
+    func_800257BC(&g_Player);
+    n = (POLY_FT4*)SP_PRIM_CURSOR - armor_prims;
+    assert((DR_TPAGE*)SP_DRAW_MODE_CURSOR == &armor_modes[n]);
+    observed[0] = n;
+    for (i = 0; i < 3; i++)
+        observed[1 + i] = i < n ? (u16)armor_prims[i].x0 | (u32)armor_prims[i].clut << 16 : 0;
+    return c_test_observe(3, row, observed, armor_expected[row], 4);
+}
+
+void init_objects(void);
+void func_80025CDC(void);
+static void clear_draw_pools(void)
+{
+    c_test_zero_words((u32*)&g_Player, sizeof(g_Player) / 4);
+    c_test_zero_words((u32*)&g_Entity, sizeof(g_Entity) / 4);
+    c_test_zero_words((u32*)baz_objects, sizeof(baz_objects) / 4);
+    c_test_zero_words((u32*)foo_objects, sizeof(foo_objects) / 4);
+    c_test_zero_words((u32*)main_objects, sizeof(main_objects) / 4);
+    c_test_zero_words((u32*)weapon_objects, sizeof(weapon_objects) / 4);
+    c_test_zero_words((u32*)shot_objects, sizeof(shot_objects) / 4);
+    c_test_zero_words((u32*)visual_objects, sizeof(visual_objects) / 4);
+    c_test_zero_words((u32*)item_objects, sizeof(item_objects) / 4);
+    c_test_zero_words((u32*)misc_objects, sizeof(misc_objects) / 4);
+    c_test_zero_words((u32*)unk_objects, sizeof(unk_objects) / 4);
+    c_test_zero_words((u32*)&qux_object, sizeof(qux_object) / 4);
+    c_test_zero_words((u32*)g_QuadObjects, sizeof(g_QuadObjects) / 4);
+}
+static u32 pool_draw(u32 row)
+{
+    static const u8 kinds[] = { 0, 1, 3, 3, 5, 2, 5 }, slots[] = { 0, 0, 0, 2, 0, 0, 0 };
+    void (*draw)(void) = row == 6 ? func_80025CDC : init_objects;
+    struct DrawInfo info;
+    void *prims, *modes;
+    u32 extra = row == 0;
+    memset(&info, 0, sizeof(info));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    cur_draw_info = &info;
+    clear_draw_pools();
+    render_setup(kinds[row], slots[row], &render_vectors[0], 0);
+    if (row == 0) {
+        armor_setup();
+        g_Player.armor_parts = 2;
+    }
+    object->on_screen = 0;
+    draw();
+    prims = SP_PRIM_CURSOR;
+    modes = SP_DRAW_MODE_CURSOR;
+    assert(SP_SPRITE_COUNT == 0 && D_8013E1E8[buffer][group][priority] == NULL);
+    object->on_screen = 1;
+    draw();
+    assert(SP_SPRITE_COUNT == 1);
+    assert((POLY_FT4*)SP_PRIM_CURSOR == (POLY_FT4*)prims + 1 + extra);
+    assert((DR_TPAGE*)SP_DRAW_MODE_CURSOR == (DR_TPAGE*)modes + 1 + extra);
+    assert(D_8013E1E8[buffer][group][priority] == (P_TAG*)modes);
+    if (row == 3) {
+        g_Player.unk2 = 1;
+        draw();
+        assert(SP_SPRITE_COUNT == 0 && D_8013E1E8[buffer][group][priority] == NULL);
+    }
+    return 1;
+}
+#define PSX_HUD_CASES (COUNT(filter_rows) + 4 + 2 + 7)
+#else
+#define PSX_HUD_CASES 0
+#endif
+
 const struct CTestGroup c_test_groups[] = {
     { "hud_color_subtraction", hud_color_subtraction_cases, hud_color_subtraction_cases_expected, COUNT(hud_color_subtraction_cases), 0 },
     { "func_80025588", 0, 0, 1, test_func_80025588 },
@@ -229,6 +438,12 @@ const struct CTestGroup c_test_groups[] = {
     { "pc_rejects_missing_or_unregistered_frame", NULL, NULL, 2, renderer_guard },
     { "pc_rejects_readonly_unregistered_object", NULL, NULL, 1, readonly_renderer_guard },
 #endif
+#ifndef MMX4_SATURN
+    { "hud_color_filter_add", NULL, NULL, COUNT(filter_rows), filter_add },
+    { "hud_status", NULL, NULL, 4, hud_status },
+    { "armor_overlay_parts", NULL, NULL, 2, armor_parts },
+    { "pool_draw_on_screen", NULL, NULL, 7, pool_draw },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
 const u32 c_test_count = COUNT(hud_color_subtraction_cases) + 1 + 16 + 24 + 36
@@ -236,4 +451,9 @@ const u32 c_test_count = COUNT(hud_color_subtraction_cases) + 1 + 16 + 24 + 36
     + 2
     + 1
 #endif
-    ;
+    + PSX_HUD_CASES;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

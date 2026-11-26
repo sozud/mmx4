@@ -54,8 +54,8 @@ static u32 pod_case(u32 mode)
         : mode < 23                        ? 2
         : mode < 25                        ? 3
                                            : 4;
-    obj.unk15 = facing ? 0x40 : 0;
-    obj.unk16 = 5;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
+    obj.unk16 = VISUAL_SATURN_LAYER(5);
     obj.unk40 = 7;
     obj.unk42 = 0x8123;
     obj.x_pos.val = 100 * 65536 + 0x1234;
@@ -87,7 +87,7 @@ static u32 pod_case(u32 mode)
         obj.unk17 = 3;
         obj.animation_cursor = (const u8*)&spawner_pod_animations[3][15];
         obj.animation_step = spawner_pod_animations[3][15];
-        assert(obj.animation_step.packed == 0x09000002);
+        assert(obj.animation_step.packed == C_TEST_STEP(0x09000002));
     }
     expected = obj;
     memcpy(pool_expected, shot_objects, sizeof(pool_expected));
@@ -109,7 +109,7 @@ static u32 pod_case(u32 mode)
             expected.unk6 = 2;
             expect_animation(&expected, 2);
         } else {
-            expected.unk15 ^= 0x40;
+            expected.unk15 ^= PLAYER_FACING_RIGHT;
             if (kind >= 2) {
                 expected.ext.main_28.unk84 = 8;
                 expect_animation(&expected, 9);
@@ -137,7 +137,7 @@ static u32 pod_case(u32 mode)
             child->unk3C = frames;
             child->unk42 = 0x123;
             child->unk7C = WEAPON_OBJECT(&obj);
-            child->unk16 = 5;
+            child->unk16 = VISUAL_SATURN_LAYER(5);
             child->unk15 = obj.unk15;
         }
     } else if (mode == 23 || mode == 25)
@@ -147,7 +147,7 @@ static u32 pod_case(u32 mode)
         expected.unk6 = 0;
         expected.unk7E = 50;
         if (mode == 24 || mode == 30) {
-            expected.unk15 ^= 0x40;
+            expected.unk15 ^= PLAYER_FACING_RIGHT;
             expected.ext.main_28.unk84 = mode == 24 ? 8 : 0;
             expected.x_accel = -128;
             expected.gravity = -256;
@@ -168,7 +168,7 @@ static u32 pod_case(u32 mode)
     for (i = 0; i < 32; i++)
         assert(D_800FD5C8[i] == 10 * (i % 5 + 1));
     assert(cur_random == (mode == 24 || mode == 26 || mode == 30 ? 376 : 119));
-    i = (u8)obj.unk6 | ((u32)(u8)obj.unk7E << 8) | ((u32)(u8)obj.unk15 << 16) | ((u32)(u8)obj.ext.main_28.unk85 << 24);
+    i = (u8)obj.unk6 | ((u32)(u8)obj.unk7E << 8) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 16) | ((u32)(u8)obj.ext.main_28.unk85 << 24);
     return i;
 }
 static const u32 spawner_pod_turn_and_shot_states_cases_expected[] = { 0x3000200u, 0x4000201u, 0x3400200u, 0x4400201u, 0x3000200u, 0x4000201u, 0x3400200u, 0x4400201u, 0x3000200u, 0x4000201u, 0x3400200u, 0x4400201u, 0x3000200u, 0x4000201u, 0x3400200u, 0x4400201u, 0x4000001u, 0x3400004u, 0x202u, 0x3400004u, 0x3000202u, 0x3000203u, 0x3000203u, 0x3000203u, 0x3403200u, 0x3000204u, 0x3003200u, 0x3400200u, 0x3000200u, 0x3000205u, 0x3403200u, 0x3000200u, 0x3000200u };
@@ -219,7 +219,7 @@ static u32 test_func_80059E40(u32 row)
     observed_values[4] = (u32)obj.unk7E;
     observed_values[5] = (u32)context.unk7C;
     observed_values[6] = (u32)(u8)obj.unk17;
-    observed_values[7] = obj.animation_step.packed;
+    observed_values[7] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[8] = (u32)cur_random;
     observed_values[9] = (u32)obj.x_speed;
     observed_values[10] = (u32)obj.y_speed;
@@ -263,10 +263,148 @@ static u32 test_spawner_pod_detach(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 1);
 }
 
+#include "support/state_cases.h"
+void spawner_pod_main(struct MainObj*);
+static struct MainObj sp_context;
+#define SP(step, sub, setup) (state_reset(step, sub, 0), memset(&sp_context, 0, sizeof(sp_context)), memset(weapon_objects, 0, sizeof(weapon_objects)), sp_context.x_pos.i.hi = 0x80, sp_context.y_pos.i.hi = 0x60, so.ext.main_28.context = &sp_context, setup)
+#define SPX() (state_extra = so.unk7E | (u32)so.ext.main_28.unk85 << 8 | (u32)so.ext.main_28.unk84 << 16 | (u32)so.state << 24)
+static void sp_main(void)
+{
+    SP(1, 0, so.state = 1), spawner_pod_main(&so), SPX();
+}
+static void sp_main_defeated(void) { SP(1, 0, (so.state = 1, so.x_pos = sp_context.x_pos, so.y_pos = sp_context.y_pos, so.hp = 1, state_hit(&so, 0, 0, 1), cur_random = 1)), spawner_pod_main(&so), SPX(); }
+static void sp_burst_wait(void) { SP(2, 0, so.animation_step.fields.relative_step = 1), func_80059E40(&so), SPX(); }
+static void sp_burst_first_row(void) { SP(2, 0, (so.unk2 = 1, cur_random = 1)), func_80059E40(&so), SPX(); }
+#define CRUISE(kind, face, vx, vy) SP(3, 0, (so.unk2 = kind, so.unk15 = face, so.x_speed = vx, so.y_speed = vy, so.unk7E = 5)), func_80059F60(&so), SPX()
+static void sp_cruise_right_slow(void)
+{
+    CRUISE(1, PLAYER_FACING_RIGHT, 0, 0);
+}
+static void sp_cruise_up_slow(void) { CRUISE(2, PLAYER_FACING_RIGHT, 0, -0x600000); }
+static void sp_cruise_down_slow(void) { CRUISE(3, 0, 0, 0x600000); }
+static void sp_cruise_down_back(void) { CRUISE(3, PLAYER_FACING_RIGHT, 0, 0); }
+static void sp_detach(void) { SP(0, 0, (so.state = 2, sp_context.active = 1, sp_context.ext.main_29.unk94 = 3, so.ext.main_28.index = 1, sp_context.ext.main_29.slots.children[1] = &so)), spawner_pod_detach(&so), state_extra = sp_context.ext.main_29.unk94 | (u32)(sp_context.ext.main_29.slots.children[1] == NULL) << 8; }
+static void sp_wait_unclocked(void) { SP(3, 3, so.unk7C = 5), func_80059F60(&so), SPX(); }
+static void (*const spawner_pod_states_cases[])(void) = {
+    sp_main,
+    sp_main_defeated,
+    sp_burst_wait,
+    sp_cruise_right_slow,
+    sp_cruise_up_slow,
+    sp_cruise_down_slow,
+    sp_cruise_down_back,
+    sp_wait_unclocked,
+    sp_detach,
+    sp_burst_first_row,
+};
+static const u32 spawner_pod_states_expected[] = {
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1000000u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x1u,
+    0x2000000u,
+    0x2100u,
+    0x2u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x40000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x4u,
+    0x0u,
+    0x3u,
+    0x40000u,
+    0x0u,
+    0x0u,
+    0xFFA00000u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x4u,
+    0x0u,
+    0x3u,
+    0x40000u,
+    0x0u,
+    0x0u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x0u,
+    0x3u,
+    0x40000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x4u,
+    0x0u,
+    0x303u,
+    0x4u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x102u,
+    0x0u,
+    0x3u,
+    0x140000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x30000u,
+    0x1u,
+    0x3u,
+    0x14u,
+    0x0u,
+};
+static u32 test_spawner_pod_states(u32 row) { return state_run(spawner_pod_states_cases[row], row, &spawner_pod_states_expected[row * 10]); }
 const struct CTestGroup c_test_groups[] = {
     { "spawner_pod_turn_and_shot_states", NULL, spawner_pod_turn_and_shot_states_cases_expected, COUNT(spawner_pod_turn_and_shot_states_cases_expected), pod_case },
     { "func_80059E40", 0, 0, 4, test_func_80059E40 },
     { "spawner_pod_detach", 0, 0, 2, test_spawner_pod_detach },
+    { "spawner_pod_states", 0, 0, COUNT(spawner_pod_states_cases), test_spawner_pod_states },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(spawner_pod_turn_and_shot_states_cases_expected) + 4 + 2;
+const u32 c_test_count = COUNT(spawner_pod_turn_and_shot_states_cases_expected) + 4 + 2 + COUNT(spawner_pod_states_cases);

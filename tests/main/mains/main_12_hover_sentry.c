@@ -36,7 +36,7 @@ static u32 height_case(u32 mode)
     cur_random = 1;
     expected = obj;
     expected.unk6 = 0;
-    expected.unk15 = mode & 1 ? 0 : 0x40;
+    expected.unk15 = mode & 1 ? 0 : PLAYER_FACING_RIGHT;
     expected.x_speed = mode & 1 ? -0x2000 : 0x2000;
     expected.y_speed = -0x1000;
     expected.animation_step.fields.duration = 9;
@@ -45,13 +45,13 @@ static u32 height_case(u32 mode)
         assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
     for (i = 0; i < sizeof(g_Player) / 4; i++)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    assert(cur_random == 1 && hover_sentry_animations[0][0].packed == 0x0001000A);
-    actual = (u8)obj.unk6 | ((u32)obj.unk15 << 8) | ((u32)(u16)(obj.x_speed / 0x2000) << 16);
+    assert(cur_random == 1 && hover_sentry_animations[0][0].packed == C_TEST_STEP(0x0001000A));
+    actual = (u8)obj.unk6 | ((u32)C_TEST_PSX_FACING(obj.unk15) << 8) | ((u32)(u16)(obj.x_speed / 0x2000) << 16);
     return actual;
 }
 static const u32 hover_sentry_player_height_cases_expected[] = { 0x14000u, 0xFFFF0000u, 0x14000u, 0xFFFF0000u };
 
-static const u32 func_8004C394_expected[] = { 1u, 0u, 0x40u, 4u, 0u, 0u, 0u, 1u, 0u, 0xFFFFFFFFu, 0u };
+static const u32 func_8004C394_expected[] = { 1u, 0u, PLAYER_FACING_RIGHT, 4u, 0u, 0u, 0u, 1u, 0u, 0xFFFFFFFFu, 0u };
 static u32 test_func_8004C394(u32 row)
 {
     u32 observed_values[11];
@@ -65,7 +65,7 @@ static u32 test_func_8004C394(u32 row)
     memset(&g_Player, 0, sizeof(g_Player));
     memset(&cur_random, 0, sizeof(cur_random));
     obj.unk6 = -1;
-    obj.unk15 = 64;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_speed = -1;
     g_Player.y_pos.i.hi = 65;
     obj.x_pos.val = -1;
@@ -184,13 +184,13 @@ static void hs_dash_left(void)
 static void hs_dash_right(void)
 {
     HS(7, 0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     func_8004C394(&so);
 }
 static void hs_dash_turn_a(void)
 {
     HS(7, 1);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_speed = -1;
     g_Player.x_pos.i.hi = 0x100;
     g_Player.y_pos.i.hi = 0x60;
@@ -217,7 +217,7 @@ static void hs_dash_turn_c(void)
 static void hs_dash_wall_right(void)
 {
     HS(7, 1);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_speed = 0x10000;
     so.collision_flags = 1;
     func_8004C394(&so);
@@ -348,7 +348,7 @@ static u32 launch_aim(u32 row)
     obj.unk5 = 5;
     obj.unk6 = 3;
     obj.unk7E = waiting ? 2 : 1;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.x_speed = 0x12345;
@@ -366,14 +366,14 @@ static u32 launch_aim(u32 row)
     if (!waiting) {
         expected.unk6 = 4;
         expected.ext.main_12.unk8C = 0;
-        expected.unk15 = aims[aim].facing;
+        expected.unk15 = aims[aim].facing ? PLAYER_FACING_RIGHT : 0;
         expected.x_speed = aims[aim].vx;
         expected.y_speed = aims[aim].vy;
         expected.x_accel = expected.gravity = 0;
         expected.unk17 = 8;
         expected.previous_animation_index = 0xFF;
         expected.animation_cursor = (const u8*)hover_sentry_animations[8];
-        expected.animation_step.packed = 0x1C010002;
+        expected.animation_step.packed = C_TEST_STEP(0x1C010002);
     }
     expected.animation_step.fields.duration = 1;
     SP_CUR_MAIN_OBJ = &obj;
@@ -384,7 +384,7 @@ static u32 launch_aim(u32 row)
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
-    assert(hover_sentry_animations[7][0].packed == 0x19010002 && hover_sentry_animations[8][0].packed == 0x1C010002);
+    assert(hover_sentry_animations[7][0].packed == C_TEST_STEP(0x19010002) && hover_sentry_animations[8][0].packed == C_TEST_STEP(0x1C010002));
     return 1;
 }
 
@@ -416,7 +416,7 @@ static u32 timer_zero(u32 row)
     func_800292D0(records);
     SP_CUR_MAIN_OBJ = &main_objects[0];
     hover_sentry_update(&main_objects[0]);
-    assert(main_objects[0].state == 1 && main_objects[0].unk5 == 6 && main_objects[0].unk6 == 0 && main_objects[0].unk7C == 144 && main_objects[0].y_speed == 16384 && main_objects[0].animation_step.packed == 0x08010006);
+    assert(main_objects[0].state == 1 && main_objects[0].unk5 == 6 && main_objects[0].unk6 == 0 && main_objects[0].unk7C == 144 && main_objects[0].y_speed == 16384 && main_objects[0].animation_step.packed == C_TEST_STEP(0x08010006));
     c_test_copy_words((u32*)expected, (u32*)main_objects, sizeof(expected) / 4);
     player = g_Player;
     entity = g_Entity;
@@ -426,10 +426,10 @@ static u32 timer_zero(u32 row)
     c_test_copy_words((u32*)cameras, (u32*)background_objects, sizeof(cameras) / 4);
     for (i = 0; i < 61; i++)
         func_8004C210(&main_objects[0]);
-    assert(main_objects[0].unk6 == 1 && main_objects[0].unk7C == 5 && main_objects[0].y_pos.val == 104 * 65536 + 49152 && main_objects[0].animation_step.packed == 0x0E010005);
+    assert(main_objects[0].unk6 == 1 && main_objects[0].unk7C == 5 && main_objects[0].y_pos.val == 104 * 65536 + 49152 && main_objects[0].animation_step.packed == C_TEST_STEP(0x0E010005));
     for (i = 0; i < 26; i++)
         func_8004C210(&main_objects[0]);
-    assert(main_objects[0].unk6 == 2 && main_objects[0].unk7C == 5 && main_objects[0].y_pos.val == 49152 && main_objects[0].animation_step.packed == 0x07010001);
+    assert(main_objects[0].unk6 == 2 && main_objects[0].unk7C == 5 && main_objects[0].y_pos.val == 49152 && main_objects[0].animation_step.packed == C_TEST_STEP(0x07010001));
     for (i = 0; i < 5; i++)
         func_8004C210(&main_objects[0]);
     rng = 0x1234;
@@ -445,7 +445,7 @@ static u32 timer_zero(u32 row)
     expected[0].attack_box = &D_800FB694;
     expected[0].unk17 = 10;
     expected[0].animation_cursor = (const u8*)hover_sentry_animations[10];
-    expected[0].animation_step.packed = 0x0D010006;
+    expected[0].animation_step.packed = C_TEST_STEP(0x0D010006);
     assert(c_test_word_difference((u32*)main_objects, (u32*)expected, sizeof(expected) / 4) == 0);
     hover_sentry_check_player_near(&main_objects[0]);
     assert(c_test_word_difference((u32*)main_objects, (u32*)expected, sizeof(expected) / 4) == 0);
@@ -457,7 +457,363 @@ static u32 timer_zero(u32 row)
     return 1;
 }
 
+extern struct Unk_unk68 D_800FB69C;
+static const struct {
+    u8 phase, event, water;
+    u16 last_tile;
+    u32 expected;
+} attack_cases[] = {
+    { 0, 1, 0, 0, 0x0601u },
+    { 1, 1, 0, 0, 0x10702u },
+    { 2, 1, 0, 0, 0x0A000503u },
+    { 4, 0, 1, 0x1234, 0x000A0504u },
+    { 4, 0, 0, 0x1234, 0x12340504u },
+};
+static u8 attack_tilemap[1];
+static u16 attack_pixels[512];
+static u32 attack_attrs[2];
+static u32 attack(u32 row)
+{
+    struct MainObj obj;
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    u32 observed, i;
+    memset(&obj, 0, sizeof(obj));
+    attack_tilemap[0] = 1;
+    for (i = 0; i < COUNT(attack_pixels); i++)
+        attack_pixels[i] = 1;
+    attack_attrs[0] = 0;
+    attack_attrs[1] = C_TEST_PSX_WORD(attack_cases[row].water ? 0x24 : 0);
+    SP_BG_TILEMAP = attack_tilemap;
+    TEST_BG_TILE_PIXELS = (u8*)attack_pixels;
+    TEST_BG_TILE_ATTRS = (u8*)attack_attrs;
+    layout_size = 1;
+    layout_width = 1;
+    obj.active = 0x41;
+    obj.id = 12;
+    obj.state = 1;
+    obj.unk5 = 5;
+    obj.unk6 = attack_cases[row].phase;
+    obj.x_pos.i.hi = 160;
+    obj.y_pos.i.hi = 120;
+    obj.ext.main_12.unk8C = attack_cases[row].last_tile;
+    obj.animation_table = (const u8* const*)hover_sentry_animations;
+    set_animation(&obj, 5);
+    obj.animation_step.fields.event = attack_cases[row].event;
+    if (attack_cases[row].phase != 1)
+        obj.terrain_box = &D_800FB69C;
+    else
+        obj.terrain_box = NULL;
+    SP_CUR_MAIN_OBJ = &obj;
+    func_8004BF5C(&obj);
+    SP_CUR_MAIN_OBJ = current;
+    observed = (u8)obj.unk6 | (u32)obj.unk17 << 8 | (u32)(obj.terrain_box == &D_800FB69C && attack_cases[row].phase == 1) << 16;
+    observed |= attack_cases[row].phase == 4 ? (u32)obj.ext.main_12.unk8C << 16 : (u32)(u8)obj.unk7E << 24;
+    return c_test_observe(0, row, &observed, &attack_cases[row].expected, 1);
+}
+
+void hover_sentry_main(struct MainObj*);
+void hover_sentry_bob(struct MainObj*);
+void func_8004BCFC(struct MainObj*);
+void func_8004C56C(struct MainObj*);
+void hover_sentry_despawn(struct MainObj*);
+void hover_sentry_check_player_near(struct MainObj*);
+extern struct Unk_unk68 D_800FB690, D_800FB69C;
+#define HS2(step, phase) (HS(step, phase), so.active = 0x41, so.state = 1, so.terrain_box = &D_800FB690, state_terrain(0), memset(weapon_objects, 0, sizeof(weapon_objects)), SPIKE_IMMUNE_SET(g_Player, 1))
+#define HS2X() (state_extra = so.state | so.ext.main_12.unk88 << 8 | so.ext.main_12.unk80 << 16 | (u32)so.ext.main_12.saved_unk5 << 24)
+static void hs2_main_dive_away(void)
+{
+    HS2(5, 4), so.terrain_box = &D_800FB69C, so.x_pos.i.hi = 0x400, hover_sentry_main(&so), HS2X();
+}
+static void hs2_main_hit(void) { HS2(5, 0), so.hp = 3, state_hit(&so, 0, 0, 1), hover_sentry_main(&so), HS2X(); }
+static void hs2_main_defeat(void) { HS2(2, 0), so.hp = 1, state_hit(&so, 0, 0, 1), hover_sentry_main(&so), HS2X(); }
+#define BOB(rising, speed) (HS2(2, 0), so.ext.main_12.unk88 = rising, so.y_speed = speed, so.gravity = 0x800, hover_sentry_bob(&so), HS2X())
+static void hs2_bob_sink(void)
+{
+    BOB(0, -0x10000);
+}
+static void hs2_bob_top(void) { BOB(1, -0x100); }
+static void hs2_bob_rise(void) { BOB(1, 0x10000); }
+static void hs2_drop_wait(void) { HS2(4, 0), so.unk7E = 1, func_8004BCFC(&so), HS2X(); }
+static void hs2_drop_lucky(void) { HS2(4, 0), so.unk2 = 2, cur_random = 0, func_8004BCFC(&so), HS2X(); }
+static void hs2_drop_short(void) { HS2(4, 0), so.unk2 = 2, cur_random = 1, func_8004BCFC(&so), HS2X(); }
+static void hs2_drop_plain(void) { HS2(4, 0), cur_random = 5, func_8004BCFC(&so), HS2X(); }
+static void hs2_fall_air(void) { HS2(4, 1), so.y_speed = -0x10000, func_8004BCFC(&so), HS2X(); }
+static void hs2_fall_splash(void) { HS2(4, 1), state_terrain(0x24), so.y_speed = -0x10000, func_8004BCFC(&so), HS2X(); }
+static void hs2_fall_land(void) { HS2(4, 1), state_terrain(0x24), so.unk7 = 1, so.collision_flags = 4, g_Player.x_pos.i.hi = 0x100, func_8004BCFC(&so), HS2X(); }
+static void hs2_sink_land(void) { HS2(4, 2), so.y_speed = 0x10000, g_Player.y_pos.i.hi = 0x80, func_8004BCFC(&so), HS2X(); }
+static void hs2_sink(void) { HS2(4, 2), so.y_speed = -0x10000, g_Player.y_pos.i.hi = 0x40, func_8004BCFC(&so), HS2X(); }
+static void hs2_windup_open_wait(void) { HS2(5, 1), func_8004BF5C(&so), HS2X(); }
+static void hs2_windup_aim_wait(void) { HS2(5, 2), func_8004BF5C(&so), HS2X(); }
+static void hs2_dive_same_tile(void) { HS2(5, 4), so.terrain_box = &D_800FB69C, state_terrain(0x24), so.ext.main_12.unk8C = (0x80 - 5 + 17) / 16, func_8004BF5C(&so), HS2X(); }
+static void hs2_skim_splashed(void) { HS2(8, 0), state_terrain(0x24), so.unk7 = 1, func_8004C56C(&so), HS2X(); }
+static void hs2_despawn_carried(void) { HS2(0, 0), so.state = 2, so.unk2 = 2, hover_sentry_despawn(&so), HS2X(); }
+static void hs2_despawn(void) { HS2(0, 0), so.state = 2, hover_sentry_despawn(&so), HS2X(); }
+static void hs2_near_left(void) { HS2(2, 0), so.unk7C = 1, g_Player.x_pos.i.hi = 0x20, hover_sentry_check_player_near(&so), HS2X(); }
+static void hs2_far_right(void) { HS2(2, 0), so.unk7C = 1, g_Player.x_pos.i.hi = 0x180, hover_sentry_check_player_near(&so), HS2X(); }
+static void (*const hs2_cases[])(void) = {
+    hs2_main_dive_away,
+    hs2_main_hit,
+    hs2_main_defeat,
+    hs2_bob_sink,
+    hs2_bob_top,
+    hs2_bob_rise,
+    hs2_drop_wait,
+    hs2_drop_lucky,
+    hs2_drop_short,
+    hs2_drop_plain,
+    hs2_fall_air,
+    hs2_fall_splash,
+    hs2_fall_land,
+    hs2_sink_land,
+    hs2_sink,
+    hs2_windup_open_wait,
+    hs2_windup_aim_wait,
+    hs2_dive_same_tile,
+    hs2_skim_splashed,
+    hs2_despawn_carried,
+    hs2_despawn,
+    hs2_near_left,
+    hs2_far_right,
+};
+static const u32 hs2_expected[] = {
+    0x405u,
+    0x0u,
+    0x4000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x41000000u,
+    0x5u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x20001u,
+    0x5000001u,
+    0x41002100u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x8000u,
+    0x0u,
+    0x80000000u,
+    0x1u,
+    0x102u,
+    0x41002100u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFEF800u,
+    0x80000u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFF8000u,
+    0xFFF80000u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xF800u,
+    0x80000u,
+    0x0u,
+    0x0u,
+    0x101u,
+    0x41000000u,
+    0x4u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x1000104u,
+    0xFFFF0000u,
+    0x800000u,
+    0x0u,
+    0x80000u,
+    0x0u,
+    0x2u,
+    0x3u,
+    0x100001u,
+    0x41000000u,
+    0x1000104u,
+    0xFFFF0000u,
+    0x800000u,
+    0x0u,
+    0x80000u,
+    0x0u,
+    0x2u,
+    0x3u,
+    0xF0001u,
+    0x41000000u,
+    0x1000104u,
+    0xFFFF0000u,
+    0x800000u,
+    0x0u,
+    0x80000u,
+    0x0u,
+    0x2u,
+    0x3u,
+    0x50001u,
+    0x41000000u,
+    0x204u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFF0000u,
+    0x0u,
+    0x9u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x10104u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x5u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x400Au,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x5u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x10000u,
+    0x0u,
+    0xAu,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x204u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x105u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x205u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x405u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x10008u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x1u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x2u,
+    0x1u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+};
+static u32 hs2_run(u32 row)
+{
+    return state_run(hs2_cases[row], row, &hs2_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "hover_sentry_branch_steps", 0, 0, COUNT(hs2_cases), hs2_run },
     { "hover_sentry_states", 0, 0, COUNT(hover_sentry_states_cases), test_hover_sentry_states },
     { "hover_sentry_player_height", NULL, hover_sentry_player_height_cases_expected, COUNT(hover_sentry_player_height_cases_expected), height_case },
     { "func_8004C394", 0, 0, 1, test_func_8004C394 },
@@ -465,6 +821,7 @@ const struct CTestGroup c_test_groups[] = {
     { "hover_sentry_signed_init_defaults", hover_sentry_signed_init_defaults_cases, hover_sentry_signed_init_defaults_cases_expected, COUNT(hover_sentry_signed_init_defaults_cases), 0 },
     { "all_compass_launch_clamps_and_countdown", NULL, NULL, COUNT(aims) + 1, launch_aim },
     { "supported_subtype1_constructor_92_own_steps_reach_timer_zero_guard", NULL, NULL, 1, timer_zero },
+    { "attack_windup_events_and_dive_splashes", NULL, NULL, COUNT(attack_cases), attack },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(hover_sentry_states_cases) + COUNT(hover_sentry_player_height_cases_expected) + 1 + COUNT(pool_full_cases) + COUNT(hover_sentry_signed_init_defaults_cases) + COUNT(aims) + 1 + 1;
+const u32 c_test_count = COUNT(hs2_cases) + COUNT(hover_sentry_states_cases) + COUNT(hover_sentry_player_height_cases_expected) + 1 + COUNT(pool_full_cases) + COUNT(hover_sentry_signed_init_defaults_cases) + COUNT(aims) + 1 + 1 + COUNT(attack_cases);

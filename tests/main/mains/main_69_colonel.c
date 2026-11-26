@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_69_colonel.h"
 #include "main/1AC84.h"
 #include "main/55C4.h"
@@ -56,21 +57,17 @@ static u32 chain_case(u32 mode)
         v->bg_offset = 2;
         v->unk40 = obj.unk40;
         v->unk42 = obj.unk42;
-        v->unk16 = 6;
+        v->unk16 = VISUAL_SATURN_LAYER(6);
         v->unk3C = (void*)frames;
         v->animation_table = (u32**)obj.animation_table;
         v->unk5C.owner = PLAYER_OBJECT(&obj);
         v->unk50 = i == 0 ? PLAYER_OBJECT(&obj) : PLAYER_OBJECT(&visual_objects[slots[i - 1]]);
     }
     colonel_spawn_afterimages(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(expected) / 4; i++)
-        assert(((u32*)visual_objects)[i] == ((u32*)expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(visual_objects, expected, sizeof(expected));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     actual = visual_objects[31].active | ((u32)visual_objects[29].active << 8) | ((u32)visual_objects[27].active << 16);
     return actual;
 }
@@ -126,7 +123,7 @@ static u32 defeat_case(u32 mode)
     memcpy(pool_before, effect_objects, sizeof(pool_before));
     memcpy(bg_before, background_objects, sizeof(bg_before));
     colonel_defeat_start(&obj);
-    before.unk15 = player_right ? 0x40 : 0;
+    before.unk15 = player_right ? PLAYER_FACING_RIGHT : 0;
     before.on_screen = 1;
     before.unk6 += airborne ? 1 : 3;
     before.unk17 = airborne ? 10 : 24;
@@ -140,22 +137,17 @@ static u32 defeat_case(u32 mode)
     }
     player_before.script_state = 1;
     player_before.script_action = 0x14;
-    player_before.script_facing = player_right ? 0 : 0x40;
-    player_before.spike_immune = 1;
+    player_before.script_facing = player_right ? 0 : PLAYER_FACING_RIGHT;
+    SPIKE_IMMUNE_SET(player_before, 1);
     engine_before.gameplay_locked = 1;
     ((u32*)&pool_before[17])[0] = ((u32*)&pool_before[17])[1] = 0;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)effect_objects)[i] == ((u32*)pool_before)[i]);
-    for (i = 0; i < sizeof(bg_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)bg_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(effect_objects, pool_before, sizeof(pool_before));
+    c_test_same_words(background_objects, bg_before, sizeof(bg_before));
     assert(g_FilterAmountR == 0 && g_FilterAmountG == 0 && g_FilterAmountB == 0 && need_palette_load == 0x81);
-    return (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)(u8)g_Player.script_facing << 16) | ((u32)obj.unk15 << 24);
+    return (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)C_TEST_PSX_FACING(g_Player.script_facing) << 16) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 24);
 }
 static const u32 colonel_defeat_animation_context_cases_expected[] = { 0x40001805u, 0x401805u, 0x40000A03u, 0x400A03u };
 
@@ -184,14 +176,10 @@ static u32 hall_case(u32 mode)
     engine_before = engine_obj;
     memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
     colonel_intro_hall_wait_player(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
     return obj.unk7 | ((u32)(u16)obj.unk7C << 8);
 }
 static const u32 colonel_hall_far_player_cases_expected[] = { 0x2702u, 0x2702u };
@@ -258,7 +246,7 @@ static u32 test_colonel_dash_brake(u32 row)
     memset(&obj, 0, sizeof(obj));
     memset(&D_801044FC, 0, sizeof(D_801044FC));
     memset(&D_80104500, 0, sizeof(D_80104500));
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.x_speed = c->x_speed;
     colonel_dash_brake(&obj);
     observed_values[0] = (u32)obj.unk5;
@@ -377,7 +365,7 @@ static u32 test_func_80087A00(u32 row)
     struct MainObj obj;
     memset(&obj, 0, sizeof(obj));
     memset(&background_objects, 0, sizeof(background_objects));
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.x_speed = c->x_speed;
     obj.x_pos.i.hi = c->hi;
     func_80087A00(&obj);
@@ -1064,13 +1052,13 @@ static u32 colonel_pages[8];
         u8 flag = engine_obj.unk25;                                         \
         struct MainObj* boss = engine_obj.boss_ptr;                         \
         state_reset(0, 0, 0);                                               \
-        D_801406A8 = colonel_pages;                                         \
+        test_stage_graphics(colonel_pages);                                 \
         so.ext.main_69.effect = &effect_objects[0];                         \
         effect_objects[0].active = busy;                                    \
         so.ext.main_69.state.bytes.variant = kind;                          \
         func_80086008(&so);                                                 \
         state_extra = engine_obj.unk25 | (engine_obj.boss_ptr == &so) << 8; \
-        D_801406A8 = pages;                                                 \
+        test_stage_graphics(pages);                                         \
         engine_obj.unk25 = flag;                                            \
         engine_obj.boss_ptr = boss;                                         \
     } while (0)
@@ -1194,7 +1182,7 @@ static u32 strike(u32 row)
     obj.hp = 48;
     obj.unk5 = 7;
     obj.unk6 = 6;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = layer;
     obj.x_pos.i.hi = 4688;
     obj.y_pos.i.hi = 928;
@@ -1206,7 +1194,7 @@ static u32 strike(u32 row)
     visual_objects[0].unk5C.value = 1;
     visuals_expected[0] = visual_objects[0];
     set_animation_frame(ANIMATED_OBJECT(&obj), 7, 16);
-    assert(obj.animation_step.packed == 0x33000008);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x33000008));
     expected = obj;
     expected.unk7C = 80;
     expected.unk6++;
@@ -1270,14 +1258,14 @@ static u32 strike_pools(u32 row)
     obj.unk5 = 7;
     obj.unk6 = 4;
     obj.unk7C = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.on_screen = 7;
     obj.ext.main_69.linked_object = &visual_objects[0];
     obj.x_pos.val = (far ? 384 : 160) * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.animation_table = (const u8* const*)D_80104770;
     set_animation_frame(ANIMATED_OBJECT(&obj), 7, event ? 5 : 0);
-    assert(obj.animation_step.packed == (event ? 0x28010101 : 0x24010002));
+    assert(obj.animation_step.packed == (event ? C_TEST_STEP(0x28010101) : C_TEST_STEP(0x24010002)));
     expected = obj;
     expected.on_screen = !far;
     if (event) {
@@ -1353,7 +1341,7 @@ static u32 flash(u32 row)
     set_animation(&obj, 1);
     for (i = 0; i < 40; i++)
         animate_object(ANIMATED_OBJECT(&obj));
-    assert(obj.animation_step.packed == 0x0A010001 && obj.animation_cursor == (const u8*)D_80104770[1] + 36);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x0A010001) && obj.animation_cursor == (const u8*)D_80104770[1] + 36);
     c_test_zero_words((u32*)effect_objects, sizeof(effect_objects) / 4);
     for (i = 0; i < COUNT(effect_objects); i++)
         effect_objects[i].active = 1;
@@ -1374,7 +1362,7 @@ static u32 flash(u32 row)
     expected.unk17 = 2;
     expected.previous_animation_index = 0xFF;
     expected.animation_cursor = D_80104770[2];
-    expected.animation_step.packed = 0x0C010001;
+    expected.animation_step.packed = C_TEST_STEP(0x0C010001);
     colonel_intro_hall_flash(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
     assert(c_test_word_difference((u32*)effect_objects, (u32*)expected_effects_colonel_hall_flash_effect_capacity, sizeof(expected_effects_colonel_hall_flash_effect_capacity) / 4) == 0);
@@ -1477,7 +1465,7 @@ static u32 port_script_wave(u32 row)
     u16 rng;
     u8 dirty;
     (void)row;
-    c_test_copy_words(record_before, (u32*)&stage_object_records_10_0[2], 2);
+    memcpy(record_before, &stage_object_records_10_0[2], 8);
     c_test_zero_words((u32*)main_objects, sizeof(main_objects) / 4);
     c_test_zero_words((u32*)shot_objects, sizeof(shot_objects) / 4);
     c_test_zero_words((u32*)weapon_objects, sizeof(weapon_objects) / 4);
@@ -1515,9 +1503,9 @@ static u32 port_script_wave(u32 row)
     colonel->y_pos.i.hi = 928;
     colonel->unk18 = colonel->x_pos;
     colonel->unk1C = colonel->y_pos;
-    colonel->unk16 = 5;
+    colonel->unk16 = VISUAL_SATURN_LAYER(5);
     colonel->unk40 = 0xB0;
-    colonel->unk42 = 0x7804;
+    colonel->unk42 = OBJECT_CLUT(0x7804);
     colonel->sprite_frames = (u8*)frames_colonel_port_script_saber_waves;
     colonel->animation_table = (const u8* const*)D_80104770;
     colonel->terrain_box = &D_801044F8;
@@ -1550,7 +1538,7 @@ static u32 port_script_wave(u32 row)
     expected[0].unk17 = 4;
     expected[0].previous_animation_index = 255;
     expected[0].animation_cursor = D_80104770[4];
-    expected[0].animation_step.packed = 0x14010006;
+    expected[0].animation_step.packed = C_TEST_STEP(0x14010006);
     expected[0].hurt_box = &D_80104508;
     expected[0].attack_box = &D_80104504;
     expected[0].ext.main_69.state.bytes.wave_delay = 20;
@@ -1560,7 +1548,7 @@ static u32 port_script_wave(u32 row)
     assert(c_test_word_difference((u32*)main_objects, (u32*)expected, sizeof(expected) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, sizeof(visuals) / 4) == 0);
     assert(zero_difference((u32*)shot_objects, sizeof(shot_objects) / 4) == 0 && zero_difference((u32*)weapon_objects, sizeof(weapon_objects) / 4) == 0 && zero_difference((u32*)effect_objects, sizeof(effect_objects) / 4) == 0 && zero_difference((u32*)misc_objects, sizeof(misc_objects) / 4) == 0);
     assert(c_test_word_difference((u32*)&g_Player, (u32*)&player, sizeof(player) / 4) == 0 && c_test_word_difference((u32*)&g_Entity, (u32*)&entity, sizeof(entity) / 4) == 0 && c_test_word_difference((u32*)&engine_obj, (u32*)&engine, sizeof(engine) / 4) == 0 && c_test_word_difference((u32*)&main_bss_state, (u32*)&main_before, sizeof(main_before) / 4) == 0 && c_test_word_difference((u32*)background_objects, (u32*)cameras, sizeof(cameras) / 4) == 0);
-    assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed && cur_random == rng && need_palette_load == dirty && SP_CUR_MAIN_OBJ == colonel && c_test_word_difference((u32*)&stage_object_records_10_0[2], record_before, 2) == 0);
+    assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed && cur_random == rng && need_palette_load == dirty && SP_CUR_MAIN_OBJ == colonel && memcmp(&stage_object_records_10_0[2], record_before, 8) == 0);
     for (i = 0; i < COUNT(frames_colonel_port_script_saber_waves); i++)
         assert(frames_colonel_port_script_saber_waves[i] == (i < 8 ? 64u : 0));
     for (i = 0; i < 6; i++)
@@ -1616,7 +1604,7 @@ static u32 defeat(u32 row)
     obj.unk6 = 8;
     obj.unk7 = 9;
     obj.on_screen = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x9234;
     obj.hp = hits[hit].lethal ? 1 : 48;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -1666,7 +1654,7 @@ static u32 defeat(u32 row)
         expected.unk5 = variant;
         expected.unk42 &= 0x7FFF;
         expected.on_screen = 1;
-        player_expected.spike_immune = 1;
+        SPIKE_IMMUNE_SET(player_expected, 1);
     } else if (!kind && hits[hit].weapon != 255) {
         expected.collision_data = D_801060F0;
         expected.ext.main_69.state.bytes.unk8D = 64;
@@ -1692,6 +1680,7 @@ void colonel_flash_strike_vanish(struct MainObj*);
 void colonel_teleport_slash_vanish(struct MainObj*);
 extern void* D_80104770[25];
 extern struct Unk_unk68 D_801044FC, D_80104500;
+#ifndef VERSION_DEMO
 static u32 gfx[48], frames_aiming_laser_vanishing_boss[48];
 static u32 vanish(u32 row)
 {
@@ -1718,7 +1707,7 @@ static u32 vanish(u32 row)
     g_Player.hp = 24;
     g_Player.weapon = 6;
     g_Player.weapon_energy[6] = 48;
-    g_Player.unk15 = face ? 0x40 : 0;
+    g_Player.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     g_Player.x_pos.i.hi = 4620;
     g_Player.y_pos.i.hi = 928;
     player_before = g_Player;
@@ -1728,7 +1717,7 @@ static u32 vanish(u32 row)
     reticle.unk2 = 3;
     reticle.owner = &g_Player;
     aiming_laser_reticle_init(&reticle, &g_Player);
-    assert(reticle.state == 1 && reticle.unk17 == 1 && reticle.animation_step.packed == 0x00010001 && reticle.on_screen == 1);
+    assert(reticle.state == 1 && reticle.unk17 == 1 && reticle.animation_step.packed == C_TEST_STEP(0x00010001) && reticle.on_screen == 1);
     reticle_before = reticle;
     memset(&target, 0, sizeof(target));
     target.active = 0x41;
@@ -1738,7 +1727,7 @@ static u32 vanish(u32 row)
     target.hurt_box = &D_801044FC;
     target.attack_box = &D_80104500;
     target.unk5 = flash ? 7 : 4;
-    target.unk15 = face ? 0x40 : 0;
+    target.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     target.x_pos.i.hi = 4688;
     target.y_pos.i.hi = 928;
     target.animation_table = (const u8* const*)D_80104770;
@@ -1760,9 +1749,290 @@ static u32 vanish(u32 row)
     assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames_aiming_laser_vanishing_boss && D_8013E198[2] == -1);
     return 1;
 }
+#define VANISH_CASES 4
+#else
+#define VANISH_CASES 0
+#endif
+
+void colonel_intro(struct MainObj*);
+void colonel_guard(struct MainObj*);
+void colonel_teleport_slash(struct MainObj*);
+void colonel_dash(struct MainObj*);
+void colonel_saber_waves(struct MainObj*);
+void colonel_jump_slam(struct MainObj*);
+void colonel_death(struct MainObj*);
+
+static struct MainObj cx;
+#define CX_IS(a, b) ((const void*)(a) == (const void*)(b))
+static void cx_reset(u8 unk5, u8 unk6, u8 unk7)
+{
+    memset(&cx, 0, sizeof(cx));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(g_QuadObjects, 0, sizeof(g_QuadObjects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    background_objects[0].x_pos.i.hi = 0x180;
+    background_objects[0].unk1E = 0x180;
+    g_Player.x_pos.i.hi = 0x100;
+    D_80141F50[2] = state_sound_rows;
+    cur_random = 0;
+    cx.active = 0x41;
+    cx.id = 69;
+    cx.state = 1;
+    cx.unk5 = unk5;
+    cx.unk6 = unk6;
+    cx.unk7 = unk7;
+    cx.hp = 0x30;
+    cx.x_pos.i.hi = 0x200;
+    cx.y_pos.i.hi = 0x100;
+    cx.animation_table = (const u8* const*)D_80104770;
+    set_animation(&cx, 0);
+}
+static void cx_step(s8 event, s8 relative)
+{
+    cx.animation_step.fields.duration = 5;
+    cx.animation_step.fields.event = event;
+    cx.animation_step.fields.relative_step = relative;
+}
+
+static void clx_hall(void)
+{
+    struct EngineObj engine = engine_obj;
+    cx_reset(2, 1, 1);
+    cx.unk7C = 1;
+    colonel_intro(&cx);
+    assert(cx.unk7 == 2 && cx.unk7C == 0x3C && g_QuadObjects[0].id == 0xE && g_QuadObjects[0].unk2 == 0);
+    cx.unk7C = 2;
+    colonel_intro(&cx);
+    assert(cx.unk7 == 2 && cx.unk7C == 1);
+    engine_obj.character_state.bytes[8] = 1;
+    abc_object.unkC = 0;
+    colonel_intro(&cx);
+    assert(cx.unk7 == 3 && abc_object.unkC == 0x80 && abc_object.unkA == 0x3C);
+    colonel_intro(&cx);
+    assert(cx.unk7 == 3 && g_QuadObjects[1].active == 0);
+    abc_object.unkC = 0;
+    colonel_intro(&cx);
+    assert(cx.unk7 == 4 && cx.unk7C == 0x3C && g_QuadObjects[1].id == 0xE && g_QuadObjects[1].unk2 == 1);
+    cx.unk7C = 2;
+    colonel_intro(&cx);
+    assert(cx.unk7 == 4 && cx.unk7C == 1);
+    colonel_intro(&cx);
+    assert(cx.unk7 == 5 && cx.unk7C == 0x30 && cx.unk17 == 2);
+    cx.unk7C = 3;
+    colonel_intro(&cx);
+    colonel_intro(&cx);
+    assert(cx.unk7 == 5 && cx.unk7C == 1);
+    engine_obj.enable_boss = 0;
+    engine_obj.unk36.value = 0;
+    colonel_intro(&cx);
+    assert(cx.unk7 == 6 && cx.unk17 == 1 && engine_obj.enable_boss == 1 && engine_obj.unk36.value == 1);
+    cx_step(0, 1);
+    colonel_intro(&cx);
+    assert(cx.unk7 == 6 && effect_objects[0].active == 0);
+    cx_step(0, 0);
+    colonel_intro(&cx);
+    assert(cx.unk7 == 7 && cx.unk17 == 2 && cx.unk7E == 3 && cx.unk7C == 1 && effect_objects[0].active == 0x41 && effect_objects[0].id == 3);
+    colonel_intro(&cx);
+    assert(cx.unk7 == 8 && effect_objects[1].id == 2 && effect_objects[1].unk2 == 0x10);
+    D_80173C84 = 0;
+    engine_obj.unk36.timer = 2;
+    cx.hp = 0x10;
+    colonel_intro(&cx);
+    assert(cx.hp == 0x10 && engine_obj.unk36.timer == 1);
+    engine_obj.unk36.timer = 0;
+    cx.unk7E = 2;
+    colonel_intro(&cx);
+    assert(cx.hp == 0x11 && cx.unk7E == 1);
+    cx.hp = 0x2F;
+    g_Player.script_state = 1;
+    colonel_intro(&cx);
+    assert(cx.hp == 0x30 && cx.unk7E == 0 && cx.unk5 == 3 && cx.unk6 == 0 && cx.unk7 == 0 && cx.ext.main_69.script != NULL && g_Player.script_state == 0);
+    engine_obj = engine;
+}
+static void clx_guard(void)
+{
+    static u8 used_up[1] = { 0xFF };
+    cx_reset(3, 0, 0);
+    cx.ext.main_69.script = used_up;
+    colonel_guard(&cx);
+    assert(cx.ext.main_69.script != used_up && CX_IS(cx.hurt_box, &D_801044FC) && CX_IS(cx.collision_data, D_80108084) && cx.unk15 == 0);
+    cx.unk5 = 3;
+    cx.unk6 = 1;
+    cx.unk7C = 5;
+    weapon_objects[0].active = 1;
+    weapon_objects[0].unk50 = (const u8*)&D_801044FC;
+    weapon_objects[0].x_pos.i.hi = 0x1F0;
+    weapon_objects[0].x_vel.val = 0x10000;
+    colonel_guard(&cx);
+    assert(cx.unk6 == 2 && cx.unk7C == 0x10);
+    cx.unk7C = 2;
+    colonel_guard(&cx);
+    assert(cx.unk6 == 2 && cx.unk7C == 1);
+    colonel_guard(&cx);
+    assert(cx.unk6 == 3 && cx.unk7C == 0x3C && cx.unk17 == 9 && CX_IS(cx.collision_data, D_801060F0));
+    cx.unk7C = 2;
+    colonel_guard(&cx);
+    assert(cx.unk6 == 3 && cx.unk7C == 1);
+    cx.ext.main_69.state.bytes.unk8D = 1;
+    colonel_guard(&cx);
+    assert(cx.unk6 == 0 && CX_IS(cx.collision_data, D_80108084) && cx.ext.main_69.state.bytes.unk8D == 0);
+}
+static void clx_teleport(void)
+{
+    cx_reset(4, 1, 0);
+    cx.x_accel = FIXED(1);
+    cx.unk7C = 2;
+    colonel_teleport_slash(&cx);
+    assert(cx.unk6 == 1 && cx.unk7C == 1 && cx.x_speed == FIXED(1) && cx.x_pos.i.hi == 0x201);
+    cx.unk7C = 3;
+    colonel_teleport_slash(&cx);
+    assert(cx.unk7C == 2 && cx.x_speed == FIXED(2) && cx.x_pos.i.hi == 0x1FF);
+    cx.unk7C = 1;
+    colonel_teleport_slash(&cx);
+    assert(cx.unk6 == 2 && cx.unk7C == 0x28 && cx.on_screen == 0);
+    cx.unk7C = 2;
+    colonel_teleport_slash(&cx);
+    assert(cx.unk6 == 2 && cx.unk7C == 1);
+    colonel_teleport_slash(&cx);
+    assert(cx.unk6 == 3 && cx.x_pos.i.hi == 0x130 && cx.unk15 == 0 && cx.unk17 == 5 && cx.unk7C == 0x1E && CX_IS(cx.hurt_box, &D_80104508));
+    cx.unk6 = 2;
+    cx.unk7C = 1;
+    g_Player.x_pos.i.hi = 0x240;
+    colonel_teleport_slash(&cx);
+    assert(cx.x_pos.i.hi == 0x210 && cx.unk15 == PLAYER_FACING_RIGHT);
+    cx_step(0, 1);
+    colonel_teleport_slash(&cx);
+    assert(cx.unk6 == 3 && shot_objects[0].active == 0);
+    cx_step(1, 1);
+    colonel_teleport_slash(&cx);
+    assert(cx.unk6 == 3 && shot_objects[0].id == 0x2D && shot_objects[0].unk2 == 0x40);
+    cx.unk7C = 2;
+    cx_step(0, 0);
+    colonel_teleport_slash(&cx);
+    assert(cx.unk6 == 3 && cx.unk7C == 1);
+    colonel_teleport_slash(&cx);
+    assert(cx.unk5 == 3 && cx.unk6 == 0);
+}
+static void clx_dash(void)
+{
+    cx_reset(5, 0, 0);
+    colonel_dash(&cx);
+    assert(cx.unk6 == 1 && cx.unk15 == PLAYER_FACING_RIGHT && cx.x_accel == FIXED(-0.1875) && cx.unk7C == 0x1E && cx.unk4B == 1 && cx.unk17 == 6 && cx.hurt_box == NULL);
+    cx.unk6 = 0;
+    cx.x_pos.i.hi = 0x230;
+    colonel_dash(&cx);
+    assert(cx.unk15 == 0);
+    cx.unk6 = 1;
+    cx.unk15 = PLAYER_FACING_RIGHT;
+    cx.x_speed = 0;
+    cx.x_accel = 0;
+    cx.x_pos.i.hi = 0x200;
+    colonel_dash(&cx);
+    assert(cx.unk6 == 1 && cx.x_speed == 0x42000);
+    cx.x_pos.i.hi = 0x290;
+    colonel_dash(&cx);
+    assert(cx.unk6 == 2 && cx.x_accel == -0x3000 && cx.unk4B == -1 && cx.unk17 == 2);
+    cx.unk6 = 1;
+    cx.unk15 = 0;
+    cx.x_speed = 0;
+    cx.x_pos.i.hi = 0x200;
+    colonel_dash(&cx);
+    assert(cx.unk6 == 1 && cx.x_speed == -0x42000);
+    cx.x_pos.i.hi = 0x1D0;
+    colonel_dash(&cx);
+    assert(cx.unk6 == 2 && cx.x_speed == -0x42000 && cx.x_accel == -0x3000);
+    cx.x_speed = -0x10000;
+    cx.x_accel = 0;
+    colonel_dash(&cx);
+    assert(cx.unk5 == 5 && cx.unk6 == 2 && cx.x_speed == -0x10000);
+    cx.unk15 = PLAYER_FACING_RIGHT;
+    cx.x_speed = 0x10000;
+    colonel_dash(&cx);
+    assert(cx.unk5 == 5 && cx.x_speed == 0x10000);
+}
+static void clx_waves(void)
+{
+    u32 i;
+    for (i = 1; i <= 3; i++) {
+        cx_reset(6, i, 0);
+        cx.ext.main_69.state.bytes.wave_delay = 0x14;
+        cx_step(0, 1);
+        colonel_saber_waves(&cx);
+        assert(cx.unk6 == i && shot_objects[0].active == 0);
+        cx_step(1, 1);
+        colonel_saber_waves(&cx);
+        assert(cx.unk6 == i && shot_objects[0].id == 0x2D && shot_objects[0].unk2 == (i == 2 ? 1 : 0));
+        cx.unk7C = 2;
+        cx_step(0, 0);
+        colonel_saber_waves(&cx);
+        assert(cx.unk6 == i && cx.unk7C == 1);
+        colonel_saber_waves(&cx);
+        assert(cx.unk6 == i + 1 && cx.unk7C == (i == 3 ? 0x28 : 0x14) && cx.unk17 == (i == 1 ? 5 : i == 2 ? 4
+                                                                                                          : 0x17));
+    }
+    cx_step(0, 1);
+    colonel_saber_waves(&cx);
+    assert(cx.unk6 == 4 && cx.unk7C == 0x27);
+    cx_step(0, 0);
+    colonel_saber_waves(&cx);
+    assert(cx.unk6 == 5 && cx.unk17 == 2);
+    cx.unk7C = 2;
+    colonel_saber_waves(&cx);
+    assert(cx.unk6 == 5 && cx.unk7C == 1);
+    colonel_saber_waves(&cx);
+    assert(cx.unk5 == 3 && cx.unk6 == 0);
+}
+static void clx_slam_retreat(void)
+{
+    cx_reset(8, 2, 0);
+    colonel_jump_slam(&cx);
+    assert(cx.unk6 == 2 && cx.air_state == 0);
+    cx.unk6 = 3;
+    cx.y_speed = -0x10000;
+    colonel_jump_slam(&cx);
+    assert(cx.y_pos.i.hi == 0x101);
+    cx_reset(1, 2, 0);
+    cx.state = 2;
+    g_Player.script_state = 1;
+    colonel_update(&cx);
+    assert(cx.unk6 == 2 && cx.x_pos.i.hi == 0x200 && cx.unk7C == 0);
+}
+static void (*const clx_cases[])(void) = {
+    clx_hall,
+    clx_guard,
+    clx_teleport,
+    clx_dash,
+    clx_waves,
+    clx_slam_retreat,
+};
+static u32 clx_run(u32 row)
+{
+    clx_cases[row]();
+    return 1;
+}
+
+void func_800889DC(struct MainObj* arg0);
+extern u8 D_801044A0[8];
+extern u8 D_801044A8[8];
+static u32 second_fight_pick(u32 row)
+{
+    struct MainObj colonel;
+    memset(&colonel, 0, sizeof(colonel));
+    colonel.hp = 48;
+    colonel.ext.main_69.state.bytes.variant = 1;
+    cur_random = row ? 0x1234 : 0;
+    func_800889DC(&colonel);
+    assert(colonel.ext.main_69.script == (row ? D_801044A8 : D_801044A0));
+    assert(cur_random == (row ? 0x366A : 0));
+    return row;
+}
 
 const struct CTestGroup c_test_groups[] = {
     { "colonel_init", 0, 0, COUNT(colonel_init_cases), test_colonel_init },
+    { "second_fight_pick", 0, 0, 2, second_fight_pick },
     { "colonel_afterimage_chain_pool", NULL, colonel_afterimage_chain_pool_cases_expected, COUNT(colonel_afterimage_chain_pool_cases_expected), chain_case },
     { "colonel_defeat_animation_context", NULL, colonel_defeat_animation_context_cases_expected, COUNT(colonel_defeat_animation_context_cases_expected), defeat_case },
     { "colonel_hall_far_player", NULL, colonel_hall_far_player_cases_expected, COUNT(colonel_hall_far_player_cases_expected), hall_case },
@@ -1782,7 +2052,10 @@ const struct CTestGroup c_test_groups[] = {
     { "actual_hall_Colonel_variant_both_intro_portraits_full_quad_pool", NULL, NULL, 2, full },
     { "original_port_fullHP_script_guard60_opcode6_wave_delay20", NULL, NULL, 1, port_script_wave },
     { "both_defeat_routes_weapon_damage_and_blink", NULL, NULL, COUNT(hits) * 16, defeat },
+#ifndef VERSION_DEMO
     { "own_Aiming_Laser_reticle_rejects_live_Colonel_during_both_real_vanish_transitions", NULL, NULL, 4, vanish },
+#endif
+    { "colonel_state_steps", NULL, NULL, COUNT(clx_cases), clx_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(colonel_init_cases) + COUNT(colonel_afterimage_chain_pool_cases_expected) + COUNT(colonel_defeat_animation_context_cases_expected) + COUNT(colonel_hall_far_player_cases_expected) + COUNT(colonel_incoming_cases) + 2 + 2 + 2 + 2 + 2 + COUNT(col_cases) + COUNT(col_sides) + COUNT(pool_full_cases) + 1 + 36 + 64 + 1 + 2 + 1 + COUNT(hits) * 16 + 4;
+const u32 c_test_count = COUNT(colonel_init_cases) + 2 + COUNT(colonel_afterimage_chain_pool_cases_expected) + COUNT(colonel_defeat_animation_context_cases_expected) + COUNT(colonel_hall_far_player_cases_expected) + COUNT(colonel_incoming_cases) + 2 + 2 + 2 + 2 + 2 + COUNT(col_cases) + COUNT(col_sides) + COUNT(pool_full_cases) + 1 + 36 + 64 + 1 + 2 + 1 + COUNT(hits) * 16 + VANISH_CASES + COUNT(clx_cases);

@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
+#ifndef VERSION_DEMO
 #include "main/mains/main_75_general.h"
 #include "main/195B4.h"
 #include "main/55C4.h"
@@ -53,12 +55,12 @@ static u32 ending_case(u32 mode)
     obj.ext.main_75.object.effect = &effect;
     obj.unk7E = mode == 2 ? 0 : 1;
     obj.unk42 = 0x2345;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.unk17 = 3;
     obj.previous_animation_index = 9;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
-    D_801406A8 = page_metadata;
+    test_stage_graphics(page_metadata);
     TEST_MENU_FRAMES = (u8*)menu_frames;
     expected = obj;
     effect_before = effect;
@@ -74,8 +76,8 @@ static u32 ending_case(u32 mode)
     if (mode >= 3) {
         assert(s_StageMainIds[(u8)engine_obj.stage][1][index] == 0xA3 && (u8)func_8002938C(0xA3) == index);
         expected.unk5 = 9;
-        expected.unk40 = 0xB9;
-        expected.unk42 = mode == 4 ? 0x78C0 : 0x78C8;
+        expected.unk40 = OBJECT_STAGE_TEXTURE(1) + OBJECT_TEXTURE_OFFSET(0xB0);
+        expected.unk42 = OBJECT_STAGE_CLUT(0xA3);
         expected.sprite_frames = (u8*)&menu_frames[16 + index];
         expected.animation_table = (const u8* const*)final_cutscene_animations;
         ANIMATED_OBJECT(&expected)->animation_cursor = (u32*)final_cutscene_animations[0];
@@ -89,16 +91,11 @@ static u32 ending_case(u32 mode)
         backgrounds_expected[0].unk28 = backgrounds_expected[0].unk2A = 50;
     }
     func_800915C4(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(effect) / 4; i++)
-        assert(((u32*)&effect)[i] == ((u32*)&effect_before)[i]);
-    for (i = 0; i < sizeof(backgrounds_expected) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_expected)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&effect, &effect_before, sizeof(effect));
+    c_test_same_words(background_objects, backgrounds_expected, sizeof(backgrounds_expected));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     for (i = 0; i < 16; i++) {
         assert(menu_frames[i] == 64 + i * 4);
         assert(menu_frames[i + 16] == i + 1);
@@ -107,7 +104,7 @@ static u32 ending_case(u32 mode)
     i = obj.unk42 | ((u32)(u8)obj.unk7E << 16) | ((u32)(u8)obj.unk5 << 24);
     return i;
 }
-static const u32 general_ending_effect_context_cases_expected[] = { 0x8012345u, 0x8002345u, 0x805A345u, 0x90178C8u, 0x90178C0u };
+static const u32 general_ending_effect_context_cases_expected[] = { 0x8012345u, 0x8002345u, 0x805A345u, 0x9010000u | OBJECT_CLUT(0x78C8), 0x9010000u | OBJECT_CLUT(0x78C0) };
 
 static u32 far_player(u32 observation)
 {
@@ -146,8 +143,8 @@ static u32 far_player(u32 observation)
         assert(((u8*)&g_Player)[i] == ((u8*)&player_before)[i]);
     assert(*(u32*)general_animations[1] == original_step);
     actual = observation == 0 ? (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8)
-            | ((u32)(u8)obj.unk7 << 16) | ((u32)(u8)obj.unk15 << 24)
-                              : obj.animation_step.packed;
+            | ((u32)(u8)obj.unk7 << 16) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 24)
+                              : C_TEST_STEP(obj.animation_step.packed);
     return actual;
 }
 static u32 far_state(void)
@@ -212,11 +209,11 @@ static u32 intro_case(u32 mode)
     g_Player.x_pos.val = (mode == 4 ? 3700 : 3736) * 65536 + 0x1234;
     g_Player.bg_offset = 1;
     g_Player.script_state = 1;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.script_action = 0x14;
-    g_Player.script_facing = 0x40;
+    g_Player.script_facing = PLAYER_FACING_RIGHT;
     engine_obj.gameplay_locked = 1;
-    D_801406A8 = graphics_header;
+    test_stage_graphics(graphics_header);
     expected = obj;
     linked_before = linked;
     player_expected = g_Player;
@@ -231,8 +228,8 @@ static u32 intro_case(u32 mode)
         expected.unk5 = 2;
         expected.unk18.val = expected.x_pos.val;
         expected.unk1C.val = expected.y_pos.val;
-        expected.unk40 = 0xE0;
-        expected.unk16 = 5;
+        expected.unk40 = OBJECT_STAGE_TEXTURE(0) + OBJECT_TEXTURE_OFFSET(0xB0);
+        expected.unk16 = VISUAL_SATURN_LAYER(5);
         expected.x_speed = expected.y_speed = expected.x_accel = expected.gravity = 0;
         expected.air_state = 0;
         expected.terrain_box = NULL;
@@ -240,13 +237,13 @@ static u32 intro_case(u32 mode)
         expected.hurt_box = D_801059C4;
         expected.attack_box = &D_801059BC;
         expected.bg_offset = 1;
-        expected.unk15 = mode == 4 ? 0 : 0x40;
+        expected.unk15 = mode == 4 ? 0 : PLAYER_FACING_RIGHT;
         expected.animation_table = (const u8* const*)general_animations;
         expected.animation_cursor = general_animations[0];
         expected.animation_step = *(union AnimationStep*)general_animations[0];
         expected.unk17 = 0;
         expected.previous_animation_index = 0xFF;
-        assert(expected.animation_step.packed == 1);
+        assert(expected.animation_step.packed == C_TEST_STEP(1));
         memset(&expected.ext.main_75, 0, sizeof(expected.ext.main_75));
         if (free_count) {
             u32 first = 32 - free_count;
@@ -264,23 +261,18 @@ static u32 intro_case(u32 mode)
             expected.ext.main_75.thruster = &shot_objects[31];
         }
         player_expected.script_state = 0;
-        player_expected.spike_immune = 0;
+        SPIKE_IMMUNE_SET(player_expected, 0);
         engine_expected.gameplay_locked = 0;
     }
     func_8008FBCC(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(linked) / 4; i++)
-        assert(((u32*)&linked)[i] == ((u32*)&linked_before)[i]);
-    for (i = 0; i < sizeof(pool_expected) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)pool_expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_expected)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&linked, &linked_before, sizeof(linked));
+    c_test_same_words(shot_objects, pool_expected, sizeof(pool_expected));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
     assert(D_801406A8 == graphics_header && graphics_header[0] == 0x1800);
     assert(graphics_header[1] == 0x12345678 && graphics_header[2] == 0x87654321 && graphics_header[3] == 0x55555555);
-    i = (u8)obj.unk5 | ((u32)obj.unk15 << 8) | ((u32)(u8)obj.hp << 16);
+    i = (u8)obj.unk5 | ((u32)C_TEST_PSX_FACING(obj.unk15) << 8) | ((u32)(u8)obj.hp << 16);
     return i;
 }
 static const u32 general_intro_two_shot_pool_cases_expected[] = { 0x7F0001u, 0x4002u, 0x4002u, 0x4002u, 0x2u, 0x4002u };
@@ -305,7 +297,7 @@ static u32 punch_case(u32 right, u32 observation)
     obj.unk5 = 3;
     obj.unk6 = 2;
     obj.unk7C = 0x7777;
-    obj.unk15 = right ? 0x40 : 0;
+    obj.unk15 = right ? PLAYER_FACING_RIGHT : 0;
     obj.ext.main_75.thruster = &thruster;
     thruster.active = 0x41;
     thruster.id = 55;
@@ -329,13 +321,10 @@ static u32 punch_case(u32 right, u32 observation)
     thruster_before.unk84.shot_55.x = right ? -0x20 : 0x20;
     thruster_before.unk84.shot_55.y = -4;
     assert(general_fists[0] == &shot_objects[17] && general_fists[1] == &shot_objects[31]);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(thruster) / 4; i++)
-        assert(((u32*)&thruster)[i] == ((u32*)&thruster_before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)pool_before)[i]);
-    return observation == 0 ? (u16)thruster.unk84.shot_55.x | ((u32)(u16)thruster.unk84.shot_55.y << 16) : obj.animation_step.packed;
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&thruster, &thruster_before, sizeof(thruster));
+    c_test_same_words(shot_objects, pool_before, sizeof(pool_before));
+    return observation == 0 ? (u16)thruster.unk84.shot_55.x | ((u32)(u16)thruster.unk84.shot_55.y << 16) : C_TEST_STEP(obj.animation_step.packed);
 }
 static const u32 general_punch_linked_fists_cases_expected[] = { 0xFFFC0020u, 0x1E010001u, 0xFFFCFFE0u, 0x1E010001u };
 static u32 general_punch_linked_fists_cases_row(u32 row)
@@ -389,13 +378,10 @@ static u32 rise_case(u32 observation)
     thruster_before.animation_step = *(union AnimationStep*)general_animations[5];
     thruster_before.unk84.shot_55.x = 24;
     thruster_before.unk84.shot_55.y = 4;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(thruster) / 4; i++)
-        assert(((u32*)&thruster)[i] == ((u32*)&thruster_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    return observation ? thruster.animation_step.packed : (u8)obj.unk7 | ((u32)obj.unk17 << 8) | ((u32)(u16)obj.unk7C << 16);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&thruster, &thruster_before, sizeof(thruster));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    return observation ? C_TEST_STEP(thruster.animation_step.packed) : (u8)obj.unk7 | ((u32)obj.unk17 << 8) | ((u32)(u16)obj.unk7C << 16);
 }
 static const u32 general_rise_animation_start_cases_expected[] = { 0x3C0801u, 0xF010001u };
 
@@ -464,18 +450,12 @@ static u32 impact_case(u32 mode)
         pool_before[31].unk2 = 6;
         pool_before[31].unk7C = WEAPON_OBJECT(&obj);
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(thruster) / 4; i++)
-        assert(((u32*)&thruster)[i] == ((u32*)&thruster_before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)pool_before)[i]);
-    for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&thruster, &thruster_before, sizeof(thruster));
+    c_test_same_words(shot_objects, pool_before, sizeof(pool_before));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     for (i = 0; i < sizeof(sound_entries); i++)
         assert(sound_entries[i] == 0);
     assert(D_8013E198[2] == -1);
@@ -493,7 +473,7 @@ static u32 general_slam_right_launch_slam_case(void)
     obj.state = 1;
     obj.unk6 = 3;
     obj.unk7C = 1;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.x_speed = 65536;
@@ -508,8 +488,7 @@ static u32 general_slam_right_launch_slam_case(void)
     before.y_speed = 0;
     before.unk7C = 0;
     before.unk6 = 4;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
     actual = (u16)obj.x_pos.i.hi | ((u32)(u16)obj.y_pos.i.hi << 16);
     return actual;
 }
@@ -532,7 +511,7 @@ static u32 general_slam_thruster_transitions_slam_case(u32 mode)
     obj.unk6 = 2;
     obj.unk7 = mode >= 4;
     obj.unk7C = rise ? 0 : 1;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.x_speed = 3 * 65536;
     obj.y_speed = 7 * 65536;
     obj.ext.main_75.thruster = &thruster;
@@ -542,7 +521,7 @@ static u32 general_slam_thruster_transitions_slam_case(u32 mode)
     if (rise || mode >= 4) {
         obj.animation_cursor += (rise ? 22 : 3) * sizeof(union AnimationStep);
         obj.animation_step = *(const union AnimationStep*)obj.animation_cursor;
-        assert(rise ? obj.animation_step.packed == 0x09000001 : obj.animation_step.packed == 0x19000102);
+        assert(rise ? obj.animation_step.packed == C_TEST_STEP(0x09000001) : obj.animation_step.packed == C_TEST_STEP(0x19000102));
     }
     thruster.active = 0x41;
     thruster.id = 55;
@@ -586,14 +565,10 @@ static u32 general_slam_thruster_transitions_slam_case(u32 mode)
         general_slam_rise(&obj);
     else
         general_slam_windup(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(thruster) / 4; i++)
-        assert(((u32*)&thruster)[i] == ((u32*)&expected_thruster)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&thruster, &expected_thruster, sizeof(thruster));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     assert(D_8013E198[2] == -1);
     return (u8)obj.unk6 | ((u32)(u8)obj.unk7 << 8) | ((u32)obj.unk17 << 16) | ((u32)thruster.unk17 << 24);
 }
@@ -605,9 +580,9 @@ struct func_800905D4_case {
 };
 static const struct func_800905D4_case func_800905D4_cases[] = {
     { -32626, -32512, 0, 0, 0, 0, { 0u, 6u, 0u, 0u, 0x1Eu, 0u, 0u } },
-    { 0, 0, 0, 0, 3, 255, { 0xBFu, 2u, 0u, 0u, 0u, 0u, 0u } },
+    { 0, 0, 0, 0, 3, 0x40, { 0u, 2u, 0u, 0u, 0u, 0u, 0u } },
     { -32626, -32512, -28673, -28671, 0, 0, { 0u, 6u, 0u, 0u, 0x1Eu, 0u, 0u } },
-    { -32626, -32512, 7, -16377, 3, 255, { 0xBFu, 2u, 0u, 0u, 0u, 0u, 0u } },
+    { -32626, -32512, 7, -16377, 3, 0x40, { 0u, 2u, 0u, 0u, 0u, 0u, 0u } },
 };
 static u32 test_func_800905D4(u32 row)
 {
@@ -621,9 +596,9 @@ static u32 test_func_800905D4(u32 row)
     obj.x_pos.i.hi = c->obj_x_pos_hi;
     g_Player.x_pos.i.hi = c->g_Player_x_pos_hi;
     obj.collision_flags = c->collision_flags;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     func_800905D4(&obj);
-    observed_values[0] = (u32)obj.unk15;
+    observed_values[0] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[1] = (u32)obj.unk5;
     observed_values[2] = (u32)obj.unk6;
     observed_values[3] = (u32)obj.unk7;
@@ -857,16 +832,16 @@ static void gs_windup_charge(void)
 {
     GEN(6, 0);
     so.unk7C = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     general_slam(&so);
-    state_extra = general_thruster.unk84.value;
+    state_extra = TEST_LE_HALVES(&general_thruster.unk84);
 }
 static void gs_windup_charge_left(void)
 {
     GEN(6, 0);
     so.unk7C = 1;
     general_slam(&so);
-    state_extra = general_thruster.unk84.value;
+    state_extra = TEST_LE_HALVES(&general_thruster.unk84);
 }
 static void gs_windup_wait(void)
 {
@@ -908,7 +883,7 @@ static void gs_ascend_right(void)
 {
     GEN(6, 4);
     so.unk7C = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     general_slam(&so);
 }
 static void gs_ascend_wait(void)
@@ -921,7 +896,7 @@ static void gs_ascend_wait(void)
 static void gs_leave_right_wall(void)
 {
     GEN(6, 5);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.collision_flags = 1;
     general_slam(&so);
 }
@@ -941,7 +916,7 @@ static void gs_leave_wrong_wall(void)
 static void gs_leave_right_open(void)
 {
     GEN(6, 5);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.collision_flags = 2;
     general_slam(&so);
 }
@@ -1048,7 +1023,7 @@ static u32 test_general_damage(u32 row)
     D_8013E198[0] = D_8013E198[1] = -1;
     engine_obj.cur_character = general_damage_cases[row].character;
     g_Player.unk2 = general_damage_cases[row].character;
-    g_Player.spike_immune = !general_damage_cases[row].dead;
+    SPIKE_IMMUNE_SET(g_Player, !general_damage_cases[row].dead);
     so.active = 0x41;
     so.id = 75;
     so.state = 1;
@@ -1084,7 +1059,7 @@ static u32 test_general_damage(u32 row)
     assert(so.x_pos.val == FIXED(100) && so.y_pos.val == FIXED(200));
     assert(so.unk18.val == FIXED(100) && so.unk1C.val == FIXED(200));
     if (general_damage_cases[row].dead)
-        assert(so.unk6 == 0 && g_Player.spike_immune == 1);
+        assert(so.unk6 == 0 && SPIKE_IMMUNE(g_Player) == 1);
     for (i = 0; i < COUNT(shot_objects); i++)
         if (shot_objects[i].active && shot_objects[i].id == 0x37 && shot_objects[i].unk7C == (void*)&so) {
             assert(shot_objects[i].active == 0x41 && shot_objects[i].unk2 == 8);
@@ -1112,15 +1087,15 @@ static u32 recover(u32 row)
     obj.unk5 = 5;
     obj.unk6 = 3;
     obj.unk7 = 0;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = wait ? 2 : 1;
     obj.animation_table = (const u8* const*)general_animations;
     set_animation(&obj, 8);
-    assert(obj.animation_step.packed == 0x17010001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x17010001));
     expected = obj;
     expected.unk7C--;
     expected.animation_cursor += 4;
-    expected.animation_step.packed = 0x17FF0001;
+    expected.animation_step.packed = C_TEST_STEP(0x17FF0001);
     if (!wait) {
         expected.unk5 = 2;
         expected.unk6 = expected.unk7 = 0;
@@ -1204,14 +1179,14 @@ static u32 full(u32 row)
         expected_shots[0].unk17 = 7;
         expected_shots[0].previous_animation_index = 255;
         expected_shots[0].animation_cursor = general_animations[7];
-        expected_shots[0].animation_step.packed = 0x0E000001;
+        expected_shots[0].animation_step.packed = C_TEST_STEP(0x0E000001);
     } else {
         expected.active |= 4;
         expected.unk5 = 1;
         player.script_state = 1;
         player.script_action = 0x14;
-        player.script_facing = 0x40;
-        player.spike_immune = 1;
+        player.script_facing = PLAYER_FACING_RIGHT;
+        SPIKE_IMMUNE_SET(player, 1);
         engine.gameplay_locked = 1;
     }
     cur_random = 0x1234;
@@ -1227,6 +1202,325 @@ static u32 full(u32 row)
     assert(cur_random == 0x1234);
     if (row)
         assert(stop_entries[0] == 0 && stop_entries[1] == 0 && stop_entries[2] == 0 && D_80141F50[2] == (u8*)stop_entries && D_8013E198[2] == -1);
+    return 1;
+}
+
+void general_intro(struct MainObj*);
+void general_fly(struct MainObj*);
+void general_punch(struct MainObj*);
+void general_orbs(struct MainObj*);
+extern u8 D_80105E70[4], D_80105E78[4];
+
+static struct MainObj gw;
+static struct ShotObj gw_thruster, gw_arm, gw_fists[2];
+static void gw_reset(u8 unk5, u8 unk6)
+{
+    memset(&gw, 0, sizeof(gw));
+    memset(&gw_thruster, 0, sizeof(gw_thruster));
+    memset(&gw_arm, 0, sizeof(gw_arm));
+    memset(gw_fists, 0, sizeof(gw_fists));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    D_80141F50[2] = state_sound_rows;
+    engine_obj.stage = 0xB;
+    engine_obj.cur_character = CHARACTER_X;
+    cur_random = 0;
+    gw.active = 0x41;
+    gw.id = 75;
+    gw.state = 1;
+    gw.unk5 = unk5;
+    gw.unk6 = unk6;
+    gw.hp = 0x30;
+    gw.x_pos.i.hi = 0xE00;
+    gw.y_pos.i.hi = 0x260;
+    gw.animation_table = (const u8* const*)general_animations;
+    set_animation(&gw, 0);
+    gw_thruster.animation_table = (void*)general_animations;
+    set_animation(&gw_thruster, 0);
+    gw.ext.main_75.thruster = &gw_thruster;
+    gw.ext.main_75.object.shot = &gw_arm;
+}
+static void gw_step(s8 event, s8 relative)
+{
+    gw.animation_step.fields.duration = 5;
+    gw.animation_step.fields.event = event;
+    gw.animation_step.fields.relative_step = relative;
+}
+
+static void gnx_intro_enter(void)
+{
+    struct EngineObj engine = engine_obj;
+    gw_reset(0, 0);
+    g_Player.capsule_state = 1;
+    general_intro(&gw);
+    assert(gw.unk5 == 0 && g_Player.script_state == 0);
+    gw_reset(2, 0);
+    gw.state = 0;
+    g_Player.x_pos.i.hi = 0xDF0;
+    general_update(&gw);
+    assert(gw.unk5 == 2);
+    g_Player.x_pos.i.hi = 0xDF1;
+    background_objects[0].unk1E = 0x1234;
+    general_update(&gw);
+    assert(gw.unk5 == 3 && gw.ext.main_75.background_unk1E == 0x1234 && background_objects[0].unk26 == 0xDD0 && background_objects[0].unk2A == 0x190);
+    assert(engine_obj.enable_boss == 1 && engine_obj.unk25 == 1 && engine_obj.boss_ptr == &gw && g_Player.script_action == 0x14);
+    background_objects[0].x_pos.i.hi = 0xDCF;
+    general_update(&gw);
+    assert(gw.unk6 == 0);
+    background_objects[0].x_pos.i.hi = 0xDD0;
+    general_update(&gw);
+    assert(gw.unk6 == 1 && gw.unk17 == 1);
+    gw_step(1, 1);
+    general_update(&gw);
+    assert(gw.unk6 == 1 && gw_thruster.unk17 == 2 && gw_thruster.timer == 1 && gw_thruster.unk84.shot_55.x == 0x18 && gw_thruster.unk84.shot_55.y == 0);
+    gw_step(0, 0);
+    general_update(&gw);
+    assert(gw.unk5 == 4 && gw.unk6 == 0 && gw.unk17 == 3 && gw_thruster.unk17 == 4);
+    gw_thruster.animation_step.fields.relative_step = 1;
+    general_update(&gw);
+    assert(gw.unk5 == 4);
+    gw_thruster.animation_step.fields.relative_step = 0;
+    general_update(&gw);
+    assert(gw.unk5 == 5 && gw_arm.unk5 == 1 && gw.unk7C == 0x1E);
+    engine_obj = engine;
+}
+static void gnx_intro_talk(void)
+{
+    static const struct {
+        u8 stage, character;
+    } talks[] = { { 0xB, CHARACTER_X }, { 0xB, CHARACTER_ZERO }, { 0xC, CHARACTER_X } };
+    struct EngineObj engine = engine_obj;
+    u32 i;
+    for (i = 0; i < COUNT(talks); i++) {
+        gw_reset(5, 0);
+        gw.unk7C = 1;
+        engine_obj.stage = talks[i].stage;
+        engine_obj.cur_character = talks[i].character;
+        engine_obj.character_state.bytes[8] = 1;
+        abc_object.unkC = 0;
+        general_intro(&gw);
+        assert(gw.unk6 == 1 && abc_object.unkC == (talks[i].stage == 0xB ? 0x80 : 0));
+    }
+    gw.unk6 = 0;
+    gw.unk7C = 2;
+    general_intro(&gw);
+    assert(gw.unk6 == 0 && gw.unk7C == 1);
+    gw.unk6 = 1;
+    abc_object.unkC = 0x80;
+    general_intro(&gw);
+    assert(gw.unk5 == 5);
+    abc_object.unkC = 0;
+    engine_obj.unk36.value = 0;
+    general_intro(&gw);
+    assert(gw.unk5 == 6 && gw.unk6 == 0 && gw.unk7C == 1 && engine_obj.unk36.value == 1);
+    gw.hp = 0x10;
+    D_80173C84 = 0;
+    engine_obj.unk36.timer = 2;
+    general_intro(&gw);
+    assert(gw.hp == 0x10 && engine_obj.unk36.timer == 1);
+    engine_obj.unk36.timer = 0;
+    gw.unk7C = 2;
+    general_intro(&gw);
+    assert(gw.hp == 0x11 && gw.unk7C == 1);
+    general_intro(&gw);
+    assert(gw.hp == 0x12 && gw.unk7C == 2);
+    gw.hp = 0x30;
+    gw.ext.main_75.background_unk1E = 0x1234;
+    general_intro(&gw);
+    assert(gw.unk5 == 7 && background_objects[0].unk26 == 0x1234 && background_objects[0].unk48 == 2);
+    background_objects[0].unk1E = 0x1233;
+    general_intro(&gw);
+    assert(gw.unk5 == 7 && gw.state == 1);
+    background_objects[0].unk1E = 0x1234;
+    gw.state = 0;
+    g_Player.script_state = 1;
+    general_intro(&gw);
+    assert(gw.state == 1 && gw.unk5 == 2 && gw.unk6 == 0 && background_objects[0].unk48 == 8 && g_Player.script_state == 0);
+    engine_obj = engine;
+}
+static void gnx_move(void)
+{
+    static u8 used_up[1] = { 0xFF };
+    gw_reset(2, 0);
+    gw.unk15 = PLAYER_FACING_RIGHT;
+    gw.y_pos.i.hi = 0x24A;
+    func_8009027C(&gw);
+    assert(gw.unk6 == 1 && gw.unk17 == 8 && gw_thruster.unk17 == 6 && gw_thruster.unk84.shot_55.x == -0x18 && gw_thruster.unk84.shot_55.y == 4);
+    func_8009027C(&gw);
+    assert(gw.unk6 == 1 && gw.x_pos.i.hi < 0xE00);
+    gw.x_pos.i.hi = 0xD7E;
+    gw.y_pos.i.hi = 0x300;
+    func_8009027C(&gw);
+    assert(gw.unk6 == 1 && gw.y_pos.i.hi < 0x300);
+    gw.x_pos.i.hi = 0xD7F;
+    gw.y_pos.i.hi = 0x24C;
+    func_8009027C(&gw);
+    assert(gw.unk6 == 2 && gw.unk7C == 0x3C && gw.x_speed == 0 && gw.y_speed == 0 && gw_thruster.unk17 == 7);
+    gw.unk6 = 1;
+    gw.x_pos.i.hi = 0xD7C;
+    gw.y_pos.i.hi = 0x249;
+    func_8009027C(&gw);
+    assert(gw.unk6 == 2 && gw.unk7C == 0x3C);
+    gw.unk7C = 2;
+    func_8009027C(&gw);
+    assert(gw.unk6 == 2 && gw.unk7C == 1);
+    gw.ext.main_75.script = used_up;
+    gw.hp = 0x18;
+    cur_random = 40;
+    func_8009027C(&gw);
+    assert(gw.unk5 == 3 && gw.unk6 == 0 && gw.unk7 == 0 && gw.ext.main_75.script == &D_80105E78[1]);
+    gw.unk5 = 2;
+    gw.unk6 = 2;
+    gw.unk7C = 1;
+    gw.ext.main_75.script = NULL;
+    gw.hp = 0x30;
+    cur_random = 0;
+    func_8009027C(&gw);
+    assert(gw.unk5 == 3 && gw.ext.main_75.script == &D_80105E70[1]);
+    gw_reset(2, 0);
+    gw.y_pos.i.hi = 0x24B;
+    func_8009027C(&gw);
+    assert(gw.unk6 == 1 && gw.unk17 == 8 && gw_thruster.unk17 == 5 && gw_thruster.unk84.shot_55.x == 0x18);
+    gw.x_pos.i.hi = 0xEC6;
+    gw.y_pos.i.hi = 0x24C;
+    func_8009027C(&gw);
+    assert(gw.unk6 == 2 && gw.unk7C == 0x3C && gw_thruster.unk17 == 7);
+    {
+        static u8 steps[2] = { 4, 0xFF };
+        gw.unk7C = 1;
+        gw.ext.main_75.script = steps;
+        func_8009027C(&gw);
+        assert(gw.unk5 == 4 && gw.unk6 == 0 && gw.ext.main_75.script == &steps[1]);
+    }
+}
+static void gnx_fly(void)
+{
+    gw_reset(3, 0);
+    general_fly(&gw);
+    assert(gw.unk6 == 1 && gw_thruster.unk17 == 6 && gw.y_speed == FIXED(-0.5) && gw.ext.main_75.random_index == 0 && gw.unk7C == 0);
+    gw.unk7C = 2;
+    general_fly(&gw);
+    assert(gw.unk6 == 1 && gw.unk7C == 1 && gw.y_pos.i.hi == 0x260);
+    gw.unk7C = 0;
+    general_fly(&gw);
+    assert(gw.unk6 == 2);
+    assert(gw.x_speed == FIXED(-2) && gw.y_speed == 0);
+    assert(gw_thruster.unk17 == 5);
+    assert(gw_thruster.unk84.shot_55.x == 0x18 && gw_thruster.unk84.shot_55.y == 4);
+    gw.unk6 = 1;
+    gw.unk15 = PLAYER_FACING_RIGHT;
+    general_fly(&gw);
+    assert(gw.x_speed == FIXED(2) && gw_thruster.unk84.shot_55.x == -0x18);
+    gw.x_speed = 0;
+    gw.ext.main_75.random_index = 1;
+    gw.collision_flags = 2;
+    general_fly(&gw);
+    assert(gw.unk5 == 3 && gw.unk15 == PLAYER_FACING_RIGHT);
+    gw.unk15 = 0;
+    gw.collision_flags = 1;
+    general_fly(&gw);
+    assert(gw.unk5 == 3 && gw.unk15 == 0);
+    gw.collision_flags = 0;
+    general_fly(&gw);
+    assert(gw.unk5 == 3);
+    gw.unk5 = 6;
+    gw.unk6 = 5;
+    general_slam_leave(&gw);
+    assert(gw.unk5 == 6 && gw.unk6 == 5);
+}
+static void gnx_punch(void)
+{
+    gw_reset(4, 0);
+    WEAPON_FRAME_COUNTER = 1;
+    gw.unk15 = PLAYER_FACING_RIGHT;
+    general_punch(&gw);
+    assert(gw.unk7 == 1 && gw.unk17 == 8 && gw_thruster.unk17 == 5 && gw_thruster.unk84.shot_55.x == -0x18 && gw.y_speed == FIXED(0.5) && gw.unk7C == 0x3C);
+    assert(gw.ext.main_75.bob_step == 1 && gw.ext.main_75.bob_timer == 0xA);
+    gw.unk7C = 2;
+    general_punch(&gw);
+    assert(gw.unk6 == 0 && gw.unk7C == 1 && gw.y_pos.i.hi == 0x25F);
+    general_punch(&gw);
+    assert(gw.unk6 == 1 && gw.unk7 == 0 && gw.unk17 == 0xB && gw_thruster.unk17 == 7 && gw.y_speed == 0);
+    gw_step(0, 1);
+    general_punch(&gw);
+    assert(gw.unk6 == 1 && shot_objects[0].active == 0);
+    gw_step(0, 0);
+    general_punch(&gw);
+    assert(gw.unk6 == 2 && gw.unk7C == 0x3C);
+    gw.unk7C = 2;
+    general_punch(&gw);
+    assert(gw.unk6 == 2 && gw.unk7C == 1);
+    general_punch(&gw);
+    assert(gw.unk6 == 3 && gw.unk17 == 0xC && gw.unk7C == 0x46 && gw.unk7E == 0);
+    WEAPON_FRAME_COUNTER = 1;
+    gw.unk7C = 2;
+    general_punch(&gw);
+    assert(gw.unk7C == 1 && shot_objects[0].active == 0 && gw.y_pos.i.hi == 0x25F);
+    WEAPON_FRAME_COUNTER = 10;
+    general_punch(&gw);
+    assert(gw.unk7C == 0x3C && shot_objects[0].id == 0x37 && shot_objects[0].unk2 == 4 && gw.unk7E == 1 && gw.y_pos.i.hi == 0x260 && gw.ext.main_75.bob_timer == 9);
+    gw.ext.main_75.bob_timer = 1;
+    general_punch(&gw);
+    assert(gw.y_pos.i.hi == 0x261 && gw.ext.main_75.bob_timer == 0xA && gw.ext.main_75.bob_step == -1);
+    general_fists[0] = &gw_fists[0];
+    general_fists[1] = &gw_fists[1];
+    gw.unk6 = 4;
+    gw_fists[0].timer = 0x80;
+    general_punch(&gw);
+    assert(gw.unk6 == 4);
+    gw_fists[0].timer = 0;
+    gw_fists[1].timer = 0x80;
+    general_punch(&gw);
+    assert(gw.unk6 == 4);
+    gw_fists[0].timer = 0x80;
+    general_punch(&gw);
+    assert(gw.unk6 == 5 && gw_fists[0].state == 1 && gw_fists[1].state == 1 && gw.unk17 == 0x17);
+    gw_step(0, 1);
+    general_punch(&gw);
+    assert(gw.unk6 == 5);
+    gw_step(0, 0);
+    general_punch(&gw);
+    assert(gw.unk5 == 2 && gw.unk6 == 0);
+    gw.unk5 = 4;
+    gw.unk7 = 0;
+    gw.unk15 = 0;
+    general_punch(&gw);
+    assert(gw.unk7 == 1 && gw_thruster.unk84.shot_55.x == 0x18);
+}
+static void gnx_orbs(void)
+{
+    gw_reset(5, 1);
+    gw.unk7C = 1;
+    gw.ext.main_75.bob_step = 1;
+    gw.ext.main_75.bob_timer = 5;
+    WEAPON_FRAME_COUNTER = 1;
+    general_orbs(&gw);
+    assert(gw.unk6 == 2 && gw_thruster.unk17 == 7 && shot_objects[0].id == 0x37 && shot_objects[0].unk2 == 9 && gw.ext.main_75.bob_timer == 5);
+    general_orbs(&gw);
+    assert(gw.unk6 == 2);
+    gw.ext.main_75.orbs_ready = 1;
+    WEAPON_FRAME_COUNTER = 20;
+    general_orbs(&gw);
+    assert(gw.unk6 == 3 && gw.unk7C == 0x78 && gw.y_pos.i.hi == 0x261 && gw.ext.main_75.bob_timer == 4);
+    gw.ext.main_75.bob_timer = 1;
+    WEAPON_FRAME_COUNTER = 30;
+    general_orbs(&gw);
+    assert(gw.y_pos.i.hi == 0x262 && gw.ext.main_75.bob_timer == 0xA && gw.ext.main_75.bob_step == -1);
+}
+static void (*const gnx_cases[])(void) = {
+    gnx_intro_enter,
+    gnx_intro_talk,
+    gnx_move,
+    gnx_fly,
+    gnx_punch,
+    gnx_orbs,
+};
+static u32 gnx_run(u32 row)
+{
+    gnx_cases[row]();
     return 1;
 }
 
@@ -1248,6 +1542,12 @@ const struct CTestGroup c_test_groups[] = {
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "actual_inherited_idle_animation_orb_timer_terminal_tick", NULL, NULL, 4, recover },
     { "General_actual_intro_or_100_tick_orb_descent_full_effect_or_shot_pool", NULL, NULL, 2, full },
+    { "general_state_steps", NULL, NULL, COUNT(gnx_cases), gnx_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(general_damage_cases) + COUNT(general_states_cases) + COUNT(general_ending_effect_context_cases_expected) + COUNT(general_far_player_cases) + COUNT(general_intro_two_shot_pool_cases_expected) + COUNT(general_punch_linked_fists_cases_expected) + COUNT(general_rise_animation_start_cases_expected) + COUNT(general_slam_impact_pool_cases_expected) + COUNT(general_slam_right_launch_cases) + COUNT(general_slam_thruster_transitions_cases_expected) + 4 + 1 + 2 + 2 + COUNT(pool_full_cases) + 4 + 2;
+const u32 c_test_count = COUNT(general_damage_cases) + COUNT(general_states_cases) + COUNT(general_ending_effect_context_cases_expected) + COUNT(general_far_player_cases) + COUNT(general_intro_two_shot_pool_cases_expected) + COUNT(general_punch_linked_fists_cases_expected) + COUNT(general_rise_animation_start_cases_expected) + COUNT(general_slam_impact_pool_cases_expected) + COUNT(general_slam_right_launch_cases) + COUNT(general_slam_thruster_transitions_cases_expected) + 4 + 1 + 2 + 2 + COUNT(pool_full_cases) + 4 + 2 + COUNT(gnx_cases);
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

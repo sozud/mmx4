@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_41_data_hopper.h"
 #include "main/mains/main_56_jet_stingray.h"
 #include "main/55C4.h"
@@ -110,7 +111,7 @@ static u32 test_func_80062778(u32 row)
     observed_values[8] = (u32)obj.x_speed;
     observed_values[9] = (u32)obj.y_speed;
     observed_values[10] = (u32)obj.x_accel;
-    observed_values[11] = (u32)obj.animation_step.packed;
+    observed_values[11] = C_TEST_STEP(obj.animation_step.packed);
     return c_test_observe(0, row, observed_values, c->expected, 12);
 }
 
@@ -138,7 +139,7 @@ static u32 test_func_80062BBC_0(u32 row)
     obj.y_pos.val = 5242880;
     data_hopper_init(&obj);
     cur_random = 0x1234;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.x_pos.val = 65536000;
     g_Player.bg_offset = 0;
     obj.unk5 = 5;
@@ -195,7 +196,7 @@ static u32 test_func_80062BBC_0(u32 row)
     observed_values[4] = (u32)obj.unk63;
     observed_values[5] = (u32)obj.unk65;
     observed_values[6] = (u32)obj.unk42;
-    observed_values[7] = (u32)weapon_objects[0].unk80.word;
+    observed_values[7] = TEST_LE_HALVES(&weapon_objects[0].unk80);
     observed_values[8] = (u32)weapon_objects[0].unk98;
     observed_values[9] = (u32)obj.x_pos.val;
     observed_values[10] = (u32)obj.y_pos.val;
@@ -222,7 +223,7 @@ static u32 test_func_80062BBC_1(u32 row)
     obj.x_pos.val = 6553600;
     obj.y_pos.val = 5242880;
     data_hopper_init(&obj);
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.x_pos.val = 65536000;
     obj.unk2 = 1;
     obj.unk5 = 6;
@@ -294,7 +295,7 @@ static u32 terrain_kind(u32 row)
     memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
     memset(map, 1, sizeof(map));
     memset(pixels, 0, sizeof(pixels));
-    attributes[0] = materials[material];
+    attributes[0] = TEST_DISC32(materials[material]);
     SP_BG_TILEMAP = map;
     TEST_BG_TILE_PIXELS = (u8*)pixels;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -321,13 +322,353 @@ static u32 terrain_kind(u32 row)
         assert(map[row] == 1);
     for (row = 0; row < sizeof(pixels) / 2; row++)
         assert(((u16*)pixels)[row] == 0);
-    assert(attributes[0] == materials[material]);
+    assert(attributes[0] == TEST_DISC32(materials[material]));
     assert(data_hopper_terrain_box.unk1 == 0 && data_hopper_terrain_box.unk3 == 23);
     assert(SP_BG_TILEMAP == map && TEST_BG_TILE_PIXELS == (u8*)pixels && TEST_BG_TILE_ATTRS == (u8*)attributes);
     return 1;
 }
 
+void data_hopper_update(struct MainObj*);
+void data_hopper_spawn_item(struct MainObj*);
+void data_hopper_stand(struct MainObj*);
+void data_hopper_fall(struct MainObj*);
+void data_hopper_land(struct MainObj*);
+void func_80062778(struct MainObj*);
+void data_hopper_blink(struct MainObj*);
+void data_hopper_vanish(struct MainObj*);
+void func_80062BBC(struct MainObj*);
+void data_hopper_despawn(struct MainObj*);
+extern struct Unk_unk68 data_hopper_terrain_box;
+#define DH2(step, sub) (state_reset(step, sub, 0), memset(item_objects, 0, sizeof(item_objects)), memset(weapon_objects, 0, sizeof(weapon_objects)), so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.terrain_box = &data_hopper_terrain_box, so.collision_flags = 8, state_terrain(0))
+#define DH2X() (state_extra = so.state | so.ext.main_41.unk80 << 8 | so.ext.main_41.unk83 << 16 | (u32)so.ext.main_41.unk84 << 24)
+static void dh2_init_spawned(void)
+{
+    DH2(0, 0), so.state = 0, so.unk2 = 1, data_hopper_update(&so), DH2X();
+}
+static void dh2_spawn_item(void) { DH2(5, 0), data_hopper_spawn_item(&so), DH2X(), state_extra ^= item_objects[0].id << 8 | (u32)item_objects[0].unk2 << 16; }
+static void dh2_stand_start(void) { DH2(2, 0), data_hopper_stand(&so), DH2X(); }
+static void dh2_stand_drop(void) { DH2(2, 1), so.collision_flags = 0, data_hopper_stand(&so), DH2X(); }
+static void dh2_fall_start(void) { DH2(3, 0), so.collision_flags = 0, data_hopper_fall(&so), DH2X(); }
+static void dh2_fall_land(void) { DH2(3, 1), data_hopper_fall(&so), DH2X(); }
+static void dh2_land_start(void) { DH2(4, 0), so.animation_step.fields.relative_step = 1, data_hopper_land(&so), DH2X(); }
+static void dh2_land_flat(void) { DH2(4, 1), so.ext.main_41.unk80 = 2, data_hopper_land(&so), DH2X(); }
+static void dh2_land_kind_16(void) { DH2(4, 1), state_terrain(16), so.ext.main_41.unk80 = 2, data_hopper_land(&so), DH2X(); }
+static void dh2_hop_wall(void) { DH2(5, 1), so.collision_flags = 9, so.unk15 = PLAYER_FACING_RIGHT, func_80062778(&so), DH2X(); }
+static void dh2_hop_slope_ahead(void) { DH2(5, 1), state_terrain(1), so.unk15 = PLAYER_FACING_RIGHT, func_80062778(&so), DH2X(); }
+static void dh2_hop_fast_left(void) { DH2(5, 1), state_terrain(1), so.x_speed = -0x50000, func_80062778(&so), DH2X(); }
+static void dh2_hop_fast_right(void) { DH2(5, 1), state_terrain(5), so.unk15 = PLAYER_FACING_RIGHT, so.x_speed = 0x50000, func_80062778(&so), DH2X(); }
+static void dh2_blink_start(void) { DH2(6, 0), data_hopper_blink(&so), DH2X(); }
+static void dh2_blink_open(void) { DH2(6, 1), so.animation_step.fields.relative_step = -1, data_hopper_blink(&so), DH2X(); }
+static void dh2_blink_opening(void) { DH2(6, 1), data_hopper_blink(&so), DH2X(); }
+static void dh2_blink_count(void) { DH2(6, 2), so.unk7C = 2, so.animation_step.fields.relative_step = -1, data_hopper_blink(&so), DH2X(); }
+static void dh2_blink_hold(void) { DH2(6, 2), so.unk7C = 2, data_hopper_blink(&so), DH2X(); }
+static void dh2_vanish_spin(void) { DH2(7, 1), so.unk7C = 2, data_hopper_vanish(&so), DH2X(); }
+static void dh2_check_items(void)
+{
+    u32 i;
+    DH2(2, 1);
+    for (i = 0; i < 4; i++) {
+        item_objects[i].active = 1;
+        item_objects[i].id = i ? 0x13 : 0x12;
+        item_objects[i].unk2 = i == 1 ? 5 : 1;
+        item_objects[i].unk68 = (struct Unk_unk68*)&data_hopper_terrain_box;
+        item_objects[i].x_pos.i.hi = i == 2 ? 0x200 : 0x80;
+        item_objects[i].y_pos.i.hi = 0x60;
+    }
+    func_80062BBC(&so);
+    DH2X(), state_extra ^= item_objects[3].unk7C.item_19.open_requested << 4 | item_objects[2].unk7C.item_19.open_requested << 5;
+}
+static void dh2_main_vanish_standing(void) { DH2(7, 2), so.ext.main_41.unk83 = 1, so.animation_step.fields.relative_step = 1, func_80062BBC(&so), DH2X(); }
+static void dh2_main_away(void) { DH2(1, 0), so.x_pos.i.hi = 0x400, func_80062BBC(&so), DH2X(); }
+static void dh2_main_away_spawned(void) { DH2(1, 0), so.unk2 = 1, so.unk7E = 5, so.x_pos.i.hi = 0x400, func_80062BBC(&so), DH2X(), state_extra ^= so.unk7E << 4; }
+static void dh2_despawn(void) { DH2(0, 0), so.state = 2, data_hopper_despawn(&so), DH2X(); }
+static void dh2_despawn_spawned(void) { DH2(0, 0), so.state = 2, so.unk2 = 1, data_hopper_despawn(&so), DH2X(); }
+static void (*const dh2_cases[])(void) = {
+    dh2_init_spawned,
+    dh2_spawn_item,
+    dh2_stand_start,
+    dh2_stand_drop,
+    dh2_fall_start,
+    dh2_fall_land,
+    dh2_land_start,
+    dh2_land_flat,
+    dh2_land_kind_16,
+    dh2_hop_wall,
+    dh2_hop_slope_ahead,
+    dh2_hop_fast_left,
+    dh2_hop_fast_right,
+    dh2_blink_start,
+    dh2_blink_open,
+    dh2_blink_opening,
+    dh2_blink_count,
+    dh2_blink_hold,
+    dh2_vanish_spin,
+    dh2_check_items,
+    dh2_main_vanish_standing,
+    dh2_main_away,
+    dh2_main_away_spawned,
+    dh2_despawn,
+    dh2_despawn_spawned,
+};
+static const u32 dh2_expected[] = {
+    0x6u,
+    0xF00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x30002u,
+    0x1u,
+    0x41000000u,
+    0x5u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0xFF801301u,
+    0x41000000u,
+    0x102u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x5u,
+    0x0u,
+    0x10001u,
+    0x41000000u,
+    0x3u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x103u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0xFFFFBE00u,
+    0x420000u,
+    0x4u,
+    0x0u,
+    0x1000001u,
+    0x41000000u,
+    0x4u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x104u,
+    0x1u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10001u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x5u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x201u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x201u,
+    0x41000000u,
+    0x105u,
+    0x0u,
+    0x7BE000u,
+    0xFFFBE000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x201u,
+    0x41000000u,
+    0x105u,
+    0x0u,
+    0x842000u,
+    0x42000u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x101u,
+    0x41000000u,
+    0x106u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x206u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x106u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x206u,
+    0x3u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x206u,
+    0x2u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x107u,
+    0x2u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x107u,
+    0xF00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0xBu,
+    0x0u,
+    0x11u,
+    0x41000000u,
+    0x207u,
+    0xF00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10001u,
+    0x41000000u,
+    0x1u,
+    0x0u,
+    0x4000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x1u,
+    0x40000u,
+    0x4000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41u,
+    0x41000000u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+};
+static u32 dh2_run(u32 row)
+{
+    return state_run(dh2_cases[row], row, &dh2_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "data_hopper_branch_steps", 0, 0, COUNT(dh2_cases), dh2_run },
     { "data_hopper_misc", 0, 0, COUNT(data_hopper_misc_cases), test_data_hopper_misc },
     { "data_hopper_vanish_animation", NULL, data_hopper_vanish_animation_cases_expected, COUNT(data_hopper_vanish_animation_cases_expected), vanish_case },
     { "func_80062778", 0, 0, 4, test_func_80062778 },
@@ -337,4 +678,4 @@ const struct CTestGroup c_test_groups[] = {
     { "terrain_kind_layers_and_block_edges", NULL, NULL, COUNT(materials) * 6, terrain_kind },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(data_hopper_misc_cases) + COUNT(data_hopper_vanish_animation_cases_expected) + 4 + 1 + 1 + COUNT(data_hopper_blink_reset_cases) + COUNT(materials) * 6;
+const u32 c_test_count = COUNT(dh2_cases) + COUNT(data_hopper_misc_cases) + COUNT(data_hopper_vanish_animation_cases_expected) + 4 + 1 + 1 + COUNT(data_hopper_blink_reset_cases) + COUNT(materials) * 6;

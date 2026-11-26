@@ -9,6 +9,7 @@ struct item_scatter_spawn_case {
 static const struct item_scatter_spawn_case item_scatter_spawn_cases[] = {
     { 255, 0, { 0u, 0u, 0u, 0u, 0u, 1u } },
     { 0, 255, { 1u, 0u, 0u, 0u, 0u, 1u } },
+    { 0, 0, { 0x41u, 7u, 0u, 0u, 0u, 1u } },
 };
 static u32 test_item_scatter_spawn(u32 row)
 {
@@ -39,7 +40,7 @@ static u32 test_item_scatter_spawn(u32 row)
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "item_scatter_spawn", 0, 0, 2, test_item_scatter_spawn },
+    { "item_scatter_spawn", 0, 0, 3, test_item_scatter_spawn },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 2;
+const u32 c_test_count = 3;

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mech.h"
 #include "main/195B4.h"
 #include "main/mech_state_data.h"
@@ -35,8 +36,8 @@ static u32 ride_armor_init_resources_armor_case(u32 mode)
     obj.unk6 = 5;
     obj.unk7 = 6;
     obj.bg_offset = 2;
-    obj.unk15 = 0x40;
-    obj.unk16 = 7;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.unk16 = VISUAL_SATURN_LAYER(7);
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.x_vel.val = 123;
@@ -54,7 +55,7 @@ static u32 ride_armor_init_resources_armor_case(u32 mode)
     memset(&obj.unk7C, 7, 0xA9 - 0x7C);
     engine_obj.stage = 11;
     engine_obj.substage = 1;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)frames;
     engine_expected = engine_obj;
     expected = obj;
@@ -64,12 +65,12 @@ static u32 ride_armor_init_resources_armor_case(u32 mode)
     expected.unk5 = expected.unk6 = 0;
     expected.bg_offset = 0;
     expected.unk15 = 0;
-    expected.unk16 = 3;
+    expected.unk16 = VISUAL_SATURN_LAYER(3);
     expected.hp = 0x20;
     expected.animation_table = (u32**)(mode ? D_800F965C : D_800F9428);
     expected.unk3C = (u8*)frames + 20;
-    expected.unk40 = 9;
-    expected.unk42 = 0x784C;
+    expected.unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x86));
+    expected.unk42 = OBJECT_CLUT(0x784C);
     expected.unk50 = expected.unk54 = expected.unk58 = NULL;
     expected.unk68 = &D_800F9124;
     expected.unk60 = expected.unk61 = expected.unk67 = 0;
@@ -81,12 +82,9 @@ static u32 ride_armor_init_resources_armor_case(u32 mode)
         ((u8*)&expected.unk7C)[cleared_tail[i] - 0x7C] = 0;
     assert(s_StageMainIds[11][1][1] == 0x86 && (u8)func_8002938C(0x86) == 1);
     func_8003D4C8(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     for (i = 0; i < 4; i++) {
         assert(frames[i] == 16 + i * 4 && frames[i + 4] == i + 1);
         assert(metadata[i] == 0x400 + i * 0x80);
@@ -96,7 +94,7 @@ static u32 ride_armor_init_resources_armor_case(u32 mode)
     assert(D_801406A8 == metadata && SP_MENU_FRAMES == frames);
     return obj.unk42 | ((u32)(u8)obj.hp << 16) | ((u32)(obj.animation_table == (u32**)D_800F965C) << 24);
 }
-static const u32 ride_armor_init_resources_cases_expected[] = { 0x20784Cu, 0x120784Cu };
+static const u32 ride_armor_init_resources_cases_expected[] = { 0x200000u | OBJECT_CLUT(0x784C), 0x1200000u | OBJECT_CLUT(0x784C) };
 
 static s32 sprites[8] = { 16, 20, 24, 28, 1, 2, 3, 4 };
 static void expected_animation(struct RideArmorObj* obj, u32 index, u32 step)
@@ -150,8 +148,8 @@ static u32 ride_armor_jump_attack_transitions_armor_case(u32 mode)
     obj.unk7D = 7;
     obj.unk98.packed = 0x234;
     obj.unk87 = 9;
-    obj.unk15 = 0x40;
-    obj.unk16 = 3;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.unk40 = 9;
     obj.unk42 = 0x8123;
     obj.x_pos.val = 100 * 65536 + 0x1234;
@@ -212,7 +210,7 @@ static u32 ride_armor_jump_attack_transitions_armor_case(u32 mode)
         child->animation_table = obj.animation_table;
         child->unk40 = obj.unk40;
         child->unk3C = obj.unk3C;
-        child->unk42 = 0x784C;
+        child->unk42 = OBJECT_CLUT(0x784C);
         child->unk16 = obj.unk16;
         child->owner = PLAYER_OBJECT(&obj);
         child->unk15 = obj.unk15;
@@ -221,16 +219,11 @@ static u32 ride_armor_jump_attack_transitions_armor_case(u32 mode)
         func_8003FD08(&obj);
     else
         func_8003F76C(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(pool_expected) / 4; i++)
-        assert(((u32*)weapon_objects)[i] == ((u32*)pool_expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_expected)[i]);
-    for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(weapon_objects, pool_expected, sizeof(pool_expected));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
     for (i = 0; i < 6; i++)
         assert(D_8013E198[i] == -1);
     for (i = 0; i < 4; i++)
@@ -239,6 +232,20 @@ static u32 ride_armor_jump_attack_transitions_armor_case(u32 mode)
     return i;
 }
 static const u32 ride_armor_jump_attack_transitions_cases_expected[] = { 0x1010005u, 0x5u, 0x20006u, 0x20006u, 0x3010Du, 0x2010Du, 0x1010005u, 0x5u, 0x1030111u, 0x20111u, 0x30110u, 0x20110u, 0x1030111u, 0x20111u };
+
+u32 func_8003DCD8(struct RideArmorObj* arg0);
+static u32 test_func_8003DCD8(u32 row)
+{
+    struct RideArmorObj armor;
+    memset(&armor, 0, sizeof(armor));
+    armor.unk8A = 0x20;
+    armor.unk2 = 1;
+    armor.unk7E = 1;
+    assert(func_8003DCD8(&armor) == 0);
+    armor.unk7E = 0;
+    assert(func_8003DCD8(&armor) == 1);
+    return 1;
+}
 
 static const u32 func_8003D6EC_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
 static u32 test_func_8003D6EC(u32 row)
@@ -259,8 +266,8 @@ static u32 test_func_8003D6EC(u32 row)
     func_8003D6EC(&obj, arg1);
     observed_values[0] = (u32)visual_objects[0].active;
     observed_values[1] = (u32)visual_objects[0].id;
-    observed_values[2] = (u32)visual_objects[0].unk15;
-    observed_values[3] = (u32)visual_objects[0].unk16;
+    observed_values[2] = C_TEST_PSX_FACING(visual_objects[0].unk15);
+    observed_values[3] = TEST_PSX_LAYER(visual_objects[0].unk16);
     observed_values[4] = (u32)visual_objects[0].unk2;
     observed_values[5] = (u32)visual_objects[0].unk40;
     observed_values[6] = (u32)visual_objects[0].unk42;
@@ -293,7 +300,9 @@ static u32 test_func_8003E0D0(u32 row)
     engine_obj.unkF = c->unkF;
     g_Player.unk2 = c->unk2;
     g_Player.attacking = c->attacking;
+#ifndef VERSION_DEMO
     g_Player.nova_strike_active = c->nova_strike_active;
+#endif
     obj.unk94.bytes.unk97 = c->unk97;
     func_8003E0D0(&obj);
     observed_values[0] = (u32)g_Player.ride_state;
@@ -396,7 +405,7 @@ s32 func_8003E048(struct PlayerObj*);
 static void r_dash_start(void)
 {
     RIDE(0x10, 0);
-    sr.unk15 = 0x40;
+    sr.unk15 = PLAYER_FACING_RIGHT;
     func_8003F908(&sr);
     RIDDEN();
 }
@@ -591,7 +600,7 @@ static void r_rush_zero(void)
     RIDE(5, 1);
     sr.input_flags = 8;
     sr.unk2 = 1;
-    sr.unk15 = 0x40;
+    sr.unk15 = PLAYER_FACING_RIGHT;
     func_8003F31C(&sr);
     RIDDEN();
 }
@@ -965,7 +974,7 @@ static void r_dash_input_stomp(void)
     RIDE(1, 0);
     state_room.player.last_shot_type = 8;
     state_room.player.unk88.value = 0x100;
-    sr.unk15 = 0x40;
+    sr.unk15 = PLAYER_FACING_RIGHT;
     state_extra = func_8003E048(PLAYER_OBJECT(&sr));
 }
 static void r_mount_start(void)
@@ -988,7 +997,7 @@ static void r_mount_busy(void)
 static void r_back_input(void)
 {
     RIDE(1, 0);
-    sr.unk15 = 0x40;
+    sr.unk15 = PLAYER_FACING_RIGHT;
     state_room.player.unk88.value = 2;
     state_extra = func_8003E0B0(PLAYER_OBJECT(&sr));
 }
@@ -1129,13 +1138,13 @@ static u32 test_armor_part_release(u32 row)
     obj.unk5 = row < 40 ? 1 : cancel_states[row - 40];
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
-    obj.unk15 = row & 1 ? 0x40 : 0;
-    obj.unk16 = 3;
+    obj.unk15 = row & 1 ? PLAYER_FACING_RIGHT : 0;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.animation_table = (u32**)D_800F965C;
     obj.unk3C = frames;
     obj.unk40 = 0x2468;
     obj.unk42 = 0x1357;
-    obj.unk94.value = 0x40000902;
+    obj.unk94.value = C_TEST_PSX_WORD(0x40000902);
     obj.unkA6 = 0x30;
     obj.unk7E = 0x7B;
     obj.spawned_parts = row < 40 ? row % 8 : 5;
@@ -1143,7 +1152,7 @@ static u32 test_armor_part_release(u32 row)
     expected = obj;
     player_before = g_Player;
     memcpy(armor_release_expected_weapons, weapon_objects, sizeof(weapon_objects));
-    expected.unk94.value = 0x40000900;
+    expected.unk94.value = C_TEST_PSX_WORD(0x40000900);
     expected.unkA6 = 0;
     next_slot = 16 - free_count;
     if (row < 40) {
@@ -1162,7 +1171,7 @@ static u32 test_armor_part_release(u32 row)
             shot->animation_table = obj.animation_table;
             shot->unk3C = obj.unk3C;
             shot->unk40 = obj.unk40;
-            shot->unk42 = 0x784C;
+            shot->unk42 = OBJECT_CLUT(0x784C);
             shot->unk16 = obj.unk16;
             shot->owner = PLAYER_OBJECT(&obj);
             shot->unk15 = obj.unk15;
@@ -1207,14 +1216,14 @@ static u32 test_armor_recovery(u32 row)
     obj.unk98.packed = 0x234;
     obj.collision_flags = armor_recovery_cases[index].held;
     obj.unk8A = armor_recovery_cases[index].pressed;
-    obj.unk15 = variant ? 0x40 : 0;
+    obj.unk15 = variant ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.x_vel.val = 0x18000;
     obj.y_vel.val = -0x24000;
     obj.animation_table = (u32**)(variant ? D_800F965C : D_800F9428);
     set_animation(&obj, 7);
-    assert(obj.animation_step.packed == 0x0D000008u);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x0D000008u));
     if (obj.unk6 != 0)
         obj.animation_step.fields.duration = 7;
     obj.previous_animation_index = 13;
@@ -1289,7 +1298,7 @@ static u32 dash_transition(u32 row)
     obj.state = 1;
     obj.unk5 = 7;
     obj.unk6 = scene != 0;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk94.bytes.unk97 = dash_scenes[scene].blocked;
     obj.unk8A = dash_scenes[scene].pressed;
     obj.input_flags = dash_scenes[scene].held;
@@ -1302,7 +1311,7 @@ static u32 dash_transition(u32 row)
     obj.y_vel.val = 0x23456;
     obj.animation_table = (u32**)(variant ? D_800F965C : D_800F9428);
     set_animation(&obj, 5);
-    assert(obj.animation_step.packed == 0x0D010004);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x0D010004));
     obj.previous_animation_index = 0x35;
     expected = obj;
     player_expected = g_Player;
@@ -1361,10 +1370,10 @@ static u32 release(u32 row)
     obj.state = 1;
     obj.unk5 = 5;
     obj.unk6 = 4;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
-    obj.unk16 = 3;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.unk40 = 9;
     obj.collision_flags = wall;
     obj.input_flags = mode == 3 ? 0 : 8;
@@ -1374,7 +1383,7 @@ static u32 release(u32 row)
     obj.unk94.bytes.pad94[0] = mode == 4;
     obj.animation_table = (u32**)D_800F965C;
     set_animation(&obj, 14);
-    assert(obj.animation_step.packed == 0x25000005);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x25000005));
     expected = obj;
     player_before = g_Player;
     engine_before = engine_obj;
@@ -1389,7 +1398,7 @@ static u32 release(u32 row)
             expected.unk5 = 12;
             expected.unk6 = 0;
         } else if (mode != 1) {
-            expected.unk15 = wall == 2 ? 0 : 0x40;
+            expected.unk15 = wall == 2 ? 0 : PLAYER_FACING_RIGHT;
             if (mode == 0) {
                 expected.unk6 = 5;
                 expected.unk7E = 16;
@@ -1406,8 +1415,8 @@ static u32 release(u32 row)
                             child->animation_table = obj.animation_table;
                             child->unk40 = 9;
                             child->unk3C = obj.unk3C;
-                            child->unk42 = 0x784C;
-                            child->unk16 = 3;
+                            child->unk42 = OBJECT_CLUT(0x784C);
+                            child->unk16 = VISUAL_SATURN_LAYER(3);
                             child->owner = PLAYER_OBJECT(&obj);
                             child->unk15 = expected.unk15;
                         }
@@ -1445,14 +1454,14 @@ static u32 mount(u32 row)
     obj.unk68 = &D_800F9124;
     obj.animation_table = (u32**)D_800F965C;
     set_animation(&obj, 17);
-    assert(obj.animation_step.packed == 0x2C000001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x2C000001));
     g_Player.active = 0x41;
     g_Player.state = 1;
     g_Player.unk2 = character;
     g_Player.attacking = attack;
     g_Player.hp = hp == 0 ? 0 : hp == 1 ? 1
                                         : 30;
-    g_Player.spike_immune = immune;
+    SPIKE_IMMUNE_SET(g_Player, immune);
     g_Player.touching_spikes = spikes;
     g_Player.hurt_phase = hurt;
     g_Player.x_pos = obj.x_pos;
@@ -1470,7 +1479,7 @@ static u32 mount(u32 row)
         expected.unk17 = 18;
         expected.previous_animation_index = 255;
         expected.animation_cursor = (u32*)D_800F965C[18];
-        expected.animation_step.packed = 0x2A01000A;
+        expected.animation_step.packed = C_TEST_STEP(0x2A01000A);
     }
     func_8003E0D0(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
@@ -1498,7 +1507,7 @@ static u32 dismount(u32 row)
     obj.unk94.bytes.unk97 = (blocked ? 2 : 0) | (riding ? 0x40 : 0);
     obj.unk94.bytes.pad94[0] = 1;
     obj.unkA6 = 9;
-    obj.unk8C.value = 7;
+    obj.unk8C.value = C_TEST_PSX_WORD(7);
     obj.unk42 = 0x8123;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
@@ -1508,7 +1517,7 @@ static u32 dismount(u32 row)
     obj.unk2C = 0x4000;
     obj.animation_table = (u32**)D_800F965C;
     set_animation(&obj, 19);
-    assert(obj.animation_step.packed == 0x27010005);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x27010005));
     g_Player.unk2 = character;
     g_Player.ride_state = riding;
     g_Player.hp = 30;
@@ -1578,22 +1587,22 @@ static u32 air_interrupt(u32 row)
     obj.input_flags = mode == 2 ? 8 : 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.animation_table = (u32**)D_800F965C;
     set_animation(&obj, 13);
-    assert(obj.animation_step.packed == 0x15010101);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x15010101));
     expected = obj;
     if (mode == 1 || mode == 2) {
         expected.unk5 = mode == 1 ? 11 : 5;
         expected.unk6 = 0;
     } else {
         if (mode != 3 && wall) {
-            expected.unk15 = wall == 2 ? 0 : 0x40;
+            expected.unk15 = wall == 2 ? 0 : PLAYER_FACING_RIGHT;
             expected.x_vel.val = wall == 2 ? -0x16000 : 0x16000;
             expected.x_pos.val += expected.x_vel.val;
         }
         expected.animation_cursor++;
-        expected.animation_step.packed = 0x16010101;
+        expected.animation_step.packed = C_TEST_STEP(0x16010101);
     }
     func_8003FBD8(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
@@ -1625,8 +1634,8 @@ static void prepare(void)
     armor.id = 1;
     armor.state = 1;
     armor.unk5 = 4;
-    armor.unk15 = 0x40;
-    armor.unk16 = 3;
+    armor.unk15 = PLAYER_FACING_RIGHT;
+    armor.unk16 = VISUAL_SATURN_LAYER(3);
     armor.x_pos.val = 0x01000000;
     armor.y_pos.val = 0x00800000;
     armor.unk40 = 9;
@@ -1651,7 +1660,11 @@ static u32 finish(void)
 static u32 idle_phase(u32 row)
 {
     static const u8 phases[] = { 3, 4, 0x7F, 0x80, 0xFF };
+#ifdef MMX4_SATURN
+    static const u32 expected[COUNT(phases)] = { 0x50DFAAFDu, 0xBAC6811Cu, 0x9CAF6201u, 0x06963820u, 0x901A7181u };
+#else
     static const u32 expected[COUNT(phases)] = { 3657060973u, 1138829452u, 633997681u, 2410733456u, 422910193u };
+#endif
     u32 hash;
     prepare();
     RIDE_BYTE(&armor, 0x94) = phases[row];
@@ -1664,6 +1677,42 @@ static u32 idle_phase(u32 row)
 
 static u32 recover(u32 row)
 {
+#ifdef MMX4_SATURN
+    static const u32 expected[32] = {
+        0xCDD2C987u,
+        0xB9D8BFE8u,
+        0x5271D6A3u,
+        0x3E77CD04u,
+        0xB4C19EE4u,
+        0xA0C79545u,
+        0x3960AC00u,
+        0x2566A261u,
+        0xCDD2C987u,
+        0xB9D8BFE8u,
+        0x3B2CC87Au,
+        0x2732BEDBu,
+        0xB4C19EE4u,
+        0xA0C79545u,
+        0xABEFC1E0u,
+        0x97F5B841u,
+        0x9EAB9B60u,
+        0x8AB191C1u,
+        0xF95F5FFFu,
+        0xDCE218A0u,
+        0x859A70BDu,
+        0x71A0671Eu,
+        0x5BEB0E9Cu,
+        0x3F6DC73Du,
+        0x9EAB9B60u,
+        0x8AB191C1u,
+        0x118EA17Bu,
+        0xFD9497DCu,
+        0x859A70BDu,
+        0x71A0671Eu,
+        0x82519AE1u,
+        0x6E579142u,
+    };
+#else
     static const u32 expected[32] = {
         2581318737u,
         2246165170u,
@@ -1698,6 +1747,7 @@ static u32 recover(u32 row)
         2407072211u,
         2071918644u,
     };
+#endif
     u32 hash;
     prepare();
     armor.id = row & 1 ? 0 : 1;
@@ -1746,13 +1796,13 @@ static u32 punch(u32 row)
     obj.on_screen = 1;
     obj.x_pos.i.hi = 100;
     obj.y_pos.i.hi = 120;
-    obj.unk16 = 3;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.animation_table = (u32**)D_800F965C;
     set_animation(&obj, 0);
     expected = obj;
     expected.unk6 = 1;
     expected.animation_cursor = (u32*)D_800F965C[8];
-    expected.animation_step.packed = 0x25010004;
+    expected.animation_step.packed = C_TEST_STEP(0x25010004);
     expected.unk17 = 8;
     expected.previous_animation_index = 0xFF;
     D_8013E198[5] = -1;
@@ -1767,6 +1817,497 @@ static u32 punch(u32 row)
     return 1;
 }
 
+void func_8003E488(struct RideArmorObj*);
+void func_8003E750(struct RideArmorObj*);
+void func_8003E8A0(struct RideArmorObj*);
+void func_8003EA08(struct RideArmorObj*);
+void func_8003ED00(struct RideArmorObj*);
+void func_8003EDF0(struct RideArmorObj*);
+void func_8003F068(struct RideArmorObj*);
+void func_8003F244(struct RideArmorObj*);
+void func_8003F76C(struct RideArmorObj*);
+void func_8003F908(struct RideArmorObj*);
+void func_8003FA58(struct RideArmorObj*);
+void func_8003FBD8(struct RideArmorObj*);
+void func_8003EEF8(struct RideArmorObj*);
+void func_8003F31C(struct RideArmorObj*);
+void func_8003F618(struct RideArmorObj*);
+void func_8003F648(struct RideArmorObj*);
+void func_8003F698(struct RideArmorObj*);
+void func_8003FF9C(struct RideArmorObj*);
+void func_800400C8(struct PlayerObj*);
+void func_800401F8(struct PlayerObj*);
+void func_80040248(struct RideArmorObj*);
+#define RIDE_WRECK_BLINKS(r) (((u8*)&(r)->collision_flags)[9])
+#define RIDE_WRECK_FRAMES(r) (((u8*)&(r)->collision_flags)[10])
+static void (*const ride_handlers[])(struct RideArmorObj*) = {
+    func_8003E488,
+    func_8003E5F8,
+    func_8003E750,
+    func_8003E8A0,
+    func_8003EA08,
+    func_8003ED00,
+    func_8003EDF0,
+    func_8003F068,
+    func_8003F244,
+    func_8003F76C,
+    func_8003F908,
+    func_8003FA58,
+    func_8003FBD8,
+    func_8003EEF8,
+    func_8003F31C,
+    func_8003F618,
+    func_8003F648,
+    func_8003F698,
+};
+enum { H_WALK,
+    H_PUNCH,
+    H_JUMP,
+    H_LAND,
+    H_AIR_PUNCH,
+    H_STEP,
+    H_SLIDE,
+    H_FALL,
+    H_RUSH,
+    H_AIR_SHOT,
+    H_DASH,
+    H_SHOT,
+    H_HOVER,
+    H_EXIT,
+    H_SPIN,
+    H_RECOVER,
+    H_RECOVERY,
+    H_ZERO_PUNCH };
+#define RIDE_STEP(duration, event, relative) C_TEST_STEP((duration) | (event) << 8 | (relative) << 16)
+static const struct {
+    u8 fn, phase, unk2, right, pad, flags, input, coll, bits, unk7D, unk7E, unk87, unk81, unk86, dead, tick;
+    s8 timer;
+    u16 speed;
+    u32 step;
+    s32 vx, vy, ay;
+    u32 e_state, e_x, e_y, e_vx, e_vy, e_anim, e_spawn, e_flags;
+    s8 snd;
+} ride_handler_rows[] = {
+    { .fn = H_WALK, .pad = 2, .e_state = 0x0D, .e_anim = 0x2A000005, .e_flags = 0x01600000, .snd = -1 },
+    { .fn = H_WALK, .phase = 1, .dead = 1, .e_state = 0x0B, .e_anim = 5, .snd = -1 },
+    { .fn = H_WALK, .phase = 1, .input = 8, .flags = 2, .e_state = 0x0122, .e_anim = 4, .e_flags = 0x200, .snd = -1 },
+    { .fn = H_WALK, .phase = 1, .input = 8, .e_state = 0x01, .e_anim = 5, .snd = -1 },
+    { .fn = H_WALK, .phase = 1, .input = 8, .coll = 2, .bits = 0x80, .e_state = 0x04, .e_anim = 5, .snd = -1 },
+    { .fn = H_WALK, .phase = 1, .input = 8, .coll = 1, .bits = 0x30, .e_state = 0x03, .e_anim = 5, .e_flags = 0x40, .snd = -1 },
+    { .fn = H_WALK, .phase = 1, .input = 8, .coll = 1, .step = RIDE_STEP(5, 1, 0), .e_state = 0x0122, .e_x = 0x16000, .e_vx = 0x16000, .e_anim = 4, .e_flags = 0x40, .snd = 1 },
+    { .fn = H_PUNCH, .unk87 = 1, .e_state = 0x01, .e_anim = 0x32000005, .e_spawn = 0x3E41, .snd = 5 },
+    { .fn = H_PUNCH, .phase = 1, .unk81 = 1, .e_state = 0x01000003, .e_anim = 5, .snd = -1 },
+    { .fn = H_PUNCH, .phase = 1, .step = RIDE_STEP(5, 1, 1), .bits = 0x30, .e_state = 0x01010122, .e_anim = 0x104, .snd = -1 },
+    { .fn = H_PUNCH, .phase = 1, .step = RIDE_STEP(5, 1, 1), .e_state = 0x0122, .e_anim = 0x104, .snd = -1 },
+    { .fn = H_PUNCH, .phase = 1, .step = RIDE_STEP(5, 1, 1), .bits = 0x30, .unk81 = 1, .e_state = 0x01000122, .e_anim = 0x104, .snd = -1 },
+    { .fn = H_PUNCH, .phase = 1, .step = RIDE_STEP(5, 1, 1), .bits = 0x30, .unk87 = 2, .e_state = 0x00020122, .e_anim = 0x104, .snd = -1 },
+    { .fn = H_JUMP, .e_state = 0x0C, .e_vy = 0x58000, .e_anim = 0x2B000005, .e_spawn = 0x0C410000, .snd = 4 },
+    { .fn = H_JUMP, .unk2 = 1, .bits = 0x30, .e_state = 0x06, .e_vy = 0x58000, .e_anim = 0x2B000005, .snd = 3 },
+    { .fn = H_JUMP, .phase = 1, .dead = 1, .e_state = 0x0B, .e_anim = 5, .snd = -1 },
+    { .fn = H_JUMP, .phase = 1, .flags = 2, .e_state = 0x0122, .e_anim = 5, .e_flags = 0x200, .snd = -1 },
+    { .fn = H_JUMP, .phase = 1, .input = 4, .coll = 0x80, .e_state = 0x0C, .e_anim = 5, .snd = -1 },
+    { .fn = H_JUMP, .phase = 1, .coll = 0x80, .vy = -1, .e_state = 0x0C, .e_vy = 0xFFFFFFFF, .e_anim = 5, .snd = -1 },
+    { .fn = H_LAND, .e_state = 0x01, .e_anim = 0x2D000005, .e_flags = 0x01600000, .snd = 1 },
+    { .fn = H_LAND, .unk2 = 1, .e_state = 0x01, .e_anim = 0x2D000005, .e_flags = 0x01600000, .snd = 0 },
+    { .fn = H_LAND, .phase = 1, .dead = 1, .e_state = 0x0B, .e_anim = 5, .snd = -1 },
+    { .fn = H_LAND, .phase = 1, .step = RIDE_STEP(5, 0, 1), .flags = 2, .e_state = 0x0122, .e_anim = 4, .e_flags = 0x200, .snd = -1 },
+    { .fn = H_LAND, .phase = 1, .step = RIDE_STEP(5, 0, 1), .e_state = 0x0C, .e_anim = 4, .snd = -1 },
+    { .fn = H_LAND, .phase = 1, .step = RIDE_STEP(5, 0, 1), .input = 8, .bits = 0x30, .e_state = 0x03, .e_anim = 4, .snd = -1 },
+    { .fn = H_LAND, .phase = 1, .step = RIDE_STEP(5, 0, 1), .input = 8, .coll = 1, .e_state = 0x0122, .e_x = 0x16000, .e_vx = 0x16000, .e_anim = 4, .e_flags = 0x40, .snd = -1 },
+    { .fn = H_LAND, .phase = 1, .step = RIDE_STEP(5, 0, 1), .input = 8, .e_state = 0x0122, .e_anim = 4, .snd = -1 },
+    { .fn = H_AIR_PUNCH, .phase = 1, .flags = 2, .e_state = 0x0122, .e_anim = 4, .e_flags = 0x200, .snd = -1 },
+    { .fn = H_AIR_PUNCH, .phase = 1, .input = 4, .vy = 0x10000, .e_state = 0x0104, .e_anim = 4, .snd = -1 },
+    { .fn = H_AIR_PUNCH, .phase = 1, .coll = 0x80, .vy = 0x10000, .step = RIDE_STEP(5, 0, 1), .e_state = 0x0122, .e_y = 0xFFFF0000, .e_vy = 0x10000, .e_anim = 4, .snd = -1 },
+    { .fn = H_STEP, .phase = 1, .step = RIDE_STEP(5, 0, 1), .bits = 0x80, .e_state = 0x04, .e_anim = 4, .snd = -1 },
+    { .fn = H_STEP, .phase = 1, .step = RIDE_STEP(5, 0, 1), .bits = 0x30, .e_state = 0x03, .e_anim = 4, .snd = -1 },
+    { .fn = H_STEP, .phase = 1, .step = RIDE_STEP(5, 0, 1), .coll = 1, .e_state = 0x03, .e_anim = 4, .snd = -1 },
+    { .fn = H_STEP, .phase = 1, .step = RIDE_STEP(5, 0, 1), .e_state = 0x0122, .e_anim = 4, .snd = -1 },
+    { .fn = H_SLIDE, .phase = 1, .input = 8, .step = RIDE_STEP(5, 1, 0), .timer = 5, .vx = 0x20000, .tick = 1, .e_state = 0x0122, .e_x = 0x20000, .e_vx = 0x20000, .e_anim = 0x40104, .snd = -1 },
+    { .fn = H_FALL, .flags = 0x40, .input = 8, .e_state = 0x05, .e_anim = 0x2C000005, .e_flags = 0x4000, .snd = -1 },
+    { .fn = H_FALL, .input = 8, .e_state = 0x0B, .e_anim = 5, .snd = -1 },
+    { .fn = H_FALL, .phase = 1, .flags = 0x40, .dead = 1, .e_state = 0x0B, .e_anim = 5, .e_flags = 0x4000, .snd = -1 },
+    { .fn = H_FALL, .phase = 1, .flags = 0x42, .e_state = 0x0122, .e_anim = 5, .e_flags = 0x4200, .snd = -1 },
+    { .fn = H_FALL, .phase = 1, .flags = 0x40, .bits = 0x30, .e_state = 0x06, .e_anim = 5, .e_flags = 0x4000, .snd = -1 },
+    { .fn = H_FALL, .phase = 1, .flags = 0x40, .unk2 = 1, .bits = 0x80, .e_state = 0x0E, .e_anim = 5, .e_flags = 0x4000, .snd = -1 },
+    { .fn = H_FALL, .phase = 1, .flags = 0x40, .unk2 = 1, .unk7D = 1, .bits = 0x80, .vx = 0x30000, .ay = 0x1000, .e_state = 0x0122, .e_vy = 0xFFFFF000, .e_anim = 5, .e_flags = 0x4000, .snd = -1 },
+    { .fn = H_FALL, .phase = 1, .flags = 0x40, .vy = -0x60000, .e_state = 0x0122, .e_y = 0x5E000, .e_vy = 0xFFFA2000, .e_anim = 5, .e_flags = 0x4000, .snd = -1 },
+    { .fn = H_FALL, .phase = 1, .flags = 0x40, .unk2 = 1, .coll = 1, .speed = 0x100, .vx = 0x30000, .e_state = 0x0122, .e_x = 0x10000, .e_vx = 0x10000, .e_anim = 5, .e_flags = 0x01004040, .snd = -1 },
+    { .fn = H_FALL, .phase = 1, .vy = 0x10000, .ay = 0x1000, .e_state = 0x0122, .e_y = 0xFFFF0000, .e_vy = 0xF000, .e_anim = 5, .snd = -1 },
+    { .fn = H_RUSH, .phase = 1, .flags = 2, .e_state = 0x0122, .e_anim = 4, .e_flags = 0x200, .snd = -1 },
+    { .fn = H_AIR_SHOT, .phase = 1, .coll = 0x80, .vy = 0x10000, .step = RIDE_STEP(5, 0, 1), .e_state = 0x0122, .e_y = 0xFFFF0000, .e_vy = 0x10000, .e_anim = 4, .snd = -1 },
+    { .fn = H_DASH, .flags = 2, .e_state = 0x0122, .e_vx = 0xFFFBE000, .e_anim = 0x2F1E0004, .e_flags = 0x04200200, .snd = 2 },
+    { .fn = H_SHOT, .phase = 1, .timer = 5, .step = RIDE_STEP(5, 0, 1), .bits = 0x30, .unk86 = 3, .e_state = 0x0122, .e_anim = 0x40004, .snd = -1 },
+    { .fn = H_HOVER, .e_state = 0x0122, .e_anim = 0x3C000004, .e_flags = 0x01600000, .snd = 5 },
+    { .fn = H_HOVER, .phase = 1, .bits = 0x80, .e_state = 0x0C, .e_anim = 5, .snd = -1 },
+    { .fn = H_HOVER, .phase = 1, .bits = 0x30, .e_state = 0x11, .e_anim = 5, .snd = -1 },
+    { .fn = H_JUMP, .phase = 1, .coll = 0x82, .vy = 0x10000, .speed = 0x100, .e_state = 0x0122, .e_x = 0xFFFF0000, .e_y = 0xFFFF0000, .e_vx = 0xFFFF0000, .e_vy = 0x10000, .e_anim = 5, .e_flags = 0x01000000, .snd = -1 },
+    { .fn = H_EXIT, .phase = 1, .pad = 3, .vy = 0x10000, .e_state = 0, .e_y = 0xFFFF0000, .e_vy = 0x10000, .e_anim = 4, .snd = -1 },
+    { .fn = H_SPIN, .phase = 1, .input = 8, .pad = 1, .e_state = 0x0122, .e_anim = 4, .snd = -1 },
+    { .fn = H_RECOVER, .phase = 1, .e_state = 0x01, .e_anim = 5, .snd = -1 },
+    { .fn = H_RECOVER, .phase = 1, .unk7E = 3, .e_state = 0x0122, .e_anim = 5, .snd = -1 },
+    { .fn = H_RECOVERY, .phase = 1, .flags = 2, .e_state = 0x0122, .e_anim = 5, .e_flags = 0x200, .snd = -1 },
+    { .fn = H_RECOVERY, .phase = 3, .e_state = 0x01, .e_anim = 5, .snd = -1 },
+    { .fn = H_ZERO_PUNCH, .e_state = 0x01, .e_anim = 0x3F000005, .e_spawn = 0x3B41, .snd = 7 },
+    { .fn = H_ZERO_PUNCH, .phase = 1, .step = RIDE_STEP(5, 1, 1), .bits = 0x30, .e_state = 0x03, .e_anim = 0x104, .snd = -1 },
+    { .fn = H_ZERO_PUNCH, .phase = 1, .step = RIDE_STEP(5, 0, 1), .e_state = 0x0122, .e_anim = 4, .snd = -1 },
+    { .fn = H_ZERO_PUNCH, .phase = 1, .step = RIDE_STEP(5, 1, 1), .e_state = 0x0122, .e_anim = 0x104, .snd = -1 },
+    { .fn = H_ZERO_PUNCH, .phase = 1, .step = RIDE_STEP(5, 1, 1), .bits = 0x30, .unk86 = 3, .e_state = 0x0122, .e_anim = 0x104, .snd = -1 },
+};
+
+#ifdef MMX4_SATURN
+#define SOUND_CHECK_RIDE(expression) ((void)0)
+#else
+#define SOUND_CHECK_RIDE(expression) assert(expression)
+#endif
+static u32 ride_sound_rows[0x100];
+static void ride_sound_probe(void)
+{
+    memset(D_8013E198, -1, sizeof(D_8013E198));
+#ifndef MMX4_SATURN
+    memset(ride_sound_rows, 0, sizeof(ride_sound_rows));
+    D_8013E198[5] = 0;
+    D_80141F50[5] = (u8*)ride_sound_rows;
+    D_80141EE8[5] = (u8*)&ride_sound_rows[0xFF];
+#endif
+    D_80137E08 = NULL;
+}
+static s32 ride_sound_id(void)
+{
+    return D_80137E08 == NULL ? -1 : (s32)(D_80137E08 - ride_sound_rows);
+}
+
+static void ride_room(u8 phase)
+{
+    RIDE(0x22, phase);
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    g_Player.hp = 16;
+    sr.active = 0x41;
+    main_bss_state.frame_counter = 1;
+    cur_random = 0x100;
+    ride_sound_probe();
+}
+
+static u32 test_ride_handlers(u32 row)
+{
+    struct RideArmorObj* r = &sr;
+    ride_room(ride_handler_rows[row].phase);
+    r->unk2 = ride_handler_rows[row].unk2;
+    r->unk15 = ride_handler_rows[row].right ? PLAYER_FACING_RIGHT : 0;
+    r->unk94.bytes.pad94[0] = ride_handler_rows[row].pad;
+    r->unk94.bytes.unk97 = ride_handler_rows[row].flags;
+    r->input_flags = ride_handler_rows[row].input;
+    r->collision_flags = ride_handler_rows[row].coll;
+    r->unk8A = ride_handler_rows[row].bits;
+    r->unk7D = ride_handler_rows[row].unk7D;
+    r->unk87 = ride_handler_rows[row].unk87;
+    r->unk80.bytes.unk81 = ride_handler_rows[row].unk81;
+    r->unk86 = ride_handler_rows[row].unk86;
+    r->unk7E = ride_handler_rows[row].unk7E;
+    r->unk90.byte = ride_handler_rows[row].timer;
+    r->unk98.packed = ride_handler_rows[row].speed;
+    if (ride_handler_rows[row].step)
+        r->animation_step.packed = ride_handler_rows[row].step;
+    r->x_vel.val = ride_handler_rows[row].vx;
+    r->y_vel.val = ride_handler_rows[row].vy;
+    r->unk2C = ride_handler_rows[row].ay;
+    if (ride_handler_rows[row].dead)
+        g_Player.hp = -0x80;
+    if (ride_handler_rows[row].tick)
+        main_bss_state.frame_counter = 0;
+    ride_handlers[ride_handler_rows[row].fn](r);
+    assert(((u8)r->unk5 | (u8)r->unk6 << 8 | (u8)r->unk87 << 16 | (u32)r->unk80.bytes.unk81 << 24) == ride_handler_rows[row].e_state);
+    assert((u32)r->x_pos.val == ride_handler_rows[row].e_x && (u32)r->y_pos.val == ride_handler_rows[row].e_y);
+    assert((u32)r->x_vel.val == ride_handler_rows[row].e_vx && (u32)r->y_vel.val == ride_handler_rows[row].e_vy);
+    assert(((u8)r->animation_step.fields.duration | (u8)r->animation_step.fields.event << 8 | (u8)r->unk90.byte << 16
+               | (u32)(u8)g_Player.ride_animation << 24)
+        == ride_handler_rows[row].e_anim);
+    assert((weapon_objects[0].active | weapon_objects[0].id << 8 | visual_objects[0].active << 16 | (u32)visual_objects[0].id << 24)
+        == ride_handler_rows[row].e_spawn);
+    assert((C_TEST_PSX_FACING(r->unk15) | r->unk94.bytes.unk97 << 8 | (u32)(u16)r->unk98.packed << 16) == ride_handler_rows[row].e_flags);
+    assert(cur_random == (ride_handler_rows[row].tick ? 0x90C : 0x100));
+    SOUND_CHECK_RIDE(ride_sound_id() == ride_handler_rows[row].snd);
+    return 1;
+}
+
+static const struct {
+    u8 pad, count, mode, flags, coll, a6, unk2;
+    u32 e_hold, e_visual;
+    s8 snd;
+} ride_hold_rows[] = {
+    { .mode = 0x80, .flags = 0x80, .coll = 0x30, .e_hold = 0, .snd = -1 },
+    { .coll = 0x10, .e_hold = 0x103C01, .snd = -1 },
+    { .pad = 1, .a6 = 0x10, .e_hold = 0, .snd = -1 },
+    { .pad = 1, .a6 = 0x10, .coll = 0x10, .count = 5, .e_hold = 0x100401, .snd = -1 },
+    { .pad = 1, .a6 = 0x10, .coll = 0x10, .count = 1, .e_hold = 0x100002, .snd = -1 },
+    { .pad = 1, .a6 = 0x10, .coll = 0x10, .count = 1, .unk2 = 1, .flags = 0x40, .e_hold = 0x100002, .e_visual = 0x101641, .snd = 8 },
+    { .pad = 1, .a6 = 0x10, .coll = 0x10, .count = 1, .unk2 = 1, .e_hold = 0x100002, .snd = -1 },
+    { .pad = 2, .a6 = 0x10, .coll = 0x10, .e_hold = 0x100002, .snd = -1 },
+    { .pad = 2, .a6 = 0x10, .e_hold = 0, .snd = -1 },
+    { .pad = 2, .a6 = 0x10, .unk2 = 1, .e_hold = 0, .snd = -1 },
+};
+
+static u32 test_ride_hold(u32 row)
+{
+    struct RideArmorObj* r = &sr;
+    ride_room(1);
+    r->unk94.bytes.pad94[0] = ride_hold_rows[row].pad;
+    r->unk94.bytes.pad94[1] = ride_hold_rows[row].count;
+    r->unk94.bytes.pad94[2] = ride_hold_rows[row].mode;
+    r->unk94.bytes.unk97 = ride_hold_rows[row].flags;
+    r->collision_flags = ride_hold_rows[row].coll;
+    r->unkA6 = ride_hold_rows[row].a6;
+    r->unk2 = ride_hold_rows[row].unk2;
+    func_8003D9E0(r);
+    assert((r->unk94.bytes.pad94[0] | r->unk94.bytes.pad94[1] << 8 | (u32)(u8)r->unkA6 << 16 | (u32)r->spawned_parts << 24) == ride_hold_rows[row].e_hold);
+    assert((visual_objects[0].active | visual_objects[0].id << 8 | (u32)visual_objects[0].unk2 << 16) == ride_hold_rows[row].e_visual);
+    assert(r->unk5 == 0x22 && r->unk94.bytes.unk97 == ride_hold_rows[row].flags && weapon_objects[0].active == 0);
+    SOUND_CHECK_RIDE(ride_sound_id() == ride_hold_rows[row].snd);
+    return 1;
+}
+
+static const u8 ride_kind_rows[][2] = { { 0, 2 }, { 0, 5 }, { 1, 1 }, { 1, 2 }, { 1, 5 }, { 1, 4 }, { 1, 0xC } };
+static u32 test_ride_kind(u32 row)
+{
+    ride_room(1);
+    sr.unk2 = ride_kind_rows[row][0];
+    sr.unk5 = ride_kind_rows[row][1];
+    assert(func_8003DE08(MAIN_OBJECT(&sr)) == 0);
+    return 1;
+}
+
+static const struct {
+    u8 stomp, cooldown, flags, active, timer, unk5, unk67, unk7D;
+    u16 tap, bits;
+    u8 e_active, e_timer;
+    u16 e_tap;
+} ride_tap_rows[] = {
+    { .bits = 3 },
+    { .active = 1, .tap = 1, .bits = 2, .timer = 5, .e_active = 1, .e_timer = 4, .e_tap = 1 },
+    { .active = 1, .tap = 1, .bits = 1, .timer = 5, .unk5 = 1, .unk67 = 1, .unk7D = 1, .e_active = 1, .e_timer = 4, .e_tap = 1 },
+    { .stomp = 1, .flags = 2, .bits = 0x100, .unk5 = 1 },
+    { .stomp = 1, .bits = 0x100, .unk5 = 3 },
+};
+
+static u32 test_ride_taps(u32 row)
+{
+    struct RideArmorObj* r = &sr;
+    ride_room(1);
+    r->unk5 = ride_tap_rows[row].unk5;
+    r->unk8C.bytes.cooldown = ride_tap_rows[row].cooldown;
+    r->unk94.bytes.unk97 = ride_tap_rows[row].flags;
+    r->unk8E.bytes.active = ride_tap_rows[row].active;
+    r->unk8E.bytes.timer = ride_tap_rows[row].timer;
+    r->pad9A = ride_tap_rows[row].tap;
+    r->unk8A = ride_tap_rows[row].bits;
+    r->unk67 = ride_tap_rows[row].unk67;
+    r->unk7D = ride_tap_rows[row].unk7D;
+    if (ride_tap_rows[row].stomp)
+        func_8003DF9C(PLAYER_OBJECT(r));
+    else
+        func_8003DE84(r);
+    assert(r->unk5 == ride_tap_rows[row].unk5 && r->unk6 == 1 && r->unk94.bytes.unk97 == ride_tap_rows[row].flags);
+    assert(r->unk8E.bytes.active == ride_tap_rows[row].e_active && r->unk8E.bytes.timer == ride_tap_rows[row].e_timer);
+    assert((u16)r->pad9A == ride_tap_rows[row].e_tap);
+    return 1;
+}
+
+static const struct {
+    u8 action, right, flags, input;
+    s32 vx, vy, ax, ay;
+    s16 sx, sy, sax, say;
+    u8 e_action, e_flags;
+    s32 e_x, e_y, e_vx, e_vy, e_ax, e_ay;
+    s16 e_sx, e_sy, e_sax, e_say;
+} ride_launch_rows[] = {
+    { 1, 0, 0, 0, 0x12300, 0x4500, 0x1200, 0x3400, 0, 0, 0, 0, 2, 0, 0, 0, 0x40000, 0, 0x5800, 0x5800, 0x123, 0x45, 0x12, 0x34 },
+    { 1, 1, 0, 0, 0x12300, 0x4500, 0x1200, 0x3400, 0, 0, 0, 0, 2, 0, 0, 0, -0x40000, 0, 0x5800, 0x5800, 0x123, 0x45, 0x12, 0x34 },
+    { 2, 0, 0, 0, -0x50000, 0, 0x5800, 0, 0, 0, 0, 0, 2, 0, -0x50000, 0, -0x55800, 0, 0x5800, 0, 0, 0, 0, 0 },
+    { 2, 0, 2, 8, 0x4000, 0x1000, 0, 0, 0x12, 0, 3, 4, 0, 0, 0x4000, -0x1000, 0x1200, 0, 0x300, 0x400, 0x12, 0, 3, 4 },
+};
+
+static u32 test_ride_launch(u32 row)
+{
+    struct RideArmorObj* r = &sr;
+    ride_room(1);
+    r->unk90.bytes.action_state = ride_launch_rows[row].action;
+    r->unk15 = ride_launch_rows[row].right ? PLAYER_FACING_RIGHT : 0;
+    r->unk94.bytes.unk97 = ride_launch_rows[row].flags;
+    r->input_flags = ride_launch_rows[row].input;
+    r->x_vel.val = ride_launch_rows[row].vx;
+    r->y_vel.val = ride_launch_rows[row].vy;
+    r->unk28 = ride_launch_rows[row].ax;
+    r->unk2C = ride_launch_rows[row].ay;
+    r->saved_x_vel = ride_launch_rows[row].sx;
+    r->saved_y_vel = ride_launch_rows[row].sy;
+    r->unkA0.saved_accel.x = ride_launch_rows[row].sax;
+    r->unkA0.saved_accel.y = ride_launch_rows[row].say;
+    r->launch_speed = 0x400;
+    func_8003FF9C(r);
+    assert(r->unk90.bytes.action_state == ride_launch_rows[row].e_action && r->unk94.bytes.unk97 == ride_launch_rows[row].e_flags);
+    assert(r->x_pos.val == ride_launch_rows[row].e_x && r->y_pos.val == ride_launch_rows[row].e_y);
+    assert(r->x_vel.val == ride_launch_rows[row].e_vx && r->y_vel.val == ride_launch_rows[row].e_vy);
+    assert(r->unk28 == ride_launch_rows[row].e_ax && r->unk2C == ride_launch_rows[row].e_ay);
+    assert(r->saved_x_vel == ride_launch_rows[row].e_sx && r->saved_y_vel == ride_launch_rows[row].e_sy);
+    assert(r->unkA0.saved_accel.x == ride_launch_rows[row].e_sax && r->unkA0.saved_accel.y == ride_launch_rows[row].e_say);
+    return 1;
+}
+
+static const struct {
+    u8 fn, unk8D, afterimage, flags, ended, timer91, timer92, dash;
+    s16 x, y;
+    u16 unk42;
+    u8 e_unk8D, e_afterimage, e_flags, e_ended, e_state, e_screen, e_dash, e_timer91, e_timer92, e_debris, e_visual, e_ride;
+    u16 e_unk42;
+    s16 e_x;
+} ride_wreck_rows[] = {
+    { .fn = 0, .unk8D = 1, .flags = 0x40, .dash = 5, .e_unk8D = 2, .e_afterimage = 0xFF, .e_flags = 4, .e_ended = 0x1E, .e_state = 1, .e_screen = 1, .e_dash = 5, .e_debris = 7, .e_ride = 0 },
+    { .fn = 0, .unk8D = 2, .ended = 1, .e_unk8D = 2, .e_state = 2, .e_visual = 4, .e_ride = 1 },
+    { .fn = 0, .unk8D = 2, .ended = 5, .e_unk8D = 2, .e_ended = 4, .e_state = 1, .e_screen = 1, .e_visual = 4, .e_ride = 1 },
+    { .fn = 0, .flags = 0x80, .dash = 5, .unk42 = 0x8123, .e_flags = 0x80, .e_state = 1, .e_screen = 1, .e_dash = 5, .e_unk42 = 0x8123, .e_ride = 1 },
+    { .fn = 1, .flags = 0x40, .afterimage = 4, .unk42 = 0x0123, .e_flags = 0x40, .e_afterimage = 4, .e_state = 1, .e_screen = 1, .e_unk42 = 0x8123, .e_ride = 1 },
+    { .fn = 1, .flags = 0x40, .afterimage = 5, .unk42 = 0x8123, .e_flags = 0x40, .e_afterimage = 5, .e_state = 1, .e_screen = 1, .e_unk42 = 0x0123, .e_ride = 1 },
+    { .fn = 2, .flags = 0x80, .timer92 = 2, .unk42 = 0x8123, .e_flags = 0x80, .e_state = 1, .e_screen = 1, .e_timer92 = 1, .e_unk42 = 0x0123, .e_ride = 1 },
+    { .fn = 2, .flags = 0x80, .timer92 = 1, .timer91 = 3, .unk42 = 0x0123, .e_flags = 0x80, .e_state = 1, .e_screen = 1, .e_timer91 = 2, .e_timer92 = 3, .e_unk42 = 0x8123, .e_ride = 1 },
+    { .fn = 2, .flags = 0x80, .timer92 = 1, .timer91 = 1, .unk42 = 0x0123, .e_unk8D = 1, .e_flags = 0x80, .e_state = 1, .e_screen = 1, .e_timer92 = 1, .e_unk42 = 0x0123, .e_ride = 1 },
+    { .fn = 3, .x = 100, .y = 300, .e_state = 2, .e_screen = 1, .e_ride = 1, .e_x = 100 },
+};
+
+static u32 test_ride_wreck(u32 row)
+{
+    struct PlayerObj* p = &state_room.player;
+    struct RideArmorObj* r = &sr;
+    u32 i, debris = 0;
+    ride_room(1);
+    g_Player.ride_state = 1;
+    g_Player.unk68 = &player_x_collision_bounds;
+    memset(background_objects, 0, sizeof(background_objects));
+    r->state = 1;
+    r->on_screen = 1;
+    r->x_pos.i.hi = ride_wreck_rows[row].x;
+    r->y_pos.i.hi = ride_wreck_rows[row].y;
+    r->unk42 = ride_wreck_rows[row].unk42;
+    r->unk94.bytes.unk97 = ride_wreck_rows[row].flags;
+    RIDE_WRECK_BLINKS(r) = ride_wreck_rows[row].timer91;
+    RIDE_WRECK_FRAMES(r) = ride_wreck_rows[row].timer92;
+    p->unk8D = ride_wreck_rows[row].unk8D;
+    p->afterimage = ride_wreck_rows[row].afterimage;
+    p->attack_ended = ride_wreck_rows[row].ended;
+    p->dash_timer = ride_wreck_rows[row].dash;
+    switch (ride_wreck_rows[row].fn) {
+    case 0:
+        func_800400C8(p);
+        break;
+    case 1:
+        func_800401F8(p);
+        break;
+    case 2:
+        func_80040248(r);
+        break;
+    default:
+        func_800402C4(p);
+        break;
+    }
+    for (i = 0; i < COUNT(misc_objects); i++)
+        debris += misc_objects[i].active == 0x41 && misc_objects[i].id == 3;
+    assert(p->unk8D == ride_wreck_rows[row].e_unk8D && (u8)p->afterimage == ride_wreck_rows[row].e_afterimage);
+    assert(r->unk94.bytes.unk97 == ride_wreck_rows[row].e_flags && (u8)p->attack_ended == ride_wreck_rows[row].e_ended);
+    assert(r->state == ride_wreck_rows[row].e_state && r->on_screen == ride_wreck_rows[row].e_screen);
+    assert(p->dash_timer == ride_wreck_rows[row].e_dash && (u16)r->unk42 == ride_wreck_rows[row].e_unk42);
+    assert(RIDE_WRECK_BLINKS(r) == ride_wreck_rows[row].e_timer91 && RIDE_WRECK_FRAMES(r) == ride_wreck_rows[row].e_timer92);
+    assert(debris == ride_wreck_rows[row].e_debris && visual_objects[0].id == ride_wreck_rows[row].e_visual);
+    assert(g_Player.ride_state == ride_wreck_rows[row].e_ride && g_Player.hp == 16);
+    assert(r->x_pos.i.hi == ride_wreck_rows[row].e_x);
+    return 1;
+}
+
+static const struct {
+    u8 screen, cooldown, buttons, flags, unkF, unk2, unk5, unk7E;
+    s8 hp;
+    u8 e_unk5, e_unk6, e_flags, e_buttons, e_timers, e_launch, e_visual, e_rider, e_unk7E;
+} ride_update_rows[] = {
+    { .screen = 1, .cooldown = 3, .hp = -0x80, .unk5 = 0x22, .e_unk5 = 0x22, .e_unk6 = 1 },
+    { .cooldown = 3, .hp = -0x80, .unk5 = 0x22, .e_unk5 = 0x22, .e_unk6 = 1, .e_flags = 0x82, .e_buttons = 0x78, .e_timers = 0x1E, .e_launch = 1, .e_visual = 0xC },
+    { .cooldown = 3, .hp = -1, .unk5 = 0x22, .e_unk5 = 0x22, .e_unk6 = 1, .e_flags = 2, .e_buttons = 0x78, .e_launch = 1, .e_visual = 0xC },
+    { .cooldown = 3, .buttons = 1, .flags = 1, .unk5 = 0x22, .e_unk5 = 0x22, .e_unk6 = 1, .e_flags = 1, .e_rider = 1 },
+    { .cooldown = 3, .buttons = 1, .unk5 = 0x22, .e_unk5 = 0x22, .e_unk6 = 1 },
+    { .cooldown = 3, .flags = 0x41, .unk5 = 0x22, .e_unk5 = 0xB, .e_flags = 0x40 },
+    { .cooldown = 3, .flags = 0x40, .unkF = 1, .unk5 = 0x22, .e_unk5 = 0xB, .e_flags = 0x41 },
+    { .cooldown = 3, .unkF = 1, .unk5 = 0x22, .e_unk5 = 0x22, .e_unk6 = 1 },
+    { .unk5 = 16, .e_unk5 = 0xC },
+    { .unk2 = 1, .unk5 = 2, .unk7E = 3, .e_unk5 = 0xC, .e_unk7E = 2 },
+    { .unk2 = 1, .unk5 = 2, .e_unk5 = 0xC },
+    { .unk5 = 2, .flags = 0x40, .e_unk5 = 0xC, .e_flags = 0x40 },
+};
+
+static u32 test_ride_update(u32 row)
+{
+    struct RideArmorObj* r = &sr;
+    ride_room(1);
+    state_terrain(0);
+    r->state = 1;
+    r->on_screen = 1;
+    r->bg_offset = 0;
+    r->x_pos.i.hi = ride_update_rows[row].screen ? 0x300 : 100;
+    r->y_pos.i.hi = 100;
+    r->hp = ride_update_rows[row].hp;
+    r->unk8C.bytes.cooldown = ride_update_rows[row].cooldown;
+    r->unk8C.bytes.buttons = ride_update_rows[row].buttons;
+    r->unk94.bytes.unk97 = ride_update_rows[row].flags;
+    r->unk2 = ride_update_rows[row].unk2;
+    r->unk5 = ride_update_rows[row].unk5;
+    r->unk7E = ride_update_rows[row].unk7E;
+    r->unk68 = &D_800F9124;
+    engine_obj.unkF = ride_update_rows[row].unkF;
+    g_Player.x_pos.i.hi = 7;
+    func_800403DC(r);
+    assert(r->unk5 == ride_update_rows[row].e_unk5 && r->unk6 == ride_update_rows[row].e_unk6);
+    assert(r->unk94.bytes.unk97 == ride_update_rows[row].e_flags && r->unk8C.bytes.buttons == ride_update_rows[row].e_buttons);
+    assert(RIDE_WRECK_BLINKS(r) == ride_update_rows[row].e_timers && RIDE_WRECK_FRAMES(r) == ride_update_rows[row].e_timers);
+    assert(r->launch_speed == (ride_update_rows[row].e_launch ? 0x400 : 0));
+    assert(r->unk90.bytes.action_state == ride_update_rows[row].e_launch && r->unk85 == ride_update_rows[row].e_launch);
+    assert(visual_objects[0].id == ride_update_rows[row].e_visual && g_Player.on_screen == ride_update_rows[row].e_rider);
+    assert(r->unk7E == ride_update_rows[row].e_unk7E);
+    assert(g_Player.x_pos.i.hi == (ride_update_rows[row].e_flags & 0x40 && ride_update_rows[row].cooldown == 0 ? 100 : 7));
+    if (ride_update_rows[row].screen)
+        assert(r->on_screen == 0);
+    return 1;
+}
+
+static u32 test_ride_mount_out_of_reach(u32 row)
+{
+    struct RideArmorObj* r = &sr;
+    (void)row;
+    ride_room(1);
+    r->unk5 = 0;
+    r->input_flags = 8;
+    r->x_pos.val = 160 * 65536;
+    r->y_pos.val = 120 * 65536;
+    r->unk68 = &D_800F9124;
+    g_Player.active = 0x41;
+    g_Player.state = 1;
+    g_Player.hp = 30;
+    g_Player.x_pos = r->x_pos;
+    g_Player.y_pos.val = r->y_pos.val + 120 * 65536;
+    g_Player.unk68 = &player_x_collision_bounds;
+    func_8003E0D0(r);
+    assert(r->unk5 == 0 && r->unk6 == 1 && r->unk94.bytes.unk97 == 0 && g_Player.ride_state == 0);
+    assert(r->animation_step.packed == C_TEST_STEP(5));
+    return 1;
+}
+
+static u32 test_ride_release_backref(u32 row)
+{
+    u8 record = 1;
+    (void)row;
+    ride_room(1);
+    sr.active = 1;
+    sr.backref = &record;
+    func_800405D4(&sr);
+    assert(record == 0x80 && sr.active == 0);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "armor_recovery", 0, 0, COUNT(armor_recovery_cases) * 2, test_armor_recovery },
     { "armor_part_release", 0, 0, 48, test_armor_part_release },
@@ -1774,6 +2315,7 @@ const struct CTestGroup c_test_groups[] = {
     { "ride_armor_init_resources", NULL, ride_armor_init_resources_cases_expected, COUNT(ride_armor_init_resources_cases_expected), ride_armor_init_resources_armor_case },
     { "ride_armor_jump_attack_transitions", NULL, ride_armor_jump_attack_transitions_cases_expected, COUNT(ride_armor_jump_attack_transitions_cases_expected), ride_armor_jump_attack_transitions_armor_case },
     { "func_8003D6EC", 0, 0, 1, test_func_8003D6EC },
+    { "func_8003DCD8", 0, 0, 1, test_func_8003DCD8 },
     { "func_8003E0D0", 0, 0, 4, test_func_8003E0D0 },
     { "func_8003FD08", 0, 0, 5, test_func_8003FD08 },
     { "func_800405D4", 0, 0, 1, test_func_800405D4 },
@@ -1786,6 +2328,15 @@ const struct CTestGroup c_test_groups[] = {
     { "unknown_contact_phase_is_inert", NULL, NULL, 5, idle_phase },
     { "recovery_entry_and_exit", NULL, NULL, 32, recover },
     { "actual_Ride_Armor_ground_punch_full_weapon_pool", NULL, NULL, 1, punch },
+    { "ride_handlers", 0, 0, COUNT(ride_handler_rows), test_ride_handlers },
+    { "ride_hold", 0, 0, COUNT(ride_hold_rows), test_ride_hold },
+    { "ride_kind", 0, 0, COUNT(ride_kind_rows), test_ride_kind },
+    { "ride_taps", 0, 0, COUNT(ride_tap_rows), test_ride_taps },
+    { "ride_launch", 0, 0, COUNT(ride_launch_rows), test_ride_launch },
+    { "ride_wreck", 0, 0, COUNT(ride_wreck_rows), test_ride_wreck },
+    { "ride_update", 0, 0, COUNT(ride_update_rows), test_ride_update },
+    { "ride_release_backref", 0, 0, 1, test_ride_release_backref },
+    { "ride_mount_out_of_reach", 0, 0, 1, test_ride_mount_out_of_reach },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(armor_recovery_cases) * 2 + 48 + COUNT(ride_armor_states_cases) + COUNT(ride_armor_init_resources_cases_expected) + COUNT(ride_armor_jump_attack_transitions_cases_expected) + 1 + 4 + 5 + 1 + COUNT(armor_bounds_clamp_cases) + COUNT(dash_scenes) * 4 + 19 + 54 + 22 + 12 + 5 + 32 + 1;
+const u32 c_test_count = COUNT(armor_recovery_cases) * 2 + 48 + COUNT(ride_armor_states_cases) + COUNT(ride_armor_init_resources_cases_expected) + COUNT(ride_armor_jump_attack_transitions_cases_expected) + 1 + 4 + 5 + 1 + COUNT(armor_bounds_clamp_cases) + COUNT(dash_scenes) * 4 + 19 + 54 + 22 + 12 + 5 + 32 + 1 + COUNT(ride_handler_rows) + COUNT(ride_hold_rows) + COUNT(ride_kind_rows) + COUNT(ride_tap_rows) + COUNT(ride_launch_rows) + COUNT(ride_wreck_rows) + COUNT(ride_update_rows) + 1 + 1 + 1;

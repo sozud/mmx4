@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 
 #include "support/state_cases.h"
 #include "main/visuals/visual_30_colonel_fx.h"
@@ -6,12 +7,12 @@
 static struct MainObj fx_owner;
 #define sv state_room.visual
 #define FX(st, mode, phase) (state_reset(mode, phase, 0), memset(&fx_owner, 0, sizeof(fx_owner)), fx_owner.x_pos.i.hi = 0x80, fx_owner.y_pos.i.hi = 0x100, fx_owner.unk42 = 0x8123, fx_owner.bg_offset = 1, fx_owner.animation_table = (void*)state_table, sv.unk50 = (struct PlayerObj*)&fx_owner, sv.state = st)
-#define FX_SEEN() (state_extra = (u8)sv.unk54 | (u32)(u8)sv.unk16 << 8 | (u32)(u8)sv.bg_offset << 16 | (u32)(u8)sv.unk5C.value << 24)
+#define FX_SEEN() (state_extra = (u8)sv.unk54 | (u32)TEST_PSX_LAYER(sv.unk16) << 8 | (u32)(u8)sv.bg_offset << 16 | (u32)(u8)sv.unk5C.value << 24)
 static void cx_init(void)
 {
     FX(0, 0, 0);
     sv.unk2 = 0x23;
-    fx_owner.unk15 = 0x40;
+    fx_owner.unk15 = PLAYER_FACING_RIGHT;
     colonel_fx_update(&sv);
     FX_SEEN();
 }
@@ -24,7 +25,7 @@ static void cx_beam_in_left(void)
 static void cx_beam_in_right(void)
 {
     FX(1, 0, 0);
-    sv.unk15 = 0x40;
+    sv.unk15 = PLAYER_FACING_RIGHT;
     colonel_fx_update(&sv);
 }
 static void cx_beam_in_done(void)
@@ -47,7 +48,7 @@ static void cx_flash_left(void)
 static void cx_flash_right(void)
 {
     FX(1, 1, 0);
-    sv.unk15 = 0x40;
+    sv.unk15 = PLAYER_FACING_RIGHT;
     colonel_fx_update(&sv);
 }
 static void cx_flash_done(void)
@@ -72,7 +73,7 @@ static void cx_slash_left(void)
 static void cx_slash_right(void)
 {
     FX(1, 2, 0);
-    sv.unk15 = 0x40;
+    sv.unk15 = PLAYER_FACING_RIGHT;
     colonel_fx_update(&sv);
 }
 static void cx_slash_done(void)

@@ -32,7 +32,9 @@ static u32 turret_case(u32 mode)
         s->unk54 = (const u8*)&box;
         s->unk68 = &box;
         s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 7;
-        s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = s->unk78 = 7;
+        s->unk72 = s->unk73 = s->unk76 = s->unk77 = 7;
+        OBJ_UNK78_SET(*s, 7);
+        OBJ_UNK74_SET(*s, 7);
         s->unk62 = s->unk63 = s->unk7A = s->unk75 = 7;
     }
     if (mode == 0 || mode == 2 || mode == 5)
@@ -44,7 +46,7 @@ static u32 turret_case(u32 mode)
     obj.state = 1;
     obj.unk5 = 3;
     obj.unk6 = 2;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.animation_table = (const u8* const*)regen_turret_animations;
@@ -52,7 +54,7 @@ static u32 turret_case(u32 mode)
     if (mode < 6) {
         obj.animation_cursor = (const u8*)&regen_turret_animations[1][5];
         obj.animation_step = regen_turret_animations[1][5];
-        assert(obj.animation_step.packed == 0x06FB0001);
+        assert(obj.animation_step.packed == C_TEST_STEP(0x06FB0001));
     } else if (mode == 7)
         obj.animation_step.fields.duration = 1;
     expected = obj;
@@ -73,7 +75,9 @@ static u32 turret_case(u32 mode)
             s->unk54 = NULL;
             s->unk68 = NULL;
             s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 0;
-            s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = s->unk78 = 0;
+            s->unk72 = s->unk73 = s->unk76 = s->unk77 = 0;
+            OBJ_UNK78_SET(*s, 0);
+            OBJ_UNK74_SET(*s, 0);
             s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
         }
     } else if (mode == 6)
@@ -83,12 +87,9 @@ static u32 turret_case(u32 mode)
         expected.animation_step = regen_turret_animations[1][1];
     }
     regen_turret_fire(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(shots) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)shots)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(shot_objects, shots, sizeof(shots));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     return obj.unk17 | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)shot_objects[31].active << 16);
 }
 static const u32 regen_turret_facing_pool_cases_expected[] = { 0x41020Au, 0x1020Au, 0x41020Au, 0x1020Au, 0x1020Au, 0x20Au, 0x10301u, 0x10301u };
@@ -98,7 +99,7 @@ static u32 test_regen_turret_rebuild(u32 row)
 {
     u32 observed_values[10];
     struct MainObj obj, before;
-    u32 spawn_record;
+    u8 spawn_record;
     memset(&obj, 0, sizeof(obj));
     memset(&g_Player, 0, sizeof(g_Player));
     memset(&background_objects, 0, sizeof(background_objects));
@@ -143,10 +144,140 @@ static void rt_idle(void)
     regen_turret_start_idle(&so);
 }
 
+void func_8005B438(struct MainObj*);
+void regen_turret_idle(struct MainObj*);
+void regen_turret_main(struct MainObj*);
+void regen_turret_rebuild_wait(struct MainObj*);
+void regen_turret_rebuild_finish(struct MainObj*);
+void regen_turret_rebuild(struct MainObj*);
+#define RT(step, setup) (state_reset(step, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.hp = 6, setup)
+#define RTX() (state_extra = so.state | (u32)so.active << 8)
+static void rt_init_right(void)
+{
+    RT(0, (so.state = 0, so.unk2 = 1, func_8005B438(&so))), RTX();
+}
+static void rt_idle_end(void) { RT(2, so.animation_step.fields.relative_step = -1), regen_turret_idle(&so), RTX(); }
+static void rt_main_break(void) { RT(2, (so.active = 1, so.hp = 1, state_hit(&so, 0, 0, 1))), regen_turret_main(&so), RTX(); }
+static void rt_main_on_screen(void) { RT(2, 0), regen_turret_main(&so), RTX(); }
+static void rt_main_away(void) { RT(2, (so.active = 1, so.x_pos.i.hi = 0x1000)), regen_turret_main(&so), RTX(); }
+static void rt_rebuild_wait_end(void) { RT(1, (so.state = 2, so.animation_step.fields.relative_step = -1)), regen_turret_rebuild_wait(&so), RTX(); }
+static void rt_rebuild_finish_end(void) { RT(2, (so.state = 2, so.active = 5, so.animation_step.fields.relative_step = -1)), regen_turret_rebuild_finish(&so), RTX(); }
+static void rt_rebuild_finish_run(void) { RT(2, so.state = 2), regen_turret_rebuild_finish(&so), RTX(); }
+static void rt_rebuild_on_screen(void) { RT(1, so.state = 2), regen_turret_rebuild(&so), RTX(); }
 static void (*const regen_turret_misc_cases[])(void) = {
     rt_idle,
+    rt_init_right,
+    rt_idle_end,
+    rt_main_break,
+    rt_main_on_screen,
+    rt_main_away,
+    rt_rebuild_wait_end,
+    rt_rebuild_finish_end,
+    rt_rebuild_finish_run,
+    rt_rebuild_on_screen,
 };
-static const u32 regen_turret_misc_expected[] = { 2u, 0u, 0u, 0u, 0u, 0u, 0xAu, 0u, 0u, 0u };
+static const u32 regen_turret_misc_expected[] = {
+    2u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0xAu,
+    0u,
+    0u,
+    0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x60003u,
+    0x1u,
+    0x0u,
+    0x3u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x60000u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x502u,
+    0x5002100u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x60000u,
+    0x1u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x60000u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x60000u,
+    0x2u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x60000u,
+    0x101u,
+    0x1000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x60000u,
+    0x2u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x60000u,
+    0x2u,
+    0x0u,
+};
 
 static u32 test_regen_turret_misc(u32 row)
 {

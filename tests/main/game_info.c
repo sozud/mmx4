@@ -1,15 +1,17 @@
 #include "test_runtime.h"
 #include "main/game_info.h"
+#include "support/test_pad.h"
 #include "main/objects.h"
 #include "main/1AC84.h"
+#include "main/1263C.h"
 
-static const u32 func_8001D698_expected[] = { 0u, 0u, 0u, 0u, 0u, 1u };
+static const u32 func_8001D698_expected[2][6] = { { 0u, 0u, 0u, 0u, 0u, 1u }, { 0u, 0u, 0u, 0u, 2u, 1u } };
 static u32 test_func_8001D698(u32 row)
 {
     u32 observed_values[6];
     struct GameInfo obj;
     memset(&obj, 0, sizeof(obj));
-    obj.unkC = 3;
+    obj.unkC = row == 0 ? 3 : 1;
     func_8001D698(&obj);
     observed_values[0] = (u32)obj.mode;
     observed_values[1] = (u32)obj.unk0;
@@ -17,7 +19,7 @@ static u32 test_func_8001D698(u32 row)
     observed_values[3] = (u32)obj.unk3;
     observed_values[4] = (u32)obj.unkC;
     observed_values[5] = (u32)obj.unkD;
-    return c_test_observe(0, row, observed_values, func_8001D698_expected, 6);
+    return c_test_observe(0, row, observed_values, func_8001D698_expected[row], 6);
 }
 
 static const struct {
@@ -25,23 +27,24 @@ static const struct {
     s8 active, cursor, next_cursor, next_mode, next_fade;
 } game_over_inputs[] = {
     { 0, 0, 0, 0, 4, 0 },
-    { PADLup, 0, 0, 2, 4, 0 },
-    { PADLup, 0, 2, 1, 4, 0 },
-    { PADLdown, 0, 2, 0, 4, 0 },
-    { PADLdown, 0, 0, 1, 4, 0 },
-    { PAD_CONFIRM, 0, 1, 1, 5, -1 },
-    { PADstart, 0, 2, 2, 5, -1 },
-    { PADLup | PAD_CONFIRM, 0, 0, 2, 5, -1 },
-    { PADLup | PADLdown, 0, 0, 0, 4, 0 },
-    { PADLdown | PADstart, 0, 1, 2, 5, -1 },
-    { PADLup | PADLdown | PAD_CONFIRM, 1, 2, 2, 4, 1 },
-    { PADstart, -1, 0, 0, 4, -1 },
+    { TEST_PAD_UP, 0, 0, 2, 4, 0 },
+    { TEST_PAD_UP, 0, 2, 1, 4, 0 },
+    { TEST_PAD_DOWN, 0, 2, 0, 4, 0 },
+    { TEST_PAD_DOWN, 0, 0, 1, 4, 0 },
+    { TEST_PAD_CONFIRM, 0, 1, 1, 5, -1 },
+    { TEST_PAD_START, 0, 2, 2, 5, -1 },
+    { TEST_PAD_UP | TEST_PAD_CONFIRM, 0, 0, 2, 5, -1 },
+    { TEST_PAD_UP | TEST_PAD_DOWN, 0, 0, 0, 4, 0 },
+    { TEST_PAD_DOWN | TEST_PAD_START, 0, 1, 2, 5, -1 },
+    { TEST_PAD_UP | TEST_PAD_DOWN | TEST_PAD_CONFIRM, 1, 2, 2, 4, 1 },
+    { TEST_PAD_START, -1, 0, 0, 4, -1 },
 };
 
 static u32 test_game_over_inputs(u32 row)
 {
     struct GameInfo info, expected;
     struct ControllerInput input;
+    u32 started;
     memset(&info, 0x25, sizeof(info));
     memset(&main_bss_state, 0, sizeof(main_bss_state));
     memset(&controller_input, 0, sizeof(controller_input));
@@ -51,16 +54,17 @@ static u32 test_game_over_inputs(u32 row)
     expected = info;
     expected.mode = game_over_inputs[row].next_mode;
     expected.unk2 = game_over_inputs[row].next_cursor;
-    controller_input.pressed = game_over_inputs[row].pressed;
+    TEST_PAD_PRESSED = game_over_inputs[row].pressed;
     input = controller_input;
     main_bss_state.transition.active = game_over_inputs[row].active;
     main_bss_state.transition.fade_amount = 3;
     main_bss_state.transition.selection = 2;
     func_8001D8DC(&info);
     c_test_same_words(&info, &expected, sizeof(info));
-    c_test_same_words(&controller_input, &input, sizeof(input));
-    assert(main_bss_state.transition.active == game_over_inputs[row].next_fade);
-    assert(main_bss_state.transition.fade_amount == (info.mode == 5 ? 8 : 3));
+    assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
+    started = game_over_inputs[row].next_fade == -1 && game_over_inputs[row].active == 0;
+    assert(main_bss_state.transition.active == (started ? TEST_FADE_OUT_ACTIVE : game_over_inputs[row].next_fade));
+    assert(main_bss_state.transition.fade_amount == (started ? TEST_FADE_OUT_AMOUNT(8, 3) : 3));
     assert(main_bss_state.transition.selection == 2);
     return 1;
 }
@@ -70,10 +74,10 @@ static u32 test_game_over_route(u32 row)
     struct GameInfo info, expected;
     memset(&info, 0x25, sizeof(info));
     memset(&main_bss_state, 0, sizeof(main_bss_state));
-    info.unk2 = row % 2 + 1;
+    info.unk2 = row == 3 ? 3 : row % 2 + 1;
     expected = info;
-    main_bss_state.transition.active = row >= 2 ? 1 : 0;
-    if (row < 2) {
+    main_bss_state.transition.active = row == 2;
+    if (row != 2) {
         expected.unk0 = row == 0 ? 7 : 8;
         expected.mode = expected.unk2 = expected.unk3 = 0;
     }
@@ -82,7 +86,9 @@ static u32 test_game_over_route(u32 row)
     return 1;
 }
 
+#ifndef MMX4_SATURN
 static struct DrawInfo fade_drawing;
+#endif
 static u8 fade_tilemap[12];
 static u16 fade_tile_pixels[256];
 
@@ -97,16 +103,20 @@ static u32 test_fade_route(u32 row)
     memset(&engine_obj, 0, sizeof(engine_obj));
     memset(&main_bss_state, 0, sizeof(main_bss_state));
     memset(background_objects, 0, sizeof(background_objects));
+#ifndef MMX4_SATURN
     memset(&fade_drawing, 0, sizeof(fade_drawing));
+#endif
     memset(fade_tilemap, 0, sizeof(fade_tilemap));
     memset(fade_tile_pixels, 0, sizeof(fade_tile_pixels));
     memset(&info, 0x25, sizeof(info));
-    SP_DRAW_BUFFER = 0;
     SP_BG_TILEMAP = fade_tilemap;
     TEST_BG_TILE_PIXELS = (u8*)fade_tile_pixels;
     layout_width = layout_height = 2;
     layout_size = 4;
+#ifndef MMX4_SATURN
+    SP_DRAW_BUFFER = 0;
     cur_draw_info = &fade_drawing;
+#endif
     engine_obj.stage = 9;
     info.unkE = scene;
     expected = info;
@@ -118,6 +128,56 @@ static u32 test_fade_route(u32 row)
     assert(main_bss_state.transition.active == fade);
     assert(engine_obj.stage == 9);
     return 1;
+}
+
+static u32 test_demo_end(u32 row)
+{
+    static const u32 expected[5][4] = {
+        { 0x00000004u, 0x05u, (u8)TEST_FADE_OUT_ACTIVE, 0 },
+        { 0x07000404u, 0x05u, 1, 0 },
+        { 0x00000404u, 0x05u, (u8)TEST_FADE_OUT_ACTIVE, 0 },
+        { 0x00000403u, 0x01000009u, 0, 0x20u },
+        { 0x00000403u, 0x01000009u, 0, 0x200000u },
+    };
+    struct GameInfo info;
+    u32 seen[4];
+    reset_objects();
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+#ifndef MMX4_SATURN
+    memset(&fade_drawing, 0, sizeof(fade_drawing));
+    SP_DRAW_BUFFER = 0;
+    cur_draw_info = &fade_drawing;
+#endif
+    memset(fade_tilemap, 0, sizeof(fade_tilemap));
+    SP_BG_TILEMAP = fade_tilemap;
+    TEST_BG_TILE_PIXELS = (u8*)fade_tile_pixels;
+    layout_width = layout_height = 2;
+    layout_size = 4;
+    memset(&info, 0, sizeof(info));
+    info.mode = 3;
+    info.unk4 = row == 0 ? 1 : 5;
+    info.unkD = 7;
+    g_Player.active = row != 1;
+    g_Player.state = row == 2 ? 3 : 1;
+    g_Player.update_delay = row >= 3 ? 2 : 0;
+    g_Player.input.buttons.held = row == 4 ? 0x20 : 0;
+    engine_obj.stage = 5;
+    func_80021E74();
+    if (row >= 3)
+        *(u16*)(REPLAY_DATA + 0xD4) = 0x20;
+    if (row == 4)
+        *(u32*)REPLAY_DATA = 0xE10;
+    engine_obj.stage = 9;
+    main_bss_state.transition.active = row == 1;
+    func_8001D460(&info);
+    seen[0] = (u32)info.unkD << 24 | (u32)(u16)info.unk4 << 8 | (u8)info.mode;
+    seen[1] = engine_obj.stage | (u32)(u8)g_Player.update_delay << 24;
+    seen[2] = (u8)main_bss_state.transition.active;
+    seen[3] = g_Player.input.buttons.held | (u32)g_Player.input.buttons.previous << 16;
+    return c_test_observe(0, row, seen, expected[row], 4);
 }
 
 #ifdef MMX4_PC
@@ -310,25 +370,38 @@ static u32 reset_lifecycle(u32 row)
     return 1;
 }
 #endif
-#ifdef MMX4_PC
-#else
+#ifndef MMX4_SATURN
+static u32 test_title_return(u32 row)
+{
+    struct GameInfo info, expected;
+    memset(&info, 0x25, sizeof(info));
+    info.mode = 1;
+    expected = info;
+    expected.unk0 = 1;
+    expected.mode = 0;
+    func_8001D1F0(&info);
+    c_test_same_words(&info, &expected, sizeof(info));
+    return 1;
+}
 #endif
 
 const struct CTestGroup c_test_groups[] = {
     { "game_over_inputs", 0, 0, COUNT(game_over_inputs), test_game_over_inputs },
     { "game_over_route", 0, 0, 4, test_game_over_route },
-    { "func_8001D698", 0, 0, 1, test_func_8001D698 },
+    { "func_8001D698", 0, 0, 2, test_func_8001D698 },
     { "fade_route", 0, 0, 12, test_fade_route },
+    { "demo_end", 0, 0, 5, test_demo_end },
 #ifdef MMX4_PC
     { "game_reset_lifecycle", NULL, NULL, 18, reset_lifecycle },
+    { "title_return", NULL, NULL, 1, test_title_return },
 #else
     { "native_reset_budget", NULL, NULL, 0, NULL },
 #endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(game_over_inputs) + 4 + 1 + 12
+const u32 c_test_count = COUNT(game_over_inputs) + 4 + 2 + 12 + 5
 #ifdef MMX4_PC
-    + 18
+    + 18 + 1
 #else
     + 0
 #endif

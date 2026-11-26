@@ -1,6 +1,7 @@
 #ifndef MMX4_TESTS_SLASH_BEAST_FIXTURE_H
 #define MMX4_TESTS_SLASH_BEAST_FIXTURE_H
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_54_slash_beast.h"
 #include "main/13A8C.h"
 #include "main/collision_bounds.h"
@@ -85,7 +86,7 @@ static void sb_throw_left(void)
 static void sb_throw_right(void)
 {
     BEAST(8, 3);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     slash_beast_grab(&so);
 }
 static void sb_check_miss(void)
@@ -144,7 +145,7 @@ static void sb_pounce_catch_right(void)
     BEAST(4, 1);
     so.ext.main_54.grab = 1;
     g_Player.stun_timer = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.y_speed = 0x10000;
     slash_beast_jump(&so);
 }
@@ -177,7 +178,7 @@ static void sb_intro_land_stop(void)
 static void sb_high_leap_right(void)
 {
     BEAST(11, 0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.animation_step.fields.event = 1;
     slash_beast_high_leap_jump(&so);
 }
@@ -199,7 +200,7 @@ static void sb_dash_turn_left(void)
     BEAST(6, 3);
     so.animation_step.fields.event = 1;
     so.unk7E = 2;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_pos.i.hi = 0x80;
     slash_beast_dash(&so);
 }
@@ -293,9 +294,26 @@ static void beast_fill_words(u32* dest, u32 value, u32 count)
 }
 static void beast_same_words(const void* a, const void* b, u32 bytes)
 {
-    assert(c_test_word_difference((const u32*)a, (const u32*)b, bytes / 4) == 0);
+    c_test_same_words(a, b, bytes);
+}
+static void beast_copy_bytes(void* dest, const void* src, u32 bytes)
+{
+    u8* d = dest;
+    const u8* s = src;
+    while (bytes--)
+        *d++ = *s++;
+}
+static u32 beast_word(const void* p)
+{
+    u32 word;
+    beast_copy_bytes(&word, p, sizeof(word));
+    return word;
 }
 extern union AnimationStep* slash_beast_animations[39];
+static u32 beast_step(u32 animation, u32 frame)
+{
+    return beast_word(slash_beast_animations[animation] + frame);
+}
 extern struct Unk_unk68 D_801078F8[32], D_80100218, D_8010021C, D_8010023C, double_cyclone_hit_box[1], aiming_laser_charged_box[1];
 extern u16 D_801005B8[8], D_801005C8[14];
 struct BeastWeapon {
@@ -381,14 +399,14 @@ static void beast_prepare(u32 scene, u32 facing, u32 layer, u32 rematch, u32 ava
     boss.unk6 = 7;
     boss.on_screen = 1;
     boss.bg_offset = layer == 0 ? -1 : layer - 1;
-    boss.unk15 = facing * 0x40;
+    boss.unk15 = facing * PLAYER_FACING_RIGHT;
     boss.x_pos.val = (200 + (layer == 2 ? 1024 : 0) + (c->outside ? 216 : 0)) * 65536 + 0x1234;
     boss.y_pos.val = 120 * 65536 + 0x5678;
     boss.animation_table = (const u8* const*)slash_beast_animations;
     boss.unk17 = c->contact == 3 ? 9 : 0;
     boss.animation_cursor = (const u8*)(slash_beast_animations[boss.unk17] + (c->contact == 3 ? 5 : 0));
-    boss.animation_step.packed = c->contact == 3 ? 0x25010301 : 0x00000101;
-    assert(*(const u32*)boss.animation_cursor == boss.animation_step.packed);
+    boss.animation_step.packed = C_TEST_STEP(c->contact == 3 ? 0x25010301 : 0x00000101);
+    assert(beast_word(boss.animation_cursor) == boss.animation_step.packed);
     boss.attack_box = D_801001F8;
     boss.hurt_box = D_801001FC;
     boss.terrain_box = 0;
@@ -444,14 +462,14 @@ static void beast_prepare(u32 scene, u32 facing, u32 layer, u32 rematch, u32 ava
     }
     for (i = 0; i < 0x400; i += 8) {
         u32 value = 0x65430080 + i * 256;
-        beast_attrs[i] = beast_attrs_want[i] = value;
-        beast_attrs[i + 1] = beast_attrs_want[i + 1] = value + 256;
-        beast_attrs[i + 2] = beast_attrs_want[i + 2] = value + 512;
-        beast_attrs[i + 3] = beast_attrs_want[i + 3] = value + 768;
-        beast_attrs[i + 4] = beast_attrs_want[i + 4] = value + 1024;
-        beast_attrs[i + 5] = beast_attrs_want[i + 5] = value + 1280;
-        beast_attrs[i + 6] = beast_attrs_want[i + 6] = value + 1536;
-        beast_attrs[i + 7] = beast_attrs_want[i + 7] = value + 1792;
+        beast_attrs[i] = beast_attrs_want[i] = C_TEST_PSX_WORD(value);
+        beast_attrs[i + 1] = beast_attrs_want[i + 1] = C_TEST_PSX_WORD(value + 256);
+        beast_attrs[i + 2] = beast_attrs_want[i + 2] = C_TEST_PSX_WORD(value + 512);
+        beast_attrs[i + 3] = beast_attrs_want[i + 3] = C_TEST_PSX_WORD(value + 768);
+        beast_attrs[i + 4] = beast_attrs_want[i + 4] = C_TEST_PSX_WORD(value + 1024);
+        beast_attrs[i + 5] = beast_attrs_want[i + 5] = C_TEST_PSX_WORD(value + 1280);
+        beast_attrs[i + 6] = beast_attrs_want[i + 6] = C_TEST_PSX_WORD(value + 1536);
+        beast_attrs[i + 7] = beast_attrs_want[i + 7] = C_TEST_PSX_WORD(value + 1792);
     }
     for (i = 0; i < 6; i++)
         D_8013E198[i] = -1;
@@ -470,18 +488,22 @@ static void beast_prepare(u32 scene, u32 facing, u32 layer, u32 rematch, u32 ava
     c_test_copy_words((u32*)beast_visual_pool, (u32*)visual_objects, sizeof(beast_visual_pool) / 4);
     c_test_copy_words((u32*)beast_animation_pointers, (u32*)slash_beast_animations, sizeof(beast_animation_pointers) / 4);
     for (i = 0; i < 39; i++) {
-        c_test_copy_words(beast_animation_words + n, (u32*)slash_beast_animations[i], beast_animation_lengths[i]);
+        beast_copy_bytes(beast_animation_words + n, slash_beast_animations[i], beast_animation_lengths[i] * 4);
         n += beast_animation_lengths[i];
     }
     assert(n == 150);
-    c_test_copy_words(beast_collision_words, (u32*)D_801078F8, 32);
-    c_test_copy_words(beast_collision_words + 32, (u32*)D_801060F0, 32);
+    beast_copy_bytes(beast_collision_words, D_801078F8, 128);
+    beast_copy_bytes(beast_collision_words + 32, D_801060F0, 128);
+}
+static u32 beast_tile_attr(u32 record, u32 value)
+{
+    return C_TEST_PSX_WORD((C_TEST_PSX_WORD(record) & 0xFFFFFF00) | value);
 }
 static void beast_expect_tiles(u32 rematch)
 {
     u32 i;
     for (i = 0; i < (rematch ? 14 : 8); i++)
-        beast_attrs_want[beast_tiles[rematch][i]] = (beast_attrs_want[beast_tiles[rematch][i]] & 0xFFFFFF00) | 0x38;
+        beast_attrs_want[beast_tiles[rematch][i]] = beast_tile_attr(beast_attrs_want[beast_tiles[rematch][i]], 0x38);
 }
 static void beast_check(void)
 {
@@ -504,9 +526,9 @@ static void beast_check(void)
     beast_same_words(D_801060F0, beast_collision_words + 32, 128);
     beast_same_words(D_801005B8, beast_tiles[0], 16);
     beast_same_words(D_801005C8, beast_tiles[1], 28);
-    assert(D_801001F8[0].packed == 0x2225F1EF && D_801001FC[0].packed == 0x313AEBE5);
-    assert(*(u32*)&D_80100218 == 0x1B21EDD6 && *(u32*)&D_8010021C == 0x061AF6BE && *(u32*)&D_8010023C == 0x3031B7D0);
-    assert(((u32*)D_801194F0)[1] == 0x2613EFF6 && ((u32*)D_8011A230)[1] == 0x2715EFF6);
+    assert(beast_word(D_801001F8) == C_TEST_PSX_WORD(0x2225F1EF) && beast_word(D_801001FC) == C_TEST_PSX_WORD(0x313AEBE5));
+    assert(beast_word(&D_80100218) == C_TEST_PSX_WORD(0x1B21EDD6) && beast_word(&D_8010021C) == C_TEST_PSX_WORD(0x061AF6BE) && beast_word(&D_8010023C) == C_TEST_PSX_WORD(0x3031B7D0));
+    assert(beast_word(&D_801194F0[1]) == C_TEST_PSX_WORD(0x2613EFF6) && beast_word(&D_8011A230[1]) == C_TEST_PSX_WORD(0x2715EFF6));
     for (i = 0; i < 6; i++) {
         assert(D_8013E198[i] == -1);
         beast_same_words(beast_weapons[i].box, &beast_weapons[i].x, 4);
@@ -563,20 +585,20 @@ static u32 test_slash_beast_run(u32 row)
                     v->unk2 = hit == 127 ? 0 : w->visual;
                     v->bg_offset = boss.bg_offset;
                     v->animation_table = D_8011BF40;
-                    v->unk40 = 0;
-                    v->unk42 = 0x7802;
-                    v->unk16 = 0;
+                    v->unk40 = WEAPON_TEXTURE_BASE;
+                    v->unk42 = WEAPON_PALETTE_2;
+                    v->unk16 = VISUAL_SATURN_LAYER(0);
                     v->unk3C = (u8*)&beast_sprite_archive[2];
                     v->x_pos.i.hi = x;
                     v->y_pos.i.hi = y;
-                    v->unk15 = boss.unk15 ^ 0x40;
+                    v->unk15 = boss.unk15 ^ PLAYER_FACING_RIGHT;
                 }
             }
         }
         if (!c->flash && hit < 0) {
             beast_want.state = 2;
             beast_want.unk5 = 0;
-            beast_player.spike_immune = 1;
+            SPIKE_IMMUNE_SET(beast_player, 1);
             beast_expect_tiles(rematch);
         } else {
             if (c->flash) {
@@ -605,9 +627,9 @@ static u32 test_slash_beast_run(u32 row)
                 beast_player.hp = c->contact == 5 ? (s8)0x80 : (s8)((24 - beast_want.contact_damage) | 128);
                 beast_player.hurt_type = 2;
                 beast_player.stun_timer = 0;
-                beast_player.hit_facing = c->contact != 1 && !facing ? 0x40 : 0;
+                beast_player.hit_facing = c->contact != 1 && !facing ? PLAYER_FACING_RIGHT : 0;
             }
-            beast_want.on_screen = !c->outside;
+            beast_want.on_screen = !c->outside && C_TEST_VISIBLE(boss.unk16);
         }
     }
     beast_want.collision_flags = 0;
@@ -625,8 +647,8 @@ static u32 test_slash_beast_tile_masks(u32 row)
     beast_prepare(0, facing, 0, rematch, 0);
     for (i = 0; i < count; i++)
         if (!kind || (facing ? i < count / 2 : i >= count / 2))
-            beast_attrs_want[beast_tiles[rematch][i]] = (beast_attrs_want[beast_tiles[rematch][i]] & 0xFFFFFF00) | (0x38 + kind);
-    func_8006E920(&boss, 0x38 + kind);
+            beast_attrs_want[beast_tiles[rematch][i]] = beast_tile_attr(beast_attrs_want[beast_tiles[rematch][i]], 0x38 + kind);
+    func_8006E920(&boss, TILE_ATTR_VALUE(0x38 + kind));
     beast_check();
     return 1;
 }
@@ -674,19 +696,19 @@ static struct MiscObj beast_misc[64];
 static const s8 beast_shot_slots[4] = { -1, 0, 15, 31 };
 static void beast_install(u32 animation, u32 frame, u32 word, u32 elapsed)
 {
-    assert(((u32*)slash_beast_animations[animation])[frame] == word && (word & 255) > elapsed);
+    assert(beast_step(animation, frame) == C_TEST_STEP(word) && (word & 255) > elapsed);
     boss.unk17 = animation;
     boss.animation_cursor = (u8*)(slash_beast_animations[animation] + frame);
-    boss.animation_step.packed = word - elapsed;
+    boss.animation_step.packed = C_TEST_STEP(word - elapsed);
 }
 static void beast_expect_frame(u32 animation, u32 frame, u32 word, u32 reset)
 {
     beast_want.unk17 = animation;
     beast_want.animation_cursor = (u8*)(slash_beast_animations[animation] + frame);
-    beast_want.animation_step.packed = word;
+    beast_want.animation_step.packed = C_TEST_STEP(word);
     if (reset)
         beast_want.previous_animation_index = 0xFF;
-    assert((((u32*)slash_beast_animations[animation])[frame] & 0xFFFFFF00) == (word & 0xFFFFFF00));
+    assert((C_TEST_STEP(beast_step(animation, frame)) & 0xFFFFFF00) == (word & 0xFFFFFF00));
 }
 static void beast_attack_prepare(u32 facing, u32 layer, u32 rematch, u32 shot_mode, u32 misc_count)
 {
@@ -717,8 +739,10 @@ static void beast_attack_prepare(u32 facing, u32 layer, u32 rematch, u32 shot_mo
         s->unk54 = (u8*)D_801001FC;
         s->unk68 = &D_80100208;
         s->unk84.value = 0x12345678;
-        s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = 1;
-        s->unk78 = s->unk62 = s->unk63 = s->unk7A = s->unk75 = 1;
+        s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = s->unk72 = s->unk73 = s->unk76 = s->unk77 = 1;
+        OBJ_UNK74_SET(*s, 1);
+        s->unk62 = s->unk63 = s->unk7A = s->unk75 = 1;
+        OBJ_UNK78_SET(*s, 1);
         s->animation_table = D_8011BF40;
         s->unk3C = &g_Entity;
     }
@@ -729,11 +753,11 @@ static void beast_attack_prepare(u32 facing, u32 layer, u32 rematch, u32 shot_mo
         m->state = 9;
         m->unk5 = 7;
         m->unk6 = 6;
-        m->unk16 = 0x12;
+        m->unk16 = VISUAL_SATURN_LAYER(0x12);
         m->unk40 = 0x3456;
         m->unk42 = 0xC123;
         m->bg_offset = -1;
-        m->animation_step.packed = 0xDEADBEEF;
+        m->animation_step.packed = C_TEST_STEP(0xDEADBEEF);
         m->x_pos.val = 0x12345678;
         m->y_pos.val = 0x23456789;
         m->ext.misc_26.timer = 60;
@@ -757,7 +781,7 @@ static void beast_attack_check(void)
     assert(c_test_word_difference((u32*)shot_objects, (u32*)beast_shots, sizeof(beast_shots) / 4) == 0);
     assert(c_test_word_difference((u32*)misc_objects, (u32*)beast_misc, sizeof(beast_misc) / 4) == 0);
     for (i = 0; i < 16; i++)
-        beast_same_words(beast_attack_boxes[i].pointer, &beast_attack_boxes[i].word, 4);
+        assert(beast_word(beast_attack_boxes[i].pointer) == C_TEST_PSX_WORD(beast_attack_boxes[i].word));
     beast_check();
 }
 static u32 test_slash_beast_crescent(u32 row)
@@ -808,8 +832,10 @@ static u32 test_slash_beast_crescent(u32 row)
             s->unk50.data = 0;
             s->unk54 = 0;
             s->unk68 = 0;
-            s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = 0;
-            s->unk78 = s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
+            s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = s->unk72 = s->unk73 = s->unk76 = s->unk77 = 0;
+            OBJ_UNK74_SET(*s, 0);
+            s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
+            OBJ_UNK78_SET(*s, 0);
             s->active = 0x41;
             s->id = 31;
             s->unk2 = c->event == 3;
@@ -856,7 +882,7 @@ static u32 test_slash_beast_crescent(u32 row)
         beast_expect_frame(10, scene == 13 ? 0 : 4, scene == 13 ? 0x01010001 : 0x00000101, 0);
         if (scene == 14) {
             beast_expect_frame(0, 0, 0x00000101, 1);
-            beast_want.unk15 ^= 0x40;
+            beast_want.unk15 ^= PLAYER_FACING_RIGHT;
             beast_want.unk5 = 3;
             beast_want.unk6 = 0;
         }
@@ -919,7 +945,7 @@ static u32 test_slash_beast_dash_run(u32 row)
         beast_expect_frame(15, 0, 0x12010002, 1);
         for (i = 0; i < count; i++)
             if (facing ? i < count / 2 : i >= count / 2)
-                beast_attrs_want[beast_tiles[rematch][i]] = (beast_attrs_want[beast_tiles[rematch][i]] & 0xFFFFFF00) | 0x39;
+                beast_attrs_want[beast_tiles[rematch][i]] = beast_tile_attr(beast_attrs_want[beast_tiles[rematch][i]], 0x39);
     }
     slash_beast_dash(&boss);
     beast_attack_check();
@@ -993,8 +1019,8 @@ static void beast_pattern_capture(void)
     c_test_copy_words((u32*)beast_pattern_tables, (u32*)slash_beast_patterns, sizeof(beast_pattern_tables) / 4);
     for (i = 0; i < 3; i++)
         c_test_copy_words((u32*)beast_pattern_links[i], (u32*)slash_beast_patterns[i], sizeof(beast_pattern_links[i]) / 4);
-    c_test_copy_words(beast_pattern_words, (u32*)slash_beast_pattern_steps, 9);
-    c_test_copy_words(beast_pattern_words + 9, (u32*)slash_beast_pattern_weights, 3);
+    beast_copy_bytes(beast_pattern_words, slash_beast_pattern_steps, 36);
+    beast_copy_bytes(beast_pattern_words + 9, slash_beast_pattern_weights, 12);
 }
 static void beast_pattern_check(void)
 {
@@ -1053,7 +1079,7 @@ static u32 test_slash_beast_decisions(u32 row)
                                                                                                 : 0x00010002,
             1);
     if (c->flags & 1)
-        beast_want.unk15 = side ? 0x40 : 0;
+        beast_want.unk15 = side ? PLAYER_FACING_RIGHT : 0;
     if (c->flags & 2)
         beast_want.ext.main_54.grab = 1;
     if (c->flags & 4)
@@ -1122,7 +1148,7 @@ static u32 test_slash_beast_dash_transitions(u32 row)
             beast_want.ext.main_54.claw_hitbox = 0;
         }
         if (scene >= 6) {
-            beast_want.unk15 ^= 0x40;
+            beast_want.unk15 ^= PLAYER_FACING_RIGHT;
             beast_want.unk7E--;
             if (scene == 7) {
                 beast_expect_frame(37, 0, 0x05010002, 1);
@@ -1180,7 +1206,7 @@ static u32 test_slash_beast_jump_edges(u32 row)
         beast_expect_frame(3, scene == 3 ? 0 : 5, scene == 3 ? 0x02010001 : 0x00000101, 0);
         if (scene == 4) {
             beast_expect_frame(0, 0, 0x00000101, 1);
-            beast_want.unk15 ^= 0x40;
+            beast_want.unk15 ^= PLAYER_FACING_RIGHT;
             beast_want.unk5 = 3;
             beast_want.unk6 = 0;
         }
@@ -1239,7 +1265,7 @@ static u32 test_slash_beast_stagger_start(u32 row)
         m->active = 0x41;
         m->id = 3;
         m->unk2 = m->state = m->unk5 = m->unk6 = 0;
-        m->unk15 = r[0] & 0x40;
+        m->unk15 = r[0] & PLAYER_FACING_RIGHT;
         m->x_pos.val = boss.x_pos.val + ((i < 3 ? 27 : 29) * (facing ? -1 : 1) + (r[1] & 3)) * 65536;
         m->y_pos.val = boss.y_pos.val + ((i < 3 ? -4 : 12) + (r[2] & 3)) * 65536;
         m->ext.misc_2.unk58 = 34 + i % 3;
@@ -1250,7 +1276,7 @@ static u32 test_slash_beast_stagger_start(u32 row)
         beast_random_want = beast_debris_states[available];
     }
     beast_expect_frame(17, 0, 0x33010002, 1);
-    beast_want.unk15 = side == 2 ? 0 : 0x40;
+    beast_want.unk15 = side == 2 ? 0 : PLAYER_FACING_RIGHT;
     beast_want.x_speed = side == 2 ? -65536 : 65536;
     beast_want.y_speed = 0x40000;
     beast_want.x_accel = 0;
@@ -1259,7 +1285,7 @@ static u32 test_slash_beast_stagger_start(u32 row)
     beast_want.y_pos.val -= 0x40000;
     beast_want.unk6 = 1;
     slash_beast_stagger(&boss);
-    assert(*(u32*)D_801005B4 == 0x00242322);
+    assert(beast_word(D_801005B4) == C_TEST_PSX_WORD(0x00242322));
     beast_attack_check();
     return 1;
 }
@@ -1302,7 +1328,7 @@ static u32 test_slash_beast_air_recovery(u32 row)
         beast_expect_frame(18, scene == 2 ? 0 : 11, scene == 2 ? 0x35010001 : 0x00000101, 0);
         if (scene == 3) {
             beast_expect_frame(12, 0, 0x00010002, 1);
-            beast_want.unk15 = side == 0 ? 0 : 0x40;
+            beast_want.unk15 = side == 0 ? 0 : PLAYER_FACING_RIGHT;
             beast_want.unk7C = 20;
             beast_want.unk7E = beast_want.ext.main_54.claw_hitbox = 1;
             beast_want.unk5 = 6;
@@ -1343,7 +1369,7 @@ static u32 test_slash_beast_air_recovery(u32 row)
             beast_want.attack_box = D_801001F8;
             beast_want.hurt_box = D_801001FC;
             beast_expect_frame(0, 0, 0x00000101, 1);
-            beast_want.unk15 = side == 0 || (side == 1 && facing) ? 0 : 0x40;
+            beast_want.unk15 = side == 0 || (side == 1 && facing) ? 0 : PLAYER_FACING_RIGHT;
             beast_want.unk5 = 3;
             beast_want.unk6 = 0;
         }
@@ -1356,6 +1382,7 @@ static u32 test_slash_beast_air_recovery(u32 row)
     return 1;
 }
 
+#ifndef MMX4_SATURN
 extern s32 D_80139538, D_80139540, D_80139544;
 extern s16 D_80139560;
 extern u16 D_800F188C[170];
@@ -1481,8 +1508,8 @@ static u32 test_slash_beast_fill_health(u32 row)
     engine_obj.gameplay_locked = 1;
     g_Player.script_state = 1;
     g_Player.script_action = 0x14;
-    g_Player.script_facing = 0x40;
-    g_Player.spike_immune = 1;
+    g_Player.script_facing = PLAYER_FACING_RIGHT;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     c_test_copy_words((u32*)&beast_want, (u32*)&boss, sizeof(beast_want) / 4);
     c_test_copy_words((u32*)&beast_player, (u32*)&g_Player, sizeof(beast_player) / 4);
     c_test_copy_words((u32*)&beast_engine, (u32*)&engine_obj, sizeof(beast_engine) / 4);
@@ -1503,7 +1530,8 @@ static u32 test_slash_beast_fill_health(u32 row)
             beast_random_want = r->state;
             beast_want.unk5 = 3;
             beast_want.unk6 = 0;
-            beast_player.script_state = beast_player.spike_immune = beast_engine.gameplay_locked = 0;
+            beast_player.script_state = beast_engine.gameplay_locked = 0;
+            SPIKE_IMMUNE_SET(beast_player, 0);
         }
     }
     slash_beast_intro(&boss);
@@ -1511,6 +1539,7 @@ static u32 test_slash_beast_fill_health(u32 row)
     beast_music_check(started, 0, mono, beast_music_delays[delay].playing);
     return 1;
 }
+#endif
 static u32 test_slash_beast_intro_dialogue(u32 row)
 {
     u32 waiting = row % 2, facing = (row / 2) % 2, layer = 0, rematch = row / 4;
@@ -1551,7 +1580,7 @@ static u32 test_slash_beast_intro_leap(u32 row)
     beast_install(21, 0, 0x2D010001, 0);
     c_test_copy_words((u32*)&beast_want, (u32*)&boss, sizeof(beast_want) / 4);
     beast_want.unk7C--;
-    beast_want.on_screen = !outside;
+    beast_want.on_screen = !outside && C_TEST_VISIBLE(boss.unk16);
     if (timer == 1) {
         beast_backgrounds[0].unk26 = 0x24C0;
         beast_backgrounds[0].unk24 = 0x24D0;
@@ -1603,7 +1632,7 @@ static u32 test_slash_beast_high_leap_landing(u32 row)
     TEST_BG_TILE_PIXELS = (u8*)beast_probe_tiles.cells;
     layout_width = layout_size = 8;
     layout_height = 1;
-    beast_attrs[1] = beast_attrs_want[1] = (beast_attrs[1] & 0xFFFFFF00) | attribute;
+    beast_attrs[1] = beast_attrs_want[1] = beast_tile_attr(beast_attrs[1], attribute);
     c_test_copy_words((u32*)&beast_want, (u32*)&boss, sizeof(beast_want) / 4);
     beast_expect_move();
     beast_expect_frame(23, 0, 0x05010001, 0);
@@ -1619,7 +1648,7 @@ static u32 test_slash_beast_high_leap_landing(u32 row)
     slash_beast_high_leap(&boss);
     assert(c_test_word_difference((u32*)&beast_probe_map, (u32*)&beast_probe_map_want, sizeof(beast_probe_map) / 4) == 0);
     assert(c_test_word_difference((u32*)&beast_probe_tiles, (u32*)&beast_probe_tiles_want, sizeof(beast_probe_tiles) / 4) == 0);
-    assert(SP_BG_TILEMAP == beast_probe_map.bytes && TEST_BG_TILE_PIXELS == (u8*)beast_probe_tiles.cells && layout_width == 8 && layout_size == 8 && layout_height == 1 && *(u32*)&D_8010024C == 0x1A1C0000);
+    assert(SP_BG_TILEMAP == beast_probe_map.bytes && TEST_BG_TILE_PIXELS == (u8*)beast_probe_tiles.cells && layout_width == 8 && layout_size == 8 && layout_height == 1 && beast_word(&D_8010024C) == C_TEST_PSX_WORD(0x1A1C0000));
     beast_attack_check();
     SP_BG_TILEMAP = saved_map;
     TEST_BG_TILE_PIXELS = saved_pixels;
@@ -1656,7 +1685,7 @@ static void beast_intro_resources(u32 check)
         beast_same_words(D_80114C14, beast_floor_tiles[0], 8);
         beast_same_words(D_80114C1C, beast_floor_tiles[1], 8);
         beast_same_words(D_80114C24, beast_floor_tiles[2], 8);
-        assert(tile_effect_tables[16] == D_80119090 && D_80119090[8] == D_80116F70 && *(u32*)D_801005B0 == 0x201F1E1D && *(u32*)&D_8010024C == 0x1A1C0000);
+        assert(tile_effect_tables[16] == D_80119090 && D_80119090[8] == D_80116F70 && beast_word(D_801005B0) == C_TEST_PSX_WORD(0x201F1E1D) && beast_word(&D_8010024C) == C_TEST_PSX_WORD(0x1A1C0000));
         for (i = 0; i < 6; i++)
             assert(D_80116F70[i].layer == 0 && D_80116F70[i].packed_count == 9 && D_80116F70[i].x == 0 && D_80116F70[i].y == (i + 1) * 16 && D_80116F70[i].has_next == (i < 5) && D_80116F70[i].tiles == (i < 4 ? D_80114C14 : i == 4 ? D_80114C1C
                                                                                                                                                                                                                                       : D_80114C24));
@@ -1724,14 +1753,14 @@ static u32 test_slash_beast_intro_landing(u32 row)
     layout_width = 40;
     layout_height = 2;
     layout_size = 80;
-    beast_attrs[1] = beast_attrs_want[1] = (beast_attrs[1] & 0xFFFFFF00) | c->attribute;
+    beast_attrs[1] = beast_attrs_want[1] = beast_tile_attr(beast_attrs[1], c->attribute);
     beast_intro_resources(0);
     c_test_copy_words((u32*)&beast_want, (u32*)&boss, sizeof(beast_want) / 4);
     beast_expect_move();
     beast_expect_frame(c->animation, 0, c->animation == 22 ? 0x03010001 : c->animation == 23 ? 0x05010001
                                                                                              : 0x02010001,
         0);
-    beast_want.on_screen = 1;
+    beast_want.on_screen = C_TEST_VISIBLE(boss.unk16);
     if (edge) {
         beast_want.x_speed = 0;
         beast_want.gravity = 65536;
@@ -1750,8 +1779,10 @@ static u32 test_slash_beast_intro_landing(u32 row)
             for (j = 0; j < 4; j++) {
                 u16 tile = beast_floor_tiles[i < 4 ? 0 : i - 3][j];
                 beast_probe_tiles_want.cells[1][i + 5][j + 8] = tile;
+#ifndef MMX4_SATURN
                 if (visible)
                     beast_cache_want.cells[0][i + 21][j + 24] = tile;
+#endif
             }
         for (i = 0; i < available; i++) {
             struct MiscObj* m = &beast_misc[beast_debris_slots[i]];
@@ -1759,7 +1790,7 @@ static u32 test_slash_beast_intro_landing(u32 row)
             m->active = 0x41;
             m->id = 3;
             m->unk2 = m->state = m->unk5 = m->unk6 = 0;
-            m->unk15 = r[0] & 0x40;
+            m->unk15 = r[0] & PLAYER_FACING_RIGHT;
             m->x_pos.val = beast_want.x_pos.val + (r[1] & 3) * 65536;
             m->y_pos.val = beast_want.y_pos.val + (r[2] & 3) * 65536;
             m->ext.misc_2.unk58 = 29 + i;
@@ -1825,9 +1856,10 @@ static u32 test_slash_beast_intro_wait(u32 row)
             beast_effects[slot].id = 24;
             beast_want.ext.main_54.effect = &effect_objects[slot];
         }
-        beast_player.script_state = beast_player.spike_immune = beast_engine.gameplay_locked = 1;
+        beast_player.script_state = beast_engine.gameplay_locked = 1;
+        SPIKE_IMMUNE_SET(beast_player, 1);
         beast_player.script_action = 0x14;
-        beast_player.script_facing = 0x40;
+        beast_player.script_facing = PLAYER_FACING_RIGHT;
         if (!rematch) {
             beast_backgrounds[0].unk26 = 0x24A0;
             beast_backgrounds[0].unk24 = 0x24E0;
@@ -1850,6 +1882,7 @@ extern union MainPaletteData D_800F1660;
 extern const u32* D_800F2FD4[2];
 extern u32 D_800F2F60[29];
 extern struct DialogueGlyphData D_801396C8;
+#ifndef MMX4_SATURN
 static union {
     u32 words[512];
     u16 colors[1024];
@@ -1859,7 +1892,9 @@ static union {
     u32 words[18];
     u16 half[36];
 } beast_messages;
+#endif
 static const s8 beast_window_slots[4] = { -1, 0, 31, 63 };
+#ifndef MMX4_SATURN
 static const u8 beast_dialogue_slots[7] = { 9, 7, 13, 19, 29, 43, 57 };
 static void beast_filled_words(const u32* words, u32 value, u32 count)
 {
@@ -1999,7 +2034,7 @@ static u32 test_slash_beast_intro_pose(u32 row)
                     m->active = 1;
                     m->id = 22;
                     m->unk2 = 2;
-                    m->unk16 = 0x11;
+                    m->unk16 = VISUAL_SATURN_LAYER(0x11);
                     m->animation_table = (u32**)D_800F2FD4;
                     m->unk40 = 0x1E00;
                     m->unk42 = 0x7846;
@@ -2010,7 +2045,7 @@ static u32 test_slash_beast_intro_pose(u32 row)
                     m->unk15 = m->unk17 = 0;
                     m->previous_animation_index = 0xFF;
                     m->animation_cursor = D_800F2F60;
-                    m->animation_step.packed = 0x28010004;
+                    m->animation_step.packed = C_TEST_STEP(0x28010004);
                 }
             }
         }
@@ -2036,6 +2071,7 @@ static u32 test_slash_beast_intro_pose(u32 row)
     TEST_ARC_48 = saved_messages;
     return 1;
 }
+#endif
 static const s16 beast_afterimage_x[4] = { -33, -32, 351, 352 };
 static u32 test_slash_beast_afterimages(u32 row)
 {
@@ -2114,10 +2150,12 @@ static u32 test_slash_beast_intro_crates(u32 row)
             item->unk50 = 0;
             item->unk54 = 0;
             item->unk68 = 0;
-            item->unk61 = item->unk64 = item->unk65 = item->unk66 = item->unk72 = item->unk73 = item->unk74 = item->unk76 = item->unk77 = item->unk78 = item->unk62 = item->unk63 = item->unk7A = item->unk75 = 0;
+            item->unk61 = item->unk64 = item->unk65 = item->unk66 = item->unk72 = item->unk73 = item->unk76 = item->unk77 = item->unk62 = item->unk63 = item->unk7A = item->unk75 = 0;
+            OBJ_UNK78_SET(*item, 0);
+            OBJ_UNK74_SET(*item, 0);
             item->active = 0x41;
             item->id = 18;
-            item->unk16 = 5;
+            item->unk16 = VISUAL_SATURN_LAYER(5);
             item->unk2 = 3 - boss.unk7C;
             item->unk40 = boss.unk40;
             item->unk42 = boss.unk42 & 0x7FFF;
@@ -2138,7 +2176,7 @@ static u32 test_slash_beast_intro_crates(u32 row)
                 m->active = 0x41;
                 m->id = 26;
                 m->unk2 = m->state = 0;
-                m->unk16 = 5;
+                m->unk16 = VISUAL_SATURN_LAYER(5);
                 m->unk40 = boss.unk40;
                 m->unk42 = boss.unk42 & 0x7FFF;
                 m->animation_table = (u32**)slash_beast_animations;
@@ -2150,7 +2188,7 @@ static u32 test_slash_beast_intro_crates(u32 row)
                 m->ext.misc_26.owner = &boss;
                 m->animation_step.fields.frame_index = 62;
             }
-            beast_want.unk15 = rematch ? 0 : 0x40;
+            beast_want.unk15 = rematch ? 0 : PLAYER_FACING_RIGHT;
             beast_expect_frame(rematch ? 23 : 21, 0, rematch ? 0x05010002 : 0x2D010001, 1);
             beast_want.unk6 = rematch ? 4 : 3;
             if (rematch)
@@ -2188,7 +2226,7 @@ static u32 test_slash_beast_grab_trails(u32 row)
     TEST_BG_TILE_PIXELS = (u8*)beast_probe_tiles.cells;
     layout_width = layout_size = 8;
     layout_height = 1;
-    beast_attrs[1] = beast_attrs_want[1] = (beast_attrs[1] & 0xFFFFFF00) | attribute;
+    beast_attrs[1] = beast_attrs_want[1] = beast_tile_attr(beast_attrs[1], attribute);
     c_test_copy_words((u32*)&beast_want, (u32*)&boss, sizeof(boss) / 4);
     beast_want.x_pos.val += boss.x_speed;
     beast_want.y_pos.val -= boss.y_speed;
@@ -2201,7 +2239,7 @@ static u32 test_slash_beast_grab_trails(u32 row)
         m->active = 0x41;
         m->id = 26;
         m->unk2 = 1;
-        m->unk16 = 0x21 - i;
+        m->unk16 = VISUAL_SATURN_LAYER(0x21) - i;
         m->unk40 = boss.unk40;
         m->unk42 = boss.unk42 & 0x7FFF;
         m->animation_table = (u32**)slash_beast_animations;
@@ -2218,7 +2256,7 @@ static u32 test_slash_beast_grab_trails(u32 row)
     slash_beast_grab(&boss);
     beast_same_words(&beast_probe_map, &beast_probe_map_want, sizeof(beast_probe_map));
     beast_same_words(&beast_probe_tiles, &beast_probe_tiles_want, sizeof(beast_probe_tiles));
-    assert(SP_BG_TILEMAP == beast_probe_map.bytes && TEST_BG_TILE_PIXELS == (u8*)beast_probe_tiles.cells && layout_width == 8 && layout_size == 8 && layout_height == 1 && *(u32*)&D_8010024C == 0x1A1C0000);
+    assert(SP_BG_TILEMAP == beast_probe_map.bytes && TEST_BG_TILE_PIXELS == (u8*)beast_probe_tiles.cells && layout_width == 8 && layout_size == 8 && layout_height == 1 && beast_word(&D_8010024C) == C_TEST_PSX_WORD(0x1A1C0000));
     beast_attack_check();
     SP_BG_TILEMAP = saved_map;
     TEST_BG_TILE_PIXELS = saved_pixels;
@@ -2313,23 +2351,23 @@ static u32 test_slash_beast_init_full(u32 row)
     beast_pages[0] = 0x80 + page * 0x80;
     beast_pages[4] = 20;
     c_test_copy_words(words, beast_pages, 8);
-    D_801406A8 = beast_pages;
+    test_stage_graphics(beast_pages);
     TEST_MENU_FRAMES = (u8*)beast_pages;
     c_test_copy_words((u32*)&beast_want, (u32*)&boss, sizeof(boss) / 4);
     beast_want.contact_damage = 6;
     beast_want.hp = beast_want.invincibility_timer = 0;
     beast_want.collision_data = D_801078F8;
-    beast_want.unk40 = (rematch ? 0x161 : 0xB1) + page;
+    beast_want.unk40 = OBJECT_STAGE_TEXTURE(0) + OBJECT_TEXTURE_OFFSET(rematch ? 0x160 : 0xB0);
     if (rematch) {
-        beast_want.unk42 = 0x7888;
+        beast_want.unk42 = OBJECT_CLUT(0x7888);
         beast_want.sprite_frames = (u8*)beast_pages + 20;
         beast_want.y_pos.val = 464 * 65536 + 0x1122;
     }
     beast_want.animation_table = (const u8* const*)slash_beast_animations;
-    beast_want.unk16 = 6;
+    beast_want.unk16 = VISUAL_SATURN_LAYER(6);
     beast_want.hurt_box = D_801001FC;
     beast_want.attack_box = D_801001F8;
-    beast_want.unk15 = 0x40;
+    beast_want.unk15 = PLAYER_FACING_RIGHT;
     beast_want.x_speed = beast_want.y_speed = beast_want.x_accel = beast_want.gravity = beast_want.air_state = 0;
     beast_want.terrain_box = 0;
     beast_want.ext.main_54.flash_timer = beast_want.ext.main_54.was_hit = beast_want.ext.main_54.grab = beast_want.ext.main_54.active = beast_want.ext.main_54.claw_hitbox = beast_want.ext.main_54.pattern_set = beast_want.ext.main_54.fight_started = beast_want.ext.main_54.high_jump = 0;
@@ -2346,7 +2384,7 @@ static u32 test_slash_beast_init_full(u32 row)
     beast_same_words(beast_pages, words, sizeof(words));
     assert(D_801406A8 == beast_pages && TEST_MENU_FRAMES == (u8*)beast_pages);
     beast_attack_check();
-    D_801406A8 = saved_pages;
+    test_stage_graphics(saved_pages);
     TEST_MENU_FRAMES = saved_menu;
     return 1;
 }
@@ -2374,10 +2412,11 @@ static u32 test_slash_beast_death_full(u32 row)
     c_test_copy_words((u32*)beast_effects, (u32*)effect_objects, sizeof(beast_effects) / 4);
     c_test_copy_words((u32*)&beast_want, (u32*)&boss, sizeof(boss) / 4);
     c_test_copy_words((u32*)&beast_engine, (u32*)&engine_obj, sizeof(beast_engine) / 4);
-    beast_want.on_screen = scene < 4 && (edge == 1 || edge == 2);
+    beast_want.on_screen = scene < 4 && (edge == 1 || edge == 2) && C_TEST_VISIBLE(boss.unk16);
     if (!scene) {
         beast_player.stun_timer = 0;
-        beast_player.script_state = beast_player.spike_immune = beast_engine.gameplay_locked = 1;
+        beast_player.script_state = beast_engine.gameplay_locked = 1;
+        SPIKE_IMMUNE_SET(beast_player, 1);
         beast_player.script_action = 20;
         beast_player.script_facing = g_Player.unk15;
         beast_want.unk5 = 1;
@@ -2427,7 +2466,7 @@ static u32 test_slash_beast_stance(u32 row)
     } else if (timer == 1) {
         beast_want.unk7C = 30;
         beast_expect_frame(0, 0, 0x00000101, 1);
-        beast_want.unk15 = side < 2 ? 0 : 0x40;
+        beast_want.unk15 = side < 2 ? 0 : PLAYER_FACING_RIGHT;
         beast_want.unk5 = 3;
         beast_want.unk6 = 1;
     } else

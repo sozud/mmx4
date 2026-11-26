@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 
 #include "support/state_cases.h"
 #include "main/misc/misc_04_dragon_rubble.h"
@@ -7,8 +8,8 @@ static struct MainObj rubble_dragon;
 static u32 rubble_pages[0x100];
 static s32 rubble_frames[0x100];
 #define sm state_room.misc
-#define RUBBLE(st, kind) (state_reset(0, 0, 0), memset(&rubble_dragon, 0, sizeof(rubble_dragon)), rubble_dragon.x_pos.i.hi = 0x200, rubble_dragon.y_pos.i.hi = 0x180, D_801406A8 = rubble_pages, TEST_MENU_FRAMES = (u8*)rubble_frames, sm.ext.misc_4.owner = &rubble_dragon, sm.state = st, sm.unk2 = kind)
-#define RUBBLE_SEEN() (sm.unk42 = 0, state_extra = (u16)rubble_dragon.unk7C | (u32)visual_objects[0].active << 16 | (u32)(u8)sm.unk16 << 24)
+#define RUBBLE(st, kind) (state_reset(0, 0, 0), memset(&rubble_dragon, 0, sizeof(rubble_dragon)), rubble_dragon.x_pos.i.hi = 0x200, rubble_dragon.y_pos.i.hi = 0x180, test_stage_graphics(rubble_pages), TEST_MENU_FRAMES = (u8*)rubble_frames, sm.ext.misc_4.owner = &rubble_dragon, sm.state = st, sm.unk2 = kind)
+#define RUBBLE_SEEN() (sm.unk42 = 0, state_extra = (u16)rubble_dragon.unk7C | (u32)visual_objects[0].active << 16 | (u32)TEST_PSX_LAYER(sm.unk16) << 24)
 static void dr_burst_right(void)
 {
     RUBBLE(4, 0);
@@ -18,7 +19,7 @@ static void dr_burst_right(void)
 static void dr_burst_left(void)
 {
     RUBBLE(4, 1);
-    rubble_dragon.unk15 = 0x40;
+    rubble_dragon.unk15 = PLAYER_FACING_RIGHT;
     dragon_rubble_update(&sm);
     RUBBLE_SEEN();
 }
@@ -80,7 +81,7 @@ static void dr_chunk_back(void)
 static void dr_chunk_front(void)
 {
     RUBBLE(2, 1);
-    rubble_dragon.unk15 = 0x40;
+    rubble_dragon.unk15 = PLAYER_FACING_RIGHT;
     dragon_rubble_update(&sm);
     RUBBLE_SEEN();
 }
@@ -93,6 +94,14 @@ static void dr_chunk_full(void)
     RUBBLE_SEEN();
 }
 
+#define REST(st, setup) (RUBBLE(st, 0), sm.active = 0x41, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x60, rubble_dragon.unk7C = 3, setup, dragon_rubble_update(&sm), state_extra = (u16)rubble_dragon.unk7C)
+static void dr_rest(void)
+{
+    REST(1, 0);
+}
+static void dr_rest_gone(void) { REST(1, sm.x_pos.i.hi = 0x1000); }
+static void dr_wall_rest(void) { REST(3, 0); }
+static void dr_wall_rest_gone(void) { REST(3, sm.x_pos.i.hi = 0x1000); }
 static void (*const dragon_rubble_states_cases[])(void) = {
     dr_burst_right,
     dr_burst_left,
@@ -106,8 +115,173 @@ static void (*const dragon_rubble_states_cases[])(void) = {
     dr_chunk_back,
     dr_chunk_front,
     dr_chunk_full,
+    dr_rest,
+    dr_rest_gone,
+    dr_wall_rest,
+    dr_wall_rest_gone,
 };
-static const u32 dragon_rubble_states_expected[] = { 0x1005u, 0u, 0x6C00000u, 0x18D0000u, 0x60000u, 0u, 0u, 0x50000u, 0x210000u, 0x41002100u, 0x1005u, 0x100u, 0x8C00000u, 0x18D0000u, 0xFFFA0000u, 0u, 0u, 0x50000u, 0x210000u, 0x41002100u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 5u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0x210000u, 0x2100u, 0x305u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0x210000u, 0x2100u, 0x705u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0x210000u, 0x2100u, 0xC05u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0x210000u, 0x2100u, 0xE05u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0x210000u, 0x2100u, 0x105u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 3u, 0u, 0x2300000u, 0x1240000u, 0u, 0u, 0u, 0x50000u, 0x6000001u, 0u, 3u, 0x100u, 0x1D00000u, 0x1240000u, 0u, 0u, 0u, 0x50000u, 0x1210001u, 0x41002100u, 0u, 0u, 0x2300000u, 0x1240000u, 0u, 0u, 0u, 0x50000u, 0x6000015u, 0u };
+static const u32 dragon_rubble_states_expected[] = {
+    0x1005u,
+    0u,
+    0x6C00000u,
+    0x18D0000u,
+    0x60000u,
+    0u,
+    0u,
+    0x50000u,
+    0x210000u,
+    0x41002100u,
+    0x1005u,
+    0x100u,
+    0x8C00000u,
+    0x18D0000u,
+    0xFFFA0000u,
+    0u,
+    0u,
+    0x50000u,
+    0x210000u,
+    0x41002100u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    5u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x210000u,
+    0x2100u,
+    0x305u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x210000u,
+    0x2100u,
+    0x705u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x210000u,
+    0x2100u,
+    0xC05u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x210000u,
+    0x2100u,
+    0xE05u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x210000u,
+    0x2100u,
+    0x105u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    3u,
+    0u,
+    0x2300000u,
+    0x1240000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x6000001u,
+    0u,
+    3u,
+    0x100u,
+    0x1D00000u,
+    0x1240000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x1210001u,
+    0x41002100u,
+    0u,
+    0u,
+    0x2300000u,
+    0x1240000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x6000015u,
+    0u,
+    1u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    3u,
+    0u,
+    0u,
+    0u,
+    0x10000000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    2u,
+    0u,
+    3u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    3u,
+    0u,
+    0u,
+    0u,
+    0x10000000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    2u,
+    0u,
+};
 
 static u32 test_dragon_rubble_states(u32 row)
 {
@@ -119,6 +293,7 @@ static u32 metadata[7], archive[16];
 static struct MiscObj misc_before[64];
 static struct VisualObj visuals_before[32];
 static const u16 seeds[2] = { 0x1234, 0x1000 }, final_seeds[2] = { 0xA30D, 0x90C0 };
+static const u8 first_random[2] = { 0x6A, 0x30 };
 static u32 enter(u32 row)
 {
     struct MiscObj obj, expected;
@@ -138,7 +313,7 @@ static u32 enter(u32 row)
         metadata[i] = (i + 1) * 128 + 0x5A;
     for (i = 0; i < COUNT(archive); i++)
         archive[i] = i < 7 ? 32 + i * 4 : 0x13570000 + i;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)archive;
     D_8013E198[5] = -1;
     c_test_zero_words((u32*)misc_objects, sizeof(misc_objects) / 4);
@@ -164,11 +339,11 @@ static u32 enter(u32 row)
     obj.x_vel.val = 0x12345;
     expected = obj;
     expected.animation_table = (u32**)dragon_rubble_animations;
-    expected.unk42 = 0x78C0;
-    expected.unk40 = 7;
+    expected.unk42 = OBJECT_CLUT(0x78C0);
+    expected.unk40 = OBJECT_STAGE_TEXTURE(6);
     expected.unk3C = (u8*)archive + 56;
-    expected.unk15 = seed ? 0 : 0x40;
-    expected.unk16 = 7;
+    expected.unk15 = first_random[seed] & PLAYER_FACING_RIGHT;
+    expected.unk16 = VISUAL_SATURN_LAYER(7);
     expected.x_vel.val = 0;
     expected.animation_step.fields.frame_index = frame;
     expected.state = 1;

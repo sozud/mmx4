@@ -25,6 +25,7 @@ void func_8001B558(struct EngineObj* arg0);
 #include <stdlib.h>
 #include <unistd.h>
 #endif
+#ifndef MMX4_SATURN
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 extern u16 D_800EE430[16];
@@ -800,7 +801,10 @@ enum TestCardKind { CARD_MISSING,
     CARD_WRITE_ERROR,
     CARD_SAVED,
     CARD_FULL,
-    CARD_FULL_SAVED };
+    CARD_FULL_SAVED,
+    CARD_INFO_ERROR,
+    CARD_PULLED,
+    CARD_FILE_ERROR };
 static u8 card_image[0x20000], menu_buffer[0x2000];
 
 static void create_test_card(const char* directory, u8 port, u8 kind)
@@ -888,13 +892,15 @@ static void card_menu_reset(char* directory, u8 kind, u8 timer)
     char* created = mkdtemp(directory);
     int configured;
     assert(created != NULL);
-    create_test_card(directory, 0, kind);
+    static const char* const faults[] = { "read", "write", 0, 0, 0, "error", "pulled", "file" };
+    create_test_card(directory, 0, kind == CARD_FILE_ERROR ? CARD_SAVED : kind >= CARD_INFO_ERROR ? CARD_BLANK
+                                                                                                  : kind);
     configured = setenv("MMX4_MEMCARD_DIR", directory, 1);
     assert(configured == 0);
     unsetenv("MMX4_MEMCARD_FAULT_0");
     unsetenv("MMX4_MEMCARD_FAULT_1");
-    if (kind == CARD_READ_ERROR || kind == CARD_WRITE_ERROR) {
-        configured = setenv("MMX4_MEMCARD_FAULT_0", kind == CARD_READ_ERROR ? "read" : "write", 1);
+    if (kind >= CARD_READ_ERROR && faults[kind - CARD_READ_ERROR]) {
+        configured = setenv("MMX4_MEMCARD_FAULT_0", faults[kind - CARD_READ_ERROR], 1);
         assert(configured == 0);
     }
     menu_reset(3, 2, 0);
@@ -1565,7 +1571,7 @@ static u32 test_load_confirmation(u32 row)
         portrait->active = 1;
         portrait->id = 42;
         portrait->unk2 = 2;
-        portrait->unk16 = 4;
+        portrait->unk16 = VISUAL_SATURN_LAYER(4);
         portrait->animation_step.fields.frame_index = 43;
         portrait->unk42 = 0x7808;
         portrait->x_pos.i.hi = 144;
@@ -1631,6 +1637,159 @@ static u32 test_load_confirmation(u32 row)
     assert(g_FilterModeR == (outcome ? 0 : 1));
     assert(g_FilterModeG == (outcome ? 0 : 1));
     assert(g_FilterModeB == (outcome ? 0 : 1));
+    return 1;
+}
+
+#include "support/sound_probe.h"
+void func_80019EF0(struct EngineObj*);
+void func_8001A8E8(struct EngineObj*);
+void func_8001A9EC(struct EngineObj*);
+void func_8001ABDC(struct EngineObj*);
+void func_8001B4E4(struct EngineObj*);
+void func_8001B558(struct EngineObj*);
+void func_8001989C(struct EngineObj*);
+void func_8001AE8C(struct EngineObj*);
+enum { MP_SCAN_INFO_ERROR,
+    MP_SCAN_PULLED,
+    MP_LOAD_INFO_ERROR,
+    MP_LOAD_PULLED,
+    MP_LOAD_FILE_ERROR,
+    MP_SAVE_INFO_ERROR,
+    MP_SAVE_PULLED,
+    MP_DISPATCH_PAGE,
+    MP_DISPATCH_SUBSTEP,
+    MP_PORT_BACK,
+    MP_LOAD_PORT_BACK,
+    MP_SLOT_DOWN_BACK,
+    MP_SLOT_SAVED,
+    MP_SLOT_EMPTY,
+    MP_RESULT_UNKNOWN,
+    MP_LOAD_ENTRY,
+    MP_LOAD_DONE_CONFIRM,
+    MP_LOAD_RESULT_UNKNOWN,
+    MP_LOAD_EXIT_FADING,
+    MP_COUNT };
+static const struct {
+    u8 card, step, result, selection;
+    s8 sound;
+} menu_path_cases[] = {
+    { CARD_INFO_ERROR, 11, 2, 0, -1 },
+    { CARD_PULLED, 11, 1, 0, -1 },
+    { CARD_INFO_ERROR, 6, 1, 0, -1 },
+    { CARD_PULLED, 6, 0, 0, -1 },
+    { CARD_FILE_ERROR, 6, 2, 0, -1 },
+    { CARD_INFO_ERROR, 11, 2, 0, -1 },
+    { CARD_PULLED, 11, 1, 2, -1 },
+    { CARD_MISSING, 11, 1, 0, -1 },
+    { 0xFF, 3, 5, 1, -1 },
+    { 0xFF, 1, 5, 3, 0x22 },
+    { 0xFF, 1, 5, 3, 0x22 },
+    { 0xFF, 4, 5, 3, -1 },
+    { 0xFF, 5, 5, 0, 0x22 },
+    { 0xFF, 6, 5, 0, 0x22 },
+    { 0xFF, 11, 5, 0, 0x22 },
+    { CARD_MISSING, 6, 0, 0, -1 },
+    { 0xFF, 6, 0, 1, 0x22 },
+    { 0xFF, 6, 5, 0, 0x22 },
+    { 0xFF, 5, 5, 0, -1 },
+};
+static struct DrawInfo menu_path_drawing;
+static u32 menu_path(u32 row)
+{
+    char directory[] = "/tmp/mmx4-menu-card-XXXXXX";
+    struct GameInfo info_before = game_info;
+    u8 card = menu_path_cases[row].card;
+    if (card != 0xFF)
+        card_menu_reset(directory, card, 1);
+    else
+        menu_reset(row <= MP_LOAD_PORT_BACK ? (row == MP_DISPATCH_SUBSTEP ? 3 : 1) : row <= MP_SLOT_EMPTY ? 4
+                : row == MP_RESULT_UNKNOWN                                                                ? 11
+                : row == MP_LOAD_EXIT_FADING                                                              ? 5
+                                                                                                          : 6,
+            row == MP_DISPATCH_SUBSTEP || row >= MP_SLOT_SAVED ? 0 : row == MP_SLOT_DOWN_BACK ? 2
+                                                                                              : 3,
+            row == MP_SLOT_DOWN_BACK ? PADLdown : row == MP_DISPATCH_SUBSTEP || row == MP_LOAD_EXIT_FADING ? 0
+                                                                                                           : CONFIRM);
+    sound_probe_begin_group(0);
+    memcard_menu.result = 5;
+    main_bss_state.transition.active = row == MP_LOAD_EXIT_FADING;
+    memset(&menu_path_drawing, 0, sizeof(menu_path_drawing));
+    SP_DRAW_BUFFER = 0;
+    cur_draw_info = &menu_path_drawing;
+    func_80023D30();
+    D_8015D9C8 = (u8*)entry_buffer_words + 4;
+    switch (row) {
+    case MP_SCAN_INFO_ERROR:
+    case MP_SCAN_PULLED:
+        engine_obj.unk1 = 2;
+        func_8001989C(&engine_obj);
+        break;
+    case MP_LOAD_INFO_ERROR:
+    case MP_LOAD_PULLED:
+    case MP_LOAD_FILE_ERROR:
+        engine_obj.unk1 = 2;
+        func_8001AE8C(&engine_obj);
+        break;
+    case MP_SAVE_INFO_ERROR:
+    case MP_SAVE_PULLED:
+        engine_obj.unk1 = 7;
+        func_8001A498(&engine_obj);
+        break;
+    case MP_DISPATCH_PAGE:
+        engine_obj.unk1 = 2;
+        func_800193D8(&engine_obj);
+        break;
+    case MP_DISPATCH_SUBSTEP:
+        func_800193D8(&engine_obj);
+        assert(engine_obj.unk2 == 1);
+        break;
+    case MP_PORT_BACK:
+        func_8001961C(&engine_obj);
+        break;
+    case MP_LOAD_PORT_BACK:
+        func_8001ABDC(&engine_obj);
+        break;
+    case MP_SLOT_DOWN_BACK:
+        func_80019EF0(&engine_obj);
+        assert(memcard_menu.slot == &menu_slots[3] && misc_objects[0].active == 0);
+        break;
+    case MP_SLOT_SAVED:
+    case MP_SLOT_EMPTY:
+        menu_slots[0].character = row == MP_SLOT_SAVED ? 0 : 0xFF;
+        func_80019EF0(&engine_obj);
+        assert(memcard_menu.selection == 0);
+        break;
+    case MP_RESULT_UNKNOWN:
+        func_8001A8E8(&engine_obj);
+        assert(engine_obj.state == 0);
+        break;
+    case MP_LOAD_ENTRY:
+        engine_obj.unk1 = 0;
+        main_bss_state.transition.selection = 2;
+        func_8001A9EC(&engine_obj);
+        assert(memcard_menu.card_status[0] == 1 && memcard_menu.card_status[1] == 1);
+        break;
+    case MP_LOAD_DONE_CONFIRM:
+        memcard_menu.result = 0;
+        D_800F1D90.save.character = 0;
+        func_8001A9EC(&engine_obj);
+        assert(game_info.unk0 == 7 && game_info.mode == 1);
+        break;
+    case MP_LOAD_RESULT_UNKNOWN:
+        func_8001B558(&engine_obj);
+        c_test_same_words(&game_info, &info_before, sizeof(game_info));
+        break;
+    default:
+        func_8001B4E4(&engine_obj);
+        assert(engine_obj.state == 0);
+        break;
+    }
+    if (card != 0xFF)
+        remove_test_cards(directory);
+    assert(engine_obj.unk1 == menu_path_cases[row].step);
+    assert(memcard_menu.result == menu_path_cases[row].result);
+    assert(main_bss_state.transition.selection == menu_path_cases[row].selection);
+    assert(sound_probe_id() == menu_path_cases[row].sound);
     return 1;
 }
 
@@ -2074,6 +2233,7 @@ const struct CTestGroup c_test_groups[] = {
     { "port_confirmation", 0, 0, 6, test_port_confirmation },
     { "card_menu_entry", 0, 0, COUNT(entry_cards) * 2, test_card_menu_entry },
     { "load_confirmation", 0, 0, COUNT(save_confirmations) * 8, test_load_confirmation },
+    { "menu_paths", 0, 0, MP_COUNT, menu_path },
 #endif
 #ifdef MMX4_PC
     { "format_accept_cancel", NULL, NULL, 24, format_confirmation },
@@ -2093,6 +2253,7 @@ const u32 c_test_count = 2 + 96 + COUNT(save_notices) + COUNT(save_result_cases)
     + 6
     + COUNT(entry_cards) * 2
     + COUNT(save_confirmations) * 8
+    + MP_COUNT
 #endif
 #ifdef MMX4_PC
     + 24
@@ -2101,3 +2262,8 @@ const u32 c_test_count = 2 + 96 + COUNT(save_notices) + COUNT(save_result_cases)
     + 0
 #endif
     ;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

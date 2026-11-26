@@ -70,8 +70,23 @@ static u32 test_sigma_beam_hitbox_states(u32 row)
     return object_run(sigma_beam_hitbox_states_cases[row], row, &sigma_beam_hitbox_states_expected[row * 10]);
 }
 
+void func_800AE450(struct ShotObj* self);
+extern u16 sigma_beam_hitbox_offsets[6][2];
+extern u8 sigma_beam_hitbox_ranges[6][2];
+static u32 init_last_segment(u32 row)
+{
+    BEAM(0);
+    ss.unk2 = 5;
+    func_800AE450(&ss);
+    assert(ss.state == 1 && ss.unk5C == 1 && ss.unk60 == 9 && ss.bg_offset == 1);
+    assert(ss.unk8C.bytes[0] == sigma_beam_hitbox_ranges[5][0] && ss.unk8C.bytes[1] == sigma_beam_hitbox_ranges[5][1]);
+    assert((u16)ss.x_pos.i.hi == sigma_beam_hitbox_offsets[5][0] && (u16)ss.y_pos.i.hi == sigma_beam_hitbox_offsets[5][1]);
+    return ss.unk60;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "sigma_beam_hitbox_states", 0, 0, COUNT(sigma_beam_hitbox_states_cases), test_sigma_beam_hitbox_states },
+    { "init_last_segment", 0, 0, 1, init_last_segment },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(sigma_beam_hitbox_states_cases);
+const u32 c_test_count = COUNT(sigma_beam_hitbox_states_cases) + 1;

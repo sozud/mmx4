@@ -33,30 +33,6 @@ extern u8 ride_chaser_shot_angles[];
 extern u8 ride_chaser_shot_animations[];
 #endif
 
-#ifdef MMX4_SATURN
-void func_80098630(struct WeaponObj* arg0)
-{
-    s32 dx;
-
-    arg0->state = 1;
-    arg0->on_screen = 1;
-    arg0->unk16 = 0;
-    arg0->unk68 = NULL;
-    arg0->unk54 = NULL;
-    arg0->unk50 = (u8*)ride_chaser_shot_hit_box;
-    dx = ride_chaser_shot_offsets[arg0->unk2][0];
-    if (arg0->unk15 != 0)
-        dx = -dx;
-    arg0->x_pos.i.hi += dx;
-    arg0->y_pos.i.hi += ride_chaser_shot_offsets[arg0->unk2][1];
-    set_velocity_from_angle(MOVING_OBJECT(arg0), ride_chaser_shot_angles[arg0->unk2]);
-    arg0->unk60 = 3;
-    arg0->x_vel.val *= 8;
-    arg0->unk5C = 1;
-    arg0->y_vel.val *= 8;
-    set_animation(arg0, ride_chaser_shot_animations[arg0->unk2]);
-}
-#else
 void func_80098630(struct WeaponObj* arg0)
 {
     s32 dx;
@@ -79,7 +55,6 @@ void func_80098630(struct WeaponObj* arg0)
     arg0->unk60 = 3;
     set_animation(arg0, ride_chaser_shot_animations[arg0->unk2]);
 }
-#endif
 
 void ride_chaser_shot_main(struct WeaponObj* arg0)
 {

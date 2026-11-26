@@ -59,7 +59,7 @@ static u32 capsule_case(s8 animation)
     obj.afterimage = 1;
     obj.attacking = obj.shot_fired = obj.attack_ended = 1;
     obj.attack_pose_timer = obj.shot_cooldown = obj.shot_palette_timer = 1;
-    obj.animation_step.packed = 0x07080004u;
+    obj.animation_step.packed = C_TEST_STEP(0x07080004u);
     player_check_capsule(&obj);
     assert(obj.capsule_state == -1 && obj.afterimage == 0);
     assert(obj.attacking == 0 && obj.shot_fired == 0 && obj.attack_ended == 0);
@@ -78,8 +78,8 @@ static u32 capsule_case(s8 animation)
         assert(obj.animation_cursor == &keyframe && obj.previous_animation_index == 0xFF);
         assert(obj.unk3C == (u8*)&player_archive_context_sprite_archive[1]);
     } else
-        assert(obj.animation_step.packed == 0x07080004u);
-    actual = (u8)obj.unk17 | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)obj.unk6 << 16) | ((u32)obj.unk15 << 24);
+        assert(obj.animation_step.packed == C_TEST_STEP(0x07080004u));
+    actual = (u8)obj.unk17 | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)obj.unk6 << 16) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 24);
     end_context();
     return actual;
 }
@@ -121,7 +121,7 @@ static u32 clone_case(u32 mode, u32 observation)
     obj.clone_offset.value = mode == 3 ? 0x40 : 8;
     obj.unk88.bytes.collision_flags = mode == 1 ? PLAYER_COLLIDE_LEFT : mode == 2 ? PLAYER_COLLIDE_RIGHT | PLAYER_COLLIDE_GROUND
                                                                                   : 0;
-    g_Player.unk15 = mode == 0 || mode == 2 ? 0x40 : 0;
+    g_Player.unk15 = mode == 0 || mode == 2 ? PLAYER_FACING_RIGHT : 0;
     g_Player.x_pos.i.hi = 100;
     player_soul_body_clone_advance(&obj);
     assert(obj.x_pos.i.lo == 0x2468 && obj.y_pos.val == 200 * 65536 + 0x1234);

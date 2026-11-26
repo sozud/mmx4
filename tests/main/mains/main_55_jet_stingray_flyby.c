@@ -27,7 +27,7 @@ static u32 flyby_cruise_states_run(u32 mode)
     u32 i, distance, difference = 0;
     memset(background_objects, 0, sizeof(background_objects));
     background_objects[0].x_pos.val = 0x00400000;
-    step.packed = 0;
+    step.packed = C_TEST_STEP(0);
     step.fields.duration = 5;
     step.fields.relative_step = 1;
     step.fields.frame_index = 4;
@@ -611,7 +611,7 @@ static u32 approach(u32 row)
     obj.gravity = 0x4567;
     obj.animation_table = (const u8* const*)&jet_stingray_flyby_animations;
     set_animation(&obj, 0);
-    assert(obj.animation_step.packed == 0x00010006);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x00010006));
     background_objects[layer].x_pos.i.hi = 0x3460;
     memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
     g_Player.hp = 30;
@@ -641,6 +641,46 @@ static u32 approach(u32 row)
     return 1;
 }
 
+void jet_stingray_flyby_main(struct MainObj*);
+static void fb_main_killed(void)
+{
+    state_reset(2, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), state_terrain(0), g_Player.unk68 = NULL;
+    so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.hp = 1, state_hit(&so, 0, 0, 1);
+    jet_stingray_flyby_main(&so);
+}
+static void (*const flyby_main_cases[])(void) = {
+    fb_main_killed,
+};
+static const u32 flyby_main_expected[] = {
+    0x107u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x0u,
+    0x0u,
+    0x41002100u,
+};
+static u32 test_flyby_main(u32 row)
+{
+    return state_run(flyby_main_cases[row], row, &flyby_main_expected[row * 10]);
+}
+
+static u32 crash_flying(u32 row)
+{
+    FLY(7, 2);
+    so.x_speed = FIXED(4);
+    so.x_pos.i.hi = 0x80;
+    so.ext.main_55.unk85 = 9;
+    cur_random = 3;
+    func_8006F86C(&so);
+    assert(so.unk6 == 2 && so.ext.main_55.unk85 == 9 && so.x_speed == FIXED(4));
+    assert(so.x_pos.i.hi == 0x84 && visual_objects[0].active == 0);
+    return so.unk6;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "flyby_windup", 0, 0, COUNT(flyby_windup_cases), test_flyby_windup },
     { "flyby_states", 0, 0, COUNT(flyby_states_cases), test_flyby_states },
@@ -649,6 +689,8 @@ const struct CTestGroup c_test_groups[] = {
     { "func_8006ED44", 0, 0, 8, test_func_8006ED44 },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "aimed_entry_exact_proximity_edges_and_rng_gate", NULL, NULL, 36, approach },
+    { "flyby_main", 0, 0, COUNT(flyby_main_cases), test_flyby_main },
+    { "crash_flying", 0, 0, 1, crash_flying },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(flyby_windup_cases) + COUNT(flyby_states_cases) + COUNT(flyby_cruise_states_cases_expected) + COUNT(stingray_flyby_rise_boundary_cases_expected) + 8 + COUNT(pool_full_cases) + 36;
+const u32 c_test_count = COUNT(flyby_windup_cases) + COUNT(flyby_states_cases) + COUNT(flyby_cruise_states_cases_expected) + COUNT(stingray_flyby_rise_boundary_cases_expected) + 8 + COUNT(pool_full_cases) + 36 + COUNT(flyby_main_cases) + 1;

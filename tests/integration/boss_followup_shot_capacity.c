@@ -33,7 +33,7 @@ static u32 burst(u32 row)
     owner.state = 1;
     owner.hp = 48;
     owner.unk5 = kind == 0 ? 8 : 1;
-    owner.unk15 = side ? 0x40 : 0;
+    owner.unk15 = side ? PLAYER_FACING_RIGHT : 0;
     owner.bg_offset = layer;
     owner.x_pos.i.hi = kind == 0 ? 7288 : kind == 1 ? 2304
                                                     : 1473;
@@ -72,7 +72,7 @@ static u32 burst(u32 row)
         obj->unk8C.word = 1;
         owner.ext.main_57.shot = obj;
         set_animation_frame(ANIMATED_OBJECT(obj), 31, 4);
-        assert(obj->animation_step.packed == 0x68000102);
+        assert(obj->animation_step.packed == C_TEST_STEP(0x68000102));
     } else if (kind == 1) {
         double_toss_init(obj);
         obj->unk5 = 5;
@@ -81,7 +81,7 @@ static u32 burst(u32 row)
         obj->x_vel.val = side ? -0x80000 : 0x80000;
         obj->y_vel.val = obj->unk2C = 0;
         set_animation_frame(ANIMATED_OBJECT(obj), 22, 4);
-        assert(obj->animation_step.packed == 0x5C010101);
+        assert(obj->animation_step.packed == C_TEST_STEP(0x5C010101));
     } else {
         obj->state = 0;
         obj->unk2 = 2;
@@ -99,7 +99,7 @@ static u32 burst(u32 row)
         sigma_head_freeze_start(obj);
         set_animation_frame(ANIMATED_OBJECT(obj), 9, 3);
         sigma_head_freeze_open(obj);
-        assert(obj->animation_step.packed == 0x0A000001);
+        assert(obj->animation_step.packed == C_TEST_STEP(0x0A000001));
     }
     owner_expected = owner;
     memcpy(pool_expected, shot_objects, sizeof(pool_expected));
@@ -110,7 +110,7 @@ static u32 burst(u32 row)
         expected->on_screen = 1;
     } else if (kind == 1) {
         expected->animation_cursor++;
-        expected->animation_step.packed = 0x5D010002;
+        expected->animation_step.packed = C_TEST_STEP(0x5D010002);
     } else {
         expected->timer = 6;
         expected->x_pos.val -= 0x10000;

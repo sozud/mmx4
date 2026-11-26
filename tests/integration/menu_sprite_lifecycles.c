@@ -1,10 +1,29 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/misc/misc_28_select_a_character.h"
 #include "main/misc/misc_52_npc_cutscene.h"
 #include "main/misc/misc_31_option_toggle.h"
 #include "main/55C4.h"
 #include "main/menu.h"
 #include "main/misc/misc_21_center_sprite.h"
+#include "weapon_resources.h"
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#include "saturn/menu.h"
+#define OPTION_VALUE saturn_sound_output
+#define OPTION_FRAME_SET 0x57
+#define OPTION_FRAME_CLEAR 0x56
+#define OPTION_SELECTED SATURN_OPTION_SELECTED_PALETTE
+#define OPTION_LOCKED SATURN_OPTION_LOCKED_PALETTE
+#define OPTION_PALETTE SATURN_OPTION_PALETTE
+#else
+#define OPTION_VALUE D_80171EA9
+#define OPTION_FRAME_SET 0x56
+#define OPTION_FRAME_CLEAR 0x57
+#define OPTION_SELECTED 0x7803
+#define OPTION_LOCKED 0x7804
+#define OPTION_PALETTE 0x7800
+#endif
 void func_80019BF4(struct EngineObj* arg0);
 extern union AnimationStep* npc_cutscene_animations[2];
 
@@ -21,6 +40,13 @@ static struct {
 static u32 backref[3];
 #define COPY(dst, src) c_test_copy_words((u32*)&(dst), (u32*)&(src), sizeof(dst) / 4)
 #define SAME(a, b) assert(c_test_word_difference((u32*)&(a), (u32*)&(b), sizeof(a) / 4) == 0)
+static u32 same_bytes(const void* a, const void* b, u32 size)
+{
+    u32 i, different = 0;
+    for (i = 0; i < size; i++)
+        different |= ((const u8*)a)[i] ^ ((const u8*)b)[i];
+    return different == 0;
+}
 static void setup(u8 id, u8 subtype)
 {
     c_test_zero_words((u32*)&obj, sizeof(obj) / 4);
@@ -28,6 +54,7 @@ static void setup(u8 id, u8 subtype)
     c_test_zero_words((u32*)&g_Player, sizeof(g_Player) / 4);
     c_test_zero_words((u32*)&main_bss_state, sizeof(main_bss_state) / 4);
     memset(&controller_input, 0, sizeof(controller_input));
+    TEST_PAD_PRESSED = TEST_PAD_HELD = TEST_PAD_PREVIOUS = 0;
     c_test_zero_words((u32*)&abc_object, sizeof(abc_object) / 4);
     c_test_zero_words((u32*)background_objects, sizeof(background_objects) / 4);
     c_test_zero_words((u32*)misc_objects, sizeof(misc_objects) / 4);
@@ -44,7 +71,7 @@ static void setup(u8 id, u8 subtype)
     obj.unk42 = 0x7800;
     obj.previous_animation_index = 0x25;
     backref[0] = 0x12345678;
-    backref[1] = 0x34567812;
+    backref[1] = C_TEST_PSX_WORD(0x34567812);
     backref[2] = 0x56781234;
 }
 static void snapshot(void)
@@ -94,7 +121,7 @@ static u32 portrait(u32 row)
     obj.on_screen = row / 8 == 1;
     obj.x_vel.val = (kind ^ departing) ? -0x100000 : 0x100000;
     engine_obj.character_state.bytes[1] = selected ? 0x80 : 0;
-    animation(select_char_menu_animations, kind, kind ? 0x01000001 : 1);
+    animation(select_char_menu_animations, kind, C_TEST_STEP(kind ? 0x01000001 : 1));
     snapshot();
     if (departing) {
         expected.x_pos.val += expected.x_vel.val;
@@ -109,8 +136,8 @@ static u32 portrait(u32 row)
     return check();
 }
 static const u32 selector_words[2][4] = {
-    { 0x08010003, 0x09010003, 0x08010003, 0x0AFD0003 },
-    { 0x0B010003, 0x0C010003, 0x0B010003, 0x0DFD0003 },
+    { C_TEST_STEP(0x08010003), C_TEST_STEP(0x09010003), C_TEST_STEP(0x08010003), C_TEST_STEP(0x0AFD0003) },
+    { C_TEST_STEP(0x0B010003), C_TEST_STEP(0x0C010003), C_TEST_STEP(0x0B010003), C_TEST_STEP(0x0DFD0003) },
 };
 static u32 selector(u32 row)
 {
@@ -153,7 +180,7 @@ static u32 selector(u32 row)
 }
 static u32 charged_shot(u32 row)
 {
-    static const u32 words[3] = { 0x0F010103, 0x10010103, 0x11FE0103 };
+    static const u32 words[3] = { C_TEST_STEP(0x0F010103), C_TEST_STEP(0x10010103), C_TEST_STEP(0x11FE0103) };
     static const s16 start_x[3] = { 137, 147, 148 };
     u32 ticks = row / 3 + 1, t, index = 0, i;
     setup(28, 9);
@@ -190,23 +217,23 @@ static u32 charged_shot(u32 row)
 static u32 option(u32 row)
 {
     u32 setting = row % 2, cached = row / 2 % 2, outside = row / 4 % 2;
-    u8 old_setting = D_80171EA9;
+    u8 old_setting = OPTION_VALUE;
     setup(31, 2);
     obj.state = 2;
     obj.x_pos.i.hi = outside ? 352 : 96;
     obj.ext.misc_31.animation = cached;
-    obj.animation_step.packed = 0x56000001;
-    D_80171EA9 = setting;
+    obj.animation_step.packed = C_TEST_STEP(0x56000001);
+    OPTION_VALUE = setting;
     snapshot();
     if (setting != cached) {
-        expected.animation_step.fields.frame_index = setting ? 0x56 : 0x57;
+        expected.animation_step.fields.frame_index = setting ? OPTION_FRAME_SET : OPTION_FRAME_CLEAR;
         expected.ext.misc_31.animation = setting;
     }
     expected.on_screen = !outside;
     option_toggle_update(&obj);
     check();
-    assert(D_80171EA9 == setting);
-    D_80171EA9 = old_setting;
+    assert(OPTION_VALUE == setting);
+    OPTION_VALUE = old_setting;
     return 1;
 }
 static u32 npc_finish(u32 row)
@@ -222,8 +249,9 @@ static u32 npc_finish(u32 row)
     obj.unk6 = blink ? 0 : 1;
     obj.ext.misc_52.timer = timer;
     obj.backref = has_backref ? (void*)&backref[1] : NULL;
-    main_bss_state.frame_counter = frame;
-    g_Player.script_state = g_Player.spike_immune = engine_obj.gameplay_locked = 1;
+    WEAPON_FRAME_COUNTER = frame;
+    g_Player.script_state = engine_obj.gameplay_locked = 1;
+    SPIKE_IMMUNE_SET(g_Player, engine_obj.gameplay_locked = 1);
     snapshot();
     if (kind != 1 && blink) {
         expected.ext.misc_52.timer = timer ? timer - 1 : 30;
@@ -235,7 +263,8 @@ static u32 npc_finish(u32 row)
         expected.on_screen = kind == 1;
         if (timer == 1) {
             if (kind == 2) {
-                before.player.script_state = before.player.spike_immune = before.engine.gameplay_locked = 0;
+                before.player.script_state = before.engine.gameplay_locked = 0;
+                SPIKE_IMMUNE_SET(before.player, before.engine.gameplay_locked = 0);
                 memset(&expected, 0, 8);
             } else
                 before.engine.unkF = 0x40;
@@ -243,7 +272,7 @@ static u32 npc_finish(u32 row)
     }
     npc_cutscene_update(&obj);
     check();
-    assert(backref[1] == (kind == 2 && !blink && timer == 1 && has_backref ? 0x34567880u : 0x34567812u));
+    assert(backref[1] == (kind == 2 && !blink && timer == 1 && has_backref ? C_TEST_PSX_WORD(0x34567880) : C_TEST_PSX_WORD(0x34567812)));
     return 1;
 }
 static u32 npc_bob(u32 row)
@@ -258,10 +287,10 @@ static u32 npc_bob(u32 row)
     obj.ext.misc_52.unk57 = direction;
     obj.animation_table = (u32**)npc_cutscene_animations;
     obj.animation_cursor = (u32*)npc_cutscene_animations[0];
-    obj.animation_step.packed = 0x0001003A;
-    assert(*obj.animation_cursor == 0x0001003A);
+    obj.animation_step.packed = C_TEST_STEP(0x0001003A);
+    assert(*obj.animation_cursor == C_TEST_STEP(0x0001003A));
     abc_object.unkC = 1;
-    main_bss_state.frame_counter = frame;
+    WEAPON_FRAME_COUNTER = frame;
     snapshot();
     expected.on_screen = 1;
     expected.animation_step.fields.duration = 57;
@@ -303,8 +332,8 @@ static u32 scroll_text(u32 row)
     return check();
 }
 static const u32 burst_words[2][9] = {
-    { 0x09010002, 0x0A010002, 0x0B010002, 0x0C010001, 0x0C010101, 0x0D010002, 0x0E000002 },
-    { 0x04010001, 0x06010001, 0x08010002, 0x0A010002, 0x0C010002, 0x0E010002, 0x10010003, 0x12010003, 0x14000004 },
+    { C_TEST_STEP(0x09010002), C_TEST_STEP(0x0A010002), C_TEST_STEP(0x0B010002), C_TEST_STEP(0x0C010001), C_TEST_STEP(0x0C010101), C_TEST_STEP(0x0D010002), C_TEST_STEP(0x0E000002) },
+    { C_TEST_STEP(0x04010001), C_TEST_STEP(0x06010001), C_TEST_STEP(0x08010002), C_TEST_STEP(0x0A010002), C_TEST_STEP(0x0C010002), C_TEST_STEP(0x0E010002), C_TEST_STEP(0x10010003), C_TEST_STEP(0x12010003), C_TEST_STEP(0x14000004) },
 };
 static u32 burst(u32 row)
 {
@@ -356,14 +385,14 @@ static u32 burst(u32 row)
 }
 static u32 option_highlight(u32 row)
 {
-    static const u16 buttons[3] = { 0, PAD_SELECTION_ALT, 0 };
+    static const u16 buttons[3] = { 0, TEST_PAD_SELECTION_ALT, 0 };
     struct MenuRuntimeData runtime_before;
     struct GameInfo game_before;
     u32 cancel = row % 3, empty = row / 3 % 2, selected = row / 6;
     setup(31, cancel == 2 ? 0xFF : 3);
     obj.unk7 = 3;
     main_bss_state.transition.selection = selected ? 3 : 0;
-    controller_input.pressed = buttons[cancel];
+    TEST_PAD_PRESSED = buttons[cancel];
     obj.unk42 = 0x7825;
     D_800F1D90.save.character = empty ? 0xFF : CHARACTER_X;
     game_info.unk0 = 9;
@@ -374,12 +403,12 @@ static u32 option_highlight(u32 row)
     if (cancel)
         expected.unk2 = -1;
     else
-        expected.unk42 = selected ? 0x7803 : empty ? 0x7804
-                                                   : 0x7800;
+        expected.unk42 = selected ? OPTION_SELECTED : empty ? OPTION_LOCKED
+                                                            : OPTION_PALETTE;
     option_toggle_update(&obj);
     check();
     SAME(D_800F1D90, runtime_before);
-    SAME(game_info, game_before);
+    assert(same_bytes(&game_info, &game_before, sizeof(game_info)));
     return 1;
 }
 static u32 center_sprite(u32 row)
@@ -388,11 +417,12 @@ static u32 center_sprite(u32 row)
     setup(21, 0);
     obj.state = row;
     obj.unk38 = frames + 7;
-    obj.unk15 = 0x40;
-    obj.unk16 = 9;
-    obj.animation_step.packed = 0x25123456;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.unk16 = VISUAL_SATURN_LAYER(9);
+    obj.animation_step.packed = C_TEST_STEP(0x25123456);
     TEST_SPRITE_FRAMES = (u8*)frames;
     snapshot();
+#ifndef MMX4_SATURN
     if (row == 0) {
         expected.on_screen = 1;
         expected.bg_offset = -1;
@@ -402,11 +432,12 @@ static u32 center_sprite(u32 row)
         expected.animation_table = NULL;
         expected.unk40 = 0x600;
         expected.unk42 = 0x7804;
-        expected.unk15 = expected.unk16 = 0;
+        expected.unk15 = expected.unk16 = VISUAL_SATURN_LAYER(0);
         expected.x_pos.i.hi = 160;
         expected.y_pos.i.hi = 120;
         expected.state = 1;
     }
+#endif
     center_sprite_update(&obj);
     check();
     assert(TEST_SPRITE_FRAMES == (u8*)frames);
@@ -415,6 +446,8 @@ static u32 center_sprite(u32 row)
                                                           : i));
     return 1;
 }
+#ifndef MMX4_SATURN
+#define FORMAT_CASES 4
 static u32 format_navigation(u32 row)
 {
     static const u16 buttons[6] = { 0, PADLup, PADLdown, PADLup | PADLdown, PADLleft, PADLright };
@@ -434,6 +467,9 @@ static u32 format_navigation(u32 row)
     SAME(memcard_menu, menu_before);
     return 1;
 }
+#else
+#define FORMAT_CASES 0
+#endif
 const struct CTestGroup c_test_groups[] = {
     { "portrait_selection_departure", NULL, NULL, 14, portrait },
     { "selector_choice_animation", NULL, NULL, 10, selector },
@@ -445,7 +481,9 @@ const struct CTestGroup c_test_groups[] = {
     { "burst_allocation_lifecycle", NULL, NULL, 74, burst },
     { "option_cancel_and_empty_highlight", NULL, NULL, 9, option_highlight },
     { "center_sprite_initialization", NULL, NULL, 2, center_sprite },
-    { "format_confirmation_navigation", NULL, NULL, 4, format_navigation },
+#ifndef MMX4_SATURN
+    { "format_confirmation_navigation", NULL, NULL, FORMAT_CASES, format_navigation },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 14 + 10 + 6 + 6 + 36 + 8 + 21 + 74 + 9 + 2 + 4;
+const u32 c_test_count = 14 + 10 + 6 + 6 + 36 + 8 + 21 + 74 + 9 + 2 + FORMAT_CASES;

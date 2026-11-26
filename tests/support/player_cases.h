@@ -56,7 +56,7 @@ static u32 player_run(void (*run)(void), u32 row, const u32* expected)
     seen[3] = pl.x_vel.val;
     seen[4] = pl.y_vel.val;
     seen[5] = pl.unk28 ^ (u32)pl.unk2C << 8;
-    seen[6] = pl.previous_animation_index | (u8)pl.unk15 << 8 | (u8)pl.spike_immune << 16 | (u32)(u8)pl.combo << 24;
+    seen[6] = pl.previous_animation_index | C_TEST_PSX_FACING(pl.unk15) << 8 | (u8)SPIKE_IMMUNE(pl) << 16 | (u32)(u8)pl.combo << 24;
     seen[7] = player_extra ^ (weapon_objects[0].active | misc_objects[0].active << 8);
     return c_test_observe(0, row, seen, expected, 8);
 }

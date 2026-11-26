@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#ifndef VERSION_DEMO
 #include "main/items/item_27_boss_teleporter.h"
 #include "support/state_cases.h"
 #include "main/195B4.h"
@@ -76,19 +77,239 @@ static void bt_closing(void)
     TELE(1);
 }
 static void bt_closed(void) { TELE(0); }
+extern u8 boss_teleporter_box[4];
+void boss_teleporter_warp(struct ItemObj*);
+void boss_teleporter_main(struct ItemObj*);
+void boss_teleporter_wait_player(struct ItemObj*);
+void boss_teleporter_wait_enter(struct ItemObj*);
+void boss_teleporter_warp_charge(struct ItemObj*);
+void boss_teleporter_warp_leave(struct ItemObj*);
+void boss_teleporter_warp_finish(struct ItemObj*);
+static struct Unk_unk68 tele_player_box = { 0, -16, 8, 16 };
+static u32 tele_archive[8], tele_meta[64];
+#define BT(step, setup)                                                                                                                       \
+    (state_reset(step, 0, 0), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.stage = 12,                                              \
+        memset(main_objects, 0, sizeof(main_objects)), memset(&g_Player, 0, sizeof(g_Player)), g_Player.active = 0x41,                        \
+        g_Player.hp = 24, TEST_MENU_FRAMES = (u8*)tele_archive, D_801406A8 = tele_meta, tele_archive[2] = 32, si.active = 0x41, si.id = 0x1B, \
+        si.state = 1, si.unk2 = 0x13, si.x_pos.i.hi = 0x80, si.y_pos.i.hi = 0x60,                                                             \
+        si.unk68 = (struct Unk_unk68*)boss_teleporter_box, setup)
+#define BTX() (state_extra = (u8)si.tail_ext.unk1.unk84.timer | (u32)(u8)g_Player.script_action << 8 | (u32)(u16)g_Player.y_pos.i.hi << 16 ^ (u32)(u8)engine_obj.checkpoint << 24 ^ misc_objects[0].unk2 << 4 ^ misc_objects[1].unk17, engine_obj.stage = 0)
+static void bt_init_return(void)
+{
+    BT(0, si.state = 0), func_800C71C0(&si), si.unk42 = 0, si.unk40 = 0, BTX();
+}
+static void bt_main_on_screen(void) { BT(3, g_Player.script_state = 0), boss_teleporter_main(&si), BTX(); }
+static void bt_main_off_screen(void) { BT(3, (g_Player.script_state = -1, si.x_pos.i.hi = 0x300)), boss_teleporter_main(&si), BTX(); }
+static void bt_wait(s16 dx, u8 box, u8 full)
+{
+    u32 i;
+    BT(0, (g_Player.x_pos.i.hi = 0x80 + dx, g_Player.y_pos.i.hi = 0x58, g_Player.unk68 = box ? &tele_player_box : NULL));
+    for (i = 0; full && i < COUNT(misc_objects); i++)
+        misc_objects[i].active = 1;
+    boss_teleporter_wait_player(&si), BTX();
+}
+static void bt_wait_no_box(void) { bt_wait(0, 0, 0); }
+static void bt_wait_left(void) { bt_wait(-0x10, 1, 0); }
+static void bt_wait_right(void) { bt_wait(0x10, 1, 0); }
+static void bt_wait_inside(void) { bt_wait(0, 1, 0); }
+static void bt_wait_inside_full(void) { bt_wait(0, 1, 1); }
+static void bt_enter_waiting(void) { BT(1, g_Player.script_state = 0), boss_teleporter_wait_enter(&si), BTX(); }
+static void bt_enter_done(void) { BT(1, (g_Player.script_state = -1, background_objects[0].x_pos.i.hi = 0x40)), boss_teleporter_wait_enter(&si), state_extra ^= (u16)background_objects[0].unk26, BTX(); }
+static void bt_warp_start(void) { BT(2, 0), boss_teleporter_warp(&si), BTX(); }
+#define BT_TIMER(run) (BT(2, (si.tail_ext.unk1.unk84.timer = 2, misc_objects[1].animation_table = state_table, si.unk7C.object = (struct MainObj*)&misc_objects[1])), run(&si), assert(si.tail_ext.unk1.unk84.timer == 1), run(&si), BTX())
+static void bt_warp_charge(void)
+{
+    BT_TIMER(boss_teleporter_warp_charge);
+}
+static void bt_warp_leave(void) { BT_TIMER(boss_teleporter_warp_leave); }
+static void bt_warp_finish(void) { BT_TIMER(boss_teleporter_warp_finish); }
 
 static void (*const boss_teleporter_states_cases[])(void) = {
     bt_closing,
     bt_closed,
+    bt_init_return,
+    bt_main_on_screen,
+    bt_main_off_screen,
+    bt_wait_no_box,
+    bt_wait_left,
+    bt_wait_right,
+    bt_wait_inside,
+    bt_wait_inside_full,
+    bt_enter_waiting,
+    bt_enter_done,
+    bt_warp_start,
+    bt_warp_charge,
+    bt_warp_leave,
+    bt_warp_finish,
 };
-static const u32 boss_teleporter_states_expected[] = { 2u, 0x101u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 3u, 0x101u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 2u, 0u };
+static const u32 boss_teleporter_states_expected[] = {
+    0x2u,
+    0x101u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x40000u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x101u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x2u,
+    0x0u,
+    0x401u,
+    0xFF000341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000u,
+    0x0u,
+    0x0u,
+    0x301u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x40000u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x1341u,
+    0x3000000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x40000u,
+    0x3000000u,
+    0x0u,
+    0x1u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x580000u,
+    0x0u,
+    0x1u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x580000u,
+    0x0u,
+    0x1u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x580000u,
+    0x0u,
+    0x101u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x481500u,
+    0x41000000u,
+    0x101u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x481400u,
+    0x1000000u,
+    0x101u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x201u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x10201u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x278u,
+    0x41000000u,
+    0x10201u,
+    0xFF001341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x78u,
+    0x0u,
+    0x10201u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x1628u,
+    0x0u,
+    0x301u,
+    0x1341u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+};
 
 static u32 test_boss_teleporter_states(u32 row)
 {
     return object_run(boss_teleporter_states_cases[row], row, &boss_teleporter_states_expected[row * 10]);
 }
 
-extern u8 boss_teleporter_box[4];
 struct Item26AnimationStep;
 extern struct Item26AnimationStep* boss_teleporter_animations[11];
 static struct MiscObj expected_pool[64];
@@ -96,7 +317,7 @@ static u32 teleporter_init_case(u32 row, u32 status)
 {
     static const s8 free_slots[4] = { -1, 0, 31, 63 };
     static const u8 animations[3] = { 1, 10, 6 };
-    static const u32 first_words[3] = { 0x00010004, 0x4901002D, 0x4E000008 };
+    static const u32 first_words[3] = { C_TEST_STEP(0x00010004), C_TEST_STEP(0x4901002D), C_TEST_STEP(0x4E000008) };
     struct ItemObj obj, expected;
     struct EngineObj engine_before;
     u32 archive[40], metadata[8], i, layout = row / 3 % 4;
@@ -121,13 +342,13 @@ static u32 teleporter_init_case(u32 row, u32 status)
     obj.unk6 = 10;
     obj.unk67 = 11;
     obj.unk75 = 12;
-    obj.unk16 = 0x25;
-    obj.unk15 = 0x40;
+    obj.unk16 = VISUAL_SATURN_LAYER(0x25);
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.unk7C.misc = &misc_objects[63];
     obj.unk42 = 0xFFFF;
-    obj.animation_step.packed = 0x12345678;
+    obj.animation_step.packed = C_TEST_STEP(0x12345678);
     for (i = 0; i < COUNT(misc_objects); i++) {
         misc_objects[i].active = 1;
         misc_objects[i].id = 21;
@@ -142,11 +363,16 @@ static u32 teleporter_init_case(u32 row, u32 status)
     expected = obj;
     engine_before = engine_obj;
     expected.active = 0x41;
-    expected.unk16 = 6;
+    expected.unk16 = VISUAL_SATURN_LAYER(6);
     expected.unk15 = 0;
+#ifdef MMX4_SATURN
+    expected.unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x88));
+    expected.unk42 = OBJECT_STAGE_CLUT(0x88);
+#else
     expected.unk40 = 0x220;
-    expected.sprite_frames = (u8*)archive + 64;
     expected.unk42 = 0x7880;
+#endif
+    expected.sprite_frames = (u8*)archive + 64;
     expected.animation_table = (const u8* const*)boss_teleporter_animations;
     expected.unk67 = expected.unk75 = 0;
     expected.unk68 = (struct Unk_unk68*)boss_teleporter_box;
@@ -197,3 +423,8 @@ const struct CTestGroup c_test_groups[] = {
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
 const u32 c_test_count = COUNT(boss_teleporter_states_cases) + 1 + COUNT(pool_full_cases) + COUNT(bosses_cleared_warp_cases) + 96 + 16;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

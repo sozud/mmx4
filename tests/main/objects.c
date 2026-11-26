@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/objects.h"
 struct EffectObj* func_8002B468(s8, s8);
+s32 func_8002B560(s8 id, s8 subtype);
 
 #define IDENTITY(prefix, type, pool)                               \
     static u32 allocators_##prefix##_identity(struct type* actual) \
@@ -46,7 +47,9 @@ ALLOCATOR(ITEM, ItemObj, item_objects, find_free_item_obj)
 ALLOCATOR(MISC, MiscObj, misc_objects, find_free_misc_obj)
 ALLOCATOR(QUAD, QuadObj, g_QuadObjects, find_free_quad_obj)
 ALLOCATOR(LAYER, LayerObj, layer_objects, find_free_layer_obj)
+#ifndef VERSION_DEMO
 ALLOCATOR(UNK, UnkObj, unk_objects, find_free_unk_obj)
+#endif
 
 #define WALK_CASE(prefix, suffix, type, pool, function, previous, direction, free1, free2) \
     static u32 allocators_##prefix##_##suffix(void)                                        \
@@ -79,7 +82,9 @@ ALLOCATOR(UNK, UnkObj, unk_objects, find_free_unk_obj)
     WALK_CASE(prefix, rev_previous, type, pool, function, COUNT(pool) - 1, 1, COUNT(pool) - 1, COUNT(pool) - 2) \
     WALK_CASE(prefix, rev_begin, type, pool, function, 0, 1, COUNT(pool) - 1, -1)
 WALKER(MISC, MiscObj, misc_objects, func_8002AE90)
+#ifndef VERSION_DEMO
 WALKER(VISUAL, VisualObj, visual_objects, func_8002AF4C)
+#endif
 
 #define ALLOC_ENTRY(prefix)         \
     allocators_##prefix##_first,    \
@@ -99,10 +104,71 @@ WALKER(VISUAL, VisualObj, visual_objects, func_8002AF4C)
 static const CTestCase allocators_cases[] = {
     ALLOC_ENTRY(MAIN) ALLOC_ENTRY(WEAPON) ALLOC_ENTRY(SHOT)
         ALLOC_ENTRY(VISUAL) ALLOC_ENTRY(EFFECT) ALLOC_ENTRY(ITEM)
-            ALLOC_ENTRY(MISC) ALLOC_ENTRY(QUAD) ALLOC_ENTRY(LAYER) ALLOC_ENTRY(UNK)
-                WALK_ENTRY(MISC) WALK_ENTRY(VISUAL)
+            ALLOC_ENTRY(MISC) ALLOC_ENTRY(QUAD) ALLOC_ENTRY(LAYER)
+#ifndef VERSION_DEMO
+                ALLOC_ENTRY(UNK)
+#endif
+                    WALK_ENTRY(MISC)
+#ifndef VERSION_DEMO
+                        WALK_ENTRY(VISUAL)
+#endif
 };
-static const u32 allocators_cases_expected[] = { 0x0u, 0x2Fu, 0xFFFFFFFFu, 0x0u, 0xFu, 0xFFFFFFFFu, 0x0u, 0x1Fu, 0xFFFFFFFFu, 0x0u, 0x1Fu, 0xFFFFFFFFu, 0x0u, 0x1Fu, 0xFFFFFFFFu, 0x0u, 0x1Fu, 0xFFFFFFFFu, 0x0u, 0x3Fu, 0xFFFFFFFFu, 0x0u, 0x1Fu, 0xFFFFFFFFu, 0x0u, 0x3u, 0xFFFFFFFFu, 0x0u, 0x13u, 0xFFFFFFFFu, 0x0u, 0x3Fu, 0xFFFFFFFFu, 0x1u, 0xFFFFFFFFu, 0x3Fu, 0x0u, 0xFFFFFFFFu, 0x3Eu, 0xFFFFFFFFu, 0x0u, 0x1Fu, 0xFFFFFFFFu, 0x1u, 0xFFFFFFFFu, 0x1Fu, 0x0u, 0xFFFFFFFFu, 0x1Eu, 0xFFFFFFFFu };
+static const u32 allocators_cases_expected[] = {
+    0x0u,
+    0x2Fu,
+    0xFFFFFFFFu,
+    0x0u,
+    0xFu,
+    0xFFFFFFFFu,
+    0x0u,
+    0x1Fu,
+    0xFFFFFFFFu,
+    0x0u,
+    0x1Fu,
+    0xFFFFFFFFu,
+    0x0u,
+    0x1Fu,
+    0xFFFFFFFFu,
+    0x0u,
+    0x1Fu,
+    0xFFFFFFFFu,
+    0x0u,
+    0x3Fu,
+    0xFFFFFFFFu,
+    0x0u,
+    0x1Fu,
+    0xFFFFFFFFu,
+    0x0u,
+    0x3u,
+    0xFFFFFFFFu,
+#ifndef VERSION_DEMO
+    0x0u,
+    0x13u,
+    0xFFFFFFFFu,
+#endif
+    0x0u,
+    0x3Fu,
+    0xFFFFFFFFu,
+    0x1u,
+    0xFFFFFFFFu,
+    0x3Fu,
+    0x0u,
+    0xFFFFFFFFu,
+    0x3Eu,
+    0xFFFFFFFFu,
+#ifndef VERSION_DEMO
+    0x0u,
+    0x1Fu,
+    0xFFFFFFFFu,
+    0x1u,
+    0xFFFFFFFFu,
+    0x1Fu,
+    0x0u,
+    0xFFFFFFFFu,
+    0x1Eu,
+    0xFFFFFFFFu,
+#endif
+};
 #undef IDENTITY
 #undef ALLOC_CASE
 #undef ALLOCATOR
@@ -203,10 +269,43 @@ static u32 test_func_8002B3C0(u32 row)
     return c_test_observe(0, row, observed_values, func_8002B3C0_expected, 1);
 }
 
+static u32 test_visibility(u32 row)
+{
+    struct BaseObj obj;
+    u32 seen;
+    static const u32 expected[2] = { 1, 0 };
+    memset(&obj, 0, sizeof(obj));
+    memset(&background_objects, 0, sizeof(background_objects));
+    obj.active = 1;
+    obj.on_screen = 1;
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = row == 0 ? 100 : 0x200;
+    func_8002B3C0(&obj);
+    seen = obj.on_screen;
+    return c_test_observe(0, row, &seen, &expected[row], 1);
+}
+
+static u32 test_delete_effects_by_id(u32 row)
+{
+    u32 seen;
+    static const u32 expected = 0x00060000u;
+    memset(effect_objects, 0, sizeof(effect_objects));
+    effect_objects[0].active = 1;
+    effect_objects[0].id = 5;
+    effect_objects[0].unk2 = 3;
+    effect_objects[2].active = 1;
+    effect_objects[2].id = 6;
+    func_8002B560((s8)0x85, 0);
+    seen = effect_objects[0].active | (u32)effect_objects[0].id << 8 | (u32)effect_objects[2].id << 16;
+    return c_test_observe(0, row, &seen, &expected, 1);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "allocators", allocators_cases, allocators_cases_expected, COUNT(allocators_cases), 0 },
     { "effect_search", effect_search_cases, effect_search_cases_expected, COUNT(effect_search_cases), 0 },
     { "func_8002B3C0", 0, 0, 1, test_func_8002B3C0 },
+    { "visibility", 0, 0, 2, test_visibility },
+    { "delete_effects_by_id", 0, 0, 1, test_delete_effects_by_id },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(allocators_cases) + COUNT(effect_search_cases) + 1;
+const u32 c_test_count = COUNT(allocators_cases) + COUNT(effect_search_cases) + 1 + 2 + 1;

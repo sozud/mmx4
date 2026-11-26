@@ -106,6 +106,10 @@ u8 func_8002D94C(struct PlayerObj* arg0);
 
 u8 func_8002D994(struct PlayerObj* arg0);
 
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1);
+#endif
+
 struct EffectSpawnData D_800F460C[64] = {
     { 0x03, 0x00, 0x01, 0x00, 0x0C },
     { 0x03, 0x00, 0x00, 0x00, 0x0C },
@@ -241,7 +245,7 @@ ret_u8 func_8002D9BC(void* object)
         if (ride->x_pos.i.hi >= shot->x_pos.i.hi) {
             ride->unk84 = 0;
         } else {
-            ride->unk84 = 0x40;
+            ride->unk84 = PLAYER_FACING_RIGHT;
         }
         return 1;
     }
@@ -330,7 +334,6 @@ ret_u8 func_8002D9BC(void* object)
 // check_weapon_hits
 
 #if defined(MMX4_PC) || defined(MMX4_SATURN)
-s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1);
 void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1);
 void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot);
 s32 func_8002DE30(struct MainObj*, struct WeaponObj*);
@@ -604,24 +607,6 @@ void collide_with_players(struct PlayerObj* arg0)
     }
 }
 
-#ifdef MMX4_SATURN
-void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
-{
-    s16 x_overlap;
-    s16 y_overlap;
-
-    if (arg1->unk68 == NULL || !func_8002C160(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1)))
-        return;
-    func_8002C26C(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1));
-    func_8002C2EC(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1));
-    x_overlap = arg1->unk6C < 0 ? -arg1->unk6C : arg1->unk6C;
-    y_overlap = arg1->unk6E < 0 ? -arg1->unk6E : arg1->unk6E;
-    if ((arg0->unk66 == 0 && x_overlap < y_overlap) || arg0->unk66 > 0)
-        arg1->x_pos.i.hi += arg1->unk6C;
-    else
-        arg1->y_pos.i.hi += arg1->unk6E;
-}
-#else
 void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
 {
     s16 x_delta;
@@ -654,7 +639,7 @@ void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
         arg1->y_pos.i.hi += (u16)arg1->unk6E;
     }
 }
-#endif
+
 #ifdef VERSION_DEMO
 void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
 {

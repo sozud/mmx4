@@ -32,17 +32,17 @@ static u32 pool_size, buffer, group, priority;
 static struct VisualObj* object;
 #define R_COPY(a, b) c_test_copy_words((u32*)&(a), (u32*)&(b), sizeof(a) / 4)
 #define R_SAME(a, b) assert(c_test_word_difference((u32*)&(a), (u32*)&(b), sizeof(a) / 4) == 0)
-#define BIND(one, region, field)                            \
-    do {                                                    \
-        pool = &(region);                                   \
-        pool_size = sizeof(region);                         \
-        c_test_zero_words((u32*)pool, pool_size / 4);       \
-        (one).field = (void*)frames;                        \
-        (one).unk40 = v->texture;                           \
-        (one).unk42 = v->clut;                              \
-        (one).animation_step.packed = 0x01120034;           \
-        (one).animation_step.fields.frame_index = slot & 1; \
-        object = (struct VisualObj*)&(one);                 \
+#define BIND(one, region, field)                               \
+    do {                                                       \
+        pool = &(region);                                      \
+        pool_size = sizeof(region);                            \
+        c_test_zero_words((u32*)pool, pool_size / 4);          \
+        (one).field = (void*)frames;                           \
+        (one).unk40 = v->texture;                              \
+        (one).unk42 = v->clut;                                 \
+        (one).animation_step.packed = C_TEST_STEP(0x01120034); \
+        (one).animation_step.fields.frame_index = slot & 1;    \
+        object = (struct VisualObj*)&(one);                    \
     } while (0)
 #define PICK(array) (slot == 0 ? 0 : slot == 1 ? COUNT(array) / 2 \
                                                : COUNT(array) - 1)

@@ -151,10 +151,127 @@ static u32 spark(u32 row)
     return 1;
 }
 
+#include "main/1AC84.h"
+void func_800BB750(struct EffectObj*);
+void boss_death_fx_finish(struct EffectObj*);
+static struct EffectObj ef;
+static void ef_reset(u8 state, u16 timer, u8 quad_timer, u16 seed, u32 free_quads)
+{
+    u32 i;
+    memset(&ef, 0, sizeof(ef));
+    c_test_zero_words((u32*)g_QuadObjects, sizeof(g_QuadObjects) / 4);
+    c_test_zero_words((u32*)visual_objects, sizeof(visual_objects) / 4);
+    for (i = 0; i < COUNT(g_QuadObjects); i++)
+        g_QuadObjects[i].active = i < free_quads ? 0 : 1;
+    ef.active = 1;
+    ef.id = 26;
+    ef.state = state;
+    ef.x_pos.i.hi = 0xA0;
+    ef.y_pos.i.hi = 0x78;
+    ef.ext.effect_26.timer = timer;
+    ef.ext.effect_26.quad_timer = quad_timer;
+    cur_random = seed;
+}
+#define EF_SEEN(q) ((u8)ef.state | (u32)(u8)ef.ext.effect_26.timer << 8 | (u32)ef.ext.effect_26.quad_timer << 16 | (u32)(u8)g_QuadObjects[q].id << 24)
+static u32 bd_burst_ray(void)
+{
+    ef_reset(2, 5, 3, 0x1234, 32);
+    boss_death_fx_update(&ef);
+    assert(g_QuadObjects[0].active == 1 && g_QuadObjects[0].unk2 == 0x0D && g_QuadObjects[0].x_pos.i.hi == 0xA0 && g_QuadObjects[0].y_pos.i.hi == 0x78);
+    assert(g_QuadObjects[1].active == 0 && cur_random == 0xA30D);
+    return EF_SEEN(0);
+}
+static u32 bd_burst_ray_full(void)
+{
+    ef_reset(2, 5, 3, 0x1234, 0);
+    boss_death_fx_update(&ef);
+    assert(cur_random == 0x366A);
+    return EF_SEEN(0);
+}
+static u32 bd_rays_explosion(void)
+{
+    u32 i, explosions = 0;
+    ef_reset(3, 0, 1, 0x1235, 32);
+    ef.ext.effect_9.transition_timer = 5;
+    boss_death_fx_update(&ef);
+    for (i = 0; i < COUNT(visual_objects); i++)
+        explosions += visual_objects[i].active != 0;
+    assert(ef.ext.effect_9.transition_timer == 4);
+    return EF_SEEN(0) ^ explosions << 28;
+}
+static u32 bd_sparks_end(void)
+{
+    ef_reset(1, 0, 3, 0x1234, 32);
+    g_FilterModeR = g_FilterModeG = g_FilterModeB = 1;
+    g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 7;
+    engine_obj.unk42 = 5;
+    func_800BB364(&ef);
+    assert(g_FilterModeR == 0 && g_FilterModeG == 0 && g_FilterModeB == 0);
+    assert(g_FilterAmountR == 0 && g_FilterAmountG == 0 && g_FilterAmountB == 0 && engine_obj.unk42 == 0);
+#ifdef MMX4_SATURN
+    assert(D_8013E188[0] == 0x7F);
+#else
+    assert(D_8013E188[0] == -1 && D_8013E188[1] == -1 && D_8013E188[2] == -1 && D_8013E188[3] == -1);
+#endif
+    return EF_SEEN(2);
+}
+static u32 bd_whiteout_count(void)
+{
+    ef_reset(4, 0, 3, 0x1235, 32);
+    g_FilterAmountR = 3;
+    func_800BB750(&ef);
+    assert(g_FilterAmountR == 3 && g_QuadObjects[0].active == 0);
+    return EF_SEEN(0);
+}
+static u32 bd_whiteout_step(void)
+{
+    ef_reset(4, 4, 3, 0x100, 32);
+    g_FilterAmountR = 0;
+    g_FilterAmountG = 0;
+    g_FilterAmountB = 0;
+    func_800BB750(&ef);
+    assert(g_FilterAmountR == 1 && g_FilterAmountG == 0x20 && g_FilterAmountB == 0x400);
+    assert(g_QuadObjects[0].active == 1 && g_QuadObjects[0].x_pos.i.hi == 0xA0);
+    return EF_SEEN(0);
+}
+static u32 bd_whiteout_boss(void)
+{
+    ef_reset(4, 4, 3, 0x1235, 32);
+    ef.active = 0x81;
+    engine_obj.enable_boss = 1;
+    g_FilterAmountR = 0x1E;
+    func_800BB750(&ef);
+    assert(ef.unk7 == 1 && engine_obj.enable_boss == 0 && g_FilterAmountR == 0x1F);
+    return EF_SEEN(0);
+}
+static u32 bd_finish_boss(void)
+{
+    ef_reset(7, 0, 0, 0, 32);
+    ef.active = 0x81;
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.script_state = 1;
+    engine_obj.gameplay_locked = 0;
+    boss_death_fx_finish(&ef);
+    assert(g_Player.script_state == 1 && engine_obj.gameplay_locked == 1 && ef.active == 0);
+    return EF_SEEN(0);
+}
+static const CTestCase boss_death_paths_cases[] = {
+    bd_burst_ray,
+    bd_burst_ray_full,
+    bd_rays_explosion,
+    bd_sparks_end,
+    bd_whiteout_count,
+    bd_whiteout_step,
+    bd_whiteout_boss,
+    bd_finish_boss,
+};
+static const u32 boss_death_paths_cases_expected[] = { 0x4020402u, 0x20402u, 0x14040403u, 0x4036402u, 0x20104u, 0x6020504u, 0x2C805u, 0u };
+
 const struct CTestGroup c_test_groups[] = {
     { "boss_death_quad_allocation_steps", NULL, boss_death_quad_allocation_steps_cases_expected, COUNT(boss_death_quad_allocation_steps_cases_expected), death_case },
     { "normal_burst_and_sixteen_ray_transitions_full_partial_available_quads", NULL, NULL, 6, late_quads },
     { "boss_death_actual_spark_angles_zero_to_three_quad_slots", NULL, NULL, 12, spark },
+    { "boss_death_paths", boss_death_paths_cases, boss_death_paths_cases_expected, COUNT(boss_death_paths_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(boss_death_quad_allocation_steps_cases_expected) + 6 + 12;
+const u32 c_test_count = COUNT(boss_death_quad_allocation_steps_cases_expected) + 6 + 12 + COUNT(boss_death_paths_cases);

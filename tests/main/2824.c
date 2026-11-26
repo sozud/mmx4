@@ -1,6 +1,8 @@
 #include "test_runtime.h"
 #include "main/102FC.h"
 #include "main/game_info.h"
+#include "main/menu.h"
+#ifndef MMX4_SATURN
 void func_80012328(void);
 #ifdef MMX4_PC
 extern struct ControllerButtons D_80166D50;
@@ -265,12 +267,107 @@ static u32 wait_two(u32 row)
     c_test_same_words(&g_Player, &player, sizeof(player));
     return 1;
 }
+static void run_once(void)
+{
+    progress = 1;
+    func_800127FC();
+}
+static u32 thread_marks(u32 row)
+{
+    struct GameThread* slots[4];
+    struct GameThread* current;
+    u32 i;
+    mmx4_pc_threads_init();
+    for (i = 0; i < 4; i++)
+        slots[i] = mmx4_pc_thread_slot(i);
+    current = D_801F8300;
+    for (i = 0; i < 4; i++)
+        saved_thread_two_frame_wait[i] = *slots[i];
+    assert(slots[3]->state == 0);
+    for (i = 0; i < 3; i++)
+        func_800128EC(i);
+    slots[3]->timer = 0;
+    slots[3]->stack = (u32)(unsigned long)&worker_stack_thread_two_frame_wait[240];
+    progress = 0;
+    func_80012740(3, run_once);
+    slots[3]->state = row ? 0x7F : 4;
+    func_80012600();
+    assert(progress == 1 && slots[3]->state == 0);
+    for (i = 0; i < 3; i++)
+        if (!(saved_thread_two_frame_wait[i].state & 0x40))
+            func_80012910(i);
+    *slots[3] = saved_thread_two_frame_wait[3];
+    D_801F8300 = current;
+    for (i = 0; i < 4; i++)
+        c_test_same_words(slots[i], &saved_thread_two_frame_wait[i], sizeof(saved_thread_two_frame_wait[i]));
+    return 1;
+}
+
+static u32 soft_reset(u32 row)
+{
+    struct GameThread* slots[4];
+    struct GameThread* current;
+    struct MemcardSaveSlot save_before;
+    u32 i, resets = row < 3, saves = row == 0;
+    ResetGraph(0);
+    mmx4_pc_threads_init();
+    for (i = 0; i < 4; i++)
+        slots[i] = mmx4_pc_thread_slot(i);
+    current = D_801F8300;
+    for (i = 0; i < 4; i++)
+        saved_thread_two_frame_wait[i] = *slots[i];
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&game_info, 0x33, sizeof(game_info));
+    memset(&D_800F1D90.save, 0xEE, sizeof(D_800F1D90.save));
+    save_before = D_800F1D90.save;
+    for (i = 0; i < 4; i++)
+        D_8013E1C8[i] = -1;
+    for (i = 0; i < 6; i++)
+        D_8013E198[i] = -1;
+    engine_obj.state = 6;
+    engine_obj.stage = row == 1 ? 0 : 1;
+    engine_obj.unk5F = row == 2 ? 2 : 3;
+    engine_obj.cur_character = 1;
+    engine_obj.max_hp = 0x20;
+    main_bss_state.transition.active = row == 4;
+    memset(&controller_input, 0, sizeof(controller_input));
+    controller_input.held = PADstart | PADselect;
+    D_8013BD44 = row != 3;
+    D_80141BD2 = 1;
+    func_80012454();
+    assert(D_80141BD2 == (resets ? 120 : 1));
+    if (saves)
+        assert(D_800F1D90.save.character == 1 && D_800F1D90.save.unk1 == 0x20 && D_800F1D90.save.unk5 == 3);
+    else
+        c_test_same_words(&D_800F1D90.save, &save_before, sizeof(save_before));
+    if (resets) {
+        assert(engine_obj.state == 0 && engine_obj.stage == 0 && engine_obj.unk5F == 0);
+        assert(game_info.unk0 == 1 && game_info.mode == 0 && game_info.unk2 == 0 && game_info.unk3 == 0);
+        assert(slots[0]->state == 2 && slots[1]->state == 0 && slots[2]->state == 0 && slots[3]->state == 0);
+        func_80012854(0);
+    } else {
+        assert(engine_obj.state == 6 && game_info.unk0 == 0x33);
+    }
+    for (i = 0; i < 4; i++)
+        *slots[i] = saved_thread_two_frame_wait[i];
+    D_801F8300 = current;
+    main_bss_state.transition.active = 0;
+    return 1;
+}
+#define PSX_CASES (4 + 2 + 5)
+#else
+#define PSX_CASES 0
+#endif
 
 const struct CTestGroup c_test_groups[] = {
+#ifndef MMX4_SATURN
     { "real_input_decoder_secondary_disconnect_digital_opposite_axes_and_pressed_edges", NULL, NULL, 1, packets },
     { "real_new_game_menu_worker_starts_engine_slot1_then_exits", NULL, NULL, 1, handoff },
     { "actual_game_loop_start_select_119_frame_hold_then_release_resets_countdown", NULL, NULL, 1, hold },
     { "real_slot3_worker_waits_two_scheduler_frames_then_resumes_and_closes", NULL, NULL, 1, wait_two },
+    { "thread_marks_4_and_7F_resume", NULL, NULL, 2, thread_marks },
+    { "start_select_soft_reset", NULL, NULL, 5, soft_reset },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1 + 1 + 1 + 1;
+const u32 c_test_count = PSX_CASES;

@@ -34,8 +34,133 @@ static u32 test_func_800A3A4C(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 3);
 }
 
+#include "support/state_cases.h"
+static struct WeaponObj beam_owner;
+#define ss state_room.shot
+#define BEAM(st, kind, face, timer, setup) (state_reset(0, 0, 0), memset(&beam_owner, 0, sizeof(beam_owner)), beam_owner.active = 1, beam_owner.state = 1, beam_owner.x_pos.i.hi = 0x200, beam_owner.y_pos.i.hi = 0x80, background_objects[0].x_pos.i.hi = 0x180, ss.active = 1, ss.state = st, ss.unk2 = kind, ss.unk15 = face, ss.unk7C = &beam_owner, ss.unk84.value = timer, ss.x_pos.i.hi = 0x123, setup, drone_beam_update(&ss), state_extra = ss.unk84.value | (u32)ss.unk17 << 8 | (u32)(ss.unk50.data == NULL ? 0xFF : ss.unk50.data[0]) << 16)
+static void db_init_near_left(void)
+{
+    BEAM(0, 0, 0, 0, 0);
+}
+static void db_init_near_right(void) { BEAM(0, 0, PLAYER_FACING_RIGHT, 0, 0); }
+static void db_init_far_left(void) { BEAM(0, 1, 0, 0, 0); }
+static void db_init_far_right(void) { BEAM(0, 1, PLAYER_FACING_RIGHT, 0, 0); }
+static void db_charging(void) { BEAM(1, 0, 0, 0x6E, 0); }
+static void db_widen_near(void) { BEAM(1, 0, 0, 0x46, 0); }
+static void db_fade_near(void) { BEAM(1, 0, 0, 0x19, 0); }
+static void db_fade_far(void) { BEAM(1, 1, 0, 0x19, 0); }
+static void db_owner_leaving(void) { BEAM(1, 0, 0, 0x30, beam_owner.state = 2); }
+static void (*const drone_beam_states_cases[])(void) = {
+    db_init_near_left,
+    db_init_near_right,
+    db_init_far_left,
+    db_init_far_right,
+    db_charging,
+    db_widen_near,
+    db_fade_near,
+    db_fade_far,
+    db_owner_leaving,
+};
+static const u32 drone_beam_states_expected[] = {
+    0x1u,
+    0xFF000001u,
+    0x1700000u,
+    0x7D0000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x80036Eu,
+    0u,
+    0x1u,
+    0xFF400001u,
+    0x2900000u,
+    0x7D0000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x80036Eu,
+    0u,
+    0x1u,
+    0xFF000101u,
+    0x700000u,
+    0x7D0000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x80046Eu,
+    0u,
+    0x1u,
+    0xFF400101u,
+    0x3900000u,
+    0x7D0000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x80046Eu,
+    0u,
+    0x1u,
+    0x1u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0xFF006Du,
+    0u,
+    0x1u,
+    0x1u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x800045u,
+    0u,
+    0x1u,
+    0xFF000001u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xFF0518u,
+    0u,
+    0x1u,
+    0xFF000101u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xFF0618u,
+    0u,
+    0x2u,
+    0x1u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0xFF002Fu,
+    0u,
+};
+static u32 test_drone_beam_states(u32 row)
+{
+    return object_run(drone_beam_states_cases[row], row, &drone_beam_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "func_800A3A4C", 0, 0, 4, test_func_800A3A4C },
+    { "drone_beam_states", 0, 0, COUNT(drone_beam_states_cases), test_drone_beam_states },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 4;
+const u32 c_test_count = 4 + COUNT(drone_beam_states_cases);

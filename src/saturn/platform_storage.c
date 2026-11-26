@@ -225,6 +225,29 @@ u16 saturn_music_thread_active;
 
 u8 saturn_stream_error_object[6];
 
+void* saturn_movie_handle;
+
+struct {
+    u32* work_addr;
+    u32 work_size;
+    u32* buf_addr;
+    u32 buf_size;
+    u16* pcm_addr;
+    u32 pcm_size;
+} saturn_movie_para;
+
+void* saturn_movie_header;
+
+u16 saturn_movie_x_offset;
+
+u16 saturn_movie_width;
+
+u16 saturn_movie_height;
+
+volatile u8 saturn_movie_timer_flag;
+
+u8 saturn_movie_top;
+
 s32 saturn_boot_state;
 
 s32 saturn_boot_substate;

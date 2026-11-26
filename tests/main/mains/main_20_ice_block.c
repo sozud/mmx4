@@ -18,7 +18,9 @@ enum { TOP_BREAK,
     BOTTOM_OTHER,
     BOTH_SHATTER,
     POOL_FULL,
-    CARRIED };
+    CARRIED,
+    BREAK_31_30,
+    BREAK_3C_3C };
 static const struct ShatterInput inputs[] = {
     { 0, 0x30, 0, 1 },
     { 0, 0x33, 0, 1 },
@@ -29,6 +31,8 @@ static const struct ShatterInput inputs[] = {
     { 0, 0x38, 0x38, 1 },
     { 0, 0, 0, 0 },
     { 1, 0x38, 0x38, 1 },
+    { 0, 0x31, 0x30, 1 },
+    { 0, 0x3C, 0x3C, 1 },
 };
 #define WEAPON_SLOT 3
 static u8 tilemap[256];
@@ -70,8 +74,8 @@ static u32 run(u32 mode)
         tiles[1][11][i] = 2;
     }
     attributes[0] = 0;
-    attributes[1] = input->top;
-    attributes[2] = input->bottom;
+    attributes[1] = TEST_DISC32(input->top);
+    attributes[2] = TEST_DISC32(input->bottom);
     SP_BG_TILEMAP = tilemap;
     layout_width = 16;
     layout_size = 256;
@@ -148,13 +152,13 @@ static u32 run(u32 mode)
     for (i = 0; i < 0x40; i++)
         difference |= misc_objects[i].active ^ 1;
     assert(difference == 0);
-    assert(attributes[1] == input->top && attributes[2] == input->bottom && engine_obj.stage == 2);
+    assert(attributes[1] == TEST_DISC32(input->top) && attributes[2] == TEST_DISC32(input->bottom) && engine_obj.stage == 2);
     for (i = 0; i < 3; i++)
         background_objects[i] = cameras[i];
     return flags | ((u32)(u8)block.unk5 << 8) | ((u32)block.unk17 << 16) | ((u32)(u8)weapon_objects[WEAPON_SLOT].id << 24);
 }
 
-static const u32 ice_block_shatter_cases_expected[] = { 0x3A080300u, 0x3A080300u, 0x3A070301u, 0x3A080300u, 0x3A060302u, 0x3A080300u, 0x3A000303u, 0x80300u, 0x3A080300u };
+static const u32 ice_block_shatter_cases_expected[] = { 0x3A080300u, 0x3A080300u, 0x3A070301u, 0x3A080300u, 0x3A060302u, 0x3A080300u, 0x3A000303u, 0x80300u, 0x3A080300u, 0x3A080300u, 0x3A080300u };
 
 static void ib_idle(void)
 {
@@ -162,10 +166,189 @@ static void ib_idle(void)
     ice_block_start_idle(&so);
 }
 
+#include "support/tile_writes.h"
+void func_800545EC(struct MainObj*);
+void ice_block_main(struct MainObj*);
+void ice_block_break(struct MainObj*);
+void ice_block_break_crumble(struct MainObj*);
+static void ib_init(u8 carried) { state_reset(0, 0, 0), so.x_pos.i.hi = 0x83, so.y_pos.i.hi = 0x65, so.unk2 = carried, func_800545EC(&so), state_extra = so.ext.main_20.unk80 | so.ext.main_20.unk81 << 8 | (u32)(so.attack_box != NULL) << 16; }
+static void ib_init_free(void) { ib_init(0); }
+static void ib_init_carried(void) { ib_init(1); }
+#define IBM(sub, setup) (state_reset(2, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.unk2 = sub, so.hp = 9, so.ext.main_20.unk80 = 9, so.ext.main_20.unk81 = 2, setup, ice_block_main(&so), state_extra = so.ext.main_20.unk80 | so.ext.main_20.unk81 << 8)
+#define IB_STAMP(base) (engine_obj.stage = 2, engine_obj.substage = 1, tile_writes_begin(), tile_writes_expect(3 + (base), 0x70, 0x30, 1), tile_writes_expect(0x12 + (base), 0x70, 0x60, 1), tile_writes_expect((base) ? 0x1F : 0x1E, 0x70, 0x50, 1))
+#define IB_STAMPED() (state_extra ^= tile_writes_end(), engine_obj.stage = engine_obj.substage = 0)
+static void ib_main_steady(void)
+{
+    IBM(0, 0);
+}
+static void ib_main_cracked(void) { IBM(0, (so.hp = 8, IB_STAMP(0))), IB_STAMPED(); }
+static void ib_main_cracked_last(void) { IBM(0, (so.hp = 8, so.ext.main_20.unk81 = 1, IB_STAMP(5))), IB_STAMPED(); }
+static void ib_main_cracked_more(void) { IBM(0, (so.hp = 8, so.ext.main_20.unk81 = 3)); }
+static void ib_main_defeated(void) { IBM(1, (so.hp = 1, state_hit(&so, 0, 0, 1))); }
+static void ib_main_away(void) { IBM(1, so.x_pos.i.hi = 0x1000); }
+static void ib_crumble_event(void) { state_reset(2, 1, 0), so.animation_step.fields.event = 1, ice_block_break_crumble(&so), state_extra = so.attack_box != NULL; }
+static void ib_crumble_end(void) { state_reset(2, 1, 0), so.animation_step.fields.relative_step = -1, ice_block_break_crumble(&so); }
+static void ib_break_on_screen(void) { state_reset(1, 0, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, ice_block_break(&so); }
+static void ib_break_removed(void) { state_reset(2, 0, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, ice_block_break(&so); }
+static void ib_break_away(void) { state_reset(1, 0, 0), so.x_pos.i.hi = 0x1000, ice_block_break(&so); }
 static void (*const ice_block_misc_cases[])(void) = {
     ib_idle,
+    ib_init_free,
+    ib_init_carried,
+    ib_main_steady,
+    ib_main_cracked,
+    ib_main_cracked_last,
+    ib_main_cracked_more,
+    ib_main_defeated,
+    ib_main_away,
+    ib_crumble_event,
+    ib_crumble_end,
+    ib_break_on_screen,
+    ib_break_removed,
+    ib_break_away,
 };
-static const u32 ice_block_misc_expected[] = { 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+static const u32 ice_block_misc_expected[] = {
+    2u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x2u,
+    0x0u,
+    0x880000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x90001u,
+    0x209u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x880000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x90003u,
+    0x10209u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x90000u,
+    0x209u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000u,
+    0xCBF864CBu,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10000u,
+    0x847AD151u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000u,
+    0x208u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x209u,
+    0x2100u,
+    0x0u,
+    0x0u,
+    0x10000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x90000u,
+    0x209u,
+    0x0u,
+    0x102u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x1u,
+    0x0u,
+    0x103u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+};
 
 static u32 test_ice_block_misc(u32 row)
 {

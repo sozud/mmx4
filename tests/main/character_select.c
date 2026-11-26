@@ -2,7 +2,14 @@
 #include "main/character_select.h"
 #include "main/1A5BC.h"
 #include "main/1AC84.h"
+#include "support/test_pad.h"
 void character_select_state_1(struct EngineObj*);
+
+#ifdef MMX4_SATURN
+#define CODE_OTHER_BUTTON SATURN_PAD_X
+#else
+#define CODE_OTHER_BUTTON PADselect
+#endif
 
 static u32 select_case(u32 available)
 {
@@ -58,6 +65,7 @@ static const u32 character_select_allocation_steps_cases_expected[] = { 0x500u, 
 
 #undef controller_input
 
+#ifndef VERSION_DEMO
 static u32 code_default(s8 phase, void (*update)(void))
 {
     memset(&engine_obj, 0, sizeof(engine_obj));
@@ -88,13 +96,13 @@ static const u32 secret_code_defaults_cases_expected[] = { 0x550503u, 0x550504u 
 
 static void secret_input(u32 zero, u16 pressed, u16 held)
 {
-    controller_input.pressed = pressed;
-    controller_input.held = held;
+    TEST_PAD_PRESSED = pressed;
+    TEST_PAD_HELD = held;
     if (zero)
         func_80029BD8();
     else
         func_80029A48();
-    assert(controller_input.pressed == pressed && controller_input.held == held);
+    assert(TEST_PAD_PRESSED == pressed && TEST_PAD_HELD == held);
 }
 
 static void secret_prefix(u32 zero)
@@ -102,11 +110,11 @@ static void secret_prefix(u32 zero)
     const u16* sequence = zero ? D_800F44D8 : D_800F44C4;
     u32 i, length = zero ? 6 : 8;
     for (i = 0; i < length; i++) {
-        secret_input(zero, sequence[i], sequence[i] | (zero ? PADR1 : 0));
+        secret_input(zero, sequence[i], sequence[i] | (zero ? TEST_PAD_R1 : 0));
         assert(engine_obj.character_state.fields.secret_code_index == i + 1);
         assert(engine_obj.character_state.fields.secret_code_phase == (i + 1 == length ? 2 : 1));
         if (i + 1 != length)
-            secret_input(zero, 0, zero ? PADR1 : 0);
+            secret_input(zero, 0, zero ? TEST_PAD_R1 : 0);
     }
 }
 
@@ -123,31 +131,31 @@ static u32 test_secret_code_sequence(u32 row)
     expected = engine_obj;
     secret_input(zero, 0, 0);
     if (mode == 1)
-        secret_input(zero, PADselect, PADselect);
+        secret_input(zero, CODE_OTHER_BUTTON, CODE_OTHER_BUTTON);
     else if (mode == 2)
-        secret_input(zero, sequence[0], sequence[0] | (zero ? 0 : PADR1));
+        secret_input(zero, sequence[0], sequence[0] | (zero ? 0 : TEST_PAD_R1));
     else if (mode >= 3 && mode <= 5) {
-        secret_input(zero, sequence[0], sequence[0] | (zero ? PADR1 : 0));
+        secret_input(zero, sequence[0], sequence[0] | (zero ? TEST_PAD_R1 : 0));
         index = 1;
         if (mode == 3) {
             secret_input(zero, 0, 0);
             phase = 1;
         }
         if (mode == 4)
-            secret_input(zero, PADselect, PADselect | (zero ? PADR1 : 0));
+            secret_input(zero, CODE_OTHER_BUTTON, CODE_OTHER_BUTTON | (zero ? TEST_PAD_R1 : 0));
         if (mode == 5)
-            secret_input(zero, sequence[1], sequence[1] | (zero ? 0 : PADR1));
+            secret_input(zero, sequence[1], sequence[1] | (zero ? 0 : TEST_PAD_R1));
     } else {
         secret_prefix(zero);
         index = zero ? 6 : 8;
         phase = 2;
         if (mode == 6)
-            secret_input(zero, 0, zero ? (PADR1 | sequence[5]) : 0);
+            secret_input(zero, 0, zero ? (TEST_PAD_R1 | sequence[5]) : 0);
         else if (mode == 7 && zero) {
-            secret_input(zero, 0, PADL1);
+            secret_input(zero, 0, TEST_PAD_L1);
             phase = 0;
         } else if (mode == 11 && zero) {
-            secret_input(zero, PADstart, PADR1);
+            secret_input(zero, TEST_PAD_START, TEST_PAD_R1);
             phase = 0;
         } else {
             if (zero) {
@@ -155,14 +163,14 @@ static u32 test_secret_code_sequence(u32 row)
                 phase = 3;
             }
             if (mode == 0 || mode == 11) {
-                secret_input(zero, mode == 11 ? PADstart : PAD_CONFIRM, hold | PAD_CONFIRM);
+                secret_input(zero, mode == 11 ? TEST_PAD_START : TEST_PAD_CONFIRM, hold | TEST_PAD_CONFIRM);
                 phase = 0;
                 enabled = 1;
             } else if (mode == 8) {
-                secret_input(zero, PAD_CONFIRM, 0);
+                secret_input(zero, TEST_PAD_CONFIRM, 0);
                 phase = 0;
             } else if (mode == 10) {
-                secret_input(zero, PADselect, PADselect);
+                secret_input(zero, CODE_OTHER_BUTTON, CODE_OTHER_BUTTON);
                 phase = 0;
             } else if (mode == 12)
                 secret_input(zero, 0, 0);
@@ -176,6 +184,7 @@ static u32 test_secret_code_sequence(u32 row)
     c_test_same_words(&engine_obj, &expected, sizeof(expected));
     return 1;
 }
+#endif
 
 static const struct {
     u8 phase, fade, ready, free_slots, next_phase, next_step, portraits;
@@ -190,6 +199,14 @@ static const struct {
     { 0, 1, 0, 2, 0, 1, 0 },
     { 1, 1, 3, 2, 1, 1, 0 },
 };
+
+#ifdef MMX4_SATURN
+#define SELECT_ENTRIES 1
+#define SELECT_READY 0x4F
+#else
+#define SELECT_ENTRIES 4
+#define SELECT_READY -1
+#endif
 
 static u32 test_portrait_entry(u32 row)
 {
@@ -222,32 +239,32 @@ static u32 test_portrait_entry(u32 row)
         }
     assert(spawned == portrait_entries[row].portraits);
     for (i = 0; i < 4; i++)
-        assert(D_8013E188[i] == (expected.unk1 == 2 ? -1 : 7));
+        assert(D_8013E188[i] == (expected.unk1 == 2 && i < SELECT_ENTRIES ? SELECT_READY : 7));
     return 1;
 }
 
+#ifndef VERSION_DEMO
 void character_select_state_3(struct EngineObj*);
 static const struct {
     u16 pressed;
     u8 character;
 } navigation[] = {
-    { 0x8000, 0 },
-    { 0x4000, 0 },
-    { 0x1000, 1 },
-    { 0x2000, 1 },
-    { 0xA000, 1 },
-    { 0x5000, 1 },
-    { 0xF000, 1 },
-    { 0xC000, 0 },
+    { TEST_PAD_LEFT, 0 },
+    { TEST_PAD_DOWN, 0 },
+    { TEST_PAD_UP, 1 },
+    { TEST_PAD_RIGHT, 1 },
+    { TEST_PAD_LEFT | TEST_PAD_RIGHT, 1 },
+    { TEST_PAD_DOWN | TEST_PAD_UP, 1 },
+    { TEST_PAD_LEFT | TEST_PAD_DOWN | TEST_PAD_UP | TEST_PAD_RIGHT, 1 },
+    { TEST_PAD_LEFT | TEST_PAD_DOWN, 0 },
 };
-static const u16 confirmations[] = { 0, 0x40, 0x800, 0x840 };
+static const u16 confirmations[] = { 0, TEST_PAD_CONFIRM, TEST_PAD_START, TEST_PAD_CONFIRM | TEST_PAD_START };
 static u32 navigate(u32 row)
 {
     struct EngineObj expected;
     struct PlayerObj player_before = g_Player;
     struct ControllerInput input_before;
     u32 choice = row % COUNT(navigation), confirmation = row / COUNT(navigation) % 4, powered = row / COUNT(navigation) / 4;
-    assert(PADLleft == 0x8000 && PADLdown == 0x4000 && PADLup == 0x1000 && PADLright == 0x2000 && PAD_CONFIRM == 0x40 && PADstart == 0x800);
     memset(&engine_obj, 0, sizeof(engine_obj));
     engine_obj.state = 1;
     engine_obj.unk1 = 3;
@@ -258,8 +275,8 @@ static u32 navigate(u32 row)
     engine_obj.character_state.fields.secret_code_phase = 7;
     engine_obj.character_state.fields.secret_code_index = 5;
     engine_obj.character_state.fields.menu_state = 0x12345678;
-    controller_input.pressed = navigation[choice].pressed | confirmations[confirmation];
-    controller_input.held = 0x1357;
+    TEST_PAD_PRESSED = navigation[choice].pressed | confirmations[confirmation];
+    TEST_PAD_HELD = 0x1357;
     controller_input.previous = 0x2468;
     input_before = controller_input;
     expected = engine_obj;
@@ -279,6 +296,10 @@ static u32 navigate(u32 row)
     assert(controller_input.pressed == input_before.pressed && D_8013E198[5] == -1);
     return 1;
 }
+#define STATE_3_CASES (26 + COUNT(secret_code_defaults_cases) + COUNT(navigation) * 8)
+#else
+#define STATE_3_CASES 0
+#endif
 
 void character_select_state_2_substate_0(struct EngineObj*);
 static const s8 active_values[] = { 0, 1, -1 };
@@ -310,7 +331,11 @@ static u32 option_return(u32 row)
             expected.unk0 = 8;
             expected.mode = expected.unk2 = expected.unk3 = 0;
         } else
+#ifdef MMX4_BIG_ENDIAN
+            expected.unk6 = byte ? 0x13FE : 0x1301;
+#else
             expected.unk6 = byte ? 0x12FF : 0x1202;
+#endif
     }
     func_8002A394(&info);
     c_test_same_words(&info, &expected, sizeof(info));
@@ -319,7 +344,11 @@ static u32 option_return(u32 row)
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(D_8013B7D0 == (active == 0 ? 0 : 2));
+#ifdef MMX4_SATURN
+    assert(need_palette_load == (active == 0 ? 0x21 : 0x20));
+#else
     assert(need_palette_load == (active == 0 && character_mode ? 0x21 : 0x20));
+#endif
     return 1;
 }
 static u32 character_palette_wait(u32 row)
@@ -352,19 +381,27 @@ static u32 character_palette_wait(u32 row)
     assert(g_FilterAmountR == (timer ? 31 : 0) && g_FilterAmountG == (timer ? 0x3E0 : 0) && g_FilterAmountB == (timer ? 0x7C00 : 0));
     assert(g_FilterModeR == 3 && g_FilterModeG == 3 && g_FilterModeB == 3);
     for (i = 0; i < 4; i++)
-        assert(D_8013E188[i] == (timer ? 7 : 0));
+        assert(D_8013E188[i] == (timer || i >= SELECT_ENTRIES ? 7 : 0));
+#ifdef MMX4_SATURN
+    assert(need_palette_load == (dirty ? 0x21 : 0x20));
+#else
     assert(need_palette_load == (timer && !dirty ? 0x20 : 0x21));
+#endif
     return 1;
 }
 
 const struct CTestGroup c_test_groups[] = {
+#ifndef VERSION_DEMO
     { "secret_code_sequence", 0, 0, 26, test_secret_code_sequence },
+#endif
     { "portrait_entry", 0, 0, COUNT(portrait_entries), test_portrait_entry },
     { "character_select_allocation_steps", NULL, character_select_allocation_steps_cases_expected, COUNT(character_select_allocation_steps_cases_expected), select_case },
+#ifndef VERSION_DEMO
     { "secret_code_defaults", secret_code_defaults_cases, secret_code_defaults_cases_expected, COUNT(secret_code_defaults_cases), 0 },
     { "navigation_priority_code_reset_and_confirm", NULL, NULL, COUNT(navigation) * 8, navigate },
+#endif
     { "options_return_fade", NULL, NULL, 12, option_return },
     { "character_palette_wait", NULL, NULL, 6, character_palette_wait },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 26 + COUNT(portrait_entries) + COUNT(character_select_allocation_steps_cases_expected) + COUNT(secret_code_defaults_cases) + COUNT(navigation) * 8 + 12 + 6;
+const u32 c_test_count = STATE_3_CASES + COUNT(portrait_entries) + COUNT(character_select_allocation_steps_cases_expected) + 12 + 6;

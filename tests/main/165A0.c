@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#ifndef MMX4_SATURN
 #include "main/165A0.h"
 
 static u32 tile_case(u32 mode)
@@ -359,6 +360,71 @@ static u32 test_frame(u32 row)
     return finish(0);
 }
 
+void func_80026720(void);
+static u32 test_intro_sky(u32 row)
+{
+    TILE before[2];
+    u32 i;
+    memset(&draw, 0, sizeof(draw));
+    cur_draw_info = &draw;
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    engine_obj.stage = row == 2;
+    engine_obj.substage = row == 1;
+    SP_DRAW_BUFFER = 1;
+    memset(D_8013B7B0, 0x5A, sizeof(D_8013B7B0));
+    setTile(&D_8013B7B0[1]);
+    memcpy(before, D_8013B7B0, sizeof(before));
+    func_80026720();
+    assert(c_test_word_difference((const u32*)&D_8013B7B0[0], (const u32*)&before[0], sizeof(TILE) / 4) == 0);
+    if (row != 0) {
+        assert(c_test_word_difference((const u32*)&D_8013B7B0[1], (const u32*)&before[1], sizeof(TILE) / 4) == 0);
+        for (i = 0; i < sizeof(draw) / 4; i++)
+            assert(((u32*)&draw)[i] == 0);
+        return 0;
+    }
+    assert(D_8013B7B0[1].r0 == 8 && D_8013B7B0[1].g0 == 0x18 && D_8013B7B0[1].b0 == 0x31);
+    assert(D_8013B7B0[1].x0 == 0 && D_8013B7B0[1].y0 == 0 && D_8013B7B0[1].w == 0x140 && D_8013B7B0[1].h == 0x60);
+    assert(nextPrim(&draw.ordering_table.end) == &D_8013B7B0[1] && getaddr(&D_8013B7B0[1]) == 0);
+    return 1;
+}
+
+void func_80027344(s32 layer, s32 x, s32 y);
+static u8 wrap_map[4][8];
+static u16 wrap_pixels[8][256];
+static u32 test_column_wrap(u32 row)
+{
+    static const s16 x_args[] = { 300, 300, 1300 }, x_before[] = { 256, 257, 1280 }, x_after[] = { 1024, 257, 512 };
+    u32 i, j, r, filled = 0;
+    memset(background_objects, 0, sizeof(background_objects));
+    background_objects[0].unk4D = 2;
+    background_objects[0].unk4E = 4;
+    background_objects[0].x_pos.i.hi = x_before[row];
+    for (i = 0; i < 4; i++)
+        for (j = 0; j < 8; j++)
+            wrap_map[i][j] = j;
+    for (i = 0; i < 8; i++)
+        for (j = 0; j < 256; j++)
+            wrap_pixels[i][j] = i * 256 + j;
+    SP_BG_TILEMAP = (u8*)wrap_map;
+    TEST_BG_TILE_PIXELS = (u8*)wrap_pixels;
+    layout_width = 8;
+    layout_size = 32;
+    for (i = 0; i < sizeof(D_801441C8) / 4; i++)
+        ((u32*)D_801441C8)[i] = 0x42424242;
+    func_80027344(0, x_args[row], 0);
+    assert(background_objects[0].x_pos.i.hi == x_after[row]);
+    for (i = 0; i < 3; i++)
+        for (r = 0; r < 32; r++)
+            for (j = 0; j < 32; j++) {
+                u16 want = 0x4242;
+                if (row == 1 && i == 0 && j == 18 && r < 18)
+                    want = 4 * 256 + (r % 16) * 16 + 2;
+                assert(D_801441C8[i][r][j] == want);
+                filled += want != 0x4242;
+            }
+    return filled;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "background_negative_tile_guards", NULL, background_negative_tile_guards_cases_expected, COUNT(background_negative_tile_guards_cases_expected), tile_case },
     { "packed_block_rectangle", 0, 0, COUNT(rectangles) * 6, test_rectangle },
@@ -366,6 +432,13 @@ const struct CTestGroup c_test_groups[] = {
     { "viewport_empty_blocks", 0, 0, 2, test_empty_blocks },
     { "viewport_inherited_height", 0, 0, 6, test_inherited_height },
     { "background_frame_layer_masks", 0, 0, 16, test_frame },
+    { "intro_sky_tile", 0, 0, 3, test_intro_sky },
+    { "column_fill_block_wrap", 0, 0, 3, test_column_wrap },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(background_negative_tile_guards_cases_expected) + COUNT(rectangles) * 6 + 16 + 2 + 6 + 16;
+const u32 c_test_count = COUNT(background_negative_tile_guards_cases_expected) + COUNT(rectangles) * 6 + 16 + 2 + 6 + 16 + 3 + 3;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

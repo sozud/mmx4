@@ -44,8 +44,8 @@ static void prepare(u32 character, u32 tile)
     memset(map, 1, sizeof(map));
     memset(tiles, 0, sizeof(tiles));
     terrain = tile;
-    attributes[0] = tile;
-    attributes[1] = 0x38;
+    attributes[0] = TEST_DISC32(tile);
+    attributes[1] = TEST_DISC32(0x38);
     SP_BG_TILEMAP = map;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -95,7 +95,7 @@ static void pose(u32 animation, u32 word, u32 saber_bank)
     expected.unk17 = animation;
     expected.previous_animation_index = 255;
     expected.animation_cursor = expected.animation_table[animation];
-    expected.animation_step.packed = word;
+    expected.animation_step.packed = C_TEST_STEP(word);
     expected.unk38 = (u8*)gfx + (saber_bank ? 128 : 64);
     expected.unk3C = (u8*)frames + (saber_bank ? 128 : 64);
 }
@@ -110,7 +110,7 @@ static void check(void)
     assert(c_test_word_difference((u32*)weapon_objects, (u32*)weapons, sizeof(weapons) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, sizeof(visuals) / 4) == 0);
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
     assert(cur_random == rng && need_palette_load == dirty);
-    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == terrain && attributes[1] == 0x38);
+    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == TEST_DISC32(terrain) && attributes[1] == TEST_DISC32(0x38));
     for (i = 0; i < COUNT(map); i++)
         assert(map[i] == 1);
     for (i = 0; i < COUNT(tiles); i++)
@@ -159,7 +159,7 @@ static u32 ground_ladder(u32 row)
         g_Player.pressed_input = 0;
         for (i = 0; i < 40 && !(g_Player.animation_step.fields.event & 0x40); i++)
             player_zero_saber(&g_Player);
-        assert(g_Player.animation_step.packed == 0x52014002);
+        assert(g_Player.animation_step.packed == C_TEST_STEP(0x52014002));
     }
     g_Player.input.buttons.held = PLAYER_INPUT_UP;
     capture();
@@ -187,14 +187,14 @@ static void buster_on_ladder(void)
 {
     u32 i;
     prepare(0, 0x20);
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     enter_ladder();
     g_Player.pressed_input = PLAYER_INPUT_SHOOT;
     assert(player_check_shoot_ladder(&g_Player) == 1);
     g_Player.pressed_input = 0;
     for (i = 0; i < 6; i++)
         player_update_normal(&g_Player);
-    assert(g_Player.unk5 == PLAYER_LADDER_SHOOT && g_Player.shot_cooldown == 0 && g_Player.attack_pose_timer == 14 && g_Player.animation_step.packed == 0x9B010002 && g_Player.shot_count == 1);
+    assert(g_Player.unk5 == PLAYER_LADDER_SHOOT && g_Player.shot_cooldown == 0 && g_Player.attack_pose_timer == 14 && g_Player.animation_step.packed == C_TEST_STEP(0x9B010002) && g_Player.shot_count == 1);
 }
 static u32 ladder_input(u32 row)
 {
@@ -256,7 +256,8 @@ static u32 ground_giga(u32 row)
     pose(0x67, 0xB1010004, 1);
     expected.attacking = 1;
     expected.combo = expected.afterimage = 0;
-    expected.air_state = expected.spike_immune = 1;
+    expected.air_state = 1;
+    SPIKE_IMMUNE_SET(expected, 1);
     expected.weapon_energy[0] = 0;
     expected.unk5 = PLAYER_ZERO_RAKUHOUHA;
     expected.unk6 = 0;

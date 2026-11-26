@@ -66,7 +66,7 @@ static void prepare(u32 wall)
         tiles[i] = i >= 256 && ((i & 255) / 16 >= 14 || (wall && (i & 15) == 14));
     c_test_copy_words((u32*)tiles_before, (u32*)tiles, sizeof(tiles) / 4);
     attributes[0] = 0;
-    attributes[1] = 0x38;
+    attributes[1] = TEST_DISC32(0x38);
     SP_BG_TILEMAP = map;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -90,7 +90,7 @@ static void prepare(u32 wall)
     g_Player.voice_timer = 1;
     g_Player.x_pos.i.hi = wall ? 208 : 160;
     g_Player.y_pos.i.hi = 203;
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     g_Player.animation_table = (u32**)D_80119DF0;
     g_Player.unk38 = (u8*)gfx + 64;
     player_enter_idle(&g_Player);
@@ -132,7 +132,7 @@ static void check(void)
     assert(c_test_word_difference((u32*)weapon_objects, (u32*)weapons, 2 * sizeof(weapons[0]) / 4) == 0 && zero_difference((u32*)&weapon_objects[2], 14 * sizeof(weapons[0]) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, 2 * sizeof(visuals[0]) / 4) == 0 && zero_difference((u32*)&visual_objects[2], 30 * sizeof(visuals[0]) / 4) == 0);
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
     assert(cur_random == rng && need_palette_load == dirty);
-    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == 0 && attributes[1] == 0x38);
+    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == 0 && attributes[1] == TEST_DISC32(0x38));
     for (i = 0; i < COUNT(map_words); i += 8)
         assert(((map_words[i] ^ 0x01010101) | (map_words[i + 1] ^ 0x01010101) | (map_words[i + 2] ^ 0x01010101) | (map_words[i + 3] ^ 0x01010101) | (map_words[i + 4] ^ 0x01010101) | (map_words[i + 5] ^ 0x01010101) | (map_words[i + 6] ^ 0x01010101) | (map_words[i + 7] ^ 0x01010101)) == 0);
     assert(c_test_word_difference((u32*)tiles, (u32*)tiles_before, sizeof(tiles) / 4) == 0);
@@ -226,9 +226,9 @@ static u32 clone_dust(u32 row)
     visuals[slot].unk38 = 0;
     visuals[slot].unk3C = (u8*)frames + 128;
     visuals[slot].animation_table = D_8011BF40;
-    visuals[slot].unk40 = 0;
-    visuals[slot].unk42 = row ? 0x7804 : 0x7802;
-    visuals[slot].unk16 = row ? 1 : 3;
+    visuals[slot].unk40 = WEAPON_TEXTURE_BASE;
+    visuals[slot].unk42 = row ? OBJECT_CLUT(0x7804) : OBJECT_CLUT(0x7802);
+    visuals[slot].unk16 = row ? VISUAL_SATURN_LAYER(1) : VISUAL_SATURN_LAYER(3);
     visuals[slot].unk15 = g_Entity.unk15;
     visuals[slot].x_pos.i.hi = g_Entity.x_pos.i.hi + (g_Entity.unk15 ? -1 : 1) * (row ? 10 : 32);
     visuals[slot].y_pos.i.hi = g_Entity.y_pos.i.hi + (row ? 17 : 12);

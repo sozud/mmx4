@@ -15,7 +15,7 @@ static u32 chase_case(u32 mode, u32 observation)
     struct ShotObj obj, before;
     struct PlayerObj player_before;
     struct Unk_unk68 bounds = { 0, 0, 8, 8 };
-    u32 i, actual;
+    u32 i, actual, steps[2];
     memset(&obj, 0, sizeof(obj));
     memset(&g_Player, 0, sizeof(g_Player));
     obj.active = 0x41;
@@ -24,14 +24,14 @@ static u32 chase_case(u32 mode, u32 observation)
     obj.unk5 = 2;
     obj.unk6 = 0;
     obj.unk70 = mode;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 80 * 65536 + 0x5678;
     obj.x_vel.val = 65536;
     obj.y_vel.val = -32768;
     obj.animation_table = (u32**)jet_stingray_animations;
     obj.animation_cursor = (u8*)&jet_stingray_anim_17[0];
-    obj.animation_step = jet_stingray_anim_17[0];
+    memcpy(&obj.animation_step, &jet_stingray_anim_17[0], sizeof(obj.animation_step));
     obj.unk68 = &bounds;
     g_Player.x_pos.i.hi = mode ? 140 : 99;
     before = obj;
@@ -47,7 +47,8 @@ static u32 chase_case(u32 mode, u32 observation)
     before.previous_animation_index = obj.previous_animation_index;
     assert(obj.animation_table == (u32**)jet_stingray_animations && obj.animation_cursor == (u8*)&jet_stingray_anim_17[0]);
     assert(jet_stingray_animations[17] == jet_stingray_anim_17);
-    assert(jet_stingray_anim_17[0].packed == 0x45010002 && jet_stingray_anim_17[1].packed == 0x46000002);
+    memcpy(steps, jet_stingray_anim_17, sizeof(steps));
+    assert(steps[0] == C_TEST_STEP(0x45010002) && steps[1] == C_TEST_STEP(0x46000002));
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     for (i = 0; i < sizeof(g_Player) / 4; i++)
@@ -61,10 +62,10 @@ static u32 chase_case(u32 mode, u32 observation)
         actual = obj.y_pos.val;
         break;
     case 2:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     case 3:
-        actual = (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u8)obj.unk15 << 16);
+        actual = (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 16);
         break;
     case 4:
         actual = obj.x_vel.val;
@@ -117,10 +118,10 @@ static u32 ride_case(u32 mode)
     obj.unk17 = 8;
     obj.previous_animation_index = 0x27;
     ANIMATED_OBJECT(&obj)->animation_cursor = (u32*)jet_stingray_flyby_animations.entries[8];
-    obj.animation_step = jet_stingray_flyby_animations.entries[8][0];
+    memcpy(&obj.animation_step, jet_stingray_flyby_animations.entries[8], sizeof(obj.animation_step));
     expected = obj;
     owner_before = owner;
-    assert(obj.animation_step.packed == 0x2B010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x2B010002));
     expected.animation_step.fields.duration = 1;
     if (mode == 1)
         expected.state = 2;
@@ -145,7 +146,9 @@ static u32 ride_case(u32 mode)
         assert(((u32*)&owner)[i] == ((u32*)&owner_before)[i]);
     for (i = 0; i < sizeof(g_Player) / 4; i++)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+#ifndef MMX4_SATURN
     assert(jet_stingray_flyby_animations.count == 0x52);
+#endif
     return obj.state | ((u32)(u8)obj.unk7 << 8) | ((u32)(u8)obj.unk6 << 16);
 }
 static const u32 ray_trap_ride_owner_defaults_cases_expected[] = { 0x301u, 0x302u, 0xFF01u, 0x101u, 0x201u, 0x10001u };
@@ -222,7 +225,7 @@ static u32 stick(void)
     before.unk17 = 8;
     before.previous_animation_index = 0xFF;
     before.animation_cursor = jet_stingray_animations[8];
-    before.animation_step = *(union AnimationStep*)jet_stingray_animations[8];
+    memcpy(&before.animation_step, jet_stingray_animations[8], sizeof(before.animation_step));
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     for (i = 0; i < sizeof(g_Player) / 4; i++)
@@ -269,7 +272,7 @@ static u32 test_func_800A1B1C_0(u32 row)
     c_test_same_words(&child_0, &owner_before, sizeof(child_0));
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk15;
+    observed_values[1] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[2] = (u32)obj.unk6;
     observed_values[3] = (u32)obj.unk7;
     observed_values[4] = (u32)obj.x_pos.i.hi;
@@ -304,13 +307,13 @@ static u32 test_func_800A1B1C_1(u32 row)
     before.animation_step.fields.duration = -1;
     before.state = 2;
     before.unk7 = 0;
-    before.unk15 = 0x40;
+    before.unk15 = PLAYER_FACING_RIGHT;
     before.unk6 = 1;
     c_test_same_words(&obj, &before, sizeof(obj));
     c_test_same_words(&child_0, &owner_before, sizeof(child_0));
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk15;
+    observed_values[1] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[2] = (u32)obj.unk6;
     observed_values[3] = (u32)obj.unk7;
     observed_values[4] = (u32)obj.x_pos.i.hi;
@@ -349,8 +352,8 @@ static u32 test_ray_trap_chase(u32 row)
 void ray_trap_check_airborne(struct ShotObj*);
 static struct MainObj ray_owner;
 #define ss state_room.shot
-#define RAY(st, step, phase) (state_reset(step, phase, 0), memset(&ray_owner, 0, sizeof(ray_owner)), ray_owner.active = 1, ray_owner.x_pos.i.hi = 0x100, ray_owner.y_pos.i.hi = 0x80, ss.state = st, ss.unk7C = (struct WeaponObj*)&ray_owner, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60)
-#define RAY_SEEN() (state_extra = ss.unk8C.word ^ (u32)(u16)ss.timer << 16 ^ (u32)ray_owner.ext.main_55.unk85 << 8)
+#define RAY(st, step, phase) (state_reset(step, phase, 0), state_terrain(0), memset(&ray_owner, 0, sizeof(ray_owner)), ray_owner.active = 1, ray_owner.x_pos.i.hi = 0x100, ray_owner.y_pos.i.hi = 0x80, ss.state = st, ss.unk7C = (struct WeaponObj*)&ray_owner, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60)
+#define RAY_SEEN() (state_extra = C_TEST_LE_WORD(&ss.unk8C) ^ (u32)(u16)ss.timer << 16 ^ (u32)ray_owner.ext.main_55.unk85 << 8)
 static void rt_init_hunter(void)
 {
     RAY(0, 0, 0);
@@ -376,7 +379,7 @@ static void rt_init_crawler_right(void)
 {
     RAY(0, 0, 0);
     ss.unk2 = 3;
-    ss.unk15 = 0x40;
+    ss.unk15 = PLAYER_FACING_RIGHT;
     ray_trap_update(&ss);
     RAY_SEEN();
 }
@@ -584,7 +587,7 @@ static u32 test_ray_trap_states(u32 row)
 }
 
 void ray_trap_ride(struct ShotObj*);
-static const u32 fly_words[] = { 0x23010002, 0x24010002, 0x25010002, 0x26FD0002 };
+static const u32 fly_words[] = { C_TEST_STEP(0x23010002), C_TEST_STEP(0x24010002), C_TEST_STEP(0x25010002), C_TEST_STEP(0x26FD0002) };
 static const s32 player_dx[] = { -65536, -1, 0, 1, 65536 };
 static u32 ray_return(u32 row)
 {
@@ -614,8 +617,8 @@ static u32 ray_return(u32 row)
     obj.unk5 = 5;
     obj.unk6 = 2;
     obj.unk7 = started;
-    obj.unk15 = 0x40;
-    obj.unk16 = 5;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.unk16 = VISUAL_SATURN_LAYER(5);
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = g_Player.y_pos.val;
     obj.x_vel.val = 0x18000;
@@ -631,7 +634,7 @@ static u32 ray_return(u32 row)
     expected = obj;
     if (!started) {
         expected.unk7 = 1;
-        expected.unk15 = offset >= 2 ? 0x40 : 0;
+        expected.unk15 = offset >= 2 ? PLAYER_FACING_RIGHT : 0;
         expected.x_vel.val = 65536;
         expected.y_vel.val = -0x30000;
     }
@@ -651,7 +654,9 @@ static u32 ray_return(u32 row)
     return 1;
 }
 
+static u32 ray_paths(u32 row);
 const struct CTestGroup c_test_groups[] = {
+    { "ray_paths", 0, 0, 18, ray_paths },
     { "ray_trap_states", 0, 0, COUNT(ray_trap_states_cases), test_ray_trap_states },
     { "ray_chase_context", NULL, ray_chase_context_cases_expected, COUNT(ray_chase_context_cases_expected), ray_chase_context_cases_row },
     { "ray_trap_ride_owner_defaults", NULL, ray_trap_ride_owner_defaults_cases_expected, COUNT(ray_trap_ride_owner_defaults_cases_expected), ride_case },
@@ -662,4 +667,131 @@ const struct CTestGroup c_test_groups[] = {
     { "ray_trap_return", NULL, NULL, 80, ray_return },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ray_trap_states_cases) + COUNT(ray_chase_context_cases_expected) + COUNT(ray_trap_ride_owner_defaults_cases_expected) + COUNT(ray_trap_wall_rebound_cases) + COUNT(ray_trap_wall_stick_cases) + 2 + 1 + 80;
+const u32 c_test_count = COUNT(ray_trap_states_cases) + COUNT(ray_chase_context_cases_expected) + COUNT(ray_trap_ride_owner_defaults_cases_expected) + COUNT(ray_trap_wall_rebound_cases) + COUNT(ray_trap_wall_stick_cases) + 2 + 1 + 80 + 18;
+
+void func_800A16FC(struct ShotObj*);
+void func_800A1B1C(struct ShotObj*);
+void func_800A1CCC(struct ShotObj*);
+void func_800A1E3C(struct ShotObj*);
+void func_800A2098(struct ShotObj*);
+static u32 ray_paths(u32 row)
+{
+    struct ShotObj obj;
+    struct MainObj owner;
+    u32 i, debris = 0;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    owner.active = 1;
+    owner.state = 1;
+    owner.x_pos.i.hi = 0x100;
+    owner.y_pos.i.hi = 0x80;
+    obj.active = 0x41;
+    obj.id = 34;
+    obj.state = 1;
+    obj.unk7C = (struct WeaponObj*)&owner;
+    obj.x_pos.i.hi = 0x80;
+    obj.y_pos.i.hi = 0x60;
+    obj.animation_table = (u32**)jet_stingray_animations;
+    set_animation(&obj, 0x10);
+    obj.animation_step.fields.duration = 2;
+    obj.animation_step.fields.relative_step = 1;
+    g_Player.x_pos.i.hi = 0x40;
+    g_Player.y_pos.i.hi = 0x60;
+    switch (row) {
+    case 0:
+        obj.state = 0;
+        func_800A16FC(&obj);
+        assert(obj.state == 1 && obj.unk15 == 0 && obj.unk68 != NULL);
+        break;
+    case 1:
+        obj.unk67 = -1;
+        obj.unk5 = 3;
+        obj.unk2C = 0x1234;
+        ray_trap_check_airborne(&obj);
+        assert(obj.unk5 == 3 && obj.unk2C == 0x1234);
+        break;
+    case 2:
+        obj.unk15 = PLAYER_FACING_RIGHT;
+        obj.unk8A = 2;
+        owner.ext.main_55.unk88 = 0;
+        func_800A1B1C(&obj);
+        assert(obj.unk15 == 0 && obj.unk6 == 1);
+        break;
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+        obj.unk5 = 3;
+        obj.unk2 = 2;
+        obj.x_vel.val = 0x30000;
+        obj.unk15 = row == 4 ? PLAYER_FACING_RIGHT : 0;
+        obj.unk70 = row == 3 ? 0 : row == 4 ? 1
+            : row == 5                      ? 2 | 8
+                                            : 1 | 8;
+        func_800A1CCC(&obj);
+        assert(obj.x_pos.i.hi == 0x83 && obj.unk8C.bytes[3] == 1);
+        assert(obj.unk6 == (row == 4) && obj.unk15 == (row == 4 || row == 5 ? (row == 4 ? 0 : PLAYER_FACING_RIGHT) : 0));
+        assert(obj.x_vel.val == (row == 4 ? 0 : row == 5 ? -0x30000
+                                                         : 0x30000));
+        break;
+    case 7:
+    case 8:
+    case 9:
+        obj.unk5 = 3;
+        obj.unk6 = 1;
+        obj.unk2 = 2;
+        obj.unk15 = row == 8 ? PLAYER_FACING_RIGHT : 0;
+        obj.animation_step.fields.relative_step = row == 7;
+        func_800A1CCC(&obj);
+        assert(obj.unk5 == (row == 7 ? 3 : 4) && obj.y_vel.val == (row == 7 ? 0 : -0x30000));
+        assert(obj.x_pos.i.hi == (row == 7 ? 0x80 : row == 8 ? 0x70
+                                                             : 0x90));
+        break;
+    case 10:
+    case 11:
+    case 12:
+        obj.unk5 = 4;
+        obj.unk6 = row != 10;
+        obj.unk2 = row == 12 ? 2 : 0;
+        obj.animation_step.fields.relative_step = row == 10;
+        if (row == 12)
+            g_Player.x_pos.i.hi = 0x100;
+        func_800A1E3C(&obj);
+        assert(obj.unk5 == (row == 10 ? 4 : 3) && obj.unk6 == 0);
+        assert(obj.x_vel.val == (row == 10 ? 0 : row == 11 ? -0x10000
+                                                           : 0x30000));
+        break;
+    case 13:
+    case 14:
+    case 15:
+        obj.unk5 = 3;
+        obj.unk6 = row != 13;
+        obj.unk70 = 8;
+        obj.animation_step.fields.relative_step = row != 15;
+        ray_trap_chase(&obj);
+        assert(obj.unk5 == (row == 15 ? 4 : 3) && obj.unk6 == (row == 14));
+        assert(obj.y_vel.val == (row == 15 ? -0x30000 : 0) && obj.unk17 == (row == 15 ? 0x10 : 0x10));
+        break;
+    case 17:
+        obj.unk5 = 3;
+        obj.unk5C = 3;
+        func_800A2098(&obj);
+        assert(obj.state == 1 && obj.unk5 == 1 && obj.unk67 == -1 && obj.unk2C == 0x4200);
+        break;
+    default:
+        obj.unk5 = 3;
+        obj.unk5C = 1;
+        state_hit(MAIN_OBJECT(&obj), 0, 0, 3);
+        func_800A2098(&obj);
+        for (i = 0; i < COUNT(misc_objects); i++)
+            debris += misc_objects[i].active == 0x41 && misc_objects[i].id == 3;
+        assert(obj.state == 2 && debris == 4);
+        break;
+    }
+    return 1;
+}

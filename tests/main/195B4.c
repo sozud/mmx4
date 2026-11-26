@@ -84,9 +84,41 @@ static u32 scan(u32 row)
     return 1;
 }
 
+#ifdef MMX4_PC
+extern int mmx4_pc_saturn_heat;
+void func_80028F58(void);
+static u32 saturn_heat(u32 row)
+{
+    u32 i, heat = 0;
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(main_objects, 0, sizeof(main_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    engine_obj.stage = 0;
+    engine_obj.substage = 1;
+    engine_obj.checkpoint = 0;
+    background_objects[0].x_pos.i.hi = 0x2000;
+    background_objects[0].y_pos.i.hi = 0x2000;
+    mmx4_pc_saturn_heat = 1 - row;
+    func_80028F58();
+    mmx4_pc_saturn_heat = 0;
+    for (i = 0; i < COUNT(effect_objects); i++)
+        heat += effect_objects[i].active == 1 && effect_objects[i].id == 0x0B && effect_objects[i].x_pos.i.hi == 0
+            && effect_objects[i].y_pos.i.hi == 256;
+    assert(heat == 1 - row);
+    return 1;
+}
+#endif
 const struct CTestGroup c_test_groups[] = {
     { "stage_record_checkpoint_pool", NULL, stage_record_checkpoint_pool_cases_expected, COUNT(stage_record_checkpoint_pool_cases_expected), record_case },
     { "three_real_jungle_records_remain_unspawned_when_effect_pool_is_full", NULL, NULL, 3, scan },
+#ifdef MMX4_PC
+    { "saturn_heat_records", NULL, NULL, 1, saturn_heat },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(stage_record_checkpoint_pool_cases_expected) + 3;
+const u32 c_test_count = COUNT(stage_record_checkpoint_pool_cases_expected) + 3
+#ifdef MMX4_PC
+    + 1
+#endif
+    ;

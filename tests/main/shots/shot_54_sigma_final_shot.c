@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/shots/shot_54_sigma_final_shot.h"
 #include "main/55C4.h"
 void sigma_final_shot_ice(struct ShotObj*);
@@ -61,14 +62,10 @@ static u32 lightning_case(u32 mode)
         shot->y_pos.val = 200 * 65536 + 0x5678;
         shot->unk7C = WEAPON_OBJECT(&owner);
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)pool_before)[i]);
-    for (i = 0; i < sizeof(owner) / 4; i++)
-        assert(((u32*)&owner)[i] == ((u32*)&owner_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(shot_objects, pool_before, sizeof(pool_before));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(D_8013E198[2] == -1);
     return (u8)obj.unk6 | ((u32)(u16)obj.timer << 8) | ((u32)(u8)shot_objects[31].unk2 << 24);
 }
@@ -181,6 +178,22 @@ static void sf_split(void)
     sigma_final_shot_lightning_split(&ss);
 }
 
+void sigma_final_shot_fireball(struct ShotObj*);
+#define FIRE(t) (SIGMA_SHOT(2, 0), ss.x_vel.val = 0x40000, ss.y_vel.val = 0x10000, ss.timer = t, sigma_final_shot_fireball(&ss), SHOT_TIMER())
+static void sf_fire_climb(void)
+{
+    FIRE(3);
+}
+static void sf_fire_level(void) { FIRE(1); }
+static void sf_fire_coast(void) { FIRE(0); }
+#define RUN(step, setup) (SIGMA_SHOT(step, 0), ss.active = 1, ss.state = 1, ss.x_vel.val = 0x40000, ss.timer = 5, setup, sigma_final_shot_update(&ss), SHOT_TIMER())
+static void sf_run_destroyed(void)
+{
+    RUN(2, (so.hp = 1, state_hit(&so, 0, 0, 1)));
+}
+static void sf_run_fireball(void) { RUN(2, 0); }
+static void sf_run_spike_far(void) { RUN(5, ss.x_pos.i.hi = 0x1000); }
+static void sf_run_fireball_far(void) { RUN(2, ss.x_pos.i.hi = 0x1000); }
 static void (*const sigma_final_shot_states_cases[])(void) = {
     sf_init_fireball,
     sf_init_lightning,
@@ -202,8 +215,286 @@ static void (*const sigma_final_shot_states_cases[])(void) = {
     sf_bolt_fade,
     sf_bolt_fading,
     sf_split,
+    sf_fire_climb,
+    sf_fire_level,
+    sf_fire_coast,
+    sf_run_destroyed,
+    sf_run_fireball,
+    sf_run_spike_far,
+    sf_run_fireball_far,
 };
-static const u32 sigma_final_shot_states_expected[] = { 0x1000201u, 0xFF400000u, 0x980000u, 0x700000u, 0x40000u, 0x10000u, 0u, 0x50107u, 0x1060019u, 0u, 0x1000301u, 0xFF000100u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50102u, 0x1060014u, 0u, 0x1000401u, 0xFF000200u, 0x680000u, 0x700000u, 0xFFFD0000u, 0x10000u, 0x800000u, 0x50103u, 0x1090000u, 0u, 0x1000601u, 0xFF000300u, 0x800000u, 0x600000u, 0x40000u, 0u, 0u, 0x50102u, 0x1060000u, 0u, 0x1000601u, 0xFF400400u, 0x800000u, 0x600000u, 0xFFFC0000u, 0u, 0u, 0x50102u, 0x1060000u, 0u, 0x1000601u, 0xFF000500u, 0x800000u, 0x600000u, 0u, 0x40000u, 0u, 0x50102u, 0x1060000u, 0u, 0x1000601u, 0xFF400600u, 0x800000u, 0x600000u, 0u, 0xFFFC0000u, 0u, 0x50102u, 0x1060000u, 0u, 0x1000501u, 0xFF400700u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50104u, 0x118003Cu, 0u, 0x10400u, 0u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0x20u, 0u, 0x10400u, 0u, 0x7E0000u, 0x600000u, 0xFFFE0000u, 0u, 0u, 0x40000u, 0x20u, 0u, 0x400u, 0u, 0x800000u, 0x610000u, 0u, 0xFFFF0000u, 0u, 0x40000u, 0u, 0u, 0x10400u, 0u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 2u, 0u, 0x20400u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x20400u, 0u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0u, 0u, 0x10300u, 0u, 0x800000u, 0x600000u, 0x3536Cu, 0x238E4u, 0u, 0x40000u, 0u, 0u, 0x300u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 2u, 0u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x20300u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 2u, 0u, 0x600u, 0u, 0x840000u, 0x600000u, 0x40000u, 0u, 0u, 0x40000u, 0u, 0u };
+static const u32 sigma_final_shot_states_expected[] = {
+    0x1000201u,
+    0xFF400000u,
+    0x980000u,
+    0x700000u,
+    0x40000u,
+    0x10000u,
+    0u,
+    0x50107u,
+    0x1060019u,
+    0u,
+    0x1000301u,
+    0xFF000100u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50102u,
+    0x1060014u,
+    0u,
+    0x1000401u,
+    0xFF000200u,
+    0x680000u,
+    0x700000u,
+    0xFFFD0000u,
+    0x10000u,
+    0x800000u,
+    0x50103u,
+    0x1090000u,
+    0u,
+    0x1000601u,
+    0xFF000300u,
+    0x800000u,
+    0x600000u,
+    0x40000u,
+    0u,
+    0u,
+    0x50102u,
+    0x1060000u,
+    0u,
+    0x1000601u,
+    0xFF400400u,
+    0x800000u,
+    0x600000u,
+    0xFFFC0000u,
+    0u,
+    0u,
+    0x50102u,
+    0x1060000u,
+    0u,
+    0x1000601u,
+    0xFF000500u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0x40000u,
+    0u,
+    0x50102u,
+    0x1060000u,
+    0u,
+    0x1000601u,
+    0xFF400600u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0xFFFC0000u,
+    0u,
+    0x50102u,
+    0x1060000u,
+    0u,
+    0x1000501u,
+    0xFF400700u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50104u,
+    0x118003Cu,
+    0u,
+    0x10400u,
+    0u,
+    0x820000u,
+    0x600000u,
+    0x20000u,
+    0u,
+    0u,
+    0x40000u,
+    0x20u,
+    0u,
+    0x10400u,
+    0u,
+    0x7E0000u,
+    0x600000u,
+    0xFFFE0000u,
+    0u,
+    0u,
+    0x40000u,
+    0x20u,
+    0u,
+    0x400u,
+    0u,
+    0x800000u,
+    0x610000u,
+    0u,
+    0xFFFF0000u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10400u,
+    0u,
+    0x820000u,
+    0x600000u,
+    0x20000u,
+    0u,
+    0u,
+    0x40000u,
+    2u,
+    0u,
+    0x20400u,
+    0xFF000000u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    2u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20400u,
+    0u,
+    0x820000u,
+    0x600000u,
+    0x20000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10300u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0x3536Cu,
+    0x238E4u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x300u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    2u,
+    0u,
+    2u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x20300u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    2u,
+    0u,
+    0x600u,
+    0u,
+    0x840000u,
+    0x600000u,
+    0x40000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x200u,
+    0u,
+    0x840000u,
+    0x5F0000u,
+    0x40000u,
+    0x10000u,
+    0u,
+    0x40000u,
+    0x2u,
+    0u,
+    0x200u,
+    0u,
+    0x840000u,
+    0x600000u,
+    0x40000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x200u,
+    0u,
+    0x840000u,
+    0x5F0000u,
+    0x40000u,
+    0x10000u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x2u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x40000u,
+    0u,
+    0u,
+    0x58000u,
+    0x5u,
+    0x2100u,
+    0x201u,
+    0x1u,
+    0x840000u,
+    0x600000u,
+    0x40000u,
+    0u,
+    0u,
+    0x40000u,
+    0x4u,
+    0u,
+    0x501u,
+    0x1u,
+    0x10000000u,
+    0x600000u,
+    0x40000u,
+    0u,
+    0u,
+    0x50000u,
+    0x4u,
+    0u,
+    0x2u,
+    0x1u,
+    0x10040000u,
+    0x600000u,
+    0x40000u,
+    0u,
+    0u,
+    0x40000u,
+    0x4u,
+    0u,
+};
 
 static u32 test_sigma_final_shot_states(u32 row)
 {
@@ -245,25 +536,25 @@ static u32 lifetime(u32 row)
     obj.y_pos.i.hi = 552 + spike * 16;
     obj.unk7C = WEAPON_OBJECT(&owner);
     func_800ABE08(&obj);
-    assert(obj.state == 1 && obj.unk5 == 5 && obj.unk6 == 0 && obj.timer == 60 && obj.animation_step.packed == 0x35000001 && obj.unk50.data == NULL && obj.on_screen == 1);
+    assert(obj.state == 1 && obj.unk5 == 5 && obj.unk6 == 0 && obj.timer == 60 && obj.animation_step.packed == C_TEST_STEP(0x35000001) && obj.unk50.data == NULL && obj.on_screen == 1);
     expected = obj;
     for (i = 0; i < 60; i++)
-        sigma_final_shot_spike(&obj);
+        test_next_frame(), sigma_final_shot_spike(&obj);
     expected.timer = 210;
     expected.unk6 = 1;
     expected.unk50.data = sigma_spike_box;
     c_test_same_words(&obj, &expected, sizeof(obj));
     for (i = 0; i < 210; i++)
-        sigma_final_shot_spike(&obj);
+        test_next_frame(), sigma_final_shot_spike(&obj);
     expected.timer = 60;
     expected.unk6 = 2;
     expected.unk50.data = NULL;
     c_test_same_words(&obj, &expected, sizeof(obj));
     for (i = 0; i < 59; i++)
-        sigma_final_shot_spike(&obj);
+        test_next_frame(), sigma_final_shot_spike(&obj);
     expected.timer = 1;
     c_test_same_words(&obj, &expected, sizeof(obj));
-    sigma_final_shot_spike(&obj);
+    test_next_frame(), sigma_final_shot_spike(&obj);
     expected.timer = 0;
     expected.state = 2;
     expected.unk5 = expected.unk6 = 0;
@@ -275,10 +566,20 @@ static u32 lifetime(u32 row)
     return 1;
 }
 
+static u32 at_position_y_off(u32 row)
+{
+    struct ShotObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.x_pos.i.hi = 0x101;
+    obj.y_pos.i.hi = 0x7D;
+    return sigma_final_shot_at_position(&obj, 0x100, 0x80);
+}
+static const u32 at_position_y_off_expected[] = { 0u };
 const struct CTestGroup c_test_groups[] = {
     { "sigma_final_shot_states", 0, 0, COUNT(sigma_final_shot_states_cases), test_sigma_final_shot_states },
     { "sigma_lightning_shot_pool", NULL, sigma_lightning_shot_pool_cases_expected, COUNT(sigma_lightning_shot_pool_cases_expected), lightning_case },
     { "own_Sigma_spike_constructor_extend_active_retract_entire_330_tick_lifetime", NULL, NULL, 36, lifetime },
+    { "sigma_final_shot_at_position_y_off", NULL, at_position_y_off_expected, 1, at_position_y_off },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(sigma_final_shot_states_cases) + COUNT(sigma_lightning_shot_pool_cases_expected) + 36;
+const u32 c_test_count = COUNT(sigma_final_shot_states_cases) + COUNT(sigma_lightning_shot_pool_cases_expected) + 36 + 1;

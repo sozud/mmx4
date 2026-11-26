@@ -89,6 +89,11 @@ static void prepare(u32 type, u32 layer, u32 seed)
     c_test_copy_words((u32*)spawners_before, (const u32*)search_light_spawners, sizeof(spawners_before) / 4);
 }
 
+#ifdef VERSION_SATURN_PROTO
+#define HIDDEN_KEEPS_ON_SCREEN 1
+#else
+#define HIDDEN_KEEPS_ON_SCREEN 0
+#endif
 static void check_object(void)
 {
     assert(guarded.before == 0x12345678 && guarded.after == 0x87654321);
@@ -333,7 +338,7 @@ static u32 test_visibility(u32 row)
     obj.runtime.search_light.pause_timer = 1;
     expected = obj;
     expected.runtime.search_light.pause_timer = 0;
-    expected.on_screen = v->visible;
+    expected.on_screen = v->visible || HIDDEN_KEEPS_ON_SCREEN;
     expected.state = v->visible ? 1 : 2;
     assert(search_light_is_visible(&obj) == v->visible);
     SearchLightUpdate(&obj);
@@ -375,7 +380,7 @@ static u32 test_endpoint_lifecycle(u32 row)
     obj.y_pos.i.hi = expected.y_pos.i.hi = 10000;
     obj.runtime.search_light.pause_timer = 1;
     expected.runtime.search_light.pause_timer = 0;
-    expected.on_screen = 0;
+    expected.on_screen = HIDDEN_KEEPS_ON_SCREEN ? expected.on_screen : 0;
     expected.state = 2;
     expected.unk5 = 0;
     SearchLightUpdate(&obj);
