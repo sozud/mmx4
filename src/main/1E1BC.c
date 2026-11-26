@@ -639,7 +639,7 @@ void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
         arg1->y_pos.i.hi += (u16)arg1->unk6E;
     }
 }
-#endif
+
 #ifdef VERSION_DEMO
 void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
 {
