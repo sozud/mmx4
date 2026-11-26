@@ -62,7 +62,10 @@ static u32 flash(u32 row)
 #include "support/state_cases.h"
 #define ss state_room.shot
 #define TRI(st, setup) (state_reset(0, 0, 0), memset(&g_Player, 0, sizeof(g_Player)), memset(&engine_obj, 0, sizeof(engine_obj)), g_Player.x_pos.i.hi = 0x400, ss.active = 0x41, ss.state = st, ss.unk2 = 1, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.x_vel.val = 0x10000, setup, trident_shot_update(&ss))
-static void tri_start_left(void) { TRI(3, 0); }
+static void tri_start_left(void)
+{
+    TRI(3, 0);
+}
 static void tri_start_right(void) { TRI(3, ss.unk15 = PLAYER_FACING_RIGHT); }
 static void tri_gone(void) { TRI(4, ss.x_pos.i.hi = 0x1000); }
 static void (*const tri_cases[])(void) = {
@@ -71,9 +74,36 @@ static void (*const tri_cases[])(void) = {
     tri_gone,
 };
 static const u32 tri_expected[] = {
-    0x4u, 0xFF000141u, 0x6C0000u, 0x740000u, 0x40000u, 0u, 0u, 0x50000u, 0u, 0u,
-    0x4u, 0xFF400141u, 0x940000u, 0x740000u, 0x40000u, 0u, 0u, 0x50000u, 0u, 0u,
-    0x5u, 0x141u, 0x10010000u, 0x600000u, 0x10000u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x4u,
+    0xFF000141u,
+    0x6C0000u,
+    0x740000u,
+    0x40000u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x4u,
+    0xFF400141u,
+    0x940000u,
+    0x740000u,
+    0x40000u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x5u,
+    0x141u,
+    0x10010000u,
+    0x600000u,
+    0x10000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
 };
 static u32 test_tri(u32 row)
 {

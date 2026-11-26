@@ -27,7 +27,6 @@ static u32 test_colonel_beam_widen(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 5);
 }
 
-
 static struct QuadObj cb;
 static struct ShotObj cb_shot;
 static void cb_reset(u8 state, u8 step)

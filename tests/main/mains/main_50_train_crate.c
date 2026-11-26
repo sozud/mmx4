@@ -87,7 +87,10 @@ void train_crate_explode(struct MainObj*);
 #define TCR(st, ss, kind, below, x, y) (state_reset(1, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.stage = st, engine_obj.substage = ss, g_Player.unk68 = NULL, so.active = 0x41, so.id = 0x32, so.state = 1, so.unk2 = kind, so.ext.main_50.unk84 = below, so.x_pos.i.hi = x, so.y_pos.i.hi = y, background_objects[0].x_pos.i.hi = x - 0x80, background_objects[0].y_pos.i.hi = 0, tile_writes_begin_wide())
 #define TCRX() (state_extra = so.ext.main_50.timer | (u32)so.ext.main_50.unk84 << 8, state_extra ^= tile_writes_end(), engine_obj.stage = engine_obj.substage = 0)
 #define TCR_HIT() (so.hp = 1, state_hit(&so, 0, 0, 1))
-static void tcr_metal_broken(void) { TCR(8, 0, 1, 8, 0xED0, 0x160), TCR_HIT(), tile_writes_expect(9, 0xED0 - 0x20, 0x160 - 0x40, 1), func_800698D8(&so), TCRX(); }
+static void tcr_metal_broken(void)
+{
+    TCR(8, 0, 1, 8, 0xED0, 0x160), TCR_HIT(), tile_writes_expect(9, 0xED0 - 0x20, 0x160 - 0x40, 1), func_800698D8(&so), TCRX();
+}
 static void tcr_stacked_broken(void)
 {
     TCR(5, 1, 6, 4, 0x34E0, 0xB0), TCR_HIT();
@@ -97,7 +100,10 @@ static void tcr_single_broken(void) { TCR(5, 1, 0, 0, 0x31E0, 0x50), TCR_HIT(), 
 static void tcr_on_screen(void) { TCR(8, 0, 0, 0, 0x3A0, 0x180), background_objects[0].y_pos.i.hi = 0x100, func_800698D8(&so), TCRX(); }
 static void tcr_off_screen(void) { TCR(8, 0, 0, 0, 0x3A0, 0x180), background_objects[0].x_pos.i.hi = 0x100, func_800698D8(&so), TCRX(); }
 #define BOOM(count, frame) (TCR(8, 0, 0, 0, 0x3A0, 0x180), so.state = 2, so.ext.main_50.timer = count, WEAPON_FRAME_COUNTER = frame, train_crate_explode(&so), TCRX())
-static void tcr_explode_sparks(void) { BOOM(0, 0); }
+static void tcr_explode_sparks(void)
+{
+    BOOM(0, 0);
+}
 static void tcr_explode(void) { BOOM(0, 1); }
 static void tcr_explode_end(void) { BOOM(0x2F, 1); }
 static void (*const train_crate_states_cases[])(void) = {
@@ -111,14 +117,86 @@ static void (*const train_crate_states_cases[])(void) = {
     tcr_explode_end,
 };
 static const u32 train_crate_states_expected[] = {
-    0x0u, 0x0u, 0xED00000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x576FADE4u, 0x41002100u,
-    0x0u, 0x0u, 0x34E00000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x3B79DAF2u, 0x41002100u,
-    0x0u, 0x0u, 0x31E00000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x7246710Cu, 0x41002100u,
-    0x1u, 0x0u, 0x3A00000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
-    0x0u, 0x0u, 0x3A00000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
-    0x1u, 0x0u, 0x3A00000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41002100u,
-    0x1u, 0x0u, 0x3A00000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
-    0x1u, 0x0u, 0x3A00000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30u, 0x41000000u,
+    0x0u,
+    0x0u,
+    0xED00000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x1u,
+    0x576FADE4u,
+    0x41002100u,
+    0x0u,
+    0x0u,
+    0x34E00000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x1u,
+    0x3B79DAF2u,
+    0x41002100u,
+    0x0u,
+    0x0u,
+    0x31E00000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x1u,
+    0x7246710Cu,
+    0x41002100u,
+    0x1u,
+    0x0u,
+    0x3A00000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x0u,
+    0x0u,
+    0x3A00000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x0u,
+    0x3A00000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41002100u,
+    0x1u,
+    0x0u,
+    0x3A00000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x41000000u,
+    0x1u,
+    0x0u,
+    0x3A00000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x30u,
+    0x41000000u,
 };
 static u32 test_train_crate_states(u32 row)
 {

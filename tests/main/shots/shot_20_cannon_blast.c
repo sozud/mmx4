@@ -31,12 +31,14 @@ static u32 test_func_8009D048(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 3);
 }
 
-
 #include "support/state_cases.h"
 static struct WeaponObj blast_owner;
 #define ss state_room.shot
 #define BLAST(st, kind, timer, setup) (state_reset(0, 0, 0), memset(&blast_owner, 0, sizeof(blast_owner)), blast_owner.active = 1, blast_owner.state = 1, blast_owner.x_pos.i.hi = 0x200, blast_owner.y_pos.i.hi = 0x80, background_objects[0].x_pos.i.hi = 0x180, ss.active = 1, ss.state = st, ss.unk2 = kind, ss.unk7C = &blast_owner, ss.unk84.value = timer, ss.x_pos.i.hi = 0x123, setup, cannon_blast_update(&ss), state_extra = ss.unk84.value | (u32)ss.unk17 << 8 | (u32)(ss.unk50.data == NULL ? 0xFF : ss.unk50.data[0]) << 16)
-static void cb_init_short(void) { BLAST(0, 0, 0, 0); }
+static void cb_init_short(void)
+{
+    BLAST(0, 0, 0, 0);
+}
 static void cb_init_long(void) { BLAST(0, 1, 0, 0); }
 static void cb_charging(void) { BLAST(1, 0, 0x6E, 0); }
 static void cb_widen_long(void) { BLAST(1, 1, 0x46, 0); }
@@ -54,13 +56,76 @@ static void (*const cb_cases[])(void) = {
     cb_owner_leaving,
 };
 static const u32 cb_expected[] = {
-    0x1u, 0xFF000001u, 0x1890000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x80036Eu, 0u,
-    0x1u, 0xFF000101u, 0x890000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x80046Eu, 0u,
-    0x1u, 0x1u, 0x1230000u, 0u, 0u, 0u, 0u, 0x40000u, 0xFF006Du, 0u,
-    0x1u, 0x101u, 0x1230000u, 0u, 0u, 0u, 0u, 0x40000u, 0x800045u, 0u,
-    0x1u, 0xFF000001u, 0x1230000u, 0u, 0u, 0u, 0u, 0x50000u, 0xFF0B18u, 0u,
-    0x1u, 0xFF000101u, 0x1230000u, 0u, 0u, 0u, 0u, 0x50000u, 0xFF0C18u, 0u,
-    0x2u, 0x1u, 0x1230000u, 0u, 0u, 0u, 0u, 0x40000u, 0xFF002Fu, 0u,
+    0x1u,
+    0xFF000001u,
+    0x1890000u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x80036Eu,
+    0u,
+    0x1u,
+    0xFF000101u,
+    0x890000u,
+    0x800000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x80046Eu,
+    0u,
+    0x1u,
+    0x1u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0xFF006Du,
+    0u,
+    0x1u,
+    0x101u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x800045u,
+    0u,
+    0x1u,
+    0xFF000001u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xFF0B18u,
+    0u,
+    0x1u,
+    0xFF000101u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xFF0C18u,
+    0u,
+    0x2u,
+    0x1u,
+    0x1230000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0xFF002Fu,
+    0u,
 };
 static u32 test_cb(u32 row)
 {

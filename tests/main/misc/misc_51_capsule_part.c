@@ -50,13 +50,15 @@ static u32 light_case(u32 mode)
 }
 static const u32 capsule_light_animation_start_cases_expected[] = { 0x2C080001u, 0x2D010001u };
 
-
 #include "support/state_cases.h"
 void capsule_part_main(struct MiscObj*);
 #define sm state_room.misc
 static struct MainObj capsule_source;
 #define PART(type, sub, setup) (state_reset(type, sub, 0), memset(&capsule_source, 0, sizeof(capsule_source)), capsule_source.active = 0x41, sm.active = 1, sm.state = 1, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x60, sm.ext.misc_51.source = &capsule_source, setup, capsule_part_main(&sm), state_extra = sm.unk17 | (u32)sm.unk16 << 8 | (u32)sm.ext.misc_51.unk54 << 16)
-static void cp_base_opened(void) { PART(0, 1, 0); }
+static void cp_base_opened(void)
+{
+    PART(0, 1, 0);
+}
 static void cp_base_opening(void) { PART(0, 1, sm.animation_step.fields.relative_step = 1); }
 static void cp_glass_start(void) { PART(1, 0, 0); }
 static void cp_glass(void) { PART(1, 1, 0); }
@@ -76,14 +78,86 @@ static void (*const cp_cases[])(void) = {
     cp_source_gone,
 };
 static const u32 cp_expected[] = {
-    0x20001u, 0xFF000001u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x5u, 0u,
-    0x10001u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
-    0x10101u, 0xFF000001u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, (u32)VISUAL_SATURN_LAYER(6) << 8 | 3, 0u,
-    0x10101u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
-    0x10201u, 0xFF000001u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x780107u, 0u,
-    0x10201u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x20000u, 0u,
-    0x2u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
-    0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x20001u,
+    0xFF000001u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x5u,
+    0u,
+    0x10001u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10101u,
+    0xFF000001u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    (u32)VISUAL_SATURN_LAYER(6) << 8 | 3,
+    0u,
+    0x10101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x10201u,
+    0xFF000001u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x780107u,
+    0u,
+    0x10201u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x20000u,
+    0u,
+    0x2u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
 };
 static u32 test_cp(u32 row)
 {

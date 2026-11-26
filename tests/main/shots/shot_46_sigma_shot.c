@@ -960,7 +960,6 @@ static u32 test_sigma_weapon_contact(u32 row)
     return 1;
 }
 
-
 #undef shot
 #include "support/state_cases.h"
 static struct WeaponObj bolt_sigma;

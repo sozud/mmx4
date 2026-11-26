@@ -404,7 +404,7 @@ static u32 option_highlight(u32 row)
         expected.unk2 = -1;
     else
         expected.unk42 = selected ? OPTION_SELECTED : empty ? OPTION_LOCKED
-                                                   : OPTION_PALETTE;
+                                                            : OPTION_PALETTE;
     option_toggle_update(&obj);
     check();
     SAME(D_800F1D90, runtime_before);

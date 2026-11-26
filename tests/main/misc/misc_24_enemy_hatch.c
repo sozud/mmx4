@@ -96,17 +96,23 @@ static u32 release(u32 row)
     return 1;
 }
 
-
 #include "support/state_cases.h"
 #define sm state_room.misc
 static u32 hatch_frames[0x40], hatch_meta[0x40];
 static struct MiscObj hatch_child;
 #define HATCH(st, step, sub, setup) (state_reset(step, sub, 0), engine_obj.stage = 6, engine_obj.substage = 1, memset(hatch_frames, 0, sizeof(hatch_frames)), TEST_MENU_FRAMES = (u8*)hatch_frames, D_801406A8 = hatch_meta, memset(&hatch_child, 0, sizeof(hatch_child)), hatch_child.active = 0x41, memset(&g_Player, 0, sizeof(g_Player)), g_Player.x_pos.i.hi = 0x40, g_Player.bg_offset = 1, sm.active = 1, sm.state = st, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x60, sm.ext.misc_24.child = &hatch_child, setup, enemy_hatch_update(&sm), state_extra = sm.ext.misc_24.timer | (u32)sm.ext.misc_24.child_active << 16 | (u32)hatch_child.active << 24)
-static void eh_init_player_left(void) { HATCH(0, 0, 0, 0); }
+static void eh_init_player_left(void)
+{
+    HATCH(0, 0, 0, 0);
+}
 static void eh_init_player_right(void) { HATCH(0, 0, 0, g_Player.x_pos.i.hi = 0x80); }
 static void eh_opening(void) { HATCH(1, 0, 1, sm.animation_step.fields.relative_step = 1); }
 static void eh_far(void) { HATCH(1, 0, 1, (sm.animation_step.fields.relative_step = 1, sm.x_pos.i.hi = 0x1000)); }
-static void eh_open(void) { HATCH(1, 0, 1, 0); state_extra ^= misc_objects[0].id << 8; }
+static void eh_open(void)
+{
+    HATCH(1, 0, 1, 0);
+    state_extra ^= misc_objects[0].id << 8;
+}
 static void eh_release_wait(void) { HATCH(1, 1, 1, sm.ext.misc_24.timer = 2); }
 static void eh_release_done(void) { HATCH(1, 1, 1, sm.ext.misc_24.timer = 1); }
 static void eh_closing(void) { HATCH(1, 2, 1, sm.animation_step.fields.relative_step = 1); }
@@ -128,17 +134,116 @@ static void (*const eh_cases[])(void) = {
     eh_despawn,
 };
 static const u32 eh_expected[] = {
-    0x1u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u | VISUAL_STAGE_PALETTE(5), 0x41000000u, 0u,
-    0x1u, 0x400001u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u | VISUAL_STAGE_PALETTE(5), 0x41000000u, 0u,
-    0x10001u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x41000000u, 0u,
-    0x10002u, 0x1u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x41000000u, 0u,
-    0x101u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x41010B00u, 0x41000000u,
-    0x10101u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x41000001u, 0u,
-    0x201u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x41000000u, 0u,
-    0x10201u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x41000000u, 0u,
-    0x2u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x41000000u, 0u,
-    0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x10000u, 0u,
-    0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x41000000u, 0u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u | VISUAL_STAGE_PALETTE(5),
+    0x41000000u,
+    0u,
+    0x1u,
+    0x400001u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u | VISUAL_STAGE_PALETTE(5),
+    0x41000000u,
+    0u,
+    0x10001u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x41000000u,
+    0u,
+    0x10002u,
+    0x1u,
+    0x10000000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x41000000u,
+    0u,
+    0x101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x41010B00u,
+    0x41000000u,
+    0x10101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x41000001u,
+    0u,
+    0x201u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x41000000u,
+    0u,
+    0x10201u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x41000000u,
+    0u,
+    0x2u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x41000000u,
+    0u,
+    0u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x10000u,
+    0u,
+    0u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x41000000u,
+    0u,
 };
 static u32 test_eh(u32 row)
 {

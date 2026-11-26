@@ -66,7 +66,10 @@ static u32 enter(u32 row)
 #include "support/state_cases.h"
 #define sm state_room.misc
 #define BRIEF(kind, flags) (state_reset(0, 0, 0), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.unk40 = flags, sm.active = 0x41, sm.state = 1, sm.unk2 = kind, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x60, MegamanInBriefingRoomUpdate(&sm), state_extra = sm.unk17)
-static void bc_character(void) { BRIEF(0, 0x27); }
+static void bc_character(void)
+{
+    BRIEF(0, 0x27);
+}
 static void bc_character_pose(void) { BRIEF(0, 0x17); }
 static void bc_partner(void) { BRIEF(1, 0x16); }
 static void bc_partner_pose(void) { BRIEF(1, 0x26); }
@@ -77,10 +80,46 @@ static void (*const briefing_poses_cases[])(void) = {
     bc_partner_pose,
 };
 static const u32 briefing_poses_expected[] = {
-    0x1u, 0x41u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
-    0x1u, 0xFF000041u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 7u, 0u,
-    0x1u, 0x141u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
-    0x1u, 0xFF000141u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 6u, 0u,
+    0x1u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x1u,
+    0xFF000041u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    7u,
+    0u,
+    0x1u,
+    0x141u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x1u,
+    0xFF000141u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    6u,
+    0u,
 };
 static u32 test_briefing_poses(u32 row)
 {

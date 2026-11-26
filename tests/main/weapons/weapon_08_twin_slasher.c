@@ -163,7 +163,6 @@ static u32 test_twin_slasher_update(u32 row)
     return c_test_observe(0, row, observed_values, twin_slasher_update_expected, 1);
 }
 
-
 void twin_slasher_charged_update(struct WeaponObj*);
 static struct WeaponObj ts;
 static u32 slash_step = C_TEST_STEP(5);

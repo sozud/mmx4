@@ -22,22 +22,58 @@ static void reset(u8 character_mode, u8 character, u8 selection, u16 pressed)
     D_8013B7D0 = 1;
 }
 
-static void open_x(void) { reset(0, 0, 3, 0); func_80029E1C(&info); }
+static void open_x(void)
+{
+    reset(0, 0, 3, 0);
+    func_80029E1C(&info);
+}
 
-static void input_confirm_exit(void) { reset(0, 0, 7, 0x0200); func_8002A098(&info); }
-static void input_confirm_row(void) { reset(0, 0, 0, 0x0600); func_8002A098(&info); }
-static void input_up_zero(void) { reset(0, 1, 7, 0x1000); func_8002A098(&info); }
-static void input_down_zero(void) { reset(0, 1, 4, 0x2000); func_8002A098(&info); }
-static void input_remap(void) { reset(0, 0, 0, 0x0100); func_8002A098(&info); }
+static void input_confirm_exit(void)
+{
+    reset(0, 0, 7, 0x0200);
+    func_8002A098(&info);
+}
+static void input_confirm_row(void)
+{
+    reset(0, 0, 0, 0x0600);
+    func_8002A098(&info);
+}
+static void input_up_zero(void)
+{
+    reset(0, 1, 7, 0x1000);
+    func_8002A098(&info);
+}
+static void input_down_zero(void)
+{
+    reset(0, 1, 4, 0x2000);
+    func_8002A098(&info);
+}
+static void input_remap(void)
+{
+    reset(0, 0, 0, 0x0100);
+    func_8002A098(&info);
+}
 
-static void exit_title(void) { reset(0, 0, 0, 0); func_8002A394(&info); }
-static void exit_mode(void) { reset(1, 0, 0, 0); func_8002A394(&info); }
+static void exit_title(void)
+{
+    reset(0, 0, 0, 0);
+    func_8002A394(&info);
+}
+static void exit_mode(void)
+{
+    reset(1, 0, 0, 0);
+    func_8002A394(&info);
+}
 
 static void (*const option_cases[])(void) = {
     open_x,
-    input_confirm_exit, input_confirm_row,
-    input_up_zero, input_down_zero, input_remap,
-    exit_title, exit_mode,
+    input_confirm_exit,
+    input_confirm_row,
+    input_up_zero,
+    input_down_zero,
+    input_remap,
+    exit_title,
+    exit_mode,
 };
 
 #define WORDS 5

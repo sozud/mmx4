@@ -32,14 +32,22 @@ static void run(u8 substage, s16 x, u8 active)
     func_800B7EE8(&zone_effect);
 }
 
-static void init(void) { run(0, 50, 0); zone_effect.state = 0; zone_effect.ext.unk_effect.unk14 = 9; func_800B7EE8(&zone_effect); }
+static void init(void)
+{
+    run(0, 50, 0);
+    zone_effect.state = 0;
+    zone_effect.ext.unk_effect.unk14 = 9;
+    func_800B7EE8(&zone_effect);
+}
 static void s0_leave_zone3(void) { run(0, 700, 8); }
 static void s1_enter_silent(void) { run(1, 50, 0); }
 static void s1_leave_pair01(void) { run(1, 700, 3); }
 
 static void (*const zone_cases[])(void) = {
-    init, s0_leave_zone3,
-    s1_enter_silent, s1_leave_pair01,
+    init,
+    s0_leave_zone3,
+    s1_enter_silent,
+    s1_leave_pair01,
 };
 
 #define WORDS 2

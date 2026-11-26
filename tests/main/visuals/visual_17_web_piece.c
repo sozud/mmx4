@@ -99,7 +99,8 @@ static u32 web_rows(u32 index)
         break;
     default:
         obj.state = 2;
-        obj.unk5 = row == 9 ? 0 : row == 12 ? 2 : 1;
+        obj.unk5 = row == 9 ? 0 : row == 12 ? 2
+                                            : 1;
         obj.unk54 = row == 10 ? 1 : 5;
         obj.y_vel.val = -0x8000;
         web_piece_fall(&obj);
@@ -107,7 +108,8 @@ static u32 web_rows(u32 index)
             assert(obj.active == 0);
             break;
         }
-        assert(obj.unk5 == (row == 10 ? 2 : 1) && obj.unk54 == (row == 9 ? 0x78 : row == 10 ? 0 : 4));
+        assert(obj.unk5 == (row == 10 ? 2 : 1) && obj.unk54 == (row == 9 ? 0x78 : row == 10 ? 0
+                                                                                            : 4));
         for (i = 0; i < COUNT(visual_objects) && visual_objects[i].active == 0; i++)
             ;
         assert((i < COUNT(visual_objects)) == (row == 10));

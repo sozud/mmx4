@@ -18,9 +18,13 @@ extern s32 saturn_cd_error;
 static void test_disc_interrupt_mask(u32 mask)
 {
     u32 sr;
-    __asm__ volatile("stc sr,%0" : "=r"(sr));
+    __asm__ volatile("stc sr,%0"
+                     : "=r"(sr));
     sr = (sr & ~0xF0u) | mask;
-    __asm__ volatile("ldc %0,sr" : : "r"(sr) : "memory");
+    __asm__ volatile("ldc %0,sr"
+                     :
+                     : "r"(sr)
+                     : "memory");
 }
 
 static void test_disc_startup(void)
@@ -49,8 +53,9 @@ static void test_disc_thread_entry(void)
     test_disc_thread_fn();
     saturn_thread_exit();
 }
-extern volatile struct { u32 state, sleep_timer, context_argument, entry, saved_stack_pointer, initial_stack_pointer; }
-    saturn_threads[6];
+extern volatile struct {
+    u32 state, sleep_timer, context_argument, entry, saved_stack_pointer, initial_stack_pointer;
+} saturn_threads[6];
 #define TEST_DISC_STACK_WORDS 1024
 static u32 test_disc_stacks[6][TEST_DISC_STACK_WORDS];
 static u32 test_disc_run_thread_in(u32 host, void (*fn)(void), u32 drain)

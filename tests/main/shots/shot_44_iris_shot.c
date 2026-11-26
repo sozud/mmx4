@@ -204,8 +204,8 @@ static u32 owner_death(u32 row)
     assert(obj.unk5 == 0 && obj.timer == (kind == 0 ? 16 : kind < 3 ? 60
                                                                     : 120)
         && obj.animation_step.packed == C_TEST_STEP(kind == 0 ? 0x41010003 : kind == 1 ? 0x7C010001
-                   : kind == 2                                              ? 0x8A010001
-                                                                            : 0xBB010002));
+                   : kind == 2                                                         ? 0x8A010001
+                                                                                       : 0xBB010002));
     owner.state = dead ? 2 : 1;
     owner_expected = owner;
     expected = obj;
@@ -213,8 +213,8 @@ static u32 owner_death(u32 row)
     expected.unk1C.val = obj.y_pos.val;
     expected.timer--;
     expected.animation_step.packed = C_TEST_STEP(kind == 0 ? 0x41010002 : kind == 1 ? 0x7D010001
-        : kind == 2                                                     ? 0x89010001
-                                                                        : 0xBB010001);
+            : kind == 2                                                             ? 0x89010001
+                                                                                    : 0xBB010001);
     if (kind == 0) {
         assert(obj.x_vel.val == 0 && obj.y_vel.val == 0x50000);
         expected.y_pos.val -= 0x50000;
@@ -353,7 +353,8 @@ static u32 iris_steps(u32 index)
             g_Player.y_pos.i.hi = 120 - chase_dy[row - 8];
             func_800A766C(&obj);
             assert(obj.unk5 == 3 && obj.unk8A == 4);
-            assert(obj.unk2 == (row == 8) && obj.timer == (row == 8 ? 0xB4 : row == 9 ? 0x78 : 4));
+            assert(obj.unk2 == (row == 8) && obj.timer == (row == 8 ? 0xB4 : row == 9 ? 0x78
+                                                                                      : 4));
             if (row <= 9) {
                 assert(row == 8 ? obj.x_vel.val > 0 && obj.y_vel.val < 0 : obj.x_vel.val < -0x10000 && obj.y_vel.val > 0x10000);
                 assert(obj.x_pos.val == (100 << 16) + obj.x_vel.val && obj.y_pos.val == (120 << 16) - obj.y_vel.val);
@@ -370,7 +371,8 @@ static u32 iris_steps(u32 index)
             obj.timer = 1;
             iris_laser_charge(&obj);
             assert(obj.unk5 == 1 && obj.timer == 0x78 && obj.unk17 == (row == 14 ? 0x19 : 0x1D));
-            assert(obj.x_pos.i.hi == (row == 12 ? 100 - 0xC1 : row == 13 ? 100 + 0xC1 : 100));
+            assert(obj.x_pos.i.hi == (row == 12 ? 100 - 0xC1 : row == 13 ? 100 + 0xC1
+                                                                         : 100));
             SOUND_CHECK(sound_probe_id() == 0xE3);
             break;
         }

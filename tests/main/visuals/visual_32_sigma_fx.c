@@ -247,7 +247,8 @@ static u32 fx_paths(u32 row)
         obj.animation_step.fields.relative_step = 1;
         memset(shot_objects, 0, sizeof(shot_objects));
         sigma_fx_electric(&obj);
-        assert(obj.state == (row == 14 ? 2 : 1) && obj.unk56 == (row == 14 ? 0 : row == 15 ? 2 : 3));
+        assert(obj.state == (row == 14 ? 2 : 1) && obj.unk56 == (row == 14 ? 0 : row == 15 ? 2
+                                                                                           : 3));
         assert(obj.unk5 == (row != 16) && shot_objects[0].active == 0);
         break;
     case 17:

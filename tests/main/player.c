@@ -950,12 +950,33 @@ static u32 test_ladder_navigation(u32 row)
     return 1;
 }
 
-enum { P_BEAM_OUT, P_CLIMB_OFF, P_CLIMB_ON, P_LET_GO, P_STUN, P_SLIDE, P_CAPSULE, P_SCRIPT_WAIT, P_SCRIPT_WALK,
-    P_VANISH, P_RIDE, P_IDLE, P_WALK };
+enum { P_BEAM_OUT,
+    P_CLIMB_OFF,
+    P_CLIMB_ON,
+    P_LET_GO,
+    P_STUN,
+    P_SLIDE,
+    P_CAPSULE,
+    P_SCRIPT_WAIT,
+    P_SCRIPT_WALK,
+    P_VANISH,
+    P_RIDE,
+    P_IDLE,
+    P_WALK };
 static void (*const player_handler_fns[])(struct PlayerObj*) = {
-    player_beam_out, player_ladder_climb_off_top, player_ladder_climb_on_top, player_ladder_let_go, player_hurt_stun,
-    player_hurt_slide, player_capsule, player_script_wait, func_80033108, player_script_vanish, player_ride,
-    player_idle, player_walk,
+    player_beam_out,
+    player_ladder_climb_off_top,
+    player_ladder_climb_on_top,
+    player_ladder_let_go,
+    player_hurt_stun,
+    player_hurt_slide,
+    player_capsule,
+    player_script_wait,
+    func_80033108,
+    player_script_vanish,
+    player_ride,
+    player_idle,
+    player_walk,
 };
 #define PLAYER_STEP(event, relative) C_TEST_STEP(5 | (event) << 8 | (u8)(relative) << 16)
 #define P_KEEP 0xFF
@@ -1082,7 +1103,6 @@ static u32 script_actions(u32 row)
     return (u8)pl.unk15;
 }
 
-
 #include "support/sound_probe.h"
 void player_hover_rise(struct PlayerObj*);
 void player_hover_hold(struct PlayerObj*);
@@ -1102,28 +1122,122 @@ void player_enter_dash(struct PlayerObj*);
 u8 get_random();
 static u16 branch_palettes[0x50][16];
 
-enum { B_DEAD, B_VOICE, B_IDLE_LADDER, B_WALK_START_LADDER, B_WALK_START_JUMP, B_WALK_START_SABER,
-    B_WALK_LADDER, B_SETTLE_WALK, B_JUMP_LOCKED, B_JUMP_CEILING, B_JUMP_LADDER,
-    B_FALL_LADDER, B_FALL_WALL_JUMP, B_CLING_FREE, B_CLING_JUMP, B_CLING_TURN, B_WJ_LOCKED, B_WJ_RISE,
-    B_WJ_CEILING, B_WJ_BACK_WALL, B_WJ_PUSH_END, B_WJ_RISE_CEILING, B_WS_GROUND, B_WS_SLASH, B_WS_FREE,
-    B_WS_PUSH, B_WS_LET_GO, B_WSR_GROUND, B_WSR_SLASH, B_WSR_END, B_WSR_FALLING, B_DASH_START_JUMP,
-    B_DASH_MOVE_JUMP, B_DASH_MOVE_WALL, B_DASH_MOVE_WALL_RIGHT, B_DASH_END_DONE, B_AIR_DASH_SHOOTING,
-    B_AIR_DASH_DUST, B_AIR_DASH_END_STEER,
-    B_KNOCK_LOCKED, B_LAUNCH_LAND_RIGHT, B_LAUNCH_IDLE, B_LAUNCH_SPIN,
-    B_LAUNCH_LOCKED, B_CLEAR_WAIT, B_CLEAR_POSE,
-    B_CLEAR_SOUND, B_CLEAR_END, B_ENTER_IDLE_EARLY, B_ENTER_IDLE_LATE, B_ENTER_STAND_SCRIPT,
-    B_JUMP_DASH_HELD, B_ENTER_LAND_SCRIPT, B_ENTER_DASH_JUMP, B_SLIDE_WALL_JUMP, B_CLEAR_X, B_IDLE_SHOT_ENDED,
-    B_IDLE_LOW_HP, B_IDLE_HIGH_HP, B_RISING_END, B_RAIJINGEKI_BUSY, B_HYOURETSUZAN_NO_SPECIAL, B_RYUENJIN_BUSY,
-    B_WALL_SLASH_JUMP, B_WALL_SLASH_AGAIN, B_RELEASE_FLASH, B_FLASH_PARTIAL, B_FRAME_ENDED, B_FRAME_ATTACK,
-    B_AIR_DASH_X, B_KNOCK_END,
+enum { B_DEAD,
+    B_VOICE,
+    B_IDLE_LADDER,
+    B_WALK_START_LADDER,
+    B_WALK_START_JUMP,
+    B_WALK_START_SABER,
+    B_WALK_LADDER,
+    B_SETTLE_WALK,
+    B_JUMP_LOCKED,
+    B_JUMP_CEILING,
+    B_JUMP_LADDER,
+    B_FALL_LADDER,
+    B_FALL_WALL_JUMP,
+    B_CLING_FREE,
+    B_CLING_JUMP,
+    B_CLING_TURN,
+    B_WJ_LOCKED,
+    B_WJ_RISE,
+    B_WJ_CEILING,
+    B_WJ_BACK_WALL,
+    B_WJ_PUSH_END,
+    B_WJ_RISE_CEILING,
+    B_WS_GROUND,
+    B_WS_SLASH,
+    B_WS_FREE,
+    B_WS_PUSH,
+    B_WS_LET_GO,
+    B_WSR_GROUND,
+    B_WSR_SLASH,
+    B_WSR_END,
+    B_WSR_FALLING,
+    B_DASH_START_JUMP,
+    B_DASH_MOVE_JUMP,
+    B_DASH_MOVE_WALL,
+    B_DASH_MOVE_WALL_RIGHT,
+    B_DASH_END_DONE,
+    B_AIR_DASH_SHOOTING,
+    B_AIR_DASH_DUST,
+    B_AIR_DASH_END_STEER,
+    B_KNOCK_LOCKED,
+    B_LAUNCH_LAND_RIGHT,
+    B_LAUNCH_IDLE,
+    B_LAUNCH_SPIN,
+    B_LAUNCH_LOCKED,
+    B_CLEAR_WAIT,
+    B_CLEAR_POSE,
+    B_CLEAR_SOUND,
+    B_CLEAR_END,
+    B_ENTER_IDLE_EARLY,
+    B_ENTER_IDLE_LATE,
+    B_ENTER_STAND_SCRIPT,
+    B_JUMP_DASH_HELD,
+    B_ENTER_LAND_SCRIPT,
+    B_ENTER_DASH_JUMP,
+    B_SLIDE_WALL_JUMP,
+    B_CLEAR_X,
+    B_IDLE_SHOT_ENDED,
+    B_IDLE_LOW_HP,
+    B_IDLE_HIGH_HP,
+    B_RISING_END,
+    B_RAIJINGEKI_BUSY,
+    B_HYOURETSUZAN_NO_SPECIAL,
+    B_RYUENJIN_BUSY,
+    B_WALL_SLASH_JUMP,
+    B_WALL_SLASH_AGAIN,
+    B_RELEASE_FLASH,
+    B_FLASH_PARTIAL,
+    B_FRAME_ENDED,
+    B_FRAME_ATTACK,
+    B_AIR_DASH_X,
+    B_KNOCK_END,
 #ifndef VERSION_DEMO
-    B_BEAM_IN_EVENT, B_JUMP_DOUBLE, B_KNOCK_FLASH, B_KNOCK_PALETTE, B_JUMP_NOVA, B_FALL_NOVA, B_WS_NOVA, B_VICTORY_WAIT, B_VICTORY_POSE, B_VICTORY_SOUND, B_VICTORY_END,
-    B_AIR_DASH_MOVE_WALL, B_AIR_DASH_MOVE_DUST, B_AIR_DASH_MOVE_ON, B_LADDER_SHOOT_OFF, B_LADDER_SHOOT_END,
-    B_HOVER_RISE_END, B_HOVER_RISE_WALL, B_HOVER_HOLD_END, B_HOVER_HOLD_WALL, B_HOVER_HOLD_TURN, B_HOVER_HOLD_BLOCKED,
-    B_HOVER_FWD_END, B_HOVER_FWD_WALL, B_HOVER_FWD_BACK, B_HOVER_FSTOP_END, B_HOVER_FSTOP_TURN, B_HOVER_BACK_END,
-    B_HOVER_BACK_WALL, B_HOVER_BACK_FWD, B_HOVER_BACK_ON, B_HOVER_BACK_STOP, B_POSE_SPLIT, B_POSE_END,
-    B_PEAK_RISING, B_PEAK_FALLING, B_BUSTER_VOICE, B_FLASH_FULL_14, B_FLASH_FULL_OTHER, B_RELEASE_SPECIAL,
-    B_RELEASE_SPECIAL_UP, B_HOLD_SPECIAL, B_RELEASE_SPECIAL_TIMER, B_SPECIAL_ARM_2,
+    B_BEAM_IN_EVENT,
+    B_JUMP_DOUBLE,
+    B_KNOCK_FLASH,
+    B_KNOCK_PALETTE,
+    B_JUMP_NOVA,
+    B_FALL_NOVA,
+    B_WS_NOVA,
+    B_VICTORY_WAIT,
+    B_VICTORY_POSE,
+    B_VICTORY_SOUND,
+    B_VICTORY_END,
+    B_AIR_DASH_MOVE_WALL,
+    B_AIR_DASH_MOVE_DUST,
+    B_AIR_DASH_MOVE_ON,
+    B_LADDER_SHOOT_OFF,
+    B_LADDER_SHOOT_END,
+    B_HOVER_RISE_END,
+    B_HOVER_RISE_WALL,
+    B_HOVER_HOLD_END,
+    B_HOVER_HOLD_WALL,
+    B_HOVER_HOLD_TURN,
+    B_HOVER_HOLD_BLOCKED,
+    B_HOVER_FWD_END,
+    B_HOVER_FWD_WALL,
+    B_HOVER_FWD_BACK,
+    B_HOVER_FSTOP_END,
+    B_HOVER_FSTOP_TURN,
+    B_HOVER_BACK_END,
+    B_HOVER_BACK_WALL,
+    B_HOVER_BACK_FWD,
+    B_HOVER_BACK_ON,
+    B_HOVER_BACK_STOP,
+    B_POSE_SPLIT,
+    B_POSE_END,
+    B_PEAK_RISING,
+    B_PEAK_FALLING,
+    B_BUSTER_VOICE,
+    B_FLASH_FULL_14,
+    B_FLASH_FULL_OTHER,
+    B_RELEASE_SPECIAL,
+    B_RELEASE_SPECIAL_UP,
+    B_HOLD_SPECIAL,
+    B_RELEASE_SPECIAL_TIMER,
+    B_SPECIAL_ARM_2,
 #endif
     B_COUNT };
 static void branch_x(void)
@@ -1268,7 +1382,8 @@ static u32 state_branch(u32 row)
             pl.unk5 = PLAYER_WALL_SLIDE;
             player_wall_slide(&pl);
         }
-        assert(pl.x_vel.val == (row == B_SLIDE_WALL_JUMP ? FIXED(4.125) : row == B_CLING_JUMP ? FIXED(-2) : FIXED(-4.125)));
+        assert(pl.x_vel.val == (row == B_SLIDE_WALL_JUMP ? FIXED(4.125) : row == B_CLING_JUMP ? FIXED(-2)
+                                                                                              : FIXED(-4.125)));
         assert(pl.dash_momentum == (row != B_CLING_JUMP));
         state = PLAYER_WALL_JUMP;
         break;
@@ -1632,7 +1747,10 @@ static u32 state_branch(u32 row)
     case B_HOVER_FWD_END:
     case B_HOVER_FSTOP_END:
     case B_HOVER_BACK_END:
-        branch_hover(row == B_HOVER_RISE_END ? 1 : row == B_HOVER_HOLD_END ? 2 : row == B_HOVER_FWD_END ? 3 : row == B_HOVER_FSTOP_END ? 4 : 5);
+        branch_hover(row == B_HOVER_RISE_END ? 1 : row == B_HOVER_HOLD_END ? 2
+                : row == B_HOVER_FWD_END                                   ? 3
+                : row == B_HOVER_FSTOP_END                                 ? 4
+                                                                           : 5);
         pl.pressed_input = PLAYER_INPUT_JUMP;
         if (row == B_HOVER_RISE_END)
             player_hover_rise(&pl);
@@ -1650,7 +1768,9 @@ static u32 state_branch(u32 row)
     case B_HOVER_HOLD_WALL:
     case B_HOVER_FWD_WALL:
     case B_HOVER_BACK_WALL:
-        branch_hover(row == B_HOVER_RISE_WALL ? 1 : row == B_HOVER_HOLD_WALL ? 2 : row == B_HOVER_FWD_WALL ? 3 : 5);
+        branch_hover(row == B_HOVER_RISE_WALL ? 1 : row == B_HOVER_HOLD_WALL ? 2
+                : row == B_HOVER_FWD_WALL                                    ? 3
+                                                                             : 5);
         pl.unk88.bytes.collision_flags = PLAYER_COLLIDE_RIGHT;
         pl.input.buttons.held = PLAYER_INPUT_RIGHT;
         pl.wall_climbable = 1;
@@ -1667,7 +1787,8 @@ static u32 state_branch(u32 row)
     case B_HOVER_HOLD_TURN:
     case B_HOVER_FSTOP_TURN:
     case B_HOVER_BACK_FWD:
-        branch_hover(row == B_HOVER_HOLD_TURN ? 2 : row == B_HOVER_FSTOP_TURN ? 4 : 5);
+        branch_hover(row == B_HOVER_HOLD_TURN ? 2 : row == B_HOVER_FSTOP_TURN ? 4
+                                                                              : 5);
         pl.input.buttons.held = PLAYER_INPUT_RIGHT;
         if (row == B_HOVER_HOLD_TURN)
             player_hover_hold(&pl);

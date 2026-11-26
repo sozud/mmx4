@@ -195,7 +195,10 @@ static u32 vertical_motion(u32 row)
 void func_800C229C(struct ItemObj*);
 #define mb state_room.item
 #define MB(vx, dx, setup) (state_reset(0, 0, 0), mb.active = 1, mb.id = 9, mb.state = 1, mb.x_pos.i.hi = 0x80 + (dx), mb.y_pos.i.hi = 0x60, mb.unk7C.saved_pos.x = 0x80, mb.unk7C.saved_pos.y = 0x60, mb.x_vel.val = vx, setup, func_800C229C(&mb), state_extra = (u8)mb.ext.item_2.unk80)
-static void mb_right(void) { MB(0x10000, 0, 0); }
+static void mb_right(void)
+{
+    MB(0x10000, 0, 0);
+}
 static void mb_left_turn(void) { MB(-0x10000, -0x8F, 0); }
 static void mb_left_paused(void) { MB(-0x10000, 0, mb.ext.item_2.unk80 = 3); }
 static void mb_away(void) { MB(0x10000, 0x7000, 0); }
@@ -206,10 +209,46 @@ static void (*const moving_block_states_cases[])(void) = {
     mb_away,
 };
 static const u32 moving_block_states_expected[] = {
-    0x1u, 0x1u, 0x810000u, 0x600000u, 0x10000u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
-    0x1u, 0x1u, 0xFFF00000u, 0x600000u, 0x10000u, 0x0u, 0x0u, 0x50000u, 0xAu, 0x0u,
-    0x1u, 0x1u, 0x800000u, 0x600000u, 0xFFFF0000u, 0x0u, 0x0u, 0x50000u, 0x2u, 0x0u,
-    0x2u, 0x1u, 0x70810000u, 0x600000u, 0xFFFF0000u, 0x0u, 0x0u, 0x50000u, 0xAu, 0x0u,
+    0x1u,
+    0x1u,
+    0x810000u,
+    0x600000u,
+    0x10000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x1u,
+    0xFFF00000u,
+    0x600000u,
+    0x10000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0xAu,
+    0x0u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x2u,
+    0x0u,
+    0x2u,
+    0x1u,
+    0x70810000u,
+    0x600000u,
+    0xFFFF0000u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0xAu,
+    0x0u,
 };
 static u32 test_moving_block_states(u32 row) { return object_run(moving_block_states_cases[row], row, &moving_block_states_expected[row * 10]); }
 #undef mb

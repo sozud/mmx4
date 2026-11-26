@@ -15,7 +15,6 @@ static u32 test_bg_wind_delay(u32 row)
     return c_test_observe(0, row, observed_values, bg_wind_delay_expected, 4);
 }
 
-
 extern u8 bg_wind_steps_slow[], bg_wind_steps_fast[], bg_wind_steps_medium[];
 static struct EffectObj wind;
 enum { SLOW = 1,
@@ -44,7 +43,10 @@ static void wind_reset(u8 phase, s16 movement, s16 direction, s32 velocity, u8 t
 #define STEP(phase) (wind_reset(phase, 9, 0, LIMIT(phase) - FIXED(1.0 / 64), 1, FIXED(258)), bg_wind_update(&wind))
 #define SLOW_DOWN(phase) (wind_reset(phase, 9, 1, LIMIT(phase) + FIXED(1.0 / 16), 5, FIXED(320)), background_objects[2].x_pos.val = 0, bg_wind_update(&wind))
 #define HOLD(phase, direction) (wind_reset(phase, 9, direction, LIMIT(phase), 5, FIXED(320)), background_objects[2].x_pos.val = 0, bg_wind_update(&wind))
-static void wind_slow_ends_right(void) { END(SLOW, 0); }
+static void wind_slow_ends_right(void)
+{
+    END(SLOW, 0);
+}
 static void wind_slow_ends_left(void) { END(SLOW, 1); }
 static void wind_fast_ends_right(void) { END(FAST, 0); }
 static void wind_fast_ends_left(void) { END(FAST, 1); }

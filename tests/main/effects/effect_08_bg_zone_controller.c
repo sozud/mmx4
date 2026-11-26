@@ -56,7 +56,8 @@ static u32 zone_step(u32 row)
     assert(obj.ext.unk_effect.unk14 == (row == 0 ? 0 : c->zone));
     assert(obj.ext.effect_8.unk16 == c->out_unk16 && obj.ext.effect_8.unk17 == c->out_unk17);
     assert((u8)engine_obj.checkpoint == c->checkpoint);
-    assert(engine_obj.unkF == (c->checkpoint != 0xFF ? -0x40 : row == 18 ? 0x40 : 0));
+    assert(engine_obj.unkF == (c->checkpoint != 0xFF ? -0x40 : row == 18 ? 0x40
+                                                                         : 0));
     assert(background_objects[1].unk4 == c->bg1_unk4 && background_objects[2].unk4 == c->bg2_unk4);
     assert(background_objects[0].unk4 == (row == 0 ? 2 : 0));
     if (row >= 3 && row <= 6) {

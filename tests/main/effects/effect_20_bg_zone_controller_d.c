@@ -44,7 +44,9 @@ static u32 zone_d_steps(u32 index)
     obj.ext.effect_20.unk14 = row == 1 ? 0 : 2;
     bg_zone_controller_d_update(&obj);
     assert(obj.state == 1 && obj.ext.effect_20.unk14 == (row <= 1 ? 0 : 2));
-    assert(obj.unk5 == (row == 1 || row == 2 ? 3 : row == 0 ? 0 : 2) && obj.unk6 == !(row == 1 || row == 2));
+    assert(obj.unk5 == (row == 1 || row == 2 ? 3 : row == 0 ? 0
+                                                            : 2)
+        && obj.unk6 == !(row == 1 || row == 2));
     assert(background_objects[0].unk2E == (row == 0 ? 0xC0 : 0));
     return 1;
 }

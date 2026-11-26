@@ -400,7 +400,8 @@ static u32 weapon_message(u32 row)
     obj.unk2 = 5;
     obj.character_state.bytes[0] = 3;
     *(s16*)&obj.unk6 = 0x3C;
-    obj.unk4 = row == 0 ? 1 : row == 1 ? 0xF0 - 0x3C + 1 : 0x50;
+    obj.unk4 = row == 0 ? 1 : row == 1 ? 0xF0 - 0x3C + 1
+                                       : 0x50;
 #ifndef MMX4_SATURN
     for (i = 0; i < 8; i++)
         voice_table[i] = 0;

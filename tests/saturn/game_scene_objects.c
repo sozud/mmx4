@@ -77,8 +77,7 @@ static u32 scene_run(u32 row)
     observed[4] = (u16)actor.unk40 | (u32)actor.unk42 << 16;
     observed[5] = (actor.unk3C ? (u32)((u8*)actor.unk3C - (u8*)frame_banks) : 0) | (u32)need_palette_load << 24;
     observed[6] = palette[0x200] | (u32)palette[0x23F] << 16;
-    observed[7] = (u16)background_objects[1].y_pos.i.hi | (u32)(u16)background_objects[2].y_pos.i.hi << 16
-        ^ (u32)(u8)engine_obj.unk4 << 8 ^ (u32)(u8)engine_obj.unk2 << 24;
+    observed[7] = (u16)background_objects[1].y_pos.i.hi | (u32)(u16)background_objects[2].y_pos.i.hi << 16 ^ (u32)(u8)engine_obj.unk4 << 8 ^ (u32)(u8)engine_obj.unk2 << 24;
     return c_test_observe(0, row, observed, scene_expected[row], WORDS);
 }
 

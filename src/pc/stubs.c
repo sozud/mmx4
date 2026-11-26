@@ -97,4 +97,3 @@ PC_GAME_STUB(dmy_SsSetNrpnVabAttr7)
 PC_GAME_STUB(dmy_SsSetNrpnVabAttr8)
 PC_GAME_STUB(dmy_SsSetNrpnVabAttr9)
 PC_GAME_STUB(dmy_SsSetPitchBend)
-

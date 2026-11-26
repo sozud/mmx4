@@ -91,7 +91,10 @@ static u32 grow(u32 row)
 extern u8 rising_platform_start_y[4];
 #define rp state_room.item
 #define RP(setup) (state_reset(0, 0, 0), memset(item_objects, 0, sizeof(item_objects)), rp.active = 0x41, rp.id = 7, rp.state = 1, rp.x_pos.i.hi = 0x80, rp.y_pos.i.hi = 0x5A0, rp.y_vel.val = 0x8000, rp.unk68 = (struct Unk_unk68*)rising_platform_start_y, g_Player.unk68 = NULL, setup, rising_platform_rise(&rp), state_extra = rp.unk7C.value | (u32)item_objects[0].id << 8 | (u32)rp.unk70 << 16)
-static void rp_blocked_on_screen(void) { RP((state_terrain(0x38), rp.on_screen = 1)); }
+static void rp_blocked_on_screen(void)
+{
+    RP((state_terrain(0x38), rp.on_screen = 1));
+}
 static void rp_blocked(void) { RP(state_terrain(0x38)); }
 static void rp_spawn_next(void) { RP(state_terrain(0)); }
 static void rp_spawned(void) { RP((state_terrain(0), rp.unk7C.value = 1)); }
@@ -104,11 +107,56 @@ static void (*const rising_platform_states_cases[])(void) = {
     rp_low,
 };
 static const u32 rising_platform_states_expected[] = {
-    0x2u, 0x41u, 0x800000u, 0x59F8000u, 0x0u, 0x8000u, 0x0u, 0x50000u, 0xF0000u, 0x41000000u,
-    0x2u, 0x41u, 0x800000u, 0x59F8000u, 0x0u, 0x8000u, 0x0u, 0x50000u, 0xF0000u, 0x0u,
-    0x1u, 0x41u, 0x800000u, 0x59F8000u, 0x0u, 0x8000u, 0x0u, 0x50000u, 0x701u, 0x0u,
-    0x1u, 0x41u, 0x800000u, 0x59F8000u, 0x0u, 0x8000u, 0x0u, 0x50000u, 0x1u, 0x0u,
-    0x1u, 0x41u, 0x800000u, 0x5FF8000u, 0x0u, 0x8000u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x2u,
+    0x41u,
+    0x800000u,
+    0x59F8000u,
+    0x0u,
+    0x8000u,
+    0x0u,
+    0x50000u,
+    0xF0000u,
+    0x41000000u,
+    0x2u,
+    0x41u,
+    0x800000u,
+    0x59F8000u,
+    0x0u,
+    0x8000u,
+    0x0u,
+    0x50000u,
+    0xF0000u,
+    0x0u,
+    0x1u,
+    0x41u,
+    0x800000u,
+    0x59F8000u,
+    0x0u,
+    0x8000u,
+    0x0u,
+    0x50000u,
+    0x701u,
+    0x0u,
+    0x1u,
+    0x41u,
+    0x800000u,
+    0x59F8000u,
+    0x0u,
+    0x8000u,
+    0x0u,
+    0x50000u,
+    0x1u,
+    0x0u,
+    0x1u,
+    0x41u,
+    0x800000u,
+    0x5FF8000u,
+    0x0u,
+    0x8000u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
 };
 static u32 test_rising_platform_states(u32 row) { return object_run(rising_platform_states_cases[row], row, &rising_platform_states_expected[row * 10]); }
 #undef rp

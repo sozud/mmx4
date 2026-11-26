@@ -245,7 +245,8 @@ static u32 timed_paths(u32 row)
     obj.ext.effect_21.timer = 7;
     g_Player.bg_offset = 0;
     g_Player.y_pos.i.hi = 592;
-    g_Player.x_pos.i.hi = row == 0 ? 0x2A0 : row == 1 ? 0xC60 : 1700;
+    g_Player.x_pos.i.hi = row == 0 ? 0x2A0 : row == 1 ? 0xC60
+                                                      : 1700;
     background_objects[0].x_pos.i.hi = 1552;
     background_objects[0].y_pos.i.hi = 512;
     if (row != 0)
@@ -330,9 +331,11 @@ static u32 crumble_paths(u32 row)
         return 1;
     }
     if (row <= 10) {
-        obj.unk2 = row == 6 || row == 9 ? 4 : row == 8 || row == 10 ? 5 : 2;
+        obj.unk2 = row == 6 || row == 9 ? 4 : row == 8 || row == 10 ? 5
+                                                                    : 2;
         obj.unk5 = row >= 9;
-        obj.ext.effect_21.timer = row == 4 || row == 9 ? 5 : row == 10 ? 1 : 0;
+        obj.ext.effect_21.timer = row == 4 || row == 9 ? 5 : row == 10 ? 1
+                                                                       : 0;
         obj.ext.effect_21.cursor = row == 5 ? first : last;
         func_800BA178(&obj);
         switch (row) {
@@ -360,7 +363,8 @@ static u32 crumble_paths(u32 row)
         return 1;
     }
     obj.unk2 = 3;
-    obj.unk5 = row <= 12 ? 0 : row == 13 ? 1 : 2;
+    obj.unk5 = row <= 12 ? 0 : row == 13 ? 1
+                                         : 2;
     g_Player.x_pos.i.hi = row == 11 ? 0xC5F : 0xC60;
     obj.ext.effect_21.timer = row == 14 ? 3 : 0;
     obj.ext.effect_21.cursor = row == 15 ? first : last;

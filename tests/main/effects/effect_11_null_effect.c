@@ -45,7 +45,8 @@ static u32 heat_wave(u32 row)
     WAVE(obj)->phase_x = row == 3 ? 15 : 3;
     WAVE(obj)->phase_y = row == 3 ? 31 : 3;
     background_objects[0].x_pos.i.hi = row == 1 ? 100 : 200;
-    background_objects[0].y_pos.i.hi = row == 1 ? 0x1F0 : row == 2 ? 0x200 : 0x100;
+    background_objects[0].y_pos.i.hi = row == 1 ? 0x1F0 : row == 2 ? 0x200
+                                                                   : 0x100;
     background_objects[2].y_pos.i.hi = row == 6 || row == 8 ? 0x201 : 0x200;
     null_effect_update(&obj);
     HEAT_ENABLE(0);

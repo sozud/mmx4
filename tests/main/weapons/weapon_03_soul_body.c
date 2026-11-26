@@ -500,13 +500,15 @@ static u32 soul_paths(u32 index)
     case 5:
         obj.unk5 = 1;
         obj.unk15 = row == 3 ? PLAYER_FACING_RIGHT : 0;
-        obj.ext.weapon_3.lifetime = row == 3 ? 0 : row == 4 ? 0x10 : 0x40;
+        obj.ext.weapon_3.lifetime = row == 3 ? 0 : row == 4 ? 0x10
+                                                            : 0x40;
         obj.unk50 = (const u8*)soul_bank;
         obj.on_screen = 1;
         soul_body_hold(&obj);
         assert(obj.x_pos.i.hi == (row == 3 ? 100 + 0x40 : 100 - 0x40) && obj.unk5 == (row == 3 ? 2 : 1));
         assert(obj.on_screen == (row == 4 ? 0 : 1) && (obj.unk50 == NULL) == (row == 3));
-        assert(obj.ext.weapon_3.lifetime == (row == 3 ? 0 : row == 4 ? 0xF : 0x3F));
+        assert(obj.ext.weapon_3.lifetime == (row == 3 ? 0 : row == 4 ? 0xF
+                                                                     : 0x3F));
         break;
     default:
         obj.unk5 = 2;

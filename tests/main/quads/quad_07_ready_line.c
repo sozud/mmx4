@@ -236,7 +236,9 @@ static u32 line_steps(u32 index)
     if (row <= 7) {
         obj.unk2 = 1;
         obj.unk7 = row == 3 ? 6 : 2;
-        obj.unk5 = row <= 3 ? 0 : row <= 5 ? 1 : row == 6 ? 2 : 3;
+        obj.unk5 = row <= 3 ? 0 : row <= 5 ? 1
+            : row == 6                     ? 2
+                                           : 3;
         obj.runtime.legacy.unk50 = row == 5 ? 1 : 2;
         if (row == 4 || row == 6) {
             obj.unk5 = 0;
@@ -295,12 +297,17 @@ static u32 line_steps(u32 index)
         obj.unk5 = 1;
         obj.runtime.legacy.unk52 = row == 10;
         obj.runtime.legacy.unk48 = row >= 13;
-        obj.x_pos.i.hi = row == 11 ? 320 : row == 12 ? 300 : row == 13 ? -177 : 0;
+        obj.x_pos.i.hi = row == 11 ? 320 : row == 12 ? 300
+            : row == 13                              ? -177
+                                                     : 0;
         obj.ext.ready_line.x_vel.val = row >= 13 ? -0x180000 : 0x180000;
         ready_line_streak(&obj);
         assert(obj.runtime.legacy.unk52 == 0);
         assert(obj.unk5 == (row == 11 || row == 13 ? 2 : 1));
-        assert(obj.x_pos.i.hi == (row == 10 ? 0 : row == 11 ? 320 : row == 12 ? 324 : row == 13 ? -177 : -24));
+        assert(obj.x_pos.i.hi == (row == 10 ? 0 : row == 11 ? 320
+                       : row == 12                          ? 324
+                       : row == 13                          ? -177
+                                                            : -24));
         return 1;
     }
     obj.unk5 = 2;

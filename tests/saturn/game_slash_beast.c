@@ -28,21 +28,86 @@ static void place(s32 dx, u8 step, u16 seed)
     cur_random = seed;
 }
 
-static void choose_far_hurt(void) { place(0xC0, 0, 0); beast.hp = 8; func_8006C6AC(&beast); }
-static void choose_far(void) { place(0xC0, 0, 0); func_8006C6AC(&beast); }
-static void choose_step0(void) { place(0x40, 0, 1); func_8006C6AC(&beast); }
-static void choose_step0_jump(void) { place(0x40, 0, 0); func_8006C6AC(&beast); }
-static void choose_step1_far(void) { place(0x90, 1, 1); func_8006C6AC(&beast); }
-static void choose_step1_powered(void) { place(0x40, 1, 1); beast.ext.main_54.powered_up = 1; func_8006C6AC(&beast); }
-static void choose_step1_jump(void) { place(0x40, 1, 0); func_8006C6AC(&beast); }
-static void choose_step2_near(void) { place(0x40, 2, 1); func_8006C6AC(&beast); }
-static void choose_step2_far(void) { place(0x90, 2, 1); func_8006C6AC(&beast); }
+static void choose_far_hurt(void)
+{
+    place(0xC0, 0, 0);
+    beast.hp = 8;
+    func_8006C6AC(&beast);
+}
+static void choose_far(void)
+{
+    place(0xC0, 0, 0);
+    func_8006C6AC(&beast);
+}
+static void choose_step0(void)
+{
+    place(0x40, 0, 1);
+    func_8006C6AC(&beast);
+}
+static void choose_step0_jump(void)
+{
+    place(0x40, 0, 0);
+    func_8006C6AC(&beast);
+}
+static void choose_step1_far(void)
+{
+    place(0x90, 1, 1);
+    func_8006C6AC(&beast);
+}
+static void choose_step1_powered(void)
+{
+    place(0x40, 1, 1);
+    beast.ext.main_54.powered_up = 1;
+    func_8006C6AC(&beast);
+}
+static void choose_step1_jump(void)
+{
+    place(0x40, 1, 0);
+    func_8006C6AC(&beast);
+}
+static void choose_step2_near(void)
+{
+    place(0x40, 2, 1);
+    func_8006C6AC(&beast);
+}
+static void choose_step2_far(void)
+{
+    place(0x90, 2, 1);
+    func_8006C6AC(&beast);
+}
 
-static void jump_near(void) { place(0x40, 0, 1); func_8006D3DC(&beast); }
-static void jump_wait(void) { place(0x90, 0, 1); func_8006D3DC(&beast); }
-static void jump_right(void) { place(0x90, 0, 1); beast.unk15 = PLAYER_FACING_RIGHT; beast.animation_step.fields.event = 1; func_8006D3DC(&beast); }
-static void jump_grab_left(void) { place(-0x90, 0, 1); beast.ext.main_54.grab = 1; beast.animation_step.fields.event = 1; func_8006D3DC(&beast); }
-static void jump_grab_right(void) { place(0x90, 0, 1); beast.ext.main_54.grab = 1; beast.unk15 = PLAYER_FACING_RIGHT; beast.animation_step.fields.event = 1; func_8006D3DC(&beast); }
+static void jump_near(void)
+{
+    place(0x40, 0, 1);
+    func_8006D3DC(&beast);
+}
+static void jump_wait(void)
+{
+    place(0x90, 0, 1);
+    func_8006D3DC(&beast);
+}
+static void jump_right(void)
+{
+    place(0x90, 0, 1);
+    beast.unk15 = PLAYER_FACING_RIGHT;
+    beast.animation_step.fields.event = 1;
+    func_8006D3DC(&beast);
+}
+static void jump_grab_left(void)
+{
+    place(-0x90, 0, 1);
+    beast.ext.main_54.grab = 1;
+    beast.animation_step.fields.event = 1;
+    func_8006D3DC(&beast);
+}
+static void jump_grab_right(void)
+{
+    place(0x90, 0, 1);
+    beast.ext.main_54.grab = 1;
+    beast.unk15 = PLAYER_FACING_RIGHT;
+    beast.animation_step.fields.event = 1;
+    func_8006D3DC(&beast);
+}
 
 static void floor(u8 stage, u8 facing, u32 code)
 {
@@ -59,10 +124,24 @@ static void floor_left_fortress(void) { floor(0xC, 0, 0x3E); }
 static void floor_right_fortress(void) { floor(0xC, PLAYER_FACING_RIGHT, 0x3E); }
 
 static void (*const beast_cases[])(void) = {
-    choose_far_hurt, choose_far, choose_step0, choose_step0_jump, choose_step1_far,
-    choose_step1_powered, choose_step1_jump, choose_step2_near, choose_step2_far,
-    jump_near, jump_wait, jump_right, jump_grab_left, jump_grab_right,
-    floor_solid_fortress, floor_left, floor_left_fortress, floor_right_fortress,
+    choose_far_hurt,
+    choose_far,
+    choose_step0,
+    choose_step0_jump,
+    choose_step1_far,
+    choose_step1_powered,
+    choose_step1_jump,
+    choose_step2_near,
+    choose_step2_far,
+    jump_near,
+    jump_wait,
+    jump_right,
+    jump_grab_left,
+    jump_grab_right,
+    floor_solid_fortress,
+    floor_left,
+    floor_left_fortress,
+    floor_right_fortress,
 };
 
 #define WORDS 5

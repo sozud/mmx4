@@ -146,7 +146,9 @@ static u32 web_steps(u32 index)
             assert(g_Player.x_pos.val == obj.x_pos.val && g_Player.y_pos.val == obj.y_pos.val);
         } else {
             assert(obj.unk5 == 1 && obj.timer == (row == 2 ? 0 : 4));
-            assert(obj.unk84.value == ((target - home_offsets[row] + (row == 5 ? 1 : row == 6 ? -1 : 0)) & 0x1F));
+            assert(obj.unk84.value == ((target - home_offsets[row] + (row == 5 ? 1 : row == 6 ? -1
+                                                                                              : 0))
+                       & 0x1F));
             assert(row <= 4 ? obj.x_vel.val == 0x10000 : obj.x_vel.val != 0x10000);
         }
     } else if (row <= 9) {
@@ -160,7 +162,9 @@ static u32 web_steps(u32 index)
         assert(g_Player.x_pos.val == obj.x_pos.val);
         assert(obj.unk5 == (row == 7 ? 4 : 3) && obj.timer == (row == 7 ? 0x1E : 9));
         assert(row == 7 ? obj.unk50.data == NULL && g_Player.stun_timer == 0 : obj.unk50.data != NULL);
-        assert(obj.unk90.val == (row == 8 ? 0x30 : row == 9 ? 1 : 2) && (g_Player.hp == 16) == (row != 8));
+        assert(obj.unk90.val == (row == 8 ? 0x30 : row == 9 ? 1
+                                                            : 2)
+            && (g_Player.hp == 16) == (row != 8));
     } else if (row <= 12) {
         obj.unk5 = 4;
         obj.timer = row == 10 ? 1 : 5;
@@ -180,7 +184,8 @@ static u32 web_steps(u32 index)
         obj.on_screen = 7;
         web_shot_main(&obj);
         assert(obj.state == (row == 16 ? 2 : 1) && obj.unk8C.word == (row == 15 ? 3 : 1));
-        assert(obj.on_screen == (row == 16 ? 7 : row == 17 ? 7 : 1));
+        assert(obj.on_screen == (row == 16 ? 7 : row == 17 ? 7
+                                                           : 1));
     } else {
         obj.state = 2;
         obj.unk8C.word = row == 20 ? 1 : 3;

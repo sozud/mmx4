@@ -71,7 +71,8 @@ static u32 plasma_paths(u32 row)
         g_Player.shot_count = row == 9 ? 4 : 1;
         func_80092B5C(&obj);
         assert(obj.unk98 == 0 && obj.x_pos.i.hi == 111);
-        assert(weapon_objects[0].active == (row == 10 ? 0x21 : 0) && g_Player.shot_count == (row == 9 ? 4 : row == 10 ? 2 : 1));
+        assert(weapon_objects[0].active == (row == 10 ? 0x21 : 0) && g_Player.shot_count == (row == 9 ? 4 : row == 10 ? 2
+                                                                                                                      : 1));
         assert(row != 10 || (weapon_objects[0].id == 0x15 && weapon_objects[0].x_pos.val == obj.x_pos.val));
         break;
     default:

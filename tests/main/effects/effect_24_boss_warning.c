@@ -150,7 +150,8 @@ static u32 warning_paths(u32 index)
     engine_obj.stage = 2;
     if (row <= 2 || row == 13) {
         obj.state = 0;
-        engine_obj.stage = row == 0 ? 10 : row == 13 ? 0 : 2;
+        engine_obj.stage = row == 0 ? 10 : row == 13 ? 0
+                                                     : 2;
         engine_obj.palette_flags = row == 1 ? 2 : 0;
         func_800BABA8(&obj);
         assert(obj.state == (row == 1 ? 0 : 1) && engine_obj.unkF == (row == 1));

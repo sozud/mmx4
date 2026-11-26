@@ -97,7 +97,15 @@ static u32 outcome_case(u32 row)
     return (u8)engine_obj.state | ((u32)(u8)engine_obj.unk1E << 8) | ((u32)(u8)engine_obj.unk42 << 16) | ((u32)(u8)engine_obj.unk5F << 24);
 }
 static const u32 engine_outcome_transition_context_cases_expected[] = {
-    0x66220003u, 0x66220007u, 0x66220004u, 0x66220004u, 0x66220004u, 0x66220003u, 0x66220003u, 0x6601FF05u, 0x66220005u,
+    0x66220003u,
+    0x66220007u,
+    0x66220004u,
+    0x66220004u,
+    0x66220004u,
+    0x66220003u,
+    0x66220003u,
+    0x6601FF05u,
+    0x66220005u,
     0x66220408u,
 };
 #else
@@ -373,7 +381,8 @@ static u32 stage_intro_marks(u32 row)
     engine_obj.substage = row == 2;
     engine_obj.unk1E = row == 1 ? 3 : 0;
     func_8001FDBC();
-    assert(engine_obj.unk1E == (row == 0 ? 1 : row == 1 ? 3 : -2));
+    assert(engine_obj.unk1E == (row == 0 ? 1 : row == 1 ? 3
+                                                        : -2));
     for (i = 0; i < COUNT(effect_objects); i++)
         assert(effect_objects[i].active == 0);
     for (i = 0; i < COUNT(misc_objects); i++)
@@ -452,7 +461,8 @@ static u32 stage_pause_row(u32 row)
 #else
     pad_port1_packet[0] = 0;
 #endif
-    assert(engine_obj.unk1 == (pauses ? 2 : row == 7 ? 1 : 0));
+    assert(engine_obj.unk1 == (pauses ? 2 : row == 7 ? 1
+                                                     : 0));
     assert(pauses ? cur_random == random : cur_random != random);
 #ifdef MMX4_SATURN
     assert(main_bss_state.transition.active == (row == 7 ? 2 : row == 2));

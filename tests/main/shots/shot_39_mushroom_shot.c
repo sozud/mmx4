@@ -284,7 +284,10 @@ static u32 mushroom_steps(u32 row)
         obj.unk8A = row == 11 ? 1 : 3;
         obj.animation_step.fields.event = row != 13;
         mushroom_shot_sprout_land(&obj);
-        assert(obj.unk5 == (row == 11 ? 3 : row == 12 ? 4 : 2) && obj.unk17 == (row == 11 ? 0 : row == 12 ? 2 : 0xB));
+        assert(obj.unk5 == (row == 11 ? 3 : row == 12 ? 4
+                                                      : 2)
+            && obj.unk17 == (row == 11 ? 0 : row == 12 ? 2
+                                                       : 0xB));
         assert(obj.timer == (row == 11 ? 0x28 : 5));
         break;
     case 14:

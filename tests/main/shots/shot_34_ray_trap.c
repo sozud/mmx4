@@ -730,11 +730,14 @@ static u32 ray_paths(u32 row)
         obj.unk2 = 2;
         obj.x_vel.val = 0x30000;
         obj.unk15 = row == 4 ? PLAYER_FACING_RIGHT : 0;
-        obj.unk70 = row == 3 ? 0 : row == 4 ? 1 : row == 5 ? 2 | 8 : 1 | 8;
+        obj.unk70 = row == 3 ? 0 : row == 4 ? 1
+            : row == 5                      ? 2 | 8
+                                            : 1 | 8;
         func_800A1CCC(&obj);
         assert(obj.x_pos.i.hi == 0x83 && obj.unk8C.bytes[3] == 1);
         assert(obj.unk6 == (row == 4) && obj.unk15 == (row == 4 || row == 5 ? (row == 4 ? 0 : PLAYER_FACING_RIGHT) : 0));
-        assert(obj.x_vel.val == (row == 4 ? 0 : row == 5 ? -0x30000 : 0x30000));
+        assert(obj.x_vel.val == (row == 4 ? 0 : row == 5 ? -0x30000
+                                                         : 0x30000));
         break;
     case 7:
     case 8:
@@ -746,7 +749,8 @@ static u32 ray_paths(u32 row)
         obj.animation_step.fields.relative_step = row == 7;
         func_800A1CCC(&obj);
         assert(obj.unk5 == (row == 7 ? 3 : 4) && obj.y_vel.val == (row == 7 ? 0 : -0x30000));
-        assert(obj.x_pos.i.hi == (row == 7 ? 0x80 : row == 8 ? 0x70 : 0x90));
+        assert(obj.x_pos.i.hi == (row == 7 ? 0x80 : row == 8 ? 0x70
+                                                             : 0x90));
         break;
     case 10:
     case 11:
@@ -759,7 +763,8 @@ static u32 ray_paths(u32 row)
             g_Player.x_pos.i.hi = 0x100;
         func_800A1E3C(&obj);
         assert(obj.unk5 == (row == 10 ? 4 : 3) && obj.unk6 == 0);
-        assert(obj.x_vel.val == (row == 10 ? 0 : row == 11 ? -0x10000 : 0x30000));
+        assert(obj.x_vel.val == (row == 10 ? 0 : row == 11 ? -0x10000
+                                                           : 0x30000));
         break;
     case 13:
     case 14:

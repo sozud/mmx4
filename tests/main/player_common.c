@@ -780,7 +780,13 @@ static const struct {
     u8 stage, substage, checkpoint;
     s8 entry;
 } entry_stages[] = {
-    { 2, 0, 1, 1 }, { 3, 0, 1, 1 }, { 5, 1, 1, 1 }, { 5, 1, 0, 1 }, { 6, 0, 1, -1 }, { 6, 0, 1, 1 }, { 12, 0, 1, 1 },
+    { 2, 0, 1, 1 },
+    { 3, 0, 1, 1 },
+    { 5, 1, 1, 1 },
+    { 5, 1, 0, 1 },
+    { 6, 0, 1, -1 },
+    { 6, 0, 1, 1 },
+    { 12, 0, 1, 1 },
 };
 
 static u32 test_player_entry_stage(u32 row)
@@ -896,8 +902,16 @@ static u32 test_player_water(u32 row)
 static const struct {
     u8 step, timer, ring, ride, pool_full;
 } deaths[] = {
-    { 0, 0, 0, 1, 0 }, { 0, 0, 0, 0, 0 }, { 1, 2, 0, 0, 0 }, { 1, 1, 0, 0, 0 }, { 2, 5, 1, 0, 0 },
-    { 2, 0, 2, 0, 0 }, { 2, 1, 3, 0, 0 }, { 3, 3, 0, 0, 0 }, { 3, 0, 0, 0, 0 }, { 2, 0, 0, 0, 1 },
+    { 0, 0, 0, 1, 0 },
+    { 0, 0, 0, 0, 0 },
+    { 1, 2, 0, 0, 0 },
+    { 1, 1, 0, 0, 0 },
+    { 2, 5, 1, 0, 0 },
+    { 2, 0, 2, 0, 0 },
+    { 2, 1, 3, 0, 0 },
+    { 3, 3, 0, 0, 0 },
+    { 3, 0, 0, 0, 0 },
+    { 2, 0, 0, 0, 1 },
 };
 static u8 death_sound_rows[0x40];
 static const u32 deaths_expected[COUNT(deaths)][3] = {

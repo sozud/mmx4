@@ -160,7 +160,8 @@ static void check(void)
     assert(cur_random == rng && need_palette_load == dirty);
     assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 32 && layout_height == 16 && layout_size == 512 && attributes[0] == 0 && attributes[1] == TEST_DISC32(0x38));
     for (i = 0; i < sizeof(map_words); i++)
-        assert(map[i] == (i == TUNNEL_SCREEN ? 0x1E : i == TUNNEL_SCREEN + 1 ? 0x18 : 1));
+        assert(map[i] == (i == TUNNEL_SCREEN ? 0x1E : i == TUNNEL_SCREEN + 1 ? 0x18
+                                                                             : 1));
     assert(c_test_word_difference((u32*)tiles, (u32*)tiles_before, sizeof(tiles) / 4) == 0);
     for (i = 0; i < COUNT(gfx); i++)
         assert(gfx[i] == (i == 0 ? 64u : (i == 1 || i == 8 || i == 9) ? 128u

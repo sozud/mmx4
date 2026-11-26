@@ -7,7 +7,10 @@ void falling_icicle_release(struct MainObj*);
 
 #define FI(step, t80, t82) (state_reset(step, 0, 0), so.state = 1, so.ext.main_21.timer_80 = t80, so.ext.main_21.timer_82 = t82)
 #define FIX() (state_extra = (u16)so.ext.main_21.timer_80 | (u32)(u16)so.ext.main_21.timer_82 << 16)
-static void fi_shatter_end(void) { FI(0, 0, 0), so.state = 2, so.animation_step.fields.event = 1, falling_icicle_shatter(&so), state_extra = so.state; }
+static void fi_shatter_end(void)
+{
+    FI(0, 0, 0), so.state = 2, so.animation_step.fields.event = 1, falling_icicle_shatter(&so), state_extra = so.state;
+}
 static void fi_shatter(void) { FI(0, 0, 0), so.state = 2, falling_icicle_shatter(&so), state_extra = so.state; }
 static void fi_wait_first(void) { FI(2, 3, 2), falling_icicle_wait(&so), FIX(); }
 static void fi_wait_second(void) { FI(2, 0, 2), falling_icicle_wait(&so), FIX(); }
@@ -25,13 +28,76 @@ static void (*const falling_icicle_states_cases[])(void) = {
     fi_release_wait,
 };
 static const u32 falling_icicle_states_expected[] = {
-    0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x3u, 0x0u,
-    0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2u, 0x0u,
-    0x2u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x20002u, 0x0u,
-    0x2u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x0u,
-    0x3u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
-    0x4u, 0x0u, 0x0u, 0x0u, 0x0u, 0x500000u, 0x0u, 0x0u, 0x0u, 0x0u,
-    0x3u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x20002u,
+    0x0u,
+    0x2u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10000u,
+    0x0u,
+    0x3u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x500000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x3u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
 };
 static u32 test_falling_icicle_states(u32 row)
 {
@@ -61,7 +127,8 @@ static u32 icicle_main(u32 row)
         state_hit(&so, 1, 0, 3);
     func_80054D8C(&so);
     assert(so.unk5 == 2 && so.ext.main_21.timer_80 == 0x1D);
-    assert(so.state == (row == 0 ? 1 : row == 1 ? 3 : 2));
+    assert(so.state == (row == 0 ? 1 : row == 1 ? 3
+                                                : 2));
     assert(so.unk17 == (row >= 2 ? 4 : 0));
     for (i = 0; i < COUNT(misc_objects); i++)
         debris += misc_objects[i].active == 0x41 && misc_objects[i].id == 3;

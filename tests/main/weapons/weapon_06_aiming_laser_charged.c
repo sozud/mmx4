@@ -626,7 +626,10 @@ static u32 ap_marker_no_shot(void)
     return ap_w.state | (u32)ap_w.ext.weapon_6.lifetime << 8 | (u32)(ap_w.unk50 == NULL) << 16;
 }
 #define AP_FIRE(t) (ap_reset(1, 2), ap_w.unk64 = 3, ap_w.ext.weapon_6.lifetime = 7, ap_w.ext.weapon_6.timer = t, aiming_laser_marker_fire(&ap_w), ap_w.ext.weapon_6.lifetime | (u32)ap_w.ext.weapon_6.timer << 8 | (u32)(u8)ap_w.unk64 << 16 | (u32)ap_w.state << 24)
-static u32 ap_fire_pulse(void) { return AP_FIRE(0); }
+static u32 ap_fire_pulse(void)
+{
+    return AP_FIRE(0);
+}
 static u32 ap_fire_count(void) { return AP_FIRE(3); }
 static u32 ap_reticle_top(void)
 {

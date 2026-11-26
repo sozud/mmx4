@@ -199,14 +199,22 @@ static u32 full(u32 row)
 #define dc state_room.item
 static struct MainObj dc_owner;
 static u32 dc_archive[16], dc_meta[64];
-#define DC(sub, setup)                                                                                         \
-    (state_reset(0, 0, 0), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.stage = 6, engine_obj.substage = 1, \
-        g_Player.unk68 = NULL, memset(main_objects, 0, sizeof(main_objects)), TEST_MENU_FRAMES = (u8*)dc_archive, test_stage_graphics(dc_meta),    \
-        dc_archive[2] = 64, sound_probe_begin(), dc.active = 0x41, dc.id = 0x13, dc.unk2 = sub, dc.state = 1,         \
+#define DC(sub, setup)                                                                                                                          \
+    (state_reset(0, 0, 0), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.stage = 6, engine_obj.substage = 1,                           \
+        g_Player.unk68 = NULL, memset(main_objects, 0, sizeof(main_objects)), TEST_MENU_FRAMES = (u8*)dc_archive, test_stage_graphics(dc_meta), \
+        dc_archive[2] = 64, sound_probe_begin(), dc.active = 0x41, dc.id = 0x13, dc.unk2 = sub, dc.state = 1,                                   \
         dc.x_pos.i.hi = 0x7B0, dc.y_pos.i.hi = 0x80, setup, data_capsule_update(&dc), DCX())
 #define DCX() (state_extra = (u16)dc.unk7C.timer16 | (u32)(u16)dc.unk7C.saved_pos.y << 16 ^ (main_objects[0].active | main_objects[0].id << 8 | (u32)(u16)main_objects[0].y_pos.i.hi << 16), engine_obj.stage = engine_obj.substage = 0)
-static void dc_spawn_on_screen(void) { DC(0, dc.on_screen = 1); SOUND_CHECK(sound_probe_id() == 0xEA); }
-static void dc_spawn_off_screen(void) { DC(0, dc.on_screen = 0); SOUND_CHECK(sound_probe_id() == -1); }
+static void dc_spawn_on_screen(void)
+{
+    DC(0, dc.on_screen = 1);
+    SOUND_CHECK(sound_probe_id() == 0xEA);
+}
+static void dc_spawn_off_screen(void)
+{
+    DC(0, dc.on_screen = 0);
+    SOUND_CHECK(sound_probe_id() == -1);
+}
 static void dc_wait_low(void) { DC(0, dc.y_pos.i.hi = 0x100); }
 static void dc_switch_rearm(void) { DC(1, engine_obj.character_state.fields.active = 1); }
 static void dc_open_done(void) { DC(1, dc.unk7C.saved_pos.y = 1); }
@@ -227,15 +235,96 @@ static void (*const data_capsule_steps_cases[])(void) = {
     dc_attached_end,
 };
 static const u32 data_capsule_steps_expected[] = {
-    0x1u, 0xFF000041u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0xA8295Fu, 0x0u,
-    0x1u, 0xFF000041u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0xA8295Fu, 0x0u,
-    0x1u, 0x41u, 0x7B00000u, 0x1000000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
-    0x1000001u, 0x141u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x1Eu, 0x0u,
-    0x1u, 0xFF000141u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
-    0x1u, 0xFF000241u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
-    0x1u, 0x141u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x10000u, 0x0u,
-    0x1u, 0xFF41u, 0x1000000u, 0x2000000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
-    0x0u, 0x0u, 0x1000000u, 0x2000000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x1u,
+    0xFF000041u,
+    0x7B00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0xA8295Fu,
+    0x0u,
+    0x1u,
+    0xFF000041u,
+    0x7B00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0xA8295Fu,
+    0x0u,
+    0x1u,
+    0x41u,
+    0x7B00000u,
+    0x1000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x1000001u,
+    0x141u,
+    0x7B00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x1Eu,
+    0x0u,
+    0x1u,
+    0xFF000141u,
+    0x7B00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0xFF000241u,
+    0x7B00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x141u,
+    0x7B00000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x40000u,
+    0x10000u,
+    0x0u,
+    0x1u,
+    0xFF41u,
+    0x1000000u,
+    0x2000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x40000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1000000u,
+    0x2000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
 };
 static u32 test_data_capsule_steps(u32 row)
 {

@@ -1,7 +1,6 @@
 #include "common.h"
 #include "saturn/platform.h"
 
-
 #define SHADOW16(offset) (*(u16*)((u8*)saturn_vdp2_shadow + (offset)))
 #define SHADOW32(offset) (*(u32*)((u8*)saturn_vdp2_shadow + (offset)))
 #define TVMD_DISPLAY_ON 0x8000

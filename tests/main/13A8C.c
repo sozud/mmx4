@@ -691,7 +691,6 @@ static u32 test_handoff(u32 row)
 #define PC_CASES 0
 #endif
 
-
 void func_80023AA8(struct MiscObj* arg0);
 static s32 sparkle_frames[4] = { 8, 0, 0, 0 };
 static u32 sparkle_pages[4] = { 0x400, 0x480, 0x500, 0x580 };

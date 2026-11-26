@@ -372,7 +372,7 @@ static u32 rising(s16 x)
 static u32 rf_rising(void)
 {
     u32 seen = rising(100);
-    seen |= QUEUED() << 24 |(u32)obj.animation_step.fields.duration << 28;
+    seen |= QUEUED() << 24 | (u32)obj.animation_step.fields.duration << 28;
     return seen;
 }
 static u32 rf_gone(void) { return rising(0x1000); }

@@ -519,9 +519,11 @@ static u32 head_paths(u32 row)
     if (row <= 7) {
         obj.unk6 = 1;
         obj.timer = row == 5 ? 1 : 5;
-        g_Player.y_pos.i.hi = row == 5 ? 110 : row == 6 ? 90 : 102;
+        g_Player.y_pos.i.hi = row == 5 ? 110 : row == 6 ? 90
+                                                        : 102;
         func_800AB170(&obj);
-        assert(obj.y_pos.i.hi == (row == 5 ? 103 : row == 6 ? 97 : 102));
+        assert(obj.y_pos.i.hi == (row == 5 ? 103 : row == 6 ? 97
+                                                            : 102));
         return 1;
     }
     obj.unk5 = 7;

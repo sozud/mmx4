@@ -877,7 +877,6 @@ static u32 test_tower_damage_timer(u32 row)
     return 1;
 }
 
-
 void frost_shard_init(struct MiscObj*);
 static void tower_at(u32 unk5, u32 event, u32 unk70, u32 lifetime)
 {

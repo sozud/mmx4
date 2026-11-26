@@ -258,12 +258,14 @@ static u32 viewport(u32 row)
     return 1;
 }
 
-
 #include "support/state_cases.h"
 #include "support/shaped_terrain.h"
 #define ss state_room.shot
 #define SHELL(setup) (state_reset(0, 0, 0), shaped_terrain(0x38, SHAPED_OPEN), memset(background_objects, 0, sizeof(background_objects)), ss.active = 0x41, ss.state = 1, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.x_vel.val = -0x28000, ss.y_vel.val = 0x10000, ss.unk2C = 0x2000, ss.unk7 = 1, setup, cannon_shell_fly(&ss), state_extra = ss.unk84.value | (u32)ss.unk70 << 8)
-static void cs_shot_down(void) { SHELL((so.hp = 1, state_hit(&so, 0, 0, 1))); }
+static void cs_shot_down(void)
+{
+    SHELL((so.hp = 1, state_hit(&so, 0, 0, 1)));
+}
 static void cs_flat_flight(void) { SHELL((ss.unk84.value = 1, ss.unk68 = (struct Unk_unk68*)cannon_shell_terrain_box, ss.unk70 = 0xA0)); }
 
 static void (*const cs_cases[])(void) = {
@@ -271,8 +273,26 @@ static void (*const cs_cases[])(void) = {
     cs_flat_flight,
 };
 static const u32 cs_expected[] = {
-    0x1000002u, 0x41u, 0x7D8000u, 0x5F0000u, 0xFFFD8000u, 0xE000u, 0x200000u, 0x48000u, 0u, 0x2100u,
-    0x1u, 0x41u, 0x7D8000u, 0x5F0000u, 0xFFFD8000u, 0xE000u, 0x200000u, 0x40000u, 0x1u, 0u,
+    0x1000002u,
+    0x41u,
+    0x7D8000u,
+    0x5F0000u,
+    0xFFFD8000u,
+    0xE000u,
+    0x200000u,
+    0x48000u,
+    0u,
+    0x2100u,
+    0x1u,
+    0x41u,
+    0x7D8000u,
+    0x5F0000u,
+    0xFFFD8000u,
+    0xE000u,
+    0x200000u,
+    0x40000u,
+    0x1u,
+    0u,
 };
 static u32 test_cs(u32 row)
 {

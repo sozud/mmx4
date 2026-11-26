@@ -151,13 +151,15 @@ static u32 direction(u32 row)
     return 1;
 }
 
-
 #include "support/state_cases.h"
 void wall_crawler_shot_fly(struct ShotObj*);
 static struct Unk_unk68 wc_player_box = { 0, 0, 12, 24 };
 #define ss state_room.shot
 #define WC(arm, setup) (state_reset(0, 0, 0), memset(&g_Player, 0, sizeof(g_Player)), g_Player.x_pos.i.hi = 0x400, ss.active = 0x41, ss.state = 1, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.x_vel.val = 0x20000, ss.unk84.value = arm, ss.unk50.data = wall_crawler_shot_hit_boxes, setup)
-static void wc_arming(void) { WC(5, ss.unk70 = 8), wall_crawler_shot_update(&ss), state_extra = ss.unk70; }
+static void wc_arming(void)
+{
+    WC(5, ss.unk70 = 8), wall_crawler_shot_update(&ss), state_extra = ss.unk70;
+}
 static void wc_destroyed(void) { WC(0, (so.hp = 1, state_hit(&so, 0, 0, 1))), wall_crawler_shot_fly(&ss); }
 static void wc_on_player(void) { WC(0, (g_Player.x_pos.i.hi = 0x82, g_Player.y_pos.i.hi = 0x60, g_Player.unk54 = (const u32*)&wc_player_box)), wall_crawler_shot_fly(&ss); }
 static void wc_on_terrain(void) { WC(0, ss.unk70 = 8), wall_crawler_shot_fly(&ss); }
@@ -171,11 +173,56 @@ static void (*const wc_cases[])(void) = {
     wc_flying,
 };
 static const u32 wc_expected[] = {
-    0x1u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0x8u, 0u,
-    0x2u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x48000u, 0u, 0x2100u,
-    0x2u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0u, 0u,
-    0x2u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0u, 0x2100u,
-    0x1u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x1u,
+    0x41u,
+    0x820000u,
+    0x600000u,
+    0x20000u,
+    0u,
+    0u,
+    0x40000u,
+    0x8u,
+    0u,
+    0x2u,
+    0x41u,
+    0x820000u,
+    0x600000u,
+    0x20000u,
+    0u,
+    0u,
+    0x48000u,
+    0u,
+    0x2100u,
+    0x2u,
+    0x41u,
+    0x820000u,
+    0x600000u,
+    0x20000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0x2u,
+    0x41u,
+    0x820000u,
+    0x600000u,
+    0x20000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0x2100u,
+    0x1u,
+    0x41u,
+    0x820000u,
+    0x600000u,
+    0x20000u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
 };
 static u32 test_wc(u32 row)
 {

@@ -168,12 +168,14 @@ static u32 empty(u32 row)
     return 1;
 }
 
-
 #include "support/state_cases.h"
 #define sm state_room.misc
 static u32 rubble_frames[0x40], rubble_meta[0x40];
 #define RUBBLE(st, stg, kind, setup) (state_reset(0, 0, 0), engine_obj.stage = stg, engine_obj.substage = 0, memset(rubble_frames, 0, sizeof(rubble_frames)), TEST_MENU_FRAMES = (u8*)rubble_frames, test_stage_graphics(rubble_meta), sm.active = 0x41, sm.state = st, sm.unk2 = kind, sm.ext.unk.unk54 = 7, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x60, sm.y_vel.val = 0x10000, sm.unk2C = 0x5000, cur_random = 0x1234, setup, rubble_update(&sm), state_extra = (u16)sm.unk42 | (u32)sm.animation_step.fields.frame_index << 16 | (u32)(u8)sm.on_screen << 24)
-static void rb_start_stage_3(void) { RUBBLE(0, 3, 0, 0); }
+static void rb_start_stage_3(void)
+{
+    RUBBLE(0, 3, 0, 0);
+}
 static void rb_start_thrown(void) { RUBBLE(0, 2, 0, 0); }
 static void rb_start_dropped(void) { RUBBLE(0, 2, 1, 0); }
 static void rb_fall_shown(void) { RUBBLE(1, 2, 0, sm.on_screen = 0); }
@@ -189,12 +191,66 @@ static void (*const rb_cases[])(void) = {
     rb_fall_gone,
 };
 static const u32 rb_expected[] = {
-    0x1u, 0x41u, 0x800000u, 0x600000u, 0x18000u, 0x50000u, 0x500000u, 0x50000u | OBJECT_CLUT(0x7987), 0x1070000u | OBJECT_CLUT(0x7987), 0u,
-    0x1u, 0x41u, 0x800000u, 0x600000u, 0x18000u, 0x50000u, 0x500000u, 0x50000u | OBJECT_CLUT(0x7983), 0x1070000u | OBJECT_CLUT(0x7983), 0u,
-    0x1u, 0x141u, 0x800000u, 0x600000u, 0x18000u, 0x50000u, 0x500000u, 0x50000u | VISUAL_STAGE_PALETTE(8), 0x1070000u | VISUAL_STAGE_PALETTE(8), 0u,
-    0x1u, 0x41u, 0x800000u, 0x5F0000u, 0u, 0xB000u, 0x500000u, 0x50000u, 0x1000000u, 0u,
-    0x1u, 0x41u, 0x800000u, 0x5F0000u, 0u, 0xB000u, 0x500000u, 0x50000u, 0u, 0u,
-    0u, 0u, 0x10000000u, 0x600000u, 0u, 0x10000u, 0x500000u, 0x50000u, 0u, 0u,
+    0x1u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0x18000u,
+    0x50000u,
+    0x500000u,
+    0x50000u | OBJECT_CLUT(0x7987),
+    0x1070000u | OBJECT_CLUT(0x7987),
+    0u,
+    0x1u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0x18000u,
+    0x50000u,
+    0x500000u,
+    0x50000u | OBJECT_CLUT(0x7983),
+    0x1070000u | OBJECT_CLUT(0x7983),
+    0u,
+    0x1u,
+    0x141u,
+    0x800000u,
+    0x600000u,
+    0x18000u,
+    0x50000u,
+    0x500000u,
+    0x50000u | VISUAL_STAGE_PALETTE(8),
+    0x1070000u | VISUAL_STAGE_PALETTE(8),
+    0u,
+    0x1u,
+    0x41u,
+    0x800000u,
+    0x5F0000u,
+    0u,
+    0xB000u,
+    0x500000u,
+    0x50000u,
+    0x1000000u,
+    0u,
+    0x1u,
+    0x41u,
+    0x800000u,
+    0x5F0000u,
+    0u,
+    0xB000u,
+    0x500000u,
+    0x50000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x10000000u,
+    0x600000u,
+    0u,
+    0x10000u,
+    0x500000u,
+    0x50000u,
+    0u,
+    0u,
 };
 static u32 test_rb(u32 row)
 {

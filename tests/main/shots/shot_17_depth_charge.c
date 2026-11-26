@@ -109,7 +109,8 @@ static u32 charge_paths(u32 row)
     }
     if (row <= 4) {
         obj.unk2 = row != 4;
-        obj.x_pos.i.hi = row == 2 ? 0x1700 : row == 3 ? 0x1780 : 0x1830;
+        obj.x_pos.i.hi = row == 2 ? 0x1700 : row == 3 ? 0x1780
+                                                      : 0x1830;
         obj.y_pos.i.hi = row == 2 ? 0x100 : 0x80 + 0xAC;
         obj.x_vel.val = 0x10000;
         obj.y_vel.val = -0x8000;
@@ -137,7 +138,8 @@ static u32 charge_paths(u32 row)
     if (row == 9)
         obj.x_pos.i.hi = 0x400;
     depth_charge_main(&obj);
-    assert(obj.active == (row == 9 ? 0 : 0x41) && obj.state == (row == 7 ? 2 : row == 9 ? 0 : 1));
+    assert(obj.active == (row == 9 ? 0 : 0x41) && obj.state == (row == 7 ? 2 : row == 9 ? 0
+                                                                                        : 1));
     assert(row != 8 || obj.on_screen == 1);
     return 1;
 }

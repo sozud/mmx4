@@ -652,7 +652,16 @@ static void (*const flyby_main_cases[])(void) = {
     fb_main_killed,
 };
 static const u32 flyby_main_expected[] = {
-    0x107u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x0u, 0x0u, 0x41002100u,
+    0x107u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000000u,
+    0x0u,
+    0x0u,
+    0x41002100u,
 };
 static u32 test_flyby_main(u32 row)
 {

@@ -33,12 +33,24 @@ static u32 test_anchored_mine_main(u32 row)
 }
 
 #include "support/state_cases.h"
-static void am_idle_on_screen(void) { state_reset(2, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), state_terrain(0), g_Player.unk68 = NULL, so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, anchored_mine_main(&so), state_extra = so.ext.main_44.saved_unk5; }
+static void am_idle_on_screen(void)
+{
+    state_reset(2, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), state_terrain(0), g_Player.unk68 = NULL, so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, anchored_mine_main(&so), state_extra = so.ext.main_44.saved_unk5;
+}
 static void (*const anchored_mine_states_cases[])(void) = {
     am_idle_on_screen,
 };
 static const u32 anchored_mine_states_expected[] = {
-    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2u, 0x41000000u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x2u,
+    0x41000000u,
 };
 static u32 test_anchored_mine_states(u32 row)
 {

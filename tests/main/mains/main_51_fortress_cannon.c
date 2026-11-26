@@ -346,16 +346,25 @@ void fortress_cannon_volley_wait(struct MainObj*);
 void fortress_cannon_lower_end(struct MainObj*);
 #define FCS(step, sub) (FCN(step, sub), memset(weapon_objects, 0, sizeof(weapon_objects)), memset(&engine_obj, 0, sizeof(engine_obj)), state_terrain(0), g_Player.unk68 = NULL, g_Player.x_pos.i.hi = 0x100, so.active = 0x41, so.id = 0x33, so.state = 1, so.collision_flags = 8)
 #define FCSX() (state_extra = so.ext.main_51.unk84 | (u32)so.ext.main_51.saved_unk5 << 8 | (u32)shot_objects[1].active << 16)
-static void fcs_init_player_right(void) { FCS(0, 0), so.state = 0, func_80069AD0(&so), FCSX(); }
+static void fcs_init_player_right(void)
+{
+    FCS(0, 0), so.state = 0, func_80069AD0(&so), FCSX();
+}
 static void fcs_main_killed(void) { FCS(2, 0), so.unk7C = 5, so.hp = 1, state_hit(&so, 0, 0, 1), func_80069BE4(&so), FCSX(); }
 static void fcs_main_off_screen(void) { FCS(2, 0), so.unk7C = 5, so.x_pos.i.hi = 0x300, func_80069BE4(&so), FCSX(); }
 #define BLAST(a, b) (FCS(0, 0), so.state = 2, so.unk7C = a, so.unk7E = b, fortress_cannon_explode(&so), FCSX())
-static void fcs_explode_end(void) { BLAST(1, 3); }
+static void fcs_explode_end(void)
+{
+    BLAST(1, 3);
+}
 static void fcs_explode_sparks(void) { BLAST(3, 1); }
 static void fcs_explode(void) { BLAST(3, 3); }
 static void fcs_last_shot(void) { FCS(3, 1), so.unk7C = 1, so.ext.main_51.unk84 = 2, func_80069F28(&so), FCSX(); }
 #define TWICE(step, sub, run) (FCS(step, sub), so.unk7C = 2, run(&so), assert(so.unk7C == 1), run(&so), FCSX())
-static void fcs_volley_raise(void) { TWICE(4, 0, fortress_cannon_volley_raise); }
+static void fcs_volley_raise(void)
+{
+    TWICE(4, 0, fortress_cannon_volley_raise);
+}
 static void fcs_volley_fire(void) { TWICE(4, 1, fortress_cannon_volley_fire); }
 static void fcs_volley_wait(void) { TWICE(4, 2, fortress_cannon_volley_wait); }
 static void fcs_lower_end(void) { TWICE(5, 1, fortress_cannon_lower_end); }
@@ -373,17 +382,116 @@ static void (*const fortress_cannon_steps_cases[])(void) = {
     fcs_lower_end,
 };
 static const u32 fortress_cannon_steps_expected[] = {
-    0x2u, 0x28u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x1E0003u, 0x0u, 0x41000000u,
-    0x1000006u, 0x5001Eu, 0x800000u, 0x0u, 0x0u, 0x420000u, 0x80000000u, 0x1u, 0x600u, 0x41002100u,
-    0x1000006u, 0x4u, 0x3000000u, 0x0u, 0x0u, 0x420000u, 0x0u, 0x0u, 0x600u, 0x41000000u,
-    0x0u, 0x30000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
-    0x0u, 0x50002u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41002100u,
-    0x0u, 0x20002u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
-    0x4u, 0x14u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
-    0x104u, 0x29u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x5u, 0x0u, 0x0u, 0x41000000u,
-    0x204u, 0x3Cu, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x410000u, 0x41410000u,
-    0x5u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
-    0x2u, 0x28u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x2u,
+    0x28u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x1E0003u,
+    0x0u,
+    0x41000000u,
+    0x1000006u,
+    0x5001Eu,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x420000u,
+    0x80000000u,
+    0x1u,
+    0x600u,
+    0x41002100u,
+    0x1000006u,
+    0x4u,
+    0x3000000u,
+    0x0u,
+    0x0u,
+    0x420000u,
+    0x0u,
+    0x0u,
+    0x600u,
+    0x41000000u,
+    0x0u,
+    0x30000u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x0u,
+    0x50002u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41002100u,
+    0x0u,
+    0x20002u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x4u,
+    0x14u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x104u,
+    0x29u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x5u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x204u,
+    0x3Cu,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x410000u,
+    0x41410000u,
+    0x5u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
+    0x2u,
+    0x28u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x41000000u,
 };
 static u32 test_fortress_cannon_steps(u32 row)
 {

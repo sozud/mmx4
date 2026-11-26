@@ -71,7 +71,6 @@ static u32 rock_case(u32 mode)
 }
 static const u32 rock_sequence_real_pool_cases_expected[] = { 0x1010001u, 0x1010001u, 0x1020001u, 0x1010002u, 0x1010002u, 0x2090000u };
 
-
 void rock_drop_sequence_wait_player(struct EffectObj*);
 void func_800BD080(struct EffectObj*);
 static u32 rds_wait(u8 checkpoint, s16 player_x)

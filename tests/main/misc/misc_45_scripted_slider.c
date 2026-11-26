@@ -176,7 +176,8 @@ static u32 slider_paths(u32 row)
     obj.x_vel.val = obj.ext.misc_45.direction ? -0x10000 : 0x10000;
     if (row <= 3) {
         scripted_slider_slide(&obj);
-        assert(obj.unk5 == (row == 1 || row == 2) && obj.unk28 == (row == 1 ? 0x10000 : row == 2 ? -0x10000 : 0));
+        assert(obj.unk5 == (row == 1 || row == 2) && obj.unk28 == (row == 1 ? 0x10000 : row == 2 ? -0x10000
+                                                                                                 : 0));
     } else {
         obj.x_vel.val = -obj.x_vel.val;
         scripted_slider_brake(&obj);

@@ -249,7 +249,9 @@ static u32 missile_paths(u32 index)
         obj.unk84.value = (angle - home_offsets[row]) & 0x1F;
         func_800A6510(&obj);
         assert(obj.timer == (row == 0 ? 4 : 0));
-        assert(obj.unk84.value == ((angle - home_offsets[row] + (row == 3 ? 1 : row == 4 ? -1 : 0)) & 0x1F));
+        assert(obj.unk84.value == ((angle - home_offsets[row] + (row == 3 ? 1 : row == 4 ? -1
+                                                                                         : 0))
+                   & 0x1F));
         assert(row <= 2 ? obj.x_vel.val == 0x10000 && obj.unk17 == 0xD : obj.unk17 == (obj.unk84.value >> 1) + 0xD);
         return 1;
     }
@@ -300,7 +302,8 @@ static u32 missile_paths(u32 index)
         target.y_pos = obj.y_pos;
     }
     peacock_missile_main(&obj);
-    assert(obj.unk5 == (row >= 10 && row <= 13 ? 1 : 0) && obj.unk90.val == (row == 13 ? 0 : row == 14 ? 4 : 5));
+    assert(obj.unk5 == (row >= 10 && row <= 13 ? 1 : 0) && obj.unk90.val == (row == 13 ? 0 : row == 14 ? 4
+                                                                                                       : 5));
     assert(visual_objects[1].active == (row == 10 ? 0x21 : 0));
     return 1;
 }

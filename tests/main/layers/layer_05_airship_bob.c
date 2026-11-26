@@ -87,11 +87,17 @@ static u32 bob_paths(u32 row)
     obj.active = 1;
     obj.state = 1;
     g_Player.x_pos.i.hi = row <= 6 ? player_x[row] : 0x100;
-    obj.unk24 = row == 1 ? 3 : row <= 2 ? 0 : row <= 4 ? 1 : row <= 6 ? 2 : 0;
+    obj.unk24 = row == 1 ? 3 : row <= 2 ? 0
+        : row <= 4                      ? 1
+        : row <= 6                      ? 2
+                                        : 0;
     obj.unk5 = obj.unk24 == 3 ? 3 : obj.unk24;
     obj.unk6 = row == 2 || row == 4 || row == 6;
     obj.unk7 = row == 9 || row == 10 || row == 12;
-    obj.unk18.val = row <= 6 ? -0x5800 : row <= 8 ? 0x100 : row <= 10 ? -0x100 : row == 11 ? 0x5C00 : -0x5C00;
+    obj.unk18.val = row <= 6 ? -0x5800 : row <= 8 ? 0x100
+        : row <= 10                               ? -0x100
+        : row == 11                               ? 0x5C00
+                                                  : -0x5C00;
     obj.private_state.value.val = row == 7 || row == 9 ? 3 : 0;
     func_800DA358(&obj);
     if (row == 0) {
@@ -99,8 +105,10 @@ static u32 bob_paths(u32 row)
         return 1;
     }
     if (row <= 6) {
-        assert(obj.unk24 == (row <= 2 ? 0 : row <= 4 ? 1 : 2));
-        assert(obj.unk5 == (obj.unk6 == 0 ? 3 : (row <= 2 ? 0 : row <= 4 ? 1 : 2)));
+        assert(obj.unk24 == (row <= 2 ? 0 : row <= 4 ? 1
+                                                     : 2));
+        assert(obj.unk5 == (obj.unk6 == 0 ? 3 : (row <= 2 ? 0 : row <= 4 ? 1
+                                                                         : 2)));
         assert(obj.unk6 == (row == 1 || row == 3 || row == 5));
         assert(obj.unk18.val == -0x5400 && background_objects[2].y_pos.val == 0x5400);
         return 1;
@@ -111,6 +119,8 @@ static u32 bob_paths(u32 row)
         return 1;
     }
     assert(obj.private_state.value.val == (row == 7 || row == 9 ? 2 : 0));
-    assert(obj.unk18.val == (row == 7 ? 0x100 : row == 8 ? 0x500 : row == 9 ? -0x100 : -0x500));
+    assert(obj.unk18.val == (row == 7 ? 0x100 : row == 8 ? 0x500
+                   : row == 9                            ? -0x100
+                                                         : -0x500));
     return 1;
 }

@@ -17,11 +17,11 @@ static u32 guarded_tiles[0x802];
 static u8 selected_tiles[0x800];
 
 #ifdef MMX4_SATURN
-#define FLOOR_TILE(before, attr) (((before) & 0xFFFFFFu) | TILE_ATTR_VALUE(attr))
+#define FLOOR_TILE(before, attr) (((before)&0xFFFFFFu) | TILE_ATTR_VALUE(attr))
 #define FLOOR_ATTR(word) ((word) >> 24)
 #else
 #define FLOOR_TILE(before, attr) (((before) & ~0xFFu) | (attr))
-#define FLOOR_ATTR(word) ((word) & 0xFF)
+#define FLOOR_ATTR(word) ((word)&0xFF)
 #endif
 
 static u32 floor_case(s8 stage, s32 attribute, u8 empty)
@@ -453,13 +453,13 @@ static u32 walrus_pages[8];
         walrus_engine = engine_obj;                                                                                                            \
         engine_obj.stage = stage_id;                                                                                                           \
         engine_obj.checkpoint = 1;                                                                                                             \
-        test_stage_graphics(walrus_pages);                                                                                                             \
+        test_stage_graphics(walrus_pages);                                                                                                     \
         TEST_MENU_FRAMES = (u8*)walrus_pages;                                                                                                  \
         body;                                                                                                                                  \
         state_extra = engine_obj.unk25 | (engine_obj.boss_ptr == &so) << 8 | (u8)engine_obj.unkF << 16 | (u32)(u8)engine_obj.checkpoint << 24; \
         so.unk42 = 0;                                                                                                                          \
         engine_obj = walrus_engine;                                                                                                            \
-        test_stage_graphics(pages);                                                                                                                    \
+        test_stage_graphics(pages);                                                                                                            \
         TEST_MENU_FRAMES = frames;                                                                                                             \
     } while (0)
 static void fw_blizzard_start(void)

@@ -240,7 +240,10 @@ static u32 test_walrus_ice_states(u32 row)
 
 #define ss state_room.shot
 #define LOB(attr) (state_reset(0, 0, 0), state_terrain(attr), ss.active = 1, ss.state = 5, ss.x_pos.i.hi = 0x40, ss.y_pos.i.hi = 0x40, ss.y_vel.val = -0x40000, ss.unk68 = &state_hit_box, walrus_ice_lob_fall(&ss), state_extra = ss.unk70)
-static void wi_lob_drop_land(void) { LOB(0x38); }
+static void wi_lob_drop_land(void)
+{
+    LOB(0x38);
+}
 
 static void (*const walrus_ice_lob_cases[])(void) = {
     wi_lob_drop_land,
@@ -294,7 +297,8 @@ static u32 form(u32 row)
     set_animation(&obj, animation);
     obj.animation_cursor = (u32*)&commands[frame];
     obj.animation_step = commands[frame];
-    assert(obj.animation_step.packed == C_TEST_STEP(terminal ? 0x2C000002 : type == 2 ? 0x33010002 : 0x2F010002));
+    assert(obj.animation_step.packed == C_TEST_STEP(terminal ? 0x2C000002 : type == 2 ? 0x33010002
+                                                                                      : 0x2F010002));
     expected = obj;
     expected.x_pos = owner.x_pos;
     expected.y_pos = owner.y_pos;
@@ -549,11 +553,15 @@ static u32 ice_paths(u32 row)
         obj.state = 5;
         obj.unk6 = 1;
         obj.unk68 = &walrus_ice_shard_terrain_box;
-        obj.x_vel.val = row == 23 ? -0x40000 : row == 24 ? 0x40000 : 0;
+        obj.x_vel.val = row == 23 ? -0x40000 : row == 24 ? 0x40000
+                                                         : 0;
         obj.y_vel.val = row >= 25 ? -0x40000 : 0;
-        obj.x_pos.i.hi = row == 23 ? 0x96 : row == 24 ? 0xA6 : 0xA0;
+        obj.x_pos.i.hi = row == 23 ? 0x96 : row == 24 ? 0xA6
+                                                      : 0xA0;
         obj.y_pos.i.hi = 0x76;
-        shaped_terrain(0x38, row == 23 ? SHAPED_COLUMNS_BELOW(9) : row == 24 ? SHAPED_COLUMNS_FROM(11) : row == 25 ? SHAPED_ROWS_FROM(8) : SHAPED_OPEN);
+        shaped_terrain(0x38, row == 23 ? SHAPED_COLUMNS_BELOW(9) : row == 24 ? SHAPED_COLUMNS_FROM(11)
+                : row == 25                                                  ? SHAPED_ROWS_FROM(8)
+                                                                             : SHAPED_OPEN);
         set_animation(&obj, 0x20);
         walrus_ice_shard_fly(&obj);
         if (row == 26) {
@@ -562,7 +570,8 @@ static u32 ice_paths(u32 row)
             break;
         }
         assert(obj.unk6 == 2 && obj.timer == 0x100 && obj.unk17 == (row == 25 ? 0x21 : 0x22));
-        assert(obj.unk70 & (row == 23 ? 2 : row == 24 ? 1 : 8));
+        assert(obj.unk70 & (row == 23 ? 2 : row == 24 ? 1
+                                                      : 8));
         assert(obj.unk15 == (row == 24 ? PLAYER_FACING_RIGHT : 0));
         SOUND_CHECK(sound_probe_id() == 0x9A);
         break;

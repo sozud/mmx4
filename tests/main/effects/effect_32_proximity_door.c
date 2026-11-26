@@ -41,13 +41,15 @@ static u32 door_case(u32 mode)
 }
 static const u32 proximity_door_real_scripts_cases_expected[] = { 0x20001u, 0x20001u, 0x110601u, 0x1106FFu, 0x208FFu, 0x110601u, 0x1106FFu };
 
-
 #include "support/state_cases.h"
 #include "support/tile_fixture.h"
 #define ae state_room.effect
 #define AX32 ae.ext.effect_32
 #define DOOR(mv, tm, setup) (state_reset(0, 0, 0), tile_fixture_begin(), memset(&g_Player, 0, sizeof(g_Player)), g_Player.x_pos.i.hi = mv ? 0x80 : 0x400, ae.active = 1, ae.state = 1, ae.x_pos.i.hi = 0x80, ae.y_pos.i.hi = 0x60, AX32.unk15 = mv, AX32.palette_source.bytes = tile_anim_trigger_scripts[0], AX32.palette.fields.timer = tm, AX32.palette.fields.step = mv, setup, proximity_door_update(&ae), state_extra = (u8)AX32.palette.fields.timer | (u32)AX32.palette.fields.id << 8 | (u32)(u8)AX32.palette.fields.step << 16 | (u32)(AX32.palette_source.bytes - tile_anim_trigger_scripts[0]) << 24, state_room.shot.x_vel.val = tile_fixture_end())
-static void door_idle(void) { DOOR(0, 0, 0); }
+static void door_idle(void)
+{
+    DOOR(0, 0, 0);
+}
 static void door_idle_far(void) { DOOR(0, 0, ae.x_pos.i.hi = 0x1000); }
 static void door_waiting(void) { DOOR(1, 3, 0); }
 static void door_next_frame(void) { DOOR(1, 1, 0); }
@@ -59,10 +61,46 @@ static void (*const door_cases[])(void) = {
     door_next_frame,
 };
 static const u32 door_expected[] = {
-    0x1u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
-    0u, 0u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
-    0x1u, 0x10001u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x10002u, 0u,
-    0x1u, 0x10001u, 0x800000u, 0x600000u, 0x3510000u | TILE_FIXTURE_WRITES(7, 1), 0u, 0u, 0x50000u, 0x4010102u, 0u,
+    0x1u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x10000000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x1u,
+    0x10001u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x10002u,
+    0u,
+    0x1u,
+    0x10001u,
+    0x800000u,
+    0x600000u,
+    0x3510000u | TILE_FIXTURE_WRITES(7, 1),
+    0u,
+    0u,
+    0x50000u,
+    0x4010102u,
+    0u,
 };
 static u32 test_door(u32 row)
 {

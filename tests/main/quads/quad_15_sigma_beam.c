@@ -90,7 +90,6 @@ static u32 fade(u32 row)
     return 1;
 }
 
-
 #include "weapon_resources.h"
 void sigma_beam_sweep(struct QuadObj*);
 static struct QuadObj sb;

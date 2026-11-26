@@ -572,7 +572,7 @@ static u32 test_split_mushroom_states(u32 row)
 
 #define MAIN(setup)                                                                                                                                       \
     do {                                                                                                                                                  \
-        u8 immune = SPIKE_IMMUNE(g_Player), delay = g_Player.update_delay_request;                                                                         \
+        u8 immune = SPIKE_IMMUNE(g_Player), delay = g_Player.update_delay_request;                                                                        \
         SPLIT(2, 1);                                                                                                                                      \
         mushroom_partner.animation_table = so.animation_table;                                                                                            \
         so.unk7C = 5;                                                                                                                                     \
@@ -586,7 +586,7 @@ static u32 test_split_mushroom_states(u32 row)
         func_800788E4(&so);                                                                                                                               \
         state_extra = so.ext.main_61.flash_timer | so.ext.main_61.hit_lock << 8 | so.ext.main_61.stunned << 16 | (u32)so.ext.main_61.merge << 24;         \
         state_extra ^= so.ext.main_61.speed_level << 4 | (u32)mushroom_partner.unk5 << 12 | (u32)so.on_screen << 20 | (u32)mushroom_partner.active << 28; \
-        SPIKE_IMMUNE_SET(g_Player, immune);                                                                                                                   \
+        SPIKE_IMMUNE_SET(g_Player, immune);                                                                                                               \
         g_Player.update_delay_request = delay;                                                                                                            \
     } while (0)
 static void smm_idle(void)
@@ -1543,7 +1543,16 @@ static void (*const split_mushroom_combo_cases[])(void) = {
     smb_combo_player_right,
 };
 static const u32 split_mushroom_combo_expected[] = {
-    0x205u, 0x14u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x0u, 0x0u,
+    0x205u,
+    0x14u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x4000u,
+    0x0u,
+    0x0u,
+    0x0u,
 };
 static u32 test_split_mushroom_combo(u32 row)
 {

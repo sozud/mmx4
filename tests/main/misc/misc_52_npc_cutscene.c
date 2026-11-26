@@ -257,9 +257,12 @@ static u32 npc_paths(u32 row)
     obj.active = 0x41;
     obj.id = 0x34;
     if (row <= 4) {
-        obj.unk2 = row == 0 || row == 4 ? 0 : row == 3 ? 2 : 1;
-        engine_obj.substage = row == 0 ? 0 : row == 4 ? 2 : 1;
-        engine_obj.character_state.bytes[8] = row == 2 ? 1 : row == 1 ? 0 : 5;
+        obj.unk2 = row == 0 || row == 4 ? 0 : row == 3 ? 2
+                                                       : 1;
+        engine_obj.substage = row == 0 ? 0 : row == 4 ? 2
+                                                      : 1;
+        engine_obj.character_state.bytes[8] = row == 2 ? 1 : row == 1 ? 0
+                                                                      : 5;
         engine_obj.character_state.bytes[9] = 5;
         if (row == 4)
             for (i = 0; i < COUNT(misc_objects); i++)
@@ -270,9 +273,11 @@ static u32 npc_paths(u32 row)
             return 1;
         }
         assert(obj.state == 1 && obj.unk17 == (row == 3 ? 1 : 0) && obj.ext.misc_52.unk56 == 7);
-        assert(engine_obj.character_state.bytes[8] == (row == 0 ? 0 : row == 1 ? 1 : 5));
+        assert(engine_obj.character_state.bytes[8] == (row == 0 ? 0 : row == 1 ? 1
+                                                                               : 5));
         assert(engine_obj.character_state.bytes[9] == (row == 0 ? 0 : 5));
-        assert(obj.x_pos.i.hi == (row == 1 ? 0x2A0 : row == 3 ? 0 : 0x9A0));
+        assert(obj.x_pos.i.hi == (row == 1 ? 0x2A0 : row == 3 ? 0
+                                                              : 0x9A0));
         assert(g_Player.script_action == (row == 1 ? 20 : 0) && obj.ext.misc_52.timer == (row == 1 ? 30 : 0));
         if (row <= 1) {
             assert(misc_objects[0].active == 0x41 && misc_objects[0].id == 0x34 && misc_objects[0].unk2 == 2);

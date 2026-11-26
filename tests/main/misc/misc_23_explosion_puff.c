@@ -88,7 +88,6 @@ static u32 test_explosion_puff_animate(u32 row)
 }
 #undef main_bss_state
 
-
 static u32 ep_step = C_TEST_STEP(5);
 static u32 puff(u8 state, u8 rel, u8 size, u8 parity)
 {

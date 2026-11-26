@@ -857,11 +857,19 @@ static u32 test_mission_palette_grey(u32 row)
 {
     u32 i, j, seen[8];
     static const u32 expected[8] = {
-        0x5294294Au, 0x7C1F03E0u, 0x7C1F03E0u, 0x7C1F03E0u, 0x5294294Au, 0x7C1F03E0u, 0x7C1F03E0u, 0x5294294Au,
+        0x5294294Au,
+        0x7C1F03E0u,
+        0x7C1F03E0u,
+        0x7C1F03E0u,
+        0x5294294Au,
+        0x7C1F03E0u,
+        0x7C1F03E0u,
+        0x5294294Au,
     };
     for (i = 0; i < 8; i++)
         for (j = 0; j < 16; j++)
-            grey_palettes[i][j] = j == 0 ? 0x03E0 : j == 1 ? 0x7C1F : 0x0123;
+            grey_palettes[i][j] = j == 0 ? 0x03E0 : j == 1 ? 0x7C1F
+                                                           : 0x0123;
     TEST_PALETTE = (u8*)grey_palettes;
     engine_obj.palette_flags = 0x13;
     func_8002E5E0();

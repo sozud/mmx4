@@ -178,7 +178,6 @@ static u32 test_title_logo_trail_fade(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 1);
 }
 
-
 #include "support/state_cases.h"
 #define sm state_room.misc
 #ifdef MMX4_SATURN
@@ -198,7 +197,10 @@ static u32 test_title_logo_trail_fade(u32 row)
 static u16 title_palette[0x200];
 static s32 title_source[48], title_target[48];
 #define TITLE(st, kind, setup) (state_reset(0, 0, 0), memset(title_palette, 0, sizeof(title_palette)), TEST_PALETTE = (u8*)title_palette, TEST_ARC_30 = (u8*)title_source, need_palette_load = 0, sm.active = 1, sm.state = st, sm.unk2 = kind, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x48, setup, TitleLogoUpdate(&sm), state_extra = sm.ext.title_logo.palette_shift_speed | (u32)sm.ext.title_logo.palette_shift_value << 8 | (sm.ext.title_logo.palette1 == NULL ? 0xFFu : (u32)(u8)(sm.ext.title_logo.palette1 - title_source)) << 16 | (u32)need_palette_load << 24)
-static void tl_init_fade(void) { TITLE(0, 0x20, 0); }
+static void tl_init_fade(void)
+{
+    TITLE(0, 0x20, 0);
+}
 static void tl_init_sparkle(void) { TITLE(0, 0x21, 0); }
 static void tl_fade_ready(void)
 {
@@ -213,7 +215,10 @@ static void tl_fade_ready(void)
 }
 static void tl_fade_wait(void) { TITLE(5, 0, sm.animation_step.fields.relative_step = 1); }
 #define FADE_STEP(speed, value) (sm.ext.title_logo.palette_shift_speed = speed, sm.ext.title_logo.palette_shift_value = value, sm.ext.title_logo.palette1 = title_source, sm.ext.title_logo.palette2 = title_target)
-static void tl_fade_hold(void) { TITLE(6, 0, FADE_STEP(3, 5)); }
+static void tl_fade_hold(void)
+{
+    TITLE(6, 0, FADE_STEP(3, 5));
+}
 static void tl_fade_copy(void)
 {
     u32 i;
@@ -225,7 +230,11 @@ static void tl_fade_copy(void)
     for (i = 0; i < COUNT(title_target); i++)
         assert(title_target[i] == (i < (u32)(sm.ext.title_logo.palette1 - title_source) ? 0x11110000 + i : 0));
 }
-static void tl_fade_done(void) { TITLE(6, 0, FADE_STEP(1, 1)); state_extra ^= (u32)sm.id << 24; }
+static void tl_fade_done(void)
+{
+    TITLE(6, 0, FADE_STEP(1, 1));
+    state_extra ^= (u32)sm.id << 24;
+}
 static void tl_sparkle(void) { TITLE(7, 0, sm.animation_step.fields.relative_step = 1); }
 static void tl_sparkle_end(void) { TITLE(7, 0, 0); }
 static void (*const tl_cases[])(void) = {
@@ -240,15 +249,96 @@ static void (*const tl_cases[])(void) = {
     tl_sparkle_end,
 };
 static const u32 tl_expected[] = {
-    0x5u, 0xFF002001u, TITLE_FADE_X << 16, 0x480000u, 0u, 0u, 0u, 0x20000u | TITLE_PALETTE, 0xFF0000u, 0u,
-    0x7u, 0xFF002101u, TITLE_SPARKLE_X << 16, 0x480000u, 0u, 0u, 0u, 0x10000u | TITLE_PALETTE, 0xFF0000u, 0u,
-    0x6u, 0x1u, 0x800000u, 0x480000u, 0u, 0u, 0u, 0x40000u, 0xF02u, 0u,
-    0x5u, 0x1u, 0x800000u, 0x480000u, 0u, 0u, 0u, 0x40000u, 0xFF0000u, 0u,
-    0x6u, 0x1u, 0x800000u, 0x480000u, 0u, 0u, 0u, 0x50000u, 0x502u, 0u,
-    0x6u, 0x1u, 0x800000u, 0x480000u, 0u, 0u, 0u, 0x50000u, 0x1000402u | TITLE_PALETTE_WORDS << 16, 0u,
-    0u, 0x1u, 0x800000u, 0x480000u, 0u, 0u, 0u, 0x50000u, 0x13000002u, 0u,
-    0x7u, 0x1u, 0x800000u, 0x480000u, 0u, 0u, 0u, 0x40000u, 0xFF0000u, 0u,
-    0u, 0u, 0x800000u, 0x480000u, 0u, 0u, 0u, 0x40000u, 0xFF0000u, 0u,
+    0x5u,
+    0xFF002001u,
+    TITLE_FADE_X << 16,
+    0x480000u,
+    0u,
+    0u,
+    0u,
+    0x20000u | TITLE_PALETTE,
+    0xFF0000u,
+    0u,
+    0x7u,
+    0xFF002101u,
+    TITLE_SPARKLE_X << 16,
+    0x480000u,
+    0u,
+    0u,
+    0u,
+    0x10000u | TITLE_PALETTE,
+    0xFF0000u,
+    0u,
+    0x6u,
+    0x1u,
+    0x800000u,
+    0x480000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0xF02u,
+    0u,
+    0x5u,
+    0x1u,
+    0x800000u,
+    0x480000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0xFF0000u,
+    0u,
+    0x6u,
+    0x1u,
+    0x800000u,
+    0x480000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x502u,
+    0u,
+    0x6u,
+    0x1u,
+    0x800000u,
+    0x480000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x1000402u | TITLE_PALETTE_WORDS << 16,
+    0u,
+    0u,
+    0x1u,
+    0x800000u,
+    0x480000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x13000002u,
+    0u,
+    0x7u,
+    0x1u,
+    0x800000u,
+    0x480000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0xFF0000u,
+    0u,
+    0u,
+    0u,
+    0x800000u,
+    0x480000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0xFF0000u,
+    0u,
 };
 static u32 test_tl(u32 row)
 {

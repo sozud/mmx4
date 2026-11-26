@@ -13,14 +13,17 @@ static u32 zone_rows(u32 row)
     obj.active = 1;
     obj.id = 10;
     obj.state = row != 0;
-    obj.ext.unk_effect.unk14 = row == 0 ? 0x55 : row == 2 ? 1 : 0;
+    obj.ext.unk_effect.unk14 = row == 0 ? 0x55 : row == 2 ? 1
+                                                          : 0;
     engine_obj.substage = row == 3;
     g_Player.x_pos.i.hi = row == 3 ? 0x300 : 0x100;
     g_Player.y_pos.i.hi = row == 3 ? 0x300 : 0x100;
     func_800B7EE8(&obj);
     assert(obj.state == 1);
-    assert(obj.ext.unk_effect.unk14 == (row == 0 ? 0 : row == 3 ? 6 : 1));
-    SOUND_CHECK(sound_probe_id() == (row == 1 ? 0 : row == 3 ? 1 : -1));
+    assert(obj.ext.unk_effect.unk14 == (row == 0 ? 0 : row == 3 ? 6
+                                                                : 1));
+    SOUND_CHECK(sound_probe_id() == (row == 1 ? 0 : row == 3 ? 1
+                                                             : -1));
     return 1;
 }
 

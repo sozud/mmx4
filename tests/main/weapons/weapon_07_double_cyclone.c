@@ -191,10 +191,13 @@ static u32 cyclone_paths(u32 index)
     case 13:
         obj.ext.weapon_7.timer = row == 10 ? 0 : 5;
         obj.unk98 = row == 11;
-        obj.ext.weapon_7.unk90 = row == 12 ? 1 : row == 13 ? 2 : 0;
+        obj.ext.weapon_7.unk90 = row == 12 ? 1 : row == 13 ? 2
+                                                           : 0;
         obj.x_vel.val = -0x26000;
         double_cyclone_fly(&obj);
-        assert(obj.unk5 == (row == 10 ? 3 : row == 11 ? 2 : 1) && obj.unk98 == 0);
+        assert(obj.unk5 == (row == 10 ? 3 : row == 11 ? 2
+                                                      : 1)
+            && obj.unk98 == 0);
         assert(obj.unk50 == (row == 10 ? NULL : double_cyclone_hit_box) && obj.unk17 == (row == 10 ? 2 : 1));
         assert(obj.ext.weapon_7.unk90 == (row == 13 ? 1 : 0));
         assert(obj.unk2C == (row == 12 ? -0x3700 : 0));

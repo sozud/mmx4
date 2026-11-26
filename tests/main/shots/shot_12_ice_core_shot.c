@@ -162,12 +162,14 @@ static u32 spray(u32 row)
     return 1;
 }
 
-
 #include "support/state_cases.h"
 static u16 icf;
 #define ss state_room.shot
 #define ICE(st, flags, setup) (state_reset(0, 0, 0), icf = flags, D_8013E198[5] = -1, memset(&g_Player, 0, sizeof(g_Player)), g_Player.x_pos.i.hi = 0x400, g_Player.y_pos.i.hi = 0x80, ss.active = 0x41, ss.state = st, ss.unk2 = 1, ss.unk7C = (struct WeaponObj*)&icf, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.y_vel.val = 0x10000, ss.unk2C = 0x2800, ss.unk50.data = ice_core_shard_hit_box, ss.unk70 = 0xA0, setup, ice_core_shot_update(&ss), state_extra = ss.unk17 | (u32)ss.unk70 << 8 | (u32)icf << 16)
-static void ic_core_gone(void) { ICE(4, 0, 0); }
+static void ic_core_gone(void)
+{
+    ICE(4, 0, 0);
+}
 static void ic_released(void) { ICE(4, 0x8000, 0); }
 static void ic_falling(void) { ICE(5, 0x8000, 0); }
 static void ic_landed(void) { ICE(5, 0x8000, ss.unk70 = 8); }
@@ -186,13 +188,76 @@ static void (*const ic_cases[])(void) = {
     ic_spray_gone,
 };
 static const u32 ic_expected[] = {
-    0x6u, 0x141u, 0x800000u, 0x600000u, 0u, 0x10000u, 0x280000u, 0x40000u, 0u, 0x41000000u,
-    0x5u, 0xFF000141u, 0x800000u, 0x600000u, 0u, 0u, 0x280000u, 0x50000u, 0x8000001Eu, 0u,
-    0x5u, 0x141u, 0x800000u, 0x5F0000u, 0u, 0xD800u, 0x280000u, 0x50000u, 0x80000000u, 0u,
-    0x6u, 0x141u, 0x800000u, 0x5F0000u, 0u, 0xD800u, 0x280000u, 0x50000u, 0x80000000u, 0x41000000u,
-    0x6u, 0x141u, 0x800000u, 0x5F0000u, 0u, 0xD800u, 0x280000u, 0x58000u, 0x80000000u, 0x41002100u,
-    0x6u, 0x141u, 0x800000u, 0x5F0000u, 0u, 0xD800u, 0x280000u, 0x50000u, 0x80000000u, 0x41000000u,
-    0x2u, 0x141u, 0x10000000u, 0x5F0000u, 0u, 0x10000u, 0x280000u, 0x50000u, 0x1A000u, 0u,
+    0x6u,
+    0x141u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0x10000u,
+    0x280000u,
+    0x40000u,
+    0u,
+    0x41000000u,
+    0x5u,
+    0xFF000141u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0x280000u,
+    0x50000u,
+    0x8000001Eu,
+    0u,
+    0x5u,
+    0x141u,
+    0x800000u,
+    0x5F0000u,
+    0u,
+    0xD800u,
+    0x280000u,
+    0x50000u,
+    0x80000000u,
+    0u,
+    0x6u,
+    0x141u,
+    0x800000u,
+    0x5F0000u,
+    0u,
+    0xD800u,
+    0x280000u,
+    0x50000u,
+    0x80000000u,
+    0x41000000u,
+    0x6u,
+    0x141u,
+    0x800000u,
+    0x5F0000u,
+    0u,
+    0xD800u,
+    0x280000u,
+    0x58000u,
+    0x80000000u,
+    0x41002100u,
+    0x6u,
+    0x141u,
+    0x800000u,
+    0x5F0000u,
+    0u,
+    0xD800u,
+    0x280000u,
+    0x50000u,
+    0x80000000u,
+    0x41000000u,
+    0x2u,
+    0x141u,
+    0x10000000u,
+    0x5F0000u,
+    0u,
+    0x10000u,
+    0x280000u,
+    0x50000u,
+    0x1A000u,
+    0u,
 };
 static u32 test_ic(u32 row)
 {

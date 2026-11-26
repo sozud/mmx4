@@ -117,9 +117,11 @@ static u32 shot_hits(u32 row)
     memset(&qux_object, 0, sizeof(qux_object));
     SPIKE_IMMUNE_SET(g_Player, 0);
     ((struct MainObj*)&shot)->attack_box = &shot_box;
-    shot.x_pos.i.hi = row == 1 ? 300 : row == 3 ? 105 : 95;
+    shot.x_pos.i.hi = row == 1 ? 300 : row == 3 ? 105
+                                                : 95;
     shot.y_pos.i.hi = 50;
-    shot.unk60 = row == 3 ? 30 : row >= 4 ? 2 : 3;
+    shot.unk60 = row == 3 ? 30 : row >= 4 ? 2
+                                          : 3;
     shot.unk62 = row >= 4 ? 5 : 0;
     g_Player.ride_state = riding ? -1 : 0;
     ((struct MainObj*)&g_Player)->hurt_box = &shot_box;
@@ -138,8 +140,11 @@ static u32 shot_hits(u32 row)
     hit = func_8002D9BC(&shot);
     assert(hit == (row >= 2));
     if (riding) {
-        assert((u8)qux_object.hp == (row < 2 ? 20 : row == 2 ? (17 | 0x80) : 0x80));
-        assert(qux_object.unk63 == (row < 2 ? 0 : row == 2 ? 1 : 2) && qux_object.unk84 == (row == 3 ? PLAYER_FACING_RIGHT : 0));
+        assert((u8)qux_object.hp == (row < 2 ? 20 : row == 2 ? (17 | 0x80)
+                                                             : 0x80));
+        assert(qux_object.unk63 == (row < 2 ? 0 : row == 2 ? 1
+                                                           : 2)
+            && qux_object.unk84 == (row == 3 ? PLAYER_FACING_RIGHT : 0));
         assert(g_Player.hp == 20);
     } else {
         assert((u8)g_Player.hp == ((row == 4 ? 19 : 18) | 0x80) && g_Player.hurt_type == 5);
@@ -173,7 +178,8 @@ static u32 weapon_hits(u32 row)
     object->y_pos.i.hi = weapon->y_pos.i.hi = 50;
     g_Player.unk2 = row == 2;
     weapon->active = 1;
-    weapon->id = row == 4 ? 0x3D : row == 5 ? 0x3E : 5;
+    weapon->id = row == 4 ? 0x3D : row == 5 ? 0x3E
+                                            : 5;
     ((struct MainObj*)weapon)->attack_box = &shot_box;
     hit_table[5 * 2] = 2;
     hit_table[0x3D * 2] = 1;
@@ -183,7 +189,8 @@ static u32 weapon_hits(u32 row)
     assert(result == (row >= 4 ? weapon->id + 1 : 0));
     assert(object->unk65 == (row == 1 || row == 2 ? 5 : 0));
     assert(object->hp == (row >= 4 ? 9 : 10) && g_Player.update_delay_request == (row >= 4));
-    assert(object->unk63 == (row == 3 ? 2 : row >= 4 ? 1 : 0));
+    assert(object->unk63 == (row == 3 ? 2 : row >= 4 ? 1
+                                                     : 0));
     assert(object->unk5 == (row >= 4 ? 0 : 3) && visual_objects[0].active == (row >= 4 ? 0x21 : 0));
     return result;
 }

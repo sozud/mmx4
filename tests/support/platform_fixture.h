@@ -11,10 +11,10 @@
 #endif
 
 #define TEST_DRAWN_LAYER VISUAL_SATURN_LAYER(5)
-#define TEST_FACING(psx) ((u8)(psx) & 0x40 ? ((u8)(psx) & ~0x40) | PLAYER_FACING_RIGHT : (u8)(psx))
+#define TEST_FACING(psx) ((u8)(psx)&0x40 ? ((u8)(psx) & ~0x40) | PLAYER_FACING_RIGHT : (u8)(psx))
 #define TEST_FADE_AMOUNT(amount, before) TEST_FADE_OUT_AMOUNT(amount, before)
 #ifdef MMX4_SATURN
-#define TEST_PSX_LAYER(layer) ((u8)(layer) & 0x40 ? ((u8)(layer) & ~0x40) | 4 : (u8)(layer))
+#define TEST_PSX_LAYER(layer) ((u8)(layer)&0x40 ? ((u8)(layer) & ~0x40) | 4 : (u8)(layer))
 #else
 #define TEST_PSX_LAYER(layer) ((u8)(layer))
 #endif

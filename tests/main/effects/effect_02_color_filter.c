@@ -85,7 +85,6 @@ static u32 color_filter_pool_cases_row(u32 row)
     return filter_case(row / 9, row % 9);
 }
 
-
 extern struct Unk14 color_filter_script_0[13], color_filter_script_2[2];
 static struct EffectObj cf;
 static u32 cf_step(struct Unk14* entry, s8 frames)

@@ -107,11 +107,13 @@ static u32 enter(u32 row)
     return 1;
 }
 
-
 #include "support/state_cases.h"
 #define sm state_room.misc
 #define VENT(kind, count) (state_reset(0, count, 0), sm.active = 1, sm.state = 1, sm.unk2 = kind, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x60, vent_update(&sm))
-static void vt_smoke_rest(void) { VENT(0, 0); }
+static void vt_smoke_rest(void)
+{
+    VENT(0, 0);
+}
 static void vt_smoke_puff(void) { VENT(0, 1); }
 static void vt_glow(void) { VENT(1, 0); }
 
@@ -121,9 +123,36 @@ static void (*const vt_cases[])(void) = {
     vt_glow,
 };
 static const u32 vt_expected[] = {
-    0x10001u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
-    0x20001u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
-    1u, 0x101u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x10001u,
+    1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0u,
+    0u,
+    0x20001u,
+    1u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    1u,
+    0x101u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
 };
 static u32 test_vt(u32 row)
 {

@@ -595,9 +595,14 @@ static u32 fall_paths(u32 row)
     shadow.active = shadow.on_screen = 1;
     obj.active = 0x41;
     obj.id = 33;
-    obj.state = kind == 0 ? 1 : kind == 1 ? 4 : kind == 2 ? 7 : kind == 3 ? 6 : 3;
+    obj.state = kind == 0 ? 1 : kind == 1 ? 4
+        : kind == 2                       ? 7
+        : kind == 3                       ? 6
+                                          : 3;
     obj.on_screen = row != 4 && row != 7 && row != 9 && row != 11 && row != 15;
-    obj.x_pos.val = (row == 6 || row == 7 ? 166 : row == 8 || row == 9 ? 154 : 160) * 65536;
+    obj.x_pos.val = (row == 6 || row == 7 ? 166 : row == 8 || row == 9 ? 154
+                                                                       : 160)
+        * 65536;
     obj.y_pos.val = 120 * 65536;
     obj.unk18 = obj.x_pos;
     obj.unk1C = obj.y_pos;
@@ -613,7 +618,8 @@ static u32 fall_paths(u32 row)
         obj.unk54 = obj.unk50.data = (const u8*)falling_rock_box_1;
         obj.animation_table = (u32**)falling_rock_b_animations;
         obj.unk15 = row <= 7 ? PLAYER_FACING_RIGHT : 0;
-        obj.x_vel.val = row == 23 ? 0 : row <= 7 ? -0x38000 : 0x38000;
+        obj.x_vel.val = row == 23 ? 0 : row <= 7 ? -0x38000
+                                                 : 0x38000;
         set_animation(&obj, 1);
     } else if (kind == 2) {
         obj.unk68 = &terrain_box;
@@ -729,7 +735,8 @@ static u32 fall_paths(u32 row)
     case 9:
         assert(obj.state == 5 && debris == 5);
         SOUND_CHECK(sound_probe_id() == (row == 6 || row == 8 ? 0xA0 : -1));
-        assert(background_objects[0].unk36 == (row == 6 || row == 8 ? 16 : row == 7 || row == 9 ? 0 : 8));
+        assert(background_objects[0].unk36 == (row == 6 || row == 8 ? 16 : row == 7 || row == 9 ? 0
+                                                                                                : 8));
         assert(obj.unk70 & (row <= 7 ? 2 : 1));
         assert(obj.unk2C == (obj.unk70 & 8 ? 0 : 0x8000));
         break;

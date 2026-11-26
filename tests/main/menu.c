@@ -893,7 +893,8 @@ static void card_menu_reset(char* directory, u8 kind, u8 timer)
     int configured;
     assert(created != NULL);
     static const char* const faults[] = { "read", "write", 0, 0, 0, "error", "pulled", "file" };
-    create_test_card(directory, 0, kind == CARD_FILE_ERROR ? CARD_SAVED : kind >= CARD_INFO_ERROR ? CARD_BLANK : kind);
+    create_test_card(directory, 0, kind == CARD_FILE_ERROR ? CARD_SAVED : kind >= CARD_INFO_ERROR ? CARD_BLANK
+                                                                                                  : kind);
     configured = setenv("MMX4_MEMCARD_DIR", directory, 1);
     assert(configured == 0);
     unsetenv("MMX4_MEMCARD_FAULT_0");
@@ -1648,10 +1649,26 @@ void func_8001B4E4(struct EngineObj*);
 void func_8001B558(struct EngineObj*);
 void func_8001989C(struct EngineObj*);
 void func_8001AE8C(struct EngineObj*);
-enum { MP_SCAN_INFO_ERROR, MP_SCAN_PULLED, MP_LOAD_INFO_ERROR, MP_LOAD_PULLED, MP_LOAD_FILE_ERROR,
-    MP_SAVE_INFO_ERROR, MP_SAVE_PULLED, MP_DISPATCH_PAGE, MP_DISPATCH_SUBSTEP, MP_PORT_BACK, MP_LOAD_PORT_BACK,
-    MP_SLOT_DOWN_BACK, MP_SLOT_SAVED, MP_SLOT_EMPTY, MP_RESULT_UNKNOWN, MP_LOAD_ENTRY, MP_LOAD_DONE_CONFIRM,
-    MP_LOAD_RESULT_UNKNOWN, MP_LOAD_EXIT_FADING, MP_COUNT };
+enum { MP_SCAN_INFO_ERROR,
+    MP_SCAN_PULLED,
+    MP_LOAD_INFO_ERROR,
+    MP_LOAD_PULLED,
+    MP_LOAD_FILE_ERROR,
+    MP_SAVE_INFO_ERROR,
+    MP_SAVE_PULLED,
+    MP_DISPATCH_PAGE,
+    MP_DISPATCH_SUBSTEP,
+    MP_PORT_BACK,
+    MP_LOAD_PORT_BACK,
+    MP_SLOT_DOWN_BACK,
+    MP_SLOT_SAVED,
+    MP_SLOT_EMPTY,
+    MP_RESULT_UNKNOWN,
+    MP_LOAD_ENTRY,
+    MP_LOAD_DONE_CONFIRM,
+    MP_LOAD_RESULT_UNKNOWN,
+    MP_LOAD_EXIT_FADING,
+    MP_COUNT };
 static const struct {
     u8 card, step, result, selection;
     s8 sound;
@@ -1686,9 +1703,9 @@ static u32 menu_path(u32 row)
         card_menu_reset(directory, card, 1);
     else
         menu_reset(row <= MP_LOAD_PORT_BACK ? (row == MP_DISPATCH_SUBSTEP ? 3 : 1) : row <= MP_SLOT_EMPTY ? 4
-                : row == MP_RESULT_UNKNOWN                                                                   ? 11
-                : row == MP_LOAD_EXIT_FADING                                                                 ? 5
-                                                                                                             : 6,
+                : row == MP_RESULT_UNKNOWN                                                                ? 11
+                : row == MP_LOAD_EXIT_FADING                                                              ? 5
+                                                                                                          : 6,
             row == MP_DISPATCH_SUBSTEP || row >= MP_SLOT_SAVED ? 0 : row == MP_SLOT_DOWN_BACK ? 2
                                                                                               : 3,
             row == MP_SLOT_DOWN_BACK ? PADLdown : row == MP_DISPATCH_SUBSTEP || row == MP_LOAD_EXIT_FADING ? 0

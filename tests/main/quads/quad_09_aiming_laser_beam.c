@@ -61,7 +61,10 @@ static u32 beam_step(u8 state, u8 timer, u8 target_hp)
     return (u8)lb.active | (u32)lb.state << 8 | (u32)lb.ext.unk_ext3.unk38 << 16 | (u32)(u8)lb.on_screen << 24;
 }
 #define BEAM_SHAPE() ((u16)lb.x_pos.i.hi ^ (u32)(u16)lb.y_pos.i.hi << 16 ^ (u16)lb.vertices[1].x.i.hi << 8 ^ (u32)(u16)lb.vertices[3].y.i.hi << 24)
-static u32 lb_target_dead(void) { return beam_step(1, 5, 0); }
+static u32 lb_target_dead(void)
+{
+    return beam_step(1, 5, 0);
+}
 static u32 lb_start(void)
 {
     u32 seen = beam_step(0, 0, 4);

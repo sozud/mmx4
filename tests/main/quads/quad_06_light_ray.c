@@ -33,11 +33,13 @@ static u32 ray_paths(u32 index)
         return 1;
     }
     obj.ext.ready_line.x_vel.bytes[1] = row == 5 ? 2 : 0;
-    obj.ext.ready_line.x_vel.bytes[2] = row == 4 ? 0xFF : row == 8 ? 30 : 100;
+    obj.ext.ready_line.x_vel.bytes[2] = row == 4 ? 0xFF : row == 8 ? 30
+                                                                   : 100;
     obj.x_pos.i.hi = row == 7 ? 100 : 0x400;
     obj.y_pos.i.hi = 100;
     light_ray_main(&obj);
-    assert(obj.ext.ready_line.x_vel.bytes[2] == (row == 4 ? 0xFE : row == 8 ? 31 : 101));
+    assert(obj.ext.ready_line.x_vel.bytes[2] == (row == 4 ? 0xFE : row == 8 ? 31
+                                                                            : 101));
     assert(obj.ext.ready_line.x_vel.bytes[1] == (row == 5 ? 1 : 0));
     assert(obj.state == (row == 4 || row == 6 ? 2 : 1));
     return 1;

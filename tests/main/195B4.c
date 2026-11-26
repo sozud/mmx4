@@ -84,7 +84,6 @@ static u32 scan(u32 row)
     return 1;
 }
 
-
 #ifdef MMX4_PC
 extern int mmx4_pc_saturn_heat;
 void func_80028F58(void);

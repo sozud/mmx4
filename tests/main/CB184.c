@@ -62,7 +62,8 @@ static u32 test_tile_effect_chain(u32 row)
     for (i = 0; i < 3; i++)
         for (j = 0; j < 32; j++)
             for (k = 0; k < 32; k++)
-                assert(D_801441C8[i][j][k] == (i == 0 && j == 0 && k == 0 ? 0xA120 : i == 0 && j == 2 && k == 3 ? 0xA121 : 0xCAFE));
+                assert(D_801441C8[i][j][k] == (i == 0 && j == 0 && k == 0 ? 0xA120 : i == 0 && j == 2 && k == 3 ? 0xA121
+                                                                                                                : 0xCAFE));
     return 1;
 }
 #define CHAIN_CASES 1

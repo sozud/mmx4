@@ -58,14 +58,17 @@ static u32 test_hopper_switch_hopper_touching(u32 row)
 void hopper_switch_main(struct ItemObj*);
 #define hs state_room.item
 static struct Unk_unk68 hs_box = { 0, 0, 8, 8 };
-#define HS(step, setup)                                                                                                      \
-    (state_reset(step, 0, 0), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.stage = 6, engine_obj.substage = 1,       \
+#define HS(step, setup)                                                                                                     \
+    (state_reset(step, 0, 0), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.stage = 6, engine_obj.substage = 1,    \
         g_Player.unk68 = NULL, memset(main_objects, 0, sizeof(main_objects)), hs.active = 0x41, hs.id = 0x15, hs.state = 1, \
         hs.x_pos.i.hi = 0xB30, hs.y_pos.i.hi = 0x657, hs.unk68 = &hs_box, main_objects[3].active = 0x41,                    \
-        main_objects[3].id = 0x29, main_objects[3].terrain_box = &hs_box, main_objects[3].x_pos.i.hi = 0xB30,                \
-        main_objects[3].y_pos.i.hi = 0x600, tile_writes_begin(), setup, hopper_switch_update(&hs),                           \
+        main_objects[3].id = 0x29, main_objects[3].terrain_box = &hs_box, main_objects[3].x_pos.i.hi = 0xB30,               \
+        main_objects[3].y_pos.i.hi = 0x600, tile_writes_begin(), setup, hopper_switch_update(&hs),                          \
         state_extra = tile_writes_end(), memset(main_objects, 0, sizeof(main_objects)), engine_obj.stage = engine_obj.substage = 0)
-static void hs_hopper_away(void) { HS(0, 0); }
+static void hs_hopper_away(void)
+{
+    HS(0, 0);
+}
 static void hs_hopper_on(void) { HS(0, (main_objects[3].y_pos.i.hi = 0x657, tile_writes_expect(0, 0, 0, 1))); }
 static void hs_pressed_end(void) { HS(1, 0); }
 static void hs_pressed(void) { HS(1, hs.animation_step.fields.relative_step = 1); }
@@ -76,10 +79,46 @@ static void (*const hopper_switch_steps_cases[])(void) = {
     hs_pressed,
 };
 static const u32 hopper_switch_steps_expected[] = {
-    0x1u, 0x41u, 0xB300000u, 0x6570000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
-    0x101u, 0xFF000041u, 0xB300000u, 0x6570000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x32B1402Au, 0x0u,
-    0x102u, 0x41u, 0xB300000u, 0x6570000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
-    0x101u, 0x41u, 0xB300000u, 0x6570000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
+    0x1u,
+    0x41u,
+    0xB300000u,
+    0x6570000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x101u,
+    0xFF000041u,
+    0xB300000u,
+    0x6570000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x32B1402Au,
+    0x0u,
+    0x102u,
+    0x41u,
+    0xB300000u,
+    0x6570000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x101u,
+    0x41u,
+    0xB300000u,
+    0x6570000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x40000u,
+    0x0u,
+    0x0u,
 };
 static u32 test_hopper_switch_steps(u32 row)
 {

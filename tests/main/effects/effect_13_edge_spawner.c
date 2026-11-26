@@ -226,7 +226,6 @@ static u32 exhaust(u32 row)
     return 1;
 }
 
-
 #include "support/shaped_terrain.h"
 static struct EffectObj es;
 static u32 es_frames[0x40], es_meta[0x40];

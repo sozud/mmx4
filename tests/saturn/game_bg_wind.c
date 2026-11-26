@@ -24,21 +24,71 @@ static void reset(s16 movement_timer, s16 direction, s32 velocity)
     saturn_frame_dma_pending = 0;
 }
 
-static void slow_ends_right(void) { reset(1, 0, 0); bg_wind_gust_slow(&wind); }
-static void slow_ends_left(void) { reset(1, 1, 0); bg_wind_gust_slow(&wind); }
-static void fast_ends_right(void) { reset(1, 0, 0); bg_wind_gust_fast(&wind); }
-static void fast_ends_left(void) { reset(1, 1, 0); bg_wind_gust_fast(&wind); }
-static void medium_ends_right(void) { reset(1, 0, 0); bg_wind_gust_medium(&wind); }
-static void medium_ends_left(void) { reset(1, 1, 0); bg_wind_gust_medium(&wind); }
+static void slow_ends_right(void)
+{
+    reset(1, 0, 0);
+    bg_wind_gust_slow(&wind);
+}
+static void slow_ends_left(void)
+{
+    reset(1, 1, 0);
+    bg_wind_gust_slow(&wind);
+}
+static void fast_ends_right(void)
+{
+    reset(1, 0, 0);
+    bg_wind_gust_fast(&wind);
+}
+static void fast_ends_left(void)
+{
+    reset(1, 1, 0);
+    bg_wind_gust_fast(&wind);
+}
+static void medium_ends_right(void)
+{
+    reset(1, 0, 0);
+    bg_wind_gust_medium(&wind);
+}
+static void medium_ends_left(void)
+{
+    reset(1, 1, 0);
+    bg_wind_gust_medium(&wind);
+}
 
-static void blow_right_at_limit(void) { reset(9, 0, 0x30000); bg_wind_gust_fast(&wind); }
-static void blow_left_decelerate(void) { reset(9, 1, 0x40000); bg_wind_gust_medium(&wind); }
-static void blow_next_cell(void) { reset(9, 0, 0); wind.ext.effect_9.timer = 1; bg_wind_gust_slow(&wind); }
-static void blow_wrap(void) { reset(9, 0, 0); background_objects[2].y_pos.val = 0x01020000; bg_wind_gust_slow(&wind); }
+static void blow_right_at_limit(void)
+{
+    reset(9, 0, 0x30000);
+    bg_wind_gust_fast(&wind);
+}
+static void blow_left_decelerate(void)
+{
+    reset(9, 1, 0x40000);
+    bg_wind_gust_medium(&wind);
+}
+static void blow_next_cell(void)
+{
+    reset(9, 0, 0);
+    wind.ext.effect_9.timer = 1;
+    bg_wind_gust_slow(&wind);
+}
+static void blow_wrap(void)
+{
+    reset(9, 0, 0);
+    background_objects[2].y_pos.val = 0x01020000;
+    bg_wind_gust_slow(&wind);
+}
 
 static void (*const wind_cases[])(void) = {
-    slow_ends_right, slow_ends_left, fast_ends_right, fast_ends_left, medium_ends_right, medium_ends_left,
-    blow_right_at_limit, blow_left_decelerate, blow_next_cell, blow_wrap,
+    slow_ends_right,
+    slow_ends_left,
+    fast_ends_right,
+    fast_ends_left,
+    medium_ends_right,
+    medium_ends_left,
+    blow_right_at_limit,
+    blow_left_decelerate,
+    blow_next_cell,
+    blow_wrap,
 };
 
 #define WORDS 5

@@ -165,10 +165,16 @@ void breakable_terrain_remove(struct MainObj*);
 static struct Unk_unk68 bt_player_box = { 0, -16, 8, 16 };
 #define BT(sub, st) (state_reset(0, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), memset(&engine_obj, 0, sizeof(engine_obj)), state_terrain(0), g_Player.unk68 = NULL, so.active = 0x41, so.id = 0x28, so.unk2 = sub, so.state = st, so.ext.main_40.unk80 = sub >> 4, so.ext.main_40.unk81 = sub & 0xF, so.x_pos.i.hi = 0x1780, so.y_pos.i.hi = 0x520, background_objects[0].x_pos.i.hi = 0x1700, background_objects[0].y_pos.i.hi = 0x480, tile_writes_begin())
 #define BTX() (state_extra = so.ext.main_40.timer | so.ext.main_40.trigger_time << 8 | (u32)so.ext.main_40.unk80 << 16 | (u32)(u8)so.hp << 24, state_extra ^= tile_writes_end(), engine_obj.stage = engine_obj.substage = 0, g_Player.unk68 = NULL)
-static void bt_init_piece(void) { BT(0x20, 0), so.ext.main_40.unk80 = 0, func_80061DFC(&so), BTX(); }
+static void bt_init_piece(void)
+{
+    BT(0x20, 0), so.ext.main_40.unk80 = 0, func_80061DFC(&so), BTX();
+}
 static void bt_block_walked_into(void) { BT(0x10, 1), so.terrain_box = &D_800FEAA0, g_Player.unk68 = &bt_player_box, g_Player.x_pos.i.hi = 0x1770, g_Player.y_pos.i.hi = 0x520, func_80061F2C(&so), BTX(); }
 #define CRUMBLE(sub, count, at, frame) (BT(sub, 2), engine_obj.stage = 3, engine_obj.substage = 1, so.ext.main_40.timer = count, so.ext.main_40.trigger_time = at, WEAPON_FRAME_COUNTER = frame)
-static void bt_crumble_block_sparks(void) { CRUMBLE(0x10, 3, 0x2F, 0), breakable_terrain_crumble(&so), BTX(); }
+static void bt_crumble_block_sparks(void)
+{
+    CRUMBLE(0x10, 3, 0x2F, 0), breakable_terrain_crumble(&so), BTX();
+}
 static void bt_crumble_piece_stamp(void) { CRUMBLE(0x20, 9, 8, 0), tile_writes_expect(6, 0x1780 - 16, 0x520 - 32, 1), breakable_terrain_crumble(&so), BTX(); }
 static void bt_crumble_piece(void) { CRUMBLE(0x20, 5, 8, 1), breakable_terrain_crumble(&so), BTX(); }
 static void bt_crumble_end(void) { CRUMBLE(0x20, 1, 8, 1), breakable_terrain_crumble(&so), BTX(); }
@@ -185,14 +191,86 @@ static void (*const breakable_terrain_steps_cases[])(void) = {
     bt_remove_block,
 };
 static const u32 breakable_terrain_steps_expected[] = {
-    0x0u, 0x0u, 0x17800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x20000u, 0x41000000u,
-    0x0u, 0x0u, 0x17800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x12F30u, 0x41000000u,
-    0x0u, 0x0u, 0x17800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x12F02u, 0x41002100u,
-    0x0u, 0x0u, 0x17800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0xE7F469C4u, 0x41000000u,
-    0x0u, 0x0u, 0x17800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x20804u, 0x41000000u,
-    0x0u, 0x0u, 0x17800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x20800u, 0x41000000u,
-    0x0u, 0x0u, 0x17800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x9BF30808u, 0x2100u,
-    0x0u, 0x0u, 0x17800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10800u, 0x0u,
+    0x0u,
+    0x0u,
+    0x17800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x20000u,
+    0x41000000u,
+    0x0u,
+    0x0u,
+    0x17800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x12F30u,
+    0x41000000u,
+    0x0u,
+    0x0u,
+    0x17800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x12F02u,
+    0x41002100u,
+    0x0u,
+    0x0u,
+    0x17800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0xE7F469C4u,
+    0x41000000u,
+    0x0u,
+    0x0u,
+    0x17800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x20804u,
+    0x41000000u,
+    0x0u,
+    0x0u,
+    0x17800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x20800u,
+    0x41000000u,
+    0x0u,
+    0x0u,
+    0x17800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x9BF30808u,
+    0x2100u,
+    0x0u,
+    0x0u,
+    0x17800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10800u,
+    0x0u,
 };
 static u32 test_breakable_terrain_steps(u32 row)
 {

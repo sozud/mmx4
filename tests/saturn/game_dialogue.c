@@ -47,11 +47,31 @@ static void all_misc_busy(void)
         misc_objects[i].active = 1;
 }
 
-static void start_x_portrait(void) { reset(0, 2, 0); start(5, 0); }
-static void start_x_stop(void) { reset(0, 2, 0xFF); start(34, 0x800); }
-static void start_zero_capsule(void) { reset(1, 2, 1); start(SATURN_DIALOGUE_CAPSULE_MESSAGE, 0x800); }
-static void start_zero_track(void) { reset(1, 2, 1); start(26, 0); }
-static void start_delay(void) { reset(0, 2, 0); func_8002217C(5, 0, 1); }
+static void start_x_portrait(void)
+{
+    reset(0, 2, 0);
+    start(5, 0);
+}
+static void start_x_stop(void)
+{
+    reset(0, 2, 0xFF);
+    start(34, 0x800);
+}
+static void start_zero_capsule(void)
+{
+    reset(1, 2, 1);
+    start(SATURN_DIALOGUE_CAPSULE_MESSAGE, 0x800);
+}
+static void start_zero_track(void)
+{
+    reset(1, 2, 1);
+    start(26, 0);
+}
+static void start_delay(void)
+{
+    reset(0, 2, 0);
+    func_8002217C(5, 0, 1);
+}
 
 static void update(u16 a, u16 b, u8 more)
 {
@@ -64,17 +84,40 @@ static void update(u16 a, u16 b, u8 more)
     func_8002328C(&abc_object);
 }
 
-static void update_bottom_speakerless(void) { reset(0, 2, 0xFF); update(0x0841, 0x2842, 1); }
-static void update_bottom_portrait(void) { reset(0, 2, 1); update(0x0841, 0x2842, 1); }
-static void update_pause_pressed(void) { reset(0, 2, 0); saturn_pad_pressed = 0x0400; update(0x1041, 0x8042, 1); }
-static void update_banner_arrow(void) { reset(0, 2, 0x80); update(0x0041, 0x2042, 1); }
+static void update_bottom_speakerless(void)
+{
+    reset(0, 2, 0xFF);
+    update(0x0841, 0x2842, 1);
+}
+static void update_bottom_portrait(void)
+{
+    reset(0, 2, 1);
+    update(0x0841, 0x2842, 1);
+}
+static void update_pause_pressed(void)
+{
+    reset(0, 2, 0);
+    saturn_pad_pressed = 0x0400;
+    update(0x1041, 0x8042, 1);
+}
+static void update_banner_arrow(void)
+{
+    reset(0, 2, 0x80);
+    update(0x0041, 0x2042, 1);
+}
 
 static void (*const start_cases[])(void) = {
-    start_x_portrait, start_x_stop, start_zero_capsule, start_zero_track, start_delay,
+    start_x_portrait,
+    start_x_stop,
+    start_zero_capsule,
+    start_zero_track,
+    start_delay,
 };
 static void (*const update_cases[])(void) = {
-    update_bottom_speakerless, update_bottom_portrait,
-    update_pause_pressed, update_banner_arrow,
+    update_bottom_speakerless,
+    update_bottom_portrait,
+    update_pause_pressed,
+    update_banner_arrow,
 };
 
 #define WORDS 5

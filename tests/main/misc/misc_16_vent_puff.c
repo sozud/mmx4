@@ -49,7 +49,8 @@ static u32 puff_paths(u32 row)
     }
     obj.unk5 = 1;
     obj.on_screen = 1;
-    obj.ext.misc_16.timer = row == 5 ? 1 : row == 6 ? 4 : 3;
+    obj.ext.misc_16.timer = row == 5 ? 1 : row == 6 ? 4
+                                                    : 3;
     func_800CACF0(&obj);
     assert(obj.state == (row == 5 ? 2 : 1));
     assert(row == 5 || obj.on_screen == (row == 6));

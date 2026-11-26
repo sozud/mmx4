@@ -508,8 +508,11 @@ static u32 web_paths(u32 index)
         obj.unk72 = row == 8 ? 8 : 0;
         obj.unk75 = 1;
         lightning_web_main(&obj);
-        assert(obj.state == (row == 6 ? 3 : row <= 8 ? 4 : 2) && obj.unk75 == (row == 9));
-        assert(obj.unk17 == (row == 7 || row == 8 ? 3 : 2) && obj.ext.weapon_1.lifetime == (row == 6 ? 5 : row == 7 ? 0 : 4));
+        assert(obj.state == (row == 6 ? 3 : row <= 8 ? 4
+                                                     : 2)
+            && obj.unk75 == (row == 9));
+        assert(obj.unk17 == (row == 7 || row == 8 ? 3 : 2) && obj.ext.weapon_1.lifetime == (row == 6 ? 5 : row == 7 ? 0
+                                                                                                                    : 4));
         break;
     case 10:
         obj.animation_step.fields.relative_step = 0;
@@ -522,7 +525,8 @@ static u32 web_paths(u32 index)
     case 14:
         obj.unk5 = 1;
         obj.unk76 = row != 13;
-        obj.unk72 = row == 11 ? 1 : row == 14 ? 0 : 2;
+        obj.unk72 = row == 11 ? 1 : row == 14 ? 0
+                                              : 2;
         obj.unk15 = row == 11 ? 0 : PLAYER_FACING_RIGHT;
         lightning_web_hang(&obj);
         assert(obj.unk5 == (row <= 12 ? 2 : 1) && obj.unk17 == (row <= 12 ? 4 : 2));

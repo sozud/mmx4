@@ -1210,11 +1210,40 @@ static u32 exit_pause(u32 row)
 void func_80030DF8(struct BarObj*);
 void func_80031014(struct BarObj*);
 void func_80031064(struct BarObj*);
-enum { PP_FD70_FADING, PP_READY_FADING, PP_READY_PLAYER2, PP_READY_PLAIN, PP_W_START, PP_W_BUSTER, PP_W_WEAPON,
-    PP_W_UP_TOP, PP_W_UP_SKIP, PP_W_UP_ZERO, PP_W_RIGHT, PP_W_LEFT_ODD, PP_W_LEFT, PP_W_LEFT_SKIP, PP_T_START,
-    PP_T_TANK_FULL, PP_T_UP_PLAYER2, PP_T_UP_WEAPON, PP_T_DOWN, PP_T_LEFT, PP_H_TANK_CLAMP,
-    PP_H_TANK_STEP, PP_H_EMPTY_STEP, PP_H_MERGE, PP_DF8_DEFAULT, PP_EC8_DEFAULT, PP_LEAVE_FADING, PP_LEAVE,
-    PP_RESUME_EXIT, PP_RESUME_PLAYER2, PP_RESUME_SAME, PP_RESUME_CHANGED, PP_EXIT_RESUME, PP_COUNT };
+enum { PP_FD70_FADING,
+    PP_READY_FADING,
+    PP_READY_PLAYER2,
+    PP_READY_PLAIN,
+    PP_W_START,
+    PP_W_BUSTER,
+    PP_W_WEAPON,
+    PP_W_UP_TOP,
+    PP_W_UP_SKIP,
+    PP_W_UP_ZERO,
+    PP_W_RIGHT,
+    PP_W_LEFT_ODD,
+    PP_W_LEFT,
+    PP_W_LEFT_SKIP,
+    PP_T_START,
+    PP_T_TANK_FULL,
+    PP_T_UP_PLAYER2,
+    PP_T_UP_WEAPON,
+    PP_T_DOWN,
+    PP_T_LEFT,
+    PP_H_TANK_CLAMP,
+    PP_H_TANK_STEP,
+    PP_H_EMPTY_STEP,
+    PP_H_MERGE,
+    PP_DF8_DEFAULT,
+    PP_EC8_DEFAULT,
+    PP_LEAVE_FADING,
+    PP_LEAVE,
+    PP_RESUME_EXIT,
+    PP_RESUME_PLAYER2,
+    PP_RESUME_SAME,
+    PP_RESUME_CHANGED,
+    PP_EXIT_RESUME,
+    PP_COUNT };
 static u16 pause_paths_palette[0x400], pause_paths_palette_bank[0x400];
 static u32 pause_paths(u32 row)
 {
@@ -1411,7 +1440,8 @@ static u32 pause_paths(u32 row)
             player_expected.weapon = row == PP_W_BUSTER ? 0 : 4;
             sound = 0x22;
         } else if (row != PP_W_UP_TOP && row != PP_W_LEFT_ODD) {
-            expected.unk14 = row == PP_W_UP_ZERO ? 0 : row == PP_W_RIGHT ? 3 : 2;
+            expected.unk14 = row == PP_W_UP_ZERO ? 0 : row == PP_W_RIGHT ? 3
+                                                                         : 2;
             sound = 0xC;
         }
         break;

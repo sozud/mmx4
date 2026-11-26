@@ -15,12 +15,18 @@ static const struct ChargeGlowRow charge_glow_rows[] = {
     { 1, 0, { PLAYER_CHARGE_NONE, PLAYER_CHARGE_FULL } },
 };
 static const u32 charge_glow_expected[] = {
-    0xFF080101u, 0x00000103u,
-    0xFF090101u, 0x00000206u,
-    0x00000000u, 0x00000004u,
-    0x00000000u, 0x00000004u,
-    0x00000101u, 0x00000003u,
-    0x00000101u, 0x00000003u,
+    0xFF080101u,
+    0x00000103u,
+    0xFF090101u,
+    0x00000206u,
+    0x00000000u,
+    0x00000004u,
+    0x00000000u,
+    0x00000004u,
+    0x00000101u,
+    0x00000003u,
+    0x00000101u,
+    0x00000003u,
 };
 static struct BazObj charge_glow;
 static u32 charge_glow_steps[3] = { C_TEST_STEP(0x04), C_TEST_STEP(0x03), C_TEST_STEP(0x06) };

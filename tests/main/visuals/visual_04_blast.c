@@ -31,7 +31,6 @@ static u32 box(u32 row)
     return c_test_observe(0, row, observed, box_cases[row].expected, 3);
 }
 
-
 #include "support/state_cases.h"
 #include "support/sound_probe.h"
 #ifdef MMX4_SATURN
@@ -64,10 +63,46 @@ static void (*const bl_cases[])(void) = {
     bl_burnt,
 };
 static const u32 bl_expected[] = {
-    0x1u, 0xFF000241u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x10000u | BLAST_PALETTE, 0x10000u | BLAST_PALETTE, 0u,
-    0x1u, 0xFF000241u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x10000u | BLAST_PALETTE, 0x10000u | BLAST_PALETTE, 0u,
-    0x1u, 0x241u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
-    0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x1u,
+    0xFF000241u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x10000u | BLAST_PALETTE,
+    0x10000u | BLAST_PALETTE,
+    0u,
+    0x1u,
+    0xFF000241u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x10000u | BLAST_PALETTE,
+    0x10000u | BLAST_PALETTE,
+    0u,
+    0x1u,
+    0x241u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
 };
 static u32 test_bl(u32 row)
 {

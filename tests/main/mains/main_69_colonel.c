@@ -1052,13 +1052,13 @@ static u32 colonel_pages[8];
         u8 flag = engine_obj.unk25;                                         \
         struct MainObj* boss = engine_obj.boss_ptr;                         \
         state_reset(0, 0, 0);                                               \
-        test_stage_graphics(colonel_pages);                                         \
+        test_stage_graphics(colonel_pages);                                 \
         so.ext.main_69.effect = &effect_objects[0];                         \
         effect_objects[0].active = busy;                                    \
         so.ext.main_69.state.bytes.variant = kind;                          \
         func_80086008(&so);                                                 \
         state_extra = engine_obj.unk25 | (engine_obj.boss_ptr == &so) << 8; \
-        test_stage_graphics(pages);                                                 \
+        test_stage_graphics(pages);                                         \
         engine_obj.unk25 = flag;                                            \
         engine_obj.boss_ptr = boss;                                         \
     } while (0)
@@ -1970,7 +1970,8 @@ static void clx_waves(void)
         colonel_saber_waves(&cx);
         assert(cx.unk6 == i && cx.unk7C == 1);
         colonel_saber_waves(&cx);
-        assert(cx.unk6 == i + 1 && cx.unk7C == (i == 3 ? 0x28 : 0x14) && cx.unk17 == (i == 1 ? 5 : i == 2 ? 4 : 0x17));
+        assert(cx.unk6 == i + 1 && cx.unk7C == (i == 3 ? 0x28 : 0x14) && cx.unk17 == (i == 1 ? 5 : i == 2 ? 4
+                                                                                                          : 0x17));
     }
     cx_step(0, 1);
     colonel_saber_waves(&cx);

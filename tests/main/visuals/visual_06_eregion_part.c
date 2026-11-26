@@ -225,7 +225,8 @@ static u32 part_paths(u32 row)
     set_animation(&obj, 6);
     obj.animation_step.fields.duration = 2;
     if (row <= 3) {
-        obj.unk2 = row <= 1 ? 0 : row == 2 ? 3 : 4;
+        obj.unk2 = row <= 1 ? 0 : row == 2 ? 3
+                                           : 4;
         obj.state = row <= 1 ? 2 : 3;
         obj.unk17 = owner.unk17 + (row == 2 ? 0 : 1);
         owner.unk15 = row == 0 ? 0 : PLAYER_FACING_RIGHT;

@@ -702,12 +702,12 @@ static u32 owl_pages[8];
         so.y_pos.i.hi = 0x60;              \
         g_Player.x_pos.i.hi = px;          \
         engine_obj.stage = stage_id;       \
-        test_stage_graphics(owl_pages);            \
+        test_stage_graphics(owl_pages);    \
         TEST_MENU_FRAMES = (u8*)owl_pages; \
         func_800751AC(&so);                \
         so.unk42 = 0;                      \
         engine_obj.stage = stage;          \
-        test_stage_graphics(pages);                \
+        test_stage_graphics(pages);        \
         TEST_MENU_FRAMES = frames;         \
     } while (0)
 static void sow_init(void)
@@ -889,7 +889,7 @@ static u32 entry(u32 row)
     obj.animation_table = (const u8* const*)storm_owl_animations;
     set_animation(&obj, initial);
     assert(obj.animation_step.packed == C_TEST_STEP(mode == 1 ? 0x13010004 : mode == 3 ? 0x68010003
-                                                                            : 0x00010004));
+                                                                                       : 0x00010004));
     g_Player.x_pos.val = obj.x_pos.val + (side ? 1 : -1) * 65536;
     player_before = g_Player;
     expected = obj;

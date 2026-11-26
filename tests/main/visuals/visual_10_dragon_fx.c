@@ -46,10 +46,12 @@ static u32 flash(u32 row)
     return c_test_observe(0, row, observed, flash_cases[row].expected, 3);
 }
 
-
 #define sv state_room.visual
 #define DFX(st, kind, setup) (state_reset(0, 0, 0), sv.active = 0x41, sv.state = st, sv.unk2 = kind, sv.x_pos.i.hi = 0x80, sv.y_pos.i.hi = 0x60, setup, dragon_fx_update(&sv), state_extra = sv.unk17)
-static void dfx_flash_left(void) { DFX(0, 0, 0); }
+static void dfx_flash_left(void)
+{
+    DFX(0, 0, 0);
+}
 static void dfx_flash_right(void) { DFX(0, 1, 0); }
 static void dfx_trail(void) { DFX(3, 0, sv.animation_step.fields.relative_step = 1); }
 static void dfx_trail_end(void) { DFX(3, 0, sv.animation_step.fields.relative_step = -1); }
@@ -61,10 +63,46 @@ static void (*const dfx_cases[])(void) = {
     dfx_trail_end,
 };
 static const u32 dfx_expected[] = {
-    1u, 0xFF000041u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 5u, 0u,
-    1u, 0xFF400141u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 5u, 0u,
-    3u, 0x41u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
-    4u, 0x41u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    1u,
+    0xFF000041u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    5u,
+    0u,
+    1u,
+    0xFF400141u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    5u,
+    0u,
+    3u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
+    4u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0u,
+    0u,
 };
 static u32 test_dfx(u32 row)
 {

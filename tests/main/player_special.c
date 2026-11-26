@@ -1430,10 +1430,10 @@ static u32 special(u32 row)
     g_Player.animation_table = (u32**)D_80119DF0;
     set_animation_frame(ANIMATED_OBJECT(&g_Player), animation, 1);
     assert(g_Player.animation_step.packed == C_TEST_STEP(kind < 2 ? 0x8B018003 : kind == 2 ? 0xE8018030
-                                                                                : 0x68018008));
+                                                                                           : 0x68018008));
     expected = g_Player;
     expected.animation_step.packed = C_TEST_STEP(kind < 2 ? 0x8B010002 : kind == 2 ? 0xE801002F
-                                                                       : 0x68010007);
+                                                                                   : 0x68010007);
     expected.shot_count = expected.special_shot_count = 1;
     if (weapon_free) {
         struct WeaponObj* w = &weapons_expected[15];

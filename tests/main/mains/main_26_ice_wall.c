@@ -396,7 +396,10 @@ void ice_wall_main(struct MainObj*);
 #define IWM(setup) (state_reset(2, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.hp = 9, so.ext.main_26.last_health = 9, so.ext.main_26.stage = 3, setup, ice_wall_main(&so), state_extra = so.ext.main_26.last_health | (u32)so.ext.main_26.stage << 8 | (u32)so.state << 16)
 #define IW_STAMP(base) (engine_obj.stage = 2, engine_obj.substage = 1, tile_writes_begin(), tile_writes_expect(3 + (base), 0x70, 0x40, 1), tile_writes_expect(0x12 + (base), 0x70, 0x70, 1), tile_writes_expect((base) ? 0x1F : 0x1E, 0x70, 0x60, 1))
 #define IW_STAMPED() (state_extra ^= tile_writes_end(), engine_obj.stage = engine_obj.substage = 0)
-static void iw_main_steady(void) { IWM(state_terrain(0x38)); }
+static void iw_main_steady(void)
+{
+    IWM(state_terrain(0x38));
+}
 static void iw_main_cracked(void) { IWM((so.hp = 8, so.ext.main_26.stage = 2, IW_STAMP(0))), IW_STAMPED(); }
 static void iw_main_cracked_last(void) { IWM((so.hp = 8, so.ext.main_26.stage = 1, IW_STAMP(5))), IW_STAMPED(); }
 static void iw_main_away(void) { IWM((state_terrain(0x38), so.x_pos.i.hi = 0x1000)); }
@@ -410,12 +413,66 @@ static void (*const ice_wall_misc_cases[])(void) = {
     iw_main_steady,
 };
 static const u32 ice_wall_misc_expected[] = {
-    2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
-    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x80000u, 0x3D297CCBu, 0x0u,
-    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x39E86F51u, 0x0u,
-    0x0u, 0x0u, 0x10000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x90000u, 0x309u, 0x0u,
-    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x20200u, 0x2100u,
-    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x90000u, 0x10309u, 0x0u,
+    2u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x80000u,
+    0x3D297CCBu,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10000u,
+    0x39E86F51u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x10000000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x90000u,
+    0x309u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x1u,
+    0x20200u,
+    0x2100u,
+    0x2u,
+    0x0u,
+    0x800000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x90000u,
+    0x10309u,
+    0x0u,
 };
 
 static u32 test_ice_wall_misc(u32 row)

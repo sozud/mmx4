@@ -6,15 +6,36 @@
 static struct RideArmorObj trap_qux;
 #define fte state_room.effect
 #define TRAP(st, step, setup) (trap_qux = qux_object, state_reset(step, 0, 0), memset(&qux_object, 0, sizeof(qux_object)), fte.active = 1, fte.state = st, fte.x_pos.i.hi = 0x80, fte.y_pos.i.hi = 0x60, setup, floor_trap_update(&fte), qux_object = trap_qux)
-static void trap_waits(void) { TRAP(0, 0, 0); }
+static void trap_waits(void)
+{
+    TRAP(0, 0, 0);
+}
 static void trap_counts(void) { TRAP(1, 2, 0); }
 static void (*const trap_cases[])(void) = {
     trap_waits,
     trap_counts,
 };
 static const u32 trap_expected[] = {
-    0x0u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
-    0x101u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x0u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
+    0x101u,
+    0x1u,
+    0x800000u,
+    0x600000u,
+    0x0u,
+    0x0u,
+    0x0u,
+    0x50000u,
+    0x0u,
+    0x0u,
 };
 static u32 test_trap(u32 row)
 {

@@ -175,12 +175,14 @@ static u32 lifetime(u32 row)
     return 1;
 }
 
-
 #include "support/state_cases.h"
 static struct WeaponObj ball_owner;
 #define ss state_room.shot
 #define BALL(st, step, setup) (state_reset(step, 0, 0), memset(&ball_owner, 0, sizeof(ball_owner)), ball_owner.state = 1, memset(&g_Player, 0, sizeof(g_Player)), g_Player.x_pos.i.hi = 0x40, g_Player.y_pos.i.hi = 0x80, ss.active = 0x41, ss.state = st, ss.unk7C = &ball_owner, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.timer = 3, setup, double_ball_update(&ss), state_extra = ss.timer | (u32)ss.unk17 << 16 | (u32)(u16)ss.unk8A << 24)
-static void dbl_start_left(void) { BALL(0, 0, 0); }
+static void dbl_start_left(void)
+{
+    BALL(0, 0, 0);
+}
 static void dbl_start_right(void) { BALL(0, 0, ss.unk15 = PLAYER_FACING_RIGHT); }
 static void dbl_holding(void) { BALL(1, 1, 0); }
 static void dbl_held(void) { BALL(1, 1, ss.timer = 1); }
@@ -196,12 +198,66 @@ static void (*const dbl_cases[])(void) = {
     dbl_burst_done,
 };
 static const u32 dbl_expected[] = {
-    0x1u, 0xFF000041u, 0x690000u, 0x6D0000u, 0xFFFC4DF4u, 0xFFFE7824u, 0u, 0x50000u, 0x100C0000u, 0u,
-    0x1u, 0xFF400041u, 0x970000u, 0x6D0000u, 0xFFFC13B0u, 0xFFFF383Cu, 0u, 0x50000u, 0x1B0C0000u, 0u,
-    0x101u, 0x41u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x2u, 0u,
-    0x201u, 0xFF000041u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0xD0000u, 0u,
-    0x201u, 0x41u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x3u, 0u,
-    0x2u, 0x41u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x3u, 0u,
+    0x1u,
+    0xFF000041u,
+    0x690000u,
+    0x6D0000u,
+    0xFFFC4DF4u,
+    0xFFFE7824u,
+    0u,
+    0x50000u,
+    0x100C0000u,
+    0u,
+    0x1u,
+    0xFF400041u,
+    0x970000u,
+    0x6D0000u,
+    0xFFFC13B0u,
+    0xFFFF383Cu,
+    0u,
+    0x50000u,
+    0x1B0C0000u,
+    0u,
+    0x101u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x2u,
+    0u,
+    0x201u,
+    0xFF000041u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0xD0000u,
+    0u,
+    0x201u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x40000u,
+    0x3u,
+    0u,
+    0x2u,
+    0x41u,
+    0x800000u,
+    0x600000u,
+    0u,
+    0u,
+    0u,
+    0x50000u,
+    0x3u,
+    0u,
 };
 static u32 test_dbl(u32 row)
 {

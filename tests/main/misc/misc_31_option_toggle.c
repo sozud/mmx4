@@ -5,7 +5,9 @@
 #ifdef MMX4_SATURN
 #include "saturn/game_low.h"
 #define TEST_OPTION_PALETTE(psx) ((psx) == 0x7803 ? SATURN_OPTION_SELECTED_PALETTE : (psx) == 0x7804 ? SATURN_OPTION_LOCKED_PALETTE \
-        : (psx) == 0x7802 ? SATURN_OPTION_TITLE_PALETTE : (psx) == 0x7800 ? SATURN_OPTION_PALETTE : (psx))
+        : (psx) == 0x7802                                                                            ? SATURN_OPTION_TITLE_PALETTE  \
+        : (psx) == 0x7800                                                                            ? SATURN_OPTION_PALETTE        \
+                                                                                                     : (psx))
 #else
 #define TEST_OPTION_PALETTE(psx) (psx)
 #endif
@@ -97,7 +99,7 @@ static u32 toggle_init(u32 row)
     expected.unk3C = TOGGLE_FRAMES(offset);
     expected.unk15 = 0;
     expected.unk42 = TEST_OPTION_PALETTE(y == 0 ? 0x7802 : label == 1 && saved ? 0x7804
-                                                                                : 0x7800);
+                                                                               : 0x7800);
     expected.x_pos.i.hi = 160;
     expected.unk16 = VISUAL_SATURN_LAYER(16);
     expected.on_screen = y != 3;
