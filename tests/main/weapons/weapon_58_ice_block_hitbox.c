@@ -56,8 +56,27 @@ static const u32 ice_hitbox_variants_cases_expected[] = { 0x1u, 0x3u, 0x2u, 0x0u
 #undef VARIANT_CASE
 #undef ENTRY
 
+void ice_block_hitbox_update(struct WeaponObj*);
+static u32 hitbox_life(u8 count)
+{
+    struct WeaponObj weapon;
+    memset(&weapon, 0, sizeof(weapon));
+    weapon.active = 1;
+    weapon.state = 1;
+    weapon.unk5 = count;
+    ice_block_hitbox_update(&weapon);
+    return weapon.state | (u32)(u8)weapon.unk5 << 8;
+}
+static u32 hitbox_lasting(void) { return hitbox_life(3); }
+static u32 hitbox_spent(void) { return hitbox_life(0); }
+static const CTestCase ice_hitbox_life_cases[] = {
+    hitbox_lasting,
+    hitbox_spent,
+};
+static const u32 ice_hitbox_life_cases_expected[] = { 0x201u, 0xFF02u };
 const struct CTestGroup c_test_groups[] = {
     { "ice_hitbox_variants", ice_hitbox_variants_cases, ice_hitbox_variants_cases_expected, COUNT(ice_hitbox_variants_cases), 0 },
+    { "ice_hitbox_life", ice_hitbox_life_cases, ice_hitbox_life_cases_expected, COUNT(ice_hitbox_life_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ice_hitbox_variants_cases);
+const u32 c_test_count = COUNT(ice_hitbox_variants_cases) + COUNT(ice_hitbox_life_cases);

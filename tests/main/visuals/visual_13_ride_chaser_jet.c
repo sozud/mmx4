@@ -22,7 +22,7 @@ static u32 jet_case(u32 row)
     rider.y_pos.i.hi = y[row];
     rider.animation_step.fields.frame_index = row == 3 ? 5 : 1;
     ride_chaser_jet_update(&jet);
-    assert(jet.state == 1 && jet.unk54 == 0xFF && jet.unk16 == 6);
+    assert(jet.state == 1 && jet.unk54 == 0xFF && jet.unk16 == VISUAL_SATURN_LAYER(6));
     jet.unk56 = row == 3 ? 5 : 9;
     jet.unk54 = row == 4 ? 0x16 : 0xFF;
     ride_chaser_jet_update(&jet);

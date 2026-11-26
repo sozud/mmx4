@@ -18,7 +18,7 @@ static void (*const stock_shot_init_states_cases[])(void) = {
     sts_init_left,
     sts_init_right,
 };
-static const u32 stock_shot_init_states_expected[] = { 1u, 0xFF000021u, 0u, 0u, 0xFFF60000u, 0u, 0u, 0x27802u, 0u, 0u, 1u, 0xFF400021u, 0u, 0u, 0xA0000u, 0u, 0u, 0x27802u, 0u, 0u };
+static const u32 stock_shot_init_states_expected[] = { 1u, 0xFF000021u, 0u, 0u, 0xFFF60000u, 0u, 0u, 0x20000u | OBJECT_CLUT(0x7802), 0u, 0u, 1u, 0xFF400021u, 0u, 0u, 0xA0000u, 0u, 0u, 0x20000u | OBJECT_CLUT(0x7802), 0u, 0u };
 
 static u32 test_stock_shot_init_states(u32 row)
 {
@@ -58,7 +58,7 @@ static u32 stock_flight(u32 row)
     obj.unk5 = 1;
     obj.on_screen = 1;
     obj.bg_offset = layer;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = (camera_x + edges[edge][0]) * 65536 + 0x1234;
     obj.y_pos.val = (camera_y + edges[edge][1]) * 65536 + 0x5678;
     obj.x_vel.val = facing ? 0xA0000 : -0xA0000;
@@ -67,7 +67,7 @@ static u32 stock_flight(u32 row)
     obj.unk98 = hit;
     obj.animation_table = D_8011BF40;
     set_animation(&obj, 24);
-    assert(obj.animation_step.packed == 0x72010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x72010002));
     expected = obj;
     if (outside[edge]) {
         expected.state = 3;

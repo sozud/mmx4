@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#ifndef VERSION_DEMO
 #include "main/visuals/visual_28_storm_owl_fx.h"
 #include "main/55C4.h"
 #include "main/mains/main_60_storm_owl.h"
@@ -28,7 +29,7 @@ static u32 storm_owl_fx_raw_modes_start_case(u32 mode)
     owner.active = 0x41;
     owner.id = 60;
     owner.state = 1;
-    owner.unk15 = mode & 1 ? 0x40 : 0;
+    owner.unk15 = mode & 1 ? PLAYER_FACING_RIGHT : 0;
     owner.ext.main_60.storm_active = 0x28;
     obj.unk50 = (struct PlayerObj*)&owner;
     before = obj;
@@ -84,7 +85,7 @@ static u32 storm_owl_fx_start_modes_start_case(u32 mode)
     owner.active = 0x41;
     owner.id = 60;
     owner.state = 1;
-    owner.unk15 = mode & 1 ? 0x40 : 0;
+    owner.unk15 = mode & 1 ? PLAYER_FACING_RIGHT : 0;
     owner.ext.main_60.storm_active = 0x28;
     obj.unk50 = (struct PlayerObj*)&owner;
     before = obj;
@@ -169,8 +170,8 @@ static u32 test_storm_owl_fx_main_states(u32 row)
 }
 
 static const u8 animations[] = { 10, 26, 25, 14 };
-static const u32 words[] = { 0x62010002, 0xA8010002, 0x45010001, 0x3F010001 };
-static const u32 next_words[] = { 0x62010001, 0xA8010001, 0x44010001, 0x40010001 };
+static const u32 words[] = { C_TEST_STEP(0x62010002), C_TEST_STEP(0xA8010002), C_TEST_STEP(0x45010001), C_TEST_STEP(0x3F010001) };
+static const u32 next_words[] = { C_TEST_STEP(0x62010001), C_TEST_STEP(0xA8010001), C_TEST_STEP(0x44010001), C_TEST_STEP(0x40010001) };
 static u32 lifetime(u32 row)
 {
     struct VisualObj obj, expected;
@@ -235,3 +236,8 @@ const struct CTestGroup c_test_groups[] = {
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
 const u32 c_test_count = COUNT(storm_owl_fx_main_states_cases) + COUNT(storm_owl_fx_raw_modes_cases_expected) + COUNT(storm_owl_fx_start_modes_cases) + 32;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

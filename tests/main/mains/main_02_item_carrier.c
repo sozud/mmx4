@@ -83,7 +83,7 @@ static u32 test_func_80042AFC(u32 row)
 
     memset(&obj, 0, sizeof(obj));
     memset(&g_Player, 0, sizeof(g_Player));
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     obj.active = 0x41;
     obj.id = 2;
     obj.x_pos.val = 6553600;
@@ -147,7 +147,7 @@ static u32 test_item_carrier_drop_start(u32 row)
 
     memset(&obj, 0, sizeof(obj));
     memset(&g_Player, 0, sizeof(g_Player));
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     obj.active = 0x41;
     obj.id = 2;
     obj.x_pos.val = 6553600;
@@ -162,7 +162,7 @@ static u32 test_item_carrier_drop_start(u32 row)
     layout_width = 16;
     layout_size = 256;
     map_words[0] = 0x01010101;
-    attributes[0] = 0x38;
+    attributes[0] = C_TEST_PSX_WORD(0x38);
     memcpy(map_before, map_words, sizeof(map_before));
     memcpy(pixels_before, pixels_words, sizeof(pixels_before));
     memcpy(attributes_before, attributes, sizeof(attributes_before));
@@ -203,7 +203,7 @@ static u32 test_item_carrier_hover_turn(u32 row)
     obj.x_pos.val = c->obj_x_pos;
     g_Player.x_pos.val = c->g_Player_x_pos;
     item_carrier_hover_turn(&obj);
-    observed_values[0] = (u32)obj.unk15;
+    observed_values[0] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[1] = (u32)obj.unk5;
     observed_values[2] = (u32)obj.unk6;
     return c_test_observe(0, row, observed_values, c->expected, 3);
@@ -265,7 +265,7 @@ static void ic_side_turn_left(void)
 static void ic_side_turn_right(void)
 {
     CARRY(3, 2, 1);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     item_carrier_leave(&so);
 }
 static void ic_side_turn_wait(void)
@@ -381,7 +381,21 @@ static void ic_spawn_zero(void)
     state_extra = ((u8*)&so.ext)[0];
 }
 
-static void (*const item_carrier_states_cases[])(void) = {
+void item_carrier_approach(struct MainObj*);
+void item_carrier_approach_fly(struct MainObj*);
+void item_carrier_approach_stop(struct MainObj*);
+static struct Unk_unk68 icm_point = { -2, -2, 4, 4 };
+#define ICM(sub, setup) (CARRY(0, 0, 0), state_terrain(0), memset(item_objects, 0, sizeof(item_objects)), memset(weapon_objects, 0, sizeof(weapon_objects)), so.state = 1, so.active = 1, so.id = 2, so.unk2 = sub, so.hp = 1, setup, func_80042AFC(&so), state_extra = so.unk2 | item_objects[0].active << 8 | (u32)item_objects[0].id << 16 | (u32)so.unk5 << 24)
+static void ic_main_front_hit(void) { ICM(0, state_hit(&so, 0, 0, 1)); }
+static void ic_main_capsule_part_hit(void) { ICM(0, (state_hit(&so, 0, 0, 1), weapon_objects[0].y_pos.i.hi -= 30, ((struct MainObj*)&weapon_objects[0])->attack_box = &icm_point)); }
+static void ic_main_capsule_alive(void) { ICM(2, 0); }
+static void ic_main_away(void) { ICM(0, so.x_pos.i.hi = 0x1000); }
+static void ic_approach_right(void) { CARRY(0, 0, 0), so.unk15 = PLAYER_FACING_RIGHT, item_carrier_approach(&so); }
+static void ic_fly_far(void) { CARRY(0, 1, 0), so.x_pos.i.hi = 0x100, item_carrier_approach_fly(&so); }
+static void ic_fly_near_left(void) { CARRY(0, 1, 0), g_Player.x_pos.i.hi = 0x90, item_carrier_approach_fly(&so); }
+static void ic_stop_done(void) { CARRY(0, 2, 0), item_carrier_approach_stop(&so); }
+static void ic_stop_wait(void) { CARRY(0, 2, 0), so.animation_step.fields.relative_step = 1, item_carrier_approach_stop(&so); }
+static void ic_fall_air(void) { CARRY(2, 2, 0), state_terrain(0), item_carrier_drop_fall(&so); }static void (*const item_carrier_states_cases[])(void) = {
     ic_leave_low,
     ic_leave_high,
     ic_side_start,
@@ -401,8 +415,29 @@ static void (*const item_carrier_states_cases[])(void) = {
     ic_spawn_both_weapon,
     ic_spawn_both_health,
     ic_spawn_zero,
+    ic_main_front_hit,
+    ic_main_capsule_part_hit,
+    ic_main_capsule_alive,
+    ic_main_away,
+    ic_approach_right,
+    ic_fly_far,
+    ic_fly_near_left,
+    ic_stop_done,
+    ic_stop_wait,
+    ic_fall_air,
 };
-static const u32 item_carrier_states_expected[] = { 0x10300u, 0u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20300u, 0u, 0x800000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1020300u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x2020300u, 0xFF000000u, 0x800000u, 0x600000u, 0xFFFE0000u, 0x2500u, 0u, 0x50000u, 0u, 0u, 0x2020300u, 0xFF400000u, 0x800000u, 0x600000u, 0x20000u, 0x2500u, 0u, 0x50000u, 0u, 0u, 0x1020300u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x2020303u, 0u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0u, 0u, 0x2020302u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10100u, 0u, 0x800000u, 0x600000u, 0u, 0xFFFFC000u, 0u, 0x50000u, 0u, 0u, 0x300u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x10200u, 0u, 0x800000u, 0x5F0000u, 0u, 0x10000u, 0u, 0x40000u, 0u, 0u, 0x20200u, 0u, 0x800000u, 0x600001u, 0u, 0u, 0x420000u, 0x40000u, 0u, 0u, 0x30200u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 1u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 3u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 1u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 3u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 1u, 0u };
+static const u32 item_carrier_states_expected[] = { 0x10300u, 0u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20300u, 0u, 0x800000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x1020300u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x2020300u, 0xFF000000u, 0x800000u, 0x600000u, 0xFFFE0000u, 0x2500u, 0u, 0x50000u, 0u, 0u, 0x2020300u, 0xFF400000u, 0x800000u, 0x600000u, 0x20000u, 0x2500u, 0u, 0x50000u, 0u, 0u, 0x1020300u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x2020303u, 0u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0u, 0u, 0x2020302u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10100u, 0u, 0x800000u, 0x600000u, 0u, 0xFFFFC000u, 0u, 0x50000u, 0u, 0u, 0x300u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x10200u, 0u, 0x800000u, 0x5F0000u, 0u, 0x10000u, 0u, 0x40000u, 0u, 0u, 0x20200u, 0u, 0x800000u, 0x600001u, 0u, 0u, 0x420000u, 0x40000u, 0u, 0u, 0x30200u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 1u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 3u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 1u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 3u, 0u, 1u, 4u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 1u, 0u,
+    0x10201u, 0xFF000201u, 0x800000u, 0x600000u, 0x0u, 0x40000u, 0x420000u, 0x58000u, 0x2000002u, 0x41002100u,
+    0x2u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x58000u, 0x22100u, 0x41002100u,
+    0x10001u, 0xFF000201u, 0x800000u, 0x600000u, 0xFFFE0000u, 0x0u, 0x0u, 0x50000u, 0x2u, 0x0u,
+    0x10002u, 0xFF000001u, 0x10000000u, 0x600000u, 0xFFFE0000u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x10000u, 0xFF400000u, 0x800000u, 0x600000u, 0x20000u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x10000u, 0x0u, 0x1000000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
+    0x20000u, 0xFF000000u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x100u, 0x0u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
+    0x20000u, 0x0u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
+    0x20200u, 0x0u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
+};
 
 static u32 test_item_carrier_states(u32 row)
 {

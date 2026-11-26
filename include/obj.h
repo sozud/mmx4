@@ -1292,6 +1292,11 @@ struct PlayerObj {
 #endif
 };
 
+#ifndef SPIKE_IMMUNE
+#define SPIKE_IMMUNE(obj) ((obj).spike_immune)
+#define SPIKE_IMMUNE_SET(obj, value) ((obj).spike_immune = (value))
+#endif
+
 MMX4_STATIC_ASSERT(player_unk68_offset,
     MMX4_OFFSET_OF(struct PlayerObj, unk68) == MMX4_OFFSET_OF(struct MainObj, terrain_box));
 MMX4_STATIC_ASSERT(player_unk6C_offset,

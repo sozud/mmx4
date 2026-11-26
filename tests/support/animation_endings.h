@@ -29,7 +29,7 @@ static u32 animation_case(u32 mode)
             web_before.animation_step = *(union AnimationStep*)(D_8011C070[8] + 1);
             web_before.on_screen = mode == 1;
         } else {
-            assert(web.animation_step.packed == 0x07000060);
+            assert(web.animation_step.packed == C_TEST_STEP(0x07000060));
             web_before.animation_step.fields.duration = 95;
             web_before.state = 3;
             web_before.on_screen = 0;
@@ -53,7 +53,7 @@ static u32 animation_case(u32 mode)
         if (mode < 5) {
             pillar.animation_cursor = (u32*)magma_dragoon_animations[32] + 7;
             pillar.animation_step = *(union AnimationStep*)pillar.animation_cursor;
-            assert(pillar.animation_step.packed == 0xB5000001);
+            assert(pillar.animation_step.packed == C_TEST_STEP(0xB5000001));
         }
         pillar_before = pillar;
         if (mode < 5)

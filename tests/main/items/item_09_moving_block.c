@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/items/item_09_moving_block.h"
 #include "main/195B4.h"
 extern u8 moving_block_terrain_box[4];
@@ -17,7 +18,7 @@ static u32 block_case(u32 mode)
     for (i = 0; i < 16; i++)
         metadata[i] = 0x1000 + i * 0x400;
     frames[8] = 64;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)frames;
     engine_obj.stage = 7;
     engine_obj.substage = 1;
@@ -28,7 +29,7 @@ static u32 block_case(u32 mode)
     obj.unk5 = 9;
     obj.unk6 = 10;
     obj.unk7 = 11;
-    obj.unk16 = 3;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.bg_offset = -1;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
@@ -40,7 +41,7 @@ static u32 block_case(u32 mode)
     obj.unk61 = 10;
     obj.unk75 = 11;
     obj.unk76 = 12;
-    obj.animation_step.packed = 0x18010003;
+    obj.animation_step.packed = C_TEST_STEP(0x18010003);
     obj.unk54 = moving_block_terrain_box;
     g_Player.x_pos.val = (mode == 0 ? 99 : 100) * 65536 + 0x1234;
     g_Player.bg_offset = 1;
@@ -50,9 +51,9 @@ static u32 block_case(u32 mode)
     expected.active = 0x41;
     expected.state = 1;
     expected.bg_offset = 1;
-    expected.unk40 = 0x60;
-    expected.unk42 = 0x78C8;
-    expected.unk16 = 6;
+    expected.unk40 = OBJECT_STAGE_TEXTURE(8);
+    expected.unk42 = OBJECT_STAGE_CLUT(0xA1);
+    expected.unk16 = VISUAL_SATURN_LAYER(6);
     expected.sprite_frames = (const u8*)frames + 64;
     expected.animation_step.fields.frame_index = 0;
     expected.unk5C = 0;
@@ -70,12 +71,9 @@ static u32 block_case(u32 mode)
     assert(s_StageMainIds[7][1][8] == 0xA1 && (u8)func_8002938C(0xA1) == 8);
     assert(moving_block_motion[0].x_velocity == 65536 && moving_block_motion[0].y_velocity == 0);
     func_800C20F4(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     for (i = 0; i < 128; i++)
         assert(frames[i] == (i == 8 ? 64 : 0x12340000 + i));
     for (i = 0; i < 16; i++)
@@ -163,7 +161,7 @@ static u32 vertical_motion(u32 row)
     obj.unk68 = (struct Unk_unk68*)moving_block_terrain_box;
     obj.unk7C.saved_pos.x = camera_x + 160;
     obj.unk7C.saved_pos.y = camera_y + 120;
-    obj.ext.packed = 0x35254700u | wait_values[wait];
+    obj.ext.packed = C_TEST_PSX_WORD(0x35254700u | wait_values[wait]);
     expected = obj;
     expected.unk18 = obj.x_pos;
     expected.unk1C = obj.y_pos;
@@ -193,9 +191,32 @@ static u32 vertical_motion(u32 row)
     return 1;
 }
 
+#include "support/state_cases.h"
+void func_800C229C(struct ItemObj*);
+#define mb state_room.item
+#define MB(vx, dx, setup) (state_reset(0, 0, 0), mb.active = 1, mb.id = 9, mb.state = 1, mb.x_pos.i.hi = 0x80 + (dx), mb.y_pos.i.hi = 0x60, mb.unk7C.saved_pos.x = 0x80, mb.unk7C.saved_pos.y = 0x60, mb.x_vel.val = vx, setup, func_800C229C(&mb), state_extra = (u8)mb.ext.item_2.unk80)
+static void mb_right(void) { MB(0x10000, 0, 0); }
+static void mb_left_turn(void) { MB(-0x10000, -0x8F, 0); }
+static void mb_left_paused(void) { MB(-0x10000, 0, mb.ext.item_2.unk80 = 3); }
+static void mb_away(void) { MB(0x10000, 0x7000, 0); }
+static void (*const moving_block_states_cases[])(void) = {
+    mb_right,
+    mb_left_turn,
+    mb_left_paused,
+    mb_away,
+};
+static const u32 moving_block_states_expected[] = {
+    0x1u, 0x1u, 0x810000u, 0x600000u, 0x10000u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x1u, 0x1u, 0xFFF00000u, 0x600000u, 0x10000u, 0x0u, 0x0u, 0x50000u, 0xAu, 0x0u,
+    0x1u, 0x1u, 0x800000u, 0x600000u, 0xFFFF0000u, 0x0u, 0x0u, 0x50000u, 0x2u, 0x0u,
+    0x2u, 0x1u, 0x70810000u, 0x600000u, 0xFFFF0000u, 0x0u, 0x0u, 0x50000u, 0xAu, 0x0u,
+};
+static u32 test_moving_block_states(u32 row) { return object_run(moving_block_states_cases[row], row, &moving_block_states_expected[row * 10]); }
+#undef mb
 const struct CTestGroup c_test_groups[] = {
     { "moving_block_resource_facing", moving_block_resource_facing_cases, moving_block_resource_facing_cases_expected, COUNT(moving_block_resource_facing_cases), 0 },
     { "defined_vertical_motion", NULL, NULL, 54, vertical_motion },
+    { "moving_block_states", 0, 0, COUNT(moving_block_states_cases), test_moving_block_states },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(moving_block_resource_facing_cases) + 54;
+const u32 c_test_count = COUNT(moving_block_resource_facing_cases) + 54 + COUNT(moving_block_states_cases);

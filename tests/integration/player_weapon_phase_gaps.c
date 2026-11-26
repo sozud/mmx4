@@ -60,7 +60,7 @@ static void prepare(u32 character)
     memset(tiles, 0, sizeof(tiles));
     c_test_copy_words((u32*)tiles_before, (u32*)tiles, sizeof(tiles) / 4);
     attributes[0] = 0;
-    attributes[1] = 0x38;
+    attributes[1] = TEST_DISC32(0x38);
     SP_BG_TILEMAP = map;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -112,7 +112,7 @@ static void pose(u32 animation, u32 word, u32 saber_bank)
     expected.unk17 = animation;
     expected.previous_animation_index = 255;
     expected.animation_cursor = expected.animation_table[animation];
-    expected.animation_step.packed = word;
+    expected.animation_step.packed = C_TEST_STEP(word);
     expected.unk38 = (u8*)gfx + (saber_bank ? 128 : 64);
     expected.unk3C = (u8*)frames + (saber_bank ? 128 : 64);
 }
@@ -127,7 +127,7 @@ static void check(void)
     assert(c_test_word_difference((u32*)weapon_objects, (u32*)weapons, sizeof(weapons) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, sizeof(visuals) / 4) == 0);
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
     assert(cur_random == rng && need_palette_load == dirty);
-    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == 0 && attributes[1] == 0x38);
+    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == 0 && attributes[1] == TEST_DISC32(0x38));
     for (i = 0; i < COUNT(map); i++)
         assert(map[i] == 1);
     assert(c_test_word_difference((u32*)tiles, (u32*)tiles_before, sizeof(tiles) / 4) == 0);
@@ -153,7 +153,7 @@ static u32 hover_cancel(u32 row)
     (void)row;
     prepare(0);
     player_enter_fall(&g_Player);
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     g_Player.armor_parts = 8;
     g_Player.pressed_input = PLAYER_INPUT_JUMP;
     assert(player_check_hover(&g_Player) == 1);
@@ -192,14 +192,15 @@ static u32 saber_ryuenjin(u32 row)
     g_Player.pressed_input = PLAYER_INPUT_SHOOT;
     assert(player_zero_check_saber(&g_Player) == 1);
     g_Player.pressed_input = 0;
-    for (i = 0; i < 12 && g_Player.animation_step.packed != 0x47010001; i++)
+    for (i = 0; i < 12 && g_Player.animation_step.packed != C_TEST_STEP(0x47010001); i++)
         player_zero_saber(&g_Player);
-    assert(g_Player.animation_step.packed == 0x47010001 && g_Player.attacking == 1 && g_Player.unk5 == PLAYER_ZERO_SABER);
+    assert(g_Player.animation_step.packed == C_TEST_STEP(0x47010001) && g_Player.attacking == 1 && g_Player.unk5 == PLAYER_ZERO_SABER);
     g_Player.input.buttons.held = PLAYER_INPUT_UP;
     g_Player.pressed_input = PLAYER_INPUT_SPECIAL;
     capture();
     pose(0x65, 0x56010001, 1);
-    expected.attacking = expected.air_state = expected.spike_immune = 1;
+    expected.attacking = expected.air_state = 1;
+    SPIKE_IMMUNE_SET(expected, 1);
     expected.combo = expected.afterimage = 0;
     expected.unk5 = PLAYER_ZERO_RYUENJIN;
     expected.unk6 = 0;

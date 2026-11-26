@@ -458,7 +458,8 @@ decompress_words(const u16* source, u16* destination)
 {
     for (;;) {
         unsigned flags = *source++;
-        for (unsigned mask = 0x8000; mask; mask >>= 1) {
+        unsigned mask;
+        for (mask = 0x8000; mask; mask >>= 1) {
             if (!(flags & mask)) {
                 *destination++ = *source++;
             } else {

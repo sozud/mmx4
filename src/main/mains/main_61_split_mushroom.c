@@ -1777,9 +1777,9 @@ void func_8007B418(struct MainObj* arg0)
     shot->unk42 = 0x78CC;
 #else
     if (engine_obj.stage == 3)
-        shot->unk42 = 0x78CC;
+        shot->unk42 = OBJECT_CLUT(0x78CC);
     else
-        shot->unk42 = 0x788C;
+        shot->unk42 = OBJECT_CLUT(0x788C);
 #endif
     shot->unk68 = arg0->terrain_box;
     shot->unk54 = arg0->hurt_box;

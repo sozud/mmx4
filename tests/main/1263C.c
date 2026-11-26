@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#define ENGINE_SIZE sizeof(struct EngineObj)
 
 void func_80021E74(void);
 void func_80022074(void);
@@ -13,6 +14,7 @@ static struct PlayerObj expected_player;
 static s32 expected_clock;
 static u16 expected_random;
 
+#ifdef MMX4_PC
 static void put16(u8* target, u32 value)
 {
     target[0] = value;
@@ -29,14 +31,35 @@ static u16 get16(const u8* source)
 {
     return source[0] | ((u16)source[1] << 8);
 }
+#define BOSS_ADDRESS(boss) (0x8013BED0u + (boss)*0x9C)
+#else
+static void put16(u8* target, u32 value)
+{
+    u16 half = value;
+    memcpy(target, &half, 2);
+}
+
+static void put32(u8* target, u32 value)
+{
+    memcpy(target, &value, 4);
+}
+
+static u16 get16(const u8* source)
+{
+    u16 half;
+    memcpy(&half, source, 2);
+    return half;
+}
+#define BOSS_ADDRESS(boss) ((u32)&main_objects[boss])
+#endif
 
 static void make_image(u8* image, u32 pattern, s32 boss)
 {
     u32 i;
-    for (i = 0; i < 0x64; i++)
+    for (i = 0; i < ENGINE_SIZE; i++)
         image[i] = pattern == 0 ? 0 : pattern == 1 ? 0xFF
                                                    : (i * 73 + 0x35);
-    put32(image + 0x20, boss < 0 ? 0 : 0x8013BED0u + boss * 0x9C);
+    put32(image + 0x20, boss < 0 ? 0 : BOSS_ADDRESS(boss));
     put32(image + 0x38, 0);
     put32(image + 0x3C, 0);
 }
@@ -86,7 +109,9 @@ static void engine_from_image(struct EngineObj* target, const u8* image, s32 bos
     target->arm_type = image[0x48];
     target->palette_flags = image[0x59];
     target->unk5F = image[0x5F];
+#ifndef VERSION_DEMO
     target->unk60 = image[0x60];
+#endif
     target->unk4 = get16(image + 0x04);
     target->unk8 = get16(image + 0x08);
     target->unkA = get16(image + 0x0A);
@@ -98,7 +123,9 @@ static void engine_from_image(struct EngineObj* target, const u8* image, s32 bos
     }
     for (i = 0; i < 3; i++) {
         target->sub_tanks[i] = image[0x5C + i];
+#ifndef VERSION_DEMO
         target->pad61[i] = image[0x61 + i];
+#endif
     }
 }
 
@@ -129,7 +156,7 @@ static const u32 bad_addresses[] = {
 static u32 playback(u32 row, u32 native)
 {
     struct EngineObj saved_engine;
-    u8 initial_image[0x64], saved_image[0x64], next_image[0x64];
+    u8 initial_image[sizeof(struct EngineObj)], saved_image[sizeof(struct EngineObj)], next_image[sizeof(struct EngineObj)];
     u32 i, mode = row % 2, pattern = (row / 2) % 3;
     s32 boss = native ? -1 : (s32)(row / 6) - 1;
     s32 saved_boss = boss < 0 ? 47 : 47 - boss;
@@ -165,13 +192,13 @@ static u32 playback(u32 row, u32 native)
     put32(expected_replay.bytes, 0xDEADBEEF);
     put32(expected_replay.bytes + 4, clocks[pattern]);
     put16(expected_replay.bytes + 8, randoms[pattern]);
-    memcpy(expected_replay.bytes + 0xC, initial_image, 0x64);
+    memcpy(expected_replay.bytes + 0xC, initial_image, ENGINE_SIZE);
     c_test_copy_words((u32*)REPLAY_DATA, expected_replay.words, COUNT(expected_replay.words));
     main_bss_state.frame_counter = 1234567;
     cur_random = 0x4321;
     put32(expected_replay.bytes, 0);
 #ifndef MMX4_PC
-    memcpy(expected_replay.bytes + 0x70, saved_image, 0x64);
+    memcpy(expected_replay.bytes + 0xC + ENGINE_SIZE, saved_image, ENGINE_SIZE);
 #endif
     engine_from_image(&expected_engine, initial_image, boss);
     expected_clock = clocks[pattern];
@@ -188,11 +215,11 @@ static u32 playback(u32 row, u32 native)
         initial_image[0x44] = 9;
         initial_image[0x36] = 0x37;
 #ifndef MMX4_PC
-        memcpy(expected_replay.bytes + 0x70, initial_image, 0x64);
+        memcpy(expected_replay.bytes + 0xC + ENGINE_SIZE, initial_image, ENGINE_SIZE);
 #endif
         make_image(next_image, (pattern + 2) % 3, saved_boss);
-        memcpy(expected_replay.bytes + 0xC, next_image, 0x64);
-        memcpy(REPLAY_DATA + 0xC, next_image, 0x64);
+        memcpy(expected_replay.bytes + 0xC, next_image, ENGINE_SIZE);
+        memcpy(REPLAY_DATA + 0xC, next_image, ENGINE_SIZE);
         put32(expected_replay.bytes + 4, clocks[(pattern + 1) % 3]);
         put16(expected_replay.bytes + 8, randoms[(pattern + 1) % 3]);
         put32(REPLAY_DATA + 4, clocks[(pattern + 1) % 3]);

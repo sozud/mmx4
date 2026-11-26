@@ -185,7 +185,7 @@ void func_80020580(struct EngineObj* arg0)
     if (arg0->stage == 0) {
         arg0->unk8 = func_8001E850(D_800F231C, 1);
         arg0->unk1 += 5;
-    } else if ((saturn_backup_status & SATURN_BACKUP_UNAVAILABLE) == SATURN_BACKUP_UNAVAILABLE) {
+    } else if ((saturn_backup_cart_status & SATURN_BACKUP_UNAVAILABLE) == SATURN_BACKUP_UNAVAILABLE) {
         arg0->unk8 = func_8001E850(D_800F2338, 1);
         arg0->unk1 += 3;
     } else {

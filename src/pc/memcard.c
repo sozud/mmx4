@@ -17,6 +17,11 @@ static struct {
 } cards[2];
 static int initialized;
 
+static int card_fault(int port, const char* kind)
+{
+    return cards[port].fault && !strcmp(cards[port].fault, kind);
+}
+
 static void blank_card(u8* data)
 {
     int i;
@@ -102,14 +107,14 @@ int mmx4_pc_card_info(int port)
             flush_card(port);
         }
     }
-    return 0;
+    return card_fault(port, "error") ? 3 : 0;
 }
 
 int mmx4_pc_card_load(int port)
 {
-    if (mmx4_pc_card_info(port))
+    if (mmx4_pc_card_info(port) == 1 || card_fault(port, "pulled"))
         return 1;
-    if (cards[port].fault && !strcmp(cards[port].fault, "read"))
+    if (card_fault(port, "read") || card_fault(port, "error"))
         return 3;
     return memcmp(cards[port].data, "MC", 2) ? 2 : 0;
 }
@@ -164,7 +169,7 @@ static int save_block(int port)
 int mmx4_pc_card_read(int port, void* buffer, int size)
 {
     int block;
-    if (mmx4_pc_card_load(port))
+    if (mmx4_pc_card_load(port) || card_fault(port, "file"))
         return 2;
     block = save_block(port);
     if (!block)

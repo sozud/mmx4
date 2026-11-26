@@ -38,9 +38,9 @@ static u32 jet_case(u32 mode, u32 observation)
             visual_before.unk17 = 0x15;
             visual_before.previous_animation_index = 0xFF;
             visual_before.animation_cursor = jet_stingray_animations[0x15];
-            visual_before.animation_step = *(union AnimationStep*)jet_stingray_animations[0x15];
+            memcpy(&visual_before.animation_step, jet_stingray_animations[0x15], sizeof(visual_before.animation_step));
         }
-        actual = observation == 0 ? visual.animation_step.packed : (u8)visual.unk5 | ((u32)(u8)visual.state << 8);
+        actual = observation == 0 ? C_TEST_STEP(visual.animation_step.packed) : (u8)visual.unk5 | ((u32)(u8)visual.state << 8);
     } else {
         jet_stingray_intro_warning(&obj);
         before.on_screen = 0;
@@ -51,9 +51,9 @@ static u32 jet_case(u32 mode, u32 observation)
             before.unk17 = 0x1D;
             before.previous_animation_index = 0xFF;
             before.animation_cursor = (const u8*)jet_stingray_animations[0x1D];
-            before.animation_step = *(union AnimationStep*)jet_stingray_animations[0x1D];
+            memcpy(&before.animation_step, jet_stingray_animations[0x1D], sizeof(before.animation_step));
         }
-        actual = observation == 0 ? obj.animation_step.packed : (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8);
+        actual = observation == 0 ? C_TEST_STEP(obj.animation_step.packed) : (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8);
     }
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);

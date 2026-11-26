@@ -36,9 +36,9 @@ static u32 trail_case(u32 mode)
     obj.unk5 = 9;
     obj.unk6 = 10;
     obj.unk7 = 11;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.bg_offset = -1;
-    obj.unk16 = 3;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.unk40 = 0x3333;
     obj.unk42 = 0x5555;
     obj.x_pos.val = 100 * 65536 + 0x1234;
@@ -52,7 +52,7 @@ static u32 trail_case(u32 mode)
     if (mode == 4) {
         obj.animation_cursor = D_8011C104[6] + 5;
         obj.animation_step = *(union AnimationStep*)obj.animation_cursor;
-        assert(obj.animation_step.packed == 0x12000060);
+        assert(obj.animation_step.packed == C_TEST_STEP(0x12000060));
     }
     expected = obj;
     player_before = g_Player;
@@ -65,18 +65,15 @@ static u32 trail_case(u32 mode)
     else {
         expected.unk38 = (u8*)gfx + 64;
         expected.unk3C = (u8*)sprites + 80;
-        expected.unk40 = 0x520;
-        expected.unk42 = 0x7801;
-        expected.unk16 = 1;
+        expected.unk40 = WEAPON_TEXTURE_SPECIAL_0;
+        expected.unk42 = OBJECT_CLUT(0x7801);
+        expected.unk16 = VISUAL_SATURN_LAYER(1);
         expected.state = 1;
     }
     func_80097DD8(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
     for (i = 0; i < 128; i++) {
         assert(gfx[i] == gfx_before[i]);
         assert(sprites[i] == sprites_before[i]);
@@ -166,10 +163,61 @@ static u32 test_twin_slasher_update(u32 row)
     return c_test_observe(0, row, observed_values, twin_slasher_update_expected, 1);
 }
 
+
+void twin_slasher_charged_update(struct WeaponObj*);
+static struct WeaponObj ts;
+static u32 slash_step = C_TEST_STEP(5);
+static u32 slasher(void (*update)(struct WeaponObj*), u8 state, s16 x, u8 stop, u8 timer)
+{
+    u32 i;
+    memset(&ts, 0, sizeof(ts));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    for (i = 0; i < COUNT(gfx); i++)
+        gfx[i] = sprites[i] = 0x40;
+    TEST_PLAYER_GFX = (u8*)gfx;
+    TEST_SPRITE_FRAMES = (u8*)sprites;
+    g_Player.weapon = 8;
+    g_Player.x_pos.i.hi = 0x100;
+    g_Player.y_pos.i.hi = 0x80;
+    ts.active = 1;
+    ts.id = 8;
+    ts.state = state;
+    ts.on_screen = 1;
+    ts.unk50 = (const u8*)&ts;
+    ts.animation_cursor = (const u8*)&slash_step;
+    ts.animation_step.packed = slash_step;
+    ts.x_pos.i.hi = x;
+    ts.y_pos.i.hi = 0x60;
+    ts.unk98 = stop;
+    ts.ext.weapon_8.timer = timer;
+    update(&ts);
+    return ts.state | (u32)ts.on_screen << 8 | (u32)(ts.unk50 != NULL) << 16 | (u32)ts.ext.weapon_8.timer << 24;
+}
+static u32 tsl_start_left(void)
+{
+    u32 seen = slasher(twin_slasher_update, 0, 0, 0, 0);
+    assert(ts.x_vel.val < 0 && ts.unk15 == 0);
+    return seen;
+}
+static u32 tsl_far(void) { return slasher(twin_slasher_update, 1, 0x1000, 0, 5); }
+static u32 tsl_stopped(void) { return slasher(twin_slasher_update, 1, 0x80, 1, 5); }
+static u32 tsl_timed_out(void) { return slasher(twin_slasher_update, 1, 0x80, 0, 0); }
+static u32 tsl_charged_far(void) { return slasher(twin_slasher_charged_update, 1, 0x1000, 0, 5); }
+static const CTestCase twin_slasher_paths_cases[] = {
+    tsl_start_left,
+    tsl_far,
+    tsl_stopped,
+    tsl_timed_out,
+    tsl_charged_far,
+};
+static const u32 twin_slasher_paths_cases_expected[] = { 0x18010101u, 0x05000003u, 0x05000003u, 0x00000003u, 0x05000003u };
+
 const struct CTestGroup c_test_groups[] = {
     { "twin_slasher_trail_archive_gates", NULL, twin_slasher_trail_archive_gates_cases_expected, COUNT(twin_slasher_trail_archive_gates_cases_expected), trail_case },
     { "twin_slasher_charged_update", 0, 0, 1, test_twin_slasher_charged_update },
     { "twin_slasher_update", 0, 0, 1, test_twin_slasher_update },
+    { "twin_slasher_paths", twin_slasher_paths_cases, twin_slasher_paths_cases_expected, COUNT(twin_slasher_paths_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(twin_slasher_trail_archive_gates_cases_expected) + 1 + 1;
+const u32 c_test_count = COUNT(twin_slasher_trail_archive_gates_cases_expected) + 1 + 1 + COUNT(twin_slasher_paths_cases);

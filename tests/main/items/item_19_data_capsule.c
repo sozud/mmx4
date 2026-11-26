@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/items/item_19_data_capsule.h"
 #include "main/195B4.h"
 #include "main/mains/main_41_data_hopper.h"
@@ -37,7 +38,7 @@ static u32 capsule_case(u32 mode)
     frames[2] = 64;
     memcpy(frames_before, frames, sizeof(frames));
     memcpy(metadata_before, metadata, sizeof(metadata));
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)frames;
     engine_obj.stage = 6;
     engine_obj.substage = 1;
@@ -61,7 +62,7 @@ static u32 capsule_case(u32 mode)
     obj.unk28 = 123;
     obj.unk2C = -456;
     obj.bg_offset = -1;
-    obj.unk16 = 3;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.unk40 = 0x3333;
     obj.unk42 = 0x5555;
     obj.unk75 = 9;
@@ -84,9 +85,9 @@ static u32 capsule_case(u32 mode)
         expected.unk1C = obj.y_pos;
         expected.animation_table = (const u8* const*)data_hopper_animations;
         expected.sprite_frames = (const u8*)frames + 64;
-        expected.unk40 = 0x30;
-        expected.unk42 = 0x7880;
-        expected.unk16 = 6;
+        expected.unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x29));
+        expected.unk42 = OBJECT_CLUT(0x7880);
+        expected.unk16 = VISUAL_SATURN_LAYER(6);
         expected.unk54 = NULL;
         expected.unk50 = NULL;
         expected.unk68 = (struct Unk_unk68*)(mode == 0 ? data_capsule_box_0 : mode == 1 ? data_capsule_box_1
@@ -114,14 +115,10 @@ static u32 capsule_case(u32 mode)
     }
     assert(s_StageMainIds[6][1][2] == 0x29 && (u8)func_8002938C(0x29) == 2);
     func_800C4778(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(pool_expected) / 4; i++)
-        assert(((u32*)item_objects)[i] == ((u32*)pool_expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(item_objects, pool_expected, sizeof(pool_expected));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     for (i = 0; i < 128; i++)
         assert(frames[i] == frames_before[i]);
     for (i = 0; i < 16; i++)
@@ -160,7 +157,7 @@ static u32 full(u32 row)
     for (i = 0; i < COUNT(metadata_data_capsule_enemy_capacity); i++)
         metadata_data_capsule_enemy_capacity[i] = (i + 1) * 128;
     TEST_MENU_FRAMES = (u8*)archive;
-    D_801406A8 = metadata_data_capsule_enemy_capacity;
+    test_stage_graphics(metadata_data_capsule_enemy_capacity);
     assert(func_8002938C(0x29) == 2);
     c_test_zero_words((u32*)item_objects, sizeof(item_objects) / 4);
     c_test_zero_words((u32*)main_objects, sizeof(main_objects) / 4);
@@ -177,7 +174,7 @@ static u32 full(u32 row)
     assert(child->state == 1 && child->unk17 == 15 && child->unk7C.timer16 == 10);
     for (i = 0; i < 16; i++)
         func_800C49BC(child);
-    assert(child->unk7C.timer16 == 0 && child->animation_step.packed == 0x42000001 && child->on_screen == 1);
+    assert(child->unk7C.timer16 == 0 && child->animation_step.packed == C_TEST_STEP(0x42000001) && child->on_screen == 1);
     memcpy(items_expected, item_objects, sizeof(items_expected));
     items_expected[1].unk7C.timer16 = 30;
     memcpy(mains_before, main_objects, sizeof(mains_before));
@@ -197,9 +194,58 @@ static u32 full(u32 row)
     return 1;
 }
 
+#include "support/state_cases.h"
+#include "support/sound_probe.h"
+#define dc state_room.item
+static struct MainObj dc_owner;
+static u32 dc_archive[16], dc_meta[64];
+#define DC(sub, setup)                                                                                         \
+    (state_reset(0, 0, 0), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.stage = 6, engine_obj.substage = 1, \
+        g_Player.unk68 = NULL, memset(main_objects, 0, sizeof(main_objects)), TEST_MENU_FRAMES = (u8*)dc_archive, test_stage_graphics(dc_meta),    \
+        dc_archive[2] = 64, sound_probe_begin(), dc.active = 0x41, dc.id = 0x13, dc.unk2 = sub, dc.state = 1,         \
+        dc.x_pos.i.hi = 0x7B0, dc.y_pos.i.hi = 0x80, setup, data_capsule_update(&dc), DCX())
+#define DCX() (state_extra = (u16)dc.unk7C.timer16 | (u32)(u16)dc.unk7C.saved_pos.y << 16 ^ (main_objects[0].active | main_objects[0].id << 8 | (u32)(u16)main_objects[0].y_pos.i.hi << 16), engine_obj.stage = engine_obj.substage = 0)
+static void dc_spawn_on_screen(void) { DC(0, dc.on_screen = 1); SOUND_CHECK(sound_probe_id() == 0xEA); }
+static void dc_spawn_off_screen(void) { DC(0, dc.on_screen = 0); SOUND_CHECK(sound_probe_id() == -1); }
+static void dc_wait_low(void) { DC(0, dc.y_pos.i.hi = 0x100); }
+static void dc_switch_rearm(void) { DC(1, engine_obj.character_state.fields.active = 1); }
+static void dc_open_done(void) { DC(1, dc.unk7C.saved_pos.y = 1); }
+static void dc_open_done_big(void) { DC(2, dc.unk7C.saved_pos.y = 1); }
+static void dc_opening(void) { DC(1, (dc.unk7C.saved_pos.y = 1, dc.animation_step.fields.relative_step = 1)); }
+static void dc_attached(u8 step) { DC(-1, (dc_owner.unk5 = step, dc_owner.x_pos.val = 0x1000000, dc_owner.y_pos.val = 0x2000000, dc.ext.owner = &dc_owner)); }
+static void dc_attached_follow(void) { dc_attached(5); }
+static void dc_attached_end(void) { dc_attached(4); }
+static void (*const data_capsule_steps_cases[])(void) = {
+    dc_spawn_on_screen,
+    dc_spawn_off_screen,
+    dc_wait_low,
+    dc_switch_rearm,
+    dc_open_done,
+    dc_open_done_big,
+    dc_opening,
+    dc_attached_follow,
+    dc_attached_end,
+};
+static const u32 data_capsule_steps_expected[] = {
+    0x1u, 0xFF000041u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0xA8295Fu, 0x0u,
+    0x1u, 0xFF000041u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0xA8295Fu, 0x0u,
+    0x1u, 0x41u, 0x7B00000u, 0x1000000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x1000001u, 0x141u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x1Eu, 0x0u,
+    0x1u, 0xFF000141u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x1u, 0xFF000241u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x1u, 0x141u, 0x7B00000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x10000u, 0x0u,
+    0x1u, 0xFF41u, 0x1000000u, 0x2000000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
+    0x0u, 0x0u, 0x1000000u, 0x2000000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+};
+static u32 test_data_capsule_steps(u32 row)
+{
+    return object_run(data_capsule_steps_cases[row], row, &data_capsule_steps_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "data_capsule_resources_child_pool", NULL, data_capsule_resources_child_pool_cases_expected, COUNT(data_capsule_resources_child_pool_cases_expected), capsule_case },
     { "stage6_real_capsule_factory_own_animation_clock_full_main_pool", NULL, NULL, 1, full },
+    { "data_capsule_steps", 0, 0, COUNT(data_capsule_steps_cases), test_data_capsule_steps },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(data_capsule_resources_child_pool_cases_expected) + 1;
+const u32 c_test_count = COUNT(data_capsule_resources_child_pool_cases_expected) + 1 + COUNT(data_capsule_steps_cases);

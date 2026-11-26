@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/player_common.h"
 #include "main/195B4.h"
 #include "main/player_animations.h"
@@ -8,10 +9,14 @@
 #include "main/55C4.h"
 #include "main/102FC.h"
 #include "main/2824.h"
+#include "support/player_cases.h"
+#include "main/player_check.h"
+#include "main/player.h"
 void player_check_splash_tile(struct PlayerObj*);
 
 static s32 gfx_archive[4] = { 8, 12, 0x11223344, 0x55667788 };
 static s32 sprite_archive[12] = { 24, 28, 32, 36, 40, 44, 1, 2, 3, 4, 5, 6 };
+#ifndef VERSION_DEMO
 static u32 entry_case(u32 mode)
 {
     struct PlayerObj obj, expected, player_before = g_Player;
@@ -142,16 +147,11 @@ static u32 entry_case(u32 mode)
         player_entry_placed(&obj);
     else
         player_update_init(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(qux_object) / 4; i++)
-        assert(((u32*)&qux_object)[i] == ((u32*)&ride_before)[i]);
-    for (i = 0; i < sizeof(bg_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)bg_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&qux_object, &ride_before, sizeof(qux_object));
+    c_test_same_words(background_objects, bg_before, sizeof(bg_before));
     assert(gfx_archive[0] == 8 && gfx_archive[1] == 12 && gfx_archive[2] == 0x11223344 && gfx_archive[3] == 0x55667788);
     for (i = 0; i < 6; i++) {
         assert(sprite_archive[i] == 24 + i * 4 && sprite_archive[i + 6] == i + 1);
@@ -162,6 +162,7 @@ static u32 entry_case(u32 mode)
     return actual;
 }
 static const u32 player_entry_callbacks_cases_expected[] = { 0xC807u, 0x100C800u, 0x101CB02u, 0x1069B02u, 0xC802u, 0x2CB02u, 0x9CA02u, 0x1CA02u, 0x1AA02u, 0x100C824u, 0x100C812u, 0x100AB02u, 0x100C800u, 0xC802u };
+#endif
 
 static Palette palette_bank[14];
 static u16 palette_storage[0x152];
@@ -191,12 +192,9 @@ static u32 palette_case(u32 mode)
     before = obj;
     engine_before = engine_obj;
     player_reset_palette(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(palette_storage[0] == 0xBEEF && palette_storage[0x151] == 0xBEEF);
     for (i = 0; i < 0x150; i++) {
         u16 expected = 0xBEEF;
@@ -241,7 +239,7 @@ static u32 splash_case(u32 mode)
     engine_obj.substage = 0;
     obj.active = 0x41;
     obj.state = 1;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.unkDF = mode == 1;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
@@ -254,13 +252,13 @@ static u32 splash_case(u32 mode)
     }
     memset(tilemap, 1, sizeof(tilemap));
     memset(pixels, 0, sizeof(pixels));
-    attributes[0] = mode ? 0x24 : 0x20;
+    attributes[0] = TEST_DISC32(mode ? 0x24 : 0x20);
     for (i = 0; i < 8; i++)
         page_metadata[i] = 0x400 + i * 0x80;
     SP_BG_TILEMAP = tilemap;
     layout_size = 256;
     layout_width = 16;
-    D_801406A8 = page_metadata;
+    test_stage_graphics(page_metadata);
     cur_random = 0x1234;
     TEST_BG_TILE_PIXELS = (u8*)pixels;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -276,29 +274,25 @@ static u32 splash_case(u32 mode)
         pool_before[31].id = 3;
         pool_before[31].unk2 = 9;
         pool_before[31].bg_offset = 0;
-        pool_before[31].unk16 = 1;
+        pool_before[31].unk16 = VISUAL_SATURN_LAYER(1);
         pool_before[31].animation_table = (const u8* const*)D_8011BF40;
         pool_before[31].unk3C = (void*)(menu_frames + 12);
-        pool_before[31].unk40 = 12;
-        pool_before[31].unk42 = 0x7888;
-        pool_before[31].unk15 = 0x40;
+        pool_before[31].unk40 = OBJECT_STAGE_TEXTURE(4);
+        pool_before[31].unk42 = OBJECT_CLUT(0x7888);
+        pool_before[31].unk15 = PLAYER_FACING_RIGHT;
         pool_before[31].x_pos.i.hi = 100;
         pool_before[31].y_pos.i.hi = 184;
     }
     player_check_splash_tile(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)visual_objects)[i] == ((u32*)pool_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(visual_objects, pool_before, sizeof(pool_before));
     for (i = 0; i < 256; i++)
         assert(tilemap[i] == 1);
     for (i = 0; i < 512; i++)
         assert(pixels[i] == 0);
-    assert(attributes[0] == (mode ? 0x24 : 0x20));
+    assert(attributes[0] == TEST_DISC32(mode ? 0x24 : 0x20));
     for (i = 0; i < 8; i++) {
         assert(page_metadata[i] == 0x400 + i * 0x80);
         assert(menu_frames[i] == 32 + i * 4);
@@ -424,6 +418,7 @@ static const CTestCase collision_bounds_identity_cases[] = {
 
 static const u32 collision_bounds_identity_cases_expected[] = { 0x0u, 0x1u, 0x2u };
 
+#ifndef MMX4_SATURN
 extern s32 D_80139538, D_80139540, D_80139544;
 extern s16 D_80139560;
 static void capture(u32* v)
@@ -495,10 +490,16 @@ static u32 music(u32 row)
     assert(D_80171EA9 == 0 && cur_random == 0x1234);
     return 1;
 }
+#endif
 
 static const u16 pads[8] = { 0, 0x2000, 0x8000, 0xA000, 0x1000, 0x4000, 0x5000, 0xFFFF };
 static const u16 mapped[8] = { 0, 1, 2, 0, 4, 8, 0, 0x7F0 };
+#ifdef MMX4_SATURN
+static const u16 bindings[16] = { SATURN_PAD_RIGHT, SATURN_PAD_LEFT, SATURN_PAD_UP, SATURN_PAD_DOWN, SATURN_PAD_A, SATURN_PAD_X, SATURN_PAD_Y,
+    SATURN_PAD_B, SATURN_PAD_C, SATURN_PAD_R, SATURN_PAD_L, 0, 0, 0, 0, 0 };
+#else
 static const u16 bindings[16] = { 0x2000, 0x8000, 0x1000, 0x4000, 0x80, 0x10, 2, 0x40, 0x20, 8, 4, 0, 0, 0, 0, 0 };
+#endif
 static u32 routing(u32 row)
 {
     struct PlayerObj player_expected, entity_expected;
@@ -520,9 +521,9 @@ static u32 routing(u32 row)
     g_Entity.input.buttons.held = 0x4567;
     g_Entity.input.buttons.previous = 0x5678;
     g_Entity.pressed_input = 0x6789;
-    controller_input.held = pads[input];
-    controller_input.previous = pads[(input + 1) % 8];
-    controller_input.pressed = pads[(input + 2) % 8];
+    TEST_PAD_HELD = test_pad_from_psx(pads[input]);
+    TEST_PAD_PREVIOUS = test_pad_from_psx(pads[(input + 1) % 8]);
+    TEST_PAD_PRESSED = test_pad_from_psx(pads[(input + 2) % 8]);
     controller_before = controller_input;
     player_expected = g_Player;
     entity_expected = g_Entity;
@@ -560,7 +561,7 @@ static u32 dash(u32 row)
     obj.hp = 24;
     obj.state = 1;
     obj.unk2 = character;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
     player_set_collision_bounds(&obj);
@@ -572,7 +573,7 @@ static u32 dash(u32 row)
     assert(func_8002938C(0x84) == 4);
     memset(map_words, 1, sizeof(map_words));
     memset(pixels_player_dash_effect_capacity, 0, sizeof(pixels_player_dash_effect_capacity));
-    attributes_player_dash_effect_capacity[0] = water ? 0x24 : 0;
+    attributes_player_dash_effect_capacity[0] = TEST_DISC32(water ? 0x24 : 0);
     SP_BG_TILEMAP = (u8*)map_words;
     TEST_BG_TILE_PIXELS = (u8*)pixels_player_dash_effect_capacity;
     TEST_BG_TILE_ATTRS = (u8*)attributes_player_dash_effect_capacity;
@@ -582,7 +583,7 @@ static u32 dash(u32 row)
         metadata[i] = (i + 1) * 128;
     for (i = 0; i < COUNT(archive); i++)
         archive[i] = i < 5 ? 20 + i * 4 : 0x13570000 + i;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = TEST_SPRITE_FRAMES = (u8*)archive;
     c_test_zero_words((u32*)visual_objects, sizeof(visual_objects) / 4);
     for (i = 0; i < COUNT(visual_objects); i++) {
@@ -596,11 +597,11 @@ static u32 dash(u32 row)
         v->id = 3;
         v->unk2 = water ? 8 : 2;
         v->bg_offset = 0;
-        v->unk16 = 1;
+        v->unk16 = VISUAL_SATURN_LAYER(1);
         v->animation_table = D_8011BF40;
         v->unk3C = (u8*)archive + (water ? 36 : 24);
-        v->unk40 = water ? 5 : 0;
-        v->unk42 = water ? 0x7888 : 0x7804;
+        v->unk40 = water ? OBJECT_STAGE_TEXTURE(4) : WEAPON_TEXTURE_BASE;
+        v->unk42 = water ? OBJECT_CLUT(0x7888) : WEAPON_PALETTE_4;
         v->unk15 = obj.unk15;
         v->x_pos.i.hi = 160 + (face ? -1 : 1) * (character ? 26 : 16);
         v->y_pos.i.hi = 120 + (water ? 0 : character ? 17
@@ -611,7 +612,7 @@ static u32 dash(u32 row)
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     c_test_same_words(visual_objects, pool_expected, sizeof(pool_expected));
-    assert(SP_BG_TILEMAP == (u8*)map_words && TEST_BG_TILE_PIXELS == (u8*)pixels_player_dash_effect_capacity && TEST_BG_TILE_ATTRS == (u8*)attributes_player_dash_effect_capacity && attributes_player_dash_effect_capacity[0] == (water ? 0x24 : 0) && D_801406A8 == metadata && TEST_MENU_FRAMES == (u8*)archive && TEST_SPRITE_FRAMES == (u8*)archive);
+    assert(SP_BG_TILEMAP == (u8*)map_words && TEST_BG_TILE_PIXELS == (u8*)pixels_player_dash_effect_capacity && TEST_BG_TILE_ATTRS == (u8*)attributes_player_dash_effect_capacity && attributes_player_dash_effect_capacity[0] == TEST_DISC32(water ? 0x24 : 0) && D_801406A8 == metadata && TEST_MENU_FRAMES == (u8*)archive && TEST_SPRITE_FRAMES == (u8*)archive);
     for (i = 0; i < COUNT(map_words); i++)
         assert(map_words[i] == 0x01010101);
     for (i = 0; i < COUNT(pixels_player_dash_effect_capacity); i++)
@@ -684,27 +685,27 @@ static u32 full_capacity(u32 row)
     player.animation_table = (u32**)D_80119DF0;
     player.unk38 = (u8*)gfx + 64;
     player.unk3C = (u8*)frames + 64;
-    player.unk40 = 0x500;
-    player.unk16 = 2;
-    player.unk42 = 0x7800;
+    player.unk40 = WEAPON_TEXTURE_PLAYER;
+    player.unk16 = VISUAL_SATURN_LAYER(2);
+    player.unk42 = OBJECT_CLUT(0x7800);
     player.unk49 = 3;
     entity.is_clone = 1;
     entity.animation_table = (u32**)D_80119DF0;
     entity.hp = entity.hud_hp = entity.spawn_hp = 32;
     entity.unk38 = (u8*)gfx + 64;
     entity.unk3C = (u8*)gfx + 64;
-    entity.unk40 = 0x540;
-    entity.unk16 = 2;
-    entity.unk42 = 0x7800;
+    entity.unk40 = WEAPON_TEXTURE_SPECIAL_2;
+    entity.unk16 = VISUAL_SATURN_LAYER(2);
+    entity.unk42 = OBJECT_CLUT(0x7800);
     entity.unk49 = 1;
     for (i = 0; i < COUNT(afterimages); i++) {
         afterimages[i].active = 0x11;
         afterimages[i].unk2 = i;
         afterimages[i].unk38 = (u8*)gfx + 64;
         afterimages[i].unk3C = (u8*)frames + 64;
-        afterimages[i].unk40 = 0x500;
-        afterimages[i].unk42 = 0x780D + i;
-        afterimages[i].unk16 = 4;
+        afterimages[i].unk40 = WEAPON_TEXTURE_PLAYER;
+        afterimages[i].unk42 = OBJECT_CLUT(0x780D + i);
+        afterimages[i].unk16 = VISUAL_SATURN_LAYER(4);
         if (i == 0)
             afterimages[i].link.player = &g_Player;
         else
@@ -715,8 +716,9 @@ static u32 full_capacity(u32 row)
         muzzles[i].unk2 = i;
         muzzles[i].unk3C = (u8*)frames + 128;
         muzzles[i].animation_table = D_8011BF40;
-        muzzles[i].unk42 = 0x7800;
-        muzzles[i].unk16 = 2;
+        muzzles[i].unk40 = WEAPON_TEXTURE_BASE;
+        muzzles[i].unk42 = OBJECT_CLUT(0x7800);
+        muzzles[i].unk16 = VISUAL_SATURN_LAYER(2);
     }
     player_spawn();
     assert(c_test_word_difference((u32*)&g_Player, (u32*)&player, sizeof(player) / 4) == 0 && c_test_word_difference((u32*)&g_Entity, (u32*)&entity, sizeof(entity) / 4) == 0);
@@ -740,8 +742,211 @@ static u32 full_capacity(u32 row)
     return 1;
 }
 
+static u32 test_player_spawn_entries(u32 row)
+{
+    static const s8 entries[3] = { 0, -1, 1 };
+    static const u32 expected[3][2] = { { 0x00303020u, 0x00010001u }, { 0x00060114u, 0x00000400u }, { 0, 0x00010001u } };
+    u32 i, seen[2], wakes = 0, extras = 0;
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&g_Entity, 0, sizeof(g_Entity));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    gfx[0] = frames[0] = 64;
+    frames[1] = 128;
+    TEST_PLAYER_GFX = (u8*)gfx;
+    TEST_SPRITE_FRAMES = (u8*)frames;
+    TEST_PALETTE = (u8*)&palette[1];
+    TEST_PALETTE_BANK = (u8*)bank;
+    engine_obj.stage = row == 1 ? 1 : 2;
+    engine_obj.max_hp = 32;
+    engine_obj.checkpoint_hp = 20;
+    engine_obj.cur_character = row == 1 ? CHARACTER_ZERO : CHARACTER_X;
+    engine_obj.unk1E = entries[row];
+    for (i = 0; i < 16; i++)
+        engine_obj.player_initial_data[i] = i + 1;
+    player_spawn();
+    for (i = 0; i < COUNT(visual_objects); i++)
+        wakes += visual_objects[i].active == 0x41 && visual_objects[i].id == 7;
+    for (i = 0; i < COUNT(misc_objects); i++)
+        extras += misc_objects[i].active == 0x21 && misc_objects[i].id == 0x36;
+    seen[0] = (u8)g_Player.hp | (u32)(u8)g_Player.weapon_energy[0] << 8 | (u32)(u8)g_Player.weapon_energy[5] << 16 | (u32)(u8)g_Player.weapon << 24;
+    seen[1] = (g_Player.animation_table == (u32**)D_80119DF0) | wakes << 8 | extras << 16;
+    return c_test_observe(0, row, seen, expected[row], 2);
+}
+
+#ifndef VERSION_DEMO
+static const struct {
+    u8 stage, substage, checkpoint;
+    s8 entry;
+} entry_stages[] = {
+    { 2, 0, 1, 1 }, { 3, 0, 1, 1 }, { 5, 1, 1, 1 }, { 5, 1, 0, 1 }, { 6, 0, 1, -1 }, { 6, 0, 1, 1 }, { 12, 0, 1, 1 },
+};
+
+static u32 test_player_entry_stage(u32 row)
+{
+    static const u32 expected[COUNT(entry_stages)][3] = {
+#include "player_entry_stage_expected.inc"
+    };
+    u32 seen[3];
+    player_reset(7, 0, 0);
+    memset(&qux_object, 0, sizeof(qux_object));
+    pl.state = 0;
+    pl.on_screen = 0;
+    engine_obj.stage = entry_stages[row].stage;
+    engine_obj.substage = entry_stages[row].substage;
+    engine_obj.checkpoint = entry_stages[row].checkpoint;
+    engine_obj.unk1E = entry_stages[row].entry;
+    player_update_init(&pl);
+    seen[0] = (u8)pl.state | (u32)(u8)pl.on_screen << 8 | (u32)(u8)pl.unk5 << 16 | (u32)(u8)qux_object.active << 24;
+    seen[1] = pl.y_vel.val;
+    seen[2] = (u16)pl.y_pos.i.hi;
+    return c_test_observe(0, row, seen, expected[row], 3);
+}
+#endif
+
+static Palette flash_bank[0x30];
+static u16 flash_palette[0x200];
+
+static u32 test_player_flash(u32 row)
+{
+    static const u8 steps[6] = { PLAYER_BEAM_IN, PLAYER_BEAM_OUT, 2, 2, 2, 2 };
+    static const s8 hurt[6] = { 0, 0, 1, -1, 0, 0 };
+    static const u32 expected[12][2] = {
+#include "player_flash_expected.inc"
+    };
+    u32 i, seen[2];
+    player_reset(row < 6 ? steps[row] : 2, 0, 0);
+    for (i = 0; i < 0x30 * 16; i++)
+        ((u16*)flash_bank)[i] = 0x1000 + i;
+    memset(flash_palette, 0, sizeof(flash_palette));
+    TEST_PALETTE_BANK = (u8*)flash_bank;
+    TEST_PALETTE = (u8*)flash_palette;
+    need_palette_load = 0;
+    engine_obj.max_hp = 30;
+    pl.unk54 = &player_box;
+    if (row < 6) {
+        pl.hurt_phase = hurt[row];
+        pl.flash_palette = row == 3 ? 0 : 4;
+        pl.flash_delay = row == 4 ? 2 : 0;
+        pl.flash_phase = row == 5;
+        player_update_flash(&pl);
+    } else if (row < 8) {
+        pl.unk2 = row == 7;
+        pl.animation_table = (u32**)(pl.unk2 ? D_8011AFF0 : D_80119DF0);
+        pl.animation_step.fields.frame_index = row == 7 ? 53 : 105;
+        pl.unk17 = 0;
+        player_update_frame_hitbox(&pl);
+    } else if (row == 8) {
+        pl.unk2 = 0;
+        pl.is_clone = 1;
+        player_set_palette(&pl, 4);
+    } else {
+        pl.voice_timer = row == 11 ? 3 : 0;
+        pl.hp = row == 10 ? 20 : 5;
+        player_check_low_hp_alarm(&pl);
+    }
+    seen[0] = (u8)pl.flash_palette | (u32)(u8)pl.flash_delay << 8 | (u32)(u8)pl.flash_phase << 16 | (u32)(u8)pl.voice_timer << 24;
+    seen[1] = flash_palette[0] | (u32)(need_palette_load & 1) << 16 | (u32)(pl.unk54 != NULL) << 24;
+    return c_test_observe(0, row, seen, expected[row], 2);
+}
+
+static u32 water_pages[0x100], shore_attrs[2];
+
+static u32 test_player_water(u32 row)
+{
+    static const u32 expected[9][2] = {
+#include "player_water_expected.inc"
+    };
+    u32 i, seen[2], splashes = 0;
+    player_reset(2, 0, 0);
+    pl.unk2 = 0;
+    pl.animation_table = (u32**)D_80119DF0;
+    TEST_MENU_FRAMES = (u8*)player_sprites;
+    test_stage_graphics(water_pages);
+    engine_obj.stage = 2;
+    player_attrs[0] = C_TEST_PSX_WORD(row >= 5 && row <= 6 ? 0x24 : 0);
+    player_pixels[256 + 13 * 16 + 6] = row == 6;
+    if (row == 6) {
+        TEST_BG_TILE_ATTRS = (u8*)shore_attrs;
+        shore_attrs[0] = C_TEST_PSX_WORD(0x24);
+        pl.y_pos.i.hi = 204;
+    }
+    if (row < 3 || row >= 7) {
+        pl.input.buttons.held = row == 0 || row == 7 ? PLAYER_INPUT_RIGHT : PLAYER_INPUT_LEFT;
+        pl.dash_momentum = row == 0 || row == 2;
+        pl.unk88.bytes.collision_flags = row == 1 ? PLAYER_COLLIDE_LEFT : 0;
+        player_air_steer(&pl);
+    } else if (row == 3) {
+        player_spawn_dash_splash(&pl);
+    } else if (row == 4) {
+        pl.unk15 = PLAYER_FACING_RIGHT;
+        player_spawn_wall_kick_spark(&pl);
+    } else {
+        pl.unk68 = row == 5 ? NULL : &player_box;
+        player_check_splash(&pl);
+    }
+    for (i = 0; i < COUNT(visual_objects); i++)
+        splashes += visual_objects[i].active == 0x41 && visual_objects[i].id == 3;
+    seen[0] = pl.x_vel.val;
+    seen[1] = splashes | (u32)(u8)pl.unkDF << 8 | (u32)(u16)visual_objects[0].x_pos.i.hi << 16;
+    return c_test_observe(0, row, seen, expected[row], 2);
+}
+
+static const struct {
+    u8 step, timer, ring, ride, pool_full;
+} deaths[] = {
+    { 0, 0, 0, 1, 0 }, { 0, 0, 0, 0, 0 }, { 1, 2, 0, 0, 0 }, { 1, 1, 0, 0, 0 }, { 2, 5, 1, 0, 0 },
+    { 2, 0, 2, 0, 0 }, { 2, 1, 3, 0, 0 }, { 3, 3, 0, 0, 0 }, { 3, 0, 0, 0, 0 }, { 2, 0, 0, 0, 1 },
+};
+static u8 death_sound_rows[0x40];
+static const u32 deaths_expected[COUNT(deaths)][3] = {
+#include "player_death_expected.inc"
+};
+
+static u32 test_player_death(u32 row)
+{
+    u32 i, seen[3], orbs = 0;
+    player_reset(deaths[row].step, 0, 0);
+    pl.on_screen = 1;
+    pl.death_timer = deaths[row].timer;
+    pl.unkC6 = deaths[row].ring;
+    pl.ride_state = deaths[row].ride;
+    memset(misc_objects, 0, sizeof(misc_objects));
+    for (i = 0; i < COUNT(misc_objects); i++)
+        misc_objects[i].active = deaths[row].pool_full;
+#ifndef MMX4_SATURN
+    D_80141F50[1] = death_sound_rows;
+#endif
+    if (row >= 2)
+        engine_obj.unk12 = engine_obj.unk1A = 1;
+    if (deaths[row].step == 0)
+        player_death_start(&pl);
+    else if (deaths[row].step == 1)
+        player_death_wait(&pl);
+    else if (deaths[row].step == 2)
+        func_80035C20(&pl);
+    else
+        player_death_end(&pl);
+    for (i = 0; i < COUNT(misc_objects); i++)
+        orbs += misc_objects[i].active == 0x21 && misc_objects[i].id == 0x11;
+    seen[0] = (u8)pl.unk5 | (u32)(u8)pl.death_timer << 8 | (u32)(u8)pl.unkC6 << 16 | (u32)(u8)pl.on_screen << 24;
+    seen[1] = (u32)(u8)engine_obj.unk12 << 24 | (u32)(u8)engine_obj.unk1A << 16 | (u32)(u8)engine_obj.unk15 << 8;
+    seen[2] = (u8)pl.state | orbs << 8 | (u32)(u8)pl.unk17 << 16;
+    return c_test_observe(0, row, seen, deaths_expected[row], 3);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "player_death", 0, 0, COUNT(deaths), test_player_death },
+    { "player_spawn_entries", 0, 0, 3, test_player_spawn_entries },
+#ifndef VERSION_DEMO
+    { "player_entry_stage", 0, 0, COUNT(entry_stages), test_player_entry_stage },
+#endif
+    { "player_flash", 0, 0, 12, test_player_flash },
+    { "player_water", 0, 0, 9, test_player_water },
+#ifndef VERSION_DEMO
     { "player_entry_callbacks", NULL, player_entry_callbacks_cases_expected, COUNT(player_entry_callbacks_cases_expected), entry_case },
+#endif
     { "player_reset_palette_banks", NULL, player_reset_palette_banks_cases_expected, COUNT(player_reset_palette_banks_cases_expected), palette_case },
     { "player_splash_tile_visual_pool", NULL, player_splash_tile_visual_pool_cases_expected, COUNT(player_splash_tile_visual_pool_cases_expected), splash_case },
     { "player_damage", 0, 0, 2, test_player_damage },
@@ -749,10 +954,16 @@ const struct CTestGroup c_test_groups[] = {
     { "player_spawn_wall_slide_dust", 0, 0, 1, test_player_spawn_wall_slide_dust },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "collision_bounds_identity", collision_bounds_identity_cases, collision_bounds_identity_cases_expected, COUNT(collision_bounds_identity_cases), 0 },
+#ifndef MMX4_SATURN
     { "Zero_final_fortress_before_cutscene_suppresses_music_and_Jet_rematch_return_resumes_exact_XA_track", NULL, NULL, 2, music },
+#endif
     { "real_soul_body_control_routes_all_button_edges_and_opposing_directions", NULL, NULL, 16, routing },
     { "actual_X_Zero_bounds_dry_and_water_dash_both_facings_full_last_visual_slot", NULL, NULL, 16, dash },
     { "supported_initial_X_spawn_full_visual_and_misc_pools", NULL, NULL, 1, full_capacity },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(player_entry_callbacks_cases_expected) + COUNT(player_reset_palette_banks_cases_expected) + COUNT(player_splash_tile_visual_pool_cases_expected) + 2 + 1 + 1 + COUNT(pool_full_cases) + COUNT(collision_bounds_identity_cases) + 2 + 16 + 16 + 1;
+const u32 c_test_count = COUNT(deaths) + 3 + DEMO_ALT(COUNT(entry_stages), 0) + 12 + 9 + DEMO_ALT(COUNT(player_entry_callbacks_cases_expected), 0) + COUNT(player_reset_palette_banks_cases_expected) + COUNT(player_splash_tile_visual_pool_cases_expected) + 2 + 1 + 1 + COUNT(pool_full_cases) + COUNT(collision_bounds_identity_cases) + 16 + 16 + 1
+#ifndef MMX4_SATURN
+    + 2
+#endif
+    ;

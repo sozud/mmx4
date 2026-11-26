@@ -1,7 +1,10 @@
 #include "test_runtime.h"
 #include "main/misc/misc_28_select_a_character.h"
 #include "main/55C4.h"
+#include "support/test_pad.h"
+#ifndef VERSION_DEMO
 void character_select_state_3(struct EngineObj*);
+#endif
 void character_select_state_4(struct EngineObj*);
 void select_char_character_idle(struct MiscObj* arg0);
 void select_char_main(struct MiscObj* arg0);
@@ -30,7 +33,7 @@ static u32 select_case(u32 mode, u32 observation)
     obj.unk6 = 0x25;
     obj.unk7 = 0x26;
     obj.unk5 = 0x24;
-    obj.unk16 = 0x28;
+    obj.unk16 = VISUAL_SATURN_LAYER(0x28);
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.x_vel.val = 65536;
@@ -42,20 +45,20 @@ static u32 select_case(u32 mode, u32 observation)
     if (mode == 1) {
         table = select_char_zero_animations;
         resource = 0;
-        before.unk42 = 0x7800;
+        before.unk42 = OBJECT_CLUT(0x7800);
         before.unk15 = 0;
     } else if (mode == 3) {
         table = select_char_menu_animations;
         resource = 1;
-        before.unk42 = 0x7808;
+        before.unk42 = OBJECT_CLUT(0x7808);
     } else {
         table = select_char_x_animations;
         resource = 2;
-        before.unk42 = 0x7840;
-        before.unk15 = 0x40;
+        before.unk42 = OBJECT_CLUT(0x7840);
+        before.unk15 = PLAYER_FACING_RIGHT;
     }
     animation = select_char_initial_animations[subtype];
-    before.unk40 = resources[resource] >> 7;
+    before.unk40 = OBJECT_STAGE_TEXTURE(resource);
     before.unk3C = (u8*)archive + archive[resource];
     before.animation_table = table;
     before.animation_cursor = table[animation];
@@ -70,7 +73,7 @@ static u32 select_case(u32 mode, u32 observation)
         before.x_pos.val = select_char_text_positions[0].x * 65536;
         before.y_pos.val = select_char_text_positions[0].y * 65536;
     }
-    before.unk16 = select_char_priorities[subtype];
+    before.unk16 = VISUAL_SATURN_LAYER(select_char_priorities[subtype]);
     before.bg_offset = -1;
     before.x_vel.val = before.y_vel.val = 0;
     before.ext.title_logo.palette_shift_speed = before.ext.title_logo.unk57 = before.unk6 = before.unk7 = 0;
@@ -81,7 +84,7 @@ static u32 select_case(u32 mode, u32 observation)
     assert(resources[0] == 0x10000 && resources[1] == 0x18000 && resources[2] == 0x20000);
     for (i = 0; i < 128; i++)
         assert(archive[i] == (i < 3 ? (s32)(64 + i * 64) : 0));
-    return observation == 0 ? (u16)obj.x_pos.i.hi | ((u32)(u16)obj.y_pos.i.hi << 16) : obj.animation_step.packed;
+    return observation == 0 ? (u16)obj.x_pos.i.hi | ((u32)(u16)obj.y_pos.i.hi << 16) : C_TEST_STEP(obj.animation_step.packed);
 }
 static const u32 select_character_text_context_cases_expected[] = { 0xA00020u, 0x8u, 0xA00120u, 0x1u, 0xC80064u, 0xF010103u, 0x38FF40u, 0x5000001u };
 static u32 select_character_text_context_cases_row(u32 row)
@@ -151,6 +154,15 @@ static const CTestCase pool_full_cases[] = {
 };
 
 static const u32 pool_full_cases_expected[] = { 0x50000u, 0x50000u };
+
+static void character_frame(struct MiscObj* obj)
+{
+#ifdef MMX4_SATURN
+    saturn_sprite_reset_queues();
+#endif
+    select_char_main(obj);
+}
+
 static u32 test_character_exit_lifecycle(u32 selected)
 {
     struct MiscObj characters[2];
@@ -177,24 +189,29 @@ static u32 test_character_exit_lifecycle(u32 selected)
         select_char_init(&characters[i]);
         assert(characters[i].state == 1 && characters[i].unk6 == 0);
     }
-    controller_input.pressed = PAD_CONFIRM;
+#ifdef VERSION_DEMO
+    engine_obj.unk1 = 4;
+    engine_obj.character_state.bytes[0] = 1;
+#else
+    TEST_PAD_PRESSED = TEST_PAD_CONFIRM;
     character_select_state_3(&engine_obj);
     assert(engine_obj.unk1 == 4);
     assert(engine_obj.character_state.bytes[0] == 1);
-    controller_input.pressed = 0;
+#endif
+    TEST_PAD_PRESSED = 0;
     character_select_state_4(&engine_obj);
     assert(engine_obj.unk2 == 0 && engine_obj.character_state.fields.flags == 0);
     for (i = 0; i < 2; i++) {
-        select_char_main(&characters[i]);
+        character_frame(&characters[i]);
         assert(characters[i].unk5 == 15 && characters[i].unk6 == 0);
-        select_char_main(&characters[i]);
+        character_frame(&characters[i]);
         assert(characters[i].unk6 == 1);
         assert(characters[i].unk17 == (i == selected ? 3 : 0));
         assert(characters[i].on_screen == 1);
     }
     for (ticks = 0; ticks < 64 && engine_obj.character_state.fields.flags != 3; ticks++) {
-        select_char_main(&characters[0]);
-        select_char_main(&characters[1]);
+        character_frame(&characters[0]);
+        character_frame(&characters[1]);
         assert(characters[0].unk6 == 1 && characters[1].unk6 == 1);
     }
     assert(ticks == (selected == CHARACTER_X ? 10 : 31));
@@ -204,24 +221,31 @@ static u32 test_character_exit_lifecycle(u32 selected)
     character_select_state_4(&engine_obj);
     assert(engine_obj.unk1 == 4 && engine_obj.unk2 == 1);
     for (i = 0; i < 2; i++) {
-        select_char_main(&characters[i]);
+        character_frame(&characters[i]);
         assert(characters[i].unk6 == 2 && characters[i].unk17 == 4);
         for (ticks = 0; ticks < 32 && characters[i].unk6 == 2; ticks++)
-            select_char_main(&characters[i]);
+            character_frame(&characters[i]);
         assert(ticks == (i == CHARACTER_X ? 12 : 13));
         assert(characters[i].unk6 == 3 && characters[i].unk17 == 5);
         assert(characters[i].y_vel.val == 0x80000);
         assert(characters[i].y_pos.val == 160 * 65536);
         for (ticks = 0; ticks < 32 && characters[i].state == 1; ticks++)
-            select_char_main(&characters[i]);
+            character_frame(&characters[i]);
         assert(ticks == 28);
         assert(characters[i].state == 2 && characters[i].on_screen == 0);
         assert(characters[i].y_pos.val == -64 * 65536);
         assert(characters[i].x_pos.i.hi == (i == CHARACTER_X ? 32 : 288));
         assert((u8)engine_obj.character_state.fields.flags == (i == 0 ? 0x82 : 0x80));
     }
+#ifdef VERSION_DEMO
+    main_bss_state.transition.active = 0;
+    character_select_state_4(&engine_obj);
+    assert(engine_obj.unk1 == 6 && engine_obj.unk2 == 0 && engine_obj.unk4 == 0);
+    assert(main_bss_state.transition.active == -1 && main_bss_state.transition.fade_amount == 8);
+#else
     character_select_state_4(&engine_obj);
     assert(engine_obj.unk1 == 5 && engine_obj.unk2 == 0 && engine_obj.unk4 == 20);
+#endif
     return 1;
 }
 
@@ -494,7 +518,7 @@ static u32 test_character_shoot(u32 row)
         character_expected_animation(&expected, 0);
     } else {
         expected.animation_cursor = (u32*)&animation[character_shoot_cases[row].next_step];
-        expected.animation_step.packed = character_shoot_cases[row].next_word;
+        expected.animation_step.packed = C_TEST_STEP(character_shoot_cases[row].next_word);
     }
     select_char_character_shoot(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
@@ -539,20 +563,24 @@ static u32 real_burst(u32 row)
     SelectACharacterUpdate(&owner);
     assert(owner.state == 1 && owner.unk6 == 0 && owner.x_pos.i.hi == (character ? 288 : 32) && owner.y_pos.i.hi == 160);
     SelectACharacterUpdate(&owner);
-    assert(owner.unk6 == 1 && owner.unk17 == 1 && owner.animation_step.packed == (character ? 0x01010004u : 0x01010001u));
+    assert(owner.unk6 == 1 && owner.unk17 == 1 && owner.animation_step.packed == (character ? C_TEST_STEP(0x01010004u) : C_TEST_STEP(0x01010001u)));
     if (character) {
         for (i = 0; i < 6; i++) {
             assert(!misc_objects[0].active);
             SelectACharacterUpdate(&owner);
         }
-        assert(owner.animation_step.packed == 0x03010001 && owner.animation_cursor == table[1] + 2);
+        assert(owner.animation_step.packed == C_TEST_STEP(0x03010001) && owner.animation_cursor == table[1] + 2);
     }
     assert(misc_objects[0].active == 0x41 && misc_objects[0].id == 28 && misc_objects[0].unk2 == (character ? 11 : 10) && misc_objects[0].state == 0 && misc_objects[0].x_pos.i.hi == owner.x_pos.i.hi && misc_objects[0].y_pos.i.hi == 160);
     if (row == 2) {
-        controller_input.pressed = PADLright;
+#ifdef VERSION_DEMO
+        engine_obj.cur_character = engine_obj.character_state.bytes[3] = CHARACTER_ZERO;
+#else
+        TEST_PAD_PRESSED = TEST_PAD_RIGHT;
         character_select_state_3(&engine_obj);
         assert(engine_obj.cur_character == CHARACTER_ZERO && engine_obj.character_state.bytes[3] == CHARACTER_ZERO);
-        controller_input.pressed = 0;
+        TEST_PAD_PRESSED = 0;
+#endif
     }
     engine = engine_obj;
     input = controller_input;
@@ -560,21 +588,21 @@ static u32 real_burst(u32 row)
     memcpy(pool, misc_objects, sizeof(pool));
     if (row == 2) {
         expected_owner.animation_cursor = table[1] + 1;
-        expected_owner.animation_step.packed = 0x02010001;
+        expected_owner.animation_step.packed = C_TEST_STEP(0x02010001);
         SelectACharacterUpdate(&owner);
     } else {
         struct MiscObj* expected = &pool[0];
         expected->state = 1;
-        expected->unk40 = resources[character ? 0 : 2] >> 7;
+        expected->unk40 = OBJECT_STAGE_TEXTURE(character ? 0 : 2);
         expected->unk3C = (u8*)frames + (character ? 64 : 192);
-        expected->unk42 = character ? 0x7800 : 0x7840;
-        expected->unk15 = character ? 0 : 0x40;
+        expected->unk42 = character ? OBJECT_CLUT(0x7800) : OBJECT_CLUT(0x7840);
+        expected->unk15 = character ? 0 : PLAYER_FACING_RIGHT;
         expected->animation_table = table;
         expected->animation_cursor = table[2];
-        expected->animation_step.packed = character ? 0x04010001 : 0x09010002;
+        expected->animation_step.packed = C_TEST_STEP(character ? 0x04010001 : 0x09010002);
         expected->unk17 = 2;
         expected->previous_animation_index = 0xFF;
-        expected->unk16 = 3;
+        expected->unk16 = VISUAL_SATURN_LAYER(3);
         expected->bg_offset = -1;
         expected->unk5 = 10 + character;
         SelectACharacterUpdate(&misc_objects[0]);

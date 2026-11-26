@@ -3,6 +3,14 @@
 #include "main/player.h"
 #include "main/player_special.h"
 #include "main/55C4.h"
+#ifdef MMX4_SATURN
+#include "saturn/player_resources.h"
+#define CLONE_TEXTURE PLAYER_CLONE_TEXTURE_BASE
+#define CLONE_PALETTE PLAYER_PALETTE_BASE
+#else
+#define CLONE_TEXTURE 0x540
+#define CLONE_PALETTE 0x7800
+#endif
 
 void player_fire_lightning_web_charged(struct PlayerObj*);
 void player_enter_rising_fire_charged(struct PlayerObj*, s32);
@@ -61,8 +69,8 @@ static void prepare(u32 facing, u32 background)
     g_Player.unk5 = PLAYER_IDLE;
     g_Player.hp = 24;
     g_Player.bg_offset = background;
-    g_Player.unk15 = facing ? 0x40 : 0;
-    g_Player.unk16 = 2;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
+    g_Player.unk16 = VISUAL_SATURN_LAYER(2);
     g_Player.unk38 = (u8*)gfx + 0x20;
     g_Player.unk3C = (u8*)frames + 0x20;
     g_Player.unk68 = &player_x_collision_bounds;
@@ -194,7 +202,8 @@ static u32 test_rising_fire_entry(u32 row)
     expect_animation(airborne ? 0x66 : 0x65, 0);
     player_expected.shot_count = 4;
     player_expected.special_shot_count = 3;
-    player_expected.air_state = player_expected.spike_immune = 1;
+    player_expected.air_state = 1;
+    SPIKE_IMMUNE_SET(player_expected, 1);
     player_expected.unk5 = PLAYER_RISING_FIRE_CHARGED;
     player_expected.unk6 = 0;
     if (weapon) {
@@ -220,7 +229,8 @@ static u32 test_soul_body_entry(u32 row)
     g_Player.unk6 = 3;
     capture();
     expect_animation(0x60, 0);
-    player_expected.controlling_clone = player_expected.spike_immune = 1;
+    player_expected.controlling_clone = 1;
+    SPIKE_IMMUNE_SET(player_expected, 1);
     player_expected.invincibility_timer = player_expected.hurt_phase = 0;
     player_expected.air_state = 1;
     player_expected.unk5 = PLAYER_SOUL_BODY;
@@ -231,11 +241,11 @@ static u32 test_soul_body_entry(u32 row)
 }
 
 static const u32 cast_frames[] = {
-    0x8A010004,
-    0x8B010003,
-    0x60018002,
-    0x5F010002,
-    0x60000060,
+    C_TEST_STEP(0x8A010004),
+    C_TEST_STEP(0x8B010003),
+    C_TEST_STEP(0x60018002),
+    C_TEST_STEP(0x5F010002),
+    C_TEST_STEP(0x60000060),
 };
 
 static void expect_clone(void)
@@ -245,9 +255,9 @@ static void expect_clone(void)
     entity_expected.animation_table = (u32**)D_80119DF0;
     entity_expected.hp = entity_expected.hud_hp = entity_expected.spawn_hp = 24;
     entity_expected.unk38 = entity_expected.unk3C = (u8*)gfx + 0x20;
-    entity_expected.unk40 = 0x540;
-    entity_expected.unk16 = 2;
-    entity_expected.unk42 = 0x7800;
+    entity_expected.unk40 = CLONE_TEXTURE;
+    entity_expected.unk16 = VISUAL_SATURN_LAYER(2);
+    entity_expected.unk42 = CLONE_PALETTE;
     entity_expected.unk49 = 1;
     entity_expected.active = 1;
     entity_expected.x_pos = player_expected.x_pos;
@@ -314,7 +324,8 @@ static u32 test_soul_body_release(u32 row)
     capture();
     entity_expected.animation_step.fields.duration--;
     entity_expected.active = entity_expected.on_screen = 0;
-    player_expected.controlling_clone = player_expected.spike_immune = 0;
+    player_expected.controlling_clone = 0;
+    SPIKE_IMMUNE_SET(player_expected, 0);
     player_expected.unk6 = 0;
     if (ground) {
         expect_animation(low_hp ? 6 : 5, 0);
@@ -349,13 +360,13 @@ static void expect_gravity(void)
 static u32 test_rising_fire_start(u32 row)
 {
     static const u32 ground_frames[] = {
-        0x51010002,
-        0x43010002,
-        0x64010001,
-        0x64010101,
-        0x65000060,
+        C_TEST_STEP(0x51010002),
+        C_TEST_STEP(0x43010002),
+        C_TEST_STEP(0x64010001),
+        C_TEST_STEP(0x64010101),
+        C_TEST_STEP(0x65000060),
     };
-    static const u32 air_frames[] = { 0x64010001, 0x64010101, 0x65000060 };
+    static const u32 air_frames[] = { C_TEST_STEP(0x64010001), C_TEST_STEP(0x64010101), C_TEST_STEP(0x65000060) };
     u32 airborne = row % 2, index = 0, tick;
     const u32* sequence = airborne ? air_frames : ground_frames;
     prepare(row / 2, row % 3);
@@ -396,7 +407,8 @@ static u32 test_rising_fire_rise(u32 row)
     prepare(facing, row % 3);
     g_Player.unk5 = PLAYER_RISING_FIRE_CHARGED;
     g_Player.unk6 = phase;
-    g_Player.air_state = g_Player.spike_immune = 1;
+    g_Player.air_state = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.x_vel.val = (facing ? 1 : -1) * (speed == 1 ? 0x2000 : 0x40000);
     g_Player.y_vel.val = speeds[speed];
     g_Player.unk28 = -0x4000;
@@ -432,7 +444,8 @@ static u32 test_rising_fire_fall(u32 row)
     prepare(facing, row % 3);
     g_Player.unk5 = PLAYER_RISING_FIRE_CHARGED;
     g_Player.unk6 = 3;
-    g_Player.air_state = g_Player.spike_immune = 1;
+    g_Player.air_state = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.dash_momentum = g_Player.afterimage = g_Player.air_action = 1;
     g_Player.input_locked = 1;
     g_Player.attacking = attacking;
@@ -446,7 +459,7 @@ static u32 test_rising_fire_fall(u32 row)
     player_expected.animation_step.fields.duration--;
     if (ground) {
         expect_animation(attacking ? 0x7C : 0xC, 0);
-        player_expected.spike_immune = player_expected.air_state = 0;
+        SPIKE_IMMUNE_SET(player_expected, player_expected.air_state = 0);
         player_expected.dash_momentum = player_expected.air_action = 0;
         player_expected.afterimage = -1;
         player_expected.unk5 = PLAYER_LAND;
@@ -455,7 +468,7 @@ static u32 test_rising_fire_fall(u32 row)
         expect_gravity();
         if (terminal) {
             expect_animation(attacking ? 0x7B : 0xB, 0);
-            player_expected.spike_immune = 0;
+            SPIKE_IMMUNE_SET(player_expected, 0);
             player_expected.unk5 = PLAYER_FALL;
             player_expected.unk6 = 0;
         }

@@ -654,13 +654,18 @@ volatile u32* const saturn_sprite_list_targets[20] = {
 
 static void queue_sprite_object(volatile u8* object, unsigned priority_offset)
 {
+    u8 priority;
+    unsigned group, pass;
+    unsigned index;
+    u8 count;
     object[3] = 0;
-    u8 priority = object[priority_offset];
-    unsigned group = priority >> 4, pass = priority & 15;
+    priority = object[priority_offset];
+    group = priority >> 4;
+    pass = priority & 15;
     if (group >= 5 || pass >= 4)
         return;
-    unsigned index = group * 4 + pass;
-    u8 count = (u8)saturn_sprite_list_counts[index];
+    index = group * 4 + pass;
+    count = (u8)saturn_sprite_list_counts[index];
     if ((unsigned)count + 1 >= 32)
         return;
     saturn_sprite_list_targets[index][count] = (u32)(u32)object;
@@ -671,7 +676,8 @@ void saturn_queue_object(void* object) { queue_sprite_object(object, 0x16); }
 void saturn_queue_frozen_quad(struct QuadObj* object) { queue_sprite_object((volatile u8*)object, 0x36); }
 void saturn_sprite_reset_queues(void)
 {
-    for (unsigned i = 0; i < 20; ++i)
+    unsigned i;
+    for (i = 0; i < 20; ++i)
         saturn_sprite_list_counts[i] = 0;
 }
 #endif

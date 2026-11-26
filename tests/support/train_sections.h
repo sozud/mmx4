@@ -37,8 +37,8 @@ static u32 section_case(u32 mode)
         bg_before[0].unk24 = bg_before[0].unk26 = 0x1A50;
         player_before.script_state = 1;
         player_before.script_action = 0x14;
-        player_before.script_facing = 0x40;
-        player_before.spike_immune = 1;
+        player_before.script_facing = PLAYER_FACING_RIGHT;
+        SPIKE_IMMUNE_SET(player_before, 1);
         engine_before.gameplay_locked = 1;
     } else if (mode >= 7) {
         if (mode == 7 || mode == 9) {

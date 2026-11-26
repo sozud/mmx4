@@ -19,7 +19,7 @@ static u32 dust_case(u32 mode, u32 observation)
         visual_objects[i].y_pos.val = 0x24681357;
         visual_objects[i].x_vel.val = 0x23456789;
         visual_objects[i].y_vel.val = 0x3456789A;
-        visual_objects[i].unk15 = 0x40;
+        visual_objects[i].unk15 = PLAYER_FACING_RIGHT;
         visual_objects[i].unk5C.value = 0x73;
     }
     if (mode != 0)
@@ -39,7 +39,11 @@ static u32 dust_case(u32 mode, u32 observation)
             expected.y_pos.i.lo = 0;
             expected.x_vel.val = 0;
             expected.y_vel.val = 0;
+#ifdef VERSION_DEMO
+            expected.unk15 = visual_objects[i].unk15 & PLAYER_FACING_RIGHT;
+#else
             expected.unk15 = 0;
+#endif
             expected.unk5C.value = 10;
             expected.state = 0;
             expected.unk5 = 0;
@@ -109,7 +113,7 @@ static u32 shard_case(u32 mode, u32 observation)
         visual_objects[i].state = 0x26;
         visual_objects[i].unk5 = 0x25;
         visual_objects[i].unk6 = 0x24;
-        visual_objects[i].unk15 = 0x40;
+        visual_objects[i].unk15 = PLAYER_FACING_RIGHT;
         visual_objects[i].unk5C.value = 0x73;
         visual_objects[i].x_pos.val = 0x13572468;
         visual_objects[i].y_pos.val = 0x24681357;
@@ -139,7 +143,11 @@ static u32 shard_case(u32 mode, u32 observation)
             expected.y_pos = visual_objects[i].y_pos;
             expected.x_vel = visual_objects[i].x_vel;
             expected.y_vel = visual_objects[i].y_vel;
+#ifdef VERSION_DEMO
+            expected.unk15 = visual_objects[i].unk15 & PLAYER_FACING_RIGHT;
+#else
             expected.unk15 = 0;
+#endif
             expected.state = 0;
             expected.unk5 = 0;
             expected.unk6 = 0;
@@ -162,12 +170,12 @@ static u32 shard_case(u32 mode, u32 observation)
             | ((u32)(u8)visual_objects[3].unk2 << 16) | ((u32)(u8)visual_objects[3].unk5C.value << 24);
     case 5:
         return visual_objects[3].state | ((u32)(u8)visual_objects[3].unk5 << 8)
-            | ((u32)(u8)visual_objects[3].unk6 << 16) | ((u32)visual_objects[3].unk15 << 24);
+            | ((u32)(u8)visual_objects[3].unk6 << 16) | ((u32)C_TEST_PSX_FACING(visual_objects[3].unk15) << 24);
     default:
         return cur_random;
     }
 }
-static const u32 ice_shard_context_cases_expected[] = { 0x630000u, 0xC20000u, 0x0u, 0x10000u, 0x2000921u, 0x0u, 0x607u, 0x650000u, 0xCC0000u, 0x18000u, 0x0u, 0x2000921u, 0x0u, 0xBAF3u, 0x5F0000u, 0xC20000u, 0x0u, 0x0u, 0x2000921u, 0x0u, 0xFFu, 0x13572468u, 0x24681357u, 0x23456789u, 0x3456789Au, 0x73273501u, 0x40242526u, 0xACE1u };
+static const u32 ice_shard_context_cases_expected[] = { 0x630000u, 0xC20000u, 0x0u, 0x10000u, 0x2000921u, DEMO_ALT(0x0u, 0x40000000u), DEMO_ALT(0x607u, 0x1219u), 0x650000u, 0xCC0000u, 0x18000u, 0x0u, 0x2000921u, 0x0u, DEMO_ALT(0xBAF3u, 0x3023u), 0x5F0000u, 0xC20000u, 0x0u, 0x0u, 0x2000921u, 0x0u, DEMO_ALT(0xFFu, 0x201u), 0x13572468u, 0x24681357u, 0x23456789u, 0x3456789Au, 0x73273501u, 0x40242526u, 0xACE1u };
 static u32 ice_shard_context_cases_row(u32 row)
 {
     return shard_case(row / 7, row % 7);
@@ -251,11 +259,98 @@ static u32 test_ice_shard_misc(u32 row)
     return object_run(ice_shard_misc_cases[row], row, &ice_shard_misc_expected[row * 10]);
 }
 
+static u32 shard_paths(u32 index);
 const struct CTestGroup c_test_groups[] = {
+    { "shard_paths", 0, 0, 12, shard_paths },
     { "ice_shard_misc", 0, 0, COUNT(ice_shard_misc_cases), test_ice_shard_misc },
     { "dust_rect_context", NULL, dust_rect_context_cases_expected, COUNT(dust_rect_context_cases_expected), dust_rect_context_cases_row },
     { "ice_shard_context", NULL, ice_shard_context_cases_expected, COUNT(ice_shard_context_cases_expected), ice_shard_context_cases_row },
     { "func_800B0CA0", 0, 0, 2, test_func_800B0CA0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ice_shard_misc_cases) + COUNT(dust_rect_context_cases_expected) + COUNT(ice_shard_context_cases_expected) + 2;
+const u32 c_test_count = COUNT(ice_shard_misc_cases) + COUNT(dust_rect_context_cases_expected) + COUNT(ice_shard_context_cases_expected) + 2 + 12;
+
+void func_800B08CC(struct VisualObj*);
+void func_800B0B48(struct VisualObj*);
+void func_800B10E4(u8, s32, s32, s32, s32, s32);
+#include "main/object_motion.h"
+extern s8 ice_shard_offsets[4][2];
+static const struct Unk_unk68 dust_box = { 4, -8, 6, 10 };
+static u32 shard_paths(u32 index)
+{
+    static const u8 scenarios[] = { 0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12 };
+    u32 row = scenarios[index];
+    static const s16 parent_dx[] = { 40, 0, -40, 0 }, parent_dy[] = { 0, -40, 0, 40 };
+    struct VisualObj obj;
+    struct MainObj parent;
+    struct MovingObj reference;
+    u32 i, left = 0, right = 0;
+    s32 direction;
+    memset(&obj, 0, sizeof(obj));
+    memset(&parent, 0, sizeof(parent));
+    memset(&reference, 0, sizeof(reference));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    cur_random = 0x1234;
+    obj.active = 0x21;
+    obj.id = 8;
+    obj.state = 1;
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = 100;
+    obj.unk50 = PLAYER_OBJECT(&parent);
+    for (i = 0; i < COUNT(state_table); i++)
+        state_table[i] = state_step;
+    obj.animation_table = (u32**)state_table;
+    obj.animation_cursor = state_step;
+    obj.animation_step.packed = state_step[0];
+    parent.x_pos.i.hi = 100;
+    parent.y_pos.i.hi = 100;
+    if (row <= 3) {
+        obj.state = 0;
+        obj.unk2 = row;
+        func_800B08CC(&obj);
+        assert(obj.state == 1 && obj.on_screen == 1 && obj.unk17 >= 0xE && obj.unk17 <= 0x10);
+        assert(obj.x_pos.i.hi >= 100 + ice_shard_offsets[row][0] && obj.x_pos.i.hi < 100 + ice_shard_offsets[row][0] + 32);
+        assert(obj.y_pos.i.hi >= 100 + ice_shard_offsets[row][1] && obj.y_pos.i.hi < 100 + ice_shard_offsets[row][1] + 32);
+        return 1;
+    }
+    if (row <= 9) {
+        if (row <= 7) {
+            parent.x_pos.i.hi = 100 + parent_dx[row - 4];
+            parent.y_pos.i.hi = 100 + parent_dy[row - 4];
+        }
+        parent.ext.main_14.unk8C = row == 8;
+        if (row == 9)
+            obj.x_pos.i.hi = parent.x_pos.i.hi = 0x400;
+        func_800B0B48(&obj);
+        assert(obj.state == (row >= 8 ? 2 : 1));
+        if (row <= 7) {
+            reference.x_pos = obj.x_pos;
+            reference.y_pos = obj.y_pos;
+            direction = angle_to_object((struct ObjectHeader*)&reference, OBJECT_HEADER(&parent));
+            assert(direction / 8 == (s32)row - 4);
+            set_velocity_from_angle(&reference, direction);
+            assert(obj.x_vel.val == reference.y_vel.val * -24 && obj.y_vel.val == reference.x_vel.val * 24);
+        }
+        return 1;
+    }
+    if (row <= 11) {
+        parent.terrain_box = &dust_box;
+        func_800B0CA0(0, row == 10 ? 3 : 4, &parent, 0, 2);
+        for (i = 0; i < 2; i++) {
+            assert(visual_objects[i].active == 0x21 && visual_objects[i].id == 9);
+            assert(visual_objects[i].x_pos.i.hi == (row == 10 ? 100 + 4 - 6 : 100 + 4 + 6));
+            assert(visual_objects[i].y_pos.i.hi >= 100 - 8 - 10 && visual_objects[i].y_pos.i.hi <= 100 - 8 + 10);
+        }
+        return 1;
+    }
+    func_800B10E4(2, 60, 80, 140, 120, 16);
+    for (i = 0; i < 16; i++) {
+        assert(visual_objects[i].active == 0x21 && visual_objects[i].y_vel.val == 0);
+        assert(visual_objects[i].x_vel.val == (visual_objects[i].x_pos.i.hi < 100 ? -0x18000 : 0x18000));
+        left += visual_objects[i].x_pos.i.hi < 100;
+        right += visual_objects[i].x_pos.i.hi >= 100;
+    }
+    assert(left != 0 && right != 0);
+    return 1;
+}

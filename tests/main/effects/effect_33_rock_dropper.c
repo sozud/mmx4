@@ -59,6 +59,22 @@ static const struct DropperInput inputs[] = {
     { 0x30, 0, 0, 1, 4, 1, 0, 0, 0, 0 },
     { 0x20, 0, 1, 1, 4, 1, 1, 1, 0, 0 },
     { 0x10, 3, 0, 1, 4, 1, 0, 0, 385, 0 },
+    { 0, 0, 0, 1, 4, 1, 0, 1, 945, 0 },
+    { 0, 0, 0, 1, 4, 1, 0, 0, 0, 0 },
+    { 0x10, 0, 0, 1, 4, 1, 0, 1, 1217, 0 },
+    { 0x10, 1, 0, 1, 4, 1, 0, 0, 0, 0 },
+    { 0x10, 1, 0, 1, 1, 1, 0, 0, 0, 0 },
+    { 0x10, 2, 0, 1, 4, 2, 0, 0, 0, 0 },
+    { 0x10, 2, 0, 1, 4, 1, 0, 0, 0, 0 },
+    { 0x10, 0, 0, 1, 4, 1, 0, 0, 385, 0 },
+    { 0x10, 0, 1, 1, 4, 1, 0, 0, -385, 0 },
+    { 0x20, 0, 0, 2, 4, 1, 0, 0, 0, 0 },
+    { 0, 0, 0, 2, 4, 1, 0, 0, 0, 0 },
+    { 0x10, 0, 0, 1, 4, 1, 0, 0, 256, 0 },
+    { 0x10, 0, 1, 1, 4, 1, 0, 0, -1000, 0 },
+    { 0x10, 1, 0, 2, 4, 1, 0, 0, 0, 0 },
+    { 0x20, 0, 0, 1, 4, 1, 0, 0, 0, 1000 },
+    { 0x20, 0, 0, 1, 4, 1, 0, 0, 0, 0 },
 };
 static u32 dropper_case(u32 mode, u32 observation)
 {
@@ -95,7 +111,7 @@ static u32 dropper_case(u32 mode, u32 observation)
     shot_objects[0].active = input->full ? 1 : 0;
     shot_objects[0].unk2 = 0x28;
     shot_objects[0].state = 0x27;
-    shot_objects[0].unk15 = 0x40;
+    shot_objects[0].unk15 = PLAYER_FACING_RIGHT;
     shot_objects[0].unk6 = 0x2F;
     shot_objects[0].x_pos.val = 250 * 65536 + 0x1234;
     shot_objects[0].y_pos.val = 500 * 65536 + 0x5678;
@@ -151,10 +167,35 @@ static u32 dropper_case(u32 mode, u32 observation)
     }
     return actual;
 }
-static const u32 rock_dropper_context_cases_expected[] = { 0x270001u, 0x26010426u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270101u, 0x26010401u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x27FF01u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270003u, 0x26010301u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270101u, 0x26010301u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270002u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010426u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010426u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010426u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x10001u, 0x26010400u, 0x6012141u, 0x3E81234u, 0x1F45678u, 0x12740u, 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010400u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270301u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u };
+static const u32 rock_dropper_context_cases_expected[] = { 0x270001u, 0x26010426u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270101u, 0x26010401u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x27FF01u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270003u, 0x26010301u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270101u, 0x26010301u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270002u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270001u, 0x26010426u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270001u, 0x26010426u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270001u, 0x26010426u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x10001u, 0x26010400u, 0x6012141u, 0x3E81234u, 0x1F45678u, 0x12700u | PLAYER_FACING_RIGHT, 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270001u, 0x26010400u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT, 0x270301u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT };
+static const u32 rock_dropper_phase_expected[][6] = {
+    { 0x270002u, 0x26010401u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270001u, 0x26010426u, 0x2141u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270002u, 0x26010401u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270001u, 0x26010326u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270201u, 0x26010000u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270201u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270001u, 0x26780426u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270101u, 0x26010401u, 0x3002141u, 0x3E81234u, 0xC85678u, 0x2F00u },
+    { 0x270101u, 0x26010401u, 0x3002141u, 0x3E81234u, 0xC85678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270101u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x270002u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F00u | PLAYER_FACING_RIGHT },
+    { 0x10001u, 0x26010426u, 0x6002141u, 0x3E81234u, 0x1F45678u, 0x12700u | PLAYER_FACING_RIGHT },
+};
 static u32 rock_dropper_context_cases_row(u32 row)
 {
     return dropper_case(row / 6, row % 6);
+}
+static u32 rock_dropper_phase(u32 row)
+{
+    u32 observed[6], i;
+    for (i = 0; i < 6; i++)
+        observed[i] = dropper_case(14 + row, i);
+    return c_test_observe(0, row, observed, rock_dropper_phase_expected[row], 6);
 }
 
 struct func_800BC784_case {
@@ -219,11 +260,48 @@ static u32 enter(u32 row)
     return 1;
 }
 
+static const struct RockKind {
+    u8 unk2;
+    s16 player_x;
+    u8 expected[9];
+} rock_kinds[] = {
+    { 0x00, 0x101, { 1, 0x50, 0x77, 0x77, 0x77, 0x77, 1, 9, 9 } },
+    { 0x00, 0x100, { 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0, 9, 9 } },
+    { 0x13, 0, { 0x3C, 0x26, 0x77, 3, 4, 0x8C, 1, 0, 9 } },
+    { 0x20, 0, { 1, 0x3C, 0, 0, 0x77, 0x77, 1, 9, 0 } },
+    { 0x21, 0, { 1, 0x50, 0, 0, 0x77, 0x77, 1, 9, 0 } },
+    { 0x22, 0, { 1, 0x64, 0, 0, 0x77, 0x77, 1, 9, 0 } },
+    { 0x24, 0, { 1, 0x78, 0, 1, 0x77, 0x77, 1, 9, 0 } },
+    { 0x25, 0, { 1, 0xB4, 0, 1, 0x77, 0x77, 1, 9, 0 } },
+    { 0x26, 0, { 0x3C, 0x3C, 1, 0, 0x77, 0x77, 1, 9, 0 } },
+    { 0x27, 0, { 1, 0x78, 0, 2, 0x77, 0x77, 1, 9, 0 } },
+    { 0x28, 0, { 1, 0xB4, 0, 2, 0x77, 0x77, 1, 9, 0 } },
+};
+static u32 rock_kind(u32 row)
+{
+    const struct RockKind* k = &rock_kinds[row];
+    struct EffectObj obj;
+    memset(&obj, 0, sizeof(obj));
+    memset(&obj.ext.effect_33, 0x77, sizeof(obj.ext.effect_33));
+    obj.unk2 = k->unk2;
+    obj.unk5 = obj.unk6 = 9;
+    obj.x_pos.i.hi = 0x100;
+    g_Player.x_pos.i.hi = k->player_x;
+    func_800BC784(&obj);
+    assert(obj.ext.effect_33.timer == k->expected[0] && obj.ext.effect_33.period == k->expected[1]);
+    assert(obj.ext.effect_33.proximity == k->expected[2] && obj.ext.effect_33.variant == k->expected[3]);
+    assert(obj.ext.effect_33.burst == k->expected[4] && obj.ext.effect_33.cooldown == k->expected[5]);
+    assert(obj.state == k->expected[6] && obj.unk5 == k->expected[7] && obj.unk6 == k->expected[8]);
+    return obj.ext.effect_33.timer | (u32)obj.ext.effect_33.period << 8 | (u32)obj.ext.effect_33.variant << 16 | (u32)obj.state << 24;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "rock_dropper_backrefs", NULL, rock_dropper_backrefs_cases_expected, COUNT(rock_dropper_backrefs_cases_expected), rock_case },
     { "rock_dropper_context", NULL, rock_dropper_context_cases_expected, COUNT(rock_dropper_context_cases_expected), rock_dropper_context_cases_row },
+    { "rock_dropper_phases", NULL, NULL, COUNT(rock_dropper_phase_expected), rock_dropper_phase },
     { "func_800BC784", 0, 0, 2, test_func_800BC784 },
     { "all_three_shipped_jungle_proximity_rock_spawners", NULL, NULL, 6, enter },
+    { "rock_dropper_kind_starts", NULL, NULL, COUNT(rock_kinds), rock_kind },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(rock_dropper_backrefs_cases_expected) + COUNT(rock_dropper_context_cases_expected) + 2 + 6;
+const u32 c_test_count = COUNT(rock_dropper_backrefs_cases_expected) + COUNT(rock_dropper_context_cases_expected) + COUNT(rock_dropper_phase_expected) + 2 + 6 + COUNT(rock_kinds);

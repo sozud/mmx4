@@ -203,7 +203,7 @@ void func_8001F3D4(struct MainObj* obj)
     s32 background_index;
     u32 i;
 
-#ifdef MMX4_BIG_ENDIAN
+#if defined(MMX4_BIG_ENDIAN) && !defined(MMX4_SATURN)
     obj->state = 6;
     obj->unk5 = 0;
 #else

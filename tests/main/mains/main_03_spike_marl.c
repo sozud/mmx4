@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_03_spike_marl.h"
 #include "main/195B4.h"
 #include "main/55C4.h"
@@ -16,7 +17,7 @@ static struct spike_marl_ahead_collision_PatrolInput {
 };
 static const struct spike_marl_ahead_collision_PatrolInput spike_marl_ahead_collision_inputs[] = {
     { 0, 1, 1, 0, 2, 1, 50 },
-    { 0, 1, 1, 0x40, 1, 1, 150 },
+    { 0, 1, 1, PLAYER_FACING_RIGHT, 1, 1, 150 },
 };
 static u8 spike_marl_ahead_collision_tilemap[256];
 static u16 spike_marl_ahead_collision_pixels[512];
@@ -31,7 +32,7 @@ static u32 spike_marl_ahead_collision_patrol_case(u32 mode)
     memset(&g_Player, 0, sizeof(g_Player));
     memset(spike_marl_ahead_collision_tilemap, 1, sizeof(spike_marl_ahead_collision_tilemap));
     memset(spike_marl_ahead_collision_pixels, 0, sizeof(spike_marl_ahead_collision_pixels));
-    spike_marl_ahead_collision_attributes[0] = input->tile;
+    spike_marl_ahead_collision_attributes[0] = C_TEST_PSX_WORD(input->tile);
     SP_BG_TILEMAP = spike_marl_ahead_collision_tilemap;
     layout_width = 16;
     layout_size = 256;
@@ -46,7 +47,7 @@ static u32 spike_marl_ahead_collision_patrol_case(u32 mode)
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 80 * 65536 + 0x5678;
     obj.unk7C = input->timer;
-    obj.unk15 = input->facing;
+    obj.unk15 = TEST_FACING(input->facing);
     obj.collision_flags = input->collision;
     obj.terrain_box = &spike_marl_terrain_box;
     obj.ext.main_3.player_ahead = input->ahead;
@@ -68,17 +69,15 @@ static u32 spike_marl_ahead_collision_patrol_case(u32 mode)
         before.unk17 = 2;
         before.previous_animation_index = 0xFF;
         before.animation_cursor = (const u8*)D_800F9E1C[2];
-        before.animation_step = *D_800F9E1C[2];
+        memcpy(&before.animation_step, D_800F9E1C[2], sizeof(before.animation_step));
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     for (i = 0; i < sizeof(spike_marl_ahead_collision_tilemap); i++)
         assert(spike_marl_ahead_collision_tilemap[i] == 1);
     for (i = 0; i < COUNT(spike_marl_ahead_collision_pixels); i++)
         assert(spike_marl_ahead_collision_pixels[i] == 0);
-    assert(spike_marl_ahead_collision_attributes[0] == input->tile && layout_width == 16 && layout_size == 256);
+    assert(spike_marl_ahead_collision_attributes[0] == C_TEST_PSX_WORD(input->tile) && layout_width == 16 && layout_size == 256);
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)obj.ext.main_3.turn_timer << 16);
 }
 static const u32 spike_marl_ahead_collision_cases_expected[] = { 0x3C0003u, 0x3C0003u };
@@ -94,11 +93,11 @@ static const struct spike_marl_patrol_terrain_PatrolInput spike_marl_patrol_terr
     { 0, 0, 0, 0, 0, 1, 100 },
     { 0, 1, 0, 0, 0, 0, 100 },
     { 0, 1, 0, 0, 2, 1, 100 },
-    { 0, 1, 0, 0x40, 1, 1, 100 },
+    { 0, 1, 0, PLAYER_FACING_RIGHT, 1, 1, 100 },
     { 0, 1, 1, 0, 0, 0, 50 },
-    { 0, 1, 1, 0x40, 0, 0, 150 },
+    { 0, 1, 1, PLAYER_FACING_RIGHT, 0, 0, 150 },
     { 0, 1, 1, 0, 0, 1, 150 },
-    { 0, 1, 1, 0x40, 0, 1, 50 },
+    { 0, 1, 1, PLAYER_FACING_RIGHT, 0, 1, 50 },
 };
 static u8 spike_marl_patrol_terrain_tilemap[256];
 static u16 spike_marl_patrol_terrain_pixels[512];
@@ -113,7 +112,7 @@ static u32 spike_marl_patrol_terrain_patrol_case(u32 mode)
     memset(&g_Player, 0, sizeof(g_Player));
     memset(spike_marl_patrol_terrain_tilemap, 1, sizeof(spike_marl_patrol_terrain_tilemap));
     memset(spike_marl_patrol_terrain_pixels, 0, sizeof(spike_marl_patrol_terrain_pixels));
-    spike_marl_patrol_terrain_attributes[0] = input->tile;
+    spike_marl_patrol_terrain_attributes[0] = C_TEST_PSX_WORD(input->tile);
     SP_BG_TILEMAP = spike_marl_patrol_terrain_tilemap;
     layout_width = 16;
     layout_size = 256;
@@ -128,7 +127,7 @@ static u32 spike_marl_patrol_terrain_patrol_case(u32 mode)
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 80 * 65536 + 0x5678;
     obj.unk7C = input->timer;
-    obj.unk15 = input->facing;
+    obj.unk15 = TEST_FACING(input->facing);
     obj.collision_flags = input->collision;
     obj.terrain_box = &spike_marl_terrain_box;
     obj.ext.main_3.player_ahead = input->ahead;
@@ -150,17 +149,15 @@ static u32 spike_marl_patrol_terrain_patrol_case(u32 mode)
         before.unk17 = 2;
         before.previous_animation_index = 0xFF;
         before.animation_cursor = (const u8*)D_800F9E1C[2];
-        before.animation_step = *D_800F9E1C[2];
+        memcpy(&before.animation_step, D_800F9E1C[2], sizeof(before.animation_step));
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     for (i = 0; i < sizeof(spike_marl_patrol_terrain_tilemap); i++)
         assert(spike_marl_patrol_terrain_tilemap[i] == 1);
     for (i = 0; i < COUNT(spike_marl_patrol_terrain_pixels); i++)
         assert(spike_marl_patrol_terrain_pixels[i] == 0);
-    assert(spike_marl_patrol_terrain_attributes[0] == input->tile && layout_width == 16 && layout_size == 256);
+    assert(spike_marl_patrol_terrain_attributes[0] == C_TEST_PSX_WORD(input->tile) && layout_width == 16 && layout_size == 256);
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)obj.ext.main_3.turn_timer << 16);
 }
 static const u32 spike_marl_patrol_terrain_cases_expected[] = { 0x252702u, 0x252702u, 0x780003u, 0x252702u, 0x780003u, 0x780003u, 0x252702u, 0x252702u, 0x3C0003u, 0x3C0003u };
@@ -214,7 +211,7 @@ static u32 test_func_80043390(u32 row)
     frames[2] = 64;
     metadata[2] = 0x1680;
     TEST_MENU_FRAMES = (u8*)frames;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     engine_obj.stage = 0;
     engine_obj.substage = 0;
     g_Player.bg_offset = 1;
@@ -228,14 +225,14 @@ static u32 test_func_80043390(u32 row)
     expected.bg_offset = 1;
     expected.unk18 = obj.x_pos;
     expected.unk1C = obj.y_pos;
-    expected.unk15 = c->unk15;
+    expected.unk15 = TEST_FACING(c->unk15);
     expected.terrain_box = &spike_marl_terrain_box;
     expected.hurt_box = &spike_marl_walk_hurt_box;
     expected.attack_box = &spike_marl_walk_attack_box;
-    expected.unk16 = 4;
-    expected.unk40 = 0x2D;
+    expected.unk16 = VISUAL_SATURN_LAYER(4);
+    expected.unk40 = OBJECT_STAGE_TEXTURE(2);
     expected.sprite_frames = (u8*)frames + 64;
-    expected.unk42 = 0x7880;
+    expected.unk42 = OBJECT_CLUT(0x7880);
     expected.air_state = 0;
     expected.collision_data = (const u16*)D_801060F0;
     expected.contact_damage = 4;
@@ -295,7 +292,7 @@ static u32 test_func_80043C0C(u32 row)
     memset(&obj, 0, sizeof(obj));
     obj.x_speed = 1048576;
     obj.collision_flags = c->collision_flags;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     func_80043C0C(&obj);
     observed_values[0] = (u32)obj.contact_damage;
     observed_values[1] = (u32)obj.unk5;
@@ -377,7 +374,7 @@ static u32 test_spike_marl_roll_entry_update(u32 row)
     set_animation(&obj, 5);
     obj.unk5 = 8;
     obj.unk6 = 1;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.unk7C = c->obj_unk7C;
     obj.x_speed = c->obj_x_speed;
     obj.y_speed = -0x10000;
@@ -415,7 +412,7 @@ static u32 test_spike_marl_roll_update(u32 row)
     memset(&obj, 0, sizeof(obj));
     memset(&g_Player, 0, sizeof(g_Player));
     obj.ext.main_3.roll_timer = -1048576;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.collision_flags = c->collision_flags;
     spike_marl_roll_update(&obj);
     observed_values[0] = (u32)obj.contact_damage;
@@ -493,9 +490,9 @@ static void smd_rolling(void)
 }
 static void smd_bouncing(void) { MARL(6, 0x70, 0x60, 0, 0); }
 static void smd_left(void) { MARL(2, 0x70, 0x60, 0, 0); }
-static void smd_right(void) { MARL(2, 0x90, 0x60, 0, 0x40); }
+static void smd_right(void) { MARL(2, 0x90, 0x60, 0, PLAYER_FACING_RIGHT); }
 static void smd_behind(void) { MARL(2, 0x90, 0x60, 0, 0); }
-static void smd_behind_right(void) { MARL(2, 0x70, 0x60, 0, 0x40); }
+static void smd_behind_right(void) { MARL(2, 0x70, 0x60, 0, PLAYER_FACING_RIGHT); }
 static void smd_walled(void) { MARL(2, 0x70, 0x60, 1, 0); }
 static void smd_far(void) { MARL(2, 0x10, 0x60, 0, 0); }
 static void smd_above(void) { MARL(2, 0x70, 0x10, 0, 0); }
@@ -537,7 +534,7 @@ static u32 tracking(u32 row)
     obj.id = 3;
     obj.state = 1;
     obj.unk5 = 2;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.ext.main_3.player_ahead = ahead;
     obj.ext.main_3.turn_timer = 9;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -571,7 +568,7 @@ static u32 rolling(u32 row)
     obj.state = 1;
     obj.unk5 = mode == 2 ? 8 : 5;
     obj.unk6 = mode == 1;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = wait;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
@@ -580,8 +577,8 @@ static u32 rolling(u32 row)
     obj.animation_table = (const u8* const*)D_800F9E1C;
     set_animation(&obj, mode == 0 ? 3 : mode == 1 ? 5
                                                   : 1);
-    assert(obj.animation_step.packed == (mode == 0 ? 0x0F010002 : mode == 1 ? 0x1D010003
-                                                                            : 0x01010006));
+    assert(obj.animation_step.packed == C_TEST_STEP(mode == 0 ? 0x0F010002 : mode == 1 ? 0x1D010003
+                                                                                       : 0x01010006));
     g_Player.x_pos.val = obj.x_pos.val + ((s32)side - 1) * 65536;
     player_before = g_Player;
     expected = obj;
@@ -591,7 +588,7 @@ static u32 rolling(u32 row)
             expected.unk17 = 5;
             expected.previous_animation_index = 255;
             expected.animation_cursor = (const u8*)D_800F9E1C[5];
-            expected.animation_step.packed = 0x1D010003;
+            expected.animation_step.packed = C_TEST_STEP(0x1D010003);
         } else
             expected.unk7C--;
         expected.animation_step.fields.duration--;
@@ -622,7 +619,121 @@ static u32 rolling(u32 row)
     return 1;
 }
 
+void spike_marl_run(struct MainObj*);
+void spike_marl_cleanup(struct MainObj*);
+void spike_marl_patrol_begin(struct MainObj*);
+void spike_marl_patrol_update(struct MainObj*);
+void spike_marl_turn_flip(struct PlayerObj*);
+void spike_marl_curl_update(struct MainObj*);
+void func_80043C0C(struct MainObj*);
+void spike_marl_fall(struct MainObj*);
+void spike_marl_uncurl_update(struct MainObj*);
+void spike_marl_check_patrol_path(struct MainObj*);
+void spike_marl_begin_fall(struct MainObj*);
+void spike_marl_track_player_side(struct MainObj*);
+extern struct Unk_unk68 spike_marl_terrain_box;
+#define SM2(step, sub) (state_reset(step, sub, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.terrain_box = &spike_marl_terrain_box, so.collision_flags = 8, g_Player.x_pos.i.hi = 0x200, g_Player.y_pos.i.hi = 0x200, state_terrain(0x38), SPIKE_IMMUNE_SET(g_Player, 1))
+#define SM2X() (state_extra = so.state | so.ext.main_3.alerted << 8 | so.ext.main_3.player_ahead << 16 | (u32)(u8)so.ext.main_3.turn_timer << 24)
+static void sm2_run_defeat(void) { SM2(8, 1), so.unk7C = 5, so.hp = 1, state_hit(&so, 0, 0, 1), spike_marl_run(&so), SM2X(); }
+static void sm2_run_away(void) { SM2(8, 1), so.unk7C = 5, so.x_pos.i.hi = 0x400, spike_marl_run(&so), SM2X(); }
+static void sm2_cleanup_placed(void) { SM2(0, 0), so.state = 2, spike_marl_cleanup(&so), SM2X(); }
+static void sm2_cleanup_placed_1(void) { SM2(0, 0), so.state = 2, so.unk2 = 1, spike_marl_cleanup(&so), SM2X(); }
+static void sm2_cleanup_spawned(void) { SM2(0, 0), so.state = 2, so.unk2 = 2, spike_marl_cleanup(&so), SM2X(); }
+static void sm2_patrol_left(void) { SM2(2, 0), spike_marl_patrol_begin(&so), SM2X(); }
+static void sm2_patrol_right(void) { SM2(2, 0), so.unk15 = PLAYER_FACING_RIGHT, spike_marl_patrol_begin(&so), SM2X(); }
+static void sm2_patrol_turn(void) { SM2(2, 1), so.ext.main_3.turn_timer = 1, so.x_speed = -0xCCCC, spike_marl_patrol_update(&so), SM2X(); }
+static void sm2_patrol_chase(void) { SM2(2, 1), so.ext.main_3.player_ahead = 1, so.x_speed = -0xCCCC, spike_marl_patrol_update(&so), SM2X(); }
+static void sm2_turn_flip(void) { SM2(3, 1), so.animation_step.fields.event = 1, spike_marl_turn_flip(PLAYER_OBJECT(&so)), SM2X(); }
+static void sm2_turn_wait(void) { SM2(3, 1), spike_marl_turn_flip(PLAYER_OBJECT(&so)), SM2X(); }
+#define CURL(ev) (SM2(4, 1), so.x_speed = -0xCCCC, so.animation_step.fields.event = ev, spike_marl_curl_update(&so), SM2X(), state_extra ^= so.contact_damage << 4 | (so.collision_data == D_801060F0) << 12)
+static void sm2_curl_done(void) { CURL(1); }
+static void sm2_curl_sound(void) { CURL(2); }
+static void sm2_curl_boxes(void) { CURL(3); }
+static void sm2_curl_armor(void) { CURL(4); }
+static void sm2_roll_slow_left(void) { SM2(5, 2), so.x_speed = -0x8000, so.x_accel = -0x1800, func_80043C0C(&so), SM2X(); }
+static void sm2_roll_fast(void) { SM2(5, 2), so.collision_flags = 0, so.x_speed = 0x20000, so.x_accel = -0x1800, func_80043C0C(&so), SM2X(); }
+static void sm2_fall_land_alert(void) { SM2(6, 0), so.ext.main_3.alerted = 1, so.air_state = 1, spike_marl_fall(&so), SM2X(); }
+static void sm2_fall_land(void) { SM2(6, 0), so.air_state = 1, spike_marl_fall(&so), SM2X(); }
+static void sm2_fall(void) { SM2(6, 0), so.collision_flags = 0, so.air_state = 1, so.gravity = 0x4200, spike_marl_fall(&so), SM2X(); }
+#define UNCURL(ev) (SM2(7, 1), so.x_speed = -0xCCCC, so.animation_step.fields.event = ev, spike_marl_uncurl_update(&so), SM2X(), state_extra ^= (so.collision_data == D_80106470) << 12)
+static void sm2_uncurl_done(void) { UNCURL(1); }
+static void sm2_uncurl_boxes(void) { UNCURL(2); }
+static void sm2_uncurl_armor(void) { UNCURL(3); }
+static void sm2_path_other_step(void) { SM2(4, 1), so.unk7C = 3, spike_marl_run(&so), SM2X(); }
+static void sm2_path_chase_right(void) { SM2(2, 1), so.ext.main_3.player_ahead = 1, so.ext.main_3.turn_timer = 5, so.unk15 = PLAYER_FACING_RIGHT, g_Player.x_pos.i.hi = 0x100, spike_marl_run(&so), SM2X(); }
+static void sm2_path_right_open(void) { SM2(2, 1), so.ext.main_3.turn_timer = 5, so.unk15 = PLAYER_FACING_RIGHT, spike_marl_run(&so), SM2X(); }
+static void sm2_fall_start(void) { SM2(2, 1), so.collision_flags = 0, so.x_speed = -0xCCCC, spike_marl_begin_fall(&so), SM2X(); }
+static void sm2_fall_start_rolling(void) { SM2(5, 1), so.collision_flags = 0, so.x_speed = -0x40000, spike_marl_begin_fall(&so), SM2X(); }
+static void sm2_fall_start_airborne(void) { SM2(6, 0), so.collision_flags = 0, so.air_state = 1, spike_marl_begin_fall(&so), SM2X(); }
+static void (*const sm2_cases[])(void) = {
+    sm2_run_defeat,
+    sm2_run_away,
+    sm2_cleanup_placed,
+    sm2_cleanup_placed_1,
+    sm2_cleanup_spawned,
+    sm2_patrol_left,
+    sm2_patrol_right,
+    sm2_patrol_turn,
+    sm2_patrol_chase,
+    sm2_turn_flip,
+    sm2_turn_wait,
+    sm2_curl_done,
+    sm2_curl_sound,
+    sm2_curl_boxes,
+    sm2_curl_armor,
+    sm2_roll_slow_left,
+    sm2_roll_fast,
+    sm2_fall_land_alert,
+    sm2_fall_land,
+    sm2_fall,
+    sm2_uncurl_done,
+    sm2_uncurl_boxes,
+    sm2_uncurl_armor,
+    sm2_path_other_step,
+    sm2_path_chase_right,
+    sm2_fall_start,
+    sm2_fall_start_rolling,
+    sm2_fall_start_airborne,
+    sm2_path_right_open,
+};
+static const u32 sm2_expected[] = {
+    0x108u, 0x4u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x2u, 0x41002100u,
+    0x108u, 0x4u, 0x4000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2u, 0x41000000u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0xFFFF3334u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x102u, 0x0u, 0x800000u, 0xCCCCu, 0x0u, 0x0u, 0x4000u, 0x0u, 0x1u, 0x41000000u,
+    0x3u, 0x0u, 0x7F3334u, 0xFFFF3334u, 0x0u, 0x0u, 0x2u, 0x0u, 0x78000001u, 0x41000000u,
+    0x102u, 0x0u, 0x7F3334u, 0xFFFF3334u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10001u, 0x41000000u,
+    0x2u, 0x14u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4001u, 0x0u, 0x1u, 0x41000000u,
+    0x103u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x5u, 0xFu, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41u, 0x41000000u,
+    0x104u, 0x0u, 0x800000u, 0xFFFF3334u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x104u, 0x0u, 0x800000u, 0xFFFF3334u, 0x0u, 0x0u, 0x0u, 0x3u, 0x1u, 0x41000000u,
+    0x104u, 0x0u, 0x800000u, 0xFFFF3334u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1001u, 0x41000000u,
+    0x7u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x205u, 0x0u, 0x820000u, 0x21800u, 0x0u, 0xFFFFE800u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x7u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x101u, 0x41000000u,
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u, 0x1u, 0x41000000u,
+    0x1000006u, 0x0u, 0x800000u, 0x0u, 0xFFFFBE00u, 0x420000u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u, 0x1u, 0x41000000u,
+    0x107u, 0x0u, 0x800000u, 0xFFFF3334u, 0x0u, 0x0u, 0x0u, 0x3u, 0x1u, 0x41000000u,
+    0x107u, 0x0u, 0x800000u, 0xFFFF3334u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1001u, 0x41000000u,
+    0x104u, 0x3u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x77000001u, 0x41000000u,
+    0x1000006u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x420000u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x1000006u, 0x0u, 0x800000u, 0xFFFC0000u, 0x0u, 0x420000u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x1000006u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x4000001u, 0x41000000u,
+};
+static u32 sm2_run(u32 row)
+{
+    return state_run(sm2_cases[row], row, &sm2_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "spike_marl_branch_steps", 0, 0, COUNT(sm2_cases), sm2_run },
     { "spike_marl_detect", 0, 0, COUNT(spike_marl_detect_cases), test_spike_marl_detect },
     { "spike_marl_misc", 0, 0, COUNT(spike_marl_misc_cases), test_spike_marl_misc },
     { "spike_marl_ahead_collision", NULL, spike_marl_ahead_collision_cases_expected, COUNT(spike_marl_ahead_collision_cases_expected), spike_marl_ahead_collision_patrol_case },
@@ -637,4 +748,4 @@ const struct CTestGroup c_test_groups[] = {
     { "shipped_roll_entry_start_and_player_crossing", NULL, NULL, 21, rolling },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(spike_marl_detect_cases) + COUNT(spike_marl_misc_cases) + COUNT(spike_marl_ahead_collision_cases_expected) + COUNT(spike_marl_patrol_terrain_cases_expected) + 4 + 3 + 3 + 4 + 3 + 3 + 45 + 21;
+const u32 c_test_count = COUNT(sm2_cases) + COUNT(spike_marl_detect_cases) + COUNT(spike_marl_misc_cases) + COUNT(spike_marl_ahead_collision_cases_expected) + COUNT(spike_marl_patrol_terrain_cases_expected) + 4 + 3 + 3 + 4 + 3 + 3 + 45 + 21;

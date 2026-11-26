@@ -15,7 +15,7 @@ static union {
 } state_room;
 #define so state_room.obj
 static u32 state_extra;
-static u32 state_step[16] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+static u32 state_step[16] = { C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5), C_TEST_STEP(5) };
 static u32* state_table[0x40];
 static u8 state_sound_rows[0x400];
 
@@ -53,7 +53,7 @@ static u32 state_run(void (*run)(void), u32 row, const u32* expected)
     seen[3] = so.x_speed;
     seen[4] = so.y_speed;
     seen[5] = so.x_accel ^ (u32)so.gravity << 8;
-    seen[6] = (u8)so.unk17 | (u8)so.unk15 << 8 | (u32)(u16)so.unk42 << 16;
+    seen[6] = (u8)so.unk17 | C_TEST_PSX_FACING(so.unk15) << 8 | (u32)(u16)so.unk42 << 16;
     seen[7] = (so.hurt_box != NULL) | (so.attack_box != NULL) << 1 | (u8)so.invincibility_timer << 8 | (u32)(u8)so.hp << 16;
     seen[8] = ((u8)g_Player.script_state | (u8)g_Player.script_action << 8 | (u8)engine_obj.enable_boss << 16 | (u32)(u8)engine_obj.unkF << 24) ^ state_extra;
     seen[9] = effect_objects[0].active | visual_objects[0].active << 8 | shot_objects[0].active << 16 | (u32)(u8)so.active << 24;
@@ -67,7 +67,7 @@ static u32 object_run(void (*run)(void), u32 row, const u32* expected)
     state_extra = 0;
     run();
     seen[0] = (u8)self->state | (u8)self->unk5 << 8 | (u8)self->unk6 << 16 | (u32)(u8)self->unk7 << 24;
-    seen[1] = (u8)self->active | (u8)self->unk2 << 8 | (u8)self->unk15 << 16 | (u32)self->previous_animation_index << 24;
+    seen[1] = (u8)self->active | (u8)self->unk2 << 8 | C_TEST_PSX_FACING(self->unk15) << 16 | (u32)self->previous_animation_index << 24;
     seen[2] = self->x_pos.val;
     seen[3] = self->y_pos.val;
     seen[4] = self->x_vel.val;
@@ -89,7 +89,7 @@ static void state_terrain(u8 attribute)
     SP_BG_TILEMAP = state_tiles;
     TEST_BG_TILE_PIXELS = (u8*)state_tile_pixels;
     TEST_BG_TILE_ATTRS = (u8*)state_tile_attrs;
-    state_tile_attrs[0] = attribute;
+    state_tile_attrs[0] = C_TEST_PSX_WORD(attribute);
     layout_size = 128;
     layout_width = 16;
 }

@@ -11,7 +11,7 @@ static u32 linked_spark_animation_spark_case(u32 mode, u32 observation)
     obj.active = 0x41;
     obj.id = 16;
     obj.unk2 = mode == 5 ? -1 : mode;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.unk84.value = 2;
     obj.animation_table = (u32**)pod_spawner_animations;
     obj.x_pos.val = 100 * 65536 + 0x1234;
@@ -24,7 +24,7 @@ static u32 linked_spark_animation_spark_case(u32 mode, u32 observation)
     before.unk60 = obj.unk60;
     before.unk84 = obj.unk84;
     before.unk15 = obj.unk15;
-    before.unk16 = 6;
+    before.unk16 = VISUAL_SATURN_LAYER(6);
     before.unk50.data = NULL;
     before.unk54 = NULL;
     before.unk68 = NULL;
@@ -37,9 +37,9 @@ static u32 linked_spark_animation_spark_case(u32 mode, u32 observation)
     if (observation == 0)
         actual = (u8)obj.state | ((u32)obj.on_screen << 8) | ((u32)(u8)obj.unk5C << 16) | ((u32)(u8)obj.unk60 << 24);
     else if (observation == 1)
-        actual = (u16)obj.unk84.value | ((u32)obj.unk15 << 16) | ((u32)obj.unk17 << 24);
+        actual = (u16)obj.unk84.value | ((u32)C_TEST_PSX_FACING(obj.unk15) << 16) | ((u32)obj.unk17 << 24);
     else
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
     return actual;
 }
 #define SPARK(m, n)                                         \
@@ -52,11 +52,13 @@ MODE(0)
 MODE(1)
 MODE(4)
 MODE(5)
+SPARK(2, 1)
+SPARK(3, 1)
 #define ENTRY(m, n) linked_spark_animation_spark_##m##_##n,
 #define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1) ENTRY(m, 2)
 static const CTestCase linked_spark_animation_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(4) ENTRIES(5) };
-static const u32 linked_spark_animation_cases_expected[] = { 0x4010101u, 0x6000006u, 0x20010102u, 0x4010101u, 0x6400006u, 0x20010102u, 0x4010101u, 0x2400002u, 0x10003u, 0x4010101u, 0x2400002u, 0x10003u };
+    = { ENTRIES(0) ENTRIES(1) ENTRIES(4) ENTRIES(5) ENTRY(2, 1) ENTRY(3, 1) };
+static const u32 linked_spark_animation_cases_expected[] = { 0x4010101u, 0x6000006u, 0x20010102u, 0x4010101u, 0x6400006u, 0x20010102u, 0x4010101u, 0x2400002u, 0x10003u, 0x4010101u, 0x2400002u, 0x10003u, 0x9400009u, 0xC40000Cu };
 #undef SPARK
 #undef MODE
 #undef ENTRY
@@ -94,7 +96,7 @@ static u32 linked_spark_owner_guards_spark_case(u32 mode)
         : mode == 7                      ? 1
                                          : 0;
     obj.bg_offset = -1;
-    obj.unk15 = mode & 1 ? 0x40 : 0;
+    obj.unk15 = mode & 1 ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 77 * 65536 + 0x1234;
     obj.y_pos.val = 88 * 65536 + 0x5678;
     obj.animation_table = (const u8* const*)pod_spawner_animations;
@@ -137,17 +139,19 @@ static u32 linked_spark_owner_guards_spark_case(u32 mode)
         assert(((u32*)&qux_object)[i] == ((u32*)&ride_before)[i]);
     for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
         assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
-    assert(pod_spawner_animations[6][5].packed == 0x1B000402);
-    assert(pod_spawner_animations[9][5].packed == 0x27000802);
-    assert(pod_spawner_animations[12][5].packed == 0x35000C02);
+    assert(pod_spawner_animations[6][5].packed == C_TEST_STEP(0x1B000402));
+    assert(pod_spawner_animations[9][5].packed == C_TEST_STEP(0x27000802));
+    assert(pod_spawner_animations[12][5].packed == C_TEST_STEP(0x35000C02));
     actual = (u8)obj.unk5 | ((u32)(u8)owner.unk5 << 8) | ((u32)obj.unk17 << 16);
     return actual;
 }
 static const u32 linked_spark_owner_guards_cases_expected[] = { 0x70601u, 0x70601u, 0x70601u, 0x70601u, 0x70401u, 0xA0401u, 0xD0401u, 0x70401u, 0x60600u, 0x90600u, 0xC0600u, 0x60601u };
 
-static const u32 inputs_0[2][5] = {
+static const u32 inputs_0[4][5] = {
     { 255, 1, 0, 0, 0 },
     { 255, 1, 29, -128, 0 },
+    { 255, 1, 29, 0, 0x37 },
+    { 255, 0, 29, 0, 0x37 },
 };
 struct linked_spark_despawn_case {
     u32 expected[2];
@@ -155,6 +159,8 @@ struct linked_spark_despawn_case {
 static const struct linked_spark_despawn_case linked_spark_despawn_cases[] = {
     { { 0u, 0u } },
     { { 0u, 0u } },
+    { { 0u, 0x36u } },
+    { { 0u, 0x37u } },
 };
 static u32 test_linked_spark_despawn(u32 row)
 {
@@ -180,7 +186,7 @@ static u32 test_linked_spark_despawn(u32 row)
 const struct CTestGroup c_test_groups[] = {
     { "linked_spark_animation", linked_spark_animation_cases, linked_spark_animation_cases_expected, COUNT(linked_spark_animation_cases), 0 },
     { "linked_spark_owner_guards", NULL, linked_spark_owner_guards_cases_expected, COUNT(linked_spark_owner_guards_cases_expected), linked_spark_owner_guards_spark_case },
-    { "linked_spark_despawn", 0, 0, 2, test_linked_spark_despawn },
+    { "linked_spark_despawn", 0, 0, 4, test_linked_spark_despawn },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(linked_spark_animation_cases) + COUNT(linked_spark_owner_guards_cases_expected) + 2;
+const u32 c_test_count = COUNT(linked_spark_animation_cases) + COUNT(linked_spark_owner_guards_cases_expected) + 4;

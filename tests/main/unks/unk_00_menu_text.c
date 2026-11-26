@@ -1,6 +1,10 @@
 #include "test_runtime.h"
+#ifndef VERSION_DEMO
 #include "main/2824.h"
 #include "main/unks/unk_00_menu_text.h"
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#endif
 
 void menu_text_update(struct UnkObj*);
 extern u16 menu_button_bits_a[8], menu_button_bits_b[8];
@@ -23,15 +27,36 @@ static const u16 binding_defaults[16] = {
     0x2000, 0x8000, 0x1000, 0x4000, 0x80, 0x10, 2, 0x40,
     0x20, 8, 4, 0, 0, 0, 0, 0
 };
+#ifdef MMX4_SATURN
+static const u16 source_buttons[8] = { 0x10, 0x80, 0x100, 0x40, 0x20, 0x200, 0x400, 0x400 };
+static const u16 physical_buttons[8] = { 0x400, 0x100, 0x200, 0x40, 0x20, 0x10, 0x80, 0x08 };
+#define LABEL_TEXTURE SATURN_OPTION_WINDOW_TEXTURE
+#define CURSOR_TEXTURE SATURN_OPTION_CURSOR_TEXTURE
+#define TITLE_PALETTE SATURN_OPTION_TITLE_PALETTE
+#define SELECTED_PALETTE SATURN_OPTION_SELECTED_PALETTE
+#define LOCKED_PALETTE SATURN_OPTION_LOCKED_PALETTE
+#define TEXT_PALETTE SATURN_OPTION_PALETTE
+#define CURSOR_PALETTE SATURN_OPTION_CURSOR_PALETTE
+#define HINT_PALETTE SATURN_OPTION_HINT_PALETTE
+#else
 static const u16 source_buttons[8] = { 0x10, 0x80, 0x100, 0x40, 0x20, 0x200, 0x400, 0 };
 static const u16 physical_buttons[8] = { 0x80, 0x10, 0x40, 0x20, 4, 1, 8, 2 };
+#define LABEL_TEXTURE 0x1F00
+#define CURSOR_TEXTURE 0x1E00
+#define TITLE_PALETTE 0x7802
+#define SELECTED_PALETTE 0x7803
+#define LOCKED_PALETTE 0x7804
+#define TEXT_PALETTE 0x7800
+#define CURSOR_PALETTE 0x7806
+#define HINT_PALETTE 0x784B
+#endif
 static const u8 binding_slots[7] = { 4, 7, 8, 6, 5, 9, 10 };
 static const u32 cursor_words[36] = {
-    0x3101000F, 0x3201000D, 0x3301000A, 0x31010008, 0x32010007, 0x33010006, 0x31010006, 0x32010005,
-    0x33010005, 0x31010004, 0x32010005, 0x33010005, 0x31010006, 0x32010006, 0x33010007, 0x31010008,
-    0x3201000A, 0x3301000D, 0x3101000F, 0x3301000D, 0x3201000A, 0x31010008, 0x33010007, 0x32010006,
-    0x31010006, 0x33010005, 0x32010005, 0x31010004, 0x33010005, 0x32010005, 0x31010006, 0x33010006,
-    0x32010007, 0x31010008, 0x3301000A, 0x32DD000D
+    C_TEST_STEP(0x3101000F), C_TEST_STEP(0x3201000D), C_TEST_STEP(0x3301000A), C_TEST_STEP(0x31010008), C_TEST_STEP(0x32010007), C_TEST_STEP(0x33010006), C_TEST_STEP(0x31010006), C_TEST_STEP(0x32010005),
+    C_TEST_STEP(0x33010005), C_TEST_STEP(0x31010004), C_TEST_STEP(0x32010005), C_TEST_STEP(0x33010005), C_TEST_STEP(0x31010006), C_TEST_STEP(0x32010006), C_TEST_STEP(0x33010007), C_TEST_STEP(0x31010008),
+    C_TEST_STEP(0x3201000A), C_TEST_STEP(0x3301000D), C_TEST_STEP(0x3101000F), C_TEST_STEP(0x3301000D), C_TEST_STEP(0x3201000A), C_TEST_STEP(0x31010008), C_TEST_STEP(0x33010007), C_TEST_STEP(0x32010006),
+    C_TEST_STEP(0x31010006), C_TEST_STEP(0x33010005), C_TEST_STEP(0x32010005), C_TEST_STEP(0x31010004), C_TEST_STEP(0x33010005), C_TEST_STEP(0x32010005), C_TEST_STEP(0x31010006), C_TEST_STEP(0x33010006),
+    C_TEST_STEP(0x32010007), C_TEST_STEP(0x31010008), C_TEST_STEP(0x3301000A), C_TEST_STEP(0x32DD000D)
 };
 static const struct {
     s8 label;
@@ -102,7 +127,11 @@ static void prepare(u32 fraction, u32 archive)
     window_expected.words[0] = archive ? 0x80 : 0x40;
     window_expected.words[1] = archive ? 0x180 : 0xA0;
     window_expected.words[2] = archive ? 0x280 : 0x140;
+#ifdef MMX4_SATURN
+    *(s32*)SATURN_OPTION_CURSOR_FRAMES = window_expected.words[2];
+#else
     c_test_copy_words((u32*)WINDOW_ARCHIVE_DATA, window_expected.words, COUNT(window_expected.words));
+#endif
     for (i = 0; i < 16; i++)
         D_800EE430[i] = binding_defaults[i];
     obj.active = 1;
@@ -111,11 +140,11 @@ static void prepare(u32 fraction, u32 archive)
     obj.bg_offset = 2;
     obj.x_pos.val = 96 * 65536 + (fraction ? 0xFEDC : 0);
     obj.y_pos.val = 80 * 65536 + (fraction ? 0xBA98 : 0);
-    obj.unk15 = 0x40;
-    obj.unk16 = 9;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.unk16 = VISUAL_SATURN_LAYER(9);
     obj.unk40 = 0x1234;
     obj.unk42 = 0x5678;
-    obj.animation_step.packed = 0x55123456;
+    obj.animation_step.packed = C_TEST_STEP(0x55123456);
     obj.previous_animation_index = 0x35;
     obj.animation_table = (u32**)falling_piece_animations;
     obj.link.data = D_800F457C;
@@ -158,7 +187,11 @@ static void check(void)
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_before));
     c_test_same_words(&main_bss_state, &main_before, sizeof(main_before));
     c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+#ifdef MMX4_SATURN
+    assert(*(s32*)SATURN_OPTION_CURSOR_FRAMES == window_expected.words[2]);
+#else
     assert(c_test_word_difference((const u32*)WINDOW_ARCHIVE_DATA, window_expected.words, COUNT(window_expected.words)) == 0);
+#endif
     for (i = 0; i < 16; i++)
         assert(D_800EE430[i] == bindings_expected[i]);
     for (i = 0; i < 8; i++) {
@@ -186,13 +219,17 @@ static void expect_visibility(void)
 
 static void expect_label_init(void)
 {
-    expected.unk40 = 0x1F00;
+    expected.unk40 = LABEL_TEXTURE;
     expected.bg_offset = -1;
     expected.unk15 = 0;
+#ifdef MMX4_SATURN
+    expected.unk3C = SATURN_OPTION_WINDOW_FRAMES;
+#else
     expected.unk3C = WINDOW_ARCHIVE_DATA + window_expected.words[0];
-    expected.unk42 = expected.y_pos.i.hi == 16 ? 0x7802 : 0x7800;
+#endif
+    expected.unk42 = expected.y_pos.i.hi == 16 ? TITLE_PALETTE : TEXT_PALETTE;
     expected.x_pos.i.hi = 160;
-    expected.unk16 = 0;
+    expected.unk16 = VISUAL_SATURN_LAYER(0);
     expected.animation_step.fields.frame_index = expected.unk2;
     expected.state = expected.unk2 < 9 ? 2 : 1;
     expect_visibility();
@@ -214,15 +251,19 @@ static u32 test_labels(u32 row)
 
 static void expect_cursor_init(void)
 {
-    expected.unk40 = 0x1E00;
+    expected.unk40 = CURSOR_TEXTURE;
     expected.animation_table = option_toggle_animations;
+#ifdef MMX4_SATURN
+    expected.unk3C = (u8*)SATURN_OPTION_CURSOR_FRAMES + window_expected.words[2];
+#else
     expected.unk3C = WINDOW_ARCHIVE_DATA + window_expected.words[2];
+#endif
     expected.unk15 = 0;
     expected.bg_offset = -1;
-    expected.unk16 = 0;
+    expected.unk16 = VISUAL_SATURN_LAYER(0);
     expected.state = 3;
     if (expected.unk2 == -1) {
-        expected.unk42 = 0x7806;
+        expected.unk42 = CURSOR_PALETTE;
         expected.y_pos.i.hi = (expected.link.data == D_800F4568 ? expected_D_800F4568 : expected_D_800F457C)[main_bss_state.transition.selection * 2] + 8;
         expected.ext.unk_0.selection_index = main_bss_state.transition.selection;
         expected.unk17 = 0;
@@ -230,7 +271,7 @@ static void expect_cursor_init(void)
         expected.animation_cursor = (u32*)option_toggle_animations[0];
         expected.animation_step.packed = cursor_words[0];
     } else {
-        expected.unk42 = 0x784B;
+        expected.unk42 = HINT_PALETTE;
         expected.x_pos.i.hi = 96;
         expected.y_pos.i.hi = 208;
         expected.animation_step.fields.frame_index = 0x29;
@@ -265,9 +306,9 @@ static u32 test_highlight(u32 row)
     engine_obj.cur_character = second;
     capture();
     if (expected.y_pos.i.hi != 16)
-        expected.unk42 = equal ? 0x7803 : 0x7800;
+        expected.unk42 = equal ? SELECTED_PALETTE : TEXT_PALETTE;
     if (!main_bss_state.character_mode && engine_obj.cur_character == 1 && expected.unk7 >= 5 && expected.unk7 < 7)
-        expected.unk42 = 0x7804;
+        expected.unk42 = LOCKED_PALETTE;
     expect_visibility();
     menu_text_update(&obj);
     check();
@@ -291,7 +332,7 @@ static u32 test_binding(u32 row)
     capture();
     if (button < 8)
         expected.animation_step.fields.frame_index = 0x68 + button;
-    expected.unk42 = !mode && character && label >= 5 ? 0x7804 : 0x7800;
+    expected.unk42 = !mode && character && label >= 5 ? LOCKED_PALETTE : TEXT_PALETTE;
     expect_visibility();
     menu_text_update(&obj);
     check();
@@ -396,7 +437,7 @@ static const CTestCase menu_binding_edges_cases[] = {
     unmatched_button,
     disabled_label,
 };
-static const u32 menu_binding_edges_cases_expected[] = { 0x1780055u, 0x178006Bu };
+static const u32 menu_binding_edges_cases_expected[] = { 0x1000055u | (u32)TEXT_PALETTE << 8, 0x100006Bu | (u32)TEXT_PALETTE << 8 };
 
 const struct CTestGroup c_test_groups[] = {
     { "menu_label_initialization", 0, 0, 41, test_labels },
@@ -410,3 +451,8 @@ const struct CTestGroup c_test_groups[] = {
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
 const u32 c_test_count = 41 + 8 + 54 + 18 + 36 + 16 + 8 + COUNT(menu_binding_edges_cases);
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

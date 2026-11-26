@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
+#ifndef VERSION_DEMO
 #include "main/items/item_26_light_capsule.h"
 #include "main/195B4.h"
 #include "archive_memory.h"
@@ -36,8 +38,8 @@ static u32 visual_case(u32 mode, u32 observation)
                                          : 0;
     obj.state = 2;
     obj.unk5 = 0x27;
-    obj.unk15 = 0x40;
-    obj.unk16 = 0x25;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.unk16 = VISUAL_SATURN_LAYER(0x25);
     owner.x_pos.val = 100 * 65536 + 0x1234;
     owner.y_pos.val = 200 * 65536 + 0x5678;
     owner.unk3C = frames;
@@ -65,16 +67,14 @@ static u32 visual_case(u32 mode, u32 observation)
         before.animation_cursor = (const u8*)light_capsule_animations[index];
         memcpy(&before.animation_step, light_capsule_animations[index], sizeof(before.animation_step));
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(owner) / 4; i++)
-        assert(((u32*)&owner)[i] == ((u32*)&owner_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
     assert(frames[0] == 0x27 && frames[1] == 0x28 && frames[2] == 0x29 && frames[3] == 0x2A);
     if (observation == 0)
-        return obj.animation_step.packed;
+        return C_TEST_STEP(obj.animation_step.packed);
     if (observation == 1)
         return obj.unk40 | ((u32)obj.unk42 << 16);
-    return (u8)obj.state | ((u32)obj.unk16 << 8) | ((u32)obj.unk17 << 16);
+    return (u8)obj.state | ((u32)TEST_PSX_LAYER(obj.unk16) << 8) | ((u32)obj.unk17 << 16);
 }
 static const u32 capsule_visual_animation_context_cases_expected[] = { 0x1D010002u, 0x13572468u, 0x20303u, 0x1B010002u, 0x13572468u, 0x70103u, 0x1E010001u, 0x13572468u, 0x80003u, 0x2C010001u, 0x13572468u, 0x90003u, 0x0u, 0x13572468u, 0x2503u };
 static u32 capsule_visual_animation_context_cases_row(u32 row)
@@ -106,7 +106,9 @@ static u32 test_func_800C6EDC(u32 row)
     memset(&background_objects, 0, sizeof(background_objects));
     memset(&player_gfx_buf_0, 0, sizeof(player_gfx_buf_0));
     memset(&player_gfx_buf_1, 0, sizeof(player_gfx_buf_1));
+#ifndef MMX4_SATURN
     memset(&vram_rect_ptr, 0, sizeof(vram_rect_ptr));
+#endif
     obj.state = inputs_0[row][0];
     obj.unk2 = inputs_0[row][1];
     g_Player.unk15 = inputs_0[row][2];
@@ -127,8 +129,8 @@ static u32 test_func_800C6EDC(u32 row)
     observed_values[6] = (u32)obj.animation_step.fields.event;
     observed_values[7] = (u32)obj.on_screen;
     observed_values[8] = (u32)obj.state;
-    observed_values[9] = (u32)obj.unk15;
-    observed_values[10] = (u32)obj.unk16;
+    observed_values[9] = C_TEST_PSX_FACING(obj.unk15);
+    observed_values[10] = TEST_PSX_LAYER(obj.unk16);
     observed_values[11] = (u32)obj.unk40;
     observed_values[12] = (u32)obj.unk42;
     observed_values[13] = (u32)obj.x_pos.val;
@@ -142,6 +144,7 @@ static u32 test_light_capsule_wait_player(u32 row)
     u32 observed_values[2];
     struct ItemObj obj;
     memset(&obj, 0, sizeof(obj));
+#ifndef MMX4_SATURN
     memset(&g_Player, 0, sizeof(g_Player));
     memset(&D_80137CC0, 0, sizeof(D_80137CC0));
     memset(&D_80139514, 0, sizeof(D_80139514));
@@ -159,11 +162,12 @@ static u32 test_light_capsule_wait_player(u32 row)
     memset(&D_80141BD4, 0, sizeof(D_80141BD4));
     memset(&D_80171EA9, 0, sizeof(D_80171EA9));
     memset(&D_80173C84, 0, sizeof(D_80173C84));
+#endif
     memset(&D_80175EE8, 0, sizeof(D_80175EE8));
     memset(&engine_obj, 0, sizeof(engine_obj));
     g_Player.y_pos.i.hi = 4096;
     light_capsule_wait_player(&obj);
-    observed_values[0] = (u32)obj.unk15;
+    observed_values[0] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[1] = (u32)obj.unk5;
     return c_test_observe(0, row, observed_values, light_capsule_wait_player_expected, 2);
 }
@@ -187,7 +191,7 @@ static const u32 pool_full_cases_expected[] = { 0x50000u };
 extern u8 light_capsule_terrain_box[4];
 static u8 capsule_tilemap[128];
 static u16 capsule_tiles[2][16][16];
-static u32 capsule_attributes[2] = { 0, 0x38 };
+static u32 capsule_attributes[2] = { 0, C_TEST_PSX_WORD(0x38) };
 static s32 capsule_frames[16];
 static u32 capsule_metadata[16];
 
@@ -261,7 +265,7 @@ static u32 test_capsule_eligibility(u32 row)
     obj.unk5 = 9;
     obj.unk6 = 2;
     obj.unk7 = 3;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 64 * 65536;
     obj.y_pos.val = (mode == 0 ? 84 : 48) * 65536;
     obj.unk18 = obj.x_pos;
@@ -278,7 +282,7 @@ static u32 test_capsule_eligibility(u32 row)
     capsule_frames[9] = 64;
     capsule_metadata[9] = 0x2000;
     TEST_MENU_FRAMES = (u8*)capsule_frames;
-    D_801406A8 = capsule_metadata;
+    test_stage_graphics(capsule_metadata);
     light_capsule_update(&obj);
     if (!capsule_eligibility[mode].keep) {
         before.active = before.id = before.unk2 = before.on_screen = 0;
@@ -297,8 +301,8 @@ static u32 test_capsule_eligibility(u32 row)
         assert(obj.animation_step.packed == first_frame.packed);
         assert(obj.previous_animation_index == 0xFF && obj.unk17 == 0);
         assert(obj.sprite_frames == (const u8*)capsule_frames + 64);
-        assert(obj.unk40 == 64 && obj.unk42 == 0x78CC);
-        assert(obj.unk16 == 4 && obj.unk15 == 0 && obj.unk75 == 1);
+        assert(obj.unk40 == (u16)OBJECT_STAGE_TEXTURE(9) && obj.unk42 == OBJECT_CLUT(0x78CC));
+        assert(obj.unk16 == VISUAL_SATURN_LAYER(4) && obj.unk15 == 0 && obj.unk75 == 1);
         assert(obj.x_pos.val == 64 * 65536 && obj.y_pos.val == 84 * 65536);
         assert(obj.unk18.val == before.unk18.val && obj.unk1C.val == before.unk1C.val);
         assert((obj.unk70 & 8) != 0 && record.flags == 0x81);
@@ -330,6 +334,7 @@ static u32 test_capsule_eligibility(u32 row)
     return 1;
 }
 
+#ifndef MMX4_SATURN
 void light_capsule_main(struct ItemObj*);
 void func_80029A48(void);
 extern struct Item26AnimationStep* light_capsule_animations[14];
@@ -438,7 +443,7 @@ static void prepare(u32 secret, u32 right)
         tiles[i] = i >= 256 && (i & 255) / 16 >= 9;
     c_test_copy_words((u32*)tiles_before, (u32*)tiles, sizeof(tiles) / 4);
     attributes[0] = 0;
-    attributes[1] = 0x38;
+    attributes[1] = C_TEST_PSX_WORD(0x38);
     SP_BG_TILEMAP = map;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -484,7 +489,7 @@ static void prepare(u32 secret, u32 right)
     assert(resource < 64);
     menu[resource] = 128;
     TEST_MENU_FRAMES = (u8*)menu;
-    D_801406A8 = resources;
+    test_stage_graphics(resources);
     cur_random = 0x1234;
     for (i = 0; i < 6; i++)
         D_8013E198[i] = -1;
@@ -551,7 +556,7 @@ static void check(void)
     assert(c_test_word_difference(audio, audio_expected, sizeof(audio) / 4) == 0);
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed && need_palette_load == dirty && cur_random == rng);
     assert(c_test_word_difference((u32*)palette, (u32*)palette_expected, sizeof(palette) / 4) == 0);
-    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_MENU_FRAMES == (u8*)menu && D_801406A8 == resources && TEST_PALETTE == (u8*)&palette[1] && TEST_PALETTE_BANK == (u8*)bank && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == 0 && attributes[1] == 0x38);
+    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_MENU_FRAMES == (u8*)menu && D_801406A8 == resources && TEST_PALETTE == (u8*)&palette[1] && TEST_PALETTE_BANK == (u8*)bank && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 16 && layout_height == 16 && layout_size == 256 && attributes[0] == 0 && attributes[1] == C_TEST_PSX_WORD(0x38));
     for (i = 0; i < COUNT(map_words); i += 8)
         assert(((map_words[i] ^ 0x01010101) | (map_words[i + 1] ^ 0x01010101) | (map_words[i + 2] ^ 0x01010101) | (map_words[i + 3] ^ 0x01010101) | (map_words[i + 4] ^ 0x01010101) | (map_words[i + 5] ^ 0x01010101) | (map_words[i + 6] ^ 0x01010101) | (map_words[i + 7] ^ 0x01010101)) == 0);
     assert(c_test_word_difference((u32*)tiles, (u32*)tiles_before, sizeof(tiles) / 4) == 0);
@@ -573,15 +578,15 @@ static u32 right_approach(u32 row)
     prepare(0, 1);
     capture();
     capsule_expected.unk5 = 1;
-    capsule_expected.unk15 = 0x40;
+    capsule_expected.unk15 = PLAYER_FACING_RIGHT;
     capsule_expected.unk17 = 10;
     capsule_expected.previous_animation_index = 255;
     capsule_expected.animation_cursor = (const u8*)light_capsule_animations[10];
-    capsule_expected.animation_step.packed = 0x01010002;
+    capsule_expected.animation_step.packed = C_TEST_STEP(0x01010002);
     player.script_state = 1;
     player.script_action = PLAYER_SCRIPT_WAIT;
     player.script_facing = 0;
-    player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(player, 1);
     engine.gameplay_locked = 1;
     audio_expected[0] = 24107520;
     audio_expected[1] = 216253;
@@ -610,7 +615,7 @@ static u32 secret_dialogue(u32 row)
     approach();
     for (i = 0; i < 67; i++)
         light_capsule_main(&capsule);
-    assert(capsule.unk5 == 1 && capsule.animation_cursor == (const u8*)light_capsule_animations[10] + 33 * 4 && capsule.animation_step.packed == 0x00010001 && abc_object.unkC == 0);
+    assert(capsule.unk5 == 1 && capsule.animation_cursor == (const u8*)light_capsule_animations[10] + 33 * 4 && capsule.animation_step.packed == C_TEST_STEP(0x00010001) && abc_object.unkC == 0);
     memset(messages_words, 0, sizeof(messages_words));
     messages[0x35] = 112;
     c_test_copy_words(&messages_words[28], secret_text_words, COUNT(secret_text_words));
@@ -620,7 +625,7 @@ static u32 secret_dialogue(u32 row)
     capture();
     capsule_expected.unk5 = 2;
     capsule_expected.animation_cursor = (const u8*)light_capsule_animations[10] + 34 * 4;
-    capsule_expected.animation_step.packed = 0x06010002;
+    capsule_expected.animation_step.packed = C_TEST_STEP(0x06010002);
     dialogue.unkC = 0x80;
     dialogue.unk0 = &messages[56];
     dialogue.unk4 = 77;
@@ -644,10 +649,10 @@ static u32 secret_dialogue(u32 row)
     window->active = 1;
     window->id = 22;
     window->unk2 = 2;
-    window->unk16 = 17;
+    window->unk16 = VISUAL_SATURN_LAYER(17);
     window->animation_table = (u32**)D_800F2FD4;
     window->unk40 = 0x1E00;
-    window->unk42 = 0x7846;
+    window->unk42 = OBJECT_CLUT(0x7846);
     window->bg_offset = -1;
     window->x_pos.i.hi = 160;
     window->y_pos.i.hi = 60;
@@ -656,7 +661,7 @@ static u32 secret_dialogue(u32 row)
     window->unk17 = 0;
     window->previous_animation_index = 255;
     window->animation_cursor = (u32*)D_800F2FD4[0];
-    window->animation_step.packed = 0x28010004;
+    window->animation_step.packed = C_TEST_STEP(0x28010004);
     light_capsule_main(&capsule);
     check();
     assert(record.flags == 1 && TEST_ARC_48 == (u8*)messages_words && ((u32*)WINDOW_ARCHIVE_DATA)[2] == 128);
@@ -688,16 +693,202 @@ static u32 offscreen_glass(u32 row)
     assert(record.flags == 0);
     return 1;
 }
+#endif
 
+#include "support/state_cases.h"
+#include "main/sprite_animations.h"
+void light_capsule_update(struct ItemObj*);
+void light_capsule_wait_player(struct ItemObj*);
+void light_capsule_start_dialogue(struct ItemObj*);
+void light_capsule_wait_dialogue_open(struct ItemObj*);
+void light_capsule_wait_dialogue_close(struct ItemObj*);
+void light_capsule_end_dialogue(struct ItemObj*);
+void light_capsule_wait_enter(struct ItemObj*);
+void light_capsule_wait_scan(struct ItemObj*);
+void light_capsule_wait_beams(struct ItemObj*);
+void light_capsule_grant_part(struct ItemObj*);
+void light_capsule_wait_done(struct ItemObj*);
+void capsule_glass_update(struct VisualObj*);
+void capsule_scan_update(struct VisualObj*);
+void capsule_beam_update(struct VisualObj*);
+#define lc state_room.item
+#define lv state_room.visual
+static struct MainObj lc_link;
+static struct Unk_unk68 lc_box = { 0, 0, 8, 8 };
+#define LC(step) (state_reset(0, 0, 0), memset(&lc_link, 0, sizeof(lc_link)), memset(&abc_object, 0, sizeof(abc_object)), lc.active = 1, lc.state = 1, lc.unk5 = step, lc.x_pos.i.hi = 0x80, lc.y_pos.i.hi = 0x60, g_Player.item_step = 0, g_Player.unk68 = &lc_box, engine_obj.unk37 = 0)
+#define LCX() (state_extra = lc.unk5 | (u32)g_Player.item_step << 8 | (u32)(u16)lc.unk7C.timer << 16)
+static void lc2_capsule_main(void) { LC(1), g_Player.x_pos.i.hi = 0x200, light_capsule_update(&lc), LCX(); }
+static void lc2_platform_gone(void) { LC(0), lc.unk2 = 6, lc.unk7C.object = &lc_link, light_capsule_update(&lc), LCX(), state_extra &= 0xFFFF; }
+static void lc2_platform_place(void) { LC(0), lc.unk2 = 6, lc.state = 0, lc_link.active = 1, lc_link.x_pos.i.hi = 0x90, lc_link.y_pos.i.hi = 0xA0, lc.unk7C.object = &lc_link, light_capsule_update(&lc), LCX(), state_extra &= 0xFFFF, state_extra ^= (u32)lc.y_pos.i.hi << 4; }
+static void lc2_platform_ride(void) { LC(0), lc.unk2 = 6, lc_link.active = 1, lc.unk68 = &lc_box, lc.unk7C.object = &lc_link, light_capsule_update(&lc), LCX(), state_extra &= 0xFFFF; }
+static void lc2_wait_far(void) { LC(1), g_Player.x_pos.i.hi = 0x100, light_capsule_wait_player(&lc), LCX(); }
+static void lc2_dialogue(void) { LC(2), lc.unk2 = 1, abc_object.unkC = 0x80, lc.animation_step.fields.event = 1, light_capsule_start_dialogue(&lc), LCX(), state_extra ^= (u32)abc_object.unk10 << 16, engine_obj.unk37 = 0; }
+static void lc2_open(void) { LC(3), abc_object.unkC = 1, light_capsule_wait_dialogue_open(&lc), LCX(); }
+static void lc2_open_wait(void) { LC(3), light_capsule_wait_dialogue_open(&lc), LCX(); }
+static void lc2_close(void) { LC(4), light_capsule_wait_dialogue_close(&lc), LCX(); }
+static void lc2_close_wait(void) { LC(4), abc_object.unkC = 1, light_capsule_wait_dialogue_close(&lc), LCX(); }
+static void lc2_end_wait(void) { LC(5), light_capsule_end_dialogue(&lc), LCX(); }
+static void lc2_end(void) { LC(5), lc.animation_step.fields.event = 1, light_capsule_end_dialogue(&lc), LCX(); }
+static void lc2_enter(void) { LC(6), lc.unk72 = 8, light_capsule_wait_enter(&lc), LCX(), state_extra ^= visual_objects[0].id << 4; }
+static void lc2_enter_wait(void) { LC(6), light_capsule_wait_enter(&lc), LCX(); }
+static void lc2_scan(void) { LC(7), g_Player.item_step = 2, light_capsule_wait_scan(&lc), LCX(), state_extra ^= visual_objects[2].unk2 << 4; }
+static void lc2_scan_wait(void) { LC(7), light_capsule_wait_scan(&lc), LCX(); }
+static void lc2_beams(void) { LC(8), g_Player.item_step = 3, light_capsule_wait_beams(&lc), LCX(); }
+static void lc2_beams_wait(void) { LC(8), light_capsule_wait_beams(&lc), LCX(); }
+static void lc2_grant(void) { LC(9), lc.unk2 = 2, light_capsule_grant_part(&lc), LCX(), state_extra ^= visual_objects[0].unk2 << 4; }
+static void lc2_grant_wait(void) { LC(9), lc.unk7C.timer = 3, light_capsule_grant_part(&lc), LCX(); }
+static void lc2_done(void) { LC(10), g_Player.item_step = 4, light_capsule_wait_done(&lc), LCX(); }
+static void lc2_done_wait(void) { LC(10), light_capsule_wait_done(&lc), LCX(); }
+#define LV(id_, sub, setup) (LC(0), lv.active = 1, lv.id = id_, lv.unk2 = sub, lv.state = 1, lv.unk50 = PLAYER_OBJECT(&lc_link), lc_link.active = 1, lc_link.animation_table = state_table, lc_link.x_pos.i.hi = 0x80, lc_link.y_pos.i.hi = 0x60, setup, state_extra = lv.unk54 | (u32)g_Player.item_step << 8)
+static void lc2_glass_open(void) { LV(35, 0, (g_Player.item_step = 1, capsule_glass_update(&lv))); }
+static void lc2_glass(void) { LV(35, 0, capsule_glass_update(&lv)); }
+static void lc2_scan_start(void) { LV(36, 0, (lv.state = 0, capsule_scan_update(&lv))); }
+static void lc2_scan_end(void) { LV(36, 0, capsule_scan_update(&lv)); }
+static void lc2_scan_run(void) { LV(36, 0, (lv.unk54 = 5, capsule_scan_update(&lv))); }
+static void lc2_beam_left(void) { LV(37, 1, (lv.state = 0, capsule_beam_update(&lv))); }
+static void lc2_beam_right(void) { LV(37, 2, (lv.state = 0, capsule_beam_update(&lv))); }
+static void lc2_beam_end(void) { LV(37, 0, capsule_beam_update(&lv)); }
+static void lc2_beam_hit(void) { LV(37, 0, (lv.animation_step.fields.relative_step = 1, lv.animation_step.fields.frame_index = 0x24, capsule_beam_update(&lv))); }
+static void lc2_beam_run(void) { LV(37, 0, (lv.animation_step.fields.relative_step = 1, capsule_beam_update(&lv))); }
+static void lc2_part_end(void) { LV(38, 0, func_800C6EDC(&lv)); }
+static void lc2_part_run(void) { LV(38, 0, (lv.animation_step.fields.relative_step = 1, func_800C6EDC(&lv))); }
+static void lc2_part_bit(void) { LV(38, 0, (lv.animation_step.fields.relative_step = 1, lv.animation_step.fields.event = 1, g_Player.armor_parts = 0, func_800C6EDC(&lv))), state_extra ^= g_Player.armor_parts << 16 | engine_obj.armor_parts << 24; }
+#include "support/player_gfx_archive.h"
+static struct {
+    u32 root[24];
+    u32 bank[256];
+    u16 stream[24];
+} lc_archive;
+static u32 lc_frames[64];
+static u8 *lc_saved_gfx, *lc_saved_frames;
+static void lc_part_init(u32 secret)
+{
+    u32 i;
+    gfx_archive_fill();
+    memset(&lc_archive, 0, sizeof(lc_archive));
+    for (i = 0; i < COUNT(lc_archive.root); i++)
+        lc_archive.root[i] = (u32)((u8*)lc_archive.bank - (u8*)lc_archive.root);
+    for (i = 0; i < COUNT(lc_archive.bank); i++)
+        lc_archive.bank[i] = 1 << 20 | (u32)((u8*)lc_archive.stream - (u8*)lc_archive.bank);
+    memcpy(lc_archive.stream, gfx_archive.stream, sizeof(lc_archive.stream));
+    lc_saved_gfx = TEST_PLAYER_GFX, lc_saved_frames = TEST_SPRITE_FRAMES;
+    TEST_PLAYER_GFX = (u8*)&lc_archive, TEST_SPRITE_FRAMES = (u8*)lc_frames;
+    GFX_QUEUE_RESET();
+    lv.state = 0, engine_obj.unk37 = secret;
+    func_800C6EDC(&lv);
+    assert(lv.unk38 == (void*)lc_archive.bank && GFX_QUEUED() == GFX_ONE_UPLOAD >> 16);
+    assert(lv.previous_animation_index == GFX_DECODED_FRAME(D_8011BF40[0x25 + secret]->fields.frame_index));
+    lv.previous_animation_index = 0, lv.unk42 = 0, engine_obj.unk37 = 0;
+    TEST_PLAYER_GFX = lc_saved_gfx, TEST_SPRITE_FRAMES = lc_saved_frames;
+}
+#define LCPART(secret) LV(38, 0, lc_part_init(secret)), state_extra ^= (u32)((const u8*)lv.animation_cursor - (const u8*)D_8011BF40[0x25 + secret]) << 16
+static void lc2_part_init(void) { LCPART(0); }
+static void lc2_part_init_secret(void) { LCPART(1); }
+static void (*const lc2_cases[])(void) = {
+    lc2_capsule_main,
+    lc2_platform_gone,
+    lc2_platform_place,
+    lc2_platform_ride,
+    lc2_wait_far,
+    lc2_dialogue,
+    lc2_open,
+    lc2_open_wait,
+    lc2_close,
+    lc2_close_wait,
+    lc2_end_wait,
+    lc2_end,
+    lc2_enter,
+    lc2_enter_wait,
+    lc2_scan,
+    lc2_scan_wait,
+    lc2_beams,
+    lc2_beams_wait,
+    lc2_grant,
+    lc2_grant_wait,
+    lc2_done,
+    lc2_done_wait,
+    lc2_glass_open,
+    lc2_glass,
+    lc2_scan_start,
+    lc2_scan_end,
+    lc2_scan_run,
+    lc2_beam_left,
+    lc2_beam_right,
+    lc2_beam_end,
+    lc2_beam_hit,
+    lc2_beam_run,
+    lc2_part_end,
+    lc2_part_run,
+    lc2_part_bit,
+    lc2_part_init,
+    lc2_part_init_secret,
+};
+static const u32 lc2_expected[] = {
+    0x101u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x1u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x1u, 0x601u, 0x900000u, 0x520000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x520u, 0x0u,
+    0x1u, 0x601u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x101u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x1u, 0x0u,
+    0x301u, 0x101u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x801B0003u, 0x0u,
+    0x401u, 0xFF000001u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x4u, 0x0u,
+    0x301u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x3u, 0x0u,
+    0x501u, 0xFF000001u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x5u, 0x0u,
+    0x401u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x4u, 0x0u,
+    0x501u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x5u, 0x0u,
+    0x601u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x6u, 0x0u,
+    0x701u, 0xFF000001u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x347u, 0x4100u,
+    0x601u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x6u, 0x0u,
+    0x801u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x228u, 0x4100u,
+    0x701u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x7u, 0x0u,
+    0x901u, 0xFF000001u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x140309u, 0x0u,
+    0x801u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x8u, 0x0u,
+    0xA01u, 0xFF000201u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x2Au, 0x4100u,
+    0x901u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x20009u, 0x0u,
+    0xB01u, 0xFF000001u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x40Bu, 0x0u,
+    0xA01u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0xAu, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x100u, 0x0u,
+    0x1u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
+    0x1u, 0xFF000001u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x78u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x200u, 0x0u,
+    0x1u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x4u, 0x0u,
+    0x1u, 0xFF000101u, 0x280000u, 0xFFF60000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x1u, 0xFF400201u, 0xD80000u, 0xFFF60000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x1u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x300u, 0x0u,
+    0x1u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x400u, 0x0u,
+    0x1u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x0u, 0x0u,
+    0x1u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x40000u, 0x1010000u, 0x0u,
+    0x1u, 0x1u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x80000u, 0x0u, 0x0u,
+    0x1u, 0x1u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x60000u, 0x0u, 0x0u,
+};
+static u32 lc2_run(u32 row)
+{
+    return object_run(lc2_cases[row], row, &lc2_expected[row * 10]);
+}
+
+#ifdef MMX4_SATURN
+#define LC_FLOW_COUNT 0
+#else
+#define LC_FLOW_COUNT 3
+#endif
 const struct CTestGroup c_test_groups[] = {
+    { "light_capsule_branch_steps", 0, 0, COUNT(lc2_cases), lc2_run },
     { "capsule_eligibility", 0, 0, COUNT(capsule_eligibility) + 3, test_capsule_eligibility },
     { "capsule_visual_animation_context", NULL, capsule_visual_animation_context_cases_expected, COUNT(capsule_visual_animation_context_cases_expected), capsule_visual_animation_context_cases_row },
     { "func_800C6EDC", 0, 0, 3, test_func_800C6EDC },
     { "light_capsule_wait_player", 0, 0, 1, test_light_capsule_wait_player },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
+#ifndef MMX4_SATURN
     { "Original_capsule_right_approach_script_and_exact_XA_music", NULL, NULL, 1, right_approach },
     { "Actual_X_secret_code_capsule_own_event_starts_original_dialogue35", NULL, NULL, 1, secret_dialogue },
     { "Actual_offscreen_capsule_despawn_clears_its_existing_glass", NULL, NULL, 1, offscreen_glass },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(capsule_eligibility) + 3 + COUNT(capsule_visual_animation_context_cases_expected) + 3 + 1 + COUNT(pool_full_cases) + 1 + 1 + 1;
+const u32 c_test_count = COUNT(lc2_cases) + COUNT(capsule_eligibility) + 3 + COUNT(capsule_visual_animation_context_cases_expected) + 3 + 1 + COUNT(pool_full_cases) + LC_FLOW_COUNT;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

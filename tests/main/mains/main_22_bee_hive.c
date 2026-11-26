@@ -3,6 +3,7 @@
 #include "main/55C4.h"
 #include "support/state_cases.h"
 #include "main/195B4.h"
+#include "weapon_resources.h"
 void func_800559BC(struct MainObj*);
 
 static const u32 inputs_0[2][2] = {
@@ -256,10 +257,67 @@ static void bh_resume(void)
     bee_hive_resume_step(&so);
 }
 
-static void (*const bee_hive_misc_cases[])(void) = {
+void func_80055164(struct MainObj*);
+void func_80055358(struct MainObj*);
+void bee_hive_open_end(struct MainObj*);
+void bee_hive_release_pause(struct MainObj*);
+void bee_hive_shake_end(struct MainObj*);
+void bee_hive_explode_smoke(struct MainObj*);
+static s32 bh_frames[64];
+static u32 bh_meta[0x40];
+#define BH(step, sub, setup) (state_reset(step, sub, 0), memset(main_objects, 0, sizeof(main_objects)), memset(weapon_objects, 0, sizeof(weapon_objects)), TEST_MENU_FRAMES = (u8*)bh_frames, D_801406A8 = bh_meta, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, setup)
+#define BHX() (state_extra = so.ext.main_22.unk84 | (u32)so.ext.main_22.destroyed << 8 | (u32)so.ext.main_22.parts_mask << 16 | (u32)so.state << 28)
+static void bh_main_hit_reaction(void) { BH(0, 0, so.unk63 = 1), func_80055164(&so), BHX(); }
+static void bh_main_destroyed_away(void) { BH(6, 1, (so.ext.main_22.destroyed = 1, so.ext.main_22.unk84 = 5, so.x_pos.i.hi = 0x1000)), func_80055164(&so), BHX(); }
+static void bh_main_away_parts_out(void) { BH(6, 1, (so.ext.main_22.destroyed = 1, so.ext.main_22.unk84 = 5, so.ext.main_22.parts_mask = 1, so.x_pos.i.hi = 0x1000)), func_80055164(&so), BHX(); }
+static void bh_main_defeated(void) { BH(6, 1, (so.ext.main_22.unk84 = 5, so.hp = 1, state_hit(&so, 0, 0, 1), cur_random = 1)), func_80055164(&so), BHX(); }
+static void bh_open_last_pair(void) { BH(2, 1, (so.ext.main_22.unk84 = 1, so.ext.main_22.unk90 = 8)), func_80055358(&so), BHX(), state_extra ^= so.ext.main_22.unk90 << 8 ^ main_objects[0].ext.main_5.part_index << 24; }
+static void bh_open_end(void) { BH(2, 2, so.ext.main_22.unk84 = 1), bee_hive_open_end(&so), BHX(); }
+static void bh_open_end_wait(void) { BH(2, 2, so.ext.main_22.unk84 = 2), bee_hive_open_end(&so), BHX(); }
+static void bh_release_pause_end(void) { BH(4, 2, so.ext.main_22.unk84 = 1), bee_hive_release_pause(&so), BHX(); }
+static void bh_release_pause(void) { BH(4, 2, so.ext.main_22.unk84 = 2), bee_hive_release_pause(&so), BHX(); }
+static void bh_shake_end(void) { BH(5, 1, so.ext.main_22.unk84 = 1), bee_hive_shake_end(&so), BHX(); }
+static void bh_shake_end_wait(void) { BH(5, 1, so.ext.main_22.unk84 = 2), bee_hive_shake_end(&so), BHX(); }
+static void bh_smoke(void) { BH(6, 1, (so.ext.main_22.unk84 = 2, WEAPON_FRAME_COUNTER = 5)), bee_hive_explode_smoke(&so), BHX(); }
+static void bh_smoke_end(void) { BH(6, 1, so.ext.main_22.unk84 = 1), bee_hive_explode_smoke(&so), BHX(); }
+#define BH_RELEASE(mask) (BH(4, 0, so.ext.main_22.parts_mask = mask), func_800559BC(&so), BHX(), state_extra ^= (u32)(u16)main_objects[1].x_pos.i.hi << 4 ^ main_objects[1].ext.main_5.part_index)
+static void bh_release_skip_odd(void) { BH_RELEASE(5); }
+static void bh_release_skip_even(void) { BH_RELEASE(2); }static void (*const bee_hive_misc_cases[])(void) = {
     bh_resume,
+    bh_main_hit_reaction,
+    bh_main_destroyed_away,
+    bh_main_away_parts_out,
+    bh_main_defeated,
+    bh_open_last_pair,
+    bh_open_end,
+    bh_open_end_wait,
+    bh_release_pause_end,
+    bh_release_pause,
+    bh_shake_end,
+    bh_shake_end_wait,
+    bh_smoke,
+    bh_smoke_end,
+    bh_release_skip_odd,
+    bh_release_skip_even,
 };
-static const u32 bee_hive_misc_expected[] = { 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+static const u32 bee_hive_misc_expected[] = {
+    3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x100u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x2700u, 0x10000000u, 0x0u,
+    0x106u, 0x0u, 0x10000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x20000104u, 0x2100u,
+    0x106u, 0x0u, 0x10000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10010104u, 0x2100u,
+    0x6u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x3u, 0x1u, 0x10000104u, 0x2100u,
+    0x202u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x2u, 0x0u, 0x1B000A08u, 0x0u,
+    0x3u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000000u, 0x0u,
+    0x202u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000001u, 0x0u,
+    0x5u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000000u, 0x0u,
+    0x204u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000001u, 0x0u,
+    0x3u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000000u, 0x0u,
+    0x105u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000001u, 0x0u,
+    0x106u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000001u, 0x0u,
+    0x206u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000000u, 0x0u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x100F0803u, 0x0u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10070802u, 0x0u,
+};
 
 static u32 test_bee_hive_misc(u32 row)
 {
@@ -352,12 +410,62 @@ static u32 owner_reuse(u32 row)
     return 1;
 }
 
+static const struct {
+    s16 player_x;
+    u32 expected[5];
+} release_cases[] = {
+    { 0x300, { 0x01C8010Au, 0x0230010Au, 0x1000003u, 0x1000103u, 0x10003u } },
+    { 0x100, { 0x01D0010Au, 0x0238010Au, 0x1000003u, 0x1000103u, 0x10003u } },
+};
+static u32 release(u32 row)
+{
+    static struct MainObj hive;
+    u8* old_frames = TEST_MENU_FRAMES;
+    u32* old_metadata = D_801406A8;
+    u32 observed[5], i;
+    c_test_zero_words((u32*)main_objects, sizeof(main_objects) / 4);
+    c_test_zero_words((u32*)&hive, sizeof(hive) / 4);
+    for (i = 0; i < COUNT(metadata); i++)
+        metadata[i] = (i + 1) * 128;
+    for (i = 0; i < COUNT(frames); i++)
+        frames[i] = (i + 1) * 64;
+    D_801406A8 = metadata;
+#ifdef MMX4_SATURN
+    saturn_stage_graphics_offsets_pointer = metadata;
+#endif
+    TEST_MENU_FRAMES = (u8*)frames;
+    engine_obj.stage = 1;
+    engine_obj.substage = 1;
+    hive.active = 0x41;
+    hive.id = 22;
+    hive.x_pos.i.hi = 0x200;
+    hive.y_pos.i.hi = 0x100;
+    g_Player.x_pos.val = release_cases[row].player_x << 16;
+    func_800559BC(&hive);
+    for (i = 0; i < 2; i++) {
+        struct MainObj* bee = &main_objects[i];
+        assert(bee->active == 0x41 && bee->id == 5 && bee->unk2 == 3 && bee->on_screen == 0 && bee->state == 0);
+        assert(bee->x_pos.i.hi == (i ? 0x210 : 0x1F0) && bee->y_pos.i.hi == 0x109 && bee->ext.main_5.owner == &hive);
+        assert(bee->unk40 == (u16)OBJECT_STAGE_TEXTURE(func_8002938C(5)) && bee->unk42 == (u16)OBJECT_STAGE_CLUT(5));
+        assert(bee->sprite_frames == (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(5)]);
+        observed[i] = bee->ext.main_5.target_x | (u32)bee->ext.main_5.target_y << 16;
+    }
+    assert(main_objects[2].active == 0);
+    observed[2] = main_objects[0].ext.main_5.part_index | (u32)main_objects[0].unk2 | (u32)hive.ext.main_22.unk8C << 24;
+    observed[3] = main_objects[1].ext.main_5.part_index << 8 | (u32)main_objects[1].unk2 | (u32)hive.ext.main_22.unk8C << 24;
+    observed[4] = hive.ext.main_22.parts_mask | (u32)(engine_obj.stage == 1) << 16;
+    D_801406A8 = old_metadata;
+    TEST_MENU_FRAMES = old_frames;
+    return c_test_observe(0, row, observed, release_cases[row].expected, 5);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "bee_hive_misc", 0, 0, COUNT(bee_hive_misc_cases), test_bee_hive_misc },
     { "bee_hive_wait_watch", 0, 0, 2, test_bee_hive_wait_watch },
     { "func_80055358", 0, 0, 1, test_func_80055358 },
     { "func_800559BC", 0, 0, 1, test_func_800559BC },
     { "actual_hive_birth_child_offscreen_owner_despawn_or_Bee_slot_reuse", NULL, NULL, 2, owner_reuse },
+    { "release_first_two_parts_into_an_empty_pool", NULL, NULL, COUNT(release_cases), release },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(bee_hive_misc_cases) + 2 + 1 + 1 + 2;
+const u32 c_test_count = COUNT(bee_hive_misc_cases) + 2 + 1 + 1 + 2 + COUNT(release_cases);

@@ -103,6 +103,14 @@ def inputs(paths, coff):
     return out
 
 
+def referenced(paths, coff):
+    names = set()
+    for path in paths:
+        target = ['--target=coff-sh'] if path in coff else []
+        names |= {line.split()[-1] for line in run(['sh-elf-nm', *target, '-u', path]).splitlines() if line.strip()}
+    return names
+
+
 def step_link(args):
     manifest = json.loads(args.manifest.read_text())
     objects = json.loads(args.objects.read_text())
@@ -123,7 +131,13 @@ def step_link(args):
     loaded = '.text* .rodata* .data* .sdata*'
     shared = f'"{output}/obj/src_main_*"({loaded})'
     platform = f'"{output}/obj/src_saturn_*"({loaded}) "{output}/sdk/*"({loaded}) "*{Path(libgcc).name}:"({loaded})'
-    lines = ['MEMORY {'] + [f'  H{i} : ORIGIN = 0x{a:08X}, LENGTH = 0x{b - a:X}' for i, (a, b) in enumerate(high)] \
+    coff = set(objects['coff'])
+    wanted = referenced(everything, coff)
+    aliases = {'_' + name: value for name, value in manifest['symbols'].items()}
+    keep = {value for name, value in aliases.items() if name in wanted and re.match(r'[A-Za-z_]\w*$', value)}
+    keep |= {name[1:] for name in referenced(sorted(coff), coff) if name not in aliases}
+    lines = [f'EXTERN(_{name})' for name in sorted(keep)]
+    lines += ['MEMORY {'] + [f'  H{i} : ORIGIN = 0x{a:08X}, LENGTH = 0x{b - a:X}' for i, (a, b) in enumerate(high)] \
         + [f'  L{i} : ORIGIN = 0x{a:08X}, LENGTH = 0x{b - a:X}' for i, (a, b) in enumerate(low)] + ['}', 'SECTIONS {']
     lines.append(f'  .entry 0x{entry:08X} : {{ KEEP(*(.text.{manifest["entry"]})) }}')
     for name, address, _ in placements:

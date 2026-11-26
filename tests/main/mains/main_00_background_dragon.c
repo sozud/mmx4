@@ -149,6 +149,7 @@ s32 func_80040ABC(struct MainObj*);
 void func_80040838(struct MainObj*);
 void func_80041060(struct MainObj*);
 void func_800415B0(struct MainObj*);
+void func_800419B8(struct MainObj*);
 #define DRAGON(step) (state_reset(step, 0, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60)
 #define DRAGON_EXT() (state_extra = ((u8*)&so.ext)[1] | ((u8*)&so.ext)[2] << 8 | ((u8*)&so.ext)[5] << 16 | (u32)((u8*)&so.ext)[6] << 24)
 static s32 dragon_pick(s32 index, u16 seed)
@@ -224,7 +225,7 @@ static void bd_main_burning_b(void)
     DRAGON(11);
     so.hp = 0x20;
     ((u8*)&so.ext)[5] = 2;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     cur_random = 2;
     func_80040838(&so);
     DRAGON_EXT();
@@ -284,7 +285,7 @@ static void bd_fire_breath_right(void)
 {
     DRAGON(2);
     so.unk6 = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.animation_step.fields.event = 1;
     background_dragon_fireball(&so);
 }
@@ -304,7 +305,7 @@ static void bd_spit(void)
 static void bd_spit_right(void)
 {
     DRAGON(3);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.animation_step.fields.event = 1;
     background_dragon_projectile_attack_update(&so);
 }
@@ -469,7 +470,7 @@ static void dg_spit_fire(void) { SPIT(1, 1); }
 static void dg_spit_fire_left(void)
 {
     DRAGON(5);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.animation_step.fields.event = 1;
     so.animation_step.fields.relative_step = 1;
     background_dragon_projectile_attack_update(&so);
@@ -586,8 +587,8 @@ static void prepare(u32 path, u32 kind, s32 target_x, s32 target_y, s32 camera_x
     obj.unk2 = kind;
     obj.on_screen = 1;
     obj.bg_offset = 0;
-    obj.unk15 = kind & 1 ? 0x40 : 0;
-    obj.unk16 = 9;
+    obj.unk15 = kind & 1 ? PLAYER_FACING_RIGHT : 0;
+    obj.unk16 = VISUAL_SATURN_LAYER(9);
     obj.x_pos.val = target_x + paths[path].dx;
     obj.y_pos.val = target_y + paths[path].dy;
     obj.unk18.val = 0x12345678;
@@ -597,7 +598,7 @@ static void prepare(u32 path, u32 kind, s32 target_x, s32 target_y, s32 camera_x
     obj.ext.main_0.background_relative = 1;
     obj.animation_table = (const u8* const*)D_800F9934;
     set_animation(&obj, 6);
-    assert(obj.animation_step.packed == 0x19010008);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x19010008));
     if (last_tick)
         obj.animation_step.fields.duration = 1;
     obj.previous_animation_index = 0x35;
@@ -611,7 +612,7 @@ static void expect_motion(u32 path, u32 scale, u32 last_tick)
     expected.y_pos.val -= expected.y_speed;
     if (last_tick) {
         expected.animation_cursor = (const u8*)(D_800F9934[6] + 1);
-        expected.animation_step.packed = 0x1A010008;
+        expected.animation_step.packed = C_TEST_STEP(0x1A010008);
     } else
         expected.animation_step.fields.duration = 7;
 }
@@ -634,7 +635,7 @@ static u32 approach(u32 row)
     dy = expected.y_pos.val - y;
     if (dx > -131072 && dx < 131072 && dy > -131072 && dy < 131072)
         expected.unk5 = 1;
-    expected.on_screen = 1;
+    expected.on_screen = C_TEST_VISIBLE(expected.unk16);
     background_dragon_fly_to_route_start(&obj);
     return check();
 }
@@ -653,7 +654,7 @@ static u32 depart(u32 row, u32 staging)
     if (!visible && exit_mode)
         expected.state = 2;
     else {
-        expected.on_screen = staging ? 1 : 0;
+        expected.on_screen = 0;
         if (!visible) {
             expected.unk15 = 0;
             expected.unk16 = staging ? 0x22 : 0x12;
@@ -667,9 +668,11 @@ static u32 depart(u32 row, u32 staging)
                 expected.unk17 = 6;
                 expected.previous_animation_index = 0xFF;
                 expected.animation_cursor = (const u8*)D_800F9934[6];
-                expected.animation_step.packed = 0x19010008;
+                expected.animation_step.packed = C_TEST_STEP(0x19010008);
             }
         }
+        if (staging)
+            expected.on_screen = C_TEST_VISIBLE(expected.unk16);
     }
     if (staging)
         background_dragon_fly_to_staging_position(&obj);
@@ -722,7 +725,7 @@ static u32 attack(u32 row)
     obj.state = 1;
     obj.unk5 = fireball ? 2 : 3;
     obj.unk6 = 1;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
@@ -730,11 +733,11 @@ static u32 attack(u32 row)
     obj.y_speed = -0x8000;
     obj.animation_table = (const u8* const*)D_800F9934;
     set_animation_frame(ANIMATED_OBJECT(&obj), anim, step);
-    assert(obj.animation_step.packed == (fireball ? 0x0E010019 : 0x0601030F));
+    assert(obj.animation_step.packed == (fireball ? C_TEST_STEP(0x0E010019) : C_TEST_STEP(0x0601030F)));
     obj.animation_step.fields.duration = 1;
     expected = obj;
     expected.animation_cursor += 4;
-    expected.animation_step.packed = fireball ? 0x0F010002 : 0x07010102;
+    expected.animation_step.packed = fireball ? C_TEST_STEP(0x0F010002) : C_TEST_STEP(0x07010102);
     expected.animation_step.fields.event = 0;
     expected.x_pos.val += obj.x_speed;
     expected.y_pos.val -= obj.y_speed;
@@ -745,7 +748,7 @@ static u32 attack(u32 row)
         expected.x_speed = face ? -0x3C000 : 0x3C000;
         expected.y_speed = -65536;
     }
-    expected.on_screen = 1;
+    expected.on_screen = C_TEST_VISIBLE(expected.unk16);
     if (free_shot) {
         struct ShotObj* s = &shots_expected[31];
         s->active = 0x41;
@@ -817,13 +820,13 @@ static u32 swoop(u32 row)
     obj.y_pos.i.hi = 532;
     obj.animation_table = (const u8* const*)D_800F9934;
     background_dragon_sequence_begin(&obj);
-    assert(obj.unk6 == 1 && obj.unk15 == 0 && obj.animation_step.packed == 0x0001FF10);
+    assert(obj.unk6 == 1 && obj.unk15 == 0 && obj.animation_step.packed == C_TEST_STEP(0x0001FF10));
     expected = obj;
     expected.unk6 = 2;
     expected.unk17 = animation;
     expected.previous_animation_index = 255;
     expected.animation_cursor = (const u8*)D_800F9934[animation];
-    expected.animation_step.packed = 0x30010103;
+    expected.animation_step.packed = C_TEST_STEP(0x30010103);
     if (shot_free) {
         struct ShotObj* s = &shots_expected_dragon_swoop_capacity[31];
         s->active = 0x41;
@@ -865,6 +868,10 @@ static u32 destroy(u32 row)
     struct BackgroundObj backgrounds_expected[3];
     struct TileEffectRecord* records;
     u32 index = row % 3, free_slot = row / 3 % 2, done = row / 6 % 2, face = row / 12, i, y, x;
+#ifdef MMX4_SATURN
+    if (!done)
+        c_test_skip();
+#endif
     memset(&obj, 0, sizeof(obj));
     memset(background_objects, 0, sizeof(background_objects));
     memset(&engine_obj, 0, sizeof(engine_obj));
@@ -896,7 +903,7 @@ static u32 destroy(u32 row)
     obj.unk5 = 3;
     obj.unk6 = 1;
     obj.bg_offset = 0;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = (0x680 + index * 512) * 65536 + 0x1234;
     obj.y_pos.val = 0x170 * 65536 + 0x5678;
     obj.ext.main_0.index = index;
@@ -905,12 +912,12 @@ static u32 destroy(u32 row)
     memcpy(backgrounds_expected, background_objects, sizeof(backgrounds_expected));
     obj.animation_table = (const u8* const*)D_800F9934;
     set_animation_frame(ANIMATED_OBJECT(&obj), 1, 6);
-    assert(obj.animation_step.packed == 0x07010102);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x07010102));
     obj.animation_step.fields.duration = 1;
     expected = obj;
     expected.animation_cursor += 4;
-    expected.animation_step.packed = 0x08010213;
-    expected.on_screen = 1;
+    expected.animation_step.packed = C_TEST_STEP(0x08010213);
+    expected.on_screen = C_TEST_VISIBLE(expected.unk16);
     records = tile_effect_tables[2][index + 1];
     for (y = 0; y < 9; y++) {
         assert(records[y].layer == 0 && records[y].packed_count == 13 && records[y].x == 0x680 + index * 512 && records[y].y == 0x130 + y * 16 && records[y].has_next == (y != 8));
@@ -950,6 +957,113 @@ static u32 destroy(u32 row)
     return 1;
 }
 
+static const struct {
+    s16 x, y, px, py;
+    u32 expected[5];
+} chase_cases[] = {
+    { 0x200, 0x100, 0x300, 0x200, { 0x0203B20Cu, 0x010187DCu, 0x0003B20Cu, 0xFFFE7824u, 0x00070004u } },
+    { 0x200, 0x16D, 0x203, 0x1B1, { 0x02037991u, 0x01700F88u, 0x00027991u, 0xFFFEF078u, 0x0007000Cu } },
+    { 0x200, 0x190, 0x1FE, 0x1CC, { 0x02000000u, 0x018E8000u, 0x00000000u, 0x00018000u, 0x00070004u } },
+    { 0x200, 0x200, 0x23C, 0x220, { 0x02016F5Eu, 0x01FE26FAu, 0x00016F5Eu, 0x0001D906u, 0x00070004u } },
+    { 0x200, 0x200, 0x1C4, 0x260, { 0x01FE90A1u, 0x01FE26FAu, 0xFFFE90A1u, 0x0001D906u, 0x00070004u } },
+};
+static u32 chase(u32 row)
+{
+    struct MainObj dragon;
+    u32 observed[5];
+    memset(&dragon, 0, sizeof(dragon));
+    memset(background_objects, 0, sizeof(background_objects));
+    background_objects[0].x_pos.i.hi = 0x100;
+    background_objects[0].y_pos.i.hi = 0x100;
+    dragon.active = 0x41;
+    dragon.state = 1;
+    dragon.unk5 = 4;
+    dragon.unk16 = 0x22;
+    dragon.x_pos.i.hi = chase_cases[row].x;
+    dragon.y_pos.i.hi = chase_cases[row].y;
+    dragon.animation_table = (const u8* const*)D_800F9934;
+    set_animation(&dragon, 6);
+    g_Player.x_pos.val = chase_cases[row].px << 16;
+    g_Player.y_pos.val = chase_cases[row].py << 16;
+    func_800419B8(&dragon);
+    observed[0] = dragon.x_pos.val;
+    observed[1] = dragon.y_pos.val;
+    observed[2] = dragon.x_speed;
+    observed[3] = dragon.y_speed;
+    observed[4] = (u8)dragon.unk5 | (u32)dragon.animation_step.fields.duration << 16;
+    assert(dragon.on_screen == C_TEST_VISIBLE(0x22));
+    return c_test_observe(0, row, observed, chase_cases[row].expected, 5);
+}
+
+void func_80040CCC(struct MainObj*);
+void background_dragon_wait_for_animation(struct MainObj*);
+void background_dragon_multi_shot(struct MainObj*);
+void background_dragon_sequence(struct MainObj*);
+static void bdm_trail(void) { DRAGON(6), background_dragon_spawn_trail(PLAYER_OBJECT(&so), 1), state_extra = visual_objects[0].id | visual_objects[0].unk2 << 8 | (u32)visual_objects[0].unk16 << 16; }
+static void bdm_main_burning_left(void) { DRAGON(11), so.hp = 0x20, ((u8*)&so.ext)[5] = 2, ((u8*)&so.ext)[6] = 3, cur_random = 2, func_80040838(&so), DRAGON_EXT(); }
+#define HOVER(dx, setup) (DRAGON(1), so.ext.main_0.exit_mode = 1, g_Player.x_pos.val = so.x_pos.val + (dx), setup, func_80040CCC(&so), DRAGON_EXT())
+static void bdm_hover_left_far(void) { HOVER(-0x1000000, 0); }
+static void bdm_hover_right_near(void) { HOVER(0x8000, so.animation_step.fields.relative_step = -1); }
+static void bdm_hover_left_near(void) { HOVER(-0x8000, 0); }
+static void bdm_wait_anim_end(void) { DRAGON(3), so.animation_step.fields.relative_step = -1, background_dragon_wait_for_animation(&so); }
+static void bdm_wait_anim(void) { DRAGON(3), background_dragon_wait_for_animation(&so); }
+static void bdm_projectile_start(void) { DRAGON(2), so.ext.main_0.index = 3, background_dragon_projectile_attack(&so); }
+static void bdm_multi_begin(void) { DRAGON(9), background_dragon_multi_shot(&so); }
+static void bdm_multi_flash(void) { DRAGON(9), so.unk6 = 1, so.animation_step.fields.event = 1, background_dragon_multi_shot(&so), state_extra = visual_objects[0].state; }
+static void bdm_multi_shot_end(void) { DRAGON(9), so.unk6 = 1, so.animation_step.fields.event = 3, so.animation_step.fields.relative_step = -1, background_dragon_multi_shot(&so), state_extra = shot_objects[0].unk2; }
+static void bdm_sequence_begin(void) { DRAGON(7), so.unk15 = PLAYER_FACING_RIGHT, background_dragon_sequence(&so); }
+static void bdm_sequence_swoop_back(void) { DRAGON(7), so.unk6 = 1, so.unk15 = PLAYER_FACING_RIGHT, g_Player.x_pos.i.hi = 0x400, so.x_pos.i.hi = 0x500, so.y_pos.i.hi = 0x200, background_dragon_sequence(&so); }
+#define BOB(ev, rel, count, exit) (DRAGON(7), so.unk6 = 2, so.y_speed = 0x10000, so.animation_step.fields.event = ev, so.animation_step.fields.relative_step = rel, so.unk7E = count, so.ext.main_0.exit_mode = exit, background_dragon_sequence(&so))
+static void bdm_bob_still(void) { BOB(0, 0, 0, 0); }
+static void bdm_bob_dive_last(void) { BOB(1, -1, 2, 0); }
+static void bdm_bob_rise_exit(void) { BOB(2, -1, 0, 1); }
+static void bdm_bob_last_exit(void) { BOB(3, -1, 2, 1); }
+static void bdm_bob_again(void) { BOB(3, -1, 0, 0); }
+static void (*const bdm_cases[])(void) = {
+    bdm_trail,
+    bdm_main_burning_left,
+    bdm_hover_left_far,
+    bdm_hover_right_near,
+    bdm_hover_left_near,
+    bdm_wait_anim_end,
+    bdm_wait_anim,
+    bdm_projectile_start,
+    bdm_multi_begin,
+    bdm_multi_flash,
+    bdm_multi_shot_end,
+    bdm_sequence_begin,
+    bdm_sequence_swoop_back,
+    bdm_bob_still,
+    bdm_bob_dive_last,
+    bdm_bob_rise_exit,
+    bdm_bob_last_exit,
+    bdm_bob_again,
+};
+static const u32 bdm_expected[] = {
+    0x6u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x23010Au, 0x4100u,
+    0xBu, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x200000u, 0x2020000u, 0x2100u,
+    0x1u, 0x0u, 0x820000u, 0x20000u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x10000u, 0x0u,
+    0x8u, 0x0u, 0x7F8000u, 0xFFFF8000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x0u,
+    0x1u, 0x0u, 0x808000u, 0x8000u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x10000u, 0x0u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x3u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0xFFFF4000u, 0x8000u, 0x0u, 0x1u, 0x0u, 0x0u, 0x0u,
+    0x109u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x7u, 0x0u, 0x0u, 0x0u,
+    0x109u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2u, 0x4100u,
+    0x9u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x6u, 0x0u, 0x3u, 0x410000u,
+    0x107u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x107u, 0x0u, 0x4FC13B0u, 0xFFFC13B0u, 0xFFFF383Cu, 0x0u, 0x4000u, 0x0u, 0x0u, 0x0u,
+    0x207u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x6u, 0x0u, 0x800000u, 0x0u, 0x55555u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x8u, 0x10000u, 0x800000u, 0x0u, 0xFFFAAAABu, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x8u, 0x0u, 0x800000u, 0x0u, 0x10000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x5u, 0x10000u, 0x800000u, 0x0u, 0x10000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+};
+static u32 bdm_run(u32 row)
+{
+    return state_run(bdm_cases[row], row, &bdm_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "background_dragon_attacks", 0, 0, COUNT(background_dragon_attacks_cases), test_background_dragon_attacks },
     { "background_dragon_states", 0, 0, COUNT(background_dragon_states_cases), test_background_dragon_states },
@@ -962,6 +1076,8 @@ const struct CTestGroup c_test_groups[] = {
     { "shipped_attack_event_with_full_or_one_free_independent_pools", NULL, NULL, 16, attack },
     { "own_Dragon_sequence_swoop_three_cycles_both_characters_full_partial_pools", NULL, NULL, 36, swoop },
     { "all_three_shipped_destruction_regions_full_free_pool_and_once_only_latch", NULL, NULL, 24, destroy },
+    { "chase_distance_clamps_and_perch_snap", NULL, NULL, COUNT(chase_cases), chase },
+    { "background_dragon_more_states", NULL, NULL, COUNT(bdm_cases), bdm_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(background_dragon_attacks_cases) + COUNT(background_dragon_states_cases) + COUNT(dragon_attack_context_cases_expected) + 1 + COUNT(pool_full_cases) + COUNT(paths) * 2 + COUNT(paths) * 2 + COUNT(paths) * 2 + 16 + 36 + 24;
+const u32 c_test_count = COUNT(background_dragon_attacks_cases) + COUNT(background_dragon_states_cases) + COUNT(dragon_attack_context_cases_expected) + 1 + COUNT(pool_full_cases) + COUNT(paths) * 2 + COUNT(paths) * 2 + COUNT(paths) * 2 + 16 + 36 + 24 + COUNT(chase_cases) + COUNT(bdm_cases);

@@ -26,7 +26,7 @@ static u32 priority_override(u32 row)
     func_800B10E4(0x11, 160, 120, 160, 120, 1);
     assert(visual_objects[0].active == 0x21 && visual_objects[0].id == 9 && visual_objects[0].state == 0 && visual_objects[0].unk5C.value == 1);
     visual_objects[0].unk7 = 1;
-    visual_objects[0].unk16 = 3;
+    visual_objects[0].unk16 = VISUAL_SATURN_LAYER(3);
     c_test_copy_words((u32*)expected, (u32*)visual_objects, sizeof(expected) / 4);
     player = g_Player;
     entity = g_Entity;
@@ -43,12 +43,12 @@ static u32 priority_override(u32 row)
     expected[0].unk3C = (u8*)frames + 64;
     expected[0].animation_table = explosion_animations;
     expected[0].bg_offset = 0;
-    expected[0].unk40 = 0;
-    expected[0].unk42 = 0x7805;
+    expected[0].unk40 = WEAPON_TEXTURE_BASE;
+    expected[0].unk42 = OBJECT_CLUT(0x7805);
     expected[0].unk17 = 1;
     expected[0].previous_animation_index = 0xFF;
     expected[0].animation_cursor = explosion_animations[1];
-    expected[0].animation_step.packed = 0x19010004;
+    expected[0].animation_step.packed = C_TEST_STEP(0x19010004);
     expected[0].state = 1;
     expected[0].unk7 = rng & 1;
     dust_puff_update(&visual_objects[0]);

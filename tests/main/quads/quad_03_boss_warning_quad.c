@@ -26,7 +26,7 @@ static const struct QuadMotionData motions[22] = {
     { { 296, 96, 280, 96 }, { 1, -7, 0, -7 } },
     { { 164, 100, 164, 104 }, { -9, 0, 9, 0 } },
 };
-static const u8 levels[16] = { 4, 6, 7, 8, 9, 10, 11, 12, 11, 10, 9, 8, 7, 6, 0, 0 };
+static const u8 levels[14] = { 4, 6, 7, 8, 9, 10, 11, 12, 11, 10, 9, 8, 7, 6 };
 struct Scenario {
     u8 mode, timer, fraction, enabled, frame;
 };
@@ -137,6 +137,9 @@ static u32 warning_transition(u32 row)
             expected->unk34 = levels[c->fraction];
             expected->ext.quad_2.x_scale.bytes.fraction = c->fraction == 13 ? 0 : c->fraction + 1;
         }
+#ifdef MMX4_SATURN
+        expected->on_screen = 0;
+#endif
     }
     boss_warning_quad_update(obj);
     c_test_same_words(&got, &want, sizeof(want));
@@ -146,7 +149,7 @@ static u32 warning_transition(u32 row)
     c_test_same_words(&main_bss_state, &main_before, sizeof(main_bss_state));
     c_test_same_words(g_QuadObjects, pool_before, sizeof(pool_before));
     c_test_same_words(boss_warning_quad_motions, motions, sizeof(motions));
-    for (i = 0; i < 16; i++)
+    for (i = 0; i < COUNT(levels); i++)
         assert(boss_warning_quad_blink_levels[i] == levels[i]);
     assert(D_8013B960 == flag && cur_random == random_before);
     return 1;

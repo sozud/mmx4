@@ -69,6 +69,14 @@ static const u32 world_flip_cases_expected[] = { 0x7FFCFC7u, 0xFFFF78F9u, 0x7FFC
     for (i = 1; i < COUNT(pool); i++)                                 \
         assert(pool[i].active == 0 && pool[i].y_pos.val == 0);
 
+#ifdef MMX4_SATURN
+#define WORLD_FLIP_BUTTON 0x40
+#define WORLD_FLIP_ON_EXPECTED 0x0u
+#else
+#define WORLD_FLIP_BUTTON 0x20
+#define WORLD_FLIP_ON_EXPECTED 0x1010100u
+#endif
+
 static u32 trigger_case(u8 pressed)
 {
     struct EffectObj obj;
@@ -84,8 +92,8 @@ static u32 trigger_case(u8 pressed)
     PREPARE(visual_objects)
     engine_obj.character_state.bytes[0]
         = 1;
-    g_Player.input.buttons.held = pressed ? 0 : 0x20;
-    g_Player.pressed_input = pressed ? 0x20 : 0;
+    g_Player.input.buttons.held = pressed ? 0 : WORLD_FLIP_BUTTON;
+    g_Player.pressed_input = pressed ? WORLD_FLIP_BUTTON : 0;
     g_Player.y_pos.val = 0x01000003;
     background_objects[0].y_pos.val = 0x02000001;
     background_objects[0].unk18.val = 0x03000007;
@@ -122,7 +130,9 @@ static const CTestCase world_flip_trigger_cases[] = {
     flip_off,
     flip_on,
 };
-static const u32 world_flip_trigger_cases_expected[] = { 0x1u, 0x1010100u };
+static const u32 world_flip_trigger_cases_expected[] = { 0x1u, WORLD_FLIP_ON_EXPECTED };
+#undef WORLD_FLIP_BUTTON
+#undef WORLD_FLIP_ON_EXPECTED
 #undef PREPARE
 #undef CHECK_POOL
 

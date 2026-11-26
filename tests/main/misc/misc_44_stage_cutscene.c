@@ -163,7 +163,7 @@ static u32 dialogue_handoff(u32 row)
     g_Player.x_pos.i.hi = 100;
     g_Player.script_state = 1;
     g_Player.script_action = 0x15;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     for (i = 0; i < 3; i++) {
         background_objects[i].unk24 = 0x250 + i;
         background_objects[i].unk26 = 0x350 + i;
@@ -183,7 +183,7 @@ static u32 dialogue_handoff(u32 row)
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.animation_table = (u32**)stage_cutscene_animations;
     set_animation(&obj, 0);
-    assert(obj.animation_step.packed == 0x00010048);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x00010048));
     UNK_OBJECT(&obj)->ext.timer = delays[edge];
     expected = obj;
     dialogue_expected = abc_object;
@@ -206,7 +206,7 @@ static u32 dialogue_handoff(u32 row)
         else {
             backgrounds_expected[layer].unk24 = 0x11B0;
             player_expected.script_state = 0;
-            player_expected.spike_immune = 0;
+            SPIKE_IMMUNE_SET(player_expected, 0);
             engine_expected.gameplay_locked = 0;
             engine_expected.character_state.bytes[8] = 1;
         }

@@ -39,6 +39,14 @@ static u32 zero_difference(const u32* p, u32 count)
         different |= *p++;
     return different;
 }
+static u32 byte_difference(const void* a, const void* b, u32 size)
+{
+    const u8 *p = a, *q = b;
+    u32 different = 0;
+    while (size--)
+        different |= *p++ ^ *q++;
+    return different;
+}
 static void prepare(void)
 {
     u32 i;
@@ -56,12 +64,15 @@ static void prepare(void)
     c_test_zero_words((u32*)&g_Player, sizeof(g_Player) / 4);
     c_test_zero_words((u32*)&g_Entity, sizeof(g_Entity) / 4);
     c_test_zero_words((u32*)&engine_obj, sizeof(engine_obj) / 4);
-    c_test_zero_words((u32*)&game_info, sizeof(game_info) / 4);
+    memset(&game_info, 0, sizeof(game_info));
     c_test_zero_words((u32*)background_objects, sizeof(background_objects) / 4);
     for (i = 0; i < COUNT(metadata); i++)
         metadata[i] = (i + 1) * 128;
     c_test_zero_words(frames, COUNT(frames));
     D_801406A8 = metadata;
+#ifdef MMX4_SATURN
+    saturn_stage_graphics_offsets_pointer = metadata;
+#endif
     TEST_TITLE_FRAMES = (u8*)frames;
     D_80171EA8 = 0;
     D_80139690 = NULL;
@@ -102,7 +113,7 @@ static u32 check(void)
     u32 i;
     assert(c_test_word_difference((u32*)main_objects, (u32*)mains, sizeof(mains) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, sizeof(visuals) / 4) == 0 && c_test_word_difference((u32*)misc_objects, (u32*)misc, sizeof(misc) / 4) == 0 && c_test_word_difference((u32*)effect_objects, (u32*)effects, sizeof(effects) / 4) == 0 && c_test_word_difference((u32*)layer_objects, (u32*)layers, sizeof(layers) / 4) == 0);
     assert(zero_difference((u32*)weapon_objects, sizeof(weapon_objects) / 4) == 0 && zero_difference((u32*)shot_objects, sizeof(shot_objects) / 4) == 0);
-    assert(c_test_word_difference((u32*)&g_Player, (u32*)&player, sizeof(player) / 4) == 0 && c_test_word_difference((u32*)&g_Entity, (u32*)&entity, sizeof(entity) / 4) == 0 && c_test_word_difference((u32*)&engine_obj, (u32*)&engine, sizeof(engine) / 4) == 0 && c_test_word_difference((u32*)&main_bss_state, (u32*)&main_before, sizeof(main_before) / 4) == 0 && c_test_word_difference((u32*)&game_info, (u32*)&info, sizeof(info) / 4) == 0 && c_test_word_difference((u32*)background_objects, (u32*)cameras, sizeof(cameras) / 4) == 0);
+    assert(c_test_word_difference((u32*)&g_Player, (u32*)&player, sizeof(player) / 4) == 0 && c_test_word_difference((u32*)&g_Entity, (u32*)&entity, sizeof(entity) / 4) == 0 && c_test_word_difference((u32*)&engine_obj, (u32*)&engine, sizeof(engine) / 4) == 0 && c_test_word_difference((u32*)&main_bss_state, (u32*)&main_before, sizeof(main_before) / 4) == 0 && byte_difference(&game_info, &info, sizeof(info)) == 0 && c_test_word_difference((u32*)background_objects, (u32*)cameras, sizeof(cameras) / 4) == 0);
     assert(SP_CUR_MAIN_OBJ == current[0] && SP_CUR_WEAPON_OBJ == current[1] && SP_CUR_SHOT_OBJ == current[2] && SP_CUR_VISUAL_OBJ == current[3] && SP_CUR_EFFECT_OBJ == current[4] && SP_CUR_MISC_OBJ == current[5] && SP_CUR_LAYER_OBJ == current[6]);
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed && cur_random == rng && need_palette_load == dirty && D_80139690 == title && D_80171EA8 == 0 && D_801406A8 == metadata && TEST_TITLE_FRAMES == (u8*)frames);
     for (i = 0; i < COUNT(metadata); i++)
@@ -167,7 +178,7 @@ static u32 collapse_full_misc(u32 row)
     object->id = 43;
     sigma_collapse_update(object);
     sigma_collapse_update(object);
-    assert(object->state == 1 && object->unk5 == 1 && object->ext.effect_9.transition_timer == 1 && object->ext.effect_9.direction == 2);
+    assert(object->state == 1 && object->unk5 == 1 && object->ext.effect_9.transition_timer == 1 && object->ext.effect_9.direction == (s16)OBJECT_STAGE_TEXTURE(1));
     capture();
     effects[0].ext.effect_9.transition_timer = 5;
     cameras[0].unk37 = 5;
@@ -194,7 +205,7 @@ static u32 train_full_main(u32 row)
         main_objects[i].active = 1;
     record = &stage_object_records_8_0[22];
     assert(record->id == 3 && record->object_type == 7 && record->x == 6608 && record->y == 384);
-    c_test_copy_words(before, (u32*)record, 2);
+    memcpy(before, record, sizeof(before));
     ((u8*)before)[0] &= 0x70;
     object = find_free_layer_obj();
     assert(object == &layer_objects[0]);
@@ -209,10 +220,10 @@ static u32 train_full_main(u32 row)
     player.script_state = 1;
     player.script_action = 0x14;
     player.script_facing = 0;
-    player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(player, 1);
     engine.gameplay_locked = 1;
     func_800D9C84(object);
-    assert(c_test_word_difference((u32*)record, before, 2) == 0);
+    assert(byte_difference(record, before, sizeof(before)) == 0);
     return check();
 }
 static u32 title_full_effects(u32 row)

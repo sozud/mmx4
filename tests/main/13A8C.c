@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#ifndef VERSION_DEMO
+#include "support/test_pad.h"
 #include "main/menu.h"
 #include "main/165A0.h"
 #include "main/2824.h"
@@ -130,9 +132,16 @@ static u32 test_start_delay(u32 character)
 {
     struct EngineObj obj, expected;
     prepare(&obj, character, 1);
+#ifdef MMX4_SATURN
+    if (character)
+        c_test_skip();
+    main_bss_state.transition.active = 1;
+#endif
     capture();
     expected = obj;
+#ifndef MMX4_SATURN
     expected.unk1 = 2;
+#endif
     func_80023684(&obj);
     c_test_same_words(&obj, &expected, sizeof(expected));
     check_world();
@@ -167,7 +176,11 @@ static u32 test_first_scroll(u32 row)
     expected = obj;
     if (fade == 0) {
         backgrounds_expected[0].y_pos.val = first_scroll[index].next_y;
+#ifdef MMX4_SATURN
+        if (first_scroll[index].phase == 0)
+#else
         if (index == 2)
+#endif
             expected.unk2 = 1;
         if (first_scroll[index].advances) {
             expected.unk1 = 4;
@@ -230,6 +243,9 @@ static u32 test_second_scroll(u32 row)
     prepare(&obj, row / (3 * COUNT(second_scroll)), 5);
     obj.unk4 = timers[timer];
     background_objects[0].y_pos.val = second_scroll[index].y;
+#ifdef MMX4_SATURN
+    saturn_display_mode = 5;
+#endif
     capture();
     expected = obj;
     if (timer) {
@@ -238,13 +254,18 @@ static u32 test_second_scroll(u32 row)
         backgrounds_expected[0].y_pos.val = second_scroll[index].next_y;
         if (second_scroll[index].advances) {
             expected.unk1 = 6;
+#ifndef MMX4_SATURN
             backgrounds_expected[0].unk3 = 0;
             backgrounds_expected[1].unk3 = 1;
+#endif
         }
     }
     func_800238F0(&obj);
     c_test_same_words(&obj, &expected, sizeof(expected));
     check_world();
+#ifdef MMX4_SATURN
+    assert(saturn_display_mode == (!timer && second_scroll[index].advances ? 6 : 5));
+#endif
     return 1;
 }
 
@@ -263,8 +284,8 @@ static u32 test_portrait_scroll(u32 row)
     backgrounds_expected[1].y_pos.val += 32768;
     if (index == 2 || index == 3) {
         expected.unk1 = 7;
-        main_expected.transition.active = -1;
-        main_expected.transition.fade_amount = 8;
+        main_expected.transition.active = TEST_FADE_OUT_ACTIVE;
+        main_expected.transition.fade_amount = TEST_FADE_OUT_AMOUNT(8, 5);
     }
     func_80023970(&obj);
     c_test_same_words(&obj, &expected, sizeof(expected));
@@ -316,12 +337,12 @@ static u32 test_spark_cleanup(u32 row)
 }
 
 static const u32 spark_frames[3][11] = {
-    { 0x0A010002, 0x0B010002, 0x0A010002, 0x0B010002, 0x0A010002,
-        0x0B010002, 0x0C010003, 0x0D010003, 0x0E010003, 0x0F010003, 0x10000003 },
-    { 0x11010002, 0x12010002, 0x11010002, 0x12010002, 0x11010002,
-        0x12010002, 0x13010003, 0x14010003, 0x15010003, 0x16000003 },
-    { 0x00010004, 0x01010004, 0x02010002, 0x03010004, 0x04010004,
-        0x05010004, 0x06010004, 0x07010004, 0x08010003, 0x09000003 },
+    { C_TEST_STEP(0x0A010002), C_TEST_STEP(0x0B010002), C_TEST_STEP(0x0A010002), C_TEST_STEP(0x0B010002), C_TEST_STEP(0x0A010002),
+        C_TEST_STEP(0x0B010002), C_TEST_STEP(0x0C010003), C_TEST_STEP(0x0D010003), C_TEST_STEP(0x0E010003), C_TEST_STEP(0x0F010003), C_TEST_STEP(0x10000003) },
+    { C_TEST_STEP(0x11010002), C_TEST_STEP(0x12010002), C_TEST_STEP(0x11010002), C_TEST_STEP(0x12010002), C_TEST_STEP(0x11010002),
+        C_TEST_STEP(0x12010002), C_TEST_STEP(0x13010003), C_TEST_STEP(0x14010003), C_TEST_STEP(0x15010003), C_TEST_STEP(0x16000003) },
+    { C_TEST_STEP(0x00010004), C_TEST_STEP(0x01010004), C_TEST_STEP(0x02010002), C_TEST_STEP(0x03010004), C_TEST_STEP(0x04010004),
+        C_TEST_STEP(0x05010004), C_TEST_STEP(0x06010004), C_TEST_STEP(0x07010004), C_TEST_STEP(0x08010003), C_TEST_STEP(0x09000003) },
 };
 
 static u32 test_spark_animation(u32 row)
@@ -373,11 +394,11 @@ static u32 test_spark_animation(u32 row)
     } else {
         misc_expected[32].animation_step.fields.duration--;
     }
-    if ((misc_expected[32].animation_step.packed & 0xFF0000) == 0) {
+    if (misc_expected[32].animation_step.fields.relative_step == 0) {
         misc_expected[32].state = 2;
         misc_expected[32].ext.misc_11.active = next_random() % 32;
     }
-    misc_expected[32].on_screen = positions[row % COUNT(positions)].visible;
+    misc_expected[32].on_screen = positions[row % COUNT(positions)].visible && C_TEST_VISIBLE(spark->unk16);
     func_80023B98(spark);
     check_world();
     for (type = 0; type < 3; type++)
@@ -670,7 +691,32 @@ static u32 test_handoff(u32 row)
 #define PC_CASES 0
 #endif
 
+
+void func_80023AA8(struct MiscObj* arg0);
+static s32 sparkle_frames[4] = { 8, 0, 0, 0 };
+static u32 sparkle_pages[4] = { 0x400, 0x480, 0x500, 0x580 };
+static u32 test_sparkle_setup(u32 row)
+{
+    struct MiscObj spark;
+    memset(&spark, 0, sizeof(spark));
+    spark.active = 1;
+    spark.id = 0x17;
+    spark.unk2 = row ? 2 : 0;
+    spark.unk15 = PLAYER_FACING_RIGHT;
+    TEST_MENU_FRAMES = (u8*)sparkle_frames;
+    D_801406A8 = sparkle_pages;
+    cur_random = 0x100;
+    func_80023AA8(&spark);
+    assert(spark.state == 1 && spark.bg_offset == -1 && spark.unk15 == 0 && spark.unk17 == spark.unk2);
+    assert(spark.unk16 == VISUAL_SATURN_LAYER(6) && spark.previous_animation_index == 0xFF);
+    assert(spark.unk40 == (u16)OBJECT_STAGE_TEXTURE(0) && spark.unk42 == (u16)OBJECT_CLUT(0x7848));
+    assert(spark.unk3C == (u8*)sparkle_frames + 8);
+    assert(spark.x_pos.i.hi == (row ? 0xCA : 238) && spark.y_pos.i.hi == (row ? 0xCF : 165));
+    assert(cur_random == (row ? 0x100 : 0x90C));
+    return 1;
+}
 const struct CTestGroup c_test_groups[] = {
+    { "staff_sparkle_setup", 0, 0, 2, test_sparkle_setup },
     { "staff_start_delay", 0, 0, 2, test_start_delay },
     { "staff_first_scroll", 0, 0, 9, test_first_scroll },
     { "staff_final_spark", 0, 0, 6, test_final_spark },
@@ -687,10 +733,15 @@ const struct CTestGroup c_test_groups[] = {
 #endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 2 + 9 + 6 + 6 + 10 + 33 + 20 + 18 + 4
+const u32 c_test_count = 2 + 2 + 9 + 6 + 6 + 10 + 33 + 20 + 18 + 4
 #ifdef MMX4_PC
     + 16
     + 6
     + 4
 #endif
     ;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

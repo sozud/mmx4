@@ -169,6 +169,7 @@ static u32 test_trial_item_selection(u32 row)
     return 1;
 }
 
+static u32 trial_step(u32 row);
 const struct CTestGroup c_test_groups[] = {
     { "trial_item_selection", 0, 0, 14, test_trial_item_selection },
     { "cyberspace_warp_pair_pool", NULL, cyberspace_warp_pair_pool_cases_expected, COUNT(cyberspace_warp_pair_pool_cases_expected), warp_case },
@@ -176,6 +177,87 @@ const struct CTestGroup c_test_groups[] = {
     { "cyberspace_trial_spawn_guide", 0, 0, 1, test_cyberspace_trial_spawn_guide },
     { "delete_items_pool", delete_items_pool_cases, delete_items_pool_cases_expected, COUNT(delete_items_pool_cases), 0 },
     { "rank_warp_spawn", rank_warp_spawn_cases, rank_warp_spawn_cases_expected, COUNT(rank_warp_spawn_cases), 0 },
+    { "trial_step", 0, 0, 20, trial_step },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 14 + COUNT(cyberspace_warp_pair_pool_cases_expected) + 2 + 1 + COUNT(delete_items_pool_cases) + COUNT(rank_warp_spawn_cases);
+const u32 c_test_count = 14 + COUNT(cyberspace_warp_pair_pool_cases_expected) + 2 + 1 + COUNT(delete_items_pool_cases) + COUNT(rank_warp_spawn_cases) + 20;
+
+void cyberspace_trial_init(struct EffectObj*);
+void cyberspace_trial_wait_start(struct EffectObj*);
+void cyberspace_trial_wait_goal(struct EffectObj*);
+void cyberspace_trial_delay(struct EffectObj*);
+void cyberspace_trial_wait_rank(struct EffectObj*);
+struct TrialStep {
+    void (*run)(struct EffectObj*);
+    u8 substage, checkpoint, unk2, timer, active, variant;
+    s16 player_x, player_y;
+    u8 state, out_unk2, out_timer, misc0, misc1, out_checkpoint, script;
+};
+static const struct TrialStep trial_steps[] = {
+    { cyberspace_trial_init, 0, 2, 9, 7, 0, 0, 0, 0, 2, 2, 0, 0, 0, 2, 0 },
+    { cyberspace_trial_init, 1, 0, 9, 7, 0, 0, 0, 0, 2, 6, 0, 0, 0, 0, 0 },
+    { cyberspace_trial_init, 1, 3, 9, 7, 0, 0, 0, 0, 6, 9, 7, 0, 0, 3, 0 },
+    { cyberspace_trial_wait_start, 0, 0, 0, 0, 0, 0, 0x18F, 0, 1, 0, 0, 0, 0, 0, 0 },
+    { cyberspace_trial_wait_start, 0, 0, 0, 0, 0, 0, 0x190, 0, 2, 0, 0, 0x22, 0, 0, 0 },
+    { cyberspace_trial_wait_start, 0, 0, 1, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0 },
+    { cyberspace_trial_wait_start, 1, 0, 6, 0, 0, 0, 0, 0, 2, 6, 0, 0, 0, 0, 0 },
+    { cyberspace_trial_wait_goal, 0, 0, 0, 0, 0, 0, 0x6FF, 0, 1, 0, 0, 0x21, 0x22, 0, 0 },
+    { cyberspace_trial_wait_goal, 1, 0, 6, 0, 0, 0, 0xF78, 0x400, 1, 6, 0, 0x21, 0x22, 0, 0 },
+    { cyberspace_trial_wait_goal, 1, 0, 6, 0, 0, 0, 0xF78, 0x3FF, 3, 6, 10, 0x21, 0x22, 0, 0x14 },
+    { cyberspace_trial_wait_goal, 0, 1, 0, 0, 0, 0, 0x700, 0, 3, 0, 10, 0x21, 0x22, 1, 0x14 },
+    { cyberspace_trial_wait_goal, 0, 0, 0, 0, 0, 0, 0x700, 0, 2, 0, 0x14, 0x21, 0x22, 0, 0x14 },
+    { cyberspace_trial_delay, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0 },
+    { cyberspace_trial_delay, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0x64, 0, 0, 0, 0 },
+    { cyberspace_trial_wait_rank, 0, 0, 0, 2, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0 },
+    { cyberspace_trial_wait_rank, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
+    { cyberspace_trial_wait_rank, 0, 0, 0, 1, 1, 0, 0, 0, 2, 0, 0x64, 0x21, 0, 0, 0x15 },
+    { cyberspace_trial_advance, 0, 0, 0, 0x50, 0, 0, 0, 0, 1, 0, 0x4F, 0x21, 0x21, 0, 0 },
+    { cyberspace_trial_advance, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0 },
+    { cyberspace_trial_advance, 0, 0, 0, 1, 0, 1, 0, 0, 2, 0, 0, 0, 0, 2, 0 },
+};
+static u32 trial_step(u32 row)
+{
+    const struct TrialStep* c = &trial_steps[row];
+    struct EffectObj obj;
+    u32 i;
+    memset(&obj, 0, sizeof(obj));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(item_objects, 0, sizeof(item_objects));
+    for (i = 0; i < 0x30; i++)
+        main_objects[i].active = 1;
+    for (i = 0; i < 0x20; i++)
+        shot_objects[i].active = 1;
+    if (c->run == cyberspace_trial_wait_goal) {
+        misc_objects[0].active = misc_objects[1].active = misc_objects[2].active = 1;
+        misc_objects[0].id = 0x21;
+        misc_objects[1].id = 0x22;
+        misc_objects[2].id = 5;
+    }
+    engine_obj.substage = c->substage;
+    engine_obj.checkpoint = c->checkpoint;
+    g_Player.x_pos.i.hi = c->player_x;
+    g_Player.y_pos.i.hi = c->player_y;
+    obj.active = 1;
+    obj.id = 38;
+    obj.state = 1;
+    obj.unk2 = c->unk2;
+    obj.ext.effect_38.timer = c->timer;
+    obj.ext.effect_38.active = c->active;
+    obj.ext.effect_38.variant = c->variant;
+    c->run(&obj);
+    assert(obj.state == c->state && obj.unk2 == c->out_unk2);
+    assert((u8)obj.ext.effect_38.timer == c->out_timer);
+    assert(misc_objects[0].id == c->misc0 && misc_objects[1].id == c->misc1);
+    assert(engine_obj.checkpoint == c->out_checkpoint);
+    assert(g_Player.script_action == c->script);
+    assert(engine_obj.unk10 == (c->misc0 == 0x22));
+    if (c->state == 3 || (c->state == 2 && c->run == cyberspace_trial_wait_goal)) {
+        assert(main_objects[0x2F].active == 0 && shot_objects[0x1F].active == 0);
+        assert(misc_objects[2].active == 0 && misc_objects[0].active == 1);
+    } else if (c->run != cyberspace_trial_init) {
+        assert(main_objects[0x2F].active == 1 && shot_objects[0x1F].active == 1);
+    }
+    return 1;
+}

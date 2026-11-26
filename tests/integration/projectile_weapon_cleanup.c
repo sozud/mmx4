@@ -41,7 +41,7 @@ static u32 cleanup(u32 row)
     g_Player.x_pos.val = (contact ? x : x + 128) * 65536 + 0x1234;
     g_Player.y_pos.val = 120 * 65536 + 0x5678;
     g_Player.unk54 = (const u32*)kinds[type].box;
-    g_Player.unk15 = facing ? 0x40 : 0;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     player_expected = g_Player;
     engine_obj.stage = scene ? 3 : 4;
     engine_obj.cur_character = 1;
@@ -85,7 +85,7 @@ static u32 cleanup(u32 row)
     expected = obj;
     expected.x_pos.val += velocity;
     expected.on_screen = 1;
-    expected.animation_step.packed = kinds[type].next;
+    expected.animation_step.packed = C_TEST_STEP(kinds[type].next);
     if (type != 1)
         expected.animation_cursor = (u32*)kinds[type].animations[kinds[type].animation] + 1;
     if (contact && !guard) {

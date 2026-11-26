@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/misc/misc_00_static_sprite.h"
 void common_effect_update(struct MiscObj*);
 extern u32* common_effect_animations[];
@@ -29,7 +30,7 @@ static u32 subtype_five(u32 row)
         metadata[i] = (i + 1) * 128;
     for (i = 0; i < COUNT(frames); i++)
         frames[i] = i < 12 ? 64 : 0;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)frames;
     assert(func_8002938C(0x84) == 4);
     spawn_common_effect(&owner, 5);
@@ -47,14 +48,14 @@ static u32 subtype_five(u32 row)
     expected[0].unk6 = 0;
     expected[0].bg_offset = 0;
     expected[0].animation_table = common_effect_animations;
-    expected[0].unk40 = 5;
-    expected[0].unk42 = 0x7888;
+    expected[0].unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x84));
+    expected[0].unk42 = OBJECT_CLUT(0x7888);
     expected[0].unk3C = (u8*)frames + 64;
-    expected[0].unk16 = 5;
+    expected[0].unk16 = VISUAL_SATURN_LAYER(5);
     expected[0].unk17 = 5;
     expected[0].previous_animation_index = 0xFF;
     expected[0].animation_cursor = common_effect_animations[5];
-    expected[0].animation_step.packed = 0x19010003;
+    expected[0].animation_step.packed = C_TEST_STEP(0x19010003);
     common_effect_update(&misc_objects[0]);
     assert(c_test_word_difference((u32*)misc_objects, (u32*)expected, sizeof(expected) / 4) == 0 && c_test_word_difference((u32*)&owner, (u32*)&owner_before, sizeof(owner) / 4) == 0);
     assert(c_test_word_difference((u32*)&g_Player, (u32*)&player, sizeof(player) / 4) == 0 && c_test_word_difference((u32*)&g_Entity, (u32*)&entity, sizeof(entity) / 4) == 0);
@@ -64,10 +65,46 @@ static u32 subtype_five(u32 row)
         assert(metadata[i] == (i + 1) * 128);
     for (i = 0; i < COUNT(frames); i++)
         assert(frames[i] == (i < 12 ? 64u : 0));
-    D_801406A8 = old_metadata;
+    test_stage_graphics(old_metadata);
     TEST_MENU_FRAMES = old_frames;
     return 1;
 }
-const struct CTestGroup c_test_groups[] = { { "supported_common_effect_subtype5_own_animation_and_priority5", NULL, NULL, 1, subtype_five } };
+static u32 ce_step = C_TEST_STEP(5);
+static u32 common_effect(u8 state, u8 kind, u8 event)
+{
+    struct MiscObj obj;
+    memset(&obj, 0, sizeof(obj));
+    memset(background_objects, 0, sizeof(background_objects));
+    engine_obj.stage = 1;
+    engine_obj.substage = 0;
+    test_stage_graphics(metadata);
+    TEST_MENU_FRAMES = (u8*)frames;
+    obj.active = 0x41;
+    obj.state = state;
+    obj.unk2 = kind;
+    obj.x_pos.i.hi = 0x80;
+    obj.y_pos.i.hi = 0x60;
+    obj.animation_cursor = (const u8*)&ce_step;
+    obj.animation_step.packed = ce_step;
+    obj.animation_step.fields.event = event;
+    common_effect_update(&obj);
+    return obj.state | (u32)obj.unk16 << 8 | (u32)obj.unk17 << 16;
+}
+static u32 ce_start_other(void)
+{
+    return common_effect(0, 2, 0);
+}
+static u32 ce_running(void) { return common_effect(1, 2, 0); }
+static u32 ce_done(void) { return common_effect(1, 2, 1); }
+static const CTestCase common_effect_paths_cases[] = {
+    ce_start_other,
+    ce_running,
+    ce_done,
+};
+static const u32 common_effect_paths_cases_expected[] = { 0x21101u, 0x1u, 0x2u };
+const struct CTestGroup c_test_groups[] = {
+    { "supported_common_effect_subtype5_own_animation_and_priority5", NULL, NULL, 1, subtype_five },
+    { "common_effect_paths", common_effect_paths_cases, common_effect_paths_cases_expected, COUNT(common_effect_paths_cases), 0 },
+};
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1;
+const u32 c_test_count = 1 + COUNT(common_effect_paths_cases);

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/collision.h"
 #include "main/player_animations_2.h"
 #include "main/player.h"
@@ -17,6 +18,11 @@ void func_80068548(struct MainObj*);
 static u32 gfx[64], frames[64], attributes[2];
 static u32 map_words[384];
 #define map ((u8*)map_words)
+#ifdef MMX4_SATURN
+#define TUNNEL_SCREEN (512 + 12)
+#else
+#define TUNNEL_SCREEN 512
+#endif
 static u16 tiles[512], tiles_before[512], palette[0x152], palette_expected[0x152];
 static u8 sound_commands[32];
 static Palette bank[40];
@@ -70,9 +76,9 @@ static void prepare(void)
         tiles[i] = i >= 256 && (i & 255) / 16 >= 11;
     c_test_copy_words((u32*)tiles_before, (u32*)tiles, sizeof(tiles) / 4);
     attributes[0] = 0;
-    attributes[1] = 0x38;
-    map[512] = 0x1E;
-    map[513] = 0x18;
+    attributes[1] = TEST_DISC32(0x38);
+    map[TUNNEL_SCREEN] = 0x1E;
+    map[TUNNEL_SCREEN + 1] = 0x18;
     SP_BG_TILEMAP = map;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -99,7 +105,7 @@ static void prepare(void)
     g_Player.voice_timer = 1;
     g_Player.x_pos.i.hi = 5808;
     g_Player.y_pos.i.hi = 410;
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     g_Player.animation_table = (u32**)D_8011AFF0;
     g_Player.unk38 = (u8*)gfx + 64;
     player_enter_idle(&g_Player);
@@ -118,7 +124,7 @@ static void prepare(void)
         metadata[i] = (i + 1) * 128;
     for (i = 0; i < COUNT(menu); i++)
         menu[i] = i < 8 ? 64 : 0;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)menu;
     current_before = SP_CUR_MAIN_OBJ;
     background_objects[0].x_pos.i.hi = 5648;
@@ -152,9 +158,9 @@ static void check(void)
     assert(c_test_word_difference((u32*)weapon_objects, (u32*)weapons, 2 * sizeof(weapons[0]) / 4) == 0 && zero_difference((u32*)&weapon_objects[2], 14 * sizeof(weapons[0]) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, 2 * sizeof(visuals[0]) / 4) == 0 && zero_difference((u32*)&visual_objects[2], 30 * sizeof(visuals[0]) / 4) == 0);
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
     assert(cur_random == rng && need_palette_load == dirty);
-    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 32 && layout_height == 16 && layout_size == 512 && attributes[0] == 0 && attributes[1] == 0x38);
-    for (i = 0; i < COUNT(map_words); i += 8)
-        assert(((map_words[i] ^ (i == 128 ? 0x0101181E : 0x01010101)) | (map_words[i + 1] ^ 0x01010101) | (map_words[i + 2] ^ 0x01010101) | (map_words[i + 3] ^ 0x01010101) | (map_words[i + 4] ^ 0x01010101) | (map_words[i + 5] ^ 0x01010101) | (map_words[i + 6] ^ 0x01010101) | (map_words[i + 7] ^ 0x01010101)) == 0);
+    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 32 && layout_height == 16 && layout_size == 512 && attributes[0] == 0 && attributes[1] == TEST_DISC32(0x38));
+    for (i = 0; i < sizeof(map_words); i++)
+        assert(map[i] == (i == TUNNEL_SCREEN ? 0x1E : i == TUNNEL_SCREEN + 1 ? 0x18 : 1));
     assert(c_test_word_difference((u32*)tiles, (u32*)tiles_before, sizeof(tiles) / 4) == 0);
     for (i = 0; i < COUNT(gfx); i++)
         assert(gfx[i] == (i == 0 ? 64u : (i == 1 || i == 8 || i == 9) ? 128u

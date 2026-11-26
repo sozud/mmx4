@@ -18,7 +18,7 @@ static u32 turn_case(u32 mode)
     obj.unk5 = 2;
     obj.unk6 = 3;
     obj.unk7C = 2;
-    obj.unk15 = right ? 0x40 : 0;
+    obj.unk15 = right ? PLAYER_FACING_RIGHT : 0;
     obj.ext.main_33.intro_laps = 1;
     obj.ext.main_33.intro_active = intro;
     obj.x_pos.val = 100 * 65536 + 0x1234;
@@ -31,7 +31,7 @@ static u32 turn_case(u32 mode)
     spike_sled_patrol_turn(&obj);
     before.y_pos.val += 32768;
     before.y_speed -= 0x1000;
-    before.unk15 = right ? 0 : 0x40;
+    before.unk15 = right ? 0 : PLAYER_FACING_RIGHT;
     before.x_speed = intro ? 65536 : 0x28000;
     before.ext.main_33.intro_laps = 0;
     before.unk7C = intro ? 0x40 : 1;
@@ -41,7 +41,7 @@ static u32 turn_case(u32 mode)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     for (i = 0; i < sizeof(g_Player) / 4; i++)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)obj.unk15 << 16) | ((u32)(u8)obj.unk7C << 24);
+    return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 16) | ((u32)(u8)obj.unk7C << 24);
 }
 static const u32 spike_sled_intro_turn_animation_cases_expected[] = { 0x40400006u, 0x40000006u, 0x1400102u };
 
@@ -57,7 +57,7 @@ static u32 patrol_case(u32 mode, u32 observation)
     obj.unk6 = 1;
     obj.unk7C = 1;
     obj.ext.main_33.intro_active = 0;
-    obj.unk15 = mode ? 0x40 : 0;
+    obj.unk15 = mode ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = (mode ? 0x130F : 0x1231) * 65536 + 0x2468;
     obj.y_pos.val = 0x2E8 * 65536 + 0x1357;
     obj.x_speed = 0x1000;
@@ -97,7 +97,7 @@ static u32 patrol_case(u32 mode, u32 observation)
         actual = obj.y_pos.val;
         break;
     case 2:
-        actual = ((u32*)&obj)[1];
+        actual = C_TEST_LE_WORD((u32*)&obj + 1);
         break;
     case 3:
         actual = (u16)obj.unk7C;
@@ -106,7 +106,7 @@ static u32 patrol_case(u32 mode, u32 observation)
         actual = obj.x_accel;
         break;
     case 5:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     default:
         actual = cursor | ((u32)obj.unk17 << 8) | ((u32)obj.previous_animation_index << 16);
@@ -136,7 +136,7 @@ static u32 sled_case(u32 mode, u32 observation)
     obj.unk7C = 1;
     obj.x_pos.val = (mode == 3 ? 0x1330 : 0x1210) * 65536 + 0x1234;
     obj.y_pos.val = 100 * 65536 + 0x5678;
-    obj.unk15 = mode == 3 ? 0x40 : 0;
+    obj.unk15 = mode == 3 ? PLAYER_FACING_RIGHT : 0;
     obj.ext.main_33.unk80 = mode == 0 ? 8 : mode == 2 ? 2
                                                       : 0;
     g_Player.x_pos.i.hi = mode < 2 ? 0x1321 : mode == 2 ? 0x1240
@@ -168,7 +168,7 @@ static u32 sled_case(u32 mode, u32 observation)
     if (observation == 0)
         actual = (u16)obj.ext.main_33.target_x | ((u32)obj.ext.main_33.variant << 16) | ((u32)(u8)obj.unk6 << 24);
     else if (observation == 1)
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
     else
         actual = obj.x_accel;
     return actual;
@@ -233,8 +233,8 @@ struct func_8005DC58_case {
     u32 expected[7];
 };
 static const struct func_8005DC58_case func_8005DC58_cases[] = {
-    { 4640, { 0u, 0x1220u, 0xFFFFC000u, 2u, 0u, 0x12500000u, 0x15010002u } },
-    { 4896, { 4u, 0x1320u, 0u, 1u, 0u, 0x12500000u, 0xF010001u } },
+    { 4640, { 0u, 0x1220u, 0xFFFFC000u, 2u, 0u, 0x12500000u, C_TEST_STEP(0x15010002u) } },
+    { 4896, { 4u, 0x1320u, 0u, 1u, 0u, 0x12500000u, C_TEST_STEP(0xF010001u) } },
 };
 static u32 test_func_8005DC58(u32 row)
 {
@@ -313,7 +313,7 @@ static u32 test_spike_sled_patrol_drive_1(u32 row)
     assert(obj->hp == 0 && obj->contact_damage == 6 && obj->y_pos.i.hi == 744);
     assert(obj->ext.main_33.unk80 == 127 && obj->ext.main_33.intro_active == 1 && obj->ext.main_33.intro_laps == 2);
     assert(engine_obj.enable_boss == 1 && engine_obj.unk25 == 2 && engine_obj.boss_ptr == obj);
-    assert(g_Player.script_state == 1 && g_Player.script_action == 20 && g_Player.script_facing == 0 && g_Player.spike_immune == 1);
+    assert(g_Player.script_state == 1 && g_Player.script_action == 20 && g_Player.script_facing == 0 && SPIKE_IMMUNE(g_Player) == 1);
     spike_sled_patrol_start(obj);
     assert(obj->unk6 == 1 && obj->unk7C == 180 && obj->x_speed == 163840);
     world_snapshot();
@@ -383,6 +383,82 @@ static void ss_drop_right(void) { DROP(3, 0x40); }
 static void ss_drop_center(void) { DROP(2, 0x40); }
 static void ss_drop_none(void) { DROP(4, 0); }
 
+void spike_sled_despawn(struct MainObj*);
+void spike_sled_patrol(struct MainObj*);
+void spike_sled_fall(struct MainObj*);
+void spike_sled_charge(struct MainObj*);
+void spike_sled_charge_approach(struct MainObj*);
+void spike_sled_charge_leap(struct MainObj*);
+void spike_sled_bomb(struct MainObj*);
+void spike_sled_intro(struct MainObj*);
+void spike_sled_intro_fill_health(struct MainObj*);
+void spike_sled_intro_start_fight(struct MainObj*);
+#define SX(step, sub) (SLED(sub), so.unk5 = step, memset(weapon_objects, 0, sizeof(weapon_objects)), SPIKE_IMMUNE_SET(g_Player, 1))
+static void ss_run_intro_patrol(void) { SX(2, 0), so.state = 1, so.ext.main_33.intro_active = 1, spike_sled_update(&so); }
+static void ss_run_flash(u8 count)
+{
+    SX(1, 0);
+    so.state = 1;
+    so.ext.main_33.saved_unk5 = 1;
+    so.ext.main_33.flash_timer = 2;
+    so.ext.main_33.unk91 = count;
+    so.ext.main_33.unk87 = 2;
+    spike_sled_update(&so);
+    state_extra = so.ext.main_33.flash_timer | so.ext.main_33.unk91 << 8;
+}
+static void ss_run_flash_burst(void) { ss_run_flash(1); }
+static void ss_run_flash_wait(void) { ss_run_flash(3); }
+#define DEATH(step, timer, count, mask, scroll) (SX(step, 0), so.state = 2, so.unk7C = timer, so.unk7E = count, so.ext.main_33.unk80 = mask, so.ext.main_33.unk88 = scroll, func_8005D4E0(&so), state_extra = so.state | (u16)so.ext.main_33.unk88 << 8)
+static void ss_death_rumble(void) { DEATH(0, 5, 2, 0, 0); }
+static void ss_death_rumble_burst(void) { DEATH(0, 5, 1, 0, 0); }
+static void ss_death_debris_done(void) { DEATH(1, 1, 0, 0, 0); }
+static void ss_death_debris_wait(void) { DEATH(1, 5, 2, 0, 0); }
+static void ss_death_debris_burst(void) { DEATH(1, 5, 1, 5, 0); }
+static void ss_death_scroll_done(void) { DEATH(2, 1, 0, 0, 0x1200); }
+static void ss_death_scroll(void) { DEATH(2, 5, 0, 0, 0x1200); }
+static void ss_despawn(void)
+{
+    SX(1, 1);
+    so.state = 3;
+    so.active = 0x41;
+    so.ext.main_33.unk80 = 0x7F;
+    g_Player.invincibility_timer = 5;
+    spike_sled_despawn(&so);
+    state_extra = (u16)background_objects[0].unk26 | (u8)g_Player.invincibility_timer << 16 | so.ext.main_33.unk80 << 24;
+}
+static void ss_patrol_edge_left(void) { SX(2, 1), spike_sled_patrol(&so); }
+static void ss_patrol_turn_lap(void) { SX(2, 2), so.unk7C = 5, so.ext.main_33.intro_laps = 3, spike_sled_patrol_turn(&so), state_extra = so.ext.main_33.intro_laps; }
+#define FALL(sub, y, saved_y, landed, timer) (SX(3, sub), so.y_pos.i.hi = y, so.unk1C.i.hi = saved_y, so.ext.main_33.unk84 = landed, so.unk7C = timer, spike_sled_fall(&so), state_extra = (u16)so.y_pos.i.hi | so.ext.main_33.unk84 << 16)
+static void ss_fall_floor(void) { FALL(0, 0x2F0, 0, 0, 0); }
+static void ss_fall_hang(void) { FALL(0, 0x200, 0x200, 0, 0); }
+static void ss_fall_hang_done(void) { FALL(0, 0x200, 0x200, 1, 0); }
+static void ss_fall_hold(void) { FALL(1, 0x300, 0, 0, 2); }
+static void ss_fall_release(void) { FALL(1, 0x300, 0, 0, 1); }
+#define CHARGE(ev, face) (SX(4, 0), so.ext.main_33.target_x = 5, so.animation_step.fields.event = ev, so.unk15 = face, spike_sled_charge(&so), state_extra = (u16)so.ext.main_33.target_x)
+static void ss_charge_rev(void) { CHARGE(2, 0); }
+static void ss_charge_go_left(void) { CHARGE(1, 0); }
+static void ss_charge_go_right(void) { CHARGE(1, PLAYER_FACING_RIGHT); }
+static void ss_charge_braking(void) { SX(4, 2), so.unk7C = 5, so.unk15 = PLAYER_FACING_RIGHT, so.x_speed = 0x10000, so.x_accel = -0x4000, func_8005DED4(&so); }
+static void ss_charge_turn_right(void) { SX(4, 2), so.unk7C = 1, func_8005DED4(&so); }
+static void ss_charge_turn_left(void) { SX(4, 2), so.unk7C = 1, so.unk15 = PLAYER_FACING_RIGHT, func_8005DED4(&so); }
+#define APPROACH(target, face, vx) (SX(4, 3), so.ext.main_33.target_x = target, so.unk15 = face, so.x_speed = vx, spike_sled_charge_approach(&so), state_extra = (u16)so.ext.main_33.target_x)
+static void ss_approach_arrived(void) { APPROACH(0x1200, 0, 0); }
+static void ss_approach_creep_left(void) { APPROACH(0x11FD, 0, 0); }
+static void ss_approach_creep_right(void) { APPROACH(0x1203, PLAYER_FACING_RIGHT, 0); }
+static void ss_approach_slow_left(void) { APPROACH(0x11F0, 0, 0); }
+static void ss_approach_slow_right(void) { APPROACH(0x1210, PLAYER_FACING_RIGHT, 0); }
+static void ss_approach_far(void) { APPROACH(0x1230, PLAYER_FACING_RIGHT, 0x40000); }
+static void ss_leap_rev(void) { SX(4, 4), so.animation_step.fields.event = 2, spike_sled_charge_leap(&so); }
+static void ss_leap_jump(void) { SX(4, 4), so.animation_step.fields.event = 1, so.x_speed = 0x10000, spike_sled_charge_leap(&so); }
+static void ss_bomb_no_slot(void) { SX(5, 0), so.ext.main_33.variant = 1, spike_sled_bomb(&so), state_extra = so.ext.main_33.variant; }
+static void ss_rise_slot_1_top(void) { RISE(1, 0x200, 3); }
+static void ss_rise_slot_3(void) { RISE(3, 0x300, 3); }
+static void ss_rise_slot_4_top(void) { RISE(4, 0x200, 3); }
+static void ss_intro_drive(void) { SX(6, 0), so.unk7C = 2, so.x_speed = 0x10000, spike_sled_intro(&so); }
+static void ss_intro_drive_done(void) { SX(6, 0), so.unk7C = 1, spike_sled_intro(&so); }
+static void ss_intro_fill(void) { SX(6, 1), so.unk7E = 2, so.hp = 0x10, spike_sled_intro_fill_health(&so); }
+static void ss_intro_fill_done(void) { SX(6, 1), so.unk7E = 1, so.hp = 0x2F, spike_sled_intro_fill_health(&so); }
+static void ss_intro_wait(void) { SX(6, 2), so.unk7C = 2, spike_sled_intro_start_fight(&so); }
 static void (*const spike_sled_states_cases[])(void) = {
     ss_aim_locked,
     ss_aim_wait_left,
@@ -412,12 +488,133 @@ static void (*const spike_sled_states_cases[])(void) = {
     ss_drop_right,
     ss_drop_center,
     ss_drop_none,
+    ss_run_intro_patrol,
+    ss_run_flash_burst,
+    ss_run_flash_wait,
+    ss_death_rumble,
+    ss_death_rumble_burst,
+    ss_death_debris_done,
+    ss_death_debris_wait,
+    ss_death_debris_burst,
+    ss_death_scroll_done,
+    ss_death_scroll,
+    ss_despawn,
+    ss_patrol_edge_left,
+    ss_patrol_turn_lap,
+    ss_fall_floor,
+    ss_fall_hang,
+    ss_fall_hang_done,
+    ss_fall_hold,
+    ss_fall_release,
+    ss_charge_rev,
+    ss_charge_go_left,
+    ss_charge_go_right,
+    ss_charge_braking,
+    ss_charge_turn_right,
+    ss_charge_turn_left,
+    ss_approach_arrived,
+    ss_approach_creep_left,
+    ss_approach_creep_right,
+    ss_approach_slow_left,
+    ss_approach_slow_right,
+    ss_approach_far,
+    ss_leap_rev,
+    ss_leap_jump,
+    ss_bomb_no_slot,
+    ss_rise_slot_1_top,
+    ss_rise_slot_3,
+    ss_rise_slot_4_top,
+    ss_intro_drive,
+    ss_intro_drive_done,
+    ss_intro_fill,
+    ss_intro_fill_done,
+    ss_intro_wait,
 };
-static const u32 spike_sled_states_expected[] = { 0x301u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 2u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x101u, 2u, 0x13000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x13000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x26010000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x32040000u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x2E030000u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x32040000u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x26010000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x26010000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 3u, 0u, 0x12000000u, 0u, 0x10000u, 0x420000u, 7u, 0u, 0u, 0u, 0x101u, 0xCu, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0x5000022u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0x6000022u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0xFF000026u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0xFF000026u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+static const u32 spike_sled_states_expected[] = { 0x301u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 2u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x101u, 2u, 0x13000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x13000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x26010000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x32040000u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x2E030000u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x32040000u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x26010000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x26010000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 3u, 0u, 0x12000000u, 0u, 0x10000u, 0x420000u, 7u, 0u, 0u, 0u, 0x101u, 0xCu, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0x5000022u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0x6000022u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0xFF000026u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0xFF000026u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x102u, 0xB4u, 0x12000000u, 0xFFFD8000u, 0u, 0u, 0u, 0u, 0u, 0u,
+    1u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x601u, 0x2100u,
+    1u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0u,
+    0u, 0x10004u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 2u, 0u,
+    0u, 0x60004u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 2u, 0x2100u,
+    2u, 0x80u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x120002u, 0u,
+    1u, 0x10004u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 2u, 0u,
+    1u, 0x60004u, 0x12A00000u, 0u, 0u, 0u, 0u, 0u, 2u, 0x2100u,
+    2u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x120003u, 0u,
+    2u, 4u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x11FE02u, 0u,
+    0u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x1100u, 0u,
+    0x202u, 0u, 0x12000000u, 0u, 0u, 0xFFFFE000u, 1u, 0u, 0u, 0u,
+    0x102u, 4u, 0x12000000u, 0x28000u, 0u, 0u, 0x4000u, 0u, 2u, 0u,
+    4u, 0u, 0x12000000u, 0u, 0u, 0u, 2u, 0u, 0x2E8u, 0u,
+    0x103u, 0x1Eu, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x200u, 0u,
+    3u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x10200u, 0u,
+    0x103u, 1u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x300u, 0u,
+    3u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0x10300u, 0u,
+    4u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x104u, 0xB4u, 0x12000000u, 0xFFFC0000u, 0u, 0u, 3u, 0u, 0u, 0u,
+    0x104u, 0xB4u, 0x12000000u, 0x40000u, 0u, 0u, 0x4003u, 0u, 0u, 0u,
+    0x204u, 4u, 0x12010000u, 0xC000u, 0u, 0xFFFFC000u, 0x4000u, 0u, 0u, 0u,
+    0x104u, 1u, 0x12000000u, 0x40000u, 0u, 0u, 0x4003u, 0u, 0u, 0u,
+    0x104u, 1u, 0x12000000u, 0xFFFC0000u, 0u, 0u, 3u, 0u, 0u, 0u,
+    0x404u, 0x1Eu, 0x12000000u, 0u, 0u, 0u, 5u, 0u, 0x1200u, 0u,
+    0x304u, 0u, 0x11FF0000u, 0xFFFF0000u, 0u, 0u, 0u, 0u, 0x11FDu, 0u,
+    0x304u, 0u, 0x12010000u, 0x10000u, 0u, 0u, 0x4000u, 0u, 0x1203u, 0u,
+    0x304u, 0u, 0x11FE0000u, 0xFFFE0000u, 0u, 0u, 0u, 0u, 0x11F0u, 0u,
+    0x304u, 0u, 0x12020000u, 0x20000u, 0u, 0u, 0x4000u, 0u, 0x1210u, 0u,
+    0x304u, 0u, 0x12040000u, 0x40000u, 0u, 0u, 0x4000u, 0u, 0x1230u, 0u,
+    0x404u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    5u, 0u, 0x12000000u, 0u, 0x40000u, 0u, 6u, 0u, 0u, 0u,
+    0x105u, 0x26u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0xFFu, 0u,
+    0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u,
+    0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u,
+    0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u,
+    6u, 1u, 0x12010000u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x106u, 0x30000u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x106u, 0x10000u, 0x12000000u, 0u, 0u, 0u, 0u, 0x110000u, 0u, 0u,
+    0x206u, 0x3003Cu, 0x12000000u, 0u, 0u, 0u, 0u, 0x300000u, 0u, 0u,
+    0x206u, 1u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+};
 
 static u32 test_spike_sled_states(u32 row)
 {
     return state_run(spike_sled_states_cases[row], row, &spike_sled_states_expected[row * 10]);
+}
+
+#include "support/tile_writes.h"
+void func_8005E298(struct MainObj*);
+#define ST(step, sub) (SX(step, sub), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.stage = 3, tile_writes_begin())
+#define STX() (state_extra ^= tile_writes_end() ^ (u32)SPIKE_IMMUNE(g_Player) << 31 ^ (u8)g_Player.invincibility_timer << 20, engine_obj.stage = 0)
+static void sst_killed(void)
+{
+    ST(1, 0), so.state = 1, so.hp = 1, state_hit(&so, 0, 0, 1), SPIKE_IMMUNE_SET(g_Player, 0), g_Player.invincibility_timer = 0;
+    tile_writes_expect(1, 0, 0, 1), spike_sled_update(&so), STX();
+}
+static void sst_death_slots(void)
+{
+    ST(0, 0), so.state = 2, so.unk7C = 1, so.ext.main_33.unk80 = 0x09;
+    tile_writes_expect(0, D_800FDDA0[0], D_800FDDA0[1], 1), tile_writes_expect(0, D_800FDDA0[6], D_800FDDA0[7], 1);
+    func_8005D4E0(&so), assert(so.unk42 == OBJECT_CLUT(0x798F)), so.unk42 = 0, STX();
+}
+#define DROPT(timer, expect) (ST(5, 1), expect, so.unk7E = timer, so.ext.main_33.variant = 2, so.ext.main_33.unk80 = 0x7F, func_8005E298(&so), state_extra = so.ext.main_33.unk80 | so.ext.main_33.variant << 8)
+static void sst_drop_wait(void) { DROPT(2, 0), STX(); }
+static void sst_drop(void) { DROPT(1, tile_writes_expect(0, D_800FDDA0[4], D_800FDDA0[5], 1)), STX(); }
+static void sst_intro_end(void) { ST(6, 3), g_Player.script_state = 1, so.unk7C = 1, so.ext.main_33.intro_active = 1, tile_writes_expect(0, 0x1340, 0x2A0, 1), spike_sled_intro_start_fight(&so), state_extra = so.ext.main_33.intro_active | (u8)g_Player.script_state << 8, STX(); }
+static void (*const spike_sled_tiles_cases[])(void) = {
+    sst_killed,
+    sst_death_slots,
+    sst_drop_wait,
+    sst_drop,
+    sst_intro_end,
+};
+static const u32 spike_sled_tiles_expected[] = {
+    0x0u, 0x4005Au, 0x12000000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x0u, 0x85C565CCu, 0x2100u,
+    0x1u, 0x10050u, 0x12E00000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x53D30018u, 0x0u,
+    0x105u, 0x10000u, 0x12000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x8000027Fu, 0x0u,
+    0x105u, 0x0u, 0x12000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x69E97F77u, 0x0u,
+    0x4u, 0x0u, 0x12000000u, 0x0u, 0x0u, 0x0u, 0x2u, 0x0u, 0xE9E9800Cu, 0x0u,
+};
+static u32 test_spike_sled_tiles(u32 row)
+{
+    return state_run(spike_sled_tiles_cases[row], row, &spike_sled_tiles_expected[row * 10]);
 }
 
 const struct CTestGroup c_test_groups[] = {
@@ -430,6 +627,7 @@ const struct CTestGroup c_test_groups[] = {
     { "spike_sled_patrol_drive_0", 0, 0, 3, test_spike_sled_patrol_drive_0 },
     { "spike_sled_patrol_drive_1", 0, 0, 1, test_spike_sled_patrol_drive_1 },
     { "spike_sled_patrol_turn", 0, 0, 1, test_spike_sled_patrol_turn },
+    { "spike_sled_tiles", 0, 0, COUNT(spike_sled_tiles_cases), test_spike_sled_tiles },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(spike_sled_states_cases) + COUNT(spike_sled_intro_turn_animation_cases_expected) + COUNT(spike_sled_patrol_context_cases_expected) + COUNT(spike_sled_selection_cases_expected) + 3 + 2 + 3 + 1 + 1;
+const u32 c_test_count = COUNT(spike_sled_states_cases) + COUNT(spike_sled_intro_turn_animation_cases_expected) + COUNT(spike_sled_patrol_context_cases_expected) + COUNT(spike_sled_selection_cases_expected) + 3 + 2 + 3 + 1 + 1 + COUNT(spike_sled_tiles_cases);

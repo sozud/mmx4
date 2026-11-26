@@ -26,8 +26,8 @@ static u32 pulse_case(u32 mode)
     obj.unk6 = mode >= 2;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
-    obj.unk16 = 2;
-    obj.unk15 = 0x40;
+    obj.unk16 = VISUAL_SATURN_LAYER(2);
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.unk40 = 0x540;
     obj.unk42 = 0x9234;
     obj.animation_table = (const u8* const*)web_spider_animations;
@@ -35,7 +35,7 @@ static u32 pulse_case(u32 mode)
     if (mode == 2) {
         obj.animation_cursor = (void*)(web_spider_animations[18] + 15);
         obj.animation_step = *(union AnimationStep*)obj.animation_cursor;
-        assert(obj.animation_step.packed == 0x63000001);
+        assert(obj.animation_step.packed == C_TEST_STEP(0x63000001));
     }
     expected = obj;
     memcpy(pool_before, visual_objects, sizeof(pool_before));
@@ -52,8 +52,8 @@ static u32 pulse_case(u32 mode)
             v->unk40 = obj.unk40;
             v->unk3C = obj.unk3C;
             v->unk42 = 0x1234;
-            v->unk16 = 2;
-            v->unk15 = 0x40;
+            v->unk16 = VISUAL_SATURN_LAYER(2);
+            v->unk15 = PLAYER_FACING_RIGHT;
             v->unk50 = PLAYER_OBJECT(&obj);
         }
     } else if (mode == 2) {
@@ -148,7 +148,7 @@ static u32 owner_handoffs(u32 row)
     obj.id = 23;
     obj.state = 1;
     obj.on_screen = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x1234;
     obj.unk5C = 3;
     obj.unk60 = 3;
@@ -161,7 +161,7 @@ static u32 owner_handoffs(u32 row)
     obj.unk58.data = web_thread_collision[0];
     obj.animation_table = (u32**)web_spider_animations;
     set_animation(&obj, 19);
-    assert(obj.animation_step.packed == 0x64010001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x64010001));
     if (hit) {
         weapon_objects[0].active = 0x21;
         weapon_objects[0].id = 8;
@@ -179,7 +179,7 @@ static u32 owner_handoffs(u32 row)
         expected.unk61 = flash;
     } else {
         expected.animation_cursor = (u32*)web_spider_animations[19] + 1;
-        expected.animation_step.packed = 0x65010001;
+        expected.animation_step.packed = C_TEST_STEP(0x65010001);
         expected.on_screen = 1;
         if (!gate && hit && !flash) {
             expected.unk42 |= 0x8000;
@@ -192,7 +192,7 @@ static u32 owner_handoffs(u32 row)
                 expected.unk17 = 20;
                 expected.previous_animation_index = 0xFF;
                 expected.animation_cursor = (u32*)web_spider_animations[20];
-                expected.animation_step.packed = 0x66010001;
+                expected.animation_step.packed = C_TEST_STEP(0x66010001);
                 owner_expected.unk5 = 1;
                 owner_expected.unk6 = 0;
             }
@@ -212,10 +212,25 @@ static u32 owner_handoffs(u32 row)
     return 1;
 }
 
+void web_thread_init(struct ShotObj*);
+static u32 thread_start_own(void)
+{
+    struct ShotObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.unk5 = 9;
+    obj.unk84.value = 7;
+    obj.animation_table = (u32**)web_spider_animations;
+    web_thread_init(&obj);
+    return obj.state | (u32)obj.unk5 << 8 | (u32)(u8)obj.unk84.value << 16 | (u32)(u16)obj.timer << 24;
+}
+static const CTestCase web_thread_start_cases[] = { thread_start_own };
+static const u32 web_thread_start_cases_expected[] = { 0xCE000001u };
+
 const struct CTestGroup c_test_groups[] = {
+    { "web_thread_start", web_thread_start_cases, web_thread_start_cases_expected, COUNT(web_thread_start_cases), 0 },
     { "web_thread_pulse_visual_pool", NULL, web_thread_pulse_visual_pool_cases_expected, COUNT(web_thread_pulse_visual_pool_cases_expected), pulse_case },
     { "web_thread_snap", 0, 0, 2, test_web_thread_snap },
     { "owner_death_web_gates_and_real_weapon_snap", NULL, NULL, 64, owner_handoffs },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(web_thread_pulse_visual_pool_cases_expected) + 2 + 64;
+const u32 c_test_count = COUNT(web_thread_pulse_visual_pool_cases_expected) + 2 + 64 + COUNT(web_thread_start_cases);

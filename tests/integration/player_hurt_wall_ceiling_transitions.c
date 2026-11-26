@@ -7,6 +7,9 @@
 #include "main/player_special.h"
 #include "main/player_common.h"
 #include "main/player_check.h"
+#ifdef MMX4_SATURN
+#include "saturn/platform.h"
+#endif
 void func_80033D54(struct PlayerObj*);
 void player_check_damage(struct PlayerObj*);
 void player_hurt(struct PlayerObj*);
@@ -71,7 +74,7 @@ static void prepare(u32 character, u32 tile)
                                                                                : (i & 255) / 16 == 10);
     c_test_copy_words((u32*)tiles_before, (u32*)tiles, sizeof(tiles) / 4);
     attributes[0] = 0;
-    attributes[1] = 0x38;
+    attributes[1] = TEST_DISC32(0x38);
     SP_BG_TILEMAP = map;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes;
@@ -125,7 +128,7 @@ static void pose(u32 animation, u32 word, u32 saber_bank)
     expected.unk17 = animation;
     expected.previous_animation_index = 255;
     expected.animation_cursor = expected.animation_table[animation];
-    expected.animation_step.packed = word;
+    expected.animation_step.packed = C_TEST_STEP(word);
     expected.unk38 = (u8*)gfx + (saber_bank ? 128 : 64);
     expected.unk3C = (u8*)frames + (saber_bank ? 128 : 64);
 }
@@ -145,7 +148,7 @@ static void check(void)
     }
     assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
     assert(cur_random == rng && need_palette_load == dirty);
-    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 64 && layout_height == 16 && layout_size == 1024 && attributes[0] == 0 && attributes[1] == 0x38);
+    assert(TEST_PLAYER_GFX == (u8*)gfx && TEST_SPRITE_FRAMES == (u8*)frames && TEST_BG_TILE_PIXELS == (u8*)tiles && TEST_BG_TILE_ATTRS == (u8*)attributes && SP_BG_TILEMAP == map && layout_width == 64 && layout_height == 16 && layout_size == 1024 && attributes[0] == 0 && attributes[1] == TEST_DISC32(0x38));
     for (i = 0; i < COUNT(map_words); i += 8)
         assert(((map_words[i] ^ 0x01010101) | (map_words[i + 1] ^ 0x01010101) | (map_words[i + 2] ^ 0x01010101) | (map_words[i + 3] ^ 0x01010101) | (map_words[i + 4] ^ 0x01010101) | (map_words[i + 5] ^ 0x01010101) | (map_words[i + 6] ^ 0x01010101) | (map_words[i + 7] ^ 0x01010101)) == 0);
     assert(c_test_word_difference((u32*)tiles, (u32*)tiles_before, sizeof(tiles) / 4) == 0);
@@ -219,7 +222,7 @@ static u32 train_recovery(u32 row)
     train_scroll_main(&train);
     assert(c_test_word_difference((u32*)&train, (u32*)&train_expected, sizeof(train) / 4) == 0);
     assert(c_test_word_difference((u32*)background_objects, (u32*)moved, sizeof(moved) / 4) == 0);
-    assert(g_Player.script_state == 1 && g_Player.script_action == PLAYER_SCRIPT_WAIT && g_Player.script_facing == 0x40 && engine_obj.gameplay_locked == 1 && g_Player.invincibility_timer == 61);
+    assert(g_Player.script_state == 1 && g_Player.script_action == PLAYER_SCRIPT_WAIT && g_Player.script_facing == PLAYER_FACING_RIGHT && engine_obj.gameplay_locked == 1 && g_Player.invincibility_timer == 61);
     previous();
     capture();
     expected.input_locked = 1;
@@ -241,7 +244,7 @@ static u32 train_recovery(u32 row)
         expected.x_vel.val = expected.unk28 = expected.y_vel.val = expected.unk2C = 0;
         expected.unk5 = PLAYER_SCRIPT_WAIT;
         expected.script_state = -1;
-        expected.unk15 = 0x40;
+        expected.unk15 = PLAYER_FACING_RIGHT;
         expected.unk54 = &D_8011A230[1];
         dirty |= 1;
     }
@@ -269,7 +272,7 @@ static u32 wall_finish(u32 row)
     assert(g_Player.unk5 == PLAYER_ZERO_WALL_SLASH && g_Player.unk6 == 1);
     for (i = 0; i < 28; i++)
         player_zero_wall_slash(&g_Player);
-    assert(g_Player.animation_step.packed == 0x32014001 && g_Player.unk5 == PLAYER_ZERO_WALL_SLASH);
+    assert(g_Player.animation_step.packed == C_TEST_STEP(0x32014001) && g_Player.unk5 == PLAYER_ZERO_WALL_SLASH);
     capture();
     pose(0xF, 0x29010002, 0);
     expected.attacking = 0;
@@ -328,7 +331,11 @@ static void sound_state(u32* v)
     v[10] = D_80139514;
     v[11] = D_80139524;
     v[12] = D_80139528;
+#ifndef MMX4_SATURN
     memcpy(&v[13], &D_80139520, 4);
+#else
+    v[13] = 0;
+#endif
     v[14] = D_8013955C;
 }
 static u32 saber_victory(u32 row)
@@ -345,9 +352,9 @@ static u32 saber_victory(u32 row)
     g_Player.pressed_input = PLAYER_INPUT_SHOOT;
     assert(player_zero_check_saber(&g_Player) == 1);
     g_Player.pressed_input = 0;
-    for (i = 0; i < 45 && g_Player.animation_step.packed != 0x86014001; i++)
+    for (i = 0; i < 45 && g_Player.animation_step.packed != C_TEST_STEP(0x86014001); i++)
         player_zero_saber(&g_Player);
-    assert(g_Player.animation_step.packed == 0x86014001 && g_Player.unk5 == PLAYER_ZERO_SABER);
+    assert(g_Player.animation_step.packed == C_TEST_STEP(0x86014001) && g_Player.unk5 == PLAYER_ZERO_SABER);
     engine_obj.unkF = 0x10;
     D_80171EA9 = 0;
     previous();
@@ -377,8 +384,13 @@ static u32 saber_victory(u32 row)
     dirty |= 1;
     player_update_normal(&g_Player);
     check();
+#ifdef MMX4_SATURN
+    (void)after;
+    assert(saturn_music_thread_track == 0x15 && saturn_music_thread_active == 1);
+#else
     sound_state(after);
     assert(c_test_word_difference((u32*)after, (u32*)music, sizeof(music) / 4) == 0);
+#endif
     assert(D_80171EA9 == 0);
     return 1;
 }

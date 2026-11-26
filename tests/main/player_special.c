@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/player_special.h"
 #include "main/player_check.h"
 #include "main/55C4.h"
@@ -74,7 +75,7 @@ static u32 cancel_case(u32 mode, u32 observation)
         D_8013E198[i] = -1;
     memset(tilemap, 1, sizeof(tilemap));
     memset(pixels, 0, sizeof(pixels));
-    attributes[0] = 0x20;
+    attributes[0] = C_TEST_PSX_WORD(0x20);
     SP_BG_TILEMAP = tilemap;
     layout_width = 16;
     layout_size = 256;
@@ -121,7 +122,7 @@ static u32 cancel_case(u32 mode, u32 observation)
         assert(tilemap[i] == 1);
     for (i = 0; i < COUNT(pixels); i++)
         assert(pixels[i] == 0);
-    assert(attributes[0] == 0x20 && gfx_archive[0] == 8 && gfx_archive[1] == 12);
+    assert(attributes[0] == C_TEST_PSX_WORD(0x20) && gfx_archive[0] == 8 && gfx_archive[1] == 12);
     assert(bounds.unk0 == 0 && bounds.unk1 == 0 && bounds.unk2 == 4 && bounds.unk3 == 4);
     for (i = 0; i < 6; i++)
         assert(zero_shippuuga_cancel_context_sprite_archive[i] == 24 + i * 4 && zero_shippuuga_cancel_context_sprite_archive[i + 6] == i + 1);
@@ -151,7 +152,7 @@ static u32 cancel_case(u32 mode, u32 observation)
         actual = (u8)obj->air_state | ((u32)(u8)obj->air_action << 8) | ((u32)(u8)obj->dash_momentum << 16);
         break;
     case 6:
-        actual = obj->animation_step.packed;
+        actual = C_TEST_STEP(obj->animation_step.packed);
         break;
     case 7:
         actual = obj->unk28;
@@ -173,6 +174,34 @@ static u32 zero_shippuuga_cancel_context_cases_row(u32 row)
     return cancel_case(row / 10, row % 10);
 }
 
+#ifdef VERSION_DEMO
+extern s8 D_8013E370_demo;
+static const struct {
+    u16 held;
+    u8 collision_flags;
+    s32 x_pos, x_vel;
+} demo_hover_cases[] = {
+    { PLAYER_INPUT_RIGHT, PLAYER_COLLIDE_RIGHT, 0, 0x1234 },
+    { PLAYER_INPUT_LEFT, 0, FIXED(-2), FIXED(-2) },
+    { 0, 0, 0, 0x1234 },
+};
+static u32 test_player_hover_steer(u32 row)
+{
+    struct PlayerObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.input.buttons.held = demo_hover_cases[row].held;
+    obj.unk88.bytes.collision_flags = demo_hover_cases[row].collision_flags;
+    obj.x_vel.val = 0x1234;
+    obj.y_pos.i.hi = 100;
+    D_8013E370_demo = 14;
+    player_hover_steer(&obj);
+    assert(D_8013E370_demo == 15 && obj.y_pos.i.hi == 99);
+    assert(obj.x_pos.val == demo_hover_cases[row].x_pos && obj.x_vel.val == demo_hover_cases[row].x_vel);
+    return row;
+}
+#define HOVER_STEER_COUNT COUNT(demo_hover_cases)
+#else
+#define HOVER_STEER_COUNT 1
 static const u32 player_hover_steer_expected[] = { 0u, 1u, 0u, 0u };
 static u32 test_player_hover_steer(u32 row)
 {
@@ -189,6 +218,7 @@ static u32 test_player_hover_steer(u32 row)
     observed_values[3] = (u32)obj.y_pos.i.hi;
     return c_test_observe(0, row, observed_values, player_hover_steer_expected, 4);
 }
+#endif
 
 struct player_nova_strike_hit_wall_case {
     u32 collision_flags, unk15;
@@ -206,7 +236,7 @@ static u32 test_player_nova_strike_hit_wall(u32 row)
     s32 return_value;
     memset(&obj, 0, sizeof(obj));
     obj.unk88.bytes.collision_flags = c->collision_flags;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     return_value = player_nova_strike_hit_wall(&obj);
     observed_values[0] = (u32)return_value;
     observed_values[1] = (u32)obj.unk28;
@@ -237,7 +267,7 @@ static u32 test_player_zero_hyouretsuzan_start(u32 row)
     player_zero_hyouretsuzan_start(&obj);
     observed_values[0] = (u32)obj.air_state;
     observed_values[1] = (u32)obj.animation_step.fields.event;
-    observed_values[2] = (u32)obj.unk15;
+    observed_values[2] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[3] = (u32)obj.unk28;
     observed_values[4] = (u32)obj.unk2C;
     observed_values[5] = (u32)obj.unk6;
@@ -283,7 +313,7 @@ static void ps_ryuenjin_launch_left(void)
 static void ps_ryuenjin_launch_right(void)
 {
     player_reset(PLAYER_ZERO_RYUENJIN, 0, 0x65);
-    pl.unk15 = 0x40;
+    pl.unk15 = PLAYER_FACING_RIGHT;
     HOLD(0x20);
     player_zero_ryuenjin_start(&pl);
 }
@@ -533,17 +563,22 @@ static void ps_rising_air(void)
     player_rising_fire(&pl);
 }
 
+#ifdef VERSION_DEMO
+#define RETAIL_ROW(f) NULL
+#else
+#define RETAIL_ROW(f) f
+#endif
 static void (*const player_special_states_cases[])(void) = {
-    ps_ryuenjin_locked,
-    ps_ryuenjin,
-    ps_ryuenjin_launch_left,
-    ps_ryuenjin_launch_right,
-    ps_ryuenjin_rise,
-    ps_ryuenjin_peak,
-    ps_flame_odd,
-    ps_ryuenjin_land,
-    ps_ryuenjin_fall,
-    ps_ryuenjin_falling,
+    RETAIL_ROW(ps_ryuenjin_locked),
+    RETAIL_ROW(ps_ryuenjin),
+    RETAIL_ROW(ps_ryuenjin_launch_left),
+    RETAIL_ROW(ps_ryuenjin_launch_right),
+    RETAIL_ROW(ps_ryuenjin_rise),
+    RETAIL_ROW(ps_ryuenjin_peak),
+    RETAIL_ROW(ps_flame_odd),
+    RETAIL_ROW(ps_ryuenjin_land),
+    RETAIL_ROW(ps_ryuenjin_fall),
+    RETAIL_ROW(ps_ryuenjin_falling),
     ps_raijin_start,
     ps_raijin_voice,
     ps_raijin_cancel,
@@ -562,8 +597,8 @@ static void (*const player_special_states_cases[])(void) = {
     ps_air_slash,
     ps_finish_idle,
     ps_finish_wait,
-    ps_double_jump,
-    ps_double_jump_no,
+    RETAIL_ROW(ps_double_jump),
+    RETAIL_ROW(ps_double_jump_no),
     ps_combo,
     ps_combo_locked,
     ps_combo_early,
@@ -578,8 +613,18 @@ static void (*const player_special_states_cases[])(void) = {
 };
 static const u32 player_special_states_expected[] = { 2u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x1010039u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0x100FFu, 1u, 0x139u, 0x640000u, 0xC80000u, 0xFFFC0000u, 0x6C000u, 0xFFBDC000u, 0xFFu, 0u, 0x139u, 0x640000u, 0xC80000u, 0x40000u, 0x6C000u, 0xFFBDC000u, 0x40FFu, 0u, 0x239u, 0x640000u, 0xC40000u, 0u, 0x40000u, 0u, 0xFFu, 0x2100u, 0x239u, 0x640000u, 0xC70000u, 0u, 0x10000u, 0u, 0xFFu, 0x2100u, 0x239u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 8u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 7u, 0x640000u, 0xC90000u, 0u, 0xFFFF0000u, 0u, 0xFFu, 0u, 0x339u, 0x640000u, 0xC90000u, 0u, 0xFFFF0000u, 0u, 0xFFu, 0u, 0x135u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 1u, 0x135u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x10135u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x10135u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 1u, 0x10130u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 1u, 8u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 8u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x10132u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 1u, 0x10138u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 7u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 7u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 7u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x10036u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 1u, 0x10036u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0x40FFu, 1u, 0x10138u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 1u, 0x10132u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 2u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x10130u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 6u, 0x640000u, 0xC23000u, 0u, 0x58E00u, 0x420000u, 0xFFu, 1u, 7u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x130u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0x10000FFu, 0u, 0x130u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x130u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x10135u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0x10000FFu, 0u, 0x10130u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x130u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x10130u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 0x10130u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 0u, 2u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 1u, 0x10002u, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, 1u, 0xFF000007u, 0x640000u, 0xC80000u, 0u, 0u, 0x420000u, 0xFFu, 0u };
 
+#ifdef VERSION_DEMO
+static const u8 special_states_demo_rows[] = { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+    30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 };
+#define SPECIAL_STATES_COUNT COUNT(special_states_demo_rows)
+#else
+#define SPECIAL_STATES_COUNT COUNT(player_special_states_cases)
+#endif
 static u32 test_player_special_states(u32 row)
 {
+#ifdef VERSION_DEMO
+    row = special_states_demo_rows[row];
+#endif
     return player_run(player_special_states_cases[row], row, &player_special_states_expected[row * 8]);
 }
 
@@ -783,7 +828,7 @@ static void psz_drop_land(void)
 static void psz_drop_land_right(void)
 {
     player_reset(PLAYER_ZERO_HYOURETSUZAN, 1, 0x61);
-    pl.unk15 = 0x40;
+    pl.unk15 = PLAYER_FACING_RIGHT;
     pl.unk88.bytes.collision_flags = PLAYER_COLLIDE_GROUND;
     player_zero_hyouretsuzan_drop(&pl);
     player_extra = misc_objects[0].x_pos.i.hi;
@@ -839,7 +884,7 @@ static void psz_rakuhouha_burst(void)
 static void psz_rakuhouha_end(void)
 {
     player_reset(PLAYER_ZERO_RAKUHOUHA, 1, 0x69);
-    pl.spike_immune = 1;
+    SPIKE_IMMUNE_SET(pl, 1);
     pl.attacking = 1;
     pl.animation_step.fields.relative_step = 0;
     player_zero_rakuhouha(&pl);
@@ -849,7 +894,7 @@ static void psz_shippuuga_start(void)
     player_reset(PLAYER_ZERO_SHIPPUUGA, 0, 0x68);
     LONG();
     pl.x_vel.val = 0x40000;
-    pl.unk15 = 0x40;
+    pl.unk15 = PLAYER_FACING_RIGHT;
     player_zero_shippuuga(&pl);
 }
 static void psz_shippuuga_stop(void)
@@ -857,7 +902,7 @@ static void psz_shippuuga_stop(void)
     player_reset(PLAYER_ZERO_SHIPPUUGA, 1, 0x68);
     LONG();
     pl.x_vel.val = 0x40000;
-    pl.unk15 = 0x40;
+    pl.unk15 = PLAYER_FACING_RIGHT;
     pl.animation_step.fields.event = 0x20;
     player_zero_shippuuga(&pl);
 }
@@ -866,7 +911,7 @@ static void psz_shippuuga_back(void)
     player_reset(PLAYER_ZERO_SHIPPUUGA, 1, 0x68);
     LONG();
     pl.x_vel.val = -0x40000;
-    pl.unk15 = 0x40;
+    pl.unk15 = PLAYER_FACING_RIGHT;
     player_zero_shippuuga(&pl);
 }
 static void psz_shippuuga_wall(void)
@@ -874,7 +919,7 @@ static void psz_shippuuga_wall(void)
     player_reset(PLAYER_ZERO_SHIPPUUGA, 1, 0x68);
     LONG();
     pl.x_vel.val = 0x40000;
-    pl.unk15 = 0x40;
+    pl.unk15 = PLAYER_FACING_RIGHT;
     pl.unk88.bytes.collision_flags = PLAYER_COLLIDE_RIGHT;
     player_zero_shippuuga(&pl);
 }
@@ -933,7 +978,7 @@ static void psz_check_shippuuga(void)
 static void psz_check_shippuuga_right(void)
 {
     player_reset(PLAYER_IDLE, 0, 0);
-    pl.unk15 = 0x40;
+    pl.unk15 = PLAYER_FACING_RIGHT;
     pl.boss_flags = 0x80;
     pl.pressed_input = PLAYER_INPUT_SPECIAL;
     player_extra = player_zero_check_shippuuga(&pl);
@@ -948,7 +993,7 @@ static void psz_ladder_slash_turn_left(void)
 {
     player_reset(PLAYER_ZERO_LADDER_SLASH, 1, 0x1F);
     LONG();
-    pl.unk15 = 0x40;
+    pl.unk15 = PLAYER_FACING_RIGHT;
     pl.pressed_input = PLAYER_INPUT_LEFT;
     player_zero_ladder_slash(&pl);
 }
@@ -974,6 +1019,8 @@ static void psz_ladder_slash_end(void)
 }
 
 static void (*const player_zero_techniques_cases[])(void) = {
+#ifndef VERSION_DEMO
+#define ZERO_TECHNIQUES_FIRST 0
     psz_drop_land,
     psz_drop_land_right,
     psz_drop_fall,
@@ -996,6 +1043,9 @@ static void (*const player_zero_techniques_cases[])(void) = {
     psz_check_shippuuga_busy,
     psz_check_shippuuga,
     psz_check_shippuuga_right,
+#else
+#define ZERO_TECHNIQUES_FIRST 22
+#endif
     psz_ladder_slash_start,
     psz_ladder_slash_turn_left,
     psz_ladder_slash_turn_right,
@@ -1006,11 +1056,12 @@ static const u32 player_zero_techniques_expected[] = { 0x236u, 0x640000u, 0xC800
 
 static u32 test_player_zero_techniques(u32 row)
 {
-    return player_run(player_zero_techniques_cases[row], row, &player_zero_techniques_expected[row * 8]);
+    return player_run(player_zero_techniques_cases[row], row, &player_zero_techniques_expected[(row + ZERO_TECHNIQUES_FIRST) * 8]);
 }
 
 #define HOLD9() (pl.animation_step.fields.duration = 9, pl.animation_step.fields.relative_step = 1)
-#define NOVA(phase, setup) (player_reset(PLAYER_NOVA_STRIKE, phase, 0), HOLD9(), pl.nova_strike_active = 1, pl.spike_immune = 1, pl.air_state = 1, setup, player_nova_strike(&pl), player_extra = pl.nova_strike_active | pl.nova_strike_timer << 8 | engine_obj.gameplay_locked << 16)
+#ifndef VERSION_DEMO
+#define NOVA(phase, setup) (player_reset(PLAYER_NOVA_STRIKE, phase, 0), HOLD9(), pl.nova_strike_active = 1, SPIKE_IMMUNE_SET(pl, 1), pl.air_state = 1, setup, player_nova_strike(&pl), player_extra = pl.nova_strike_active | pl.nova_strike_timer << 8 | engine_obj.gameplay_locked << 16)
 static void pns_locked(void)
 {
     NOVA(1, pl.input_locked = 1);
@@ -1019,7 +1070,7 @@ static void pns_windup(void) { NOVA(0, 0); }
 static void pns_windup_go(void) { NOVA(0, pl.animation_step.fields.event = (s8)0x80); }
 static void pns_dash_wait(void) { NOVA(1, 0); }
 static void pns_dash_launch(void) { NOVA(1, pl.animation_step.fields.event = 0x20); }
-static void pns_dash_launch_right(void) { NOVA(1, (pl.unk15 = 0x40, pl.animation_step.fields.event = 0x20)); }
+static void pns_dash_launch_right(void) { NOVA(1, (pl.unk15 = PLAYER_FACING_RIGHT, pl.animation_step.fields.event = 0x20)); }
 static void pns_dash_wall(void) { NOVA(1, (engine_obj.gameplay_locked = 1, pl.x_vel.val = -0x80000, pl.unk88.bytes.collision_flags = PLAYER_COLLIDE_LEFT, pl.animation_step.fields.event = 0x40)); }
 static void pns_end_fly(void) { NOVA(2, (pl.nova_strike_timer = 3, pl.x_vel.val = -0x80000)); }
 static void pns_end_timeout(void) { NOVA(2, (engine_obj.gameplay_locked = 1, pl.nova_strike_timer = 0)); }
@@ -1122,6 +1173,10 @@ static u32 test_player_zero_air_techniques(u32 row)
 {
     return player_run(player_zero_air_techniques_cases[row], row, &player_zero_air_techniques_expected[row * 8]);
 }
+#define ZERO_AIR_COUNT COUNT(player_zero_air_techniques_cases)
+#else
+#define ZERO_AIR_COUNT 0
+#endif
 
 static const struct {
     u16 pressed, held;
@@ -1165,7 +1220,7 @@ static const struct {
     s8 relative_step;
 } ladder_slashes[] = {
     { PLAYER_INPUT_LEFT, 0, 0, 1, PLAYER_ZERO_LADDER_SLASH, 1, 0, 1 },
-    { PLAYER_INPUT_RIGHT, 0, 0, 1, PLAYER_ZERO_LADDER_SLASH, 1, 0x40, 1 },
+    { PLAYER_INPUT_RIGHT, 0, 0, 1, PLAYER_ZERO_LADDER_SLASH, 1, PLAYER_FACING_RIGHT, 1 },
     { 0, 1, 0, 1, PLAYER_ZERO_LADDER_SLASH, 1, 0, 1 },
     { 0, 0, 0x40, 1, PLAYER_ZERO_LADDER_SLASH, 1, 0, 1 },
     { PLAYER_INPUT_SHOOT, 0, 0x40, 1, PLAYER_ZERO_LADDER_SLASH, 1, 0, 1 },
@@ -1181,7 +1236,7 @@ static u32 test_ladder_slash(u32 row)
     pl.animation_step.fields.event = ladder_slashes[row].event;
     pl.animation_step.fields.relative_step = ladder_slashes[row].relative_step;
     pl.animation_step.fields.duration = 2;
-    player_attrs[0] = ladder_slashes[row].ladder ? 0x20 : 0;
+    player_attrs[0] = C_TEST_PSX_WORD(ladder_slashes[row].ladder ? 0x20 : 0);
 
     player_zero_ladder_slash(&pl);
 
@@ -1207,7 +1262,7 @@ static void animation(struct PlayerObj* p, u32 index, u32 word)
     p->unk17 = index;
     p->previous_animation_index = 0xFF;
     p->animation_cursor = (u32*)D_80119DF0[index];
-    p->animation_step.packed = word;
+    p->animation_step.packed = C_TEST_STEP(word);
     p->unk3C = (u8*)frames + 8;
 }
 static u32 hover_handoff(u32 row)
@@ -1233,7 +1288,7 @@ static u32 hover_handoff(u32 row)
     g_Player.state = 1;
     g_Player.unk5 = PLAYER_HOVER;
     g_Player.unk6 = rise ? 1 : 6;
-    g_Player.unk15 = facing ? 0x40 : 0;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     g_Player.hover_timer = mode == 3 ? 1 : 2;
     g_Player.hover_bob = bob_indices[bob];
     g_Player.x_pos.val = 100 * 65536 + 0x1234;
@@ -1277,7 +1332,7 @@ static u32 hover_handoff(u32 row)
         expected.unk6 = 0;
     } else if (can_dash) {
         if (direction)
-            expected.unk15 = direction == 2 ? 0x40 : 0;
+            expected.unk15 = direction == 2 ? PLAYER_FACING_RIGHT : 0;
         expected.x_vel.val = expected.unk15 ? 0x68000 : -0x68000;
         animation(&expected, 18, animation_words[2]);
         expected.unk28 = -0x3000;
@@ -1295,7 +1350,7 @@ static u32 hover_handoff(u32 row)
             palette_expected[1 + 0x130 + i] = 0x1210 + i;
     } else {
         if (dash && direction)
-            expected.unk15 = direction == 2 ? 0x40 : 0;
+            expected.unk15 = direction == 2 ? PLAYER_FACING_RIGHT : 0;
         expected.y_pos.val += bob_offsets[bob] * 65536;
         expected.hover_bob = bob_indices[bob] + 1;
         expected.x_vel.val = direction == 0 ? 0 : direction == 1 ? -0x20000
@@ -1363,22 +1418,22 @@ static u32 special(u32 row)
     g_Player.weapon_energy[g_Player.weapon] = 48;
     g_Player.shot_type = g_Player.last_shot_type = id;
     g_Player.attacking = g_Player.air_state = 1;
-    g_Player.unk15 = face ? 0x40 : 0;
+    g_Player.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     g_Player.bg_offset = layer;
     g_Player.x_pos.i.hi = 160;
     g_Player.y_pos.i.hi = 120;
     g_Player.unk38 = (u8*)gfx + 32;
     g_Player.unk3C = (u8*)frames_player_special_shot_capacity + 32;
     g_Player.unk40 = 0x500;
-    g_Player.unk42 = 0x7800;
-    g_Player.unk16 = 2;
+    g_Player.unk42 = OBJECT_CLUT(0x7800);
+    g_Player.unk16 = VISUAL_SATURN_LAYER(2);
     g_Player.animation_table = (u32**)D_80119DF0;
     set_animation_frame(ANIMATED_OBJECT(&g_Player), animation, 1);
-    assert(g_Player.animation_step.packed == (kind < 2 ? 0x8B018003 : kind == 2 ? 0xE8018030
+    assert(g_Player.animation_step.packed == C_TEST_STEP(kind < 2 ? 0x8B018003 : kind == 2 ? 0xE8018030
                                                                                 : 0x68018008));
     expected = g_Player;
-    expected.animation_step.packed = kind < 2 ? 0x8B010002 : kind == 2 ? 0xE801002F
-                                                                       : 0x68010007;
+    expected.animation_step.packed = C_TEST_STEP(kind < 2 ? 0x8B010002 : kind == 2 ? 0xE801002F
+                                                                       : 0x68010007);
     expected.shot_count = expected.special_shot_count = 1;
     if (weapon_free) {
         struct WeaponObj* w = &weapons_expected[15];
@@ -1451,8 +1506,8 @@ static void prepare(u32 profile)
         ((u16*)bank_player_zero_air_handoffs)[i] = 0x1200 + i;
     for (i = 0; i < COUNT(palette_player_zero_air_handoffs); i++)
         palette_player_zero_air_handoffs[i] = palette_expected_player_zero_air_handoffs[i] = 0xBEEF;
-    attributes_player_zero_air_handoffs[0] = 0x20;
-    attributes_player_zero_air_handoffs[1] = 0x38;
+    attributes_player_zero_air_handoffs[0] = C_TEST_PSX_WORD(0x20);
+    attributes_player_zero_air_handoffs[1] = C_TEST_PSX_WORD(0x38);
     for (i = 480; i < COUNT(pixels_player_zero_air_handoffs); i++)
         pixels_player_zero_air_handoffs[i] = 1;
     TEST_PLAYER_GFX = (u8*)gfx_player_zero_air_handoffs;
@@ -1480,7 +1535,7 @@ static void prepare(u32 profile)
     g_Player.active = 0x41;
     g_Player.state = PLAYER_STATE_NORMAL;
     g_Player.hp = 24;
-    g_Player.unk15 = profile % 2 ? 0x40 : 0;
+    g_Player.unk15 = profile % 2 ? PLAYER_FACING_RIGHT : 0;
     g_Player.bg_offset = profile % 3;
     g_Player.x_pos.val = (100 + profile % 3 * 16) * 65536 + 0x1234;
     g_Player.y_pos.val = 200 * 65536 + 0x5678;
@@ -1553,7 +1608,7 @@ static void check(void)
         assert(gfx_player_zero_air_handoffs[i] == (i < 2 ? 0x20 + 4 * i : 0));
         assert(sprites[i] == (i < 6 ? 0x20 + 4 * i : 0));
     }
-    assert(attributes_player_zero_air_handoffs[0] == 0x20 && attributes_player_zero_air_handoffs[1] == 0x38 && bounds.unk0 == 0 && bounds.unk1 == 0 && bounds.unk2 == 4 && bounds.unk3 == 4);
+    assert(attributes_player_zero_air_handoffs[0] == C_TEST_PSX_WORD(0x20) && attributes_player_zero_air_handoffs[1] == C_TEST_PSX_WORD(0x38) && bounds.unk0 == 0 && bounds.unk1 == 0 && bounds.unk2 == 4 && bounds.unk3 == 4);
     assert(controller_input.held == 0x1234 && controller_input.previous == 0x5678 && controller_input.pressed == 0x840);
     assert(cur_random == 0x1234 && need_palette_load == palette_dirty);
     for (i = 0; i < 6; i++)
@@ -1569,13 +1624,13 @@ static void expect_animation(u32 animation, u32 word)
 {
     const u32* const* table = expected.unk2 ? D_8011AFF0 : D_80119DF0;
     u32 resource = expected.unk2 && (animation == 0x41 || animation == 0x64) ? 1 : 0;
-    assert(table[animation][0] == word);
+    assert(table[animation][0] == C_TEST_STEP(word));
     if (expected.unk2)
         assert(D_8011AF60[animation] == resource);
     expected.unk17 = animation;
     expected.previous_animation_index = 0xFF;
     expected.animation_cursor = (u32*)table[animation];
-    expected.animation_step.packed = word;
+    expected.animation_step.packed = C_TEST_STEP(word);
     if (expected.unk2)
         expected.unk38 = (u8*)gfx_player_zero_air_handoffs + (resource ? 0x24 : 0x20);
     expected.unk3C = (u8*)sprites + (resource ? 0x34 : 0x20);
@@ -1615,10 +1670,10 @@ static void expect_clear_attack(void)
 }
 
 static const u32 slash_words[2][11] = {
-    { 0xD5018001, 0xD7010101, 0xD9010201, 0xDB010301, 0xDD010401,
-        0xDF010501, 0xE1010601, 0xE3010702, 0xE5014804, 0xE5004960 },
-    { 0x84010002, 0xA1018002, 0xA3010002, 0xA5010002, 0xA7010002,
-        0xA9010002, 0xAB010002, 0xAD010002, 0xAF010002, 0xA0010002, 0xA0000060 },
+    { C_TEST_STEP(0xD5018001), C_TEST_STEP(0xD7010101), C_TEST_STEP(0xD9010201), C_TEST_STEP(0xDB010301), C_TEST_STEP(0xDD010401),
+        C_TEST_STEP(0xDF010501), C_TEST_STEP(0xE1010601), C_TEST_STEP(0xE3010702), C_TEST_STEP(0xE5014804), C_TEST_STEP(0xE5004960) },
+    { C_TEST_STEP(0x84010002), C_TEST_STEP(0xA1018002), C_TEST_STEP(0xA3010002), C_TEST_STEP(0xA5010002), C_TEST_STEP(0xA7010002),
+        C_TEST_STEP(0xA9010002), C_TEST_STEP(0xAB010002), C_TEST_STEP(0xAD010002), C_TEST_STEP(0xAF010002), C_TEST_STEP(0xA0010002), C_TEST_STEP(0xA0000060) },
 };
 
 static void prepare_zero(u32 profile, u32 falling, u32 spin, u32 frame)
@@ -1794,7 +1849,7 @@ static u32 handoff(u32 row)
     c_test_zero_words(attributes_rising_fire_ladder_handoff, COUNT(attributes_rising_fire_ladder_handoff));
     map[50] = 33;
     tiles[33 * 256 + (down ? 12 : 13) * 16 + 6] = tile;
-    attributes_rising_fire_ladder_handoff[tile] = down ? 0x03720021 : 0x03760020;
+    attributes_rising_fire_ladder_handoff[tile] = TEST_DISC32(down ? 0x03720021 : 0x03760020);
     c_test_copy_words(expected_map, map_words, COUNT(map_words));
     c_test_copy_words(expected_tiles, tiles_words, COUNT(tiles_words));
     c_test_copy_words(expected_attributes, attributes_rising_fire_ladder_handoff, COUNT(attributes_rising_fire_ladder_handoff));
@@ -1821,7 +1876,7 @@ static u32 handoff(u32 row)
     g_Player.weapon_energy[4] = 48;
     g_Player.shot_count = g_Player.special_shot_count = 1;
     g_Player.air_state = 1;
-    g_Player.unk15 = face ? 0x40 : 0;
+    g_Player.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     g_Player.x_pos.i.hi = 5731;
     g_Player.y_pos.i.hi = down ? 427 : 481;
     g_Player.x_pos.u.lo = fraction ? 0x1234 : 0;
@@ -1833,14 +1888,14 @@ static u32 handoff(u32 row)
     g_Player.unk3C = (u8*)frames_rising_fire_ladder_handoff + 32;
     g_Player.animation_table = (u32**)D_80119DF0;
     set_animation_frame(ANIMATED_OBJECT(&g_Player), 99, 2);
-    assert(g_Player.animation_step.packed == 0xE8000060);
+    assert(g_Player.animation_step.packed == C_TEST_STEP(0xE8000060));
     expected = g_Player;
     expected.x_pos.i.hi = 5736;
     expected.x_pos.u.lo = expected.y_pos.u.lo = 0;
     expected.unk17 = anim;
     expected.previous_animation_index = 255;
     expected.animation_cursor = (u32*)D_80119DF0[anim];
-    expected.animation_step.packed = down ? 0x9A010005 : 0x8F010003;
+    expected.animation_step.packed = C_TEST_STEP(down ? 0x9A010005 : 0x8F010003);
     expected.unk5 = PLAYER_LADDER_TRANSITION;
     expected.unk6 = down ? 2 : 0;
     if (down)
@@ -1866,6 +1921,12 @@ static u32 handoff(u32 row)
 }
 
 static u32 archive[16];
+#ifdef MMX4_SATURN
+#include "saturn/player_resources.h"
+#define RAKUHOUHA_TEXTURE PLAYER_EFFECT_TEXTURE_BASE
+#else
+#define RAKUHOUHA_TEXTURE 0
+#endif
 static struct VisualObj visuals_expected_zero_rakuhouha_capacity[32];
 static struct WeaponObj weapons_expected_zero_rakuhouha_capacity[16];
 static u32 rakuhouha(u32 row)
@@ -1891,23 +1952,24 @@ static u32 rakuhouha(u32 row)
     obj.state = 1;
     obj.unk2 = 1;
     obj.unk5 = 0x3A;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = layer;
     obj.hp = 24;
     obj.boss_flags = 0x20;
-    obj.attacking = obj.air_state = obj.spike_immune = 1;
+    obj.attacking = obj.air_state = 1;
+    SPIKE_IMMUNE_SET(obj, 1);
     obj.weapon_energy[0] = 36;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.animation_table = (u32**)D_8011AFF0;
     set_animation_frame(ANIMATED_OBJECT(&obj), 0x67, event ? 9 : 4);
-    assert(obj.animation_step.packed == (event ? 0xB6014002 : 0xB5010002));
+    assert(obj.animation_step.packed == (event ? C_TEST_STEP(0xB6014002) : C_TEST_STEP(0xB5010002)));
     if (!event)
         obj.animation_step.fields.duration = 1;
     expected = obj;
     if (!event)
         expected.animation_cursor++;
-    expected.animation_step.packed = 0xB6010001;
+    expected.animation_step.packed = C_TEST_STEP(0xB6010001);
     if (!event && slots) {
         struct VisualObj* v = &visuals_expected_zero_rakuhouha_capacity[31];
         v->active = 0x21;
@@ -1916,7 +1978,8 @@ static u32 rakuhouha(u32 row)
         v->bg_offset = layer;
         v->unk3C = (u8*)archive + 52;
         v->animation_table = D_8011C018;
-        v->unk42 = 0x7803;
+        v->unk40 = RAKUHOUHA_TEXTURE;
+        v->unk42 = OBJECT_CLUT(0x7803);
         v->x_pos = obj.x_pos;
         v->y_pos = obj.y_pos;
         v->unk15 = obj.unk15;
@@ -1941,27 +2004,44 @@ static u32 rakuhouha(u32 row)
     return 1;
 }
 
+#ifdef VERSION_DEMO
+#define RETAIL_SPECIAL_CASES 0
+#else
+#define RETAIL_SPECIAL_CASES (COUNT(hyo_land_cases) + COUNT(zero_shippuuga_cancel_context_cases_expected) + 2 + 2 + 54 + 96 + 36)
+#endif
 const struct CTestGroup c_test_groups[] = {
+#ifndef VERSION_DEMO
     { "hyouretsuzan_land", 0, 0, COUNT(hyo_land_cases), test_hyo_land },
+#endif
     { "ladder_slash", 0, 0, COUNT(ladder_slashes), test_ladder_slash },
+#ifndef VERSION_DEMO
     { "player_zero_air_techniques", 0, 0, COUNT(player_zero_air_techniques_cases), test_player_zero_air_techniques },
+#endif
     { "player_zero_techniques", 0, 0, COUNT(player_zero_techniques_cases), test_player_zero_techniques },
     { "player_special_extra", 0, 0, COUNT(player_special_extra_cases), test_player_special_extra },
-    { "player_special_states", 0, 0, COUNT(player_special_states_cases), test_player_special_states },
+    { "player_special_states", 0, 0, SPECIAL_STATES_COUNT, test_player_special_states },
+#ifndef VERSION_DEMO
     { "zero_shippuuga_cancel_context", NULL, zero_shippuuga_cancel_context_cases_expected, COUNT(zero_shippuuga_cancel_context_cases_expected), zero_shippuuga_cancel_context_cases_row },
-    { "player_hover_steer", 0, 0, 1, test_player_hover_steer },
+#endif
+    { "player_hover_steer", 0, 0, HOVER_STEER_COUNT, test_player_hover_steer },
+#ifndef VERSION_DEMO
     { "player_nova_strike_hit_wall", 0, 0, 2, test_player_nova_strike_hit_wall },
     { "player_zero_hyouretsuzan_start", 0, 0, 2, test_player_zero_hyouretsuzan_start },
+#endif
     { "soul_body_clone_archive", soul_body_clone_archive_cases, soul_body_clone_archive_cases_expected, COUNT(soul_body_clone_archive_cases), 0 },
+#ifndef VERSION_DEMO
     { "hover_dash_cooldown_fall_wall_and_stop_handoffs", NULL, NULL, 54, hover_handoff },
     { "X_normal_charged_Frost_Tower_and_ground_air_Rising_Fire_original_events_capacity", NULL, NULL, 96, special },
+#endif
     { "air_handoff", 0, 0, 12, test_air_handoff },
     { "cancel_window_handoff", 0, 0, 72, test_cancel_window_handoff },
     { "cancelled_attack_handoff", 0, 0, 12, test_cancelled_attack_handoff },
     { "combo_end", 0, 0, 16, test_combo_end },
     { "combo_cancel", 0, 0, 96, test_combo_cancel },
     { "ground_Rising_Fire_terminal_to_real_stage1_ladder_body_and_top", NULL, NULL, 8, handoff },
+#ifndef VERSION_DEMO
     { "Zero_own_animation_visual_and_nine_shot_events_capacity_faces_layers", NULL, NULL, 36, rakuhouha },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(hyo_land_cases) + COUNT(ladder_slashes) + COUNT(player_zero_air_techniques_cases) + COUNT(player_zero_techniques_cases) + COUNT(player_special_extra_cases) + COUNT(player_special_states_cases) + COUNT(zero_shippuuga_cancel_context_cases_expected) + 1 + 2 + 2 + COUNT(soul_body_clone_archive_cases) + 54 + 96 + 12 + 72 + 12 + 16 + 96 + 8 + 36;
+const u32 c_test_count = RETAIL_SPECIAL_CASES + COUNT(ladder_slashes) + ZERO_AIR_COUNT + COUNT(player_zero_techniques_cases) + COUNT(player_special_extra_cases) + SPECIAL_STATES_COUNT + HOVER_STEER_COUNT + COUNT(soul_body_clone_archive_cases) + 12 + 72 + 12 + 16 + 96 + 8;

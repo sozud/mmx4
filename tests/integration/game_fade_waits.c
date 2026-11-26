@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/game_info.h"
 void character_select_state_5(struct EngineObj*);
 static const s8 active_values[] = { 0, 1, -1 };
@@ -24,8 +25,8 @@ static u32 fade_wait(u32 row)
         if (timer == 0) {
             engine_expected.unk1++;
             if (active == 0) {
-                main_expected.transition.active = -1;
-                main_expected.transition.fade_amount = 8;
+                main_expected.transition.active = TEST_FADE_OUT_ACTIVE;
+                main_expected.transition.fade_amount = TEST_FADE_AMOUNT(8, main_expected.transition.fade_amount);
             }
         } else
             engine_expected.unk4--;
@@ -35,8 +36,8 @@ static u32 fade_wait(u32 row)
         if (timer == 0) {
             expected.mode++;
             if (active == 0) {
-                main_expected.transition.active = -1;
-                main_expected.transition.fade_amount = 8;
+                main_expected.transition.active = TEST_FADE_OUT_ACTIVE;
+                main_expected.transition.fade_amount = TEST_FADE_AMOUNT(8, main_expected.transition.fade_amount);
             }
         }
         func_8001D64C(&info);

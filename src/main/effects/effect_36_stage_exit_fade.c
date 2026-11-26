@@ -59,19 +59,17 @@ void stage_exit_fade_whiteout(struct EffectObj* self)
     g_Player.invincibility_timer = 0x78;
     if (--self->ext.effect_36.timer == 0) {
         self->state = 3;
-#ifdef MMX4_SATURN
-        D_8013E188[0] = 0x4F;
-#else
+#ifndef MMX4_SATURN
         for (i = 0; i < 4; i++) {
             D_8013E188[i] = -1;
         }
-#endif
         g_FilterModeR = 1;
         g_FilterModeG = 2;
         g_FilterModeB = 4;
         g_FilterAmountR = 0x1F;
         g_FilterAmountG = 0x3E0;
         g_FilterAmountB = 0x7C00;
+#endif
     }
 }
 

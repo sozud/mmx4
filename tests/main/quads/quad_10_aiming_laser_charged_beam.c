@@ -94,7 +94,7 @@ static u32 beam_case(u32 mode, u32 observation)
         obj->vertices[i].x.val = (100 + i) * 65536 + 0x1357;
         obj->vertices[i].y.val = (200 + i) * 65536 + 0x2468;
     }
-    player.unk15 = mode == 0 ? 0 : 0x40;
+    player.unk15 = mode == 0 ? 0 : PLAYER_FACING_RIGHT;
     player.animation_step.fields.frame_index = 4;
     player.x_pos.val = 300 * 65536 + 0x5678;
     player.y_pos.val = 400 * 65536 + 0x6789;
@@ -226,6 +226,7 @@ static u32 beam_transitions(u32 row)
                                           : 2;
     obj->unk2 = type;
     obj->on_screen = 1;
+    obj->unk36 = 1;
     obj->bg_offset = -1;
     obj->unk5C = PLAYER_OBJECT(&owner);
     obj->x_pos.val = 100 * 65536 + 0x1234;
@@ -239,7 +240,7 @@ static u32 beam_transitions(u32 row)
     g_Player.weapon = 6;
     g_Player.hp = 16;
     g_Player.bg_offset = layer == 0 ? -1 : layer - 1;
-    g_Player.unk15 = facing * 0x40;
+    g_Player.unk15 = facing * PLAYER_FACING_RIGHT;
     g_Player.animation_step.fields.frame_index = 4;
     g_Player.x_pos.val = (layer == 2 ? -300 : 300) * 65536 + 0x5678;
     g_Player.y_pos.val = (layer == 2 ? -400 : 400) * 65536 + 0x6789;

@@ -8,7 +8,61 @@
 void player_update_charged_shot_type(struct PlayerObj* self, s32 button);
 void player_cancel_released_charge(void);
 extern u32* D_80137E08;
+s32 player_check_nova_strike(struct PlayerObj* self);
 extern u8* D_80141EE8[6];
+
+#ifdef VERSION_DEMO
+void func_8004314C_demo(struct PlayerObj* player);
+
+static u32 weapon_sound_rows[0x20];
+static u8* weapon_saved_rows;
+#define SWAP(cur, flags, press, keys, setup) (weapon_saved_rows = D_80141F50[1], player_reset(1, 0, 0), D_80141F50[1] = (u8*)weapon_sound_rows, pl.unk5 = PLAYER_IDLE, pl.weapon = cur, pl.boss_flags = flags, pl.armor_parts = 4, pl.pressed_input = press, pl.input.buttons.held = keys, setup, func_8004314C_demo(&pl), D_80141F50[1] = weapon_saved_rows, player_extra = (u8)pl.weapon)
+static void pw_locked(void) { SWAP(1, 0xFF, 0x100, 0, pl.input_locked = 1); }
+static void pw_clone(void) { SWAP(1, 0xFF, 0x100, 0, pl.is_clone = 1); }
+static void pw_beam_in(void) { SWAP(1, 0xFF, 0x100, 0, pl.unk5 = PLAYER_BEAM_IN); }
+static void pw_beam_out(void) { SWAP(1, 0xFF, 0x100, 0, pl.unk5 = PLAYER_BEAM_OUT); }
+static void pw_specials(void) { SWAP(1, 0xFF, 0x100, 0, pl.special_shot_count = 1); }
+static void pw_ride_exit(void) { SWAP(1, 0xFF, 0x100, 0, pl.ride_state = -1); }
+static void pw_riding(void) { SWAP(1, 0xFF, 0x100, 0, pl.ride_state = 1); }
+static void pw_both_held(void) { SWAP(3, 0xFF, 0, 0x300, 0); }
+static void pw_both_pressed(void) { SWAP(3, 0xFF, 0x300, 0, 0); }
+static void pw_both_buster(void) { SWAP(0, 0xFF, 0x300, 0, 0); }
+static void pw_none(void) { SWAP(2, 0xFF, 0, 0, 0); }
+static void pw_next(void) { SWAP(0, 5, 0x100, 0, pl.armor_parts = 0); }
+static void pw_next_skip(void) { SWAP(1, 5, 0x100, 0, 0); }
+static void pw_next_wrap(void) { SWAP(3, 5, 0x100, 0, 0); }
+static void pw_prev_wrap(void) { SWAP(0, 0x80, 0x200, 0, 0); }
+static void pw_prev_skip(void) { SWAP(3, 1, 0x200, 0, 0); }
+static void pw_prev_buster(void) { SWAP(1, 0, 0x200, 0, 0); }
+static void pw_same(void) { SWAP(0, 0, 0x100, 0, 0); }
+static void pw_select_5(void) { SWAP(4, 0x10, 0x100, 0, 0); }
+static void pw_select_6(void) { SWAP(5, 0x20, 0x100, 0, 0); }
+static void pw_select_8(void) { SWAP(7, 0x80, 0x100, 0, 0); }
+
+static void (*const player_weapon_switch_cases[])(void) = {
+    pw_locked, pw_clone, pw_beam_in, pw_beam_out, pw_specials, pw_ride_exit, pw_riding, pw_both_held,
+    pw_both_pressed, pw_both_buster, pw_none, pw_next, pw_next_skip, pw_next_wrap, pw_prev_wrap, pw_prev_skip,
+    pw_prev_buster, pw_same, pw_select_5, pw_select_6, pw_select_8,
+};
+#define ROW(action, extra) action, 0x640000u, 0xC80000u, 0u, 0u, 0u, 0xFFu, extra
+static const u32 player_weapon_switch_expected[] = {
+    ROW(2u, 1u), ROW(2u, 1u), ROW(0u, 1u), ROW(1u, 1u), ROW(2u, 1u), ROW(2u, 1u), ROW(2u, 2u), ROW(2u, 0u),
+    ROW(2u, 0u), ROW(2u, 0u), ROW(2u, 2u), ROW(2u, 1u), ROW(2u, 3u), ROW(2u, 0u), ROW(2u, 8u), ROW(2u, 1u),
+    ROW(2u, 0u), ROW(2u, 0u), ROW(2u, 5u), ROW(2u, 6u ^ 1u), ROW(2u, 8u),
+};
+#undef ROW
+
+static u32 test_player_weapon_switch(u32 row)
+{
+    return player_run(player_weapon_switch_cases[row], row, &player_weapon_switch_expected[row * 8]);
+}
+
+const struct CTestGroup c_test_groups[] = {
+    { "player_weapon_switch", 0, 0, COUNT(player_weapon_switch_cases), test_player_weapon_switch },
+};
+const u32 c_test_group_count = COUNT(c_test_groups);
+const u32 c_test_count = COUNT(player_weapon_switch_cases);
+#else
 
 static u32 charge_case(u32 mode)
 {
@@ -105,7 +159,7 @@ static u32 ladder_case(u32 mode)
     obj.dash_momentum = 1;
     obj.hurt_phase = 2;
     obj.invincibility_timer = 9;
-    obj.unk15 = mode == 4 ? 0x40 : 0;
+    obj.unk15 = mode == 4 ? PLAYER_FACING_RIGHT : 0;
     obj.armor_parts = 2;
     obj.weapon_energy[0] = 0x30;
     obj.pressed_input = PLAYER_INPUT_GIGA;
@@ -141,7 +195,7 @@ static u32 ladder_case(u32 mode)
         expected.hurt_phase = 0;
         expected.invincibility_timer = 0;
         expected.air_state = 1;
-        expected.spike_immune = 1;
+        SPIKE_IMMUNE_SET(expected, 1);
         expected.nova_strike_active = 1;
         expected.nova_strike_timer = 24;
         expected.weapon_energy[0] = mode == 4 ? 0x30 : 0;
@@ -534,6 +588,33 @@ static u32 charge(u32 row)
     return 1;
 }
 
+static u32 equip_effect(u32 row)
+{
+    player_reset(2, 0, 0);
+    pl.unk2 = 0;
+    pl.weapon = row ? 8 : 5;
+    player_equip_weapon(&pl);
+    assert(visual_objects[0].active == 1 && visual_objects[0].id == 0x1B && visual_objects[0].unk2 == row);
+    assert(visual_objects[1].active == 0);
+    return 1;
+}
+
+static u32 nova_refusals(u32 row)
+{
+    player_reset(2, 0, 0);
+    pl.unk2 = 0;
+    pl.animation_table = (u32**)D_80119DF0;
+    pl.armor_parts = 2;
+    pl.weapon_energy[0] = 0x30;
+    pl.air_action = row == 0;
+    pl.unk15 = row == 1 ? PLAYER_FACING_RIGHT : 0;
+    pl.unk88.bytes.collision_flags = row == 1 ? PLAYER_COLLIDE_RIGHT : 0;
+    pl.pressed_input = row == 2 ? 0 : PLAYER_INPUT_GIGA;
+    assert(player_check_nova_strike(&pl) == 0);
+    assert(pl.weapon_energy[0] == 0x30 && pl.air_action == (row == 0) && pl.unk5 == 2);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "charge_inhibition", 0, 0, 16, test_charge_inhibition },
     { "stored_charge_priority", 0, 0, 36, test_stored_charge_priority },
@@ -544,6 +625,9 @@ const struct CTestGroup c_test_groups[] = {
     { "player_charge_special_button", 0, 0, 7, test_player_charge_special_button },
     { "player_check_shoot_ladder", 0, 0, 1, test_player_check_shoot_ladder },
     { "charge_energy_stock_and_timer_boundaries", NULL, NULL, COUNT(cases), charge },
+    { "equip_effect", NULL, NULL, 2, equip_effect },
+    { "nova_refusals", NULL, NULL, 3, nova_refusals },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 16 + 36 + COUNT(player_weapon_switch_cases) + COUNT(player_independent_charge_release_cases_expected) + COUNT(player_ladder_attack_context_cases_expected) + 1 + 7 + 1 + COUNT(cases);
+const u32 c_test_count = 16 + 36 + COUNT(player_weapon_switch_cases) + COUNT(player_independent_charge_release_cases_expected) + COUNT(player_ladder_attack_context_cases_expected) + 1 + 7 + 1 + COUNT(cases) + 2 + 3;
+#endif

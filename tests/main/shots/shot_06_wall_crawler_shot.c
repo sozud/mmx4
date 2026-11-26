@@ -16,7 +16,7 @@ static u32 default_case(u32 observation)
     obj.id = 6;
     obj.state = 1;
     obj.unk2 = 0;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.x_vel.val = 65536;
@@ -25,7 +25,7 @@ static u32 default_case(u32 observation)
     obj.unk28 = 0x27;
     obj.unk2C = 0x28;
     obj.unk67 = 0x25;
-    obj.unk16 = 0x26;
+    obj.unk16 = VISUAL_SATURN_LAYER(0x26);
     obj.animation_table = (u32**)wall_crawler_animations;
     set_animation(&obj, 0);
     before = obj;
@@ -38,7 +38,7 @@ static u32 default_case(u32 observation)
     before.state = 2;
     before.unk28 = before.unk2C = 0;
     before.unk5C = 1;
-    before.unk67 = before.unk16 = 0;
+    before.unk67 = before.unk16 = VISUAL_SATURN_LAYER(0);
     before.unk60 = 2;
     before.unk42 = 0x1234;
     before.x_vel.val = 3 * 65536;
@@ -53,7 +53,7 @@ static u32 default_case(u32 observation)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     if (observation == 0)
         return (u16)obj.x_pos.i.hi | ((u32)(u16)obj.y_pos.i.hi << 16);
-    return obj.animation_step.packed;
+    return C_TEST_STEP(obj.animation_step.packed);
 }
 static const u32 wall_crawler_shot_default_cases_expected[] = { 0xC80071u, 0x10010001u };
 
@@ -112,14 +112,14 @@ static u32 direction(u32 row)
     obj.active = 0x41;
     obj.id = 6;
     obj.unk2 = angle;
-    obj.unk15 = facing * 0x40;
+    obj.unk15 = facing * PLAYER_FACING_RIGHT;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.unk42 = 0x9234;
     obj.unk28 = 0x27;
     obj.unk2C = 0x28;
     obj.unk67 = 0x25;
-    obj.unk16 = 0x26;
+    obj.unk16 = VISUAL_SATURN_LAYER(0x26);
     obj.animation_table = (u32**)wall_crawler_animations;
     set_animation(&obj, 0);
     set_velocity_from_angle(MOVING_OBJECT(&obj), angle);
@@ -133,7 +133,7 @@ static u32 direction(u32 row)
     expected.state = 1;
     expected.unk28 = expected.unk2C = 0;
     expected.unk5C = 1;
-    expected.unk67 = expected.unk16 = 0;
+    expected.unk67 = expected.unk16 = VISUAL_SATURN_LAYER(0);
     expected.unk60 = 2;
     expected.unk42 = 0x1234;
     expected.x_vel.val = vx * 3;
@@ -143,7 +143,7 @@ static u32 direction(u32 row)
     expected.unk17 = 11;
     expected.previous_animation_index = 0xFF;
     expected.animation_cursor = (const u8*)wall_crawler_animations[11];
-    expected.animation_step.packed = 0x10010001;
+    expected.animation_step.packed = C_TEST_STEP(0x10010001);
     func_8009A9E4(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
@@ -151,9 +151,41 @@ static u32 direction(u32 row)
     return 1;
 }
 
+
+#include "support/state_cases.h"
+void wall_crawler_shot_fly(struct ShotObj*);
+static struct Unk_unk68 wc_player_box = { 0, 0, 12, 24 };
+#define ss state_room.shot
+#define WC(arm, setup) (state_reset(0, 0, 0), memset(&g_Player, 0, sizeof(g_Player)), g_Player.x_pos.i.hi = 0x400, ss.active = 0x41, ss.state = 1, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.x_vel.val = 0x20000, ss.unk84.value = arm, ss.unk50.data = wall_crawler_shot_hit_boxes, setup)
+static void wc_arming(void) { WC(5, ss.unk70 = 8), wall_crawler_shot_update(&ss), state_extra = ss.unk70; }
+static void wc_destroyed(void) { WC(0, (so.hp = 1, state_hit(&so, 0, 0, 1))), wall_crawler_shot_fly(&ss); }
+static void wc_on_player(void) { WC(0, (g_Player.x_pos.i.hi = 0x82, g_Player.y_pos.i.hi = 0x60, g_Player.unk54 = (const u32*)&wc_player_box)), wall_crawler_shot_fly(&ss); }
+static void wc_on_terrain(void) { WC(0, ss.unk70 = 8), wall_crawler_shot_fly(&ss); }
+static void wc_flying(void) { WC(0, ss.unk70 = 0xA0), wall_crawler_shot_update(&ss); }
+
+static void (*const wc_cases[])(void) = {
+    wc_arming,
+    wc_destroyed,
+    wc_on_player,
+    wc_on_terrain,
+    wc_flying,
+};
+static const u32 wc_expected[] = {
+    0x1u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0x8u, 0u,
+    0x2u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x48000u, 0u, 0x2100u,
+    0x2u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x2u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0u, 0x2100u,
+    0x1u, 0x41u, 0x820000u, 0x600000u, 0x20000u, 0u, 0u, 0x40000u, 0u, 0u,
+};
+static u32 test_wc(u32 row)
+{
+    return object_run(wc_cases[row], row, &wc_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "wall_crawler_shot_flight", 0, 0, COUNT(wc_cases), test_wc },
     { "wall_crawler_shot_default", NULL, wall_crawler_shot_default_cases_expected, COUNT(wall_crawler_shot_default_cases_expected), default_case },
     { "shot_spawn_directions", NULL, NULL, 64, direction },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(wall_crawler_shot_default_cases_expected) + 64;
+const u32 c_test_count = COUNT(wall_crawler_shot_default_cases_expected) + 64 + COUNT(wc_cases);

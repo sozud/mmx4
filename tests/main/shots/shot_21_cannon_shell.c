@@ -33,7 +33,7 @@ static u32 cannon_shell_animation_shell_case(u32 mode, u32 observation)
     if (mode == 3) {
         for (i = 0; i < sizeof(obj); i++)
             assert(((u8*)&obj)[i] == ((u8*)&before)[i]);
-        actual = observation == 0 ? (u32)obj.unk84.value : obj.animation_step.packed;
+        actual = observation == 0 ? (u32)obj.unk84.value : C_TEST_STEP(obj.animation_step.packed);
     } else {
         terrain = mode == 0 ? cannon_shell_flat_terrain_box : mode == 1 ? cannon_shell_terrain_box
                                                                         : cannon_shell_steep_terrain_box;
@@ -51,7 +51,7 @@ static u32 cannon_shell_animation_shell_case(u32 mode, u32 observation)
         before.previous_animation_index = 0xFF;
         for (i = 0; i < sizeof(obj); i++)
             assert(((u8*)&obj)[i] == ((u8*)&before)[i]);
-        actual = observation == 0 ? (u32)obj.unk84.value : obj.animation_step.packed;
+        actual = observation == 0 ? (u32)obj.unk84.value : C_TEST_STEP(obj.animation_step.packed);
     }
     assert(*(u32*)train_cannon_animations[7] == original_step);
     return actual;
@@ -120,12 +120,9 @@ static u32 cannon_shell_distance_animation_start_shell_case(u32 mode)
     ANIMATED_OBJECT(&expected)->animation_cursor = (u32*)train_cannon_animations[7];
     expected.animation_step.packed = *(u32*)train_cannon_animations[7];
     func_8009D23C(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(owner) / 4; i++)
-        assert(((u32*)&owner)[i] == ((u32*)&owner_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     return (u32)obj.unk2C;
 }
 static const u32 cannon_shell_distance_animation_start_cases_expected[] = { 0x471Cu, 0x471Cu, 0x1400u, 0x21AFu, 0x28000u };
@@ -139,6 +136,10 @@ static const struct func_8009D588_case func_8009D588_cases[] = {
     { 0, 0, 0, { 0u } },
     { 2, 0, 0, { 2u } },
     { 0, -744641, -260177, { 0u } },
+    { 1, 0x1000, -0x80000, { 1u } },
+    { 2, -0x1000, 0x80000, { 2u } },
+    { 1, -0x30000, -0x28000, { 2u } },
+    { 2, -0x30000, -0x8000, { 3u } },
 };
 static u32 test_func_8009D588(u32 row)
 {
@@ -147,6 +148,7 @@ static u32 test_func_8009D588(u32 row)
     struct ShotObj obj;
     memset(&obj, 0, sizeof(obj));
     obj.unk84.value = c->value;
+    obj.animation_table = (u32**)train_cannon_animations;
     obj.y_vel.val = c->y_vel;
     obj.x_vel.val = c->x_vel;
     func_8009D588(&obj);
@@ -203,7 +205,7 @@ static u32 viewport(u32 row)
     obj.state = 1;
     obj.on_screen = 7;
     obj.unk7 = timer;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x1234;
     obj.unk5C = 1;
     obj.unk60 = 3;
@@ -215,7 +217,7 @@ static u32 viewport(u32 row)
     obj.unk58.animation_steps = D_80105FF0;
     obj.animation_table = (u32**)train_cannon_animations;
     set_animation(&obj, 7);
-    assert(obj.animation_step.packed == 0x28000001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x28000001));
     expected = obj;
     expected.x_pos.val += 65536;
     expected.y_pos.val -= 65536;
@@ -229,13 +231,13 @@ static u32 viewport(u32 row)
             m->active = 0x21;
             m->id = 23;
             m->unk2 = 0;
-            m->unk15 = 0x40;
+            m->unk15 = 0x6A & PLAYER_FACING_RIGHT;
             m->ext.unk.unk54 = 0;
             m->x_pos.i.hi = positions[position].x;
             m->y_pos.i.hi = positions[position].y;
             m->x_vel.val = m->y_vel.val = 0;
             m->unk7 = 1;
-            m->unk16 = 7;
+            m->unk16 = VISUAL_SATURN_LAYER(7);
         }
         if (positions[position].far)
             expected.state = 2;
@@ -256,11 +258,33 @@ static u32 viewport(u32 row)
     return 1;
 }
 
+
+#include "support/state_cases.h"
+#include "support/shaped_terrain.h"
+#define ss state_room.shot
+#define SHELL(setup) (state_reset(0, 0, 0), shaped_terrain(0x38, SHAPED_OPEN), memset(background_objects, 0, sizeof(background_objects)), ss.active = 0x41, ss.state = 1, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.x_vel.val = -0x28000, ss.y_vel.val = 0x10000, ss.unk2C = 0x2000, ss.unk7 = 1, setup, cannon_shell_fly(&ss), state_extra = ss.unk84.value | (u32)ss.unk70 << 8)
+static void cs_shot_down(void) { SHELL((so.hp = 1, state_hit(&so, 0, 0, 1))); }
+static void cs_flat_flight(void) { SHELL((ss.unk84.value = 1, ss.unk68 = (struct Unk_unk68*)cannon_shell_terrain_box, ss.unk70 = 0xA0)); }
+
+static void (*const cs_cases[])(void) = {
+    cs_shot_down,
+    cs_flat_flight,
+};
+static const u32 cs_expected[] = {
+    0x1000002u, 0x41u, 0x7D8000u, 0x5F0000u, 0xFFFD8000u, 0xE000u, 0x200000u, 0x48000u, 0u, 0x2100u,
+    0x1u, 0x41u, 0x7D8000u, 0x5F0000u, 0xFFFD8000u, 0xE000u, 0x200000u, 0x40000u, 0x1u, 0u,
+};
+static u32 test_cs(u32 row)
+{
+    return object_run(cs_cases[row], row, &cs_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "cannon_shell_flight", 0, 0, COUNT(cs_cases), test_cs },
     { "cannon_shell_animation", NULL, cannon_shell_animation_cases_expected, COUNT(cannon_shell_animation_cases_expected), cannon_shell_animation_cases_row },
     { "cannon_shell_distance_animation_start", NULL, cannon_shell_distance_animation_start_cases_expected, COUNT(cannon_shell_distance_animation_start_cases_expected), cannon_shell_distance_animation_start_shell_case },
-    { "func_8009D588", 0, 0, 4, test_func_8009D588 },
+    { "func_8009D588", 0, 0, COUNT(func_8009D588_cases), test_func_8009D588 },
     { "bottom_margin_trail_pool_and_despawn_edges", NULL, NULL, COUNT(positions) * 8, viewport },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(cannon_shell_animation_cases_expected) + COUNT(cannon_shell_distance_animation_start_cases_expected) + 4 + COUNT(positions) * 8;
+const u32 c_test_count = COUNT(cannon_shell_animation_cases_expected) + COUNT(cannon_shell_distance_animation_start_cases_expected) + COUNT(func_8009D588_cases) + COUNT(positions) * 8 + COUNT(cs_cases);

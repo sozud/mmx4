@@ -154,7 +154,7 @@ static u32 spawn_case(u32 mode, u32 observation)
         actual = (u8)g_Player.shot_count | ((u32)(u8)g_Player.special_shot_count << 8) | (mask << 16);
         break;
     case 2:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     case 3:
         actual = cursor | ((u32)(obj.unk50 != NULL) << 8) | ((u32)(obj.unk68 != NULL) << 16) | ((u32)obj.on_screen << 24);
@@ -216,10 +216,60 @@ static const CTestCase ground_hunter_charged_fly_cases[]
       };
 
 static const u32 ground_hunter_charged_fly_cases_expected[] = { 0x101u, 0x3u, 0x1u };
+
+#include "support/shaped_terrain.h"
+static struct WeaponObj gh;
+static s32 gh_archive[32];
+static u32 gh_step = C_TEST_STEP(5);
+static u32 hunter(u8 state, u8 face, u8 rel)
+{
+    u32 i;
+    memset(&gh, 0, sizeof(gh));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    for (i = 0; i < COUNT(gh_archive); i++)
+        gh_archive[i] = 0x80;
+    TEST_PLAYER_GFX = (u8*)gh_archive;
+    TEST_SPRITE_FRAMES = (u8*)gh_archive;
+    shaped_terrain(0x38, SHAPED_OPEN);
+    D_8013E198[1] = -1;
+    g_Player.weapon = 5;
+    g_Player.unk15 = face;
+    g_Player.x_pos.i.hi = 0x100;
+    g_Player.y_pos.i.hi = 0x80;
+    gh.active = 1;
+    gh.id = 5;
+    gh.state = state;
+    gh.x_pos.i.hi = 0x100;
+    gh.y_pos.i.hi = 0x80;
+    gh.animation_cursor = (const u8*)&gh_step;
+    gh.animation_step.packed = gh_step;
+    gh.animation_step.fields.relative_step = rel;
+    ground_hunter_update(&gh);
+    return gh.state | (u32)(u8)gh.on_screen << 8 | (u32)(gh.unk50 != NULL) << 16 | (u32)(gh.unk68 != NULL) << 17 | (u32)(u8)(gh.x_vel.val >> 16) << 24;
+}
+static u32 ghn_start_left(void)
+{
+    u32 seen = hunter(0, 0, 0);
+    assert(gh.y_vel.val == -0x20000 && gh.unk67 == 1 && gh.unk15 == 0);
+    return seen;
+}
+static u32 ghn_start_right(void) { return hunter(0, PLAYER_FACING_RIGHT, 0); }
+static u32 ghn_bursting(void) { return hunter(2, 0, 1); }
+static u32 ghn_burst_done(void) { return hunter(2, 0, 0); }
+static const CTestCase ground_hunter_paths_cases[] = {
+    ghn_start_left,
+    ghn_start_right,
+    ghn_bursting,
+    ghn_burst_done,
+};
+static const u32 ground_hunter_paths_cases_expected[] = { 0xFA030101u, 0x6030101u, 0x102u, 0x3u };
+
 const struct CTestGroup c_test_groups[] = {
     { "ground_hunter_cancel_collision", ground_hunter_cancel_collision_cases, ground_hunter_cancel_collision_cases_expected, COUNT(ground_hunter_cancel_collision_cases), 0 },
     { "ground_hunter_spawn_context", NULL, ground_hunter_spawn_context_cases_expected, COUNT(ground_hunter_spawn_context_cases_expected), ground_hunter_spawn_context_cases_row },
     { "ground_hunter_charged_fly", ground_hunter_charged_fly_cases, ground_hunter_charged_fly_cases_expected, COUNT(ground_hunter_charged_fly_cases), 0 },
+    { "ground_hunter_paths", ground_hunter_paths_cases, ground_hunter_paths_cases_expected, COUNT(ground_hunter_paths_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ground_hunter_cancel_collision_cases) + COUNT(ground_hunter_spawn_context_cases_expected) + COUNT(ground_hunter_charged_fly_cases);
+const u32 c_test_count = COUNT(ground_hunter_cancel_collision_cases) + COUNT(ground_hunter_spawn_context_cases_expected) + COUNT(ground_hunter_charged_fly_cases) + COUNT(ground_hunter_paths_cases);

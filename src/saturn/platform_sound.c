@@ -303,9 +303,24 @@ s8 saturn_sound_mix_table[] = {
     16,
     16,
     16,
+    0x10,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    3,
 };
-
-u8 saturn_sound_mix_default = 0x10;
 
 s16 saturn_sound_tempos[] = {
     -32768,
@@ -945,6 +960,11 @@ void saturn_stage_sound_finalize(void)
         saturn_sound_total_volume = SOUND_FINAL_VOLUME;
         saturn_sound_set_total_volume(SOUND_FINAL_VOLUME);
     }
+}
+
+void saturn_sound_forget_stage_map(void)
+{
+    saturn_sound_stage_map = SOUND_STAGE_MAP_INITIAL;
 }
 
 static void sound_push_request(struct SaturnSoundRequest* queue, u8* index, s32 kind, s32 id, s32 pan)

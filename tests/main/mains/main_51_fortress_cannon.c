@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_51_fortress_cannon.h"
 #include "main/1AC84.h"
 #include "support/state_cases.h"
@@ -26,8 +27,8 @@ static u32 test_fortress_cannon_fire_double_shot(u32 row)
     observed_values[0] = (u32)shot_objects[0].active;
     observed_values[1] = (u32)shot_objects[0].bg_offset;
     observed_values[2] = (u32)shot_objects[0].id;
-    observed_values[3] = (u32)shot_objects[0].unk15;
-    observed_values[4] = (u32)shot_objects[0].unk16;
+    observed_values[3] = C_TEST_PSX_FACING(shot_objects[0].unk15);
+    observed_values[4] = TEST_PSX_LAYER(shot_objects[0].unk16);
     observed_values[5] = (u32)shot_objects[0].unk2;
     observed_values[6] = (u32)shot_objects[0].unk40;
     observed_values[7] = (u32)shot_objects[0].unk42;
@@ -62,8 +63,8 @@ static u32 test_fortress_cannon_fire_shot(u32 row)
     observed_values[0] = (u32)shot_objects[0].active;
     observed_values[1] = (u32)shot_objects[0].bg_offset;
     observed_values[2] = (u32)shot_objects[0].id;
-    observed_values[3] = (u32)shot_objects[0].unk15;
-    observed_values[4] = (u32)shot_objects[0].unk16;
+    observed_values[3] = C_TEST_PSX_FACING(shot_objects[0].unk15);
+    observed_values[4] = TEST_PSX_LAYER(shot_objects[0].unk16);
     observed_values[5] = (u32)shot_objects[0].unk2;
     observed_values[6] = (u32)shot_objects[0].unk40;
     observed_values[7] = (u32)shot_objects[0].unk42;
@@ -82,8 +83,8 @@ static u32 test_fortress_cannon_fire_volley(u32 row)
     observed_values[0] = (u32)shot_objects[0].active;
     observed_values[1] = (u32)shot_objects[0].bg_offset;
     observed_values[2] = (u32)shot_objects[0].id;
-    observed_values[3] = (u32)shot_objects[0].unk15;
-    observed_values[4] = (u32)shot_objects[0].unk16;
+    observed_values[3] = C_TEST_PSX_FACING(shot_objects[0].unk15);
+    observed_values[4] = TEST_PSX_LAYER(shot_objects[0].unk16);
     observed_values[5] = (u32)shot_objects[0].unk2;
     observed_values[6] = (u32)shot_objects[0].unk40;
     observed_values[7] = (u32)shot_objects[0].unk42;
@@ -129,7 +130,7 @@ static u32 test_func_80069BE4(u32 row)
     memset(&weapon_objects, 0, sizeof(weapon_objects));
     memset(&obj, 0, sizeof(obj));
     memset(&g_Player, 0, sizeof(g_Player));
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     obj.active = 0x41;
     obj.id = 51;
     obj.hp = 30;
@@ -280,7 +281,7 @@ static u32 four_zero_shots(u32 row)
     cannon->y_pos.i.hi = 100;
     cannon->sprite_frames = (u8*)frames;
     cannon->unk40 = 0xB0;
-    cannon->unk42 = 0x7804;
+    cannon->unk42 = OBJECT_CLUT(0x7804);
     SP_CUR_MAIN_OBJ = cannon;
     fortress_cannon_update(cannon);
     assert(cannon->state == 1 && cannon->unk5 == 2 && cannon->unk6 == 0 && cannon->unk7C == 40 && cannon->ext.main_51.unk84 == 0);
@@ -303,18 +304,18 @@ static u32 four_zero_shots(u32 row)
             expected[0].unk17 = (burst & 1) ? 1 : 2;
             expected[0].previous_animation_index = 255;
             expected[0].animation_cursor = (const u8*)fortress_cannon_animations[expected[0].unk17];
-            expected[0].animation_step.packed = 0x00010001;
+            expected[0].animation_step.packed = C_TEST_STEP(0x00010001);
             expected[0].unk7C = 75;
             expected[0].unk6 = 1;
             shots[burst].active = 0x41;
             shots[burst].id = 30;
             shots[burst].unk2 = 1 ^ (burst & 1);
             shots[burst].unk7C = WEAPON_OBJECT(cannon);
-            shots[burst].unk42 = 0x7804;
+            shots[burst].unk42 = OBJECT_CLUT(0x7804);
             shots[burst].animation_table = (u32**)fortress_cannon_animations;
             shots[burst].unk3C = (u8*)frames;
             shots[burst].unk40 = 0xB0;
-            shots[burst].unk16 = 4;
+            shots[burst].unk16 = VISUAL_SATURN_LAYER(4);
             fortress_cannon_fire(cannon);
             assert(c_test_word_difference((u32*)main_objects, (u32*)expected, sizeof(expected) / 4) == 0 && c_test_word_difference((u32*)shot_objects, (u32*)shots, sizeof(shots) / 4) == 0);
         } else {
@@ -338,6 +339,57 @@ static u32 four_zero_shots(u32 row)
     return 1;
 }
 
+void fortress_cannon_explode(struct MainObj*);
+void fortress_cannon_volley_raise(struct MainObj*);
+void fortress_cannon_volley_fire(struct MainObj*);
+void fortress_cannon_volley_wait(struct MainObj*);
+void fortress_cannon_lower_end(struct MainObj*);
+#define FCS(step, sub) (FCN(step, sub), memset(weapon_objects, 0, sizeof(weapon_objects)), memset(&engine_obj, 0, sizeof(engine_obj)), state_terrain(0), g_Player.unk68 = NULL, g_Player.x_pos.i.hi = 0x100, so.active = 0x41, so.id = 0x33, so.state = 1, so.collision_flags = 8)
+#define FCSX() (state_extra = so.ext.main_51.unk84 | (u32)so.ext.main_51.saved_unk5 << 8 | (u32)shot_objects[1].active << 16)
+static void fcs_init_player_right(void) { FCS(0, 0), so.state = 0, func_80069AD0(&so), FCSX(); }
+static void fcs_main_killed(void) { FCS(2, 0), so.unk7C = 5, so.hp = 1, state_hit(&so, 0, 0, 1), func_80069BE4(&so), FCSX(); }
+static void fcs_main_off_screen(void) { FCS(2, 0), so.unk7C = 5, so.x_pos.i.hi = 0x300, func_80069BE4(&so), FCSX(); }
+#define BLAST(a, b) (FCS(0, 0), so.state = 2, so.unk7C = a, so.unk7E = b, fortress_cannon_explode(&so), FCSX())
+static void fcs_explode_end(void) { BLAST(1, 3); }
+static void fcs_explode_sparks(void) { BLAST(3, 1); }
+static void fcs_explode(void) { BLAST(3, 3); }
+static void fcs_last_shot(void) { FCS(3, 1), so.unk7C = 1, so.ext.main_51.unk84 = 2, func_80069F28(&so), FCSX(); }
+#define TWICE(step, sub, run) (FCS(step, sub), so.unk7C = 2, run(&so), assert(so.unk7C == 1), run(&so), FCSX())
+static void fcs_volley_raise(void) { TWICE(4, 0, fortress_cannon_volley_raise); }
+static void fcs_volley_fire(void) { TWICE(4, 1, fortress_cannon_volley_fire); }
+static void fcs_volley_wait(void) { TWICE(4, 2, fortress_cannon_volley_wait); }
+static void fcs_lower_end(void) { TWICE(5, 1, fortress_cannon_lower_end); }
+static void (*const fortress_cannon_steps_cases[])(void) = {
+    fcs_init_player_right,
+    fcs_main_killed,
+    fcs_main_off_screen,
+    fcs_explode_end,
+    fcs_explode_sparks,
+    fcs_explode,
+    fcs_last_shot,
+    fcs_volley_raise,
+    fcs_volley_fire,
+    fcs_volley_wait,
+    fcs_lower_end,
+};
+static const u32 fortress_cannon_steps_expected[] = {
+    0x2u, 0x28u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x1E0003u, 0x0u, 0x41000000u,
+    0x1000006u, 0x5001Eu, 0x800000u, 0x0u, 0x0u, 0x420000u, 0x80000000u, 0x1u, 0x600u, 0x41002100u,
+    0x1000006u, 0x4u, 0x3000000u, 0x0u, 0x0u, 0x420000u, 0x0u, 0x0u, 0x600u, 0x41000000u,
+    0x0u, 0x30000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x0u, 0x50002u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41002100u,
+    0x0u, 0x20002u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x4u, 0x14u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x104u, 0x29u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x5u, 0x0u, 0x0u, 0x41000000u,
+    0x204u, 0x3Cu, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x410000u, 0x41410000u,
+    0x5u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x2u, 0x28u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+};
+static u32 test_fortress_cannon_steps(u32 row)
+{
+    return state_run(fortress_cannon_steps_cases[row], row, &fortress_cannon_steps_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "fortress_cannon_states", 0, 0, COUNT(fortress_cannon_states_cases), test_fortress_cannon_states },
     { "fortress_cannon_fire_double_shot", 0, 0, 1, test_fortress_cannon_fire_double_shot },
@@ -346,6 +398,7 @@ const struct CTestGroup c_test_groups[] = {
     { "func_80069BE4", 0, 0, 1, test_func_80069BE4 },
     { "func_80069F28", 0, 0, 2, test_func_80069F28 },
     { "original_constructor_wait40_three_wait75_then_fourth_Zero_shot", NULL, NULL, 1, four_zero_shots },
+    { "fortress_cannon_steps", 0, 0, COUNT(fortress_cannon_steps_cases), test_fortress_cannon_steps },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(fortress_cannon_states_cases) + 1 + 2 + 1 + 1 + 2 + 1;
+const u32 c_test_count = COUNT(fortress_cannon_states_cases) + 1 + 2 + 1 + 1 + 2 + 1 + COUNT(fortress_cannon_steps_cases);

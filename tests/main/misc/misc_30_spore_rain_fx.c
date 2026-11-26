@@ -36,8 +36,33 @@ static u32 test_spore_rain_fx_animate(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 8);
 }
 
+
+#include "support/state_cases.h"
+static struct MainObj spore_owner;
+#define sm state_room.misc
+#define SPORE(count, side) (state_reset(0, 0, 0), memset(&spore_owner, 0, sizeof(spore_owner)), spore_owner.state = 1, sm.active = 1, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x60, sm.ext.misc_30.owner = &spore_owner, sm.ext.misc_30.unk56 = count, sm.ext.misc_30.unk54 = side, spore_rain_fx_update(&sm), state_extra = (u8)sm.ext.misc_30.unk54 | (u32)(u16)sm.ext.misc_30.unk56 << 16)
+static void sp_landed(void) { SPORE(1, 0); }
+static void sp_zig(void) { SPORE(5, 0); }
+static void sp_zag(void) { SPORE(5, 0x20); }
+
+static void (*const sp_cases[])(void) = {
+    sp_landed,
+    sp_zig,
+    sp_zag,
+};
+static const u32 sp_expected[] = {
+    0x1u, 0x1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
+    0u, 0x1u, 0xA00000u, 0x610000u, 0u, 0u, 0u, 0x40000u, 0x40020u, 0u,
+    0u, 0x1u, 0x600000u, 0x610000u, 0u, 0u, 0u, 0x40000u, 0x40000u, 0u,
+};
+static u32 test_sp(u32 row)
+{
+    return object_run(sp_cases[row], row, &sp_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "spore_rain_steps", 0, 0, COUNT(sp_cases), test_sp },
     { "spore_rain_fx_animate", 0, 0, 3, test_spore_rain_fx_animate },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 3;
+const u32 c_test_count = 3 + COUNT(sp_cases);

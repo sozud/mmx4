@@ -1,0 +1,8 @@
+file	line	function	outcome	class	evidence
+src/main/layers/layer_02_train_tunnel.c	120	train_tunnel_section_1	taken	unreachable-logic	The switch (unk6) covers the stop, start-braking and brake phases 0-2; section 1 only steps unk6 up to 2 (the brake keeps it there), and a section change resets it to 0.
+src/main/layers/layer_02_train_tunnel.c	135	train_tunnel_wait_stop_point	taken	unreachable-logic	The switch (unk7) covers phases 0-2; the stop wait sets unk7 only to 1 and 2, and leaving the phase resets it to 0.
+src/main/layers/layer_05_airship_bob.c	100	func_800DA358	not-taken	unreachable-logic	The substage is tested again right after the section step, and no section function (wait/done for sections 0-2) changes engine_obj.substage.
+src/main/layers/layer_00_train_scroll.c	243	train_scroll_open_tiles	taken	unreachable-logic	The implicit default of switch (bg_offset): the event runs only from sections 1-4, and train_scroll_update_section makes the section index the bg_offset (1-4), all named.
+src/main/layers/layer_02_train_tunnel.c	120	train_tunnel_section_1	taken	unreachable-logic	The implicit default of switch (unk6): section 1 starts at unk6 0 and its own steps raise it only to 1 and 2, all named (the section changes before it could go further).
+src/main/layers/layer_02_train_tunnel.c	135	train_tunnel_wait_stop_point	taken	unreachable-logic	The implicit default of switch (unk7): the wait step sets unk7 only to 0-2, all named.
+src/main/layers/layer_05_airship_bob.c	100	func_800DA358	not-taken	unreachable-logic	The outer test just checked engine_obj.substage == 0 and neither airship_bob_update_section nor the section steps write the substage, so the repeated test is always true.

@@ -55,7 +55,7 @@ static u32 test_drill_copter_fire_shots(u32 row)
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     c_test_same_words(shot_objects, shots_before, sizeof(shots_before));
     assert(D_8013E198[2] == -1);
-    observed_values[0] = (u32)obj.animation_step.packed;
+    observed_values[0] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[1] = (u32)obj.unk7E;
     observed_values[2] = (u32)obj.unk6;
     observed_values[3] = (u32)shot_objects[31].active;
@@ -100,7 +100,7 @@ static u32 test_func_80044508(u32 row)
     g_Player.bg_offset = 0;
     g_Player.x_pos.val = 0;
     g_Player.y_pos.val = 0;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     engine_obj.stage = 0;
     engine_obj.substage = 0;
     background_objects[0].x_pos.val = 0;
@@ -245,7 +245,7 @@ static void dc_approach_left(void)
 static void dc_approach_right(void)
 {
     DC(1, 0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     drill_copter_approach(&so);
 }
 static void dc_approach_far(void)
@@ -275,7 +275,7 @@ static void dc_sway_near(void)
 {
     DC(2, 1);
     so.x_speed = 0x10000;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     drill_copter_sway(&so);
 }
 static void dc_drop_start(void)
@@ -490,6 +490,9 @@ static void dcs_sway_turn(void) { SWAY(0xD0, 0x10000); }
 static void dcs_sway_leave(void) { SWAY(0xD0, -0x10000); }
 static void dcs_sway_left(void) { SWAY(0x30, -0x10000); }
 static void dcs_sway_left_near(void) { SWAY(0x70, -0x10000); }
+static void dcs_sway_turn_right(void) { state_reset(3, 1, 0), so.x_pos.i.hi = 0xD0, so.y_pos.i.hi = 0x60, so.x_speed = 0x10000, so.unk15 = PLAYER_FACING_RIGHT, g_Player.x_pos.i.hi = 0x80, drill_copter_sway_move(&so); }
+static void dcs_init_player_right(void) { state_reset(0, 0, 0), so.x_pos.i.hi = 0x40, g_Player.x_pos.i.hi = 0x80, func_80044458(&so); }
+static void dcs_approach_player_right(void) { state_reset(1, 1, 0), so.x_pos.i.hi = 0x40, g_Player.x_pos.i.hi = 0x80, drill_copter_approach(&so); }
 static void dcs_despawn_child(void)
 {
     state_reset(6, 0, 0);
@@ -516,8 +519,15 @@ static void (*const drill_copter_sway_cases[])(void) = {
     dcs_sway_left_near,
     dcs_despawn_child,
     dcs_despawn,
+    dcs_sway_turn_right,
+    dcs_init_player_right,
+    dcs_approach_player_right,
 };
-static const u32 drill_copter_sway_expected[] = { 0x103u, 0u, 0x910000u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 0xD10000u, 0xFFFF0000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 1u, 0u, 0xCF0000u, 0x10000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 1u, 0u, 0x2F0000u, 0x10000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 0x103u, 0u, 0x6F0000u, 0xFFFF0000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+static const u32 drill_copter_sway_expected[] = { 0x103u, 0u, 0x910000u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 0xD10000u, 0xFFFF0000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 1u, 0u, 0xCF0000u, 0x10000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 1u, 0u, 0x2F0000u, 0x10000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 0x103u, 0u, 0x6F0000u, 0xFFFF0000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x1u, 0x0u, 0xD10000u, 0xFFFF0000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x1u, 0xB4u, 0x400000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x60003u, 0x0u, 0x0u,
+    0x101u, 0x0u, 0x400000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+};
 
 static u32 test_drill_copter_sway(u32 row)
 {

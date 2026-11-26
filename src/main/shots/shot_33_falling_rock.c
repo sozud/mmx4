@@ -427,7 +427,7 @@ void func_800A0C4C(struct ShotObj* arg0)
                     start_screen_shake_x(0x10, 6, 2);
                 spawn_debris(5, falling_rock_debris_2, arg0);
                 if (arg0->on_screen != 0)
-                    func_8001540C(2, 0xA0, arg0);
+                    func_8001540C(2, SATURN_SOUND(0xA0, 0x70), arg0);
                 arg0->state = 5;
                 return;
             }
@@ -436,7 +436,7 @@ void func_800A0C4C(struct ShotObj* arg0)
                 start_screen_shake_x(0x10, 6, 2);
             spawn_debris(5, falling_rock_debris_2, arg0);
             if (arg0->on_screen != 0)
-                func_8001540C(2, 0xA0, arg0);
+                func_8001540C(2, SATURN_SOUND(0xA0, 0x70), arg0);
             arg0->state = 5;
             return;
         }
@@ -444,14 +444,14 @@ void func_800A0C4C(struct ShotObj* arg0)
         if (func_8002BB80((struct MainObj*)arg0, (struct MainObj*)&g_Player) != 0) {
             spawn_debris(5, falling_rock_debris_2, arg0);
             if (arg0->on_screen != 0)
-                func_8001540C(2, 0xA0, arg0);
+                func_8001540C(2, SATURN_SOUND(0xA0, 0x70), arg0);
             arg0->state = 5;
         }
         collision = func_8002DD04((struct MainObj*)arg0);
         if (collision < 0) {
             spawn_debris(5, falling_rock_debris_2, arg0);
             if (arg0->on_screen != 0)
-                func_8001540C(2, 0xA0, arg0);
+                func_8001540C(2, SATURN_SOUND(0xA0, 0x70), arg0);
             arg0->state = 5;
         }
 #ifndef VERSION_DEMO

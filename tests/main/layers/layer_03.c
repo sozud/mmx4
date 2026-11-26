@@ -45,7 +45,7 @@ static u32 layer_run(void (*run)(void), u32 row, const u32* expected)
     memcpy(saved_items, item_objects, sizeof(saved_items));
     saved_weapon = weapon_objects[0];
     run();
-    seen[0] = (u8)train_layer.bg_offset | (u8)train_layer.unk15 << 8 | (u8)train_layer.unk16 << 16 | (u32)(u8)train_layer.unk17 << 24;
+    seen[0] = (u8)train_layer.bg_offset | C_TEST_PSX_FACING(train_layer.unk15) << 8 | (u8)train_layer.unk16 << 16 | (u32)(u8)train_layer.unk17 << 24;
     seen[1] = (u16)main_objects[0].x_pos.i.hi | (u32)(u16)main_objects[1].x_pos.i.hi << 16;
     seen[2] = 0;
     for (i = 0; i < 5; i++)
@@ -106,6 +106,12 @@ static void l_shot_calm(void)
     shot_objects[0].state = 4;
     func_800D9C84(&train_layer);
 }
+static void l_armor_flash(void)
+{
+    layer_reset(1, 0, 1, 0);
+    main_objects[1].id = 0x2E;
+    func_800D9C84(&train_layer);
+}
 static void l_carry_player(void)
 {
     layer_reset(1, 4, 0, 0);
@@ -122,8 +128,9 @@ static void (*const layer_cases[])(void) = {
     l_shot_hit,
     l_shot_calm,
     l_carry_player,
+    l_armor_flash,
 };
-static const u32 layer_expected[] = { 0u, 0x1000100u, 0u, 0x1000100u, 0x1001B00u, 1u, 0u, 0x1001960u, 0u, 0x1000100u, 0x1001B70u, 0x100u, 0u, 0x1030103u, 0x31F1Fu, 0x1030103u, 0x1000100u, 1u, 0u, 0xFE00FEu, 0u, 0xFE00FEu, 0x1000100u, 1u, 0x1000000u, 0x1000100u, 2u, 0x1000100u, 0x1000100u, 1u, 0u, 0x1000100u, 0x100u, 0x1000100u, 0x1000100u, 0x10001u, 0u, 0x1000100u, 0u, 0x1000100u, 0x1000100u, 1u, 0u, 0x1040104u, 0u, 0x1040104u, 0x1040104u, 1u };
+static const u32 layer_expected[] = { 0u, 0x1000100u, 0u, 0x1000100u, 0x1001B00u, 1u, 0u, 0x1001960u, 0u, 0x1000100u, 0x1001B70u, 0x100u, 0u, 0x1030103u, 0x31F1Fu, 0x1030103u, 0x1000100u, 1u, 0u, 0xFE00FEu, 0u, 0xFE00FEu, 0x1000100u, 1u, 0x1000000u, 0x1000100u, 2u, 0x1000100u, 0x1000100u, 1u, 0u, 0x1000100u, 0x100u, 0x1000100u, 0x1000100u, 0x10001u, 0u, 0x1000100u, 0u, 0x1000100u, 0x1000100u, 1u, 0u, 0x1040104u, 0u, 0x1040104u, 0x1040104u, 1u, 0u, 0x1000100u, 0x31F1Fu, 0x1000100u, 0x1000100u, 1u };
 
 static u32 test_train_layer_states(u32 row)
 {

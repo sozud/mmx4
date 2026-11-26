@@ -43,8 +43,8 @@ static u32 bird_case(u32 mode)
     obj.unk6 = 0;
     obj.unk7 = 7;
     obj.unk2 = 1;
-    obj.unk15 = mode & 2 ? 0x40 : 0;
-    obj.unk16 = 8;
+    obj.unk15 = mode & 2 ? PLAYER_FACING_RIGHT : 0;
+    obj.unk16 = VISUAL_SATURN_LAYER(8);
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.x_speed = 123;
@@ -83,7 +83,7 @@ static u32 bird_case(u32 mode)
             child->animation_table = ANIMATED_OBJECT(&obj)->animation_table;
             child->unk40 = obj.unk40;
             child->unk42 = obj.unk42;
-            child->unk16 = 4;
+            child->unk16 = VISUAL_SATURN_LAYER(4);
             child->x_pos = obj.x_pos;
             child->y_pos = obj.y_pos;
         }
@@ -271,7 +271,7 @@ static u32 test_ice_bird_face_player(u32 row)
     memset(&obj, 0, sizeof(obj));
     memset(&g_Player, 0, sizeof(g_Player));
     ice_bird_face_player(&obj);
-    observed_values[0] = (u32)obj.unk15;
+    observed_values[0] = C_TEST_PSX_FACING(obj.unk15);
     return c_test_observe(0, row, observed_values, ice_bird_face_player_expected, 1);
 }
 
@@ -316,7 +316,7 @@ static u32 test_ice_bird_main_1(u32 row)
     obj.x_pos.i.hi = c->obj_x_pos_hi;
     obj.unk42 = 0x9234;
     g_Player.x_pos.i.hi = c->g_Player_x_pos_hi;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
     FILL_ACTIVE(weapon_objects, 16, 0);
@@ -342,6 +342,7 @@ static u32 test_ice_bird_main_1(u32 row)
     return 1;
 }
 
+#ifndef VERSION_DEMO
 void ice_bird_blast_start(struct MainObj* arg0);
 void ice_bird_blast_wait(struct MainObj*);
 void ice_bird_init(struct MainObj*);
@@ -400,13 +401,15 @@ static u32 full(u32 row)
     expected_effects[0].ext.effect_17.timer = 2;
     player = g_Player;
     memcpy(backgrounds, background_objects, sizeof(backgrounds));
+#ifndef MMX4_SATURN
     for (i = 0; i < 3; i++)
         backgrounds[i].unk4C = 1;
+#endif
     layout_width = 29;
     layout_height = 8;
     layout_size = 232;
-    c_test_copy_words((u32*)D_80141BE8, (u32*)D_80110F7C, 174);
-    c_test_copy_words(expected_map, (u32*)D_80110F7C, 174);
+    memcpy(D_80141BE8, D_80110F7C, sizeof(expected_map));
+    memcpy(expected_map, D_80110F7C, sizeof(expected_map));
     for (i = 0; i < 2; i++) {
         column = patch[5] + i;
         map[column] = patch[0] + i;
@@ -417,6 +420,8 @@ static u32 full(u32 row)
     }
     need_palette_load = 32;
     cur_random = 0x1234;
+    for (i = 0; i < 4; i++)
+        D_8013E188[i] = 0;
     freeze_blast_update(obj);
     assert(obj->state == 1);
     for (i = 0; i < 60; i++)
@@ -430,20 +435,65 @@ static u32 full(u32 row)
     c_test_same_words(background_objects, backgrounds, sizeof(backgrounds));
     assert(cur_random == 0x1234 && need_palette_load == 33 && layout_width == 29 && layout_height == 8 && layout_size == 232 && g_FilterModeR == 0 && g_FilterModeG == 0 && g_FilterModeB == 0 && g_FilterAmountR == 0 && g_FilterAmountG == 0 && g_FilterAmountB == 0);
     for (i = 0; i < 4; i++)
+#ifdef MMX4_SATURN
+        assert(D_8013E188[i] == (i == 0 ? 0x4F : 0));
+#else
         assert(D_8013E188[i] == -1);
+#endif
     for (i = 0; i < COUNT(sound_entries_freeze_blast_enemy_capacity); i++)
         assert(sound_entries_freeze_blast_enemy_capacity[i] == 0);
     assert(D_80141F50[2] == (u8*)sound_entries_freeze_blast_enemy_capacity && D_8013E198[2] == -1);
     return 1;
 }
+#define FULL_CASES 4
+#else
+#define FULL_CASES 0
+#endif
 
+#include "support/state_cases.h"
+void ice_bird_main(struct MainObj*);
+void ice_bird_fly_in_move(struct MainObj*);
+void ice_bird_charge_wait(struct MainObj*);
+void ice_bird_charge_ring(struct MainObj*);
+void ice_bird_spawn_ice_shards(struct AnimatedObj*);
+#define IB(step, sub, timer) (state_reset(step, sub, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.ext.main_14.unk80 = timer, state_extra = 0)
+#define IBX() (state_extra ^= (u8)so.ext.main_14.unk80 | (u32)(u8)so.ext.main_14.saved_unk5 << 8)
+static void ib_fly_in_done(void) { IB(2, 1, 1), ice_bird_fly_in_move(&so), IBX(); }
+static void ib_fly_in(void) { IB(2, 1, 2), ice_bird_fly_in_move(&so), IBX(); }
+static void ib_charge_done(void) { IB(3, 1, 1), ice_bird_charge_wait(&so), IBX(); }
+static void ib_ring_done(void) { IB(3, 2, 0), so.ext.main_14.visual_variant = 7, ice_bird_charge_ring(&so), IBX(); }
+static void ib_ring(void) { IB(3, 2, 0), ice_bird_charge_ring(&so), IBX(); }
+static void ib_main_defeated(void) { IB(3, 1, 5), so.state = 1, so.hp = 1, state_hit(&so, 0, 0, 1), cur_random = 1, ice_bird_main(&so), IBX(); }
+static void ib_shards(void) { IB(4, 0, 0), ice_bird_spawn_ice_shards(ANIMATED_OBJECT(&so)), state_extra = visual_objects[11].active | (u32)visual_objects[11].id << 8 | (u32)visual_objects[11].unk2 << 16 | (u32)visual_objects[12].active << 24; }
+static void (*const ice_bird_states_cases[])(void) = {
+    ib_fly_in_done,
+    ib_fly_in,
+    ib_charge_done,
+    ib_ring_done,
+    ib_ring,
+    ib_main_defeated,
+    ib_shards,
+};
+static const u32 ice_bird_states_expected[] = {
+    0x3u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u,
+    0x203u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x2u, 0x0u, 0x0u, 0x0u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x203u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x103u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x304u, 0x2100u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30841u, 0x4100u,
+};
+static u32 test_ice_bird_states(u32 row) { return state_run(ice_bird_states_cases[row], row, &ice_bird_states_expected[row * 10]); }
 const struct CTestGroup c_test_groups[] = {
     { "ice_bird_flight_and_despawn", NULL, ice_bird_flight_and_despawn_cases_expected, COUNT(ice_bird_flight_and_despawn_cases_expected), bird_case },
     { "func_8004D6FC_1", 0, 0, 9, test_func_8004D6FC_1 },
     { "ice_bird_blast_release", 0, 0, 2, test_ice_bird_blast_release },
     { "ice_bird_face_player", 0, 0, 1, test_ice_bird_face_player },
     { "ice_bird_main_1", 0, 0, 4, test_ice_bird_main_1 },
+#ifndef VERSION_DEMO
     { "four_shipped_Ice_Birds_actual_freeze_factory_full_main_pool_original_stage_map", NULL, NULL, 4, full },
+#endif
+    { "ice_bird_states", 0, 0, COUNT(ice_bird_states_cases), test_ice_bird_states },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ice_bird_flight_and_despawn_cases_expected) + 9 + 2 + 1 + 4 + 4;
+const u32 c_test_count = COUNT(ice_bird_flight_and_despawn_cases_expected) + 9 + 2 + 1 + 4 + FULL_CASES + COUNT(ice_bird_states_cases);

@@ -17,13 +17,20 @@ static void of_init_aim(void)
 static void of_init_aim_right(void)
 {
     FEATHER(0, 0);
-    feather_owner.unk15 = 0x40;
+    feather_owner.unk15 = PLAYER_FACING_RIGHT;
     owl_feather_update(&ss);
     SEEN();
 }
 static void of_init_nearest(void)
 {
     FEATHER(0, 1);
+    owl_feather_update(&ss);
+    SEEN();
+}
+static void of_init_nearest_left(void)
+{
+    FEATHER(0, 1);
+    g_Player.x_pos.i.hi = 0x400;
     owl_feather_update(&ss);
     SEEN();
 }
@@ -137,8 +144,11 @@ static void (*const owl_feather_states_cases[])(void) = {
     of_fly_away,
     of_despawn_held,
     of_despawn_aimed,
+    of_init_nearest_left,
 };
-static const u32 owl_feather_states_expected[] = { 1u, 0xFF000001u, 0xDA0000u, 0x860000u, 0xFFFC13B0u, 0xFFFF383Cu, 0u, 0x50000u, 0u, 0u, 1u, 0xFF000001u, 0x1260000u, 0x860000u, 0xFFFC13B0u, 0xFFFF383Cu, 0u, 0x50000u, 0u, 0u, 1u, 0xFF000101u, 0xDA0000u, 0x860000u, 0x1A9B6u, 0xFFFEE38Eu, 0u, 0x50000u, 0x1004u, 0u, 1u, 0xFF000201u, 0xDA0000u, 0x860000u, 0x1F628u, 0x63E2u, 0u, 0x50000u, 0x3F402u, 0u, 1u, 0xFF000501u, 0x1000000u, 0x800000u, 0x18F88u, 0x7D8A0u, 0u, 0x50000u, 0u, 0u, 1u, 0xFF000701u, 0x1000000u, 0x800000u, 0xFFFA57D8u, 0xFFFA57D8u, 0u, 0x50000u, 0u, 0u, 1u, 0x101u, 0x1000000u, 0x800000u, 0x1F628u, 0x63E2u, 0u, 0x40000u, 2u, 0u, 1u, 0x101u, 0x1030000u, 0x680000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 1u, 0x201u, 0x1000000u, 0x800000u, 0xFFFB189Cu, 0xFFFF064Bu, 0u, 0x40000u, 0x1000000u, 0u, 1u, 0x201u, 0x1010000u, 0x800000u, 0x10000u, 0u, 0u, 0x40000u, 0x1000000u, 0u, 1u, 1u, 0x1010000u, 0x800000u, 0x10000u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x1000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x1000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x10000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x1000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2104u, 0u, 0u, 0u, 0x1000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x3100u, 0u };
+static const u32 owl_feather_states_expected[] = { 1u, 0xFF000001u, 0xDA0000u, 0x860000u, 0xFFFC13B0u, 0xFFFF383Cu, 0u, 0x50000u, 0u, 0u, 1u, 0xFF000001u, 0x1260000u, 0x860000u, 0xFFFC13B0u, 0xFFFF383Cu, 0u, 0x50000u, 0u, 0u, 1u, 0xFF000101u, 0xDA0000u, 0x860000u, 0x1A9B6u, 0xFFFEE38Eu, 0u, 0x50000u, 0x1004u, 0u, 1u, 0xFF000201u, 0xDA0000u, 0x860000u, 0x1F628u, 0x63E2u, 0u, 0x50000u, 0x3F402u, 0u, 1u, 0xFF000501u, 0x1000000u, 0x800000u, 0x18F88u, 0x7D8A0u, 0u, 0x50000u, 0u, 0u, 1u, 0xFF000701u, 0x1000000u, 0x800000u, 0xFFFA57D8u, 0xFFFA57D8u, 0u, 0x50000u, 0u, 0u, 1u, 0x101u, 0x1000000u, 0x800000u, 0x1F628u, 0x63E2u, 0u, 0x40000u, 2u, 0u, 1u, 0x101u, 0x1030000u, 0x680000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 1u, 0x201u, 0x1000000u, 0x800000u, 0xFFFB189Cu, 0xFFFF064Bu, 0u, 0x40000u, 0x1000000u, 0u, 1u, 0x201u, 0x1010000u, 0x800000u, 0x10000u, 0u, 0u, 0x40000u, 0x1000000u, 0u, 1u, 1u, 0x1010000u, 0x800000u, 0x10000u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x1000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x1000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x10000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x1000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x2104u, 0u, 0u, 0u, 0x1000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x3100u, 0u,
+    0x1u, 0xFF000101u, 0xDA0000u, 0x860000u, 0x1F628u, 0xFFFF9C1Eu, 0u, 0x50000u, 0x4006u, 0u,
+};
 
 static u32 test_owl_feather_states(u32 row)
 {
@@ -181,7 +191,7 @@ static u32 storm_cleanup(u32 row)
     storm_owl_spawn_volley_feather(&owner, 5);
     assert(shot_objects[0].active == 0x41 && shot_objects[0].id == 37 && shot_objects[0].unk2 == 5 && shot_objects[0].state == 0);
     owl_feather_update(&shot_objects[0]);
-    assert(shot_objects[0].state == 1 && shot_objects[0].animation_step.packed == 0x3E010001 && shot_objects[0].x_vel.val == 370728 && shot_objects[0].y_vel.val == 370728 && owner.ext.main_60.feather_mask == 0);
+    assert(shot_objects[0].state == 1 && shot_objects[0].animation_step.packed == C_TEST_STEP(0x3E010001) && shot_objects[0].x_vel.val == 370728 && shot_objects[0].y_vel.val == 370728 && owner.ext.main_60.feather_mask == 0);
     background_objects[0].x_pos.i.hi = 1000;
     owl_feather_update(&shot_objects[0]);
     assert(shot_objects[0].state == 2 && shot_objects[0].x_pos.val == 160 * 65536 + 370728 && shot_objects[0].y_pos.val == 120 * 65536 - 370728);

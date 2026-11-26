@@ -57,7 +57,7 @@ static u32 follower(u32 row)
         expected.on_screen = visible[edge];
         if (kind && status == 1) {
             expected.state = 3;
-            expected.unk42 = 0x7848;
+            expected.unk42 = OBJECT_CLUT(0x7848);
         }
     }
     if (kind)
@@ -71,6 +71,8 @@ static u32 follower(u32 row)
     c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
     return 1;
 }
+#ifndef MMX4_SATURN
+#define LABEL_CASES 16
 static const s16 label_y[] = { 15, 16, 17, 272 };
 static u32 label_init(u32 row)
 {
@@ -86,17 +88,17 @@ static u32 label_init(u32 row)
     obj.unk2 = 0x5E + row % 8;
     obj.on_screen = 7;
     obj.bg_offset = 2;
-    obj.unk15 = 0x40;
-    obj.unk16 = 7;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.unk16 = VISUAL_SATURN_LAYER(7);
     obj.x_pos.val = 0x12345678;
     obj.y_pos.val = label_y[row % 4] * 65536 + (row & 8 ? 0x5678 : 0);
-    obj.animation_step.packed = 0x12345678;
+    obj.animation_step.packed = C_TEST_STEP(0x12345678);
     expected = obj;
     expected.unk40 = 0x1F00;
     expected.bg_offset = -1;
     expected.unk3C = WINDOW_ARCHIVE_DATA + offset;
     expected.unk15 = 0;
-    expected.unk16 = 0;
+    expected.unk16 = VISUAL_SATURN_LAYER(0);
     expected.x_pos.i.hi = 160;
     expected.unk42 = row % 4 == 1 ? 0x7802 : 0x7800;
     expected.animation_step.fields.frame_index = obj.unk2;
@@ -110,9 +112,14 @@ static u32 label_init(u32 row)
     memcpy(WINDOW_ARCHIVE_DATA, &saved_directory, 4);
     return 1;
 }
+#else
+#define LABEL_CASES 0
+#endif
 const struct CTestGroup c_test_groups[] = {
     { "menu_owner_followers", NULL, NULL, 56, follower },
-    { "menu_label_init", NULL, NULL, 16, label_init },
+#ifndef MMX4_SATURN
+    { "menu_label_init", NULL, NULL, LABEL_CASES, label_init },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 56 + 16;
+const u32 c_test_count = 56 + LABEL_CASES;

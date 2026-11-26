@@ -66,11 +66,11 @@ static u32 ten_real_hits(u32 row)
     owner.active = 0x41;
     owner.id = 74;
     owner.state = 1;
-    owner.unk16 = 6;
+    owner.unk16 = VISUAL_SATURN_LAYER(6);
     owner.unk40 = 0xB0;
     owner.animation_table = (const u8* const*)sigma_final_animations;
     owner.sprite_frames = (u8*)frames;
-    owner.unk42 = 0x7804;
+    owner.unk42 = OBJECT_CLUT(0x7804);
     SP_CUR_MAIN_OBJ = &owner;
     head = find_free_shot_obj();
     assert(head == &shot_objects[0]);
@@ -85,7 +85,7 @@ static u32 ten_real_hits(u32 row)
     g_Player.hp = 24;
     g_Player.x_pos.i.hi = -38;
     g_Player.y_pos.i.hi = 9;
-    g_Player.unk15 = 0x40;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
     g_Player.animation_table = (u32**)D_80119DF0;
     player_enter_idle(&g_Player);
     g_Player.input.buttons.held = PLAYER_INPUT_SHOOT;
@@ -136,7 +136,8 @@ static u32 ten_real_hits(u32 row)
     visuals[19].id = 3;
     visuals[19].unk2 = 3;
     visuals[19].animation_table = D_8011BF40;
-    visuals[19].unk42 = 0x7802;
+    visuals[19].unk40 = WEAPON_TEXTURE_BASE;
+    visuals[19].unk42 = OBJECT_CLUT(0x7802);
     visuals[19].unk3C = (u8*)frames + 64;
     visuals[19].x_pos.i.hi = visuals[19].y_pos.i.hi = -1;
     for (i = 0; i < 6; i++) {
@@ -148,7 +149,7 @@ static u32 ten_real_hits(u32 row)
         v->x_pos.i.hi = (i & 1) ? -15 : 15;
         v->y_pos.i.hi = i < 2 ? 20 : i < 4 ? 0
                                            : -20;
-        v->unk16 = 1;
+        v->unk16 = VISUAL_SATURN_LAYER(1);
     }
     sigma_head_update(head);
     assert(c_test_word_difference((u32*)shot_objects, (u32*)shots, sizeof(shots) / 4) == 0 && c_test_word_difference((u32*)weapon_objects, (u32*)weapons, sizeof(weapons) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, sizeof(visuals) / 4) == 0 && zero_difference((u32*)misc_objects, sizeof(misc_objects) / 4) == 0);

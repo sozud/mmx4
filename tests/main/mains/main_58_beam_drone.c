@@ -30,7 +30,7 @@ static u32 test_func_800745E8(u32 row)
     obj.unk2 = c->unk2;
     obj.x_pos.val = 6558260;
     obj.y_pos.val = 5251909;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     func_80074438(&obj);
     obj.unk5 = 1;
     obj.ext.main_58.saved_unk5 = 2;
@@ -61,6 +61,7 @@ static struct MainObj expected[48];
 static struct ShotObj shots[32];
 static struct VisualObj visuals[32];
 static struct StageObjectRecord records[2] = { { 0, 58, 1, 0, 160, 1000 }, { 0, 0, 0, 255, 0, 0 } };
+#ifndef VERSION_DEMO
 static u32 upper_exit(u32 row)
 {
     struct PlayerObj player, entity;
@@ -114,7 +115,7 @@ static u32 upper_exit(u32 row)
     expected[0].unk17 = 0;
     expected[0].previous_animation_index = 255;
     expected[0].animation_cursor = beam_drone_animations[0];
-    expected[0].animation_step.packed = 0x00010002;
+    expected[0].animation_step.packed = C_TEST_STEP(0x00010002);
     expected[0].unk7C = 60;
     expected[0].y_speed = -98304;
     expected[0].unk6 = 1;
@@ -127,10 +128,113 @@ static u32 upper_exit(u32 row)
     SP_CUR_MAIN_OBJ = current;
     return 1;
 }
+#endif
+
+#include "support/state_cases.h"
+void func_80074438(struct MainObj*);
+void func_800745E8(struct MainObj*);
+void beam_drone_despawn(struct MainObj*);
+void beam_drone_fire_end(struct MainObj*);
+void beam_drone_leave_start(struct MainObj*);
+void beam_drone_leave_move(struct MainObj*);
+void beam_drone_spawn_beam(struct VisualObj*);
+void beam_drone_spawn_charge(struct AnimatedObj*);
+#define BM2(step, sub) (state_reset(step, sub, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), engine_obj.character_state.fields.active = 0, so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, g_Player.x_pos.i.hi = 0x100, g_Player.y_pos.i.hi = 0x80, SPIKE_IMMUNE_SET(g_Player, 1))
+#define BM2X() (engine_obj.character_state.fields.active = 0, state_extra = so.state | so.ext.main_58.unk88 << 8 | (u32)so.ext.main_58.saved_unk5 << 16 | (u32)(u8)so.unk2 << 24)
+#define BMINIT(kind, px, py) (BM2(0, 0), so.state = 0, so.unk2 = kind, g_Player.x_pos.i.hi = px, g_Player.y_pos.i.hi = py, func_80074438(&so), BM2X())
+static void bm2_init_0_right(void) { BMINIT(0, 0x100, 0x80); }
+static void bm2_init_0_left(void) { BMINIT(0, 0x40, 0x80); }
+static void bm2_init_1_below(void) { BMINIT(1, 0x100, 0x80); }
+static void bm2_init_2_left(void) { BMINIT(2, 0x40, 0x80); }
+static void bm2_init_2_right(void) { BMINIT(2, 0x100, 0x80); }
+#define BMMAIN(kind, setup) (BM2(1, 0), so.unk2 = kind, so.ext.main_58.saved_unk5 = 1, setup, func_800745E8(&so), BM2X())
+static void bm2_main_1(void) { BMMAIN(1, 0); }
+static void bm2_main_2_away(void) { BMMAIN(2, so.x_pos.i.hi = 0x400); }
+static void bm2_main_firing_away(void) { BMMAIN(0, (so.unk5 = 4, so.unk6 = 3, so.unk7C = 5, so.x_pos.i.hi = 0x400)); }
+static void bm2_main_defeat_0(void) { BMMAIN(0, (so.hp = 1, state_hit(&so, 0, 0, 1))); }
+static void bm2_main_defeat_1(void) { BMMAIN(1, (so.hp = 1, state_hit(&so, 0, 0, 1))); }
+static void bm2_main_pod_gone(void) { BMMAIN(1, engine_obj.character_state.fields.active = 1); }
+static void bm2_main_left(void) { BMMAIN(1, (so.unk5 = 5, so.unk6 = 1, so.unk7C = 1)); }
+static void bm2_despawn_placed(void) { BM2(0, 0), so.state = 2, beam_drone_despawn(&so), BM2X(); }
+static void bm2_despawn_pod(void) { BM2(0, 0), so.state = 2, so.unk2 = 1, beam_drone_despawn(&so), BM2X(); }
+static void bm2_fire_end_placed(void) { BM2(4, 3), so.unk7C = 1, beam_drone_fire_end(&so), BM2X(); }
+#ifndef VERSION_DEMO
+#define LEAVE(kind, x, y) (BM2(5, 0), so.unk2 = kind, so.x_pos.i.hi = x, so.y_pos.i.hi = y, beam_drone_leave_start(&so), BM2X())
+static void bm2_leave_down(void) { LEAVE(1, 0x80, 0x300); }
+static void bm2_leave_right(void) { LEAVE(2, 0x960, 0x60); }
+static void bm2_leave_left(void) { LEAVE(2, 0x900, 0x60); }
+static void bm2_leave_wait(void) { BM2(5, 1), so.unk7C = 3, beam_drone_leave_move(&so), BM2X(); }
+#endif
+static void bm2_beam_left(void) { BM2(4, 1), beam_drone_spawn_beam(VISUAL_OBJECT(&so)), BM2X(), state_extra ^= shot_objects[0].unk16 << 4 | shot_objects[1].unk2 << 12; }
+static void bm2_beam_right(void) { BM2(4, 1), so.unk15 = PLAYER_FACING_RIGHT, beam_drone_spawn_beam(VISUAL_OBJECT(&so)), BM2X(), state_extra ^= shot_objects[0].unk16 << 4; }
+static void bm2_charge(void) { BM2(4, 0), beam_drone_spawn_charge(ANIMATED_OBJECT(&so)), BM2X(), state_extra ^= visual_objects[0].id << 4; }
+static void (*const bm2_cases[])(void) = {
+    bm2_init_0_right,
+    bm2_init_0_left,
+    bm2_init_1_below,
+    bm2_init_2_left,
+    bm2_init_2_right,
+    bm2_main_1,
+    bm2_main_2_away,
+    bm2_main_firing_away,
+    bm2_main_defeat_0,
+    bm2_main_defeat_1,
+    bm2_main_pod_gone,
+    bm2_main_left,
+    bm2_despawn_placed,
+    bm2_despawn_pod,
+    bm2_fire_end_placed,
+    bm2_beam_left,
+    bm2_beam_right,
+    bm2_charge,
+#ifndef VERSION_DEMO
+    bm2_leave_down,
+    bm2_leave_right,
+    bm2_leave_left,
+    bm2_leave_wait,
+#endif
+};
+static const u32 bm2_expected[] = {
+    0x2u, 0x280000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x50003u, 0x1u, 0x41000000u,
+    0x2u, 0x280000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x50003u, 0x1u, 0x41000000u,
+    0x2u, 0x3C0000u, 0x800000u, 0x0u, 0xFFFE8000u, 0x0u, 0x0u, 0x50003u, 0x1000001u, 0x41000000u,
+    0x2u, 0x3C0000u, 0x800000u, 0xFFFEB000u, 0x0u, 0x0u, 0x0u, 0x50003u, 0x2000001u, 0x41000000u,
+    0x2u, 0x3C0000u, 0x800000u, 0x15000u, 0x0u, 0x0u, 0x0u, 0x50003u, 0x2000001u, 0x41000000u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1010001u, 0x41000000u,
+    0x102u, 0x0u, 0x4000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2020002u, 0x41000000u,
+    0x304u, 0x4u, 0x4000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x40001u, 0x41000000u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x10202u, 0x41002100u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x1010202u, 0x41002100u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1010202u, 0x41002100u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10200u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x200u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x200u, 0x0u,
+    0x2u, 0x280000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x104u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1001u, 0x41410000u,
+    0x104u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x11u, 0x41410000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x101u, 0x41004100u,
+#ifndef VERSION_DEMO
+    0x105u, 0x3Cu, 0x800000u, 0x0u, 0x18000u, 0x0u, 0x0u, 0x0u, 0x1000001u, 0x41000000u,
+    0x105u, 0x3Cu, 0x9600000u, 0x18000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2000001u, 0x41000000u,
+    0x105u, 0x3Cu, 0x9000000u, 0xFFFE8000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2000001u, 0x41000000u,
+    0x105u, 0x2u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+#endif
+};
+static u32 bm2_run(u32 row)
+{
+    return state_run(bm2_cases[row], row, &bm2_expected[row * 10]);
+}
 
 const struct CTestGroup c_test_groups[] = {
+    { "beam_drone_branch_steps", 0, 0, COUNT(bm2_cases), bm2_run },
     { "func_800745E8", 0, 0, 2, test_func_800745E8 },
+#ifndef VERSION_DEMO
     { "supported_vertical_drone_263_own_attack_steps_upper_exit", NULL, NULL, 1, upper_exit },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 2 + 1;
+const u32 c_test_count = COUNT(bm2_cases) + 2
+#ifndef VERSION_DEMO
+    + 1
+#endif
+    ;

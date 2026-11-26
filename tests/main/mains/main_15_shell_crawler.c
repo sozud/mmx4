@@ -2,6 +2,10 @@
 #include "main/mains/main_15_shell_crawler.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
+#include "support/state_cases.h"
+void shell_crawler_hop(struct MainObj*);
+void shell_crawler_land(struct MainObj*);
+void shell_crawler_walk(struct MainObj*);
 extern u8 D_800FFB5C[4];
 extern union AnimationStep* shell_crawler_animations[];
 extern u32* D_80137E08;
@@ -18,7 +22,8 @@ enum { AIRBORNE,
     TURN,
     WALL,
     JUMP_LEFT,
-    JUMP_RIGHT };
+    JUMP_RIGHT,
+    TURN_BACK };
 static const struct JumpInput inputs[] = {
     { 1, 1, 5, 0, 0, 0 },
     { 0, 0, 5, 0, 0, 0 },
@@ -27,10 +32,11 @@ static const struct JumpInput inputs[] = {
     { 0, 1, 5, 1, 0, 0 },
     { 0, 1, 5, 0, 0, 0 },
     { 0, 1, 7, 0, 0x40, 0 },
+    { 0, 1, 7, 0, 0x40, 1 },
 };
 static u8 tilemap[256];
 static u16 tiles[2][16][16];
-static u32 attributes[2] = { 0, 0x39 };
+static u32 attributes[2] = { 0, C_TEST_PSX_WORD(0x39) };
 static u32 steps[2];
 static u32* table[0x20];
 static struct MainObj soldier, expected;
@@ -110,7 +116,10 @@ static u32 check(u32 mode, u32 observation)
         expected.x_accel = 0;
         expected.air_state = -1;
     } else if (mode == TURN) {
-        expected.unk15 = 0x40;
+        expected.unk15 = PLAYER_FACING_RIGHT;
+        expected.x_speed = -0x8000;
+    } else if (mode == TURN_BACK) {
+        expected.unk15 = 0;
         expected.x_speed = -0x8000;
     } else if (mode == JUMP_LEFT || mode == JUMP_RIGHT) {
         expected.unk5 = 5;
@@ -121,15 +130,15 @@ static u32 check(u32 mode, u32 observation)
     }
     for (i = 0; i < sizeof(soldier) / 4; i++)
         assert(((u32*)&soldier)[i] == ((u32*)&expected)[i]);
-    assert(tilemap[0] == 1 && attributes[0] == 0 && attributes[1] == 0x39 && layout_width == 16 && layout_size == 256);
+    assert(tilemap[0] == 1 && attributes[0] == 0 && attributes[1] == C_TEST_PSX_WORD(0x39) && layout_width == 16 && layout_size == 256);
 
     if (observation == 0)
         return soldier.collision_flags | ((u32)(u8)soldier.unk5 << 8) | ((u32)(u8)soldier.air_state << 16)
-            | ((u32)(u8)soldier.unk15 << 24);
+            | ((u32)C_TEST_PSX_FACING(soldier.unk15) << 24);
     return (u16)soldier.y_pos.i.hi | ((u32)(u8)soldier.unk6C << 16) | ((u32)(u8)soldier.unk6E << 24);
 }
 
-static const u32 shell_crawler_check_jump_cases_expected[] = { 0x10200u, 0x6Bu, 0xFF0200u, 0x8006Bu, 0x208u, 0x8006Bu, 0x40000208u, 0x8006Bu, 0x20Eu, 0x8006Bu, 0x10508u, 0x8006Bu, 0x40010508u, 0x8006Bu };
+static const u32 shell_crawler_check_jump_cases_expected[] = { 0x10200u, 0x6Bu, 0xFF0200u, 0x8006Bu, 0x208u, 0x8006Bu, 0x40000208u, 0x8006Bu, 0x20Eu, 0x8006Bu, 0x10508u, 0x8006Bu, 0x40010508u, 0x8006Bu, 0x208u };
 static u32 shell_crawler_check_jump_cases_row(u32 row)
 {
     return check(row / 2, row % 2);
@@ -162,7 +171,9 @@ static u32 shell_case(u32 mode)
         s->unk54 = (const u8*)&box;
         s->unk68 = &box;
         s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 7;
-        s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = s->unk78 = 7;
+        s->unk72 = s->unk73 = s->unk76 = s->unk77 = 7;
+        OBJ_UNK78_SET(*s, 7);
+        OBJ_UNK74_SET(*s, 7);
         s->unk62 = s->unk63 = s->unk7A = s->unk75 = 7;
     }
     if (mode == 1 || mode == 4)
@@ -174,7 +185,7 @@ static u32 shell_case(u32 mode)
     obj.unk6 = 1;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.bg_offset = 2;
     obj.unk40 = 0x1234;
     obj.unk42 = 0x5678;
@@ -222,7 +233,9 @@ static u32 shell_case(u32 mode)
                 s->unk54 = NULL;
                 s->unk68 = NULL;
                 s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 0;
-                s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = s->unk78 = 0;
+                s->unk72 = s->unk73 = s->unk76 = s->unk77 = 0;
+                OBJ_UNK78_SET(*s, 0);
+                OBJ_UNK74_SET(*s, 0);
                 s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
             }
         }
@@ -314,7 +327,7 @@ static u32 test_func_8004E300_1_0(u32 row)
     obj.y_speed = -0x10000;
     obj.gravity = 0x4200;
     obj.x_pos.i.hi = c->hi;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
     FILL_ACTIVE(weapon_objects, 16, 0);
@@ -420,7 +433,7 @@ static u32 test_func_8004E300_1_1(u32 row)
         shots_expected[31].id = 0xA;
     }
     if (!full) {
-        shots_expected[31].unk42 = 0x7885;
+        shots_expected[31].unk42 = OBJECT_CLUT(0x7885);
     }
     if (!full) {
         shots_expected[31].bg_offset = obj.bg_offset;
@@ -523,7 +536,7 @@ static u32 test_shell_crawler_main_0(u32 row)
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     return 1;
 }
-static const u32 shell_crawler_main_1_expected[] = { 1u, 9u, 0x10005u, 1u };
+static const u32 shell_crawler_main_1_expected[] = { 1u, 9u, C_TEST_STEP(0x10005u), 1u };
 static u32 test_shell_crawler_main_1(u32 row)
 {
     u32 observed_values[4];
@@ -558,7 +571,7 @@ static u32 test_shell_crawler_main_1(u32 row)
     engine_obj.stage = 2;
     engine_obj.substage = 1;
     engine_obj.character_state.bytes[0] = 1;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
     FILL_ACTIVE(weapon_objects, 16, 0);
@@ -661,8 +674,8 @@ struct shell_crawler_shell_1_1_case {
     u32 expected[5];
 };
 static const struct shell_crawler_shell_1_1_case shell_crawler_shell_1_1_cases[] = {
-    { 2, 1, 1, 0, 1, { 1u, 1u, 0x14010101u, 0xFFu, 0u } },
-    { 1, 2, 0, 1, 5, { 2u, 0u, 0x18010005u, 0xFFu, 0u } },
+    { 2, 1, 1, 0, 1, { 1u, 1u, C_TEST_STEP(0x14010101u), 0xFFu, 0u } },
+    { 1, 2, 0, 1, 5, { 2u, 0u, C_TEST_STEP(0x18010005u), 0xFFu, 0u } },
 };
 static u32 test_shell_crawler_shell_1_1(u32 row)
 {
@@ -731,7 +744,7 @@ static u32 test_shell_crawler_shell_1_1(u32 row)
     observed_values[4] = (u32)obj.ext.main_0.flags[0];
     return c_test_observe(1, row, observed_values, c->expected, 5);
 }
-static const u32 shell_crawler_shell_1_2_expected[] = { 0u, 7u, 0x1010007u, 0xFEu, 0x78u };
+static const u32 shell_crawler_shell_1_2_expected[] = { 0u, 7u, C_TEST_STEP(0x1010007u), 0xFEu, 0x78u };
 static u32 test_shell_crawler_shell_1_2(u32 row)
 {
     u32 observed_values[5];
@@ -806,7 +819,196 @@ static u32 test_shell_crawler_shell_1(u32 index)
     return test_shell_crawler_shell_1_2(index);
 }
 
+#define SC(step, sub) (state_reset(step, sub, 0), so.id = 15, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, memset(weapon_objects, 0, sizeof(weapon_objects)), SPIKE_IMMUNE_SET(g_Player, 1))
+#define SC_TIMERS() (state_extra = so.ext.main_0.index | so.ext.main_0.flags[1] << 8 | so.ext.main_0.background_relative << 16 | (u32)so.ext.main_0.flags[0] << 24)
+#define SC_PLAYER(x, y) (g_Player.x_pos.i.hi = x, g_Player.y_pos.i.hi = y)
+#define HOP(count, face, px, py) (SC(1, 1), so.ext.main_0.index = count, so.unk15 = face, SC_PLAYER(px, py), func_8004D9CC(&so), SC_TIMERS())
+static void sc_hop_busy(void) { SC(1, 1), so.ext.main_0.background_relative = 2, func_8004D9CC(&so), SC_TIMERS(); }
+static void sc_hop_cooldown(void) { SC(1, 1), so.ext.main_0.flags[1] = 3, func_8004D9CC(&so), SC_TIMERS(); }
+static void sc_hop_player_level_far(void) { HOP(9, 0, 0x80, 0); }
+static void sc_hop_fires(void) { HOP(0x3C, PLAYER_FACING_RIGHT, 0x80, 0x70); }
+static void sc_hop_right_far(void) { HOP(5, PLAYER_FACING_RIGHT, 0xD0, 0x60); }
+static void sc_hop_left_near(void) { HOP(5, 0, 0x40, 0x60); }
+static void sc_hop_left_far(void) { HOP(5, 0, 0x30, 0x60); }
+static void sc_weapon(u32 slot, u32 id, s16 x, s16 y)
+{
+    weapon_objects[slot].active = 1;
+    weapon_objects[slot].id = id;
+    weapon_objects[slot].x_pos.i.hi = x;
+    weapon_objects[slot].y_pos.i.hi = y;
+}
+#define GUARD(face, player_face, px) (SC(1, 1), so.unk15 = face, g_Player.unk15 = player_face, SC_PLAYER(px, 0x60))
+static void sc_guard_busy(void) { SC(1, 1), so.ext.main_0.background_relative = 1, func_8004DCB0(&so), SC_TIMERS(); }
+static void sc_guard_cooldown(void) { SC(1, 1), so.ext.main_0.flags[0] = 4, func_8004DCB0(&so), SC_TIMERS(); }
+static void sc_guard_right_player_turned(void) { GUARD(PLAYER_FACING_RIGHT, PLAYER_FACING_RIGHT, 0x100), sc_weapon(0, 0, 0x90, 0x60), func_8004DCB0(&so), SC_TIMERS(); }
+static void sc_guard_right_player_level(void) { GUARD(PLAYER_FACING_RIGHT, 0, 0x80), sc_weapon(0, 0, 0x90, 0x60), func_8004DCB0(&so), SC_TIMERS(); }
+static void sc_guard_right_shot(void)
+{
+    GUARD(PLAYER_FACING_RIGHT, 0, 0x100);
+    sc_weapon(1, 1, 0x90, 0x60);
+    sc_weapon(2, 0, 0x90, 0x78);
+    sc_weapon(3, 0, 0x100, 0x5C);
+    sc_weapon(4, 0, 0xFF, 0x60);
+    func_8004DCB0(&so);
+    SC_TIMERS();
+}
+static void sc_guard_left_player_turned(void) { GUARD(0, 0, 0), sc_weapon(0, 0, 0x70, 0x60), func_8004DCB0(&so), SC_TIMERS(); }
+static void sc_guard_left_player_level(void) { GUARD(0, PLAYER_FACING_RIGHT, 0x80), sc_weapon(0, 0, 0x70, 0x60), func_8004DCB0(&so), SC_TIMERS(); }
+static void sc_guard_left_shot(void)
+{
+    GUARD(0, PLAYER_FACING_RIGHT, 0);
+    sc_weapon(1, 1, 0x70, 0x60);
+    sc_weapon(2, 0, 0x70, 0x48);
+    sc_weapon(3, 0, 0, 0x64);
+    sc_weapon(4, 0, 1, 0x60);
+    func_8004DCB0(&so);
+    SC_TIMERS();
+}
+static void sc_jump_takeoff(void) { SC(5, 0), so.animation_step.fields.event = 1, shell_crawler_hop(&so); }
+static void sc_jump_rising(void) { SC(5, 1), so.y_speed = 0x10000, so.gravity = 0x4200, shell_crawler_hop(&so); }
+static void sc_jump_apex(void) { SC(5, 1), so.y_speed = 0x1000, so.gravity = 0x4200, shell_crawler_hop(&so); }
+static void sc_land_falling(void) { SC(2, 0), so.gravity = 0x4200, shell_crawler_land(&so); }
+static void sc_land_touchdown(void) { SC(2, 0), so.x_speed = 0x10000, so.collision_flags = 8, shell_crawler_land(&so); }
+static void sc_land_recovered(void) { SC(2, 1), so.air_state = -1, shell_crawler_land(&so); }
+static void sc_land_recovering(void) { SC(2, 1), so.air_state = -1, so.animation_step.fields.relative_step = 1, shell_crawler_land(&so); }
+static void sc_walk_start_right(void) { SC(1, 0), so.unk15 = PLAYER_FACING_RIGHT, shell_crawler_walk(&so); }
+static void sc_walk_start_left_wall(void) { SC(1, 0), so.collision_flags = 2, shell_crawler_walk(&so); }
+static void sc_walk_right_wall(void) { SC(1, 1), so.unk15 = PLAYER_FACING_RIGHT, so.x_speed = 0x6000, so.collision_flags = 1, shell_crawler_walk(&so); }
+static void sc_walk_left(void) { SC(1, 1), so.x_speed = -0x6000, shell_crawler_walk(&so); }
+static void sc_shell_close(void) { SC(3, 0), shell_crawler_shell(&so); }
+static void sc_shell_opening(void) { SC(3, 2), so.animation_step.fields.relative_step = 1, shell_crawler_shell(&so); }
+static void sc_frozen_start(void) { SC(1, 0), so.state = 3, func_8004E300(&so), state_extra = so.state; }
+static void sc_frozen_shattered(void)
+{
+    SC(1, 1);
+    so.state = 3;
+    so.hp = 3;
+    so.collision_flags = 8;
+    state_hit(&so, 0, 0, 1);
+    func_8004E300(&so);
+    state_extra = so.state;
+}
+static void sc_thaw_wait(void) { SC(1, 0), so.state = 4, so.unk7C = 5, func_8004E490(&so), state_extra = so.state; }
+static void sc_thaw_burst(void) { SC(1, 0), so.state = 4, so.unk7C = 1, func_8004E490(&so), state_extra = so.state; }
+#define INIT(kind, px) (SC(1, 0), so.state = 0, so.unk2 = kind, SC_PLAYER(px, 0), func_8004E55C(&so), state_extra = so.state)
+static void sc_init_walker(void) { INIT(0, 0); }
+static void sc_init_buried(void) { INIT(2, 0x80); }
+static void sc_init_kind_4(void) { INIT(4, 0); }
+#define BURIED(x, attribute) (SC(0, 0), so.state = 5, so.unk2 = 2, so.x_pos.i.hi = x, state_terrain(attribute), shell_crawler_update(&so), state_extra = so.state)
+static void sc_buried_wait(void) { BURIED(0x80, 0x38); }
+static void sc_buried_emerge(void) { BURIED(0x80, 0); }
+static void sc_buried_off_screen(void) { BURIED(0x200, 0x38); }
+static void sc_despawn(void) { SC(3, 1), so.active = 0x41, so.state = 2, shell_crawler_update(&so), state_extra = so.state; }
+#define MAIN(x, stage_id, flag) (SC(5, 0), so.air_state = 1, so.x_pos.i.hi = x, engine_obj.stage = stage_id, engine_obj.substage = 1, engine_obj.character_state.bytes[0] = flag, shell_crawler_main(&so), state_extra = so.state)
+static void sc_main_above_zones(void) { MAIN(0x17D2, 2, 1); }
+static void sc_main_flag_clear(void) { MAIN(0x80, 2, 0); }
+static void sc_main_defeated(void)
+{
+    SC(5, 0);
+    so.active = 0x41;
+    so.air_state = 1;
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    engine_obj.stage = 0;
+    shell_crawler_main(&so);
+    state_extra = so.state | misc_objects[3].active << 8;
+}
+
+static void (*const shell_crawler_states_cases[])(void) = {
+    sc_hop_busy,
+    sc_hop_cooldown,
+    sc_hop_player_level_far,
+    sc_hop_fires,
+    sc_hop_right_far,
+    sc_hop_left_near,
+    sc_hop_left_far,
+    sc_guard_busy,
+    sc_guard_cooldown,
+    sc_guard_right_player_turned,
+    sc_guard_right_player_level,
+    sc_guard_right_shot,
+    sc_guard_left_player_turned,
+    sc_guard_left_player_level,
+    sc_guard_left_shot,
+    sc_jump_takeoff,
+    sc_jump_rising,
+    sc_jump_apex,
+    sc_land_falling,
+    sc_land_touchdown,
+    sc_land_recovered,
+    sc_land_recovering,
+    sc_walk_start_right,
+    sc_walk_start_left_wall,
+    sc_walk_right_wall,
+    sc_walk_left,
+    sc_shell_close,
+    sc_shell_opening,
+    sc_frozen_start,
+    sc_frozen_shattered,
+    sc_thaw_wait,
+    sc_thaw_burst,
+    sc_init_walker,
+    sc_init_buried,
+    sc_init_kind_4,
+    sc_buried_wait,
+    sc_buried_emerge,
+    sc_buried_off_screen,
+    sc_despawn,
+    sc_main_above_zones,
+    sc_main_flag_clear,
+    sc_main_defeated,
+};
+static const u32 shell_crawler_states_expected[] = {
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x20000u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x200u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    4u, 0u, 0x800000u, 0u, 0u, 0u, 0x4007u, 0u, 0x20000u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 0u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 6u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x10000u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x3000000u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 0u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 0u, 0u,
+    3u, 0u, 0x800000u, 0u, 0u, 0u, 0x4005u, 0u, 0x10000u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    3u, 0u, 0x800000u, 0u, 0u, 0u, 5u, 0u, 0x10000u, 0u,
+    0x105u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x105u, 0u, 0x800000u, 0u, 0xBE00u, 0x420000u, 0u, 0u, 0u, 0u,
+    0xFF000002u, 0u, 0x800000u, 0u, 0u, 0x420000u, 3u, 0u, 0u, 0u,
+    2u, 0u, 0x800000u, 0u, 0xFFFFBE00u, 0x420000u, 0u, 0u, 0u, 0u,
+    0x102u, 0u, 0x810000u, 0u, 0u, 0u, 4u, 0u, 0u, 0u,
+    1u, 0u, 0x800000u, 0u, 0u, 0u, 1u, 0u, 0u, 0u,
+    0xFF000102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x101u, 0u, 0x806000u, 0x6000u, 0u, 0u, 0x4001u, 3u, 0u, 0u,
+    0x101u, 0u, 0x7FA000u, 0x6000u, 0u, 0u, 0x4001u, 3u, 0u, 0u,
+    0x101u, 0u, 0x806000u, 0xFFFFA000u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x101u, 0u, 0x7FA000u, 0xFFFFA000u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x103u, 0x3Bu, 0x800000u, 0u, 0u, 0u, 5u, 0u, 0u, 0u,
+    0x203u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0xFF000101u, 0u, 0x800000u, 0u, 0xFFFFBE00u, 0x420000u, 0xDu, 0u, 3u, 0u,
+    0x101u, 0xAu, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0x20001u, 2u, 0x412100u,
+    1u, 4u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 4u, 0u,
+    1u, 0xAu, 0x800000u, 0u, 0u, 0u, 0u, 0u, 2u, 0x410000u,
+    1u, 0u, 0x800000u, 0u, 0u, 0u, 1u, 0x30003u, 1u, 0u,
+    1u, 0u, 0x880000u, 0u, 0u, 0u, 0x4000u, 0x30000u, 5u, 0u,
+    1u, 0u, 0x800000u, 0u, 0u, 0u, 1u, 0x30003u, 1u, 0u,
+    0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 5u, 0u,
+    1u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 3u, 1u, 0u,
+    0u, 0u, 0x2000000u, 0u, 0u, 0u, 0u, 0u, 2u, 0u,
+    0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x1000005u, 0u, 0x17D20000u, 0u, 0u, 0u, 0u, 0u, 2u, 0u,
+    0x1000005u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 1u, 0u,
+    0x1000005u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 1u, 0x4102u, 0x41002100u,
+};
+static u32 test_shell_crawler_states(u32 row)
+{
+    return state_run(shell_crawler_states_cases[row], row, &shell_crawler_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "shell_crawler_states", 0, 0, COUNT(shell_crawler_states_cases), test_shell_crawler_states },
     { "shell_crawler_check_jump", NULL, shell_crawler_check_jump_cases_expected, COUNT(shell_crawler_check_jump_cases_expected), shell_crawler_check_jump_cases_row },
     { "shell_crawler_shoot_events", NULL, shell_crawler_shoot_events_cases_expected, COUNT(shell_crawler_shoot_events_cases_expected), shell_case },
     { "shell_expiry_full_pool", shell_expiry_full_pool_cases, shell_expiry_full_pool_cases_expected, COUNT(shell_expiry_full_pool_cases), 0 },
@@ -815,4 +1017,4 @@ const struct CTestGroup c_test_groups[] = {
     { "shell_crawler_shell_1", 0, 0, 5, test_shell_crawler_shell_1 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(shell_crawler_check_jump_cases_expected) + COUNT(shell_crawler_shoot_events_cases_expected) + COUNT(shell_expiry_full_pool_cases) + 6 + 9 + 5;
+const u32 c_test_count = COUNT(shell_crawler_states_cases) + COUNT(shell_crawler_check_jump_cases_expected) + COUNT(shell_crawler_shoot_events_cases_expected) + COUNT(shell_expiry_full_pool_cases) + 6 + 9 + 5;

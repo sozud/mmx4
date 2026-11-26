@@ -23,10 +23,7 @@ static s8 pf_bank_saved;
 
 static void pf_same(const void* actual, const void* wanted, u32 size)
 {
-    u32 i, difference = 0;
-    for (i = 0; i < size / 4; i++)
-        difference |= ((const u32*)actual)[i] ^ ((const u32*)wanted)[i];
-    assert(difference == 0);
+    c_test_same_words(actual, wanted, size);
 }
 
 static struct ObjectHeader* pf_slot(u32 pool, u32 index)
@@ -83,7 +80,7 @@ static void pf_prepare(void)
     g_Player.input.buttons.held = 1;
     cur_random = 1;
     D_8013E198[2] = -1;
-    step.packed = 0;
+    step.packed = C_TEST_STEP(0);
     step.fields.duration = 5;
     step.fields.relative_step = 1;
     step.fields.frame_index = 4;
@@ -161,7 +158,7 @@ static void pf_script(u8 action, u8 facing)
     pf_player_expected.script_state = 1;
     pf_player_expected.script_action = action;
     pf_player_expected.script_facing = facing;
-    pf_player_expected.spike_immune = 1;
+    SPIKE_IMMUNE_SET(pf_player_expected, 1);
     pf_engine_expected.gameplay_locked = 1;
 }
 

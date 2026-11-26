@@ -23,12 +23,59 @@ static void tp_despawn(void)
     si.backref = NULL;
 }
 
+void func_800C2C3C(struct ItemObj*);
+void teleporter_wait_player(struct ItemObj*);
+void teleporter_activate(struct ItemObj*);
+void teleporter_wait_flash(struct ItemObj*);
+void teleporter_delay(struct ItemObj*);
+void teleporter_finish(struct ItemObj*);
+static u32 tp_meta[0x100];
+static s32 tp_frames[0x100];
+static struct MainObj tp_owner;
+static struct MiscObj tp_light;
+static struct Unk_unk68 tp_player_box = { -8, -16, 16, 16 };
+#define TPS(setup) (state_reset(0, 0, 0), memset(&tp_owner, 0, sizeof(tp_owner)), memset(&tp_light, 0, sizeof(tp_light)), D_801406A8 = tp_meta, TEST_MENU_FRAMES = (u8*)tp_frames, si.active = 1, si.id = 0xB, si.state = 1, si.x_pos.i.hi = 0x80, si.y_pos.i.hi = 0x60, si.ext.owner = &tp_owner, si.unk7C.misc = &tp_light, memset(&engine_obj, 0, sizeof(engine_obj)), g_Player.script_state = 0, g_Player.script_action = 0, setup)
+#define TPX() (state_extra = (u8)si.tail_ext.unk1.unk84.timer | (u32)(u8)g_Player.script_action << 8 | (u32)engine_obj.checkpoint << 16 | (u32)tp_light.ext.misc_11.active << 24)
+static void tp_init_used(void) { TPS((si.state = 0, si.unk2 = 0x82)), func_800C2C3C(&si), assert(si.unk42 == VISUAL_STAGE_PALETTE(func_8002938C(0x88))), si.unk42 = 0, TPX(); }
+static void tp_init(void) { TPS((si.state = 0, si.unk2 = 2)), func_800C2C3C(&si), assert(si.unk42 == VISUAL_STAGE_PALETTE(func_8002938C(0x88))), si.unk42 = 0, TPX(); }
+static void tp_wait_stepped_on(void) { TPS((si.unk72 = 8, si.unk68 = &tp_player_box, g_Player.unk68 = &tp_player_box)), teleporter_wait_player(&si), TPX(), state_extra ^= (u32)(u16)g_Player.y_pos.i.hi << 4; }
+static void tp_activate(void) { TPS((si.unk5 = 1, g_Player.script_state = -1)), teleporter_activate(&si), TPX(); }
+static void tp_activate_wait(void) { TPS(si.unk5 = 1), teleporter_activate(&si), TPX(); }
+static void tp_flash(void) { TPS((si.unk5 = 2, tp_owner.animation_table = state_table, tp_owner.animation_step.fields.event = 1)), teleporter_wait_flash(&si), TPX(); }
+static void tp_flash_wait(void) { TPS(si.unk5 = 2), teleporter_wait_flash(&si), TPX(); }
+static void tp_delay_done(void) { TPS(si.tail_ext.unk1.unk84.timer = 0x31), teleporter_delay(&si), TPX(); }
+static void tp_delay(void) { TPS(0), teleporter_delay(&si), TPX(); }
+static void tp_finish(void) { TPS((si.unk2 = 5, g_Player.script_state = -1)), teleporter_finish(&si), TPX(); }
+static void tp_finish_wait(void) { TPS(si.unk2 = 5), teleporter_finish(&si), TPX(); }
 static void (*const teleporter_states_cases[])(void) = {
     tp_idle,
     tp_away,
     tp_despawn,
+    tp_init_used,
+    tp_init,
+    tp_wait_stepped_on,
+    tp_activate,
+    tp_activate_wait,
+    tp_flash,
+    tp_flash_wait,
+    tp_delay_done,
+    tp_delay,
+    tp_finish,
+    tp_finish_wait,
 };
-static const u32 teleporter_states_expected[] = { 1u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+static const u32 teleporter_states_expected[] = { 1u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 1u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
+    0x3u, 0xFF008241u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x0u, 0x0u,
+    0x1u, 0xFF000241u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x0u, 0x0u,
+    0x101u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x1000u, 0x0u,
+    0x201u, 0xFF000001u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x101u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x10201u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x1001600u, 0x0u,
+    0x201u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x301u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x32u, 0x0u,
+    0x1u, 0x1u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x1u, 0x0u,
+    0x3u, 0x501u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x50000u, 0x0u,
+    0x1u, 0x501u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+};
 
 static u32 test_teleporter_states(u32 row)
 {
@@ -67,7 +114,7 @@ static u32 spawn(u32 row)
     obj.unk6 = glow ? 1 : 0;
     obj.sprite_frames = (const u8*)frames;
     obj.tail_ext.unk1.unk84.timer = wait ? 94 : 95;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.unk40 = 0x1234;
     obj.unk42 = 0x4567;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -80,7 +127,11 @@ static u32 spawn(u32 row)
         m->id = 11;
         m->unk2 = glow ? 2 : 1;
         m->bg_offset = layer;
+#ifdef VERSION_SATURN_PROTO
+        m->unk16 = glow ? 0 : 1;
+#else
         m->unk16 = glow ? 16 : 1;
+#endif
         m->unk15 = obj.unk15;
         m->unk40 = obj.unk40;
         m->unk42 = obj.unk42;

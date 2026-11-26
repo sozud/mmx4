@@ -32,7 +32,7 @@ static void oc_init_low(void)
 static void oc_init_mid(void)
 {
     CYC(0, 1);
-    cyclone_owner.unk15 = 0x40;
+    cyclone_owner.unk15 = PLAYER_FACING_RIGHT;
     owl_cyclone_update(&ss);
 }
 static void oc_init_level(void)

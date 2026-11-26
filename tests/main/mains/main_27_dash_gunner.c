@@ -56,7 +56,7 @@ static u32 dash_gunner_animation_transitions_dash_case(u32 mode)
     obj.state = 1;
     obj.unk5 = 6;
     obj.unk6 = 3;
-    obj.unk15 = mode == 1 || mode == 3 || mode == 5 ? 0x40 : 0;
+    obj.unk15 = mode == 1 || mode == 3 || mode == 5 ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 100 * 65536 + 0x5678;
     obj.x_speed = 12345;
@@ -132,7 +132,7 @@ static u32 dash_gunner_facing_start_dash_case(u32 mode)
     obj.id = 27;
     obj.state = 1;
     obj.unk5 = 3;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = mode == 4 ? 2 : 1;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.x_speed = 0x5678;
@@ -337,7 +337,7 @@ static u32 turn_case(u32 mode, u32 observation)
     obj.state = 1;
     obj.unk5 = 3;
     obj.unk6 = 1;
-    obj.unk15 = mode == 2 ? 0x40 : 0;
+    obj.unk15 = mode == 2 ? PLAYER_FACING_RIGHT : 0;
     obj.ext.main_27.unk8A = mode == 0 ? 0 : 1;
     obj.x_speed = 65536;
     obj.y_speed = -65536;
@@ -347,7 +347,7 @@ static u32 turn_case(u32 mode, u32 observation)
     set_animation_frame(&obj, 2, 6);
     before = obj;
     dash_gunner_turn_flip(&obj);
-    before.unk15 ^= 0x40;
+    before.unk15 ^= PLAYER_FACING_RIGHT;
     before.unk7C = 0x14;
     before.unk17 = animation;
     before.previous_animation_index = 0xFF;
@@ -362,7 +362,7 @@ static u32 turn_case(u32 mode, u32 observation)
     }
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    return observation == 0 ? obj.animation_step.packed : (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u8)obj.unk15 << 16);
+    return observation == 0 ? C_TEST_STEP(obj.animation_step.packed) : (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 16);
 }
 static const u32 dash_gunner_turn_animation_cases_expected[] = { 0x4010003u, 0x400203u, 0x26010002u, 0x400107u, 0x26010002u, 0x107u };
 static u32 dash_gunner_turn_animation_cases_row(u32 row)
@@ -410,7 +410,7 @@ static u32 test_dash_gunner_dash_move(u32 row)
     obj->ext.main_27.unk8B = 0;
     obj->ext.main_27.unk8C = 150;
     obj->ext.main_27.collision_direction = 0;
-    obj->animation_step.packed = 0x06010003;
+    obj->animation_step.packed = C_TEST_STEP(0x06010003);
     obj->previous_animation_index = 0xFF;
     obj->animation_cursor = (const u8*)(dash_gunner_animations[1] + 2);
     cur_random = 5;
@@ -473,7 +473,7 @@ static u32 test_func_80058740_0(u32 row)
     world_snapshot();
     world_expected->hp = 6;
     world_expected->animation_table = (const u8* const*)dash_gunner_animations;
-    world_expected->unk16 = 6;
+    world_expected->unk16 = VISUAL_SATURN_LAYER(6);
     world_expected->unk18 = world_expected->x_pos;
     world_expected->unk1C = world_expected->y_pos;
     world_expected->state = 1;
@@ -499,11 +499,11 @@ static u32 test_func_80058740_1(u32 row)
     world_snapshot();
     world_expected->hp = 6;
     world_expected->animation_table = (const u8* const*)dash_gunner_animations;
-    world_expected->unk16 = 6;
+    world_expected->unk16 = VISUAL_SATURN_LAYER(6);
     world_expected->unk18 = world_expected->x_pos;
     world_expected->unk1C = world_expected->y_pos;
     world_expected->state = 1;
-    world_expected->unk15 = 64;
+    world_expected->unk15 = PLAYER_FACING_RIGHT;
     world_expected->ext.main_27.unk82 = 30;
     world_expected->ext.main_27.unk8C = 300;
     world_expected->ext.main_27.unk89 = 20;
@@ -646,7 +646,7 @@ static void dg_aim_dash_right(void)
 {
     DG(1);
     so.unk7C = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     func_80059590(&so);
 }
 static void dg_aim_fire(void)
@@ -694,17 +694,17 @@ static const struct {
     u8 phase, facing, mode, aim_wait, direction, aim_timer, airborne, volley, retries;
 } dash_gunner_spawn_cases[] = {
     { -0x18000, 30, 2, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0x18000, 30, 3, 0x40, 0, 0, 0, 0, 1, 0, 0 },
+    { 0x18000, 30, 3, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 1, 0, 0 },
     { 0, 300, 6, 0, 1, 30, 0, 20, 0, 0, 0 },
-    { 0, 300, 3, 0x40, 1, 30, 1, 20, 1, 0, 0 },
+    { 0, 300, 3, PLAYER_FACING_RIGHT, 1, 30, 1, 20, 1, 0, 0 },
     { -0x18000, 30, 2, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0x18000, 30, 3, 0x40, 0, 0, 0, 0, 1, 0, 0 },
+    { 0x18000, 30, 3, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 1, 0, 0 },
     { 0, 300, 6, 0, 1, 30, 0, 20, 0, 0, 0 },
-    { 0, 300, 3, 0x40, 1, 30, 1, 20, 1, 0, 0 },
+    { 0, 300, 3, PLAYER_FACING_RIGHT, 1, 30, 1, 20, 1, 0, 0 },
     { -0x18000, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0 },
-    { 0x18000, 0, 2, 0x40, 0, 0, 0, 0, 0, 1, 0 },
+    { 0x18000, 0, 2, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 0, 1, 0 },
     { -0x18000, 0, 2, 0, 0, 0, 0, 0, 0, 2, 2 },
-    { 0x18000, 0, 2, 0x40, 0, 0, 0, 0, 0, 2, 2 },
+    { 0x18000, 0, 2, PLAYER_FACING_RIGHT, 0, 0, 0, 0, 0, 2, 2 },
 };
 
 static u32 test_dash_gunner_spawn_subtypes(u32 row)
@@ -741,7 +741,7 @@ static u32 test_dash_gunner_spawn_subtypes(u32 row)
     expected.collision_flags = 0;
     expected.bg_offset = row % 3;
     expected.animation_table = (const u8* const*)dash_gunner_animations;
-    expected.unk16 = 6;
+    expected.unk16 = VISUAL_SATURN_LAYER(6);
     expected.hurt_box = expected.attack_box = NULL;
     expected.x_speed = dash_gunner_spawn_cases[row].speed;
     expected.y_speed = expected.x_accel = expected.gravity = 0;
@@ -749,7 +749,7 @@ static u32 test_dash_gunner_spawn_subtypes(u32 row)
     expected.unk1C = obj.y_pos;
     expected.unk5 = dash_gunner_spawn_cases[row].phase;
     expected.unk15 = dash_gunner_spawn_cases[row].facing;
-    expected.unk7A = dash_gunner_spawn_cases[row].airborne;
+    expected.unk7A = DEMO_ALT(dash_gunner_spawn_cases[row].airborne, 0);
     expected.ext.main_27.unk80 = dash_gunner_spawn_cases[row].mode;
     expected.ext.main_27.unk82 = dash_gunner_spawn_cases[row].aim_wait;
     expected.ext.main_27.unk88 = dash_gunner_spawn_cases[row].direction;
@@ -759,7 +759,7 @@ static u32 test_dash_gunner_spawn_subtypes(u32 row)
     expected.ext.main_27.unk90 = dash_gunner_spawn_cases[row].volley;
     expected.ext.main_27.unk91 = row >= 8 ? 48 : 0;
     expected.ext.main_27.unk92 = dash_gunner_spawn_cases[row].retries;
-    expected.contact_damage = first ? 7 : 6;
+    expected.contact_damage = first ? DEMO_ALT(7, 4) : DEMO_ALT(6, 3);
     expected.terrain_box = dash_gunner_boxes[first + 4];
     expected_animation(&expected, 1);
     expected.state = 1;
@@ -786,7 +786,7 @@ static u32 repeat(u32 row)
     obj.state = 1;
     obj.unk5 = 2;
     obj.unk6 = 1;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.x_speed = face ? 0x20000 : -0x20000;
@@ -799,7 +799,7 @@ static u32 repeat(u32 row)
     obj.ext.main_27.unk8C = duration ? 2 : 1;
     obj.animation_table = (const u8* const*)dash_gunner_animations;
     set_animation(&obj, 2);
-    assert(obj.animation_step.packed == 0x0C010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x0C010002));
     expected = obj;
     expected.x_pos.val += obj.x_speed;
     expected.y_pos.val -= obj.y_speed;
@@ -809,7 +809,7 @@ static u32 repeat(u32 row)
         expected.unk17 = 3;
         expected.previous_animation_index = 255;
         expected.animation_cursor = (const u8*)dash_gunner_animations[3];
-        expected.animation_step.packed = 0x12010002;
+        expected.animation_step.packed = C_TEST_STEP(0x12010002);
         expected.x_speed = 0;
         expected.unk5 = 5;
         expected.unk6 = 0;
@@ -825,7 +825,7 @@ static u32 repeat(u32 row)
                 expected.unk17 = 3;
                 expected.previous_animation_index = 255;
                 expected.animation_cursor = (const u8*)dash_gunner_animations[3];
-                expected.animation_step.packed = 0x12010002;
+                expected.animation_step.packed = C_TEST_STEP(0x12010002);
                 expected.x_speed = 0;
                 expected.unk5 = 5;
                 expected.unk6 = 0;
@@ -853,7 +853,126 @@ static u32 repeat(u32 row)
     return 1;
 }
 
+void func_80058740(struct MainObj*);
+void func_80058AC8(struct MainObj*);
+void dash_gunner_wait_for_player(struct MainObj*);
+void dash_gunner_explode(struct MainObj*);
+void dash_gunner_turn_brake(struct MainObj*);
+void dash_gunner_turn_flip(struct MainObj*);
+void func_80059154(struct MainObj*);
+void dash_gunner_shoot_raise(struct MainObj*);
+void dash_gunner_shoot_aim(struct MainObj*);
+void dash_gunner_shoot_fire(struct MainObj*);
+void dash_gunner_shoot_wait(struct MainObj*);
+void dash_gunner_shoot_lower(struct MainObj*);
+void func_80059640(struct MainObj*);
+void dash_gunner_dash_move(struct MainObj*);
+void dash_gunner_dash_end(struct MainObj*);
+#define DG2(step, sub) (state_reset(step, sub, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.active = 0x41, so.state = 1, memset(weapon_objects, 0, sizeof(weapon_objects)), SPIKE_IMMUNE_SET(g_Player, 1))
+#define DG2X() (state_extra = so.ext.main_27.unk8B | so.ext.main_27.unk88 << 8 | (u32)so.state << 16 | (u32)so.ext.main_27.unk89 << 24)
+#define DG2MAIN(setup) (DG2(5, 3), so.unk7C = 5, so.ext.main_27.saved_unk5 = 5, D_8013B828 = &dash_gunner_box_0, D_8013B82C = &dash_gunner_box_1, D_8013B830 = &dash_gunner_box_3, D_8013B834 = &dash_gunner_box_2, setup, func_80058AC8(&so), DG2X())
+static void dg2_main_stage3_raised(void) { DG2MAIN((engine_obj.stage = 3, so.x_pos.i.hi = 0x10, so.ext.main_27.unk8B = 1)), engine_obj.stage = 0; }
+static void dg2_main_right_front(void) { DG2MAIN((so.unk15 = PLAYER_FACING_RIGHT, g_Player.x_pos.i.hi = 0xC0)); }
+static void dg2_main_defeat_behind(void) { DG2MAIN((g_Player.x_pos.i.hi = 0xC0, so.hp = 1, state_hit(&so, 0, 0, 1))); }
+static void dg2_main_past_end(void) { DG2MAIN(so.x_pos.i.hi = 0x790); }
+static void dg2_wait_then_hop(void) { DG2(3, 0), so.ext.main_27.unk80 = 1, so.unk7A = 1, g_Player.x_pos.i.hi = 0x140, dash_gunner_wait_for_player(&so), DG2X(); }
+static void dg2_brake_stop(void) { DG2(4, 0), so.unk7C = 1, so.x_speed = 0x100, so.x_accel = 0x100, dash_gunner_turn_brake(&so), DG2X(); }
+static void dg2_brake(void) { DG2(4, 0), so.unk7C = 2, so.x_speed = -0x8000, so.x_accel = 0x100, dash_gunner_turn_brake(&so), DG2X(); }
+static void dg2_flip_wait(void) { DG2(4, 1), dash_gunner_turn_flip(&so), DG2X(); }
+#define TURN_END(timer, hop, facing) (DG2(4, 2), so.unk7C = timer, so.ext.main_27.unk80 = hop, so.unk15 = facing, func_80059154(&so), DG2X())
+static void dg2_turn_end_wait(void) { TURN_END(2, 0, 0); }
+static void dg2_turn_end_left(void) { TURN_END(1, 0, 0); }
+static void dg2_turn_end_right(void) { TURN_END(1, 0, PLAYER_FACING_RIGHT); }
+static void dg2_turn_end_hop(void) { TURN_END(1, 1, 0); }
+static void dg2_raise_lock(void) { DG2(5, 0), so.animation_step.fields.event = 2, dash_gunner_shoot_raise(&so), DG2X(); }
+static void dg2_raise_done(void) { DG2(5, 0), so.animation_step.fields.event = 1, dash_gunner_shoot_raise(&so), DG2X(); }
+#define AIM(count, facing) (DG2(5, 1), so.unk7E = count, so.unk15 = facing, g_Player.x_pos.i.hi = 0x40, g_Player.y_pos.i.hi = 0x60, dash_gunner_shoot_aim(&so), DG2X(), state_extra ^= so.ext.main_27.collision_direction << 8)
+static void dg2_aim_wait(void) { AIM(2, 0); }
+static void dg2_aim_left(void) { AIM(1, 0); }
+static void dg2_aim_right(void) { AIM(1, PLAYER_FACING_RIGHT); }
+static void dg2_fire_behind_left(void) { DG2(5, 2), so.unk7C = 3, so.ext.main_27.collision_direction = 25, dash_gunner_shoot_fire(&so), DG2X(); }
+static void dg2_fire_right(void) { DG2(5, 2), so.unk7C = 3, so.unk15 = PLAYER_FACING_RIGHT, so.ext.main_27.collision_direction = 4, dash_gunner_shoot_fire(&so), DG2X(), state_extra ^= shot_objects[0].x_vel.val; }
+static void dg2_shoot_wait_end(void) { DG2(5, 3), so.unk7C = 1, dash_gunner_shoot_wait(&so), DG2X(); }
+static void dg2_lower_unlock(void) { DG2(5, 4), so.ext.main_27.unk8B = 1, so.animation_step.fields.event = 2, dash_gunner_shoot_lower(&so), DG2X(); }
+static void dg2_lower_done(void) { DG2(5, 4), so.animation_step.fields.event = 1, dash_gunner_shoot_lower(&so), DG2X(); }
+#define HOP(setup) (DG2(6, 0), so.ext.main_27.unk8C = 5, so.ext.main_27.unk82 = 5, so.ext.main_27.unk89 = 3, so.ext.main_27.unk84 = 0x800000, setup, func_80059640(&so), DG2X())
+static void dg2_hop_right_close(void) { HOP((so.unk15 = PLAYER_FACING_RIGHT, g_Player.x_pos.val = 0x820000, g_Player.y_pos.i.hi = 0x60)); }
+static void dg2_dash_move_end(void) { DG2(7, 1), so.unk7C = 1, so.ext.main_27.unk8C = 5, so.x_speed = 0x40000, dash_gunner_dash_move(&so), DG2X(); }
+static void dg2_dash_end_right(void) { DG2(7, 3), so.unk7C = 1, so.unk15 = PLAYER_FACING_RIGHT, so.ext.main_27.unk8C = 5, g_Player.x_pos.i.hi = 0xC0, dash_gunner_dash_end(&so), DG2X(); }
+static void dg2_hop_right_turn(void) { HOP((so.unk15 = PLAYER_FACING_RIGHT, so.ext.main_27.unk89 = 0, g_Player.x_pos.i.hi = 0x40, g_Player.y_pos.i.hi = 0x200)); }
+#define EXPLODE(count, tick) (DG2(0, 0), so.state = 2, so.unk7C = count, so.unk7E = tick, dash_gunner_explode(&so), DG2X())
+static void dg2_explode_done(void) { EXPLODE(1, 3); }
+static void dg2_explode_burst(void) { EXPLODE(5, 1); }
+static void dg2_explode_wait(void) { EXPLODE(5, 3); }
+static void (*const dg2_cases[])(void) = {
+    dg2_main_stage3_raised,
+    dg2_main_right_front,
+    dg2_main_defeat_behind,
+    dg2_main_past_end,
+    dg2_wait_then_hop,
+    dg2_brake_stop,
+    dg2_brake,
+    dg2_flip_wait,
+    dg2_turn_end_wait,
+    dg2_turn_end_left,
+    dg2_turn_end_right,
+    dg2_turn_end_hop,
+    dg2_raise_lock,
+    dg2_raise_done,
+    dg2_aim_wait,
+    dg2_aim_left,
+    dg2_aim_right,
+    dg2_fire_behind_left,
+    dg2_fire_right,
+    dg2_shoot_wait_end,
+    dg2_lower_unlock,
+    dg2_lower_done,
+    dg2_hop_right_close,
+    dg2_dash_move_end,
+    dg2_dash_end_right,
+    dg2_hop_right_turn,
+    dg2_explode_done,
+    dg2_explode_burst,
+    dg2_explode_wait,
+};
+static const u32 dg2_expected[] = {
+    0x305u, 0x4u, 0x200000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x3u, 0x10001u, 0x41000000u,
+    0x305u, 0x4u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x3u, 0x10000u, 0x41000000u,
+    0x305u, 0x60020u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x3u, 0x20000u, 0x41002100u,
+    0x305u, 0x4u, 0x7800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x3u, 0x30000u, 0x41000000u,
+    0x7u, 0x1u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x41000000u,
+    0x104u, 0x0u, 0x800100u, 0x0u, 0x0u, 0x0u, 0x2u, 0x0u, 0x10000u, 0x41000000u,
+    0x4u, 0x1u, 0x7F8000u, 0xFFFF7F00u, 0x0u, 0x100u, 0x0u, 0x0u, 0x10000u, 0x41000000u,
+    0x104u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x41000000u,
+    0x204u, 0x1u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x41000000u,
+    0x2u, 0x0u, 0x800000u, 0xFFFE8000u, 0x0u, 0x0u, 0x1u, 0x0u, 0x10000u, 0x41000000u,
+    0x2u, 0x0u, 0x800000u, 0x18000u, 0x0u, 0x0u, 0x4001u, 0x0u, 0x10000u, 0x41000000u,
+    0x6u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u, 0x14010000u, 0x41000000u,
+    0x5u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10001u, 0x41000000u,
+    0x105u, 0x1E0004u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x41000000u,
+    0x105u, 0x10000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x41000000u,
+    0x205u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x11000u, 0x41000000u,
+    0x205u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x11000u, 0x41000000u,
+    0x305u, 0xAu, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x41000000u,
+    0x105u, 0x140002u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4004u, 0x0u, 0x31F0Fu, 0x41410000u,
+    0x405u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x6u, 0x0u, 0x10000u, 0x41000000u,
+    0x405u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x41000000u,
+    0x505u, 0xAu, 0x800000u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u, 0x10000u, 0x41000000u,
+    0x6u, 0x0u, 0x820000u, 0x20000u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x2010000u, 0x41000000u,
+    0x207u, 0x0u, 0x840000u, 0x40000u, 0x0u, 0xFFFFE000u, 0x1u, 0x0u, 0x10000u, 0x41000000u,
+    0x6u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x10000u, 0x41000000u,
+    0x4u, 0x14u, 0x800000u, 0x0u, 0x0u, 0xFFFFE000u, 0x4000u, 0x0u, 0x10000u, 0x41000000u,
+    0x0u, 0x30000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x41000000u,
+    0x0u, 0x60004u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x20000u, 0x41002100u,
+    0x0u, 0x20004u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x20000u, 0x41000000u,
+};
+static u32 dg2_run(u32 row)
+{
+    return state_run(dg2_cases[row], row, &dg2_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "dash_gunner_branch_steps", 0, 0, COUNT(dg2_cases), dg2_run },
     { "dash_gunner_spawn_subtypes", 0, 0, COUNT(dash_gunner_spawn_cases), test_dash_gunner_spawn_subtypes },
     { "dash_gunner_aim", 0, 0, COUNT(dash_gunner_aim_cases), test_dash_gunner_aim },
     { "dash_gunner_animation_transitions", NULL, dash_gunner_animation_transitions_cases_expected, COUNT(dash_gunner_animation_transitions_cases_expected), dash_gunner_animation_transitions_dash_case },
@@ -870,4 +989,4 @@ const struct CTestGroup c_test_groups[] = {
     { "run_expiry_jump_modes_repeat_limit_and_wall_priority", NULL, NULL, 87, repeat },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(dash_gunner_spawn_cases) + COUNT(dash_gunner_aim_cases) + COUNT(dash_gunner_animation_transitions_cases_expected) + COUNT(dash_gunner_facing_start_cases_expected) + COUNT(dash_gunner_steps_cases_expected) + COUNT(dash_gunner_turn_animation_cases_expected) + 1 + 1 + 1 + 1 + 2 + 1 + 8 + 87;
+const u32 c_test_count = COUNT(dg2_cases) + COUNT(dash_gunner_spawn_cases) + COUNT(dash_gunner_aim_cases) + COUNT(dash_gunner_animation_transitions_cases_expected) + COUNT(dash_gunner_facing_start_cases_expected) + COUNT(dash_gunner_steps_cases_expected) + COUNT(dash_gunner_turn_animation_cases_expected) + 1 + 1 + 1 + 1 + 2 + 1 + 8 + 87;

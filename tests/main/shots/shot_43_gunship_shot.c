@@ -20,6 +20,26 @@ static void gs_init(u8 kind, u8 facing)
 }
 static void gs_bullet_top(void) { gs_init(0, 0); }
 static void gs_bullet_low_right(void) { gs_init(1, 0x40); }
+static void gs_bullet_top_right(void) { gs_init(0, 0x40); }
+static void gs_bullet_low(void) { gs_init(1, 0); }
+static void gs_fall(void)
+{
+    GUN(1);
+    gunship_shot_update(&ss);
+}
+static void gs_fall_away(void)
+{
+    GUN(1);
+    ss.x_pos.i.hi = 0x1000;
+    gunship_shot_update(&ss);
+}
+static void gs_fall_shot(void)
+{
+    GUN(1);
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    gunship_shot_update(&ss);
+}
 static void gs_missile_a(void) { gs_init(2, 0); }
 static void gs_missile_b(void) { gs_init(3, 0); }
 static void gs_missile_c(void) { gs_init(4, 0); }
@@ -98,8 +118,19 @@ static void (*const gunship_shot_states_cases[])(void) = {
     gs_home_wrap,
     gs_home_back,
     gs_home_back_wrap,
+    gs_bullet_top_right,
+    gs_bullet_low,
+    gs_fall,
+    gs_fall_away,
+    gs_fall_shot,
 };
-static const u32 gunship_shot_states_expected[] = { 1u, 0xFF000000u, 0xBB0000u, 0x660000u, 0xFFFC0000u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 0xFF400100u, 0x1450000u, 0x770000u, 0x40000u, 0u, 0u, 0x50000u, 0u, 0u, 0x2000002u, 0xFF000200u, 0x1140000u, 0x590000u, 0xFFFD8000u, 0x28000u, 0u, 0x50000u, 0x5A140Cu, 0u, 0x2000002u, 0xFF000300u, 0x1080000u, 0x670000u, 0xFFFD8000u, 0x28000u, 0u, 0x50000u, 0x5A140Cu, 0u, 0x2000002u, 0xFF000400u, 0x1080000u, 0x4D0000u, 0xFFFD8000u, 0x28000u, 0u, 0x50000u, 0x5A140Cu, 0u, 0x2000002u, 0xFF000500u, 0x1140000u, 0x400000u, 0xFFFD8000u, 0x28000u, 0u, 0x50000u, 0x5A140Cu, 0u, 0x2000002u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0x21000000u, 0x1000002u, 0u, 0x7D8000u, 0x600000u, 0xFFFD8000u, 0u, 0u, 0x40000u, 0u, 0u, 0x1000003u, 0u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x2000003u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48000u, 0u, 0x2100u, 0x1000002u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x20100u, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0xFFFCAC94u, 0x238E4u, 0u, 0x50000u, 0x2010Du, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0x3EC50u, 0xC7C4u, 0u, 0x50000u, 0x20101u, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0x3536Cu, 0xFFFDC71Cu, 0u, 0x50000u, 0x2011Du, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0x3B20Cu, 0x187DCu, 0u, 0x50000u, 0x20102u, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0xFFFDC71Cu, 0xFFFCAC94u, 0u, 0x50000u, 0x20115u, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0x3EC50u, 0xFFFF383Cu, 0u, 0x50000u, 0x2011Fu, 0u };
+static const u32 gunship_shot_states_expected[] = { 1u, 0xFF000000u, 0xBB0000u, 0x660000u, 0xFFFC0000u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 0xFF400100u, 0x1450000u, 0x770000u, 0x40000u, 0u, 0u, 0x50000u, 0u, 0u, 0x2000002u, 0xFF000200u, 0x1140000u, 0x590000u, 0xFFFD8000u, 0x28000u, 0u, 0x50000u, 0x5A140Cu, 0u, 0x2000002u, 0xFF000300u, 0x1080000u, 0x670000u, 0xFFFD8000u, 0x28000u, 0u, 0x50000u, 0x5A140Cu, 0u, 0x2000002u, 0xFF000400u, 0x1080000u, 0x4D0000u, 0xFFFD8000u, 0x28000u, 0u, 0x50000u, 0x5A140Cu, 0u, 0x2000002u, 0xFF000500u, 0x1140000u, 0x400000u, 0xFFFD8000u, 0x28000u, 0u, 0x50000u, 0x5A140Cu, 0u, 0x2000002u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0x21000000u, 0x1000002u, 0u, 0x7D8000u, 0x600000u, 0xFFFD8000u, 0u, 0u, 0x40000u, 0u, 0u, 0x1000003u, 0u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x2000003u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48000u, 0u, 0x2100u, 0x1000002u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x20100u, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0xFFFCAC94u, 0x238E4u, 0u, 0x50000u, 0x2010Du, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0x3EC50u, 0xC7C4u, 0u, 0x50000u, 0x20101u, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0x3536Cu, 0xFFFDC71Cu, 0u, 0x50000u, 0x2011Du, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0x3B20Cu, 0x187DCu, 0u, 0x50000u, 0x20102u, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0xFFFDC71Cu, 0xFFFCAC94u, 0u, 0x50000u, 0x20115u, 0u, 0x1000002u, 0xFF000000u, 0x800000u, 0x600000u, 0x3EC50u, 0xFFFF383Cu, 0u, 0x50000u, 0x2011Fu, 0u,
+    0x1u, 0xFF400000u, 0x1450000u, 0x660000u, 0x40000u, 0u, 0u, 0x50000u, 0u, 0u,
+    0x1u, 0xFF000100u, 0xBB0000u, 0x770000u, 0xFFFC0000u, 0u, 0u, 0x50000u, 0u, 0u,
+    0x1u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x3u, 0u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x3u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48000u, 0u, 0x2100u,
+};
 
 static u32 test_gunship_shot_states(u32 row)
 {
@@ -108,12 +139,6 @@ static u32 test_gunship_shot_states(u32 row)
 
 #define ss state_room.shot
 #define HOME(timer, cur, px, py) (state_reset(0, 0, 0), ss.active = 1, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x80, ss.unk90.bytes[0] = cur, ss.unk90.bytes[1] = timer, g_Player.x_pos.i.hi = px, g_Player.y_pos.i.hi = py, func_800A6DF4(&ss), state_extra = ss.unk90.bytes[0] | ss.unk90.bytes[1] << 8)
-static void gh_wait(void)
-{
-    HOME(2, 0, 0x80, 0x40);
-}
-static void gh_turn_up(void) { HOME(0, 0, 0x80, 0x40); }
-static void gh_turn_down(void) { HOME(0, 0, 0x80, 0xC0); }
 static void gh_near_up(void) { HOME(0, 7, 0x80, 0x40); }
 static void gh_back_up(void) { HOME(0, 0x10, 0x80, 0x40); }
 static void gh_wrap_up(void) { HOME(0, 0x1F, 0x80, 0x40); }
@@ -121,20 +146,42 @@ static void gh_near_down(void) { HOME(0, 9, 0x80, 0x40); }
 static void gh_locked(void) { HOME(0, 8, 0x80, 0x40); }
 
 static void (*const gunship_homing_cases[])(void) = {
-    gh_wait,
-    gh_turn_up,
-    gh_turn_down,
     gh_near_up,
     gh_back_up,
     gh_wrap_up,
     gh_near_down,
     gh_locked,
 };
-static const u32 gunship_homing_expected[] = { 0u, 1u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x100u, 0u, 0u, 0xFF000001u, 0x800000u, 0x800000u, 0x3EC50u, 0xC7C4u, 0u, 0x50000u, 0x101u, 0u, 0u, 0xFF000001u, 0x800000u, 0x800000u, 0x3EC50u, 0xFFFF383Cu, 0u, 0x50000u, 0x11Fu, 0u, 0u, 1u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x107u, 0u, 0u, 0xFF000001u, 0x800000u, 0x800000u, 0xFFFC13B0u, 0xC7C4u, 0u, 0x50000u, 0x10Fu, 0u, 0u, 0xFF000001u, 0x800000u, 0x800000u, 0x40000u, 0u, 0u, 0x50000u, 0x100u, 0u, 0u, 1u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x109u, 0u, 0u, 1u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x108u, 0u };
+static const u32 gunship_homing_expected[] = { 0u, 1u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x107u, 0u, 0u, 0xFF000001u, 0x800000u, 0x800000u, 0xFFFC13B0u, 0xC7C4u, 0u, 0x50000u, 0x10Fu, 0u, 0u, 0xFF000001u, 0x800000u, 0x800000u, 0x40000u, 0u, 0u, 0x50000u, 0x100u, 0u, 0u, 1u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x109u, 0u, 0u, 1u, 0x800000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x108u, 0u };
 
 static u32 test_gunship_homing(u32 row)
 {
     return object_run(gunship_homing_cases[row], row, &gunship_homing_expected[row * 10]);
+}
+
+static const u8 turn_heading[] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 30 };
+static const u8 turn_animation[] = { 0x10, 0x11, 0x11, 0x12, 0x12, 3, 3, 4, 4, 5, 6, 7, 7, 8, 8, 9, 10, 10, 11, 11, 12, 12, 13, 14 };
+static u32 turn(u32 row)
+{
+    u8 v = turn_heading[row];
+    u8 target;
+    state_reset(0, 0, 0);
+    ss.active = 1;
+    ss.x_pos.i.hi = 0x80;
+    ss.y_pos.i.hi = 0x80;
+    if (v < 24) {
+        target = v < 8 ? 8 : v < 16 ? 16 : 24;
+        ss.unk90.bytes[0] = v - 1;
+    } else {
+        target = v == 24 ? 16 : 24;
+        ss.unk90.bytes[0] = v + 1;
+    }
+    g_Player.x_pos.i.hi = target == 16 ? 0x40 : 0x80;
+    g_Player.y_pos.i.hi = target == 8 ? 0x40 : target == 24 ? 0xC0 : 0x80;
+    func_800A6DF4(&ss);
+    assert(ss.unk90.bytes[0] == v && ss.unk90.bytes[1] == 1);
+    assert(ss.unk17 == turn_animation[row] && ss.previous_animation_index == 0xFF);
+    return ss.unk17;
 }
 
 void gunship_shot_missile_fly(struct ShotObj*);
@@ -172,7 +219,7 @@ static u32 missile(u32 row)
     obj.unk60 = 6;
     obj.unk5C = 1;
     obj.bg_offset = layer;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk50.data = obj.unk54 = gunship_shot_missile_hit_box;
     obj.unk58.data = (u8*)D_80105FF0;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -181,12 +228,12 @@ static u32 missile(u32 row)
     obj.y_vel.val = 0x28000;
     obj.animation_table = (u32**)gunship_animations;
     set_animation(&obj, 5);
-    assert(obj.animation_step.packed == 0x0E010001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x0E010001));
     expected = obj;
     expected.x_pos.val += obj.x_vel.val;
     expected.y_pos.val -= obj.y_vel.val;
     expected.animation_cursor++;
-    expected.animation_step.packed = 0x0F010001;
+    expected.animation_step.packed = C_TEST_STEP(0x0F010001);
     g_Player.hp = 30;
     g_Player.armor_parts = armor ? 2 : 0;
     g_Player.unk54 = (const u32*)&player_bounds;
@@ -220,7 +267,8 @@ static u32 missile(u32 row)
 const struct CTestGroup c_test_groups[] = {
     { "gunship_homing", 0, 0, COUNT(gunship_homing_cases), test_gunship_homing },
     { "gunship_shot_states", 0, 0, COUNT(gunship_shot_states_cases), test_gunship_shot_states },
+    { "gunship_homing_turn_frames", NULL, NULL, COUNT(turn_heading), turn },
     { "real_missile_contact_armor_and_full_smoke_explosion_pools", NULL, NULL, 24, missile },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(gunship_homing_cases) + COUNT(gunship_shot_states_cases) + 24;
+const u32 c_test_count = COUNT(gunship_homing_cases) + COUNT(gunship_shot_states_cases) + COUNT(turn_heading) + 24;

@@ -30,6 +30,19 @@ static void ms_shot_down(void)
     state_hit(&so, 0, 0, 1);
     double_mine_shot_update(&ss);
 }
+extern u8 double_ball_box_5[2][4];
+static struct Unk_unk68 mine_player_box = { 0, 0, 12, 24 };
+static void ms_touch(void)
+{
+    MINESHOT(1);
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.x_pos.i.hi = 0x80;
+    g_Player.y_pos.i.hi = 0x60;
+    g_Player.unk54 = (const u32*)&mine_player_box;
+    ss.unk50.data = double_ball_box_5[0];
+    double_mine_shot_update(&ss);
+    g_Player.unk54 = NULL;
+}
 static void ms_away(void)
 {
     MINESHOT(1);
@@ -43,8 +56,11 @@ static void (*const double_mine_shot_states_cases[])(void) = {
     ms_owner_gone,
     ms_shot_down,
     ms_away,
+    ms_touch,
 };
-static const u32 double_mine_shot_states_expected[] = { 1u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0xFFFC0000u, 0u, 0x50000u, 0u, 0u, 1u, 0u, 0x800000u, 0x640000u, 0u, 0xFFFC0000u, 0u, 0x40000u, 0u, 0u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48000u, 0u, 0x2100u, 2u, 0u, 0x800000u, 0x10000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u };
+static const u32 double_mine_shot_states_expected[] = { 1u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0xFFFC0000u, 0u, 0x50000u, 0u, 0u, 1u, 0u, 0x800000u, 0x640000u, 0u, 0xFFFC0000u, 0u, 0x40000u, 0u, 0u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48000u, 0u, 0x2100u, 2u, 0u, 0x800000u, 0x10000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+};
 
 static u32 test_double_mine_shot_states(u32 row)
 {

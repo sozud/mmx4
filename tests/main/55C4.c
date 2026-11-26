@@ -23,6 +23,7 @@ static u32 same_bytes(const void* lhs, const void* rhs, u32 size)
     return 1;
 }
 
+#ifndef MMX4_SATURN
 static u32 copy_words(void)
 {
     u32 source[3] = { 0x01234567, 0x89ABCDEF, 0xFEDCBA98 };
@@ -92,7 +93,12 @@ static const CTestCase buffer_primitives_cases[] = {
 };
 static const u32 buffer_primitives_cases_expected[] = { 0x1u, 0xABCDABCDu, 0x10031002u, 0x10051004u, 0x10071006u, 0x10091008u, 0x100B100Au, 0x100D100Cu, 0x100F100Eu, 0x0u, 0x0u };
 #undef DECODE_CASE
+#define BUFFER_PRIMITIVE_CASES COUNT(buffer_primitives_cases)
+#else
+#define BUFFER_PRIMITIVE_CASES 0
+#endif
 
+#ifndef MMX4_SATURN
 static u16 cd_input_enabled(void)
 {
 #ifdef MMX4_PC
@@ -155,6 +161,10 @@ static u32 test_cd_fade_signed_boundary(u32 row)
     assert(cd_input_enabled() == 0);
     return 1;
 }
+#define CD_MIXER_CASES (64 + 4)
+#else
+#define CD_MIXER_CASES 0
+#endif
 
 #ifdef MMX4_PC
 static const struct {
@@ -582,6 +592,8 @@ static u32 test_replay_xa_stop(u32 row)
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 
+#ifndef MMX4_SATURN
+#define LOOKUP_CASES 6
 static u32 table[300];
 
 static u32 lookup(u32 row)
@@ -617,25 +629,75 @@ static u32 lookup(u32 row)
     D_8013E198[1] = bank;
     return c_test_observe(0, row, &observed, &expected[row], 1);
 }
+#else
+#define LOOKUP_CASES 0
+#endif
+
+#ifdef MMX4_PC
+s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
+static const u8 sequence_sep[] = {
+    'p', 'Q', 'E', 'S', 0, 0, 0, 0, 0, 48, 0x07, 0xA1, 0x20, 4, 2, 0, 0, 0, 4, 0, 0xFF, 0x2F, 0,
+    0, 1, 0, 48, 0x07, 0xA1, 0x20, 4, 2, 0, 0, 0, 4, 0, 0xFF, 0x2F, 0,
+};
+struct SequenceRow {
+    u8 type, priority, sequence, previous, playing;
+};
+static const struct SequenceRow sequence_rows[] = {
+    { 2, 5, 1, 0xFF, 0 },
+    { 2, 3, 0, 0xA1, 1 },
+    { 2, 7, 0, 0xA1, 1 },
+    { 1, 4, 0, 0xA1, 0 },
+};
+static u32 test_sequence_command(u32 row)
+{
+    const struct SequenceRow* in = &sequence_rows[row];
+    u32 command;
+    s32 access, result;
+    int success = setenv("SDL_AUDIODRIVER", "dummy", 1);
+    assert(success == 0);
+    Psyz_SpuInit();
+    func_80014DC4();
+    access = SsSepOpenJ((unsigned long*)sequence_sep, 0, 2);
+    assert(access == 0);
+    if (in->playing)
+        SsSepPlay(access, 1, SSPLAY_PLAY, 1);
+    D_8013924C[1] = in->previous;
+    command = (u32)(in->type == 2 ? 0x40 : 0) | (u32)access << 8 | (u32)(0x10 | in->priority) << 16 | (u32)in->sequence << 24;
+    D_80137E08 = &command;
+    result = func_800157AC(in->type, 0, NULL);
+    assert(result == (row == 1 ? -1 : 0));
+    assert(D_8013924C[1] == (row == 1 ? 0xA1 : in->type == 2 ? in->priority << 5 | in->sequence
+                                                             : in->priority << 5 | 0x1F));
+    assert(SsIsEos(access, 1) == (row == 0 || row == 1));
+    assert(SsIsEos(access, 0) == (row >= 2));
+    SsSepClose(access);
+    func_80014DC4();
+    return D_8013924C[1];
+}
+#endif
 
 const struct CTestGroup c_test_groups[] = {
+#ifndef MMX4_SATURN
     { "cd_mixer", 0, 0, 64, test_cd_mixer },
     { "cd_fade_signed_boundary", 0, 0, 4, test_cd_fade_signed_boundary },
     { "buffer_primitives", buffer_primitives_cases, buffer_primitives_cases_expected, COUNT(buffer_primitives_cases), 0 },
-    { "mute_range_and_empty_command_returns", NULL, NULL, 6, lookup },
+    { "mute_range_and_empty_command_returns", NULL, NULL, LOOKUP_CASES, lookup },
+#endif
 #ifdef MMX4_PC
     { "cd_commands", 0, 0, COUNT(cd_commands), test_cd_commands },
     { "replay_xa_stop", 0, 0, 4, test_replay_xa_stop },
     { "sound_bank_transfer", 0, 0, 12, test_sound_bank_transfer },
     { "sound_shutdown", 0, 0, 2, test_sound_shutdown },
+    { "sequence_command_priority", 0, 0, COUNT(sequence_rows), test_sequence_command },
 #endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 64 + 4 + COUNT(buffer_primitives_cases) + 6
+const u32 c_test_count = CD_MIXER_CASES + BUFFER_PRIMITIVE_CASES + LOOKUP_CASES
 #ifdef MMX4_PC
     + COUNT(cd_commands)
     + 4
     + 12
     + 2
+    + COUNT(sequence_rows)
 #endif
     ;

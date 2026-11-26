@@ -150,6 +150,12 @@ void func_80066F1C(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
 }
 
+#ifdef MMX4_BIG_ENDIAN
+#define TRAIN_BOSS_X(boss) (((struct BaseObj*)(boss))->x_pos.i.lo)
+#else
+#define TRAIN_BOSS_X(boss) (((struct BaseObj*)(boss))->x_pos.i.hi)
+#endif
+
 void train_boss_armor_smoke(struct MainObj* self)
 {
     s32 tableIndex;
@@ -163,7 +169,7 @@ void train_boss_armor_smoke(struct MainObj* self)
 
     if (--self->unk7E == 0) {
         tableIndex = self->unk2;
-        y = (u16)((struct BaseObj*)self->ext.main_47.train_boss)->x_pos.i.hi + train_boss_armor_smoke_offsets[0][tableIndex * 2];
+        y = (u16)TRAIN_BOSS_X(self->ext.main_47.train_boss) + train_boss_armor_smoke_offsets[0][tableIndex * 2];
         x = (u16)self->y_pos.i.hi + train_boss_armor_smoke_offsets[0][tableIndex * 2 + 1];
         func_800B10E4(0x11, (s16)(y - 6), (s16)(x - 6),
             (s16)(y + 6), (s16)(x + 6), 1);

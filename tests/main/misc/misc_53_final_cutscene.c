@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/misc/misc_53_final_cutscene.h"
 #include "main/1AC84.h"
 #include "support/state_cases.h"
@@ -53,18 +54,14 @@ static u32 approach_case(u32 character, u32 observation)
     before.ext.misc_53.movement_timer = obj.ext.misc_53.movement_timer;
     before.ext.misc_53.x_step = obj.ext.misc_53.x_step;
     dialogue_before.unk10 = abc_object.unk10;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(abc_object) / 4; i++)
-        assert(((u32*)&abc_object)[i] == ((u32*)&dialogue_before)[i]);
-    for (i = 0; i < sizeof(bg_before) / 4; i++)
-        assert(((u32*)&background_objects[0])[i] == ((u32*)&bg_before)[i]);
-    for (i = 0; i < sizeof(engine_before) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&abc_object, &dialogue_before, sizeof(abc_object));
+    c_test_same_words(&background_objects[0], &bg_before, sizeof(bg_before));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_before));
     assert(obj.animation_table == (u32**)final_cutscene_animations);
     assert(obj.animation_cursor == (u8*)&final_cutscene_anim_0[1]);
     assert(final_cutscene_animations[0] == final_cutscene_anim_0);
-    assert(final_cutscene_anim_0[0].packed == 0x00010001 && final_cutscene_anim_0[1].packed == 0x01010001 && final_cutscene_anim_0[2].packed == 0x02FE0001);
+    assert(final_cutscene_anim_0[0].packed == C_TEST_STEP(0x00010001) && final_cutscene_anim_0[1].packed == C_TEST_STEP(0x01010001) && final_cutscene_anim_0[2].packed == C_TEST_STEP(0x02FE0001));
     switch (observation) {
     case 0:
         actual = (u16)obj.ext.misc_53.timer | ((u32)obj.ext.misc_53.movement_timer << 16) | ((u32)(u8)obj.ext.misc_53.x_step << 24);
@@ -79,7 +76,7 @@ static u32 approach_case(u32 character, u32 observation)
         actual = obj.y_pos.val;
         break;
     default:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     }
     return actual;
@@ -324,13 +321,13 @@ static void fc_init(void)
     u32* pages = D_801406A8;
     u8* frames = TEST_MENU_FRAMES;
     FC(0, 0);
-    D_801406A8 = cutscene_pages;
+    test_stage_graphics(cutscene_pages);
     TEST_MENU_FRAMES = (u8*)cutscene_pages;
     final_cutscene_update(&sm);
-    D_801406A8 = pages;
+    state_extra = (u16)(sm.unk40 - OBJECT_STAGE_TEXTURE(1));
+    test_stage_graphics(pages);
     TEST_MENU_FRAMES = frames;
     sm.unk42 = 0;
-    state_extra = sm.unk40;
 }
 static void fc_wait(void)
 {
@@ -362,7 +359,7 @@ static void (*const final_cutscene_states_cases[])(void) = {
     fc_wait_arrive,
     fc_approach_scrolling,
 };
-static const u32 final_cutscene_states_expected[] = { 1u, 0xFF000001u, 0x8600000u, 0x2680000u, 0xFFFD8000u, 0u, 0u, 0x10000u, 0xB0u, 0u, 1u, 1u, 0x7000000u, 0x2680000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 1u, 0x7000000u, 0x2680000u, 0u, 0u, 0u, 0x50000u, 0x6B01401u, 0u, 0x101u, 1u, 0x7000000u, 0x2680000u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+static const u32 final_cutscene_states_expected[] = { 1u, 0xFF000001u, 0x8600000u, 0x2680000u, 0xFFFD8000u, 0u, 0u, 0x10000u, OBJECT_TEXTURE_OFFSET(0xB0), 0u, 1u, 1u, 0x7000000u, 0x2680000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 1u, 0x7000000u, 0x2680000u, 0u, 0u, 0u, 0x50000u, 0x6B01401u, 0u, 0x101u, 1u, 0x7000000u, 0x2680000u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
 
 static u32 test_final_cutscene_states(u32 row)
 {

@@ -48,12 +48,14 @@ static u32 test_armored_walker_turn_pause(u32 row)
 static void aw_init_left(void)
 {
     AW(0, 0);
+    state_terrain(0);
     so.x_pos.val = 0x100000;
     armored_walker_update(&so);
 }
 static void aw_init_right(void)
 {
     AW(0, 0);
+    state_terrain(0);
     so.x_pos.val = -0x100000;
     armored_walker_update(&so);
 }
@@ -69,7 +71,7 @@ static void aw_main_wall_right(void)
     AW(2, 1);
     so.state = 1;
     ON_SCREEN();
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_pos.i.hi = -0x80;
     so.collision_flags = 9;
     armored_walker_update(&so);
@@ -87,7 +89,7 @@ static void aw_main_behind_right(void)
     AW(2, 1);
     so.state = 1;
     ON_SCREEN();
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.collision_flags = 8;
     armored_walker_update(&so);
 }
@@ -122,6 +124,10 @@ static void aw_despawn(void)
     so.active = 1;
     armored_walker_update(&so);
 }
+void armored_walker_main(struct MainObj*);
+static void aw_main_defeated(void) { AW(1, 0), so.state = 1, ON_SCREEN(), so.collision_flags = 8, so.hp = 1, state_hit(&so, 0, 0, 1), cur_random = 1, armored_walker_main(&so); }
+static void aw_main_hit_reaction(void) { AW(0, 0), so.state = 1, ON_SCREEN(), so.unk63 = 1, armored_walker_main(&so); }
+static void aw_main_behind_right_ahead(void) { AW(2, 1), so.state = 1, ON_SCREEN(), so.air_state = 1, so.unk15 = PLAYER_FACING_RIGHT, so.collision_flags = 8, g_Player.x_pos.i.hi = 0x100, armored_walker_main(&so); }
 static void aw_walk_left(void)
 {
     AW(2, 0);
@@ -130,7 +136,7 @@ static void aw_walk_left(void)
 static void aw_walk_right(void)
 {
     AW(2, 0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     func_800423A0(&so);
 }
 static void aw_walk_on(void)
@@ -149,7 +155,7 @@ static void aw_hop_right(void)
 {
     AW(3, 0);
     so.animation_step.fields.event = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     armored_walker_hop(&so);
 }
 static void aw_hop_crouch(void)
@@ -173,14 +179,14 @@ static void aw_land_turn_right(void)
 {
     AW(4, 0);
     so.animation_step.fields.event = 1;
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_pos.val = 0x10000;
     armored_walker_land(&so);
 }
 static void aw_land_walk_right(void)
 {
     AW(4, 0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_pos.val = -0x10000;
     armored_walker_land(&so);
 }
@@ -275,8 +281,15 @@ static void (*const armored_walker_states_cases[])(void) = {
     aw_flip_wait,
     aw_fall_land,
     aw_fall,
+    aw_main_defeated,
+    aw_main_hit_reaction,
+    aw_main_behind_right_ahead,
 };
-static const u32 armored_walker_states_expected[] = { 2u, 0u, 0x100000u, 0u, 0u, 0u, 1u, 0xF0003u, 0u, 0u, 2u, 0u, 0xFFF00000u, 0u, 0u, 0u, 0x4001u, 0xF0003u, 0u, 0u, 0xFF000106u, 0u, 0x800000u, 0u, 0xFFFFBE00u, 0x420000u, 4u, 0u, 0u, 0u, 0x1000003u, 0u, 0xFF800000u, 0u, 0u, 0u, 0x4003u, 0u, 0u, 0u, 0x1000003u, 0u, 0x800000u, 0u, 0u, 0u, 3u, 0u, 0u, 0u, 5u, 9u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 5u, 9u, 0xFFE00000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0xFF000106u, 0u, 0x10000000u, 0u, 0xFFFFBE00u, 0x420000u, 4u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x102u, 0u, 0xFFFD0000u, 0xFFFD0000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x102u, 0u, 0x30000u, 0x30000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 0x102u, 0u, 0x30000u, 0x30000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0u, 0x20000u, 0x60000u, 0x420000u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0u, 0xFFFE0000u, 0x60000u, 0x420000u, 0x4000u, 0u, 0u, 0u, 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 6u, 0u, 0u, 0u, 0xFFFFFFFFu, 0u, 4u, 0u, 0u, 0u, 0x103u, 0u, 0u, 0u, 0x60000u, 0u, 0u, 0u, 0u, 0u, 5u, 0u, 0x10000u, 0u, 0u, 0u, 0x4002u, 0u, 0u, 0u, 2u, 0u, 0xFFFF0000u, 0u, 0u, 0u, 0x4001u, 0u, 0u, 0u, 5u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0u, 0u, 2u, 0u, 0x10000u, 0u, 0u, 0u, 1u, 0u, 0u, 0u, 4u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x105u, 0u, 0u, 0u, 0u, 0xFFFFE900u, 2u, 0u, 0u, 0u, 5u, 1u, 0x30000u, 0x30000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x205u, 0x1Eu, 0u, 0u, 0u, 0u, 0x4001u, 0u, 0u, 0u, 0x205u, 0u, 0u, 0u, 0u, 0u, 0x4001u, 0u, 0u, 0u, 0x105u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0u, 0u, 0u, 0u, 5u, 0u, 0u, 0u, 0x106u, 0u, 0u, 0u, 0xFFFF0000u, 0u, 0u, 0u, 0u, 0u };
+static const u32 armored_walker_states_expected[] = { 2u, 0u, 0x100000u, 0u, 0u, 0u, 1u, 0xF0003u, 0u, 0u, 2u, 0u, 0xFFF00000u, 0u, 0u, 0u, 0x4001u, 0xF0003u, 0u, 0u, 0xFF000106u, 0u, 0x800000u, 0u, 0xFFFFBE00u, 0x420000u, 4u, 0u, 0u, 0u, 0x1000003u, 0u, 0xFF800000u, 0u, 0u, 0u, 0x4003u, 0u, 0u, 0u, 0x1000003u, 0u, 0x800000u, 0u, 0u, 0u, 3u, 0u, 0u, 0u, 5u, 9u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 5u, 9u, 0xFFE00000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0xFF000106u, 0u, 0x10000000u, 0u, 0xFFFFBE00u, 0x420000u, 4u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x102u, 0u, 0xFFFD0000u, 0xFFFD0000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x102u, 0u, 0x30000u, 0x30000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 0x102u, 0u, 0x30000u, 0x30000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0u, 0x20000u, 0x60000u, 0x420000u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0u, 0xFFFE0000u, 0x60000u, 0x420000u, 0x4000u, 0u, 0u, 0u, 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 6u, 0u, 0u, 0u, 0xFFFFFFFFu, 0u, 4u, 0u, 0u, 0u, 0x103u, 0u, 0u, 0u, 0x60000u, 0u, 0u, 0u, 0u, 0u, 5u, 0u, 0x10000u, 0u, 0u, 0u, 0x4002u, 0u, 0u, 0u, 2u, 0u, 0xFFFF0000u, 0u, 0u, 0u, 0x4001u, 0u, 0u, 0u, 5u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0u, 0u, 2u, 0u, 0x10000u, 0u, 0u, 0u, 1u, 0u, 0u, 0u, 4u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x105u, 0u, 0u, 0u, 0u, 0xFFFFE900u, 2u, 0u, 0u, 0u, 5u, 1u, 0x30000u, 0x30000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x205u, 0x1Eu, 0u, 0u, 0u, 0u, 0x4001u, 0u, 0u, 0u, 0x205u, 0u, 0u, 0u, 0u, 0u, 0x4001u, 0u, 0u, 0u, 0x105u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0u, 0u, 0u, 0u, 5u, 0u, 0u, 0u, 0x106u, 0u, 0u, 0u, 0xFFFF0000u, 0u, 0u, 0u, 0u, 0u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x0u, 0x2100u,
+    0x100u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x2700u, 0x0u, 0x0u,
+    0x1000102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x0u, 0x0u,
+};
 
 static u32 test_armored_walker_states(u32 row)
 {

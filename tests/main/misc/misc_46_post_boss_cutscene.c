@@ -244,7 +244,7 @@ static u32 images(u32 row)
     obj.id = 46;
     obj.state = 1;
     obj.bg_offset = layer;
-    obj.unk16 = 6;
+    obj.unk16 = VISUAL_SATURN_LAYER(6);
     obj.unk40 = 0xB3;
     obj.unk42 = 0x780A;
     obj.unk3C = (u8*)frames;
@@ -262,7 +262,7 @@ static u32 images(u32 row)
         v->unk3C = obj.unk3C;
         v->animation_table = obj.animation_table;
         v->unk42 = obj.unk42;
-        v->unk16 = 6;
+        v->unk16 = VISUAL_SATURN_LAYER(6);
         v->unk5C.owner = PLAYER_OBJECT(&obj);
         v->unk50 = i ? PLAYER_OBJECT(&visual_objects[32 - i]) : PLAYER_OBJECT(&obj);
     }
@@ -275,6 +275,7 @@ static u32 images(u32 row)
     return 1;
 }
 
+#ifndef VERSION_DEMO
 void post_boss_cutscene_update(struct MiscObj*);
 void object_afterimage_update(struct VisualObj*);
 static u32 metadata[8], menu[64];
@@ -360,11 +361,17 @@ static u32 partial_lifetime(u32 row)
         assert(menu[i] == (i < 8 ? 64u : 0));
     return 1;
 }
+#define PARTIAL_CASES 1
+#else
+#define PARTIAL_CASES 0
+#endif
 
 const struct CTestGroup c_test_groups[] = {
     { "post_boss_cutscene_states", 0, 0, COUNT(post_boss_cutscene_states_cases), test_post_boss_cutscene_states },
     { "real_cutscene_reverse_allocator_zero_through_three_afterimages_and_links", NULL, NULL, 12, images },
+#ifndef VERSION_DEMO
     { "actual_post_boss_single_afterimage_reaches_nonfinal_catch_up", NULL, NULL, 1, partial_lifetime },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(post_boss_cutscene_states_cases) + 12 + 1;
+const u32 c_test_count = COUNT(post_boss_cutscene_states_cases) + 12 + PARTIAL_CASES;

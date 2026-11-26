@@ -5,6 +5,11 @@
 #include "main/collision_bounds.h"
 #include "support/state_cases.h"
 void surface_hopper_appear(struct MainObj* arg0);
+void surface_hopper_crawl(struct MainObj*);
+void surface_hopper_crawl_turn_end(struct MainObj*);
+void surface_hopper_crawl_attach(struct MainObj*);
+void surface_hopper_crawl_finish(struct MainObj*);
+void surface_hopper_leap(struct MainObj*);
 u8 func_80053B54(struct MainObj*);
 extern union AnimationStep* surface_hopper_animations[27];
 extern u8 D_800FC80C[8];
@@ -103,7 +108,7 @@ static u32 launch_case(u32 observation)
         actual = obj.y_speed;
         break;
     case 2:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     case 3:
         actual = (u8)obj.unk6 | ((u32)(u16)obj.unk7C << 8);
@@ -112,7 +117,7 @@ static u32 launch_case(u32 observation)
         actual = obj.unk15 | ((u32)obj.unk17 << 8) | ((u32)obj.previous_animation_index << 16);
         break;
     default:
-        actual = ((u32*)&obj)[1];
+        actual = C_TEST_LE_WORD((u32*)&obj + 1);
         break;
     }
     return actual;
@@ -179,7 +184,7 @@ static u32 surface_hopper_crawl_run(u32 mode, u32 observation)
     struct Main19Ext want;
     memset(surface_hopper_crawl_tilemap, 1, sizeof(surface_hopper_crawl_tilemap));
     memset(surface_hopper_crawl_tiles, 0, sizeof(surface_hopper_crawl_tiles));
-    surface_hopper_crawl_attributes[0] = input->solid ? 0x39 : 0;
+    surface_hopper_crawl_attributes[0] = input->solid ? C_TEST_PSX_WORD(0x39) : 0;
     SP_BG_TILEMAP = surface_hopper_crawl_tilemap;
     layout_width = 16;
     layout_size = 256;
@@ -224,7 +229,7 @@ static u32 surface_hopper_crawl_run(u32 mode, u32 observation)
         surface_hopper_crawl_expected.unk6 = 1;
     } else {
         mask = D_800FC80C[input->index * 4 + input->orientation];
-        want.unk82 = surface_hopper_crawl_attributes[0];
+        want.unk82 = input->solid ? 0x39 : 0;
         if (!input->solid) {
             x = want.unk86;
             y = want.unk88;
@@ -337,7 +342,7 @@ static u32 surface_hopper_launched_run(u32 mode, u32 observation)
     for (i = 0; i < 0x40; i++)
         want_miscs[i].active = 1;
     memset(&g_Player, 0, sizeof(g_Player));
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     engine_obj.stage = 5;
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
@@ -422,7 +427,7 @@ static u32 surface_hopper_launched_run(u32 mode, u32 observation)
     same(misc_objects, want_miscs, sizeof(want_miscs));
     for (i = 1; i < COUNT(weapon_objects); i++)
         assert(!weapon_objects[i].active);
-    assert(g_Player.spike_immune == 1 && engine_obj.stage == 5);
+    assert(SPIKE_IMMUNE(g_Player) == 1 && engine_obj.stage == 5);
     x = (u16)weapon_objects[0].x_pos.i.hi;
     y = ((u16*)&weapon_objects[0].unk80)[0];
     if (observation == 0)
@@ -450,16 +455,18 @@ enum { V_TURN,
     H_NEARBY,
     V_NEARBY,
     H_CRAWL,
-    V_EMPTY };
+    V_EMPTY,
+    H_EMPTY };
 static const struct TurnInput wall_crawler_turn_inputs[] = {
     { 0, 0, 0, 0, 1, 0 },
     { 0, 1, 0, 0, 1, 0 },
     { 2, 0, 0, 0, 1, 0 },
-    { 2, 1, 0x40, 0, 1, 0 },
+    { 2, 1, PLAYER_FACING_RIGHT, 0, 1, 0 },
     { 2, 0, 0, 0xFF, 1, 1 },
-    { 0, 0, 0x40, 0xFF, 1, 1 },
+    { 0, 0, PLAYER_FACING_RIGHT, 0xFF, 1, 1 },
     { 2, 0, 0, 0xFF, 1, 0 },
     { 0, 0, 0, 0xFF, 0, 0 },
+    { 2, 0, 0, 0xFF, 0, 0 },
 };
 static u8 wall_crawler_turn_tilemap[256];
 static u16 wall_crawler_turn_tiles[2][16][16];
@@ -477,7 +484,7 @@ static u32 wall_crawler_turn_run(u32 mode, u32 observation)
     u8 direction, flags;
     memset(wall_crawler_turn_tilemap, 1, sizeof(wall_crawler_turn_tilemap));
     memset(wall_crawler_turn_tiles, 0, sizeof(wall_crawler_turn_tiles));
-    wall_crawler_turn_attributes[0] = input->solid ? 0x39 : 0;
+    wall_crawler_turn_attributes[0] = input->solid ? C_TEST_PSX_WORD(0x39) : 0;
     SP_BG_TILEMAP = wall_crawler_turn_tilemap;
     layout_width = 16;
     layout_size = 256;
@@ -536,20 +543,20 @@ static u32 wall_crawler_turn_run(u32 mode, u32 observation)
         wall_crawler_turn_expected.unk6 = 6;
         direction = input->direction ^ 1;
         if (input->index >= 2)
-            wall_crawler_turn_expected.unk15 ^= 0x40;
+            wall_crawler_turn_expected.unk15 ^= PLAYER_FACING_RIGHT;
         wall_crawler_turn_expected.ext.main_19.unk80 = ((flags >> (input->index < 2 ? direction + 2 : direction)) & 1) ? direction ^ 1 : direction;
     }
     for (i = 0; i < sizeof(crawler) / 4; i++)
         difference |= ((u32*)&crawler)[i] ^ ((u32*)&wall_crawler_turn_expected)[i];
     assert(difference == 0);
     if (observation == 0)
-        actual = turned | ((u32)crawler.ext.main_19.unk80 << 8) | ((u32)(u8)crawler.unk15 << 16) | ((u32)flags << 24);
+        actual = turned | ((u32)crawler.ext.main_19.unk80 << 8) | ((u32)C_TEST_PSX_FACING(crawler.unk15) << 16) | ((u32)flags << 24);
     else
         actual = (u16)crawler.x_pos.i.hi | ((u32)(u16)crawler.y_pos.i.hi << 16);
     return actual;
 }
 
-static const u32 wall_crawler_turn_cases_expected[] = { 0xF000001u, 0x600080u, 0xF000101u, 0x600080u, 0xF400001u, 0x600080u, 0xF000101u, 0x600080u, 0xF400001u, 0x600080u, 0xF400001u, 0x600080u, 0xF000000u, 0x600080u, 0x101u, 0x600080u };
+static const u32 wall_crawler_turn_cases_expected[] = { 0xF000001u, 0x600080u, 0xF000101u, 0x600080u, 0xF400001u, 0x600080u, 0xF000101u, 0x600080u, 0xF400001u, 0x600080u, 0xF400001u, 0x600080u, 0xF000000u, 0x600080u, 0x101u, 0x600080u, 0x400101u };
 static u32 wall_crawler_turn_cases_row(u32 row)
 {
     return wall_crawler_turn_run(row / 2, row % 2);
@@ -624,7 +631,7 @@ static u32 test_func_80052E94_0(u32 row)
     if (probe_mode) {
         pixels[357] = 1;
     }
-    attrs[1] = 0x38;
+    attrs[1] = C_TEST_PSX_WORD(0x38);
     SP_BG_TILEMAP = tiles;
     TEST_BG_TILE_PIXELS = (u8*)pixels;
     TEST_BG_TILE_ATTRS = (u8*)attrs;
@@ -659,7 +666,7 @@ static u32 test_func_80052E94_0(u32 row)
     c_test_same_words(tiles, tiles_before, sizeof(tiles));
     return 1;
 }
-static const u32 func_80052E94_1_expected[] = { 1u, 0xF30001u, 0u, 0u, 0u };
+static const u32 func_80052E94_1_expected[] = { 1u, C_TEST_STEP(0xF30001u), 0u, 0u, 0u };
 static u32 test_func_80052E94_1(u32 row)
 {
     u32 observed_values[5];
@@ -722,7 +729,7 @@ static u32 test_func_80052E94_1(u32 row)
     if (probe_mode) {
         pixels[357] = 1;
     }
-    attrs[1] = 0x38;
+    attrs[1] = C_TEST_PSX_WORD(0x38);
     SP_BG_TILEMAP = tiles;
     TEST_BG_TILE_PIXELS = (u8*)pixels;
     TEST_BG_TILE_ATTRS = (u8*)attrs;
@@ -775,8 +782,8 @@ struct func_8005368C_0_case {
     u32 expected[3];
 };
 static const struct func_8005368C_0_case func_8005368C_0_cases[] = {
-    { 1, { 0x32010003u, 1u, 0u } },
-    { 0, { 0x32010003u, 0x41u, 0xBu } },
+    { 1, { C_TEST_STEP(0x32010003u), 1u, 0u } },
+    { 0, { C_TEST_STEP(0x32010003u), 0x41u, 0xBu } },
 };
 static u32 test_func_8005368C_0(u32 row)
 {
@@ -807,7 +814,7 @@ static u32 test_func_8005368C_0(u32 row)
     set_animation(&obj, 1);
     obj.unk5 = 4;
     obj.unk6 = 1;
-    obj.unk16 = 6;
+    obj.unk16 = VISUAL_SATURN_LAYER(6);
     obj.unk15 = 64;
     obj.ext.main_19.animation_index = 0;
     obj.ext.main_19.unk83 = 0;
@@ -883,8 +890,8 @@ struct func_8005368C_1_case {
     u32 expected[3];
 };
 static const struct func_8005368C_1_case func_8005368C_1_cases[] = {
-    { { 0x32010003u, 1u, 0u } },
-    { { 0x32010003u, 0x41u, 0xBu } },
+    { { C_TEST_STEP(0x32010003u), 1u, 0u } },
+    { { C_TEST_STEP(0x32010003u), 0x41u, 0xBu } },
 };
 static u32 test_func_8005368C_1(u32 row)
 {
@@ -989,8 +996,8 @@ struct func_8005368C_2_case {
     u32 expected[3];
 };
 static const struct func_8005368C_2_case func_8005368C_2_cases[] = {
-    { 1, { 0x2A010003u, 1u, 0u } },
-    { 0, { 0x2A010003u, 0x41u, 0xBu } },
+    { 1, { C_TEST_STEP(0x2A010003u), 1u, 0u } },
+    { 0, { C_TEST_STEP(0x2A010003u), 0x41u, 0xBu } },
 };
 static u32 test_func_8005368C_2(u32 row)
 {
@@ -1021,7 +1028,7 @@ static u32 test_func_8005368C_2(u32 row)
     set_animation(&obj, 1);
     obj.unk5 = 4;
     obj.unk6 = 1;
-    obj.unk16 = 6;
+    obj.unk16 = VISUAL_SATURN_LAYER(6);
     obj.unk15 = 64;
     obj.ext.main_19.animation_index = 2;
     obj.ext.main_19.unk83 = 0;
@@ -1100,7 +1107,7 @@ static u32 test_func_8005368C(u32 index)
     return test_func_8005368C_2(index);
 }
 
-static const u32 surface_hopper_crawl_turn_0_expected[] = { 3u, 0x1F010009u };
+static const u32 surface_hopper_crawl_turn_0_expected[] = { 3u, C_TEST_STEP(0x1F010009u) };
 static u32 test_surface_hopper_crawl_turn_0(u32 row)
 {
     u32 observed_values[2];
@@ -1147,7 +1154,7 @@ static u32 test_surface_hopper_crawl_turn_0(u32 row)
     observed_values[1] = (u32)obj.animation_step.packed;
     return c_test_observe(0, row, observed_values, surface_hopper_crawl_turn_0_expected, 2);
 }
-static const u32 surface_hopper_crawl_turn_1_expected[] = { 3u, 0x18010009u };
+static const u32 surface_hopper_crawl_turn_1_expected[] = { 3u, C_TEST_STEP(0x18010009u) };
 static u32 test_surface_hopper_crawl_turn_1(u32 row)
 {
     u32 observed_values[2];
@@ -1273,6 +1280,99 @@ static void sh_appear_done(void)
     state_extra = so.ext.main_19.unk80;
 }
 
+#define HC(kind, st, step, sub) (SH(kind, st, step, sub), so.ext.main_19.animation_index = kind, SPIKE_IMMUNE_SET(g_Player, 1), cur_random = 0x1234)
+#define HSTATE() (state_extra = so.ext.main_19.unk80 | so.ext.main_19.animation_index << 8 | (u32)so.state << 24)
+#define HSTART() (state_extra = so.ext.main_19.unk80 | so.ext.main_19.unk82 << 8 | (u8)so.ext.main_19.unk84 << 16 | (u32)(u8)so.ext.main_19.unk8A << 24)
+#define HY() (state_extra = (u16)so.y_pos.i.hi | so.ext.main_19.unk80 << 16 | (u32)so.ext.main_19.unk83 << 24)
+static void sh_run(void (*step)(struct MainObj*))
+{
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    SP_CUR_MAIN_OBJ = &so;
+    step(&so);
+    SP_CUR_MAIN_OBJ = current;
+}
+static void sh_init_right(void) { HC(0, 0, 0, 0), state_terrain(0), sh_run(surface_hopper_update), HSTATE(); }
+static void sh_init_left_solid(void) { HC(1, 0, 0, 0), state_terrain(0x38), sh_run(surface_hopper_update), HSTATE(); }
+static void sh_init_down(void) { HC(2, 0, 0, 0), state_terrain(0), sh_run(surface_hopper_update), HSTATE(); }
+static void sh_main_on_screen(void) { HC(0, 1, 5, 0), state_terrain(0), sh_run(surface_hopper_update), HSTATE(); }
+static void sh_main_land_off_screen(void) { HC(0, 1, 5, 0), so.x_pos.i.hi = 0x200, state_terrain(0x38), sh_run(surface_hopper_update), HSTATE(); }
+static void sh_defeat(u32 kind, u8 facing)
+{
+    HC(kind, 1, 5, 0);
+    state_terrain(0);
+    so.unk15 = facing;
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    memset(item_objects, 0, sizeof(item_objects));
+    cur_random = 0x366A;
+    sh_run(surface_hopper_update);
+    state_extra = (u32)so.state << 24 | (u8)item_objects[0].y_pos.i.hi << 16 | (u16)item_objects[0].x_pos.i.hi;
+}
+static void sh_defeat_facing_right(void) { sh_defeat(0, PLAYER_FACING_RIGHT); }
+static void sh_defeat_facing_left(void) { sh_defeat(0, 0); }
+static void sh_defeat_ceiling(void) { sh_defeat(2, 0); }
+static void sh_crawl_start_left(void) { HC(0, 1, 2, 0), cur_random = 0x366A, state_terrain(0), sh_run(surface_hopper_crawl), HSTART(); }
+static void sh_crawl_start_right_solid(void) { HC(1, 1, 2, 0), so.ext.main_19.unk80 = 1, state_terrain(0x38), sh_run(surface_hopper_crawl), HSTART(); }
+static void sh_crawl_start_ceiling(void) { HC(2, 1, 2, 0), cur_random = 0x366A, state_terrain(0), sh_run(func_80052CB8), HSTART(); }
+static void sh_crawl_start_ceiling_back(void) { HC(2, 1, 2, 0), so.ext.main_19.unk80 = 1, state_terrain(0), sh_run(func_80052CB8), HSTART(); }
+#define MOVE(kind, rel, range, saved_x, saved_y, px, py) (HC(kind, 1, 2, 1), state_terrain(0), so.animation_step.fields.relative_step = rel, so.ext.main_19.unk84 = range, so.ext.main_19.unk86 = saved_x, so.ext.main_19.unk88 = saved_y, so.ext.main_19.unk8A = kind < 2 ? 0x15 : 0x17, g_Player.x_pos.i.hi = px, g_Player.y_pos.i.hi = py)
+static void sh_crawl_aim_down(void) { MOVE(0, -1, 0x50, 0x80, 0x60, 0x80, 0x90), sh_run(func_80052E94), HY(); }
+static void sh_crawl_aim_up(void) { MOVE(0, -1, 0x50, 0x80, 0xC0, 0xD0, -0x10), sh_run(func_80052E94), HY(); }
+static void sh_crawl_stun(void) { MOVE(0, -1, 0, 0x80, 0x65, 0x30, 0x60), sh_run(func_80052E94), HY(); }
+static void sh_crawl_step_up(void) { MOVE(0, 0, 0, 0x80, 0x60, 0, 0), so.animation_step.fields.event = 1, sh_run(func_80052E94), HY(); }
+static void sh_crawl_step_down(void) { MOVE(0, 0, 0, 0x80, 0x60, 0, 0), so.ext.main_19.unk80 = 1, so.animation_step.fields.event = 1, sh_run(func_80052E94), HY(); }
+static void sh_crawl_step_wait(void) { MOVE(0, 0, 0, 0x80, 0x60, 0, 0), sh_run(func_80052E94), HY(); }
+static void sh_crawl_side_step_left(void) { MOVE(2, 0, 0, 0x80, 0x60, 0, 0), so.animation_step.fields.event = 1, sh_run(func_80052E94), HY(); }
+static void sh_crawl_side_step_right(void) { MOVE(2, 0, 0, 0x80, 0x60, 0, 0), so.ext.main_19.unk80 = 1, so.animation_step.fields.event = 1, sh_run(func_80052E94), HY(); }
+static void sh_crawl_side_wait(void) { MOVE(2, 0, 0, 0x80, 0x60, 0, 0), sh_run(func_80052E94), HY(); }
+static void sh_crawl_dash_right(void) { MOVE(2, -1, 0, 0x7B, 0x60, 0x110, 0x60), sh_run(func_80052E94), HY(); }
+static void sh_crawl_dash_left(void) { MOVE(2, -1, 0, 0x85, 0x60, -0x10, 0x60), sh_run(func_80052E94), HY(); }
+static void sh_crawl_side_stun(void) { MOVE(2, -1, 0x40, 0x80, 0x60, 0x30, 0x60), sh_run(func_80052E94), HY(); }
+static u8 sh_ledge_tiles[4];
+static u16 sh_ledge_pixels[512];
+static u32 sh_ledge_attrs[2];
+static void sh_ledge(s16 px)
+{
+    HC(2, 1, 2, 1);
+    so.x_pos.i.hi = 105;
+    so.y_pos.i.hi = 100;
+    so.unk7C = 0x3C;
+    so.terrain_box = surface_hopper_attach_terrain_boxes[1];
+    so.animation_step.fields.relative_step = -1;
+    so.ext.main_19.unk84 = 32;
+    so.ext.main_19.unk86 = 105;
+    so.ext.main_19.unk88 = 100;
+    so.ext.main_19.unk8A = 23;
+    sh_ledge_tiles[0] = 1;
+    sh_ledge_pixels[356] = sh_ledge_pixels[357] = 1;
+    sh_ledge_attrs[1] = C_TEST_PSX_WORD(0x38);
+    SP_BG_TILEMAP = sh_ledge_tiles;
+    TEST_BG_TILE_PIXELS = (u8*)sh_ledge_pixels;
+    TEST_BG_TILE_ATTRS = (u8*)sh_ledge_attrs;
+    layout_size = 1;
+    layout_width = 1;
+    g_Player.x_pos.i.hi = px;
+    g_Player.y_pos.i.hi = 100;
+    sh_run(func_80052E94);
+    HY();
+}
+static void sh_ledge_stun(void) { sh_ledge(105 - 0x50); }
+static void sh_ledge_player_right(void) { sh_ledge(105 + 0x50); }
+static void sh_turn_wait(void) { HC(0, 1, 2, 2), sh_run(surface_hopper_crawl_turn), HY(); }
+static void sh_turn_end(void) { HC(0, 1, 2, 3), so.animation_step.fields.relative_step = -1, sh_run(surface_hopper_crawl_turn_end), HY(); }
+static void sh_turn_end_wait(void) { HC(0, 1, 2, 3), sh_run(surface_hopper_crawl_turn_end), HY(); }
+#define ATTACH(kind, rel, dir) (HC(kind, 1, 2, 4), so.animation_step.fields.relative_step = rel, so.ext.main_19.unk80 = dir, so.x_speed = 0x10000, so.y_speed = 0x20000, so.x_accel = 0x100, so.gravity = 0x4200, sh_run(surface_hopper_crawl_attach), HY())
+static void sh_attach_wall_up(void) { ATTACH(0, -1, 0); }
+static void sh_attach_wall_down(void) { ATTACH(0, -1, 1); }
+static void sh_attach_ceiling(void) { ATTACH(2, -1, 0); }
+static void sh_attach_wait(void) { ATTACH(0, 0, 0); }
+static void sh_finish(void) { HC(0, 1, 2, 6), so.animation_step.fields.relative_step = -1, sh_run(surface_hopper_crawl_finish), HY(); }
+static void sh_finish_wait(void) { HC(0, 1, 2, 6), sh_run(surface_hopper_crawl_finish), HY(); }
+static void sh_leap_start(void) { HC(0, 1, 4, 0), so.unk7C = 9, sh_run(surface_hopper_leap), HY(); }
+static void sh_leap_end(void) { HC(0, 1, 4, 1), so.ext.main_19.unk80 = 1, so.animation_step.fields.relative_step = -1, sh_run(func_8005368C), HY(); }
+static void sh_leap_wait(void) { HC(0, 1, 4, 1), sh_run(func_8005368C), HY(); }
+static void sh_despawn(void) { HC(0, 2, 3, 1), so.active = 0x41, sh_run(surface_hopper_update), HSTATE(); }
+
 static void (*const surface_hopper_states_cases[])(void) = {
     sh_launch_up,
     sh_launch_up_wall,
@@ -1284,13 +1384,122 @@ static void (*const surface_hopper_states_cases[])(void) = {
     sh_appear_start,
     sh_appear_wait,
     sh_appear_done,
+    sh_init_right,
+    sh_init_left_solid,
+    sh_init_down,
+    sh_main_on_screen,
+    sh_main_land_off_screen,
+    sh_defeat_facing_right,
+    sh_defeat_facing_left,
+    sh_defeat_ceiling,
+    sh_crawl_start_left,
+    sh_crawl_start_right_solid,
+    sh_crawl_start_ceiling,
+    sh_crawl_start_ceiling_back,
+    sh_crawl_aim_down,
+    sh_crawl_aim_up,
+    sh_crawl_stun,
+    sh_crawl_step_up,
+    sh_crawl_step_down,
+    sh_crawl_step_wait,
+    sh_crawl_side_step_left,
+    sh_crawl_side_step_right,
+    sh_crawl_side_wait,
+    sh_crawl_dash_right,
+    sh_crawl_dash_left,
+    sh_crawl_side_stun,
+    sh_ledge_stun,
+    sh_ledge_player_right,
+    sh_turn_wait,
+    sh_turn_end,
+    sh_turn_end_wait,
+    sh_attach_wall_up,
+    sh_attach_wall_down,
+    sh_attach_ceiling,
+    sh_attach_wait,
+    sh_finish,
+    sh_finish_wait,
+    sh_leap_start,
+    sh_leap_end,
+    sh_leap_wait,
+    sh_despawn,
 };
-static const u32 surface_hopper_states_expected[] = { 5u, 0u, 0x800000u, 0u, 0xFFF80000u, 0u, 0x1001Au, 0x1F0002u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0xFFF80000u, 0u, 0x1401Au, 0x1F0002u, 0u, 0u, 5u, 0u, 0x800000u, 0x80000u, 0u, 0u, 0x14009u, 0x1F0002u, 0u, 0u, 2u, 0u, 0x800000u, 0x80000u, 0u, 0u, 0x14008u, 0x1F0002u, 0u, 0u, 5u, 0u, 0x800000u, 0xFFF80000u, 0u, 0u, 0x10008u, 0x1F0002u, 0u, 0u, 2u, 0u, 0x800000u, 0xFFF80000u, 0u, 0u, 0x10009u, 0x1F0002u, 0u, 0u, 5u, 0u, 0x800000u, 0u, 0u, 0u, 0x1001Au, 0x1F0002u, 0u, 0u, 0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0xEu, 0u, 0u, 0u, 0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+static const u32 surface_hopper_states_expected[] = { 5u, 0u, 0x800000u, 0u, 0xFFF80000u, 0u, 0x1001Au, 0x1F0002u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0xFFF80000u, 0u, 0x1401Au, 0x1F0002u, 0u, 0u, 5u, 0u, 0x800000u, 0x80000u, 0u, 0u, 0x14009u, 0x1F0002u, 0u, 0u, 2u, 0u, 0x800000u, 0x80000u, 0u, 0u, 0x14008u, 0x1F0002u, 0u, 0u, 5u, 0u, 0x800000u, 0xFFF80000u, 0u, 0u, 0x10008u, 0x1F0002u, 0u, 0u, 2u, 0u, 0x800000u, 0xFFF80000u, 0u, 0u, 0x10009u, 0x1F0002u, 0u, 0u, 5u, 0u, 0x800000u, 0u, 0u, 0u, 0x1001Au, 0x1F0002u, 0u, 0u, 0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0xEu, 0u, 0u, 0u, 0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    5u, 0u, 0x800000u, 0x80000u, 0u, 0u, 0x4000u, 0x40003u, 0x1000000u, 0u,
+    2u, 0u, 0x800000u, 0xFFF80000u, 0u, 0u, 0u, 0x40003u, 0x1000100u, 0u,
+    5u, 0u, 0x800000u, 0u, 0x80000u, 0u, 0u, 0x40003u, 0x1000200u, 0u,
+    5u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x1000000u, 0u,
+    2u, 0u, 0x2000000u, 0u, 0u, 0u, 0u, 0u, 0x2000000u, 0u,
+    5u, 0u, 0x800000u, 0u, 0u, 0u, 0x80004000u, 1u, 0x2600070u, 0x2100u,
+    5u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 1u, 0x2600090u, 0x2100u,
+    5u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 1u, 0x2700080u, 0x2100u,
+    0x102u, 1u, 0x800000u, 0u, 0u, 0u, 0x4004u, 0u, 0x15500101u, 0u,
+    0x102u, 1u, 0x800000u, 0u, 0u, 0u, 3u, 0u, 0x15200200u, 0u,
+    0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0x4002u, 0u, 0x17400401u, 0u,
+    0x102u, 0u, 0x800000u, 0u, 0u, 0u, 2u, 0u, 0x17200400u, 0u,
+    0x402u, 0u, 0x800000u, 0u, 0xFFFD0000u, 0u, 6u, 0u, 0x10060u, 0u,
+    0x402u, 0u, 0x800000u, 0u, 0x27E91u, 0u, 6u, 0u, 0x60u, 0u,
+    4u, 0u, 0x800000u, 0xFFFF0000u, 0u, 0u, 0u, 0u, 0x10000060u, 0u,
+    0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x4Bu, 0u,
+    0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x10075u, 0u,
+    0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x60u, 0u,
+    0x102u, 0u, 0x690000u, 0u, 0u, 0u, 0u, 0u, 0x60u, 0u,
+    0x102u, 0u, 0x970000u, 0u, 0u, 0u, 0u, 0u, 0x10060u, 0u,
+    0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x60u, 0u,
+    0x402u, 0u, 0x800000u, 0x30000u, 0u, 0u, 0x4005u, 0u, 0x10060u, 0u,
+    0x402u, 0u, 0x800000u, 0xFFFD0000u, 0u, 0u, 5u, 0u, 0x60u, 0u,
+    4u, 0u, 0x800000u, 0xFFFF0000u, 0u, 0u, 0u, 0u, 0x10000060u, 0u,
+    4u, 0x3Cu, 0x690000u, 0u, 0u, 0u, 0u, 0u, 0x10000064u, 0u,
+    0x102u, 0x3Cu, 0x690000u, 0u, 0u, 0u, 0u, 0u, 0x64u, 0u,
+    0x202u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x60u, 0u,
+    2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x10060u, 0u,
+    0x302u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x60u, 0u,
+    0x502u, 0u, 0x800000u, 0u, 0x20000u, 0u, 8u, 0u, 0x60u, 0u,
+    0x502u, 0u, 0x800000u, 0u, 0x20000u, 0u, 9u, 0u, 0x10060u, 0u,
+    0x502u, 0u, 0x800000u, 0x10000u, 0u, 0x100u, 7u, 0u, 0x60u, 0u,
+    0x402u, 0u, 0x800000u, 0x10000u, 0x20000u, 0x420100u, 0u, 0u, 0x60u, 0u,
+    2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x60u, 0u,
+    0x602u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x60u, 0u,
+    0x104u, 0u, 0x800000u, 0u, 0u, 0u, 0xDu, 0u, 0x60u, 0u,
+    2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x60u, 0u,
+    0x104u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x60u, 0u,
+    0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+};
 
 static u32 test_surface_hopper_states(u32 row)
 {
     return state_run(surface_hopper_states_cases[row], row, &surface_hopper_states_expected[row * 10]);
 }
+
+#include "support/shaped_terrain.h"
+static void sht_start_wall_right(void) { HC(0, 1, 2, 0), cur_random = 0x366A, shaped_terrain(0x38, SHAPED_COLUMNS_FROM(11)), shaped_tiles[1][4][8] = 1, sh_run(func_80052CB8), HSTART(); }
+static void sht_start_ceiling(void) { HC(2, 1, 2, 0), cur_random = 0x366A, shaped_terrain(0x38, SHAPED_ROWS_BELOW(3)), shaped_tiles[1][5][6] = 1, sh_run(func_80052CB8), HSTART(); }
+static void sht_move_near_wall(void) { MOVE(0, -1, 0x50, 0x80, 0x60, 0x80, 0x90), shaped_terrain(0x38, SHAPED_COLUMNS_FROM(11)), shaped_tiles[1][9][8] = 1, so.ext.main_19.unk80 = 1, so.unk15 = PLAYER_FACING_RIGHT, sh_run(func_80052E94), HY(); }
+static void sht_side_player_right(void) { MOVE(2, -1, 0x40, 0x80, 0x60, 0xD0, 0x60), sh_run(func_80052E94), HY(); }
+static void (*const surface_hopper_terrain_cases[])(void) = {
+    sht_start_wall_right,
+    sht_start_ceiling,
+    sht_move_near_wall,
+    sht_side_player_right,
+};
+static const u32 surface_hopper_terrain_expected[] = {
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4003u, 0x0u, 0x15500100u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x2u, 0x0u, 0x17400400u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x10060u, 0x0u,
+    0x202u, 0x0u, 0x800000u, 0x10000u, 0x0u, 0x0u, 0x5u, 0x0u, 0x60u, 0x0u,
+};
+static u32 test_surface_hopper_terrain(u32 row)
+{
+    return state_run(surface_hopper_terrain_cases[row], row, &surface_hopper_terrain_expected[row * 10]);
+}
+#ifdef MMX4_PC
+static u32 test_surface_hopper_stale_step(u32 row)
+{
+    HC(0, 0, 0, 0), state_terrain(0), so.ext.main_19.unk8A = row ? 0x17 : 0x18, sh_run(surface_hopper_update);
+    assert(so.ext.main_19.unk8A == (row ? 0x17 : 1));
+    return 1;
+}
+#endif
 
 const struct CTestGroup c_test_groups[] = {
     { "surface_hopper_states", 0, 0, COUNT(surface_hopper_states_cases), test_surface_hopper_states },
@@ -1303,6 +1512,14 @@ const struct CTestGroup c_test_groups[] = {
     { "func_8005368C", 0, 0, 6, test_func_8005368C },
     { "surface_hopper_crawl_turn", 0, 0, 2, test_surface_hopper_crawl_turn },
     { "surface_hopper_launch", 0, 0, 2, test_surface_hopper_launch },
+    { "surface_hopper_terrain", 0, 0, COUNT(surface_hopper_terrain_cases), test_surface_hopper_terrain },
+#ifdef MMX4_PC
+    { "surface_hopper_stale_step", 0, 0, 2, test_surface_hopper_stale_step },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(surface_hopper_states_cases) + COUNT(hopper_aim_edges_cases_expected) + COUNT(hopper_launch_binding_cases_expected) + COUNT(surface_hopper_crawl_cases_expected) + COUNT(surface_hopper_launched_cases_expected) + COUNT(wall_crawler_turn_cases_expected) + 3 + 6 + 2 + 2;
+const u32 c_test_count = COUNT(surface_hopper_states_cases) + COUNT(hopper_aim_edges_cases_expected) + COUNT(hopper_launch_binding_cases_expected) + COUNT(surface_hopper_crawl_cases_expected) + COUNT(surface_hopper_launched_cases_expected) + COUNT(wall_crawler_turn_cases_expected) + 3 + 6 + 2 + 2 + COUNT(surface_hopper_terrain_cases)
+#ifdef MMX4_PC
+    + 2
+#endif
+    ;

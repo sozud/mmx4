@@ -50,7 +50,7 @@ static u32 defaults_case(u32 mode, u32 skier)
     expected.air_state = 0;
     if (skier) {
         expected.unk5 = 1;
-        expected.unk16 = 6;
+        expected.unk16 = VISUAL_SATURN_LAYER(6);
         expected.hp = 3;
         expected.contact_damage = 1;
         expected.animation_table = (const u8* const*)slope_skier_animations;
@@ -63,7 +63,7 @@ static u32 defaults_case(u32 mode, u32 skier)
         expected.unk17 = 4;
         expected.previous_animation_index = 0xFF;
         expected.animation_cursor = (const u8*)slope_skier_animations[4];
-        expected.animation_step = slope_skier_animations[4][0];
+        memcpy(&expected.animation_step, slope_skier_animations[4], sizeof(expected.animation_step));
         func_800564B4(&obj);
     } else {
         expected.unk6 = 0;
@@ -83,7 +83,7 @@ static u32 defaults_case(u32 mode, u32 skier)
     assert(box.unk0 == -2 && box.unk1 == -3 && box.unk2 == 4 && box.unk3 == 5);
     SP_CUR_MAIN_OBJ = saved_current;
     g_Player = saved_player;
-    return (u8)obj.state | ((u32)(u8)obj.unk15 << 8) | ((u32)(u8)obj.unk5 << 16) | ((u32)(u8)obj.hp << 24);
+    return (u8)obj.state | ((u32)C_TEST_PSX_FACING(obj.unk15) << 8) | ((u32)(u8)obj.unk5 << 16) | ((u32)(u8)obj.hp << 24);
 }
 #define DEFAULTS_CASE(m, s)                                              \
     static u32 hover_skier_signed_init_defaults_defaults_##m##_##s(void) \

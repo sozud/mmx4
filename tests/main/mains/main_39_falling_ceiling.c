@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_39_falling_ceiling.h"
 #include "main/55C4.h"
 #include "support/state_cases.h"
@@ -27,7 +28,7 @@ static u32 ceiling_case(u32 mode)
     obj.x_pos.val = (500 + (mode & 1 ? 16 : -16) - delta[mode]) * 65536 + 0x1234;
     obj.y_pos.val = 100 * 65536 + 0x5678;
     obj.gravity = 0x2000;
-    obj.unk15 = mode & 1 ? 0x40 : 0;
+    obj.unk15 = mode & 1 ? PLAYER_FACING_RIGHT : 0;
     obj.ext.main_39.unk88 = 1;
     obj.ext.main_39.unk8C = mode < 5 ? 300 * 65536 : 0x2FFFFF0;
     obj.ext.main_39.unk90 = mode < 5 ? 0x2000 : 0x10000;
@@ -54,8 +55,8 @@ static u32 ceiling_case(u32 mode)
         assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
     for (i = 0; i < sizeof(g_Player) / 4; i++)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
-    assert(falling_ceiling_animations[0][0].packed == 0x00010001);
-    assert(falling_ceiling_animations[0][1].packed == 0x01010001);
+    assert(falling_ceiling_animations[0][0].packed == C_TEST_STEP(0x00010001));
+    assert(falling_ceiling_animations[0][1].packed == C_TEST_STEP(0x01010001));
     actual = obj.unk5 | ((u32)obj.unk2 << 8) | ((u32)(obj.gravity >> 12) << 16);
     return actual;
 }
@@ -79,8 +80,8 @@ static u32 test_func_800615CC(u32 row)
     observed_values[6] = (u32)obj.hp;
     observed_values[7] = (u32)obj.invincibility_timer;
     observed_values[8] = (u32)obj.state;
-    observed_values[9] = (u32)obj.unk15;
-    observed_values[10] = (u32)obj.unk16;
+    observed_values[9] = C_TEST_PSX_FACING(obj.unk15);
+    observed_values[10] = TEST_PSX_LAYER(obj.unk16);
     observed_values[11] = (u32)obj.unk5;
     observed_values[12] = (u32)obj.unk6;
     observed_values[13] = (u32)obj.unk7E;
@@ -158,7 +159,7 @@ static u32 test_func_80061B58_1(u32 row)
     observed_values[3] = (u32)obj.unk7C;
     observed_values[4] = (u32)obj.unk7E;
     observed_values[5] = (u32)obj.ext.main_39.unk94;
-    observed_values[6] = obj.animation_step.packed;
+    observed_values[6] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[7] = (u32)obj.x_pos.val;
     observed_values[8] = (u32)obj.y_pos.val;
     observed_values[9] = (u32)obj.y_speed;
@@ -186,14 +187,93 @@ static void fcl_despawn(void)
     so.backref = NULL;
 }
 static void fcl_hover_flip(void) { FC(0, (so.y_speed = 0xF000, so.gravity = 0x1000, so.ext.main_39.unk84.h.unk84 = 0x100)); }
+#include "support/tile_writes.h"
+void func_80061918(struct MainObj*);
+void falling_ceiling_drop_start(struct MainObj*);
+void falling_ceiling_drop_land(struct MainObj*);
+#define FCX() (state_extra = so.ext.main_39.unk80.h.unk82 | (u32)so.ext.main_39.unk84.h.unk84 << 16)
+#define FCINIT(kind) (state_reset(0, 0, 0), so.unk2 = kind, func_800615CC(&so), FCX(), state_extra ^= so.ext.main_39.unk80.h.unk80 << 4 ^ so.ext.main_39.unk84.h.unk86 << 8)
+static void fcl_init_1(void) { FCINIT(1); }
+static void fcl_init_2(void) { FCINIT(2); }
+static void fcl_init_3(void) { FCINIT(3); }
+static void fcl_init_4(void) { FCINIT(4); }
+static void fcl_init_5(void) { FCINIT(5); }
+static void fcl_init_6(void) { FCINIT(6); }
+static void fcl_init_7(void) { FCINIT(7); }
+static void fcl_init_8(void) { FCINIT(8); }
+static void fcl_init_9(void) { FCINIT(9); }
+static void fcl_init_10(void) { FCINIT(10); }
+static void fcl_init_11(void) { FCINIT(11); }
+#define WAITC(setup) (state_reset(0, 0, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.gravity = 0x2000, so.ext.main_39.unk88 = 1, so.ext.main_39.unk8C = 0x1200000, g_Player.x_pos.i.hi = 0x90, g_Player.y_pos.i.hi = 0x100, setup, func_80061918(&so), FCX(), state_extra ^= so.ext.main_39.unk8C)
+static void fcl_wait_flip_trigger(void) { WAITC((so.ext.main_39.unk88 = 0, so.y_speed = 0x12000, so.ext.main_39.unk84.h.unk84 = 0x80)); }
+static void fcl_wait_below(void) { WAITC(g_Player.y_pos.i.hi = 0x200); }
+static void fcl_wait_above(void) { WAITC(g_Player.y_pos.i.hi = 0x40); }
+static void fcl_wait_odd_far(void) { WAITC((so.unk2 = 1, g_Player.x_pos.i.hi = 0x40)); }
+static void fcl_drop_floor(void) { state_reset(1, 0, 0), so.y_pos.i.hi = 0x120, so.y_speed = -0x10000, so.animation_step.fields.event = 1, falling_ceiling_drop_start(&so); }
+static void fcl_drop_air(void) { state_reset(1, 0, 0), so.y_pos.i.hi = 0x100, so.y_speed = -0x10000, so.gravity = 0x8000, falling_ceiling_drop_start(&so); }
+#define FALLC(setup) (state_reset(1, 1, 0), memset(item_objects, 0, sizeof(item_objects)), so.y_pos.i.hi = 0x100, so.ext.main_39.unk94 = 5, so.unk7E = 1, so.unk7C = 1, so.ext.main_39.unk80.h.unk80 = 0x300, so.ext.main_39.unk84.h.unk86 = 0x188, setup, func_80061B58(&so), state_extra = so.ext.main_39.unk94 | (u32)so.unk7E << 8 | (u32)item_objects[1].unk2 << 16 | (u32)item_objects[1].id << 24)
+static void fcl_fall_shake(void) { FALLC((so.ext.main_39.unk94 = 1, so.unk7E = 0xF, so.unk7C = 5)); }
+static void fcl_fall_odd_end(void) { FALLC((so.unk7E = 7, so.unk2 = 1, background_objects[0].unk34 = 0x10, ((u8*)&background_objects[0].unk3E)[0] = 4)); }
+static void fcl_fall_items(void) { FALLC((so.unk7E = 7, background_objects[0].unk34 = 0x10, ((u8*)&background_objects[0].unk3E)[0] = 1)); }
+static void fcl_fall_items_late(void) { FALLC(so.unk2 = 8); }
+#define FCLAND(kind) (state_reset(1, 2, 0), memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.stage = 8, background_objects[0].x_pos.i.hi = 0xB00, background_objects[0].y_pos.i.hi = 0x100, tile_writes_begin(), so.unk2 = kind, so.ext.main_39.unk80.h.unk82 = 0xB20)
+static void fcl_land_odd(void) { FCLAND(1), falling_ceiling_drop_land(&so), state_extra = tile_writes_end(); }
+static void fcl_land_even(void) { FCLAND(2), tile_writes_expect(1, 0xB20, 0x120, 1), falling_ceiling_drop_land(&so), state_extra = tile_writes_end(); }
 
 static void (*const falling_ceiling_states_cases[])(void) = {
     fcl_sink,
     fcl_sink_away,
     fcl_despawn,
     fcl_hover_flip,
+    fcl_init_1,
+    fcl_init_2,
+    fcl_init_3,
+    fcl_init_4,
+    fcl_init_5,
+    fcl_init_6,
+    fcl_init_7,
+    fcl_init_8,
+    fcl_init_9,
+    fcl_init_10,
+    fcl_init_11,
+    fcl_wait_flip_trigger,
+    fcl_wait_below,
+    fcl_wait_above,
+    fcl_wait_odd_far,
+    fcl_drop_floor,
+    fcl_drop_air,
+    fcl_fall_shake,
+    fcl_fall_odd_end,
+    fcl_fall_items,
+    fcl_fall_items_late,
+    fcl_land_odd,
+    fcl_land_even,
 };
-static const u32 falling_ceiling_states_expected[] = { 2u, 0u, 0x800000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x80u, 0u, 0u, 0u, 0x800000u, 0u, 0xE000u, 0x100000u, 0u, 0u, 0u, 0u };
+static const u32 falling_ceiling_states_expected[] = { 2u, 0u, 0x800000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x80u, 0u, 0u, 0u, 0x800000u, 0u, 0xE000u, 0x100000u, 0u, 0u, 0u, 0u,
+    0x0u, 0x0u, 0xB900000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xB700B20u, 0x0u,
+    0x0u, 0x0u, 0xC300000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xBF14220u, 0x0u,
+    0x0u, 0x0u, 0xC900000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xBF00C20u, 0x0u,
+    0x0u, 0x0u, 0xD300000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xCE15320u, 0x0u,
+    0x0u, 0x0u, 0xD900000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xCE00D20u, 0x0u,
+    0x0u, 0x0u, 0xE300000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xDD16020u, 0x0u,
+    0x0u, 0x0u, 0xE900000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xDD00E20u, 0x0u,
+    0x0u, 0x0u, 0xEB00000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xE5160A0u, 0x0u,
+    0x0u, 0x0u, 0xF100000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xE500EA0u, 0x0u,
+    0x0u, 0x0u, 0xF300000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xEB17920u, 0x0u,
+    0x0u, 0x0u, 0xF900000u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x60003u, 0xEB00F20u, 0x0u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x10000u, 0x200000u, 0x1u, 0x0u, 0x1A00000u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0xFFFFE000u, 0x200000u, 0x0u, 0x0u, 0x1200000u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0xFFFFE000u, 0x200000u, 0x0u, 0x0u, 0x1200000u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0xFFFFE000u, 0x200000u, 0x0u, 0x0u, 0x1200000u, 0x0u,
+    0x101u, 0x3Cu, 0x0u, 0x0u, 0x0u, 0x0u, 0x2u, 0x0u, 0x0u, 0x0u,
+    0x1u, 0x0u, 0x0u, 0x0u, 0xFFFE8000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x101u, 0x100004u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x101Eu, 0x2100u,
+    0x201u, 0x80000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x804u, 0x0u,
+    0x201u, 0x80000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0xF010804u, 0x0u,
+    0x201u, 0x20000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0xF030204u, 0x0u,
+    0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x200000u, 0x0u, 0x0u, 0x22B3A8C8u, 0x0u,
+};
 
 static u32 test_falling_ceiling_states(u32 row)
 {

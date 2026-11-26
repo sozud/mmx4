@@ -57,7 +57,7 @@ static u32 spawn_case(u32 observation)
         i = observation < 6 ? 3 : 17;
         switch ((observation - 2) % 4) {
         case 0:
-            actual = ((u32*)&item_objects[i])[0];
+            actual = C_TEST_LE_WORD((u32*)&item_objects[i] + 0);
             break;
         case 1:
             actual = item_objects[i].x_pos.val;
@@ -226,12 +226,64 @@ static u32 exhaust(u32 row)
     return 1;
 }
 
+
+#include "support/shaped_terrain.h"
+static struct EffectObj es;
+static u32 es_frames[0x40], es_meta[0x40];
+static u32 edge(u32 shape, s16 camera_dx, s16 camera_dy, u8 attempts)
+{
+    memset(&es, 0, sizeof(es));
+    memset(main_objects, 0, sizeof(main_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    engine_obj.stage = 2;
+    engine_obj.substage = 0;
+    TEST_MENU_FRAMES = (u8*)es_frames;
+    D_801406A8 = es_meta;
+    shaped_terrain(0x38, shape);
+    es.active = 1;
+    es.id = 13;
+    es.state = 1;
+    es.x_pos.i.hi = 0x80;
+    es.y_pos.i.hi = 0x60;
+    es.ext.unk_effect.unk15 = attempts;
+    background_objects[0].x_pos.i.hi = 0x80 - 0xA0 + camera_dx;
+    background_objects[0].y_pos.i.hi = 0x60 - 0x80 + camera_dy;
+    cur_random = 0x1234;
+    edge_spawner_main(&es);
+    return (u8)es.x_pos.i.hi | (u32)(u8)es.y_pos.i.hi << 8 | (u32)es.ext.unk_effect.unk15 << 16 | (u32)es.state << 24;
+}
+#define SPAWNED() (main_objects[0].active == 0x41 && main_objects[0].id == 0x15 && main_objects[0].unk2 < 4 && main_objects[0].x_pos.val == es.x_pos.val && main_objects[0].y_pos.val == es.y_pos.val)
+static u32 es_drop_below(void)
+{
+    u32 seen = edge(SHAPED_ROWS_BELOW(6), 0, 0, 0x1E);
+    assert(SPAWNED());
+    return seen;
+}
+static u32 es_drop_under_ceiling(void)
+{
+    u32 seen = edge(SHAPED_ROWS_BELOW(5), 0, 0, 0);
+    assert(SPAWNED());
+    return seen;
+}
+static u32 es_left_of_view(void) { return edge(SHAPED_OPEN, 0xA1, 0, 0) | (u32)main_objects[0].active << 24; }
+static u32 es_right_of_view(void) { return edge(SHAPED_OPEN, -0xF0, 0, 0) | (u32)main_objects[0].active << 24; }
+static u32 es_below_view(void) { return edge(SHAPED_OPEN, 0, -0x81, 0) | (u32)main_objects[0].active << 24; }
+static const CTestCase edge_spawner_paths_cases[] = {
+    es_drop_below,
+    es_drop_under_ceiling,
+    es_left_of_view,
+    es_right_of_view,
+    es_below_view,
+};
+static const u32 edge_spawner_paths_cases_expected[] = { 0x21F7070u, 0x1016070u, 0x1006080u, 0x1006080u, 0x1006080u };
+
 const struct CTestGroup c_test_groups[] = {
     { "edge_spawner_bounds", NULL, edge_spawner_bounds_cases_expected, COUNT(edge_spawner_bounds_cases_expected), spawn_case },
     { "func_800B887C", 0, 0, 3, test_func_800B887C },
     { "shipped_edge_spawner_one_pixel_above_camera_scan_bounds", NULL, NULL, 1, above },
     { "shipped_Frost_Walrus_edge_spawner_initial_enemy_full_main_pool", NULL, NULL, 1, full },
     { "all_fifteen_solid_or_empty_probes_exhaust_without_spawning", NULL, NULL, 12, exhaust },
+    { "edge_spawner_paths", edge_spawner_paths_cases, edge_spawner_paths_cases_expected, COUNT(edge_spawner_paths_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(edge_spawner_bounds_cases_expected) + 3 + 1 + 1 + 12;
+const u32 c_test_count = COUNT(edge_spawner_bounds_cases_expected) + 3 + 1 + 1 + 12 + COUNT(edge_spawner_paths_cases);

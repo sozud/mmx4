@@ -29,7 +29,7 @@ static u32 normal_left(void)
 }
 static u32 mirrored_left(void)
 {
-    return overlap_left(0x40);
+    return overlap_left(PLAYER_FACING_RIGHT);
 }
 static const CTestCase collision_output_edges_cases[] = {
     normal_left,
@@ -37,6 +37,7 @@ static const CTestCase collision_output_edges_cases[] = {
 };
 static const u32 collision_output_edges_cases_expected[] = { 0xB000Bu, 0xB0009u };
 
+#ifdef MMX4_PC
 struct func_8002C36C_case {
     u32 slot;
     u32 expected[8];
@@ -66,12 +67,13 @@ static u32 test_func_8002C36C(u32 row)
     observed_values[1] = (u32)argument_obj_1.wall_climbable;
     observed_values[2] = (u32)obj.unk72;
     observed_values[3] = (u32)obj.unk73;
-    observed_values[4] = (u32)obj.unk74;
+    observed_values[4] = (u32)OBJ_UNK74(obj);
     observed_values[5] = (u32)obj.unk76;
     observed_values[6] = (u32)obj.unk77;
-    observed_values[7] = (u32)obj.unk78;
+    observed_values[7] = (u32)OBJ_UNK78(obj);
     return c_test_observe(0, row, observed_values, c->expected, 8);
 }
+#endif
 
 static const u8 slope_heights[12][16] = {
     { 15, 15, 15, 15, 14, 14, 14, 14, 13, 13, 13, 13, 12, 12, 12, 12 },
@@ -92,7 +94,7 @@ static u32 slope_contact(u32 row)
     static const u8 samples[3] = { 0, 7, 15 };
     static u8 tilemap[4] = { 1, 1, 1, 1 };
     static u16 tiles[2][16][16];
-    static u32 attributes[2] = { 0, 9 };
+    static u32 attributes[2] = { 0, C_TEST_PSX_WORD(9) };
     struct {
         u32 before;
         struct PlayerObj value;
@@ -162,7 +164,7 @@ static u32 slope_contact(u32 row)
     for (i = 0; i < 16; i++)
         for (j = 0; j < 16; j++)
             assert(tiles[0][i][j] == 0 && tiles[1][i][j] == 1);
-    assert(attributes[0] == 0 && attributes[1] == 9);
+    assert(attributes[0] == 0 && attributes[1] == C_TEST_PSX_WORD(9));
     return 1;
 }
 
@@ -182,8 +184,8 @@ static u32 sweep(u32 row)
     c_test_zero_words((u32*)&second, sizeof(second) / 4);
     first.attack_box = &attack;
     second.hurt_box = &hurt;
-    first.unk15 = row & 1 ? 0x40 : 0;
-    second.unk15 = row & 2 ? 0x40 : 0;
+    first.unk15 = row & 1 ? PLAYER_FACING_RIGHT : 0;
+    second.unk15 = row & 2 ? PLAYER_FACING_RIGHT : 0;
     for (b = 0; b < 2; b++) {
         attack.unk0 = boxes[b][0];
         attack.unk1 = boxes[b][1];
@@ -220,11 +222,127 @@ static u32 both(void) { return sweep(3); }
 static const CTestCase sweep_cases[] = { neither, attacker, target, both };
 static const u32 sweep_expected[] = { 3092694172u, 3951215244u, 4272335052u, 1024630340u };
 
+static u32 facing_right_attacker_misses_left_facing_target(void)
+{
+    struct Unk_unk68 attack = { 0, 0, 4, 4 }, hurt = { 0, 0, 4, 4 };
+    c_test_zero_words((u32*)&first, sizeof(first) / 4);
+    c_test_zero_words((u32*)&second, sizeof(second) / 4);
+    first.attack_box = &attack;
+    second.hurt_box = &hurt;
+    first.unk15 = PLAYER_FACING_RIGHT;
+    first.x_pos.i.hi = 10;
+    second.x_pos.i.hi = 12;
+    first.y_pos.i.hi = second.y_pos.i.hi = 40;
+    assert(func_8002BB80(&first, &second) == 0);
+    second.unk15 = PLAYER_FACING_RIGHT;
+    assert(func_8002BB80(&first, &second) == 1);
+    return 1;
+}
+
+static u32 second_object_without_bounds(void)
+{
+    struct Unk_unk68 bounds = { 0, 0, 8, 8 };
+    struct CollisionObj a, b;
+    c_test_zero_words((u32*)&a, sizeof(a) / 4);
+    c_test_zero_words((u32*)&b, sizeof(b) / 4);
+    a.collision_bounds = &bounds;
+    assert(func_8002C160(&a, &b) == 0);
+    b.collision_bounds = &bounds;
+    assert(func_8002C160(&a, &b) == 1);
+    return 1;
+}
+
+static const CTestCase bounds_cases[] = {
+    facing_right_attacker_misses_left_facing_target,
+    second_object_without_bounds,
+};
+static const u32 bounds_expected[] = { 1, 1 };
+
+static const u32 slot_contact_expected[4][8] = {
+#ifdef VERSION_SATURN_PROTO
+    { 0x77, 0x02, 0x77, 0x66, 0x01, 0x66, 0x12, 0x5A },
+    { 0x77, 0x00, 0x77, 0x66, 0x00, 0x66, 0x10, 0x11 },
+    { 0x77, 0x02, 0x77, 0x66, 0x01, 0x66, 0x12, 0x5A },
+    { 0x77, 0x00, 0x77, 0x66, 0x00, 0x66, 0x10, 0x11 },
+#else
+    { 0x77, 0x77, 0x02, 0x66, 0x66, 0x01, 0x12, 0x5A },
+    { 0x77, 0x77, 0x00, 0x66, 0x66, 0x00, 0x10, 0x11 },
+    { 0x77, 0x77, 0x77, 0x66, 0x66, 0x66, 0x12, 0x5A },
+    { 0x77, 0x77, 0x77, 0x66, 0x66, 0x66, 0x10, 0x11 },
+#endif
+};
+static u32 slot_contact(u32 row)
+{
+    struct Unk_unk68 box0 = { 0, 0, 4, 4 }, box1 = { 0, 0, 4, 4 };
+    struct PlayerObj self, other;
+    u32 observed[8];
+    memset(&self, 0, sizeof(self));
+    memset(&other, 0, sizeof(other));
+    self.unk68 = &box0;
+    other.unk68 = &box1;
+    self.unk72 = self.unk73 = 0x77;
+    self.unk76 = self.unk77 = 0x66;
+#ifndef VERSION_SATURN_PROTO
+    self.unk74 = 0x77;
+    self.unk78 = 0x66;
+#endif
+    self.unk75 = 0x5A;
+    other.wall_climbable = 0x11;
+    other.unk71 = 0x10;
+    self.x_pos.i.hi = 100;
+    self.y_pos.i.hi = 50;
+    other.x_pos.i.hi = 108;
+    other.y_pos.i.hi = row & 1 ? 58 : 52;
+    func_8002C36C(&self, &other, row < 2 ? 2 : 3);
+    observed[0] = (u8)self.unk72;
+    observed[1] = (u8)self.unk73;
+#ifdef VERSION_SATURN_PROTO
+    observed[2] = 0x77;
+    observed[5] = 0x66;
+#else
+    observed[2] = (u8)self.unk74;
+    observed[5] = (u8)self.unk78;
+#endif
+    observed[3] = (u8)self.unk76;
+    observed[4] = (u8)self.unk77;
+    observed[6] = (u8)other.unk71;
+    observed[7] = (u8)other.wall_climbable;
+    return c_test_observe(1, row, observed, slot_contact_expected[row], 8);
+}
+
+#ifdef MMX4_PC
+static u32 slot2_without_bounds(u32 row)
+{
+    struct PlayerObj self, other;
+    memset(&self, 0, sizeof(self));
+    memset(&other, 0, sizeof(other));
+    self.unk72 = self.unk73 = self.unk74 = 0x77;
+    self.unk76 = self.unk77 = self.unk78 = 0x66;
+    func_8002C36C(&self, &other, 2);
+    assert(self.unk74 == 0 && self.unk78 == 0);
+    assert(self.unk72 == 0x77 && self.unk73 == 0x77 && self.unk76 == 0x66 && self.unk77 == 0x66);
+    return 1;
+}
+#define SLOT2_NULL_CASES 1
+#else
+#define slot2_without_bounds NULL
+#define SLOT2_NULL_CASES 0
+#endif
+
 const struct CTestGroup c_test_groups[] = {
     { "slope_contact", 0, 0, 128, slope_contact },
     { "collision_output_edges", collision_output_edges_cases, collision_output_edges_cases_expected, COUNT(collision_output_edges_cases), 0 },
+#ifdef MMX4_PC
     { "func_8002C36C", 0, 0, 2, test_func_8002C36C },
+#endif
     { "attack_hurt_facing_sweep", sweep_cases, sweep_expected, 4, NULL },
+    { "bounds_checks", bounds_cases, bounds_expected, COUNT(bounds_cases), NULL },
+    { "slot_contact", 0, 0, 4, slot_contact },
+    { "slot2_without_bounds", 0, 0, SLOT2_NULL_CASES, slot2_without_bounds },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 128 + COUNT(collision_output_edges_cases) + 2 + 4;
+const u32 c_test_count = 128 + COUNT(collision_output_edges_cases) + 4 + COUNT(bounds_cases) + 4 + SLOT2_NULL_CASES
+#ifdef MMX4_PC
+    + 2
+#endif
+    ;

@@ -44,11 +44,9 @@ static u32 drone_case(u32 burst, u32 observation)
         before.timer = 0x3C;
         before.x_vel.val = before.y_vel.val = before.unk28 = before.unk2C = 0;
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    return observation == 0 ? (u8)obj.unk5 | ((u32)(u16)obj.timer << 8) | ((u32)obj.unk17 << 24) : obj.animation_step.packed;
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    return observation == 0 ? (u8)obj.unk5 | ((u32)(u16)obj.timer << 8) | ((u32)obj.unk17 << 24) : C_TEST_STEP(obj.animation_step.packed);
 }
 static const u32 iris_drone_animation_context_cases_expected[] = { 0xE003C02u, 0x47010001u, 0xF777705u, 0x4A010003u };
 static u32 iris_drone_animation_context_cases_row(u32 row)
@@ -167,7 +165,7 @@ static u32 owner_death(u32 row)
     player_update_frame_hitbox(&g_Player);
     player_set_collision_bounds(&g_Player);
     g_Player.x_pos.i.hi = g_Player.y_pos.i.hi = 1000;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.invincibility_timer = 17;
     player_before = g_Player;
     cur_random = 119;
@@ -182,7 +180,7 @@ static u32 owner_death(u32 row)
     owner.id = 66;
     owner.state = 1;
     owner.hp = 48;
-    owner.unk15 = face ? 0x40 : 0;
+    owner.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     owner.unk2 = kind == 3;
     owner.x_pos.i.hi = 2304;
     owner.y_pos.i.hi = 446;
@@ -191,7 +189,7 @@ static u32 owner_death(u32 row)
     obj.active = 0x41;
     obj.id = 44;
     obj.unk2 = kind == 2;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = WEAPON_OBJECT(&owner);
     obj.animation_table = (u32**)iris_animations;
     obj.x_pos.val = owner.x_pos.val;
@@ -205,7 +203,7 @@ static u32 owner_death(u32 row)
         func_800A73C4(&obj);
     assert(obj.unk5 == 0 && obj.timer == (kind == 0 ? 16 : kind < 3 ? 60
                                                                     : 120)
-        && obj.animation_step.packed == (kind == 0 ? 0x41010003 : kind == 1 ? 0x7C010001
+        && obj.animation_step.packed == C_TEST_STEP(kind == 0 ? 0x41010003 : kind == 1 ? 0x7C010001
                    : kind == 2                                              ? 0x8A010001
                                                                             : 0xBB010002));
     owner.state = dead ? 2 : 1;
@@ -214,9 +212,9 @@ static u32 owner_death(u32 row)
     expected.unk18.val = obj.x_pos.val;
     expected.unk1C.val = obj.y_pos.val;
     expected.timer--;
-    expected.animation_step.packed = kind == 0 ? 0x41010002 : kind == 1 ? 0x7D010001
+    expected.animation_step.packed = C_TEST_STEP(kind == 0 ? 0x41010002 : kind == 1 ? 0x7D010001
         : kind == 2                                                     ? 0x89010001
-                                                                        : 0xBB010001;
+                                                                        : 0xBB010001);
     if (kind == 0) {
         assert(obj.x_vel.val == 0 && obj.y_vel.val == 0x50000);
         expected.y_pos.val -= 0x50000;
@@ -242,7 +240,9 @@ static u32 owner_death(u32 row)
     return 1;
 }
 
+static u32 iris_steps(u32 index);
 const struct CTestGroup c_test_groups[] = {
+    { "iris_steps", 0, 0, 22, iris_steps },
     { "iris_drone_animation_context", NULL, iris_drone_animation_context_cases_expected, COUNT(iris_drone_animation_context_cases_expected), iris_drone_animation_context_cases_row },
     { "iris_drone_brake", 0, 0, 1, test_iris_drone_brake },
     { "iris_drone_burst", 0, 0, 1, test_iris_drone_burst },
@@ -250,4 +250,153 @@ const struct CTestGroup c_test_groups[] = {
     { "own_Iris_drone_both_lasers_pillar_cleanup_after_owner_death", NULL, NULL, 16, owner_death },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(iris_drone_animation_context_cases_expected) + 1 + 1 + 2 + 16;
+const u32 c_test_count = COUNT(iris_drone_animation_context_cases_expected) + 1 + 1 + 2 + 16 + 22;
+
+#include "weapon_resources.h"
+#include "support/sound_probe.h"
+#include "support/state_cases.h"
+void iris_drone_launch(struct ShotObj*);
+void iris_drone_brake(struct ShotObj*);
+void iris_drone_hover(struct ShotObj*);
+void func_800A766C(struct ShotObj*);
+void iris_laser_charge(struct ShotObj*);
+void iris_laser_fire(struct ShotObj*);
+void iris_laser_end(struct ShotObj*);
+void iris_pillar_fire(struct ShotObj*);
+void iris_pillar_end(struct ShotObj*);
+extern u8 iris_laser_box[4], iris_pillar_box[4];
+static u32 iris_steps(u32 index)
+{
+    static const u8 scenarios[] = { 0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 };
+    u32 row = scenarios[index];
+    static const s16 chase_dx[] = { -40, 40, 1, 0 }, chase_dy[] = { -40, 40, -1, 5 };
+    struct ShotObj obj;
+    struct MainObj owner;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    sound_probe_begin();
+    owner.state = 1;
+    obj.active = 0x41;
+    obj.id = 44;
+    obj.state = 1;
+    obj.unk7C = (struct WeaponObj*)&owner;
+    obj.x_pos.val = 100 << 16;
+    obj.y_pos.val = 120 << 16;
+    obj.animation_table = (u32**)iris_animations;
+    set_animation(&obj, 0xD);
+    g_Player.x_pos.i.hi = 300;
+    g_Player.y_pos.i.hi = 300;
+    if (row == 15 || row == 17 || row == 19 || row == 21) {
+        obj.animation_step.fields.duration = 2;
+        obj.animation_step.fields.event = 1;
+    }
+    switch (row) {
+    case 0:
+    case 1:
+        obj.unk5 = 2;
+        obj.timer = 5;
+        obj.unk5C = 1;
+        g_Player.invincibility_timer = 7;
+        if (row == 0) {
+            state_hit(MAIN_OBJECT(&obj), 0, 0, 1);
+        } else {
+            obj.unk50.data = (const u8*)&state_hit_box;
+            MAIN_OBJECT(&g_Player)->hurt_box = (const u8*)&state_hit_box;
+            g_Player.x_pos = obj.x_pos;
+            g_Player.y_pos = obj.y_pos;
+        }
+        iris_drone_run(&obj);
+        assert(obj.state == 2 && visual_objects[row == 0].active == 0x21 && visual_objects[row == 0].id == 4);
+        assert(g_Player.invincibility_timer == 7 && obj.timer == 4);
+        break;
+    case 2:
+        obj.timer = 1;
+        obj.x_vel.val = 0x50000;
+        obj.y_vel.val = 0x20000;
+        iris_drone_launch(&obj);
+        assert(obj.unk5 == 1 && obj.unk28 == -0x5000 && obj.unk2C == 0x2000);
+        break;
+    case 3:
+        obj.unk5 = 1;
+        obj.unk61 = 1;
+        obj.x_vel.val = 0x20000;
+        obj.unk28 = -0x1000;
+        iris_drone_brake(&obj);
+        assert(obj.unk5 == 1 && obj.unk61 == 1 && obj.x_vel.val == 0x1F000);
+        break;
+    case 4:
+    case 5:
+        obj.unk5 = 2;
+        obj.unk2 = row == 5;
+        obj.timer = 1;
+        iris_drone_hover(&obj);
+        assert(obj.unk5 == 3 && obj.timer == (row == 5 ? 0xB4 : 0x78) && obj.unk8A == 0x1E0);
+        break;
+    case 7:
+        obj.unk5 = 3;
+        obj.unk8A = 1;
+        func_800A766C(&obj);
+        assert(obj.unk5 == 4 && obj.unk17 == 0xE);
+        break;
+    default:
+        if (row <= 11) {
+            obj.unk5 = 3;
+            obj.unk8A = 5;
+            obj.unk2 = row == 9;
+            obj.timer = row <= 9 ? 1 : 5;
+            WEAPON_FRAME_COUNTER = row <= 9 ? 4 : 5;
+            obj.x_vel.val = obj.y_vel.val = 0x8000;
+            g_Player.x_pos.i.hi = 100 - chase_dx[row - 8];
+            g_Player.y_pos.i.hi = 120 - chase_dy[row - 8];
+            func_800A766C(&obj);
+            assert(obj.unk5 == 3 && obj.unk8A == 4);
+            assert(obj.unk2 == (row == 8) && obj.timer == (row == 8 ? 0xB4 : row == 9 ? 0x78 : 4));
+            if (row <= 9) {
+                assert(row == 8 ? obj.x_vel.val > 0 && obj.y_vel.val < 0 : obj.x_vel.val < -0x10000 && obj.y_vel.val > 0x10000);
+                assert(obj.x_pos.val == (100 << 16) + obj.x_vel.val && obj.y_pos.val == (120 << 16) - obj.y_vel.val);
+            } else {
+                assert(obj.x_vel.val == 0x8000 && obj.y_vel.val == 0x8000);
+                assert(obj.x_pos.val == (row == 10 ? 100 << 16 : (100 << 16) + 0x8000));
+                assert(obj.y_pos.val == (row == 10 ? 120 << 16 : (120 << 16) - 0x8000));
+            }
+            break;
+        }
+        if (row <= 14) {
+            obj.unk2 = row != 14;
+            obj.unk15 = row == 13 ? PLAYER_FACING_RIGHT : 0;
+            obj.timer = 1;
+            iris_laser_charge(&obj);
+            assert(obj.unk5 == 1 && obj.timer == 0x78 && obj.unk17 == (row == 14 ? 0x19 : 0x1D));
+            assert(obj.x_pos.i.hi == (row == 12 ? 100 - 0xC1 : row == 13 ? 100 + 0xC1 : 100));
+            SOUND_CHECK(sound_probe_id() == 0xE3);
+            break;
+        }
+        if (row <= 16) {
+            obj.unk5 = 1;
+            obj.timer = row == 15 ? 2 : 1;
+            iris_laser_fire(&obj);
+            assert(obj.unk50.data == (row == 15 ? iris_laser_box : NULL));
+            assert(obj.unk5 == (row == 15 ? 1 : 2) && obj.unk17 == (row == 15 ? 0xD : 0x1A));
+            break;
+        }
+        if (row <= 18) {
+            iris_laser_end(&obj);
+            assert(obj.state == (row == 17 ? 5 : 1));
+            break;
+        }
+        if (row <= 20) {
+            obj.timer = row == 19 ? 2 : 1;
+            iris_pillar_fire(&obj);
+            assert(obj.unk50.data == (row == 19 ? iris_pillar_box : NULL));
+            assert(obj.unk5 == (row == 19 ? 0 : 1) && obj.unk17 == (row == 19 ? 0xD : 0x1C));
+            break;
+        }
+        iris_pillar_end(&obj);
+        assert(obj.state == (row == 21 ? 8 : 1));
+        break;
+    }
+    return 1;
+}

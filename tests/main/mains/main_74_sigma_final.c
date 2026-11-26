@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
+#ifndef VERSION_DEMO
 #include "main/mains/main_74_sigma_final.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -76,14 +78,10 @@ static u32 charge_case(u32 mode)
         shots_before[31].unk2 = 5;
         shots_before[31].unk7C = WEAPON_OBJECT(&obj);
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(misc_before) / 4; i++)
-        assert(((u32*)misc_objects)[i] == ((u32*)misc_before)[i]);
-    for (i = 0; i < sizeof(shots_before) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)shots_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(misc_objects, misc_before, sizeof(misc_before));
+    c_test_same_words(shot_objects, shots_before, sizeof(shots_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     return (u8)obj.unk6 | ((u32)misc_objects[63].active << 8) | ((u32)shot_objects[31].active << 16) | ((u32)obj.animation_step.fields.duration << 24);
 }
 static const u32 sigma_final_beam_charge_pools_cases_expected[] = { 0x1D010102u, 0x1010103u, 0x1014103u, 0x1014103u, 0x1010103u };
@@ -138,16 +136,11 @@ static u32 dialogue_case(u32 zero)
     before.animation_step.fields.duration--;
     sigma_final_death_dialogue_dialogue_before.unk10 = (zero ? 0x25 : 0x2C) | 0x8000;
     assert(D_8013B8B0 == NULL && D_8013B8B4 == NULL);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    for (i = 0; i < sizeof(abc_object) / 4; i++)
-        assert(((u32*)&abc_object)[i] == ((u32*)&sigma_final_death_dialogue_dialogue_before)[i]);
-    for (i = 0; i < sizeof(bg_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)bg_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(&abc_object, &sigma_final_death_dialogue_dialogue_before, sizeof(abc_object));
+    c_test_same_words(background_objects, bg_before, sizeof(bg_before));
     assert(D_801397BC == NULL && D_801397C0 == NULL && D_801397C4 == NULL && D_801397C8 == NULL);
     assert(D_801397CC == NULL && D_801397D0 == NULL && D_801397D4 == NULL);
     return (u16)abc_object.unk10 | ((u32)(u8)obj.unk5 << 16);
@@ -181,13 +174,11 @@ static u32 aim_case(u32 mode, u32 observation)
     before.previous_animation_index = 0xFF;
     before.animation_cursor = (const u8*)sigma_final_animations[before.unk17];
     before.animation_step = *(union AnimationStep*)sigma_final_animations[before.unk17];
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     if (observation == 0)
         return obj.ext.main_74.animation_index | ((u32)(u8)obj.unk6 << 8) | ((u32)obj.unk17 << 16);
-    return obj.animation_step.packed;
+    return C_TEST_STEP(obj.animation_step.packed);
 }
 static const u32 sigma_final_laser_aim_heights_cases_expected[] = { 0x200303u, 0x4F01001Eu, 0x1D0302u, 0x4F01001Eu, 0x1F0301u, 0x4F01001Eu };
 static u32 sigma_final_laser_aim_heights_cases_row(u32 row)
@@ -223,12 +214,9 @@ static u32 live_shots(void)
     player_before = g_Player;
     memcpy(pool_before, shot_objects, sizeof(pool_before));
     sigma_final_grab_release(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)pool_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(shot_objects, pool_before, sizeof(pool_before));
     actual = (u8)obj.unk6 | ((u32)(u8)g_Player.stun_timer << 8);
     return actual;
 }
@@ -315,14 +303,10 @@ static u32 grab_case(u32 mode)
         }
     }
     func_8008E748(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(pool_expected) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)pool_expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
-    for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(shot_objects, pool_expected, sizeof(pool_expected));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
     for (i = 0; i < 6; i++)
         assert(D_8013E198[i] == -1);
     for (i = 0; i < sizeof(sound_entries); i++)
@@ -389,16 +373,12 @@ static u32 hide_case(u32 mode, u32 observation)
         assert(D_8013B8B0 == &box && D_8013B8B4 == &box);
     }
     assert(D_8013B8A0 == (mode == 0 ? 0x1E : 0x27));
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(children) / 4; i++)
-        assert(((u32*)children)[i] == ((u32*)children_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(children, children_before, sizeof(children));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
     assert(box.unk0 == 1 && box.unk1 == 2 && box.unk2 == 3 && box.unk3 == 4);
-    return observation == 0 ? (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)D_8013B8A0 << 16) : obj.animation_step.packed;
+    return observation == 0 ? (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)D_8013B8A0 << 16) : C_TEST_STEP(obj.animation_step.packed);
 }
 static const u32 sigma_lower_hide_children_cases_expected[] = { 0x1E0002u, 0x4F000002u, 0x270107u, 0x4F000001u, 0x270107u, 0x4F010001u };
 static u32 sigma_lower_hide_children_cases_row(u32 row)
@@ -425,10 +405,8 @@ static u32 pattern_case(u32 observation)
     func_8008DAE8(&obj);
     before.unk5 = obj.unk5;
     before.ext.main_74.pattern_index = 0;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(D_8013B8A0 == 0 && D_8013B8B8 == 0);
     if (observation == 0)
         return (u8)obj.unk5 | ((u32)obj.ext.main_74.pattern_index << 8);
@@ -1084,7 +1062,7 @@ static u32 full(u32 row)
     func_8008F578(&obj);
     assert(obj.unk5 == 3 && obj.unk17 == 24 && obj.x_pos.i.hi == 1383 && obj.y_pos.i.hi == 647);
     for (i = 0; i < 160 && obj.unk5 == 3; i++)
-        sigma_final_death_collapse(&obj);
+        test_next_frame(), sigma_final_death_collapse(&obj);
     assert(obj.unk5 == 4 && effect_objects[0].active == 1 && effect_objects[0].id == 43 && effect_objects[0].unk2 == 1);
     sigma_final_death_wait_player(&obj);
     assert(obj.unk5 == 4);
@@ -1144,7 +1122,7 @@ static u32 weapon_regions(u32 row)
     memset(&g_Player, 0, sizeof(g_Player));
     memset(&engine_obj, 0, sizeof(engine_obj));
     g_Player.hp = 24;
-    g_Player.unk15 = facing ? 0x40 : 0;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     player_expected = g_Player;
     if (weapon == 35)
         player_expected.update_delay_request = 1;
@@ -1219,7 +1197,7 @@ static u32 weapon_regions(u32 row)
             player_expected.script_state = 1;
             player_expected.script_action = 0x14;
             player_expected.script_facing = g_Player.unk15;
-            player_expected.spike_immune = 1;
+            SPIKE_IMMUNE_SET(player_expected, 1);
             engine_expected.gameplay_locked = 1;
         }
     } else {
@@ -1289,7 +1267,7 @@ static u32 wind(u32 row)
     expected.unk17 = 2;
     expected.previous_animation_index = 255;
     expected.animation_cursor = sigma_final_animations[2];
-    expected.animation_step.packed = 0x06010102;
+    expected.animation_step.packed = C_TEST_STEP(0x06010102);
     expected.unk7C = 60;
     expected.unk6 = 1;
     effects_expected[31].active = 1;
@@ -1349,7 +1327,7 @@ static u32 fire(u32 row)
     obj.ext.main_74.animation_index = aim;
     obj.animation_table = (const u8* const*)sigma_final_animations;
     set_animation(&obj, animations[aim]);
-    assert(obj.animation_step.packed == 0x4F01001E);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x4F01001E));
     if (event) {
         obj.animation_cursor = (const u8*)sigma_final_animations[animations[aim]] + 4 * (last_steps[aim] - 1);
         memcpy(&obj.animation_step, obj.animation_cursor, 4);
@@ -1360,7 +1338,7 @@ static u32 fire(u32 row)
     link_before = D_8013B8A8;
     if (event) {
         expected.animation_cursor += 4;
-        expected.animation_step.packed = ((u32)final_frames[aim] << 24) | 0xFF0001;
+        expected.animation_step.packed = C_TEST_STEP(((u32)final_frames[aim] << 24) | 0xFF0001);
         expected.unk6++;
         if (quad) {
             quads_expected[31].active = 1;
@@ -1388,6 +1366,359 @@ static u32 fire(u32 row)
     return 1;
 }
 
+#ifdef MMX4_SATURN
+#include "saturn/platform.h"
+#include "saturn/weapon_resources.h"
+void sigma_final_intro_start_music(struct MainObj* self);
+void sigma_final_intro_wait_load(struct MainObj* self);
+static u8 intro_sound_queue[0x800] __attribute__((aligned(4)));
+static u32 test_saturn_intro(u32 row)
+{
+    struct MainObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.unk5 = 3;
+    saturn_sound_driver_area = NULL;
+    saturn_sound_command_queue = intro_sound_queue;
+    saturn_sound_command_slot = intro_sound_queue;
+    saturn_music_fading = 0;
+    saturn_archive_queue_busy = 0;
+    D_80141BD0 = row;
+    D_80171EA8 = 0;
+    if (row == 0)
+        sigma_final_intro_start_music(&obj);
+    else
+        sigma_final_intro_wait_load(&obj);
+    assert(obj.unk5 == 4);
+    assert(D_80141BD0 == !row);
+    assert(D_80171EA8 == row);
+    return 1;
+}
+#endif
+
+void sigma_final_appear(struct MainObj*);
+void sigma_final_hide_upper(struct MainObj*);
+void sigma_final_hide_lower(struct MainObj*);
+void sigma_final_show_lower(struct MainObj*);
+void sigma_final_wind(struct MainObj*);
+void sigma_final_summon(struct MainObj*);
+void sigma_final_big_beam(struct MainObj*);
+void sigma_final_grab(struct MainObj*);
+extern struct Unk_unk68 D_80105374;
+extern struct Unk_unk68 D_80108284[], D_80108304[];
+extern u8 D_8013B8A4;
+
+static struct MainObj fo, fo_parts[3];
+#define FO_IS(a, b) ((const void*)(a) == (const void*)(b))
+static void fo_reset(u8 unk5, u8 unk6)
+{
+    u32 i;
+    memset(&fo, 0, sizeof(fo));
+    memset(fo_parts, 0, sizeof(fo_parts));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    D_80141F50[2] = state_sound_rows;
+    D_8013B8A0 = 0;
+    D_8013B8A4 = 0;
+    D_8013B8B0 = NULL;
+    D_8013B8B8 = 0;
+    engine_obj.stage = 0xD;
+    engine_obj.cur_character = CHARACTER_X;
+    cur_random = 0;
+    fo.active = 0x41;
+    fo.id = 74;
+    fo.state = 1;
+    fo.unk5 = unk5;
+    fo.unk6 = unk6;
+    fo.x_pos.i.hi = 0x500;
+    fo.y_pos.i.hi = 0x280;
+    fo.animation_table = (const u8* const*)sigma_final_animations;
+    set_animation(&fo, 0);
+    for (i = 0; i < 3; i++)
+        fo.ext.main_74.children[i] = &fo_parts[i];
+}
+static void fo_step(s8 event, s8 relative)
+{
+    fo.animation_step.fields.duration = 5;
+    fo.animation_step.fields.event = event;
+    fo.animation_step.fields.relative_step = relative;
+}
+
+static void sfx_init(void)
+{
+    static u32 pages[8];
+    struct EngineObj engine = engine_obj;
+    u32* saved_pages = D_801406A8;
+    u32 i;
+    test_stage_graphics(pages);
+    fo_reset(4, 0);
+    fo.state = 0;
+    engine_obj.enable_boss = 1;
+    sigma_final_update(&fo);
+    assert(fo.state == 1 && fo.unk5 == 3 && fo.unk6 == 0 && fo.hp == 0 && fo.contact_damage == 9 && fo.ext.main_74.lower_health == 0x30 && fo.ext.main_74.target == 0);
+    assert(engine_obj.boss_ptr == &fo && engine_obj.enable_boss == 0);
+    for (i = 0; i < 3; i++)
+        assert(FO_IS(fo.ext.main_74.children[i], &shot_objects[i]) && shot_objects[i].id == 0x35 && shot_objects[i].unk2 == i);
+    test_stage_graphics(saved_pages);
+    fo.unk5 = 1;
+    fo.ext.main_74.upper_health = 0x20;
+    sigma_final_set_target(&fo, 1);
+    fo.hp = 0x1F;
+    sigma_final_update(&fo);
+    assert(fo.ext.main_74.upper_health == 0x1F && engine_obj.enable_boss == 1 && FO_IS(fo.collision_data, D_80108284));
+    sigma_final_set_target(&fo, 2);
+    fo.hp = 0x2F;
+    sigma_final_update(&fo);
+    assert(fo.ext.main_74.lower_health == 0x2F && fo.ext.main_74.upper_health == 0x1F && FO_IS(fo.collision_data, D_80108304));
+    sigma_final_set_target(&fo, 0);
+    fo.collision_data = NULL;
+    sigma_final_update(&fo);
+    assert(engine_obj.enable_boss == 0 && fo.collision_data == NULL);
+    engine_obj = engine;
+}
+static void sfx_appear(void)
+{
+    struct EngineObj engine = engine_obj;
+    fo_reset(3, 0);
+    sigma_final_appear(&fo);
+    assert(fo.unk6 == 1 && fo.x_pos.i.hi == 0x567 && fo.y_pos.i.hi == 0x287 && fo.unk17 == 0x18);
+    fo_step(0, 1);
+    sigma_final_appear(&fo);
+    assert(fo.unk6 == 1);
+    abc_object.unkC = 0x80;
+    abc_object.unk10 = 0;
+    fo_step(0, -1);
+    sigma_final_appear(&fo);
+    assert(fo.unk6 == 2 && (u16)abc_object.unk10 == 0x8032);
+    fo.unk6 = 1;
+    engine_obj.cur_character = CHARACTER_ZERO;
+    fo_step(0, -1);
+    sigma_final_appear(&fo);
+    assert(fo.unk6 == 2 && (u16)abc_object.unk10 == 0x802D);
+    sigma_final_appear(&fo);
+    assert(fo.unk6 == 2);
+    abc_object.unkC = 0;
+    engine_obj.unk36.value = 0;
+    fo.ext.main_74.upper_health = 0x10;
+    sigma_final_appear(&fo);
+    assert(fo.unk6 == 3 && fo.ext.main_74.target == 1 && fo.hp == 0x10 && fo.unk7E == 3 && engine_obj.unk36.value == 1 && FO_IS(fo.attack_box, &D_8010535C));
+    D_80173C84 = 0;
+    engine_obj.unk36.timer = 2;
+    sigma_final_appear(&fo);
+    assert(fo.hp == 0x10 && engine_obj.unk36.timer == 1);
+    engine_obj.unk36.timer = 0;
+    fo.unk7E = 2;
+    sigma_final_appear(&fo);
+    assert(fo.hp == 0x11 && fo.unk7E == 1);
+    sigma_final_appear(&fo);
+    assert(fo.hp == 0x12 && fo.unk7E == 3);
+    fo.hp = 0x30;
+    g_Player.script_state = 1;
+    sigma_final_appear(&fo);
+    assert(fo.unk5 == 2 && fo.unk6 == 0 && fo.unk17 == 0 && D_8013B8A0 == 0xA && FO_IS(D_8013B8B0, &D_80105368) && g_Player.script_state == 0);
+    engine_obj = engine;
+}
+static void sfx_hide_show(void)
+{
+    u32 i;
+    fo_reset(5, 0);
+    sigma_final_hide_upper(&fo);
+    assert(fo.unk6 == 1 && fo.ext.main_74.unk8C == 3 && fo.unk17 == 0x19);
+    fo_step(0, 1);
+    sigma_final_hide_upper(&fo);
+    assert(fo.unk5 == 5 && fo.x_pos.i.hi == 0x500);
+    fo_parts[0].unk5 = 3;
+    fo_parts[1].unk5 = 3;
+    fo_step(0, 0);
+    sigma_final_hide_upper(&fo);
+    assert(fo.unk5 == 5 && fo.x_pos.i.hi == 0 && fo.y_pos.i.hi == 0);
+    fo_parts[2].unk5 = 3;
+    fo.ext.main_74.target = 1;
+    sigma_final_hide_upper(&fo);
+    assert(fo.unk5 == 2 && fo.unk6 == 0 && fo.ext.main_74.target == 0 && D_8013B8A0 == 0x1E);
+    fo.unk5 = 7;
+    fo.unk6 = 0;
+    sigma_final_hide_lower(&fo);
+    assert(fo.unk6 == 1 && fo.ext.main_74.unk8C == 3 && fo.unk17 == 0x1B);
+    fo.unk5 = 6;
+    fo.unk6 = 0;
+    fo.ext.main_74.lower_health = 0x28;
+    sigma_final_show_lower(&fo);
+    assert(fo.unk6 == 1 && fo.x_pos.i.hi == 0x450 && fo.y_pos.i.hi == 0x2B8 && fo.ext.main_74.target == 2 && fo.hp == 0x28 && fo.unk17 == 0x1A && fo.contact_damage == 9);
+    fo_step(0, 1);
+    sigma_final_show_lower(&fo);
+    assert(fo.unk5 == 6);
+    fo_step(0, -1);
+    sigma_final_show_lower(&fo);
+    assert(fo.unk5 == 2 && fo.unk6 == 0 && D_8013B8A0 == 0xA);
+    for (i = 0; i < 3; i++)
+        assert(fo_parts[i].unk5 == 3);
+}
+static void sfx_wind(void)
+{
+    fo_reset(0xC, 1);
+    fo.unk7C = 0x15;
+    sigma_final_wind(&fo);
+    assert(fo.unk6 == 1 && fo.unk7C == 0x14 && misc_objects[0].id == 0x37 && misc_objects[0].unk2 == 2 && misc_objects[0].ext.misc_55.owner == &fo);
+    fo.unk7C = 0x16;
+    sigma_final_wind(&fo);
+    assert(fo.unk7C == 0x15 && misc_objects[1].active == 0 && D_8013B8B0 == NULL);
+    fo.unk7C = 1;
+    fo_step(1, 1);
+    sigma_final_wind(&fo);
+    assert(fo.unk6 == 2 && fo.unk7C == 0x3C && misc_objects[1].id == 0x37 && FO_IS(D_8013B8B0, &D_80105374));
+    g_Player.x_pos.i.hi = 0x400;
+    fo.unk7C = 0x16;
+    sigma_final_wind(&fo);
+    assert(fo.unk6 == 2 && fo.unk7C == 0x15 && g_Player.x_pos.i.hi == 0x403 && misc_objects[2].active == 0);
+    fo.unk7C = 1;
+    sigma_final_wind(&fo);
+    assert(fo.unk6 == 3 && fo.unk7C == 0x5A && misc_objects[2].id == 0x37);
+    fo.unk7C = 0x16;
+    sigma_final_wind(&fo);
+    assert(fo.unk6 == 3 && fo.unk7C == 0x15 && g_Player.x_pos.i.hi == 0x40A);
+    fo.unk7C = 0xB;
+    sigma_final_wind(&fo);
+    assert(fo.unk7C == 0xA);
+    fo.unk7C = 1;
+    sigma_final_wind(&fo);
+    assert(fo.unk6 == 4 && fo.unk7C == 0x5A);
+    fo.unk7C = 0x16;
+    sigma_final_wind(&fo);
+    assert(fo.unk6 == 4 && fo.unk7C == 0x15);
+    fo.unk7C = 0xB;
+    sigma_final_wind(&fo);
+    assert(fo.unk7C == 0xA);
+    fo.unk7C = 1;
+    sigma_final_wind(&fo);
+    assert(fo.unk5 == 7 && fo.unk6 == 0);
+}
+static void sfx_pick(void)
+{
+    fo_reset(2, 0);
+    D_8013B8A0 = 2;
+    fo.ext.main_74.target = 1;
+    func_8008DAE8(&fo);
+    assert(D_8013B8A0 == 1 && fo.unk5 == 2 && fo.ext.main_74.pattern_index == 0);
+    fo.ext.main_74.target = 0;
+    func_8008DAE8(&fo);
+    assert(D_8013B8A0 == 0 && fo.unk5 == 5 && fo.ext.main_74.pattern_index == 1);
+    fo.ext.main_74.target = 1;
+    func_8008DAE8(&fo);
+    assert(fo.unk5 == 8 && fo.ext.main_74.pattern_index == 2);
+    func_8008DAE8(&fo);
+    assert(fo.unk5 == 6 && fo.ext.main_74.pattern_index == 3);
+    cur_random = 1;
+    func_8008DAE8(&fo);
+    assert(fo.unk5 == 0xC && fo.ext.main_74.pattern_index == 4);
+    func_8008DAE8(&fo);
+    assert(fo.unk5 == 7 && fo.ext.main_74.pattern_index == 5);
+    func_8008DAE8(&fo);
+    assert(fo.unk5 == 8 && fo.ext.main_74.pattern_index == 6);
+}
+static void sfx_waits(void)
+{
+    fo_reset(8, 1);
+    sigma_sequencer = &effect_objects[3];
+    effect_objects[3].active = 1;
+    sigma_final_summon(&fo);
+    assert(fo.unk5 == 8);
+    effect_objects[3].active = 0;
+    sigma_final_summon(&fo);
+    assert(fo.unk5 == 2 && fo.unk6 == 0 && D_8013B8A0 == 0x1E);
+    fo_reset(10, 2);
+    D_8013B8A8 = (struct ObjectHeader*)&effect_objects[4];
+    effect_objects[4].active = 1;
+    sigma_final_big_beam(&fo);
+    assert(fo.unk6 == 2 && D_8013B8A8 == (struct ObjectHeader*)&effect_objects[4]);
+    fo_reset(0xD, 3);
+    fo.unk62 = 3;
+    fo_step(1, 1);
+    sigma_final_grab(&fo);
+    assert(fo.unk5 == 0xB && fo.unk6 == 0 && fo.unk62 == 0 && fo.contact_damage == 9 && FO_IS(D_8013B8B0, &D_80105374));
+}
+static void (*const sfx_cases[])(void) = {
+    sfx_init,
+    sfx_appear,
+    sfx_hide_show,
+    sfx_wind,
+    sfx_pick,
+    sfx_waits,
+};
+static u32 sfx_run(u32 row)
+{
+    sfx_cases[row]();
+    return 1;
+}
+
+#include "support/tile_writes.h"
+void sigma_final_big_beam_fire(struct MainObj*);
+void sigma_final_death_finish(struct MainObj*);
+static u32 sfm_meta[8];
+static u32 test_sigma_final_more(u32 row)
+{
+    u32 i;
+    switch (row) {
+    case 0:
+        state_reset(1, 0, 0), test_stage_graphics(sfm_meta);
+        for (i = 0; i < COUNT(shot_objects); i++)
+            shot_objects[i].active = 1;
+        so.unk15 = PLAYER_FACING_RIGHT;
+        func_8008D5C8(&so);
+        assert(so.ext.main_74.children[0] == NULL && so.ext.main_74.children[1] == NULL && so.ext.main_74.children[2] == NULL && so.unk15 == 0);
+        assert(so.state == 1 && so.unk5 == 3 && engine_obj.boss_ptr == &so && so.ext.main_74.lower_health == 0x30);
+        engine_obj.boss_ptr = NULL;
+        for (i = 0; i < COUNT(shot_objects); i++)
+            assert(shot_objects[i].id == 0);
+        memset(shot_objects, 0, sizeof(shot_objects));
+        break;
+    case 1:
+        state_reset(7, 1, 0), CURRENT(0);
+        for (i = 0; i < COUNT(g_QuadObjects); i++)
+            g_QuadObjects[i].active = 1;
+        sigma_final_big_beam_fire(&so);
+        assert(D_8013B8A8 == NULL);
+        for (i = 0; i < COUNT(g_QuadObjects); i++)
+            assert(g_QuadObjects[i].id == 0);
+        memset(g_QuadObjects, 0, sizeof(g_QuadObjects));
+        CURRENT(0);
+        break;
+    default:
+        state_reset(0, 4, 0), CURRENT(0), so.active = 0x41;
+        g_Player.script_state = 1, SPIKE_IMMUNE_SET(g_Player, 1), engine_obj.character_state.fields.active = 0;
+        engine_obj.stage = 12, engine_obj.substage = 1, tile_writes_begin(), tile_writes_expect(8, 0, 0, 1);
+        sigma_final_death_finish(&so);
+        tile_writes_end();
+        assert(so.active == 0 && engine_obj.character_state.fields.active == 1 && background_objects[0].unk26 == 0x450 && background_objects[0].unk24 == 0x480);
+        assert(SPIKE_IMMUNE(g_Player) == 0 && g_Player.script_state == 0);
+        engine_obj.stage = engine_obj.substage = 0, engine_obj.character_state.fields.active = 0;
+        break;
+    }
+    return 1;
+}
+#ifndef MMX4_SATURN
+void sigma_final_intro_start_music(struct MainObj*);
+void sigma_final_intro_wait_load(struct MainObj*);
+extern u8 D_80137DD8;
+static u32 test_sigma_final_intro_music(u32 row)
+{
+    state_reset(row < 2 ? 1 : 2, 0, 0);
+    if (row < 2) {
+        so.ext.main_74.timer = 2 - row;
+        sigma_final_intro_start_music(&so);
+        assert(so.unk5 == row + 1 && (row == 0 || D_80137DD8 == 0x81));
+    } else {
+        D_801406AC = row == 3 ? 1 : 2, D_8013BD40 = row == 4, D_80171EA8 = 0;
+        sigma_final_intro_wait_load(&so);
+        assert(so.unk5 == (row == 2 ? 3 : 2) && D_80171EA8 == (row == 2));
+        D_801406AC = D_8013BD40 = D_80171EA8 = 0;
+    }
+    return 1;
+}
+#endif
+
 const struct CTestGroup c_test_groups[] = {
     { "sigma_final_states", 0, 0, COUNT(sigma_final_states_cases), test_sigma_final_states },
     { "sigma_final_beam_charge_pools", NULL, sigma_final_beam_charge_pools_cases_expected, COUNT(sigma_final_beam_charge_pools_cases_expected), charge_case },
@@ -1405,9 +1736,30 @@ const struct CTestGroup c_test_groups[] = {
     { "sigma_spawn_sequencer", 0, 0, 1, test_sigma_spawn_sequencer },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "Sigma_actual_second_body_death_collapse_rumble_finished_dialogue_full_effect_pool", NULL, NULL, 1, full },
+    { "sigma_final_state_steps", NULL, NULL, COUNT(sfx_cases), sfx_run },
     { "real_body_vulnerable_regions_flash_and_death", NULL, NULL, 48, weapon_regions },
     { "own_Sigma_final_wind_spikes_full_partial_twelve_free_shot_slots", NULL, NULL, 9, wind },
     { "all_aims_shipped_fire_events_and_independent_full_pools", NULL, NULL, 32, fire },
+    { "sigma_final_more", 0, 0, 3, test_sigma_final_more },
+#ifndef MMX4_SATURN
+    { "sigma_final_intro_music", 0, 0, 5, test_sigma_final_intro_music },
+#endif
+#ifdef MMX4_SATURN
+    { "saturn_intro_music_and_load", 0, 0, 2, test_saturn_intro },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(sigma_final_states_cases) + COUNT(sigma_final_beam_charge_pools_cases_expected) + COUNT(sigma_final_death_dialogue_cases_expected) + COUNT(sigma_final_laser_aim_heights_cases_expected) + COUNT(sigma_grab_live_shots_cases) + COUNT(sigma_grab_shot_pool_context_cases_expected) + COUNT(sigma_lower_hide_children_cases_expected) + COUNT(sigma_pattern_rng_cases) + 6 + 1 + 2 + 1 + 2 + 1 + COUNT(pool_full_cases) + 1 + 48 + 9 + 32;
+const u32 c_test_count = COUNT(sigma_final_states_cases) + COUNT(sigma_final_beam_charge_pools_cases_expected) + COUNT(sigma_final_death_dialogue_cases_expected) + COUNT(sigma_final_laser_aim_heights_cases_expected) + COUNT(sigma_grab_live_shots_cases) + COUNT(sigma_grab_shot_pool_context_cases_expected) + COUNT(sigma_lower_hide_children_cases_expected) + COUNT(sigma_pattern_rng_cases) + 6 + 1 + 2 + 1 + 2 + 1 + COUNT(pool_full_cases) + 1 + 48 + 9 + 32 + COUNT(sfx_cases)
+#ifdef MMX4_SATURN
+    + 2
+#endif
+    + 3
+#ifndef MMX4_SATURN
+    + 5
+#endif
+    ;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

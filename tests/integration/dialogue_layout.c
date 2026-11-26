@@ -3,6 +3,18 @@
 #include "main/128C4.h"
 #include "main/195B4.h"
 #include "main/13A8C.h"
+#include "support/test_pad.h"
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#include "saturn/player_resources.h"
+#define TEXT_TEXTURE 0xC600
+#define ARROW_TEXTURE 0xC980
+#define TEXT_CLUT(fortress) ((fortress) ? 0x3E : 0x0D)
+#else
+#define TEXT_TEXTURE 0x1F00
+#define ARROW_TEXTURE 0x1FFF
+#define TEXT_CLUT(fortress) ((fortress) ? 0x78CE : 0x7845)
+#endif
 
 void func_8002328C(struct AbcObj*);
 extern struct DialogueGlyphData D_801396C8;
@@ -70,6 +82,9 @@ static void prepare(u8 portrait, u32 free_first, u32 free_count)
     TEST_MENU_FRAMES = (u8*)frame_headers;
     TEST_PALETTE = (u8*)palette.colors;
     D_801406A8 = pages;
+#ifdef MMX4_SATURN
+    saturn_stage_graphics_offsets_pointer = pages;
+#endif
     D_801397BC = D_801397C0 = D_801397C4 = NULL;
     D_801397C8 = D_801397CC = D_801397D0 = D_801397D4 = NULL;
     D_801397DC = (struct Func80022730Config*)D_800F2DD0[0];
@@ -87,6 +102,7 @@ static void prepare(u8 portrait, u32 free_first, u32 free_count)
     controller_input.held = 0x1234;
     controller_input.previous = 0x5678;
     controller_input.pressed = 0;
+    TEST_PAD_PRESSED = 0;
     need_palette_load = 0x20;
     cur_random = 0x1234;
     for (i = 0; i < 6; i++)
@@ -145,7 +161,10 @@ static void check(u16 input)
                (const u32*)expected_pool, sizeof(expected_pool) / 4)
         == 0);
     assert(controller_input.held == 0x1234 && controller_input.previous == 0x5678
-        && controller_input.pressed == input);
+        && TEST_PAD_PRESSED == input);
+#ifdef MMX4_SATURN
+    assert(controller_input.pressed == 0);
+#endif
     assert(need_palette_load == 0x20 && cur_random == 0x1234);
     assert(D_80139824 == 7 && D_80139828 == 1);
     assert(TEST_MENU_FRAMES == (u8*)frame_headers && D_801406A8 == pages);
@@ -223,15 +242,20 @@ static void expect_portrait(u32 slot, u32 part, const struct Func80022730Config*
     obj->unk2 = part == PLAYER_FACE ? 5 : part == RIVAL_FACE ? 3
                                                              : 4;
     obj->bg_offset = -1;
-    obj->unk15 = part == RIVAL_FRAME ? 0x40 : 0;
+    obj->unk15 = part == RIVAL_FRAME ? PLAYER_FACING_RIGHT : 0;
     obj->x_pos.i.hi = part == RIVAL_FACE || part == RIVAL_FRAME ? 240 : config->unk5 ? 160
                                                                                      : 80;
     obj->y_pos.i.hi = 72;
     obj->unk16 = part == PLAYER_FRAME || part == RIVAL_FRAME ? 17 : 16;
-    obj->unk40 = (pages[texture] >> 7) + (config->unk4 ? 0xB0 : 0);
     palette_column = config->unk3 * 4 + (part == PLAYER_FACE ? character + 26 : part == RIVAL_FACE ? 25
                                                                                                    : 24);
+#ifdef MMX4_SATURN
+    obj->unk40 = (u16)(((((pages[texture] >> 7) + (config->unk4 ? 0xB0 : 0)) << 7) + 0x25C24000u) >> 3);
+    obj->unk42 = palette_column;
+#else
+    obj->unk40 = (pages[texture] >> 7) + (config->unk4 ? 0xB0 : 0);
     obj->unk42 = (palette_column % 16) | ((480 + palette_column / 16) << 6);
+#endif
     obj->unk3C = (u8*)frame_headers + frame_headers[frame];
     obj->state = 0;
     obj->animation_table = (u32**)D_800F2EE8[part == PLAYER_FACE ? character
@@ -287,11 +311,11 @@ static void expect_text(u16 word)
         struct MiscObj* obj = &expected_pool[slot];
         obj->active = 1;
         obj->id = 0x16;
-        obj->unk16 = 16;
-        obj->unk40 = 0x1F00;
+        obj->unk16 = VISUAL_SATURN_LAYER(16);
+        obj->unk40 = TEXT_TEXTURE;
         obj->unk2 = 0;
         obj->unk3C = &D_801396C8.count;
-        obj->unk42 = engine_obj.stage == 13 ? 0x78CE : 0x7845;
+        obj->unk42 = TEXT_CLUT(engine_obj.stage == 13);
         obj->bg_offset = -1;
         obj->x_pos.val = 160 * 65536;
         obj->y_pos.val = ((word & 0x800)                   ? portrait_before == 0xFF ? 120 : 112
@@ -311,11 +335,11 @@ static void expect_arrow(u16 word)
         struct MiscObj* obj = &expected_pool[slot];
         obj->active = 1;
         obj->id = 0x16;
-        obj->unk16 = 16;
-        obj->unk40 = 0x1FFF;
+        obj->unk16 = VISUAL_SATURN_LAYER(16);
+        obj->unk40 = ARROW_TEXTURE;
         obj->unk2 = 1;
         obj->unk3C = D_800F2F38;
-        obj->unk42 = engine_obj.stage == 13 ? 0x78CE : 0x7845;
+        obj->unk42 = TEXT_CLUT(engine_obj.stage == 13);
         obj->bg_offset = -1;
         obj->x_pos.i.hi = 152;
         obj->y_pos.i.hi = word & 0x800 ? portrait_before == 0xFF ? 197 : 189
@@ -417,7 +441,7 @@ static u32 test_decoder_delay(u32 row)
     u32 plan = row / 27 % 3, stage = row / 81;
     decoder_prepare(portrait, stage, plans[plan]);
     abc_object.unkF = skip;
-    controller_input.pressed = inputs[input];
+    TEST_PAD_PRESSED = inputs[input];
     script[0] = 0x1041;
     script[1] = 0x2042;
     capture();
@@ -462,7 +486,7 @@ static u32 test_close_handle(u32 row)
         misc_objects[3].id = handle == 1 ? 0x16 : 0x17;
         misc_objects[3].active = misc_objects[3].on_screen = active;
     }
-    controller_input.pressed = inputs[input];
+    TEST_PAD_PRESSED = inputs[input];
     capture();
     if (inputs[input] & 0xFF) {
         if (handle == 1)
@@ -476,12 +500,56 @@ static u32 test_close_handle(u32 row)
     return 1;
 }
 
+static u32 test_decoder_existing_text(u32 row)
+{
+    decoder_prepare(0, 0, 1);
+    D_801397C0 = &misc_objects[5];
+    misc_objects[5].id = 0x16;
+    misc_objects[5].unk2 = 0;
+    script[0] = 0x0041;
+    script[1] = 0x2042;
+    capture();
+    expect_decode(0);
+    func_8002328C(&abc_object);
+    check(0);
+    return 1;
+}
+
+static u32 test_next_page(u32 row)
+{
+    prepare(0, 0, 1);
+    abc_object.unkD = 3;
+    abc_object.unk4 = 0x01FF;
+    abc_object.unkC = 0xFF;
+    abc_object.unkE = 4;
+    abc_object.unkF = 2;
+    abc_object.unk6 = 40;
+    abc_object.unk8 = 99;
+    D_801397E0 = D_801396C8.count = 5;
+    D_801396C8.active = 1;
+    script[0] = 0x0041;
+    script[1] = 0x2042;
+    TEST_PAD_PRESSED = 0x40;
+    capture();
+    glyph_count_expected = 0;
+    expected_dialogue.unkC = 1;
+    expected_dialogue.unk6 = -120;
+    expected_dialogue.unk8 = 29;
+    expected_dialogue.unkE = 5;
+    expect_decode(0x40);
+    func_80022730(&abc_object);
+    check(0x40);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "dialogue_portrait_allocation", 0, 0, 124, test_portrait_allocation },
     { "dialogue_decoder_layout", 0, 0, 129, test_decoder_layout },
     { "dialogue_decoder_delay", 0, 0, 6, test_decoder_delay },
     { "dialogue_decoder_continuation", 0, 0, 2, test_decoder_continuation },
     { "dialogue_close_handle", 0, 0, 9, test_close_handle },
+    { "dialogue_decoder_existing_text", 0, 0, 1, test_decoder_existing_text },
+    { "dialogue_next_page", 0, 0, 1, test_next_page },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 124 + 129 + 6 + 2 + 9;
+const u32 c_test_count = 124 + 129 + 6 + 2 + 9 + 1 + 1;

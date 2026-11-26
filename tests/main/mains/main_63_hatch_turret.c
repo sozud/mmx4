@@ -57,9 +57,54 @@ static u32 test_func_8007C144(u32 row)
     return c_test_observe(0, row, observed_values, func_8007C144_expected, 3);
 }
 
+#include "support/state_cases.h"
+#define HT(step, setup) (state_reset(step, 0, 0), memset(shot_objects, 0, sizeof(shot_objects)), so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, setup, func_8007C144(&so), state_extra = (u16)so.unk7C | (u32)shot_objects[0].active << 16)
+static void ht_off_screen(void) { HT(0, so.x_pos.i.hi = 0x300); }
+static void ht_closed_wait(void) { HT(0, so.unk7C = 2); }
+static void ht_closed_open(void) { HT(0, 0); }
+static void ht_opening(void) { HT(1, so.animation_step.fields.relative_step = 1); }
+static void ht_opened(void) { HT(1, 0); }
+static void ht_raising(void) { HT(2, so.animation_step.fields.relative_step = 1); }
+static void ht_raised(void) { HT(2, 0); }
+static void ht_blast_out(void) { HT(3, so.unk7 = 1); }
+static void ht_blast_gone(void) { HT(3, 0); }
+static void ht_closing(void) { HT(4, so.animation_step.fields.relative_step = 1); }
+static void ht_closed(void) { HT(4, 0); }
+static void (*const hatch_turret_steps_cases[])(void) = {
+    ht_off_screen,
+    ht_closed_wait,
+    ht_closed_open,
+    ht_opening,
+    ht_opened,
+    ht_raising,
+    ht_raised,
+    ht_blast_out,
+    ht_blast_gone,
+    ht_closing,
+    ht_closed,
+};
+static const u32 hatch_turret_steps_expected[] = {
+    0x0u, 0x0u, 0x3000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x0u, 0x1u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u, 0x0u, 0x41000000u,
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x10003u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x410000u, 0x41410000u,
+    0x10003u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x5u, 0x0u, 0x0u, 0x41000000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x0u, 0x80u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x80u, 0x41000000u,
+};
+static u32 test_hatch_turret_steps(u32 row)
+{
+    return state_run(hatch_turret_steps_cases[row], row, &hatch_turret_steps_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "func_8007C090", 0, 0, 1, test_func_8007C090 },
     { "func_8007C144", 0, 0, 1, test_func_8007C144 },
+    { "hatch_turret_steps", 0, 0, COUNT(hatch_turret_steps_cases), test_hatch_turret_steps },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1 + 1;
+const u32 c_test_count = 1 + 1 + COUNT(hatch_turret_steps_cases);

@@ -164,7 +164,7 @@ static u32 test_func_8004CA94(u32 row)
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     observed_values[0] = (u32)obj.ext.main_13.unk80;
     observed_values[1] = (u32)obj.unk7C;
-    observed_values[2] = (u32)obj.animation_step.packed;
+    observed_values[2] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[3] = (u32)cur_random;
     return c_test_observe(0, row, observed_values, c->expected, 4);
 }
@@ -355,7 +355,73 @@ static u32 test_heavy_mech_misc(u32 row)
     return state_run(heavy_mech_misc_cases[row], row, &heavy_mech_misc_expected[row * 10]);
 }
 
+void heavy_mech_explode(struct MainObj*);
+#define HM2(step, sub) (state_reset(step, sub, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.hp = 3, so.collision_flags = 8, g_Player.x_pos.i.hi = 0x200, SPIKE_IMMUNE_SET(g_Player, 1))
+#define HM2X() (state_extra = so.state | so.ext.main_13.unk80 << 8 | (u32)so.ext.main_13.unk88 << 24)
+static void hm2_main_catch(void) { HM2(2, 1), so.unk7C = 5, so.ext.main_13.unk80 = 0x8001, func_8004C860(&so), HM2X(); }
+static void hm2_main_defeat(void) { HM2(5, 0), so.hp = 1, state_hit(&so, 0, 0, 1), func_8004C860(&so), HM2X(); }
+static void hm2_main_away(void) { HM2(5, 0), so.x_pos.i.hi = 0x400, func_8004C860(&so), HM2X(); }
+#define ROLL(timer, px, seed) (HM2(2, 1), so.unk7C = timer, g_Player.x_pos.i.hi = px, cur_random = seed, func_8004CA94(&so), HM2X())
+static void hm2_idle_wait(void) { ROLL(2, 0x40, 1); }
+static void hm2_near_pause(void) { ROLL(1, 0x40, 1); }
+static void hm2_near_throw(void) { ROLL(1, 0x40, 5); }
+static void hm2_near_lob(void) { ROLL(1, 0x40, 13); }
+static void hm2_far_pause(void) { ROLL(1, 0x200, 1); }
+static void hm2_far_throw(void) { ROLL(1, 0x200, 5); }
+static void hm2_far_lob(void) { ROLL(1, 0x200, 9); }
+static void hm2_throw_idle(void) { HM2(4, 0), heavy_mech_throw_anim(&so), HM2X(); }
+static void hm2_throw_done(void) { HM2(4, 0), so.animation_step.fields.event = 1, heavy_mech_throw_anim(&so), HM2X(); }
+static void hm2_throw_shot(void) { HM2(4, 0), so.ext.main_13.unk88 = 1, so.animation_step.fields.event = 2, heavy_mech_throw_anim(&so), HM2X(), state_extra ^= shot_objects[0].state << 4; }
+static void hm2_stomp_shake(void) { HM2(5, 0), so.animation_step.fields.event = 2, heavy_mech_stomp(&so), HM2X(); }
+#define EXPLODE(count, tick) (HM2(0, 0), so.state = 2, so.unk7C = count, so.unk7E = tick, heavy_mech_explode(&so), HM2X())
+static void hm2_explode_done(void) { EXPLODE(1, 3); }
+static void hm2_explode_burst(void) { EXPLODE(5, 1); }
+static void hm2_explode_wait(void) { EXPLODE(5, 3); }
+static void (*const hm2_cases[])(void) = {
+    hm2_main_catch,
+    hm2_main_defeat,
+    hm2_main_away,
+    hm2_idle_wait,
+    hm2_near_pause,
+    hm2_near_throw,
+    hm2_near_lob,
+    hm2_far_pause,
+    hm2_far_throw,
+    hm2_far_lob,
+    hm2_throw_idle,
+    hm2_throw_done,
+    hm2_throw_shot,
+    hm2_stomp_shake,
+    hm2_explode_done,
+    hm2_explode_burst,
+    hm2_explode_wait,
+};
+static const u32 hm2_expected[] = {
+    0x5u, 0x5u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x3u, 0x30000u, 0x800001u, 0x41000000u,
+    0x5u, 0x60020u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x2u, 0x41002100u,
+    0x5u, 0x0u, 0x4000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x3u, 0x41000000u,
+    0x102u, 0x1u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x1u, 0x41000000u,
+    0x102u, 0x3Cu, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x1u, 0x41000000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x2u, 0x30000u, 0x2000001u, 0x41000000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x1u, 0x30000u, 0x1000001u, 0x41000000u,
+    0x102u, 0x3Cu, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x1u, 0x41000000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4002u, 0x30000u, 0x2000001u, 0x41000000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4001u, 0x30000u, 0x1000001u, 0x41000000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x1u, 0x41000000u,
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x1u, 0x41000000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x1000001u, 0x41410000u,
+    0x5u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x1u, 0x41000000u,
+    0x0u, 0x30000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x3u, 0x41000000u,
+    0x0u, 0x60004u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x2u, 0x41002100u,
+    0x0u, 0x20004u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x30000u, 0x2u, 0x41000000u,
+};
+static u32 hm2_run(u32 row)
+{
+    return state_run(hm2_cases[row], row, &hm2_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "heavy_mech_branch_steps", 0, 0, COUNT(hm2_cases), hm2_run },
     { "heavy_mech_misc", 0, 0, COUNT(heavy_mech_misc_cases), test_heavy_mech_misc },
     { "func_8004C860_0", 0, 0, 1, test_func_8004C860_0 },
     { "func_8004C860_1", 0, 0, 2, test_func_8004C860_1 },
@@ -364,4 +430,4 @@ const struct CTestGroup c_test_groups[] = {
     { "heavy_mech_throw_anim_1", 0, 0, 2, test_heavy_mech_throw_anim_1 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(heavy_mech_misc_cases) + 1 + 2 + 3 + 2 + 2;
+const u32 c_test_count = COUNT(hm2_cases) + COUNT(heavy_mech_misc_cases) + 1 + 2 + 3 + 2 + 2;

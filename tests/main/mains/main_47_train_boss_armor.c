@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_47_train_boss_armor.h"
 #include "main/collision_bounds.h"
 #include "support/state_cases.h"
@@ -74,11 +75,11 @@ static u32 armor_case(u32 mode, u32 observation)
     obj.collision_data = D_80107678;
     obj.invincibility_timer = inputs[mode].timer;
     bind_owner(&obj, &owner, &boss_hp);
-    *reflected_word(&obj) = 0xA5A52700 | inputs[mode].reflected;
+    *reflected_word(&obj) = C_TEST_PSX_WORD(0xA5A52700 | inputs[mode].reflected);
     owner.unk87 = 1;
     owner.attack_flags = inputs[mode].attack;
     owner.layer_signals = &signals;
-    signals.unk16 = 0x27;
+    signals.unk16 = VISUAL_SATURN_LAYER(0x27);
     signals.collision_state = 0x35;
     weapon->active = inputs[mode].hit;
     weapon->id = inputs[mode].weapon;
@@ -114,20 +115,16 @@ static u32 armor_case(u32 mode, u32 observation)
     *reflected_word(&before) = *reflected_word(&obj);
     owner_before.attack_flags = owner.attack_flags;
     signals_before.unk16 = signals.unk16;
-    player_before.spike_immune = g_Player.spike_immune;
+    SPIKE_IMMUNE_SET(player_before, SPIKE_IMMUNE(g_Player));
     player_before.update_delay_request = g_Player.update_delay_request;
     weapon_before.unk80 = weapon->unk80;
     weapon_before.unk98 = weapon->unk98;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(owner) / 4; i++)
-        assert(((u32*)&owner)[i] == ((u32*)&owner_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
     for (i = 0; i < sizeof(signals); i++)
         assert(((u8*)&signals)[i] == ((u8*)&signals_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(*weapon) / 4; i++)
-        assert(((u32*)weapon)[i] == ((u32*)&weapon_before)[i]);
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(weapon, &weapon_before, sizeof(*weapon));
     assert(obj.hurt_box == &hurt && obj.collision_data == D_80107678 && owner.layer_signals == &signals);
     assert(hurt.unk2 == 8 && hurt.unk3 == 8 && attack.unk2 == 8 && attack.unk3 == 8);
     assert(obj.x_pos.val == before.x_pos.val && obj.y_pos.val == before.y_pos.val);
@@ -152,13 +149,13 @@ static u32 armor_case(u32 mode, u32 observation)
         actual = obj.unk42 | ((u32)obj.on_screen << 16) | ((u32)owner.attack_flags << 24);
         break;
     case 3:
-        actual = (u8)boss_hp | ((u32)signals.unk16 << 8) | ((u32)g_Player.spike_immune << 16) | ((u32)(u8)weapon->unk98 << 24);
+        actual = (u8)boss_hp | ((u32)TEST_PSX_LAYER(signals.unk16) << 8) | ((u32)SPIKE_IMMUNE(g_Player) << 16) | ((u32)(u8)weapon->unk98 << 24);
         break;
     case 4:
-        actual = *reflected_word(&obj);
+        actual = C_TEST_PSX_WORD(*reflected_word(&obj));
         break;
     case 5:
-        actual = weapon->unk80.word;
+        actual = TEST_LE_HALVES(&weapon->unk80);
         break;
     default:
         actual = (u16)obj.unk7C | ((u32)(u16)obj.unk7E << 16);
@@ -214,7 +211,12 @@ static u32 smoke_case(u32 mode, u32 observation)
     obj.unk7E = mode < 2 ? 2 : 1;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
+#ifdef MMX4_BIG_ENDIAN
+    parent.x_pos.i.hi = 0x4321;
+    parent.x_pos.i.lo = 300;
+#else
     parent.x_pos.val = 300 * 65536 + 0x4321;
+#endif
     parent.active = 0x41;
     parent.id = 45;
     parent_ptr = (struct BaseObj*)&parent;
@@ -254,14 +256,10 @@ static u32 smoke_case(u32 mode, u32 observation)
         expected->state = expected->unk5 = expected->unk6 = 0;
     } else
         assert(cur_random == 0xACE1);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(parent) / 4; i++)
-        assert(((u32*)&parent)[i] == ((u32*)&parent_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)visual_objects)[i] == ((u32*)pool_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&parent, &parent_before, sizeof(parent));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(visual_objects, pool_before, sizeof(pool_before));
     if (observation == 0)
         return (u16)obj.unk7C | ((u32)(u8)obj.unk7E << 16) | ((u32)obj.state << 24);
     if (observation == 1)
@@ -329,8 +327,8 @@ static u32 test_func_80066DE8(u32 row)
     observed_values[3] = (u32)obj.hp;
     observed_values[4] = (u32)obj.invincibility_timer;
     observed_values[5] = (u32)obj.state;
-    observed_values[6] = (u32)obj.unk15;
-    observed_values[7] = (u32)obj.unk16;
+    observed_values[6] = C_TEST_PSX_FACING(obj.unk15);
+    observed_values[7] = TEST_PSX_LAYER(obj.unk16);
     observed_values[8] = (u32)obj.unk5;
     observed_values[9] = (u32)obj.unk5D;
     observed_values[10] = (u32)obj.unk6;
@@ -341,7 +339,7 @@ static u32 test_func_80066DE8(u32 row)
     observed_values[15] = (u32)shot_objects[0].bg_offset;
     observed_values[16] = (u32)shot_objects[0].id;
     observed_values[17] = (u32)shot_objects[0].state;
-    observed_values[18] = (u32)shot_objects[0].unk15;
+    observed_values[18] = C_TEST_PSX_FACING(shot_objects[0].unk15);
     observed_values[19] = (u32)shot_objects[0].unk2;
     observed_values[20] = (u32)shot_objects[0].unk40;
     observed_values[21] = (u32)shot_objects[0].unk42;
@@ -445,7 +443,7 @@ static void tba_break(void)
 }
 static void tba_break_last(void)
 {
-    u8 immune = g_Player.spike_immune;
+    u8 immune = SPIKE_IMMUNE(g_Player);
     TBA(1, 2, 2);
     so.unk6 = 1;
     armor_boss.attack_flags = 3;
@@ -453,8 +451,19 @@ static void tba_break_last(void)
     state_hit(&so, 0, 0, 1);
     train_boss_armor_update(&so);
     SEEN();
-    state_extra ^= g_Player.spike_immune << 28;
-    g_Player.spike_immune = immune;
+    state_extra ^= SPIKE_IMMUNE(g_Player) << 28;
+    SPIKE_IMMUNE_SET(g_Player, immune);
+}
+
+static void tba_open_unhit(void)
+{
+    TBA(1, 2, 0);
+    so.unk6 = 1;
+    armor_boss.unk87 = 1;
+    so.unk42 = 0x8000;
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    train_boss_armor_update(&so);
+    SEEN();
 }
 
 static void (*const train_boss_armor_states_cases[])(void) = {
@@ -467,8 +476,20 @@ static void (*const train_boss_armor_states_cases[])(void) = {
     tba_hit,
     tba_break,
     tba_break_last,
+    tba_open_unhit,
 };
-static const u32 train_boss_armor_states_expected[] = { 2u, 0u, 0x800000u, 0x10000u, 0u, 0u, 0u, 0x100001u, 0x318u, 0x410000u, 2u, 0u, 0x810000u, 0x10000u, 0u, 0u, 0u, 0x100000u, 0x20u, 0u, 0x102u, 0u, 0x1AB00000u, 0u, 0u, 0u, 0u, 0x100000u, 0x20u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0x10000u, 0x100000u, 0x20u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x100100u, 0x10020u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x100100u, 0x1000020u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0xF0201u, 0x1001Fu, 0x2100u, 0x102u, 0x100B4u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 1u, 0x2210u, 0x2100u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x10001u, 0x320u, 0u };
+static const u32 train_boss_armor_states_expected[] = {
+    0x2u, 0x0u, 0x800000u, 0x10000u, 0x0u, 0x0u, 0x0u, 0x100001u, 0x318u, 0x410000u,
+    0x2u, 0x0u, 0x810000u, 0x10000u, 0x0u, 0x0u, 0x0u, 0x100000u, 0x20u, 0x0u,
+    0x102u, 0x0u, 0x1AB00000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x100000u, 0x20u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x10000u, 0x100000u, 0x20u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x100100u, 0x10020u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x100100u, 0x1000020u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0xF0201u, 0x1001Fu, 0x2100u,
+    0x102u, 0x100B4u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x2210u, 0x2100u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x10001u, 0x320u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x100000u, 0x20u, 0x0u,
+};
 
 static u32 test_train_boss_armor_states(u32 row)
 {

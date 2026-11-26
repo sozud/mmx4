@@ -380,63 +380,6 @@ void spike_sled_charge_start(struct MainObj* self)
 }
 
 // spike_sled_charge_dash
-#ifdef MMX4_SATURN
-void func_8005DC58(struct MainObj* arg0)
-{
-    struct Main33Ext* ext = &arg0->ext.main_33;
-    s16 target;
-    s32 delta;
-    u8 slot;
-    u8 first;
-
-    animate_object(ANIMATED_OBJECT(arg0));
-    if (ext->target_x != 0) {
-        arg0->unk6 = 3;
-        return;
-    }
-    move_object(MOVING_OBJECT(arg0));
-    target = g_Player.x_pos.i.hi;
-    if (--arg0->unk7C == 0) {
-        if (g_Player.x_pos.i.hi < 0x1220) {
-            ext->variant = 0;
-            if (!(D_800FDD98[0] & ext->unk80)) {
-                ext->variant = 1;
-                if (!(D_800FDD98[1] & ext->unk80))
-                    ext->variant = 0;
-            }
-        } else if (g_Player.x_pos.i.hi >= 0x1321) {
-            ext->variant = 4;
-            if (!(D_800FDD98[4] & ext->unk80)) {
-                ext->variant = 3;
-                if (!(D_800FDD98[3] & ext->unk80))
-                    ext->variant = 4;
-            }
-        } else {
-            delta = (u16)g_Player.x_pos.i.hi - 0x1220;
-            slot = (u8)((s16)delta >> 6);
-            ext->variant = (delta & 0x3F) < 0x21 ? slot : slot + 1;
-            first = ext->variant;
-            if (!(D_800FDD98[first] & ext->unk80)) {
-                ext->variant = (delta & 0x3F) < 0x21 ? first + 1 : first - 1;
-                if (!(D_800FDD98[ext->variant] & ext->unk80))
-                    ext->variant = first;
-            }
-        }
-        ext->target_x = ext->variant * 64 + 0x1220;
-        target = ext->target_x;
-    }
-    if (arg0->unk15 == 0) {
-        if (!(arg0->x_pos.i.hi < 0x1220 && ext->target_x == 0) && !(arg0->x_pos.i.hi < target))
-            return;
-    } else {
-        if (!(arg0->x_pos.i.hi >= 0x1321 && ext->target_x == 0) && !(target < arg0->x_pos.i.hi))
-            return;
-    }
-    set_animation(arg0, 4);
-    arg0->x_accel = -0x4000;
-    arg0->unk6 = 2;
-}
-#else
 void func_8005DC58(struct MainObj* arg0)
 {
     s16 target;
@@ -507,7 +450,6 @@ void func_8005DC58(struct MainObj* arg0)
         }
     }
 }
-#endif
 
 // spike_sled_charge_target
 void func_8005DED4(struct MainObj* arg0)

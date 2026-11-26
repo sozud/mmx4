@@ -49,7 +49,7 @@ static const u32 gunship_exhaust_raw_subtype_cases_expected[] = { 0x1000102u };
 
 static struct MainObj exhaust_ship;
 #define sv state_room.visual
-#define JET(st, kind) (state_reset(0, 0, 0), memset(&exhaust_ship, 0, sizeof(exhaust_ship)), exhaust_ship.active = 1, exhaust_ship.x_pos.i.hi = 0x100, exhaust_ship.y_pos.i.hi = 0x80, exhaust_ship.unk15 = 0x40, sv.unk50 = (struct PlayerObj*)&exhaust_ship, sv.state = st, sv.unk2 = kind)
+#define JET(st, kind) (state_reset(0, 0, 0), memset(&exhaust_ship, 0, sizeof(exhaust_ship)), exhaust_ship.active = 1, exhaust_ship.x_pos.i.hi = 0x100, exhaust_ship.y_pos.i.hi = 0x80, exhaust_ship.unk15 = PLAYER_FACING_RIGHT, sv.unk50 = (struct PlayerObj*)&exhaust_ship, sv.state = st, sv.unk2 = kind)
 #define JET_SEEN() (state_extra = (u8)sv.unk54 | (u32)(u8)sv.unk56 << 8)
 static void ge_init_a(void)
 {

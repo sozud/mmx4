@@ -52,7 +52,7 @@ static u32 wave_case(u32 mode, u32 observation)
     memcpy(bg_before, background_objects, sizeof(bg_before));
     memset(tilemap, 1, sizeof(tilemap));
     memset(pixels, 0, sizeof(pixels));
-    attributes[0] = input->tile;
+    attributes[0] = TEST_DISC32(input->tile);
     SP_BG_TILEMAP = tilemap;
     layout_width = 16;
     layout_size = 256;
@@ -79,18 +79,15 @@ static u32 wave_case(u32 mode, u32 observation)
         before.previous_animation_index = 0xFF;
         before.animation_cursor = (const u8*)wave_rider_animations[obj.unk17];
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(bg_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)bg_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(background_objects, bg_before, sizeof(bg_before));
     assert(bounds.unk0 == 0 && bounds.unk1 == 0 && bounds.unk2 == 4 && bounds.unk3 == 4);
     for (i = 0; i < COUNT(tilemap); i++)
         assert(tilemap[i] == 1);
     for (i = 0; i < COUNT(pixels); i++)
         assert(pixels[i] == 0);
-    assert(attributes[0] == input->tile && SP_BG_TILEMAP == tilemap
+    assert(attributes[0] == TEST_DISC32(input->tile) && SP_BG_TILEMAP == tilemap
         && SP_BG_TILE_PIXELS == pixels && SP_BG_TILE_ATTRS == attributes);
     assert(layout_width == 16 && layout_size == 256);
     switch (observation) {
@@ -118,7 +115,7 @@ static u32 wave_case(u32 mode, u32 observation)
         actual = obj.gravity;
         break;
     case 7:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     default:
         actual = obj.on_screen | ((u32)obj.unk17 << 8);
@@ -219,9 +216,9 @@ static u8 tilemap_wave_rider_transitions[3 * 256];
 static u16 tiles[4][16][16];
 static u32 attributes_wave_rider_transitions[3];
 static const u32 animation_words[3][7] = {
-    { 0x00010002, 0x04010002, 0x05010006, 0x04010001, 0x00010001, 0x06010003, 0x00000101 },
-    { 0x01010002, 0x07010002, 0x08010006, 0x07010001, 0x01010001, 0x09010003, 0x01000001 },
-    { 0x02010002, 0x0A010002, 0x0B010006, 0x0A010001, 0x02010001, 0x0C010003, 0x02000101 },
+    { C_TEST_STEP(0x00010002), C_TEST_STEP(0x04010002), C_TEST_STEP(0x05010006), C_TEST_STEP(0x04010001), C_TEST_STEP(0x00010001), C_TEST_STEP(0x06010003), C_TEST_STEP(0x00000101) },
+    { C_TEST_STEP(0x01010002), C_TEST_STEP(0x07010002), C_TEST_STEP(0x08010006), C_TEST_STEP(0x07010001), C_TEST_STEP(0x01010001), C_TEST_STEP(0x09010003), C_TEST_STEP(0x01000001) },
+    { C_TEST_STEP(0x02010002), C_TEST_STEP(0x0A010002), C_TEST_STEP(0x0B010006), C_TEST_STEP(0x0A010001), C_TEST_STEP(0x02010001), C_TEST_STEP(0x0C010003), C_TEST_STEP(0x02000101) },
 };
 static const s16 cameras[3][2] = { { 0, 0 }, { 512, 64 }, { 1024, 128 } };
 
@@ -241,9 +238,9 @@ static void prepare(u32 subtype, u32 layer)
     for (b = 0; b < 4; b++)
         for (i = 0; i < 256; i++)
             ((u16*)tiles[b])[i] = b ? b - 1 : 0;
-    attributes_wave_rider_transitions[0] = 0x24;
-    attributes_wave_rider_transitions[1] = 0x38;
-    attributes_wave_rider_transitions[2] = 5;
+    attributes_wave_rider_transitions[0] = C_TEST_PSX_WORD(0x24);
+    attributes_wave_rider_transitions[1] = C_TEST_PSX_WORD(0x38);
+    attributes_wave_rider_transitions[2] = TEST_DISC32(5);
     SP_BG_TILEMAP = tilemap_wave_rider_transitions;
     TEST_BG_TILE_PIXELS = (u8*)tiles;
     TEST_BG_TILE_ATTRS = (u8*)attributes_wave_rider_transitions;
@@ -262,8 +259,10 @@ static void prepare(u32 subtype, u32 layer)
         shot_objects[i].unk68 = &wave_rider_terrain_box;
         shot_objects[i].unk98 = shot_objects[i].unk61 = shot_objects[i].unk64 = 1;
         shot_objects[i].unk65 = shot_objects[i].unk66 = shot_objects[i].unk72 = 1;
-        shot_objects[i].unk73 = shot_objects[i].unk74 = shot_objects[i].unk76 = 1;
-        shot_objects[i].unk77 = shot_objects[i].unk78 = shot_objects[i].unk62 = 1;
+        shot_objects[i].unk73 = shot_objects[i].unk76 = 1;
+        OBJ_UNK74_SET(shot_objects[i], 1);
+        shot_objects[i].unk77 = shot_objects[i].unk62 = 1;
+        OBJ_UNK78_SET(shot_objects[i], 1);
         shot_objects[i].unk63 = shot_objects[i].unk7A = shot_objects[i].unk75 = 1;
         visual_objects[i].active = 1;
         visual_objects[i].id = 8;
@@ -281,7 +280,7 @@ static void prepare(u32 subtype, u32 layer)
     obj.on_screen = 1;
     obj.state = 1;
     obj.unk5 = 1;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.bg_offset = layer;
     obj.x_pos.val = (cameras[layer][0] + 100) * 65536 + 0x1234;
     obj.y_pos.val = (cameras[layer][1] + 160) * 65536 + 0x5678;
@@ -294,7 +293,7 @@ static void prepare(u32 subtype, u32 layer)
     obj.unk62 = 5;
     obj.unk7C = 19;
     obj.unk7E = 9;
-    obj.unk16 = 3;
+    obj.unk16 = VISUAL_SATURN_LAYER(3);
     obj.x_speed = 0x50000;
     obj.x_accel = 0x1000;
     obj.y_speed = -0x10000;
@@ -365,7 +364,7 @@ static u32 test_initialization(u32 row)
     prepare(subtype, old_layer);
     g_Player.bg_offset = new_layer;
     obj.state = 0;
-    obj.unk15 = row % 2 ? 0 : 0x40;
+    obj.unk15 = row % 2 ? 0 : PLAYER_FACING_RIGHT;
     obj.ext.main_53.unk84 = 1;
     if (shot >= 0)
         shot_objects[shot].active = 0;
@@ -377,11 +376,11 @@ static u32 test_initialization(u32 row)
     expected.unk5 = subtype < 3 ? 1 : subtype == 3 ? 2
                                                    : 5;
     expected.state = subtype >= 3;
-    expected.unk15 = subtype == 4 ? 0 : 0x40;
-    expected.ext.main_53.unk80 = attributes_wave_rider_transitions[old_layer];
+    expected.unk15 = subtype == 4 ? 0 : PLAYER_FACING_RIGHT;
+    expected.ext.main_53.unk80 = (u8)TEST_DISC32(attributes_wave_rider_transitions[old_layer]);
     expected.unk7C = 0x3C;
     expected.collision_data = D_80107878;
-    expected.unk16 = 5;
+    expected.unk16 = VISUAL_SATURN_LAYER(5);
     expected.invincibility_timer = expected.unk62 = 0;
     expected.x_accel = expected.y_speed = expected.gravity = 0;
     expected.hp = 6;
@@ -398,7 +397,9 @@ static u32 test_initialization(u32 row)
         s->unk50.data = s->unk54 = NULL;
         s->unk68 = NULL;
         s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 0;
-        s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = s->unk78 = 0;
+        s->unk72 = s->unk73 = s->unk76 = s->unk77 = 0;
+        OBJ_UNK78_SET(*s, 0);
+        OBJ_UNK74_SET(*s, 0);
         s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
     }
     if (visual >= 0) {
@@ -408,7 +409,7 @@ static u32 test_initialization(u32 row)
     }
     func_8006AF70(&obj);
     check();
-    assert(attributes_wave_rider_transitions[0] == 0x24 && attributes_wave_rider_transitions[1] == 0x38 && attributes_wave_rider_transitions[2] == 5);
+    assert(attributes_wave_rider_transitions[0] == C_TEST_PSX_WORD(0x24) && attributes_wave_rider_transitions[1] == C_TEST_PSX_WORD(0x38) && attributes_wave_rider_transitions[2] == TEST_DISC32(5));
     return 1;
 }
 
@@ -425,8 +426,7 @@ static u32 test_camera_handoff(u32 row)
     obj.x_pos.val = (cameras[layer][0] + 64) * 65536 + offset - (path == 1 ? 0x80000 : 0x50000);
     obj.ext.main_53.unk80 = path == 0 ? 0x38 : 0;
     for (i = 0; i < 3; i++)
-        attributes_wave_rider_transitions[i] = path == 0 ? 0x38 : path == 1 ? 0x24
-                                                                            : 0;
+        attributes_wave_rider_transitions[i] = TEST_DISC32(path == 0 ? 0x38 : path == 1 ? 0x24 : 0);
     obj.x_accel = 0;
     if (path == 0)
         obj.y_speed = obj.gravity = 0;
@@ -434,7 +434,7 @@ static u32 test_camera_handoff(u32 row)
         obj.y_speed = 0x60000;
     capture();
     expected.ext.main_53.unk84 = 1;
-    expected.ext.main_53.unk81 = attributes_wave_rider_transitions[layer];
+    expected.ext.main_53.unk81 = (u8)TEST_DISC32(attributes_wave_rider_transitions[layer]);
     if (path == 1) {
         expected.x_speed = 0x80000;
         expected.air_state = expected.unk6 = 0;
@@ -464,12 +464,91 @@ static u32 test_camera_handoff(u32 row)
     func_8006B5F8(&obj);
     check();
     for (i = 0; i < 3; i++)
-        assert(attributes_wave_rider_transitions[i] == (path == 0 ? 0x38 : path == 1 ? 0x24
-                                                                                     : 0));
+        assert(attributes_wave_rider_transitions[i] == TEST_DISC32(path == 0 ? 0x38 : path == 1 ? 0x24 : 0));
     return 1;
 }
 
+void wave_rider_main(struct MainObj*);
+void wave_rider_leap(struct MainObj*);
+u8 func_8006B1C4(struct MainObj*, u8);
+void func_8006B2A4(struct MainObj*);
+void func_8006B398(struct MainObj*);
+#define WV2(step, attr) (WR(step, attr), memset(weapon_objects, 0, sizeof(weapon_objects)), so.active = 0x41, so.state = 1, SPIKE_IMMUNE_SET(g_Player, 1))
+#define WV2X() (state_extra = so.state | so.ext.main_53.unk80 << 8 | so.ext.main_53.unk81 << 16 | (u32)so.ext.main_53.unk85 << 24)
+static void wv2_wait_onscreen(void) { WV2(1, 0), so.state = 0, wave_rider_wait_offscreen(&so), WV2X(); }
+static void wv2_wait_behind_kind_2(void) { WV2(1, 0), so.state = 0, so.unk2 = 2, background_objects[0].x_pos.i.hi = 0x100, wave_rider_wait_offscreen(&so), WV2X(); }
+static void wv2_probe_through(void) { WV2(1, 0x10), state_extra = func_8006B1C4(&so, 1); }
+#define FLOAT(attr) (WV2(3, attr), so.ext.main_53.unk80 = 0xFF, func_8006B2A4(&so), WV2X())
+static void wv2_float_5(void) { FLOAT(5); }
+static void wv2_float_1(void) { FLOAT(1); }
+static void wv2_float_level(void) { FLOAT(0x38); }
+static void wv2_float_air(void) { FLOAT(0); }
+#define BOB(attr, setup) (WV2(3, attr), so.unk6 = 1, setup, func_8006B398(&so), WV2X())
+static void wv2_bob_ahead_water(void) { BOB(0x24, (so.ext.main_53.unk84 = 1, so.x_pos.i.hi = 0x100)); }
+static void wv2_bob_slow_right(void) { BOB(0x38, (so.unk2 = 4, so.unk15 = PLAYER_FACING_RIGHT)); }
+static void wv2_bob_left(void) { BOB(0x38, 0); }
+static void wv2_ride_7(void) { RIDE(7), WV2X(); }
+static void wv2_ride_8(void) { RIDE(8), WV2X(); }
+static void wv2_ride_2(void) { RIDE(2), WV2X(); }
+static void wv2_ride_4(void) { RIDE(4), WV2X(); }
+static void wv2_leap_back(void) { WV2(5, 0), so.unk2 = 4, wave_rider_leap(&so), WV2X(); }
+static void wv2_leap(void) { WV2(5, 0), wave_rider_leap(&so), WV2X(); }
+#define WVMAIN(attr, setup) (WV2(1, attr), setup, wave_rider_main(&so), WV2X())
+static void wv2_main_splash(void) { WVMAIN(0x24, 0); }
+static void wv2_main_splash_wait(void) { WVMAIN(0x24, so.ext.main_53.unk85 = 2); }
+static void wv2_main_away(void) { WVMAIN(0, (so.ext.main_53.unk85 = 2, so.x_pos.i.hi = 0x400)); }
+static void wv2_main_body_hit(void) { WVMAIN(0, (so.hp = 1, state_hit(&so, 0, 0, 1))); }
+static void (*const wv2_cases[])(void) = {
+    wv2_wait_onscreen,
+    wv2_wait_behind_kind_2,
+    wv2_probe_through,
+    wv2_float_5,
+    wv2_float_1,
+    wv2_float_level,
+    wv2_float_air,
+    wv2_bob_ahead_water,
+    wv2_bob_slow_right,
+    wv2_bob_left,
+    wv2_ride_7,
+    wv2_ride_8,
+    wv2_ride_2,
+    wv2_ride_4,
+    wv2_leap_back,
+    wv2_leap,
+    wv2_main_splash,
+    wv2_main_splash_wait,
+    wv2_main_away,
+    wv2_main_body_hit,
+};
+static const u32 wv2_expected[] = {
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x5u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x41000000u,
+    0x3u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u, 0x50501u, 0x41000000u,
+    0x3u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x2u, 0x0u, 0x10101u, 0x41000000u,
+    0x3u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x383801u, 0x41000000u,
+    0x1000103u, 0x0u, 0x800000u, 0x0u, 0x68000u, 0x500000u, 0x2u, 0x0u, 0x1u, 0x41000000u,
+    0x3u, 0x0u, 0x1000000u, 0x50000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x240001u, 0x41000000u,
+    0x3u, 0x0u, 0x800000u, 0x10000u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x380001u, 0x41002100u,
+    0x3u, 0x0u, 0x800000u, 0x60000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x380001u, 0x41002100u,
+    0x1000004u, 0x70000u, 0x800000u, 0x80000u, 0x0u, 0x0u, 0x4u, 0x0u, 0x70700u, 0x0u,
+    0x1000004u, 0x80000u, 0x800000u, 0x80000u, 0x0u, 0x0u, 0x4u, 0x0u, 0x80800u, 0x0u,
+    0x1000004u, 0x20000u, 0x800000u, 0x80000u, 0x0u, 0x0u, 0x5u, 0x0u, 0x20200u, 0x0u,
+    0x1000004u, 0x40000u, 0x800000u, 0x80000u, 0x0u, 0x0u, 0x5u, 0x0u, 0x40400u, 0x0u,
+    0x1000006u, 0x0u, 0x800000u, 0xFFFF0000u, 0x80000u, 0x500000u, 0x2u, 0x0u, 0x1u, 0x41000000u,
+    0x1000006u, 0x0u, 0x800000u, 0xB0000u, 0x80000u, 0x500000u, 0x2u, 0x0u, 0x1u, 0x41000000u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x2000001u, 0x41000000u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x1000001u, 0x41000000u,
+    0x0u, 0x0u, 0x4000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x2u, 0x41000000u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x2u, 0x41002100u,
+};
+static u32 wv2_run(u32 row)
+{
+    return state_run(wv2_cases[row], row, &wv2_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "wave_rider_branch_steps", 0, 0, COUNT(wv2_cases), wv2_run },
     { "wave_rider_states", 0, 0, COUNT(wave_rider_states_cases), test_wave_rider_states },
     { "wave_rider_terrain_context", NULL, wave_rider_terrain_context_cases_expected, COUNT(wave_rider_terrain_context_cases_expected), wave_rider_terrain_context_cases_row },
     { "wave_rider_wait_offscreen", 0, 0, 1, test_wave_rider_wait_offscreen },
@@ -477,4 +556,4 @@ const struct CTestGroup c_test_groups[] = {
     { "camera_handoff", 0, 0, 57, test_camera_handoff },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(wave_rider_states_cases) + COUNT(wave_rider_terrain_context_cases_expected) + 1 + 20 + 57;
+const u32 c_test_count = COUNT(wv2_cases) + COUNT(wave_rider_states_cases) + COUNT(wave_rider_terrain_context_cases_expected) + 1 + 20 + 57;

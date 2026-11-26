@@ -53,10 +53,46 @@ static void ml_despawn(void)
     state_room.item.backref = NULL;
 }
 
+void func_800C0EBC(struct ItemObj*);
+void func_800C1050(struct ItemObj*);
+extern u8 moving_lift_boxes[9][4];
+#define ml state_room.item
+static s32 ml_frames[64];
+static u32 ml_meta[64];
+static struct Unk_unk68 ml_player_box = { -8, -16, 16, 32 };
+#define ML(setup) (state_reset(0, 0, 0), memset(item_objects, 0, sizeof(item_objects)), D_801406A8 = ml_meta, TEST_MENU_FRAMES = (u8*)ml_frames, g_Player.unk68 = NULL, ml.active = 0x41, ml.id = 5, setup)
+#define MLX() (state_extra = ml.unk76 | (u32)(u8)g_Player.unk71 << 8 | (u32)visual_objects[0].unk2 << 16 | (u32)item_objects[7].unk2 << 24)
+#define MLM(sub, setup) ML((ml.unk2 = sub, ml.state = 1, ml.x_pos.i.hi = 0x10A0, ml.y_pos.i.hi = 0x500, ml.unk68 = (struct Unk_unk68*)moving_lift_boxes[sub], setup)), func_800C1050(&ml), MLX(), state_extra ^= (u32)g_Player.y_pos.val
+static void ml_init_first(void) { ML(0), func_800C0EBC(&ml), assert(ml.unk42 == OBJECT_CLUT(0x788C)), ml.unk42 = 0, MLX(); }
+static void ml_init_turning(void) { ML(ml.unk2 = 3), func_800C0EBC(&ml), assert(ml.unk42 == OBJECT_CLUT(0x788C)), ml.unk42 = 0, MLX(); }
+static void ml_move_ridden_turning(void) { MLM(3, ml.unk76 = 1); }
+static void ml_move_ridden(void) { MLM(0, ml.unk76 = 1); }
+static void ml_move_wrap(void) { MLM(0, ml.y_pos.i.hi = 0x630); }
+static void ml_move_carry(void) { MLM(0, (g_Player.unk68 = &ml_player_box, g_Player.x_pos.i.hi = 0x10B0, g_Player.y_pos.i.hi = 0x4F6, g_Player.unk71 = 0)); }
+static void ml_move_side(void) { MLM(0, (ml.unk1C.val = ml.y_pos.val, g_Player.unk68 = &ml_player_box, g_Player.x_pos.i.hi = 0x10D8, g_Player.y_pos.i.hi = 0x500, g_Player.unk71 = 0)); }
+static void ml_move_side_slip(void) { MLM(0, (ml.unk1C.val = ml.y_pos.val, g_Player.unk68 = &ml_player_box, g_Player.x_pos.i.hi = 0x10D8, g_Player.y_pos.val = 0x53EC000, g_Player.unk71 = 0)); }
 static void (*const moving_lift_misc_cases[])(void) = {
     ml_despawn,
+    ml_init_first,
+    ml_init_turning,
+    ml_move_ridden_turning,
+    ml_move_ridden,
+    ml_move_wrap,
+    ml_move_carry,
+    ml_move_side,
+    ml_move_side_slip,
 };
-static const u32 moving_lift_misc_expected[] = { 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+static const u32 moving_lift_misc_expected[] = {
+    0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
+    0x1u, 0xFF000041u, 0x10A00000u, 0x4E00000u, 0x0u, 0xFFFF0000u, 0x10000u, 0x30000u, 0x8010000u, 0x4100u,
+    0x1u, 0xFF000341u, 0x11D80000u, 0x4800000u, 0x0u, 0xFFFF0000u, 0x10000u, 0x40000u, 0x30000u, 0x4100u,
+    0x1u, 0x341u, 0x10A00000u, 0x501A000u, 0x0u, 0xFFFE6000u, 0x0u, 0x50000u, 0x5010000u, 0x0u,
+    0x1u, 0x41u, 0x10A00000u, 0x5000000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x5000000u, 0x0u,
+    0x1u, 0x41u, 0x10A00000u, 0x4E00000u, 0x0u, 0xFFFF0000u, 0x0u, 0x40000u, 0x0u, 0x0u,
+    0x1u, 0x41u, 0x10A00000u, 0x5010000u, 0x0u, 0xFFFF0000u, 0x0u, 0x40000u, 0x4EB0801u, 0x0u,
+    0x1u, 0x41u, 0x10A00000u, 0x5010000u, 0x0u, 0xFFFF0000u, 0x0u, 0x40000u, 0x5014201u, 0x0u,
+    0x1u, 0x41u, 0x10A00000u, 0x5010000u, 0x0u, 0xFFFF0000u, 0x0u, 0x40000u, 0x5430200u, 0x0u,
+};
 
 static u32 test_moving_lift_misc(u32 row)
 {

@@ -229,12 +229,159 @@ static u32 phases(u32 row)
     return 1;
 }
 
+extern u8* crumble_sequencer_groups[4][2];
+void func_800B9F38(struct EffectObj* arg0);
+static u32 timed_paths(u32 row)
+{
+    struct EffectObj obj;
+    u32 i, retired = 0, expected = 0, spawned_left = 0xFFFFFFFFu;
+    const u8* list = crumble_sequencer_groups[2][0];
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    c_test_zero_words((u32*)effect_objects, sizeof(effect_objects) / 4);
+    obj.active = 1;
+    obj.id = 21;
+    obj.state = 1;
+    obj.ext.effect_21.timer = 7;
+    g_Player.bg_offset = 0;
+    g_Player.y_pos.i.hi = 592;
+    g_Player.x_pos.i.hi = row == 0 ? 0x2A0 : row == 1 ? 0xC60 : 1700;
+    background_objects[0].x_pos.i.hi = 1552;
+    background_objects[0].y_pos.i.hi = 512;
+    if (row != 0)
+        obj.ext.effect_21.inside = obj.ext.effect_21.was_inside = 1;
+    if (row == 2) {
+        obj.ext.effect_21.timer = 0;
+        obj.ext.effect_21.spawned = 0xFFFFFFFFu;
+    }
+    func_800B9F38(&obj);
+    if (row != 2) {
+        assert(obj.ext.effect_21.inside == (row == 1) && obj.ext.effect_21.was_inside == (row == 1));
+        assert(obj.ext.effect_21.timer == (row == 1 ? 6 : 7) && obj.ext.effect_21.phase == 0);
+        assert(effect_objects[0].active == 0);
+        return obj.ext.effect_21.timer;
+    }
+    for (;;) {
+        expected++;
+        spawned_left &= ~(1u << (*list & 0x7F));
+        if (*list++ & 0x80)
+            break;
+    }
+    for (i = 0; i < COUNT(effect_objects); i++) {
+        if (effect_objects[i].active) {
+            assert(effect_objects[i].id == 0x15 && effect_objects[i].unk2 == 2);
+            assert(!(spawned_left & 1u << effect_objects[i].ext.effect_21.index));
+            retired++;
+        }
+    }
+    assert(retired == expected && obj.ext.effect_21.spawned == spawned_left);
+    assert(obj.ext.effect_21.phase == 1 && obj.ext.effect_21.timer == 0x96);
+    return retired;
+}
+
+static u32 crumble_paths(u32 row);
 const struct CTestGroup c_test_groups[] = {
+    { "crumble_paths", 0, 0, 17, crumble_paths },
     { "crumble_chain_raw_default", crumble_chain_raw_default_cases, crumble_chain_raw_default_cases_expected, COUNT(crumble_chain_raw_default_cases), 0 },
     { "crumble_sequencer_chain", 0, 0, 3, test_crumble_sequencer_chain },
     { "func_800B9EC0", 0, 0, 1, test_func_800B9EC0 },
     { "func_800BA178", 0, 0, 3, test_func_800BA178 },
     { "real_crumble_phase_birth_and_retirement_full_effect_pool", NULL, NULL, 1, phases },
+    { "timed_paths", 0, 0, 3, timed_paths },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(crumble_chain_raw_default_cases) + 3 + 1 + 3 + 1;
+const u32 c_test_count = COUNT(crumble_chain_raw_default_cases) + 3 + 1 + 3 + 1 + 3 + 17;
+
+void func_800B9EC0(struct EffectObj*);
+void func_800BA178(struct EffectObj*);
+void crumble_sequencer_chain(struct EffectObj*);
+extern struct Effect21SpawnRecord* crumble_sequencer_sequences[];
+static struct Effect21SpawnRecord* sequence_end(u32 index)
+{
+    struct Effect21SpawnRecord* record = crumble_sequencer_sequences[index];
+    while (!(record->flags & 0x80))
+        record++;
+    return record;
+}
+static u32 crumble_paths(u32 row)
+{
+    static const u8 init_types[] = { 2, 3, 4, 5 };
+    struct EffectObj obj;
+    struct Effect21SpawnRecord *first, *last;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(item_objects, 0, sizeof(item_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    obj.active = 1;
+    obj.id = 0x15;
+    obj.state = 1;
+    obj.ext.effect_21.index = 9;
+    first = crumble_sequencer_sequences[9];
+    last = sequence_end(9);
+    assert(first != last);
+    if (row <= 3) {
+        obj.state = 0;
+        obj.unk2 = init_types[row];
+        obj.ext.effect_21.index = 0x89;
+        func_800B9EC0(&obj);
+        assert(obj.state == 1 && obj.ext.effect_21.timer == 0);
+        assert(row == 1 ? obj.ext.effect_21.index == 8 : obj.ext.effect_21.cursor == first);
+        return 1;
+    }
+    if (row <= 10) {
+        obj.unk2 = row == 6 || row == 9 ? 4 : row == 8 || row == 10 ? 5 : 2;
+        obj.unk5 = row >= 9;
+        obj.ext.effect_21.timer = row == 4 || row == 9 ? 5 : row == 10 ? 1 : 0;
+        obj.ext.effect_21.cursor = row == 5 ? first : last;
+        func_800BA178(&obj);
+        switch (row) {
+        case 4:
+        case 9:
+            assert(obj.ext.effect_21.timer == 4 && obj.state == 1 && misc_objects[0].active == 0);
+            break;
+        case 5:
+            assert(misc_objects[0].active == 0x41 && misc_objects[0].id == 8 && (u8)misc_objects[0].unk2 == (first->flags | 0x80));
+            assert(obj.ext.effect_21.timer == 4 && obj.ext.effect_21.cursor == first + 1 && obj.state == 1);
+            break;
+        case 6:
+            assert(obj.unk5 == 1 && obj.ext.effect_21.timer == 0x78 && obj.state == 1);
+            break;
+        case 7:
+        case 8:
+            assert(obj.state == 2 && misc_objects[0].x_pos.i.hi == last->x);
+            assert(item_objects[0].active == (row == 8) && (row == 7 || (item_objects[0].id == 0x11 && item_objects[0].unk2 == 1)));
+            break;
+        default:
+            assert(obj.state == 2 && effect_objects[0].active == 1 && effect_objects[0].unk2 == 5);
+            assert(effect_objects[0].ext.effect_21.index == 9);
+            break;
+        }
+        return 1;
+    }
+    obj.unk2 = 3;
+    obj.unk5 = row <= 12 ? 0 : row == 13 ? 1 : 2;
+    g_Player.x_pos.i.hi = row == 11 ? 0xC5F : 0xC60;
+    obj.ext.effect_21.timer = row == 14 ? 3 : 0;
+    obj.ext.effect_21.cursor = row == 15 ? first : last;
+    crumble_sequencer_chain(&obj);
+    switch (row) {
+    case 11:
+    case 12:
+        assert(obj.unk5 == (row == 12));
+        break;
+    case 13:
+        assert(obj.unk5 == 2 && obj.ext.effect_21.cursor == first);
+        break;
+    case 14:
+        assert(obj.ext.effect_21.timer == 2 && misc_objects[0].active == 0);
+        break;
+    case 15:
+        assert(obj.ext.effect_21.cursor == first + 1 && misc_objects[0].unk2 == first->object_id && obj.ext.effect_21.timer == 1);
+        break;
+    default:
+        assert(obj.ext.effect_21.index == 10 && obj.unk5 == 1 && item_objects[0].active == 1 && item_objects[0].unk2 == 1);
+        break;
+    }
+    return 1;
+}

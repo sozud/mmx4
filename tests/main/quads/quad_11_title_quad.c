@@ -38,8 +38,7 @@ static u32 morph_case(u32 observation)
     before.ext.title_quad = obj.ext.title_quad;
     for (i = 0; i < 4; i++)
         before.vertices[i] = obj.vertices[i];
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
     if (observation < 8)
         return observation & 1 ? (u32)obj.vertices[observation / 2].y.val : (u32)obj.vertices[observation / 2].x.val;
     switch (observation) {
@@ -58,7 +57,14 @@ static u32 morph_case(u32 observation)
     }
     return actual;
 }
-static const u32 title_morph_context_cases_expected[] = { 0x170000u, 0x480000u, 0xD80000u, 0x410000u, 0xDAC2F0u, 0x3FB6CDu, 0x170000u, 0x4A0000u, 0x6000002u, 0x1C210u, 0x14141414u, 0x1000101u };
+#ifdef MMX4_SATURN
+#define MORPH_COLOR_OBSERVATIONS 0x4000002u, 0x12469u
+#define TITLE_BOTTOM 239
+#else
+#define MORPH_COLOR_OBSERVATIONS 0x6000002u, 0x1C210u
+#define TITLE_BOTTOM 240
+#endif
+static const u32 title_morph_context_cases_expected[] = { 0x170000u, 0x480000u, 0xD80000u, 0x410000u, 0xDAC2F0u, 0x3FB6CDu, 0x170000u, 0x4A0000u, MORPH_COLOR_OBSERVATIONS, 0x14141414u, 0x1000101u };
 
 static u32 title_case(u32 mode, u32 observation)
 {
@@ -141,7 +147,7 @@ static const u32 title_quad_converge_cases_expected[] = { 0x0u, 0x0u, 0x13F0000u
 static u32 quad_case(u32 shape, u32 mode)
 {
     static const s16 morph_xy[8] = { 23, 72, 216, 65, 216, 67, 23, 74 };
-    static const s16 shape_xy[8] = { 80, 192, 319, 121, 319, 240, 80, 240 };
+    static const s16 shape_xy[8] = { 80, 192, 319, 121, 319, TITLE_BOTTOM, 80, TITLE_BOTTOM };
     static const u16 timers[6] = { 6, 2, 3, 3, 1, 6 };
     static const u8 colors[6] = { 0, 7, 12, 13, 9, 14 };
     static const s32 residual[6] = { 5 * 65536 + 0x2800, 0,
@@ -181,10 +187,14 @@ static u32 quad_case(u32 shape, u32 mode)
     expected.ext.title_quad.unk42 = 0;
     expected.ext.title_quad.unk38 = timers[mode] - 1;
     if (!shape && mode != 1 && mode != 4) {
+#ifdef MMX4_SATURN
+        expected.unk34 = 0x1235;
+#else
         expected.unk34 = mode == 0 ? 0x94A5 : 0x7FFF;
         expected.ext.title_quad.unk43 = mode == 0 ? 2 : mode == 2 || mode == 3 ? 14
                                                                                : 15;
         assert(title_quad_palette[2] == 0x94A5 && title_quad_palette[14] == 0x7FFF);
+#endif
     }
     if (mode == 4) {
         expected.state = shape ? 4 : 2;
@@ -199,13 +209,16 @@ static u32 quad_case(u32 shape, u32 mode)
         func_800D7468(&obj);
     else
         title_quad_morph(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     return obj.unk34 | ((u32)obj.ext.title_quad.unk38 << 16) | ((u32)(u8)obj.state << 24);
 }
-static const u32 title_quad_real_targets_cases_expected[] = { 0x10594A5u, 0x1011234u, 0x1027FFFu, 0x1027FFFu, 0x2031234u, 0x1057FFFu, 0x6051234u, 0x6011234u, 0x6021234u, 0x6021234u, 0x4001234u, 0x6051234u };
+#ifdef MMX4_SATURN
+#define MORPH_COLORS 0x1051235u, 0x1011234u, 0x1021235u, 0x1021235u, 0x2031234u, 0x1051235u
+#else
+#define MORPH_COLORS 0x10594A5u, 0x1011234u, 0x1027FFFu, 0x1027FFFu, 0x2031234u, 0x1057FFFu
+#endif
+static const u32 title_quad_real_targets_cases_expected[] = { MORPH_COLORS, 0x6051234u, 0x6011234u, 0x6021234u, 0x6021234u, 0x4001234u, 0x6051234u };
 static u32 title_quad_real_targets_cases_row(u32 row)
 {
     return quad_case(row / 6, row % 6);
@@ -219,6 +232,8 @@ static const struct title_quad_split_case title_quad_split_cases[] = {
     { 0, 0, 0, 0, { 0u, 0u, 0u, 0u, 0u } },
     { 1, 0, 0, 0, { 2u, 0u, 0u, 0xFFF80000u, 0xFFF80000u } },
     { 1, -1, -1, -983040, { 0u, 0x80000u, 0xFFF90000u, 0xFFFF0000u, 0u } },
+    { 1, 0, 100, 0, { 0u, 0u, 0u, 0x5C0000u, 0xFFF80000u } },
+    { 1, 1, 0, 0, { 2u, 0x80000u, 0x80000u, 0u, 0u } },
 };
 static u32 test_title_quad_split(u32 row)
 {
@@ -270,19 +285,55 @@ static void (*const title_quad_init_states_cases[])(void) = {
     tq_init_3,
     tq_init_5,
 };
+#ifdef MMX4_SATURN
+static const u32 title_quad_init_states_expected[] = { 0xFF000381u, 0u, 0x13Fu, 0x78013Fu, 0x780000u, 0x14100170u, 0xFF030381u, 0xBF0050u, 0x780000u, 0x790001u, 0xC00051u, 0x14100170u, 0xFF050381u, 0x780000u, 0x78014Au, 0xBF0050u, 0xBF0050u, 0x14100170u };
+#else
 static const u32 title_quad_init_states_expected[] = { 0xFF000381u, 0u, 0x13Fu, 0x78013Fu, 0x780000u, 0x14108421u, 0xFF030381u, 0xBF0050u, 0x780000u, 0x790004u, 0xC00054u, 0x14108421u, 0xFF050381u, 0x780000u, 0x78014Au, 0xC00050u, 0xC00050u, 0x14108421u };
+#endif
 
 static u32 test_title_quad_init_states(u32 row)
 {
     return title_quad_run(title_quad_init_states_cases[row], row, &title_quad_init_states_expected[row * 6]);
 }
 
+void title_quad_delay(struct QuadObj*);
+void TitleSetWhiteQuadSpeed(struct QuadObj*);
+static u32 title_wait(void (*step)(struct QuadObj*), u8 timer, u8 title_step)
+{
+    memset(&title_quad, 0, sizeof(title_quad));
+    memset(&game_info, 0, sizeof(game_info));
+    game_info.unkA = title_step;
+    title_quad.active = 1;
+    title_quad.state = 3;
+    title_quad.bg_offset = -1;
+    title_quad.ext.title_quad.unk38 = timer;
+    step(&title_quad);
+    return title_quad.state | (u32)title_quad.ext.title_quad.unk38 << 8;
+}
+static u32 tq_delay_counting(void) { return title_wait(title_quad_delay, 5, 0); }
+static u32 tq_delay_done(void) { return title_wait(title_quad_delay, 0, 0); }
+static u32 tq_white_waiting(void) { return title_wait(TitleSetWhiteQuadSpeed, 3, 1); }
+static u32 tq_white_go(void) { return title_wait(TitleSetWhiteQuadSpeed, 3, 2); }
+static const CTestCase title_quad_waits_cases[] = {
+    tq_delay_counting,
+    tq_delay_done,
+    tq_white_waiting,
+    tq_white_go,
+};
+#ifdef VERSION_JP
+#define TQ_SHOWN 6
+#else
+#define TQ_SHOWN 4
+#endif
+static const u32 title_quad_waits_cases_expected[] = { 0x403u, 0x300u | TQ_SHOWN, 0x303u, 0x2C05u };
+
 const struct CTestGroup c_test_groups[] = {
     { "title_quad_init_states", 0, 0, COUNT(title_quad_init_states_cases), test_title_quad_init_states },
     { "title_morph_context", NULL, title_morph_context_cases_expected, COUNT(title_morph_context_cases_expected), morph_case },
     { "title_quad_converge", title_quad_converge_cases, title_quad_converge_cases_expected, COUNT(title_quad_converge_cases), 0 },
     { "title_quad_real_targets", NULL, title_quad_real_targets_cases_expected, COUNT(title_quad_real_targets_cases_expected), title_quad_real_targets_cases_row },
-    { "title_quad_split", 0, 0, 3, test_title_quad_split },
+    { "title_quad_split", 0, 0, 5, test_title_quad_split },
+    { "title_quad_waits", title_quad_waits_cases, title_quad_waits_cases_expected, COUNT(title_quad_waits_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(title_quad_init_states_cases) + COUNT(title_morph_context_cases_expected) + COUNT(title_quad_converge_cases) + COUNT(title_quad_real_targets_cases_expected) + 3;
+const u32 c_test_count = COUNT(title_quad_init_states_cases) + COUNT(title_morph_context_cases_expected) + COUNT(title_quad_converge_cases) + COUNT(title_quad_real_targets_cases_expected) + 5 + COUNT(title_quad_waits_cases);

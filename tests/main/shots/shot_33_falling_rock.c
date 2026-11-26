@@ -1,8 +1,11 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "support/state_cases.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
 #include "main/shots/shot_33_falling_rock.h"
+#include "main/tile_effects.h"
+extern struct TileEffectRecord** tile_effect_tables[26];
 void func_800A12EC(struct ShotObj*);
 
 extern union AnimationStep* falling_rock_c_animations[];
@@ -29,7 +32,7 @@ static void prepare_rock(u8 on_screen)
         D_8013E198[i] = -1;
     D_80141F50[2] = state_sound_rows;
     cur_random = 0xD37;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     rock.active = 0x41;
     rock.id = 33;
     rock.state = 7;
@@ -65,7 +68,7 @@ static void check_debris(u32 first)
         assert(piece->unk2 == 0 && piece->state == 0);
         assert(piece->ext.misc_2.unk58 == first + i);
         assert(piece->ext.misc_2.owner == MAIN_OBJECT(&rock));
-        assert(piece->unk15 == 0 || piece->unk15 == 0x40);
+        assert(piece->unk15 == 0 || piece->unk15 == PLAYER_FACING_RIGHT);
         assert(piece->x_pos.val >= rock.x_pos.val);
         assert(piece->x_pos.val <= rock.x_pos.val + 3 * 65536);
         assert(piece->y_pos.val >= rock.y_pos.val);
@@ -164,7 +167,7 @@ static u32 test_terrain_impact(u32 row)
     prepare_rock(row & 1);
     state_terrain(0);
     memset(state_tile_pixels, 0, sizeof(state_tile_pixels));
-    state_tile_attrs[1] = 0x38;
+    state_tile_attrs[1] = C_TEST_PSX_WORD(0x38);
     for (i = 0; i < 256; i++)
         state_tile_pixels[256 + i] = ceiling ? i / 16 < 4 : i / 16 >= 6;
     rock.unk68 = &terrain_box;
@@ -235,7 +238,7 @@ static u32 rock_falling_rock_c_capacity(u32 row)
         metadata[i] = (i + 1) * 128;
     for (i = 0; i < COUNT(archive); i++)
         archive[i] = i < 7 ? 28 + i * 4 : 0x13570000 + i;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)archive;
     assert(func_8002938C(0x8D) == 6);
     c_test_zero_words((u32*)misc_objects, sizeof(misc_objects) / 4);
@@ -269,14 +272,14 @@ static u32 rock_falling_rock_c_capacity(u32 row)
         expected.unk58.animation_steps = D_80105FF0;
         expected.unk5C = 15;
         expected.unk60 = 6;
-        expected.unk40 = 7;
+        expected.unk40 = OBJECT_STAGE_TEXTURE(6);
         expected.unk3C = (u8*)archive + 52;
-        expected.unk42 = 0x78C0;
+        expected.unk42 = OBJECT_CLUT(0x78C0);
         expected.animation_table = (u32**)falling_rock_c_animations;
         expected.unk17 = animation;
         expected.previous_animation_index = 0xFF;
         expected.animation_cursor = (u32*)falling_rock_c_animations[animation];
-        expected.animation_step.packed = kind ? 0x04010002 : 0x10010002;
+        expected.animation_step.packed = C_TEST_STEP(kind ? 0x04010002 : 0x10010002);
         expected.y_vel.val = kind ? 0xA0000 : -0x18000;
         expected.unk2C = 0x2000;
         expected.y_pos.i.hi = kind ? 0x330 : 576;
@@ -288,9 +291,9 @@ static u32 rock_falling_rock_c_capacity(u32 row)
             u32 a = kind ? 0 : 2;
             m->active = 0x41;
             m->id = 27;
-            m->unk16 = 1;
-            m->unk40 = 7;
-            m->unk42 = 0x78C0;
+            m->unk16 = VISUAL_SATURN_LAYER(1);
+            m->unk40 = OBJECT_STAGE_TEXTURE(6);
+            m->unk42 = OBJECT_CLUT(0x78C0);
             m->animation_table = expected.animation_table;
             m->unk3C = expected.unk3C;
             m->bg_offset = layer;
@@ -301,7 +304,7 @@ static u32 rock_falling_rock_c_capacity(u32 row)
             m->unk17 = a;
             m->previous_animation_index = 0xFF;
             m->animation_cursor = (u32*)falling_rock_c_animations[a];
-            m->animation_step.packed = kind ? 0x00010002 : 0x0C010002;
+            m->animation_step.packed = C_TEST_STEP(kind ? 0x00010002 : 0x0C010002);
             expected.unk7C = (struct WeaponObj*)&misc_objects[63];
         }
     }
@@ -324,7 +327,7 @@ void func_800A068C(struct ShotObj*);
 extern union AnimationStep *falling_rock_a_animations[], *falling_rock_b_animations[];
 extern struct Unk_unk68 falling_rock_box_0[], falling_rock_box_1[], falling_rock_box_3[], falling_rock_box_4[];
 static const u8 weapons[] = { 2, 11, 33 }, damages[] = { 4, 8, 8 };
-static const u32 initial_words[] = { 0x04010002, 0x05010004 }, frozen_words[] = { 0x13000101, 0x12000101 };
+static const u32 initial_words[] = { C_TEST_STEP(0x04010002), C_TEST_STEP(0x05010004) }, frozen_words[] = { C_TEST_STEP(0x13000101), C_TEST_STEP(0x12000101) };
 static u8 tilemap[256];
 static u16 pixels[2][16][16];
 static u32 attributes[1];
@@ -354,7 +357,7 @@ static u32 weapon_transition(u32 row)
     background_objects[0].unk34 = 0x10;
     memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
     memset(&g_Player, 0, sizeof(g_Player));
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     player_expected = g_Player;
     if (weapon == 2)
         player_expected.update_delay_request = 1;
@@ -383,7 +386,7 @@ static u32 weapon_transition(u32 row)
     obj.state = kind ? 4 : 1;
     obj.on_screen = visible;
     obj.bg_offset = 0;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x9234;
     obj.unk5C = lethal ? 1 : 15;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -427,7 +430,7 @@ static u32 weapon_transition(u32 row)
         expected.unk17 = animation;
         expected.previous_animation_index = 0xFF;
         expected.animation_cursor = (u32*)animations[animation];
-        expected.animation_step.packed = lethal ? 0x0B010002 : frozen_words[kind];
+        expected.animation_step.packed = lethal ? C_TEST_STEP(0x0B010002) : frozen_words[kind];
         if (!lethal) {
             expected.unk84.value = 8;
             shadow_expected.active = shadow_expected.on_screen = 0;
@@ -495,6 +498,45 @@ static u32 default_phase(u32 row)
     return 1;
 }
 
+static u32 fall_paths(u32 row);
+void func_800A03F4(struct ShotObj*);
+static u32 rock_a_metadata[32], rock_a_archive[64];
+static u32 rock_a_init(u32 row)
+{
+    struct ShotObj obj;
+    u32 i;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    for (i = 0; i < COUNT(misc_objects); i++)
+        misc_objects[i].active = row == 1;
+    engine_obj.stage = 4;
+    engine_obj.substage = 1;
+    for (i = 0; i < COUNT(rock_a_metadata); i++)
+        rock_a_metadata[i] = (i + 1) * 128;
+    for (i = 0; i < COUNT(rock_a_archive); i++)
+        rock_a_archive[i] = i < 32 ? 128 + i * 4 : 0x13570000 + i;
+    test_stage_graphics(rock_a_metadata);
+    TEST_MENU_FRAMES = (u8*)rock_a_archive;
+    background_objects[0].x_pos.i.hi = 0x100;
+    background_objects[0].y_pos.i.hi = 0x200;
+    obj.active = 0x41;
+    obj.id = 33;
+    cur_random = 0;
+    func_800A03F4(&obj);
+    assert(obj.state == 1 && obj.unk5 == 0 && obj.on_screen == 1);
+    assert(obj.x_pos.i.hi >= 0x140 && obj.x_pos.i.hi < 0x340 && obj.y_pos.i.hi == 0x1C0);
+    if (row == 1) {
+        assert(obj.unk7C == NULL);
+        return 0;
+    }
+    for (i = 0; i < COUNT(misc_objects) && misc_objects[i].active == 0; i++)
+        ;
+    assert(i < COUNT(misc_objects) && misc_objects[i].id == 0x1B && obj.unk7C == (struct WeaponObj*)&misc_objects[i]);
+    assert(misc_objects[i].x_pos.val == obj.x_pos.val && misc_objects[i].ext.misc_5.owner == (struct MainObj*)&obj);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "freezing_weapon", 0, 0, 6, test_freezing_weapon },
     { "destruction", 0, 0, 4, test_destruction },
@@ -505,6 +547,210 @@ const struct CTestGroup c_test_groups[] = {
     { "stage4_1_shipped_dropper_variants_character_stop_and_shadow_capacity", NULL, NULL, 24, rock_falling_rock_c_capacity },
     { "weapon_freeze_countdown_and_lethal_hits", NULL, NULL, 48, weapon_transition },
     { "defined_unknown_phase_fallthrough", NULL, NULL, 3, default_phase },
+    { "fall_paths", NULL, NULL, 24, fall_paths },
+    { "rock_a_init", 0, 0, 2, rock_a_init },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 6 + 4 + 2 + 4 + 6 + 2 + 24 + 48 + 3;
+const u32 c_test_count = 6 + 4 + 2 + 4 + 6 + 2 + 24 + 48 + 3 + 24 + 2;
+
+#include "support/sound_probe.h"
+static u16 path_tiles[2][16][16];
+static u32 path_attributes[2];
+static u32 path_metadata[32], path_archive[64];
+static u16 effect_tile = 0xA123;
+static struct TileEffectRecord effect_record;
+static struct TileEffectRecord* effect_table[3];
+static u32 fall_paths(u32 row)
+{
+    static const u8 kinds[] = { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 2, 4, 4, 1 };
+    struct ShotObj obj;
+    struct WeaponObj shadow;
+    struct TileEffectRecord** saved_table = tile_effect_tables[9];
+    u32 kind = kinds[row], i, debris = 0;
+    s16 y_before;
+    memset(path_tiles, 0, sizeof(path_tiles));
+    memset(tilemap, 1, sizeof(tilemap));
+    path_attributes[0] = C_TEST_PSX_WORD(row <= 1 ? 1 : 0);
+    path_attributes[1] = C_TEST_PSX_WORD(0x38);
+    for (i = 0; i < 256; i++)
+        if ((row >= 6 && row <= 7 && i % 16 < 9) || (row >= 8 && row <= 9 && i % 16 >= 11) || (kind == 2 && i / 16 < 12) || (row == 23 && i / 16 >= 8))
+            path_tiles[1][i / 16][i % 16] = 1;
+    SP_BG_TILEMAP = tilemap;
+    TEST_BG_TILE_PIXELS = (u8*)path_tiles;
+    TEST_BG_TILE_ATTRS = (u8*)path_attributes;
+    layout_width = layout_height = 16;
+    layout_size = 256;
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    sound_probe_begin();
+    SPIKE_IMMUNE_SET(g_Player, 1);
+    g_Player.bg_offset = kind == 1 ? 1 : 0;
+    if (row == 1 || row == 7 || row == 9 || row == 13)
+        background_objects[g_Player.bg_offset].unk34 = 0x10;
+    memset(&obj, 0, sizeof(obj));
+    memset(&shadow, 0, sizeof(shadow));
+    shadow.active = shadow.on_screen = 1;
+    obj.active = 0x41;
+    obj.id = 33;
+    obj.state = kind == 0 ? 1 : kind == 1 ? 4 : kind == 2 ? 7 : kind == 3 ? 6 : 3;
+    obj.on_screen = row != 4 && row != 7 && row != 9 && row != 11 && row != 15;
+    obj.x_pos.val = (row == 6 || row == 7 ? 166 : row == 8 || row == 9 ? 154 : 160) * 65536;
+    obj.y_pos.val = 120 * 65536;
+    obj.unk18 = obj.x_pos;
+    obj.unk1C = obj.y_pos;
+    obj.unk7C = &shadow;
+    obj.unk5C = 15;
+    if (kind == 0) {
+        obj.unk68 = falling_rock_box_3;
+        obj.unk54 = obj.unk50.data = (const u8*)falling_rock_box_0;
+        obj.animation_table = (u32**)falling_rock_a_animations;
+        set_animation(&obj, 1);
+    } else if (kind == 1) {
+        obj.unk68 = falling_rock_box_4;
+        obj.unk54 = obj.unk50.data = (const u8*)falling_rock_box_1;
+        obj.animation_table = (u32**)falling_rock_b_animations;
+        obj.unk15 = row <= 7 ? PLAYER_FACING_RIGHT : 0;
+        obj.x_vel.val = row == 23 ? 0 : row <= 7 ? -0x38000 : 0x38000;
+        set_animation(&obj, 1);
+    } else if (kind == 2) {
+        obj.unk68 = &terrain_box;
+        obj.unk54 = obj.unk50.data = (const u8*)falling_rock_box_2;
+        obj.animation_table = (u32**)falling_rock_c_animations;
+        obj.y_pos.val = 198 * 65536;
+        obj.unk1C = obj.y_pos;
+        obj.y_vel.val = 4 * 65536;
+        obj.x_pos.i.hi = row == 16 ? 0x4E0 : 0x100;
+        obj.unk18 = obj.x_pos;
+        obj.unk6 = row == 13 ? 0 : 2;
+        engine_obj.substage = row != 20;
+        set_animation(&obj, 3);
+        effect_record.layer = 0;
+        effect_record.packed_count = 3;
+        effect_record.x = 0x20;
+        effect_record.y = 0x10;
+        effect_record.tiles = &effect_tile;
+        effect_record.has_next = 0;
+        for (i = 0; i < 3; i++)
+            effect_table[i] = &effect_record;
+        tile_effect_tables[9] = effect_table;
+    } else if (kind == 4) {
+        obj.unk15 = row == 21 ? PLAYER_FACING_RIGHT : 0;
+        for (i = 0; i < COUNT(misc_objects); i++)
+            misc_objects[i].active = row == 22;
+    } else {
+        obj.unk2 = 1;
+        engine_obj.substage = row != 17;
+        obj.x_pos.i.hi = row == 18 ? 0x60 : 0x4E0;
+        background_objects[0].y_pos.i.hi = 0x100;
+    }
+    if (kind >= 2) {
+        engine_obj.stage = 4;
+        for (i = 0; i < COUNT(path_metadata); i++)
+            path_metadata[i] = (i + 1) * 128;
+        for (i = 0; i < COUNT(path_archive); i++)
+            path_archive[i] = i < 32 ? 128 + i * 4 : 0x13570000 + i;
+        test_stage_graphics(path_metadata);
+        TEST_MENU_FRAMES = (u8*)path_archive;
+    }
+    if (row == 2 || row == 10 || row == 11) {
+        MAIN_OBJECT(&g_Player)->hurt_box = (const u8*)&state_hit_box;
+        g_Player.x_pos = obj.x_pos;
+        g_Player.y_pos = obj.y_pos;
+    }
+    if (row >= 3 && row <= 5) {
+        obj.unk5 = 1;
+        set_animation(&obj, 2);
+        obj.animation_step.fields.duration = 2;
+        obj.animation_step.fields.event = row != 5;
+    }
+    if (row == 5 || row == 12)
+        obj.y_pos.i.hi = 0x151;
+    y_before = obj.y_pos.i.hi;
+    switch (kind) {
+    case 0:
+        func_800A068C(&obj);
+        break;
+    case 1:
+        func_800A0C4C(&obj);
+        break;
+    case 2:
+        func_800A12EC(&obj);
+        break;
+    case 4:
+        func_800A0A38(&obj);
+        assert(obj.state == 4 && obj.unk17 == 1 && obj.x_vel.val == (row == 21 ? -0x38000 : 0x38000));
+        assert(obj.unk7C == (row == 21 ? (struct WeaponObj*)&misc_objects[0] : &shadow));
+        assert(misc_objects[0].active == (row == 21 ? 0x41 : 1) && misc_objects[0].id == (row == 21 ? 0x1B : 0));
+        assert(row == 22 || misc_objects[0].ext.misc_5.owner == MAIN_OBJECT(&obj));
+        tile_effect_tables[9] = saved_table;
+        return 1;
+    default:
+        func_800A0FE8(&obj);
+        assert(obj.state == 7 && obj.unk17 == 1);
+        assert(obj.y_pos.i.hi == 0x100 + 0x130);
+        tile_effect_tables[9] = saved_table;
+        return 1;
+    }
+    tile_effect_tables[9] = saved_table;
+    for (i = 0; i < COUNT(misc_objects); i++)
+        debris += misc_objects[i].active == 0x41 && misc_objects[i].id == 3;
+
+    switch (row) {
+    case 0:
+    case 1:
+        assert(obj.unk5 == 1 && obj.unk17 == 2 && obj.state == 1);
+        assert(obj.x_vel.val == 0 && obj.y_vel.val == 0 && obj.unk28 == 0 && obj.unk2C == 0);
+        assert(background_objects[0].unk36 == (row == 0 ? 16 : 0));
+        assert(debris == 0);
+        SOUND_CHECK(sound_probe_id() == -1);
+        break;
+    case 2:
+        assert(obj.unk5 == 1 && obj.unk17 == 2 && obj.state == 1);
+        assert(shadow.active == 1 && debris == 0);
+        SOUND_CHECK(sound_probe_id() == -1);
+        break;
+    case 3:
+    case 4:
+        assert(obj.state == 2 && debris == 5);
+        SOUND_CHECK(sound_probe_id() == (row == 3 ? 0xA0 : -1));
+        break;
+    case 5:
+    case 12:
+        assert(obj.state == (row == 5 ? 2 : 5) && debris == 0);
+        SOUND_CHECK(sound_probe_id() == -1);
+        assert(obj.unk5 == (row == 5 ? 1 : 0));
+        break;
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+        assert(obj.state == 5 && debris == 5);
+        SOUND_CHECK(sound_probe_id() == (row == 6 || row == 8 ? 0xA0 : -1));
+        assert(background_objects[0].unk36 == (row == 6 || row == 8 ? 16 : row == 7 || row == 9 ? 0 : 8));
+        assert(obj.unk70 & (row <= 7 ? 2 : 1));
+        assert(obj.unk2C == (obj.unk70 & 8 ? 0 : 0x8000));
+        break;
+    case 10:
+    case 11:
+        assert(obj.state == 5 && debris == 5 && obj.unk2C == 0x8000);
+        SOUND_CHECK(sound_probe_id() == (row == 10 ? 0xA0 : -1));
+        break;
+    case 23:
+        assert(obj.state == 4 && (obj.unk70 & 8) && obj.unk2C == 0 && debris == 0);
+        break;
+    default:
+        assert(obj.state == 8 && obj.unk70 == 4);
+        assert(background_objects[0].unk36 == (row == 13 ? 0 : 16));
+        assert(row == 20 ? engine_obj.substage == 0 : engine_obj.substage == 1);
+        assert(obj.y_pos.i.hi == y_before - 2);
+        assert(path_tiles[1][7][0] == (row == 16 || row == 20 ? 1 : 0xA123));
+        assert(debris == (row == 14 || row == 15 ? 12 : 5));
+        assert(misc_objects[5].unk2 == (row == 14 || row == 15));
+        SOUND_CHECK(sound_probe_id() == (row == 15 ? -1 : 0xA0));
+        break;
+    }
+    return 1;
+}

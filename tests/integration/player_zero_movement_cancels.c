@@ -93,7 +93,7 @@ static void pose(u32 animation, u32 word, u32 saber_bank)
     expected.unk17 = animation;
     expected.previous_animation_index = 255;
     expected.animation_cursor = expected.animation_table[animation];
-    expected.animation_step.packed = word;
+    expected.animation_step.packed = C_TEST_STEP(word);
     expected.unk38 = (u8*)gfx + (saber_bank ? 128 : 64);
     expected.unk3C = (u8*)frames + (saber_bank ? 128 : 64);
 }
@@ -230,7 +230,7 @@ static u32 end_finished(u32 row)
     air_entry(2);
     for (i = 0; i < 6; i++)
         player_air_dash(&g_Player);
-    assert(g_Player.unk6 == 2 && g_Player.animation_step.packed == 0x2C010101);
+    assert(g_Player.unk6 == 2 && g_Player.animation_step.packed == C_TEST_STEP(0x2C010101));
     capture();
     pose(0x14, 0x18010003, 0);
     expected.y_pos.val -= expected.y_vel.val;

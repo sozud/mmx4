@@ -1,9 +1,12 @@
 #include "test_runtime.h"
+#ifndef VERSION_DEMO
 #include "main/weapons/weapon_01_lightning_web.h"
 #include "main/weapons/weapon_02_frost_tower.h"
 #include "main/weapons/weapon_06_aiming_laser_charged.h"
 #include "main/weapons/weapon_07_double_cyclone.h"
 void frost_tower_charged_spawn_part(s8);
+#include "support/sound_probe.h"
+#include "weapon_resources.h"
 
 static u32 shard_case(u32 mode, u32 observation)
 {
@@ -87,10 +90,8 @@ static u32 cancel_case(u32 mode)
     player_before.shot_count = 2;
     player_before.special_shot_count = 1;
     frost_tower_update(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(need_palette_load == palette_before);
     return (u8)obj.state | ((u32)(u8)player_before.shot_count << 8) | ((u32)(u8)player_before.special_shot_count << 16);
 }
@@ -232,8 +233,10 @@ static struct WeaponObj weapons_before[16];
 static struct MiscObj misc_before[64];
 static u32 sprites[32], sprites_before[32];
 static u16 random_expected;
+#ifndef MMX4_SATURN
 static struct RectPtrPair uploads_expected[8];
 static u32 queue_expected, pixels_expected[GFX_WORDS], pixels0_expected[0x400];
+#endif
 static const s16 cameras[3][2] = { { 0, 0 }, { 1024, 512 }, { -320, -240 } };
 static const s32 x_velocities[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
 static const s32 y_velocities[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };
@@ -553,7 +556,7 @@ static void prepare(u32 layer, u32 wrap)
     controller.unk3C = (u8*)sprites + 0x60;
     controller.animation_table = D_8011C094;
     controller.animation_cursor = D_8011C094[0];
-    controller.animation_step.packed = 0x55010203;
+    controller.animation_step.packed = C_TEST_STEP(0x55010203);
     controller.previous_animation_index = 0x37;
     controller.ext.raw[2] = 0x35;
     controller.ext.raw[3] = 0x45;
@@ -618,7 +621,7 @@ static void check(void)
         assert(frost_sparkle_animations[i] == sparkle_animations[i]);
     }
     for (i = 2; i <= 8; i++)
-        assert(*D_8011C018[i] == ((i + 4) << 24 | 0x60));
+        assert(*D_8011C018[i] == C_TEST_STEP((i + 4) << 24 | 0x60));
 }
 
 static u32 visible(s16 x_hi, s16 y_hi, u32 layer)
@@ -641,7 +644,7 @@ static void expect_birth(u32 seed)
     u32 animation = sparkle_animations[launches[seed].animation];
     expected_sparkle.x_pos.u.hi += launches[seed].dx;
     expected_sparkle.y_pos.u.hi += launches[seed].dy;
-    expected_sparkle.unk15 = launches[seed].facing;
+    expected_sparkle.unk15 = launches[seed].facing ? PLAYER_FACING_RIGHT : 0;
     expected_sparkle.x_vel.val = x_velocities[launches[seed].vx];
     expected_sparkle.y_vel.val = y_velocities[launches[seed].vy];
     expected_sparkle.unk28 = 0;
@@ -651,13 +654,13 @@ static void expect_birth(u32 seed)
     expected_sparkle.on_screen = visible(expected_sparkle.x_pos.i.hi, expected_sparkle.y_pos.i.hi, expected_sparkle.bg_offset);
     expected_sparkle.unk3C = (u8*)sprites + 0x40;
     expected_sparkle.animation_table = D_8011C018;
-    expected_sparkle.unk40 = 0;
-    expected_sparkle.unk42 = 0x7802;
-    expected_sparkle.unk16 = 0;
+    expected_sparkle.unk40 = WEAPON_TEXTURE_BASE;
+    expected_sparkle.unk42 = OBJECT_CLUT(0x7802);
+    expected_sparkle.unk16 = VISUAL_SATURN_LAYER(0);
     expected_sparkle.unk17 = animation;
     expected_sparkle.previous_animation_index = 0xFF;
     expected_sparkle.animation_cursor = D_8011C018[animation];
-    expected_sparkle.animation_step.packed = ((animation + 4) << 24) | 0x60;
+    expected_sparkle.animation_step.packed = C_TEST_STEP(((animation + 4) << 24) | 0x60);
     random_expected = launches[seed].random;
 }
 
@@ -751,6 +754,7 @@ static u32 test_sparkle_edges(u32 row)
 static void prepare_graphics(u32 queue)
 {
     u32 i;
+#ifndef MMX4_SATURN
     fill_words((u32*)player_gfx_buf_1, GFX_WORDS, 0x5A5AA5A5);
     fill_words((u32*)player_gfx_buf_0, 0x400, 0xA5A55A5A);
     for (i = 0; i < 8; i++) {
@@ -762,6 +766,7 @@ static void prepare_graphics(u32 queue)
     }
     vram_rect_ptr = &vram_rect_ptrs[queue];
     queue_expected = queue;
+#endif
     c_test_zero_words((u32*)&frost_archive, sizeof(frost_archive) / 4);
     frost_archive.root[3] = 0x20;
     for (i = 0; i < 16; i++)
@@ -773,11 +778,14 @@ static void prepare_graphics(u32 queue)
     frost_archive.stream[19] = 0x1001;
     frost_archive.stream[21] = 2;
     TEST_PLAYER_GFX = (u8*)&frost_archive;
+#ifndef MMX4_SATURN
     c_test_copy_words((u32*)uploads_expected, (const u32*)vram_rect_ptrs, sizeof(uploads_expected) / 4);
     fill_words(pixels_expected, GFX_WORDS, 0x5A5AA5A5);
     fill_words(pixels0_expected, 0x400, 0xA5A55A5A);
+#endif
 }
 
+#ifndef MMX4_SATURN
 static u32 test_parent_init(u32 row)
 {
     u32 layer = row % 3, fraction = (row / 3) % 2, facing = (row / 6) % 2;
@@ -786,11 +794,11 @@ static u32 test_parent_init(u32 row)
     prepare(layer, 0);
     prepare_graphics(queue);
     controller.unk49 = bank;
-    g_Player.unk15 = facing ? 0x40 : 0;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     if (!fraction)
         controller.x_pos.u.lo = controller.y_pos.u.lo = 0;
     capture();
-    expected_controller.unk40 = 0x520;
+    expected_controller.unk40 = WEAPON_TEXTURE_SPECIAL_0;
     expected_controller.previous_animation_index = 9;
     expected_controller.animation_step.fields.frame_index = 9;
     expected_controller.state = 1;
@@ -815,6 +823,7 @@ static u32 test_parent_init(u32 row)
     assert(c_test_word_difference((const u32*)player_gfx_buf_0, pixels0_expected, 0x400) == 0);
     return 1;
 }
+#endif
 
 static const s16 tower_edges[4][2] = { { -41, 120 }, { 360, 120 }, { 160, -57 }, { 160, 296 } };
 static u32 test_tower_outside(u32 row)
@@ -847,7 +856,7 @@ static u32 test_tower_damage_timer(u32 row)
     controller.state = 1;
     controller.on_screen = on_screen;
     controller.animation_cursor = D_8011C094[0];
-    controller.animation_step.packed = 0x00010002;
+    controller.animation_step.packed = C_TEST_STEP(0x00010002);
     controller.animation_step.fields.duration = 1;
     controller.unk50 = has_box ? frost_tower_hit_box : NULL;
     controller.unk64 = 5;
@@ -856,7 +865,7 @@ static u32 test_tower_damage_timer(u32 row)
     capture();
     expected_controller.ext.weapon_2.lifetime = 148;
     expected_controller.animation_cursor = D_8011C094[0] + 1;
-    expected_controller.animation_step.packed = 0x01010002;
+    expected_controller.animation_step.packed = C_TEST_STEP(0x01010002);
     expected_controller.on_screen = 1;
     if (has_box) {
         expected_controller.ext.weapon_2.timer = timers[timer] ? timers[timer] - 1 : 8;
@@ -868,18 +877,173 @@ static u32 test_tower_damage_timer(u32 row)
     return 1;
 }
 
+
+void frost_shard_init(struct MiscObj*);
+static void tower_at(u32 unk5, u32 event, u32 unk70, u32 lifetime)
+{
+    prepare(0, 0);
+    controller.id = 2;
+    controller.state = 1;
+    controller.on_screen = 1;
+    controller.unk5 = unk5;
+    controller.unk70 = unk70;
+    controller.unk67 = 1;
+    controller.unk68 = NULL;
+    controller.animation_step.packed = 0;
+    controller.animation_step.fields.duration = 3;
+    controller.animation_step.fields.event = event;
+    controller.y_vel.val = 0x10000;
+    controller.unk2C = 0x4200;
+    controller.ext.weapon_2.lifetime = lifetime;
+    controller.ext.weapon_2.timer = 4;
+    sound_probe_begin_group(0);
+    frost_tower_main(&controller);
+    assert(controller.animation_step.fields.duration == (lifetime ? 2 : 3));
+}
+static u32 shards(void)
+{
+    u32 i, n = 0;
+    for (i = 0; i < COUNT(misc_objects); i++) {
+        if (misc_objects[i].active == 1 && misc_objects[i].id == 0x25) {
+            assert(misc_objects[i].x_pos.val == controller.x_pos.val && misc_objects[i].y_pos.val == controller.y_pos.val);
+            assert(misc_objects[i].bg_offset == controller.bg_offset && misc_objects[i].unk2 == 0);
+            n++;
+        }
+    }
+    return n;
+}
+#define TOWER_SEEN() ((u8)controller.state | (u32)controller.unk5 << 8 | (u32)(u8)controller.unk67 << 16 | (u32)shards() << 24)
+static u32 tp_shatter(void)
+{
+    tower_at(0, 0, 0, 0);
+    SOUND_CHECK(sound_probe_id() == WEAPON_SOUND_FROST);
+    assert(controller.on_screen == 0 && controller.unk50 == NULL && controller.unk68 == NULL);
+    return TOWER_SEEN();
+}
+static u32 tp_shatter_full(void)
+{
+    u32 i;
+    prepare(0, 0);
+    for (i = 0; i < COUNT(misc_objects); i++)
+        misc_objects[i].active = 2;
+    controller.id = 2;
+    controller.state = 1;
+    sound_probe_begin_group(0);
+    frost_tower_main(&controller);
+    for (i = 0; i < COUNT(misc_objects); i++)
+        assert(misc_objects[i].active == 2 && misc_objects[i].id == 0);
+    return TOWER_SEEN();
+}
+static u32 tp_form_sound(void)
+{
+    tower_at(0, 0x40, 0, 100);
+    SOUND_CHECK(sound_probe_id() == WEAPON_SOUND_FROST);
+    assert(controller.animation_step.fields.event == 0 && controller.unk68 == NULL);
+    return TOWER_SEEN();
+}
+static u32 tp_form_solid(void)
+{
+    tower_at(0, 0x80, 0, 100);
+    SOUND_CHECK(sound_probe_id() == -1);
+    assert(controller.animation_step.fields.event == 0 && controller.unk68 == frost_tower_terrain_box);
+    return TOWER_SEEN();
+}
+static u32 tp_grounded(void)
+{
+    tower_at(1, 0, 8, 100);
+    assert(controller.y_vel.val == 0x10000 && controller.unk2C == 0x4200);
+    return TOWER_SEEN();
+}
+static u32 tp_unsupported(void)
+{
+    tower_at(1, 0, 0, 100);
+    assert(controller.y_vel.val == 0 && controller.x_vel.val == 0 && controller.unk2C == 0x4200);
+    return TOWER_SEEN();
+}
+static u32 tp_falling(void)
+{
+    s32 y;
+    tower_at(2, 0, 0, 100);
+    y = (cameras[0][1] + 120) * 65536 + 0x5678;
+    assert(controller.y_pos.val == y - 0x10000 && controller.y_vel.val == 0x10000 - 0x4200);
+    return TOWER_SEEN();
+}
+static u32 tp_landing(void)
+{
+    tower_at(2, 0, 8, 100);
+    SOUND_CHECK(sound_probe_id() == WEAPON_SOUND_FROST);
+    assert(background_objects[0].unk34 == 0x10 && background_objects[0].unk36 == 8 && background_objects[0].unk45 == 6);
+    return TOWER_SEEN();
+}
+static u32 tp_shard_birth(void)
+{
+    struct MiscObj obj;
+    prepare(0, 0);
+    prepare_graphics(0);
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 1;
+    obj.id = 0x25;
+    frost_shard_update(&obj);
+    assert(obj.unk38 == (u8*)frost_archive.bank && obj.unk3C == (u8*)sprites + 0x60);
+    assert(obj.animation_table == D_8011C094 && obj.unk16 == 0 && obj.previous_animation_index == 0xFF);
+    return (u8)obj.state | (u32)obj.unk17 << 8 | (u32)(u16)cur_random << 16;
+}
+static u32 tower_init(u8 facing)
+{
+    prepare(0, 0);
+    prepare_graphics(0);
+    g_Player.x_pos.i.hi = 0x100;
+    g_Player.y_pos.i.hi = 0x80;
+    g_Player.unk15 = facing;
+    controller.state = 0;
+    controller.unk49 = 2;
+    func_80093D78(&controller);
+    assert(controller.y_pos.i.hi == 0x7A && controller.ext.weapon_2.lifetime == 0x96 && controller.ext.weapon_2.timer == 8);
+    assert(controller.unk50 == frost_tower_hit_box && controller.unk64 == 1 && controller.unk67 == 1 && controller.unk49 == 0);
+    assert(controller.unk38 == (u8*)frost_archive.bank && controller.animation_table == D_8011C094 && controller.unk17 == 0);
+    return (u16)controller.x_pos.i.hi | (u32)controller.state << 16 | (u32)controller.unk16 << 24;
+}
+static u32 tp_init_left(void) { return tower_init(0); }
+static u32 tp_init_right(void) { return tower_init(PLAYER_FACING_RIGHT); }
+static const CTestCase frost_tower_paths_cases[] = {
+    tp_shatter,
+    tp_shatter_full,
+    tp_form_sound,
+    tp_form_solid,
+    tp_grounded,
+    tp_unsupported,
+    tp_falling,
+    tp_landing,
+    tp_shard_birth,
+    tp_init_left,
+    tp_init_right,
+};
+static const u32 frost_tower_paths_cases_expected[] = { 0x08010003u, 0x3u, 0x10001u, 0x101u, 0x10101u, 0xFF0201u, 0x10201u, 0x4000101u, 0x19BA0401u, 0x3010105u, 0x30100FBu };
+
 const struct CTestGroup c_test_groups[] = {
     { "charged_waves", 0, 0, 20, test_charged_waves },
     { "frost_shard_gates", NULL, frost_shard_gates_cases_expected, COUNT(frost_shard_gates_cases_expected), frost_shard_gates_cases_row },
     { "frost_tower_cancellation_dispatch", NULL, frost_tower_cancellation_dispatch_cases_expected, COUNT(frost_tower_cancellation_dispatch_cases_expected), cancel_case },
     { "frost_tower_spawn_shard", 0, 0, 1, test_frost_tower_spawn_shard },
     { "frost_tower_charged_dispatch", frost_tower_charged_dispatch_cases, frost_tower_charged_dispatch_cases_expected, COUNT(frost_tower_charged_dispatch_cases), 0 },
+#ifndef MMX4_SATURN
     { "frost_charged_parent_init", 0, 0, 39, test_parent_init },
+#endif
     { "frost_sparkle_birth", 0, 0, 2, test_sparkle_birth },
     { "frost_sparkle_flight", 0, 0, 16, test_sparkle_flight },
     { "frost_sparkle_screen_edges", 0, 0, 48, test_sparkle_edges },
     { "frost_tower_outside", 0, 0, 4, test_tower_outside },
     { "frost_tower_damage_timer", 0, 0, 6, test_tower_damage_timer },
+    { "frost_tower_paths", frost_tower_paths_cases, frost_tower_paths_cases_expected, COUNT(frost_tower_paths_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 20 + COUNT(frost_shard_gates_cases_expected) + COUNT(frost_tower_cancellation_dispatch_cases_expected) + 1 + COUNT(frost_tower_charged_dispatch_cases) + 39 + 2 + 16 + 48 + 4 + 6;
+const u32 c_test_count = 20 + COUNT(frost_shard_gates_cases_expected) + COUNT(frost_tower_cancellation_dispatch_cases_expected) + 1 + COUNT(frost_tower_charged_dispatch_cases) + 39 + 2 + 16 + 48 + 4 + 6 + COUNT(frost_tower_paths_cases)
+#ifdef MMX4_SATURN
+    - 39
+#endif
+    ;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

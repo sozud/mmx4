@@ -36,10 +36,8 @@ static u32 launch_case(u32 observation)
     before.y_vel = obj.y_vel;
     before.unk2C = obj.unk2C;
     before.animation_step = obj.animation_step;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(obj.animation_table == (u32**)split_mushroom_animations && obj.animation_cursor == split_mushroom_animations[16]);
     assert(*(u32*)split_mushroom_animations[16] == script_before);
     if (observation == 0)
@@ -51,7 +49,7 @@ static u32 launch_case(u32 observation)
     else if (observation == 3)
         actual = (u16)obj.timer | ((u32)(u8)obj.unk5 << 16);
     else
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
     return actual;
 }
 static const u32 mushroom_launch_context_cases_expected[] = { 0x0u, 0xFFFA23EDu, 0x1000u, 0x60000u, 0x3D010001u };
@@ -77,7 +75,7 @@ static void msh_sprout_init(void)
 {
     SPROUT(4, 0, 0);
 }
-static void msh_sprout_init_right(void) { SPROUT(4, 0, ss.unk15 = 0x40); }
+static void msh_sprout_init_right(void) { SPROUT(4, 0, ss.unk15 = PLAYER_FACING_RIGHT); }
 static void msh_grow_wait(void) { SPROUT(5, 0, 0); }
 static void msh_grow_highway(void) { SPROUT(5, 0, (engine_obj.stage = 3, ss.animation_step.fields.event = 1)); }
 static void msh_grow_rematch(void) { SPROUT(5, 0, (engine_obj.stage = 0xC, ss.animation_step.fields.event = 1)); }
@@ -88,7 +86,7 @@ static void msh_main_owner_gone(void) { SPROUT(5, 0, sprout_owner.state = 2); }
 static void msh_main_away(void) { SPROUT(5, 0, ss.x_pos.i.hi = 0x1000); }
 static void msh_main_hit(void) { SPROUT(5, 0, (so.hp = 1, state_hit(&so, 0, 0, 1))); }
 static void msh_spray_init(void) { SPROUT(7, 0, ss.unk2 = 1); }
-static void msh_spray_init_right(void) { SPROUT(7, 0, (ss.unk2 = 2, ss.unk15 = 0x40)); }
+static void msh_spray_init_right(void) { SPROUT(7, 0, (ss.unk2 = 2, ss.unk15 = PLAYER_FACING_RIGHT)); }
 
 static void (*const mushroom_sprout_states_cases[])(void) = {
     msh_sprout_init,
@@ -105,7 +103,7 @@ static void (*const mushroom_sprout_states_cases[])(void) = {
     msh_spray_init,
     msh_spray_init_right,
 };
-static const u32 mushroom_sprout_states_expected[] = { 5u, 0xFF000001u, 0x600000u, 0x600000u, 0u, 0xFFFD0000u, 0u, 0x50000u, 0u, 0u, 5u, 0xFF400001u, 0xA00000u, 0x600000u, 0u, 0xFFFD0000u, 0u, 0x50000u, 0u, 0u, 5u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10105u, 0xFF000001u, 0x800000u, 0x600000u, 0u, 0u, 0x380000u, 0x578CCu, 0u, 0u, 0x10105u, 0xFF000001u, 0x800000u, 0x600000u, 0u, 0u, 0x380000u, 0x5788Cu, 0u, 0u, 0x10005u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x478CCu, 0u, 0u, 0x2010005u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x4788Eu, 0u, 0u, 0x10005u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 6u, 1u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 6u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48000u, 0u, 0x2100u, 8u, 0xFF000101u, 0x740000u, 0x500000u, 0u, 0x18000u, 0x1000u, 0x50000u, 0u, 0u, 8u, 0xFF400201u, 0x7C0000u, 0x500000u, 0u, 0x18000u, 0xFFFFF000u, 0x50000u, 0u, 0u };
+static const u32 mushroom_sprout_states_expected[] = { 5u, 0xFF000001u, 0x600000u, 0x600000u, 0u, 0xFFFD0000u, 0u, 0x50000u, 0u, 0u, 5u, 0xFF400001u, 0xA00000u, 0x600000u, 0u, 0xFFFD0000u, 0u, 0x50000u, 0u, 0u, 5u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10105u, 0xFF000001u, 0x800000u, 0x600000u, 0u, 0u, 0x380000u, 0x50000u | OBJECT_CLUT(0x78CC), 0u, 0u, 0x10105u, 0xFF000001u, 0x800000u, 0x600000u, 0u, 0u, 0x380000u, 0x50000u | OBJECT_CLUT(0x788C), 0u, 0u, 0x10005u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u | OBJECT_CLUT(0x78CC), 0u, 0u, 0x2010005u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u | OBJECT_CLUT(0x788E), 0u, 0u, 0x10005u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 6u, 1u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 6u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48000u, 0u, 0x2100u, 8u, 0xFF000101u, 0x740000u, 0x500000u, 0u, 0x18000u, 0x1000u, 0x50000u, 0u, 0u, 8u, 0xFF400201u, 0x7C0000u, 0x500000u, 0u, 0x18000u, 0xFFFFF000u, 0x50000u, 0u, 0u };
 
 static u32 test_mushroom_sprout_states(u32 row)
 {
@@ -140,7 +138,7 @@ static u32 owner_cleanup(u32 row)
     obj.id = 39;
     obj.state = spray ? 8 : 1;
     obj.on_screen = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = WEAPON_OBJECT(&owner);
     obj.unk61 = 1;
     obj.timer = 20;
@@ -154,7 +152,7 @@ static u32 owner_cleanup(u32 row)
     obj.unk50.data = spray ? mushroom_shot_sprout_hit_box : mushroom_shot_spore_hit_box;
     obj.animation_table = (u32**)split_mushroom_animations;
     set_animation(&obj, spray ? 18 : 11);
-    assert(obj.animation_step.packed == (spray ? 0x51010002 : 0x2C010003));
+    assert(obj.animation_step.packed == (spray ? C_TEST_STEP(0x51010002) : C_TEST_STEP(0x2C010003)));
     expected = obj;
     expected.animation_step.fields.duration--;
     expected.y_pos.val -= obj.y_vel.val;
@@ -179,10 +177,149 @@ static u32 owner_cleanup(u32 row)
     return 1;
 }
 
+static u32 mushroom_steps(u32 row);
 const struct CTestGroup c_test_groups[] = {
+    { "mushroom_steps", 0, 0, 20, mushroom_steps },
     { "mushroom_sprout_states", 0, 0, COUNT(mushroom_sprout_states_cases), test_mushroom_sprout_states },
     { "mushroom_launch_context", NULL, mushroom_launch_context_cases_expected, COUNT(mushroom_launch_context_cases_expected), launch_case },
     { "spore_spray_owner_death_and_margin_boundaries", NULL, NULL, COUNT(screen_x) * 8, owner_cleanup },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(mushroom_sprout_states_cases) + COUNT(mushroom_launch_context_cases_expected) + COUNT(screen_x) * 8;
+const u32 c_test_count = COUNT(mushroom_sprout_states_cases) + COUNT(mushroom_launch_context_cases_expected) + COUNT(screen_x) * 8 + 20;
+
+void mushroom_shot_spore_init(struct ShotObj*);
+void mushroom_shot_spore_burst(struct ShotObj*);
+void mushroom_shot_sprout_main(struct ShotObj*);
+void mushroom_shot_sprout_hop(struct ShotObj*);
+void mushroom_shot_sprout_land(struct ShotObj*);
+void mushroom_shot_sprout_wait(struct ShotObj*);
+void mushroom_shot_sprout_jump(struct ShotObj*);
+void func_800A5194(struct ShotObj*);
+extern s32 mushroom_shot_spore_x_speeds[];
+static u32 mushroom_steps(u32 row)
+{
+    struct ShotObj obj;
+    struct MainObj owner;
+    u32 hurt;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    owner.state = 1;
+    obj.active = 0x41;
+    obj.id = 39;
+    obj.state = 1;
+    obj.unk7C = (struct WeaponObj*)&owner;
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = 100;
+    obj.unk60 = 6;
+    obj.timer = 5;
+    obj.animation_table = (u32**)split_mushroom_animations;
+    set_animation(&obj, 0xB);
+    obj.animation_step.fields.duration = 2;
+    g_Player.hp = 16;
+    g_Player.x_pos = obj.x_pos;
+    g_Player.y_pos = obj.y_pos;
+    MAIN_OBJECT(&g_Player)->hurt_box = (const u8*)&state_hit_box;
+    obj.unk50.data = (const u8*)&state_hit_box;
+    if (row == 2 || row == 3 || row == 5)
+        obj.animation_step.fields.event = 1;
+    if (row == 4 || row == 6)
+        obj.animation_step.fields.event = 2;
+    switch (row) {
+    case 0:
+    case 1:
+        obj.state = 0;
+        obj.unk2 = 1;
+        obj.unk15 = row == 1 ? PLAYER_FACING_RIGHT : 0;
+        mushroom_shot_spore_init(&obj);
+        assert(obj.state == 1 && obj.timer == 0x28 && obj.unk17 == 0xB);
+        assert(obj.x_vel.val == (row == 0 ? mushroom_shot_spore_x_speeds[1] : -mushroom_shot_spore_x_speeds[1]));
+        break;
+    case 2:
+        obj.timer = 1;
+        obj.y_vel.val = 0x2000;
+        obj.unk2C = 0x2000;
+        mushroom_shot_spore_fly(&obj);
+        assert(obj.unk2C == 0x1000 && obj.state == 2 && obj.unk17 == 0xD);
+        break;
+    case 3:
+    case 4:
+        obj.state = 2;
+        mushroom_shot_spore_burst(&obj);
+        assert(obj.state == (row == 4 ? 3 : 2));
+        break;
+    case 5:
+    case 6:
+        obj.state = 8;
+        mushroom_shot_spray_fly(&obj);
+        assert(obj.state == (row == 6 ? 9 : 8));
+        break;
+    case 7:
+        obj.state = 5;
+        obj.unk5 = 6;
+        obj.unk70 = 8;
+        obj.unk68 = (struct Unk_unk68*)&state_hit_box;
+        obj.unk50.data = NULL;
+        mushroom_shot_sprout_main(&obj);
+        assert(obj.unk70 == 8 && obj.state == 5);
+        break;
+    case 8:
+    case 9:
+    case 10:
+        obj.unk5 = 1;
+        obj.unk84.bytes[0] = row == 9;
+        obj.y_vel.val = row == 10 ? 0x20000 : -0x10000;
+        obj.unk70 = row == 8 ? 8 : 0;
+        set_animation(&obj, 2);
+        mushroom_shot_sprout_hop(&obj);
+        assert(obj.unk84.bytes[0] == (row != 10) && obj.unk5 == (row == 8 ? 2 : 1));
+        assert(obj.unk17 == (row == 8 ? 0xA : 2));
+        break;
+    case 11:
+    case 12:
+    case 13:
+        obj.unk5 = 2;
+        obj.unk8A = row == 11 ? 1 : 3;
+        obj.animation_step.fields.event = row != 13;
+        mushroom_shot_sprout_land(&obj);
+        assert(obj.unk5 == (row == 11 ? 3 : row == 12 ? 4 : 2) && obj.unk17 == (row == 11 ? 0 : row == 12 ? 2 : 0xB));
+        assert(obj.timer == (row == 11 ? 0x28 : 5));
+        break;
+    case 14:
+    case 15:
+        obj.unk5 = 3;
+        obj.timer = row == 14 ? 1 : 2;
+        mushroom_shot_sprout_wait(&obj);
+        assert(obj.unk5 == (row == 14 ? 5 : 3) && obj.timer == (row == 14 ? 0x28 : 1));
+        break;
+    case 16:
+    case 17:
+        obj.unk5 = 4;
+        obj.animation_step.fields.event = row == 16;
+        obj.unk84.bytes[0] = 1;
+        mushroom_shot_sprout_jump(&obj);
+        assert(obj.unk5 == (row == 16 ? 1 : 4) && obj.unk84.bytes[0] == (row == 17));
+        assert(obj.y_pos.val == (row == 16 ? (100 << 16) - 0x40000 : 100 << 16));
+        break;
+    case 19:
+        obj.unk5 = 5;
+        obj.timer = 2;
+        func_800A5194(&obj);
+        assert(obj.unk5 == 5 && obj.timer == 1 && obj.x_vel.val == 0);
+        break;
+    default:
+        obj.unk5 = 5;
+        obj.timer = 1;
+        g_Player.x_pos.i.hi = 60;
+        g_Player.y_pos.i.hi = 80;
+        func_800A5194(&obj);
+        assert(obj.unk5 == 6 && obj.unk2C == 0x1000);
+        assert(obj.x_vel.val < 0 && obj.x_vel.val >= -0x60000 && obj.y_vel.val > 0 && obj.y_vel.val <= 0x60000);
+        break;
+    }
+    hurt = HP_DAMAGE_FLAG(g_Player.hp) != 0;
+    assert(hurt == (row == 2 || row == 3 || row == 5));
+    return 1;
+}

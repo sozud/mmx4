@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_46_train_boss_turret.h"
 #include "main/55C4.h"
 #include "main/mains/main_45_train_boss.h"
@@ -37,7 +38,7 @@ static u32 test_train_boss_turret_fire(u32 row)
     c_test_same_words(&main_objects[47], &parent_expected, sizeof(main_objects[47]));
     c_test_same_words(shot_objects, shots_before, sizeof(shot_objects));
     observed_values[0] = (u32)obj.unk17;
-    observed_values[1] = (u32)obj.animation_step.packed;
+    observed_values[1] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[2] = (u32)main_objects[47].ext.main_45.projectile_command;
     observed_values[3] = (u32)obj.x_pos.val;
     observed_values[4] = (u32)obj.y_pos.val;
@@ -91,7 +92,7 @@ static u32 test_train_boss_turret_main(u32 row)
     obj.ext.main_46.owner = &main_objects[47].ext.main_45;
     obj.unk5 = 3;
     obj.hp = c->hp;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.x_pos.val = 65536000;
     background_objects[0].x_pos.val = 436207616;
     background_objects[0].y_pos.val = 0;
@@ -146,8 +147,8 @@ static u32 test_train_boss_turret_main(u32 row)
     observed_values[6] = (u32)obj.y_pos.val;
     observed_values[7] = (u32)main_objects[47].ext.main_45.attack_flags;
     observed_values[8] = (u32)layer_objects[3].unk17;
-    observed_values[9] = (u32)obj.animation_step.packed;
-    observed_values[10] = (u32)weapon_objects[0].unk80.word;
+    observed_values[9] = C_TEST_STEP(obj.animation_step.packed);
+    observed_values[10] = TEST_LE_HALVES(&weapon_objects[0].unk80);
     observed_values[11] = (u32)weapon_objects[0].unk98;
     return c_test_observe(0, row, observed_values, c->expected, 12);
 }

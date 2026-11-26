@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/misc/misc_31_option_toggle.h"
+#ifndef MMX4_SATURN
 void func_8001C008(s32, s32);
 void func_8001B388(struct EngineObj*);
 void menu_icon_update(struct MiscObj*);
@@ -60,11 +61,11 @@ static u32 cursor(u32 row)
         expected[0].unk40 = 0x1E00;
         expected[0].unk3C = WINDOW_ARCHIVE_DATA + 64;
         expected[0].animation_table = (u32**)option_toggle_animations;
-        expected[0].unk16 = 0;
+        expected[0].unk16 = VISUAL_SATURN_LAYER(0);
         expected[0].unk17 = 0;
         expected[0].previous_animation_index = 0xFF;
         expected[0].animation_cursor = (u32*)option_toggle_animations[0];
-        expected[0].animation_step.packed = 0x3101000F;
+        expected[0].animation_step.packed = C_TEST_STEP(0x3101000F);
         expected[0].x_pos.i.hi = row ? 0x28 : 0x50;
         expected[0].y_pos.i.hi = 0x78;
         expected[0].state = 1;
@@ -100,3 +101,8 @@ static u32 cursor(u32 row)
 const struct CTestGroup c_test_groups[] = { { "original_menu_cursor_port_slots_and_real_confirmation_Up_toggle", NULL, NULL, 3, cursor } };
 const u32 c_test_group_count = COUNT(c_test_groups);
 const u32 c_test_count = 3;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

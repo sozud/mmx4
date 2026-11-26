@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/misc/misc_13_stage_portrait.h"
 #include "main/55C4.h"
 extern union AnimationStep* stage_portrait_animations[1];
@@ -14,27 +15,27 @@ static u32 enter(u32 row)
     metadata[1] = (resource + 1) * 128 + 0x5A;
     for (i = 0; i < COUNT(archive); i++)
         archive[i] = i < 2 ? 8 + i * 4 : 0x13570000 + i;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)archive;
     memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 13;
     obj.unk2 = fixed;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 99 * 65536 + fraction * 0x1234;
     obj.y_pos.val = 101 * 65536 + fraction * 0x5678;
     expected = obj;
-    expected.unk42 = fixed ? 0x784F : 0x780B;
-    expected.unk40 = resource + 1;
+    expected.unk42 = OBJECT_PALETTE_FROM_COLOR(fixed ? 0x1F : 0x0B);
+    expected.unk40 = OBJECT_STAGE_TEXTURE(1);
     expected.animation_table = (u32**)stage_portrait_animations;
     expected.bg_offset = 0;
     expected.unk15 = 0;
-    expected.unk16 = 1;
+    expected.unk16 = VISUAL_SATURN_LAYER(1);
     expected.unk3C = (u8*)archive + 12;
     expected.previous_animation_index = 255;
     expected.animation_cursor = (u32*)(stage_portrait_animations[0] + (fixed ? 10 : 1));
-    expected.animation_step.packed = fixed ? 0x0A01001E : 0x0101001E;
+    expected.animation_step.packed = C_TEST_STEP(fixed ? 0x0A01001E : 0x0101001E);
     if (fixed) {
         expected.x_pos.i.hi = 96;
         expected.y_pos.i.hi = 384;
@@ -79,8 +80,8 @@ static u32 portrait(u32 row)
     obj.id = 13;
     obj.state = 1;
     obj.unk7 = unchanged ? selection : (selection + 1) % 9;
-    obj.unk16 = 1;
-    obj.unk42 = 0x780B;
+    obj.unk16 = VISUAL_SATURN_LAYER(1);
+    obj.unk42 = OBJECT_PALETTE_FROM_COLOR(0x0B);
     obj.x_pos.val = 228 * 65536 + 0x1234;
     obj.y_pos.val = 392 * 65536 + 0x5678;
     obj.animation_table = (u32**)stage_portrait_animations;
@@ -92,8 +93,8 @@ static u32 portrait(u32 row)
         expected.unk17 = 0;
         expected.previous_animation_index = 255;
         expected.animation_cursor = (u32*)(stage_portrait_animations[0] + frame);
-        expected.animation_step.packed = (frame << 24) | 0x0001001E;
-        expected.unk42 = (2 * (stage - 1) + 11) % 16 | (((stage + 4) / 8 + 480) << 6);
+        expected.animation_step.packed = C_TEST_STEP((frame << 24) | 0x0001001E);
+        expected.unk42 = OBJECT_PALETTE_FROM_COLOR((stage - 1) * 2 + 0xB);
     }
     stage_portrait_select(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));

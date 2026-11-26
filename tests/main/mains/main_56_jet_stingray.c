@@ -67,7 +67,7 @@ static u32 damage_case(u32 mode, u32 observation)
     weapon->unk98 = 0x27;
     g_Player.active = 0x41;
     g_Player.hp = 20;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     engine_obj.cur_character = inputs[mode].character;
     before = obj;
     player_before = g_Player;
@@ -123,12 +123,16 @@ static u32 damage_case(u32 mode, u32 observation)
         actual = weapon->unk80.word;
         break;
     default:
-        actual = (u8)weapon->unk98 | ((u32)g_Player.update_delay_request << 8) | ((u32)g_Player.spike_immune << 16);
+        actual = (u8)weapon->unk98 | ((u32)g_Player.update_delay_request << 8) | ((u32)SPIKE_IMMUNE(g_Player) << 16);
         break;
     }
     return actual;
 }
+#ifdef VERSION_DEMO
+static const u32 stingray_damage_dispatch_cases_expected[] = { 0x201u, 0x1020026u, 0x1409234u, 0x680068u, 0x27u, 0x201u, 0x102FF28u, 0x1401234u, 0x680068u, 0x27u, 0x201u, 0x1020027u, 0x1409234u, 0x680068u, 0x1u, 0x201u, 0x102FF28u, 0x1401234u, 0x680068u, 0x27u, 0x201u, 0x102FF28u, 0x1401234u, 0x680068u, 0x27u, 0x201u, 0x1020027u, 0x1409234u, 0x680068u, 0x1u, 0x201u, 0x1020027u, 0x1401234u, 0x680068u, 0x127u, 0x201u, 0x102FF28u, 0x1401234u, 0x680068u, 0x27u };
+#else
 static const u32 stingray_damage_dispatch_cases_expected[] = { 0x201u, 0x1020027u, 0x9234u, 0x680068u, 0x10027u, 0x103u, 0x20024u, 0x9234u, 0x680068u, 0x10127u, 0x201u, 0x1020027u, 0x1409234u, 0x680068u, 0x10001u, 0x201u, 0x102FF28u, 0x1234u, 0x680068u, 0x10027u, 0x103u, 0x20023u, 0x9234u, 0x680068u, 0x10027u, 0x201u, 0x1020027u, 0x1409234u, 0x680068u, 0x10001u, 0x201u, 0x1020026u, 0x19234u, 0x680068u, 0x10127u, 0x201u, 0x1020026u, 0x1409234u, 0x680068u, 0x10127u };
+#endif
 static u32 stingray_damage_dispatch_cases_row(u32 row)
 {
     return damage_case(row / 5, row % 5);
@@ -165,7 +169,7 @@ static u32 vortex_case(u32 mode)
     obj.unk5 = 7;
     obj.unk6 = 0;
     obj.unk7C = mode == 0 ? 2 : 1;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.bg_offset = 2;
     obj.unk40 = 0x1234;
     obj.unk42 = 0x5678;
@@ -183,7 +187,7 @@ static u32 vortex_case(u32 mode)
         expected.unk17 = 3;
         expected.previous_animation_index = 0xFF;
         expected.animation_cursor = (const u8*)jet_stingray_animations[3];
-        expected.animation_step = *(union AnimationStep*)jet_stingray_animations[3];
+        memcpy(&expected.animation_step, jet_stingray_animations[3], sizeof(expected.animation_step));
         if (mode == 2) {
             struct VisualObj* child = &pool[31];
             child->active = 0x41;
@@ -356,7 +360,7 @@ static u32 jet_stingray_ambush_drop_case(u32 mode)
         boss_before.unk17 = 8;
         boss_before.previous_animation_index = 0xFF;
         boss_before.animation_cursor = jet_stingray_animations[8];
-        boss_before.animation_step = *(union AnimationStep*)jet_stingray_animations[8];
+        memcpy(&boss_before.animation_step, jet_stingray_animations[8], sizeof(boss_before.animation_step));
     } else if (mode == 5) {
         boss_before.unk7 = 0;
         boss_before.unk7C = 40;
@@ -392,6 +396,7 @@ RESET_CASE(3)
 static const CTestCase jet_stingray_ambush_rise_start_cases[] = { RESET_ENTRY(0) RESET_ENTRY(3) };
 static const u32 jet_stingray_ambush_rise_start_cases_expected[] = { 0x7010103u, 0x30103u };
 
+#ifndef VERSION_DEMO
 #include "support/jet_stingray_animation_wait.h"
 JET_WAIT_CASE(0, 0)
 JET_WAIT_CASE(0, 1)
@@ -400,6 +405,10 @@ JET_WAIT_CASE(2, 1)
 static const CTestCase jet_stingray_intro_warning_wait_cases[] = { JET_WAIT_ENTRY(0, 0) JET_WAIT_ENTRY(0, 1) JET_WAIT_ENTRY(2, 0) JET_WAIT_ENTRY(2, 1) };
 
 static const u32 jet_stingray_intro_warning_wait_cases_expected[] = { 0x5F010003u, 0x2u, 0x10009u, 0x301u };
+#define WARNING_WAIT_CASES COUNT(jet_stingray_intro_warning_wait_cases)
+#else
+#define WARNING_WAIT_CASES 0
+#endif
 static struct PlayerObj stingray_player;
 static u32 stingray_pages[8];
 #define INTRO(capsule, stage_id)                                 \
@@ -424,12 +433,17 @@ static u32 stingray_pages[8];
         D_801406A8 = pages;                                      \
         TEST_MENU_FRAMES = frames;                               \
     } while (0)
+#ifndef VERSION_DEMO
 static void js_intro_wait(void)
 {
     INTRO(1, 0);
 }
 static void js_intro(void) { INTRO(0, 0); }
 static void js_intro_rematch(void) { INTRO(0, 0xC); }
+#define JS_FIRST 0
+#else
+#define JS_FIRST 3
+#endif
 static void js_vortex_wait(void)
 {
     state_reset(5, 3, 0);
@@ -452,18 +466,20 @@ static void js_pattern_dead(void)
 }
 
 static void (*const jet_stingray_states_cases[])(void) = {
+#ifndef VERSION_DEMO
     js_intro_wait,
     js_intro,
     js_intro_rematch,
+#endif
     js_vortex_wait,
     js_vortex_done,
     js_pattern_dead,
 };
-static const u32 jet_stingray_states_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x20B0000u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 2u, 0u, 0x20B0000u, 0u, 0u, 0u, 0u, 0u, 0x788801u, 0u, 0x305u, 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u };
+static const u32 jet_stingray_states_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x20B0000u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 2u, 0u, 0x20B0000u, 0u, 0u, 0u, 0u, 0u, OBJECT_CLUT(0x7888) << 8 | 1u, 0u, 0x305u, 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u };
 
 static u32 test_jet_stingray_states(u32 row)
 {
-    return state_run(jet_stingray_states_cases[row], row, &jet_stingray_states_expected[row * 10]);
+    return state_run(jet_stingray_states_cases[row], row, &jet_stingray_states_expected[(row + JS_FIRST) * 10]);
 }
 
 extern void* jet_stingray_animations[45];
@@ -492,7 +508,7 @@ static u32 missile(u32 row)
     obj.hp = 48;
     obj.unk5 = wide ? 9 : 8;
     obj.unk7 = 2;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = layer;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
@@ -501,9 +517,9 @@ static u32 missile(u32 row)
     obj.sprite_frames = (u8*)resource;
     obj.animation_table = (const u8* const*)jet_stingray_animations;
     set_animation_frame(ANIMATED_OBJECT(&obj), 9, 5);
-    assert(obj.animation_step.packed == 0x2F010102);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x2F010102));
     expected = obj;
-    expected.animation_step.packed = 0x2F010001;
+    expected.animation_step.packed = C_TEST_STEP(0x2F010001);
     if (!full) {
         struct ShotObj* s = &expected_pool[31];
         s->active = 0x41;
@@ -530,6 +546,7 @@ static u32 missile(u32 row)
     return 1;
 }
 
+#ifndef VERSION_DEMO
 extern void* jet_stingray_animations[45];
 static struct VisualObj pool_expected[32];
 static u32 splash(u32 row)
@@ -551,7 +568,7 @@ static u32 splash(u32 row)
     obj.id = 56;
     obj.state = 1;
     obj.bg_offset = layer;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk40 = 7;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
@@ -626,7 +643,7 @@ static u32 vortex(u32 row)
     obj.unk5 = 4;
     obj.unk6 = 2;
     obj.unk7C = 60;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = layer;
     obj.x_pos.i.hi = 17146;
     obj.y_pos.i.hi = 138;
@@ -671,6 +688,630 @@ static u32 vortex(u32 row)
     assert(cur_random == seed);
     return 1;
 }
+#define SPLASH_VORTEX_CASES (12 + 48)
+#else
+#define SPLASH_VORTEX_CASES 0
+#endif
+
+void jet_stingray_intro(struct MainObj*);
+void jet_stingray_swim(struct MainObj*);
+void jet_stingray_swim_next(struct MainObj*);
+void jet_stingray_land(struct MainObj*);
+void jet_stingray_vortex(struct MainObj*);
+void jet_stingray_dash(struct MainObj*);
+void jet_stingray_leap(struct MainObj*);
+void jet_stingray_missiles(struct MainObj*);
+void jet_stingray_missiles_wide(struct MainObj*);
+void jet_stingray_stagger(struct MainObj*);
+void jet_stingray_death(struct MainObj*);
+extern struct Unk_unk68 jet_stingray_swim_attack_box;
+extern struct Unk_unk68 jet_stingray_swim_hurt_box;
+extern struct Unk_unk68 jet_stingray_ambush_hurt_box;
+extern struct Unk_unk68 jet_stingray_dash_attack_box;
+extern struct Unk_unk68 jet_stingray_dash_hurt_box;
+extern struct Unk_unk68 jet_stingray_leap_attack_box;
+extern struct Unk_unk68 jet_stingray_leap_hurt_boxes[6];
+extern u8 jet_stingray_bubble_index;
+
+static struct MainObj jr;
+static void jr_reset(u8 state, u8 unk5, u8 unk6, u8 unk7)
+{
+    memset(&jr, 0, sizeof(jr));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    state_terrain(0);
+    main_bss_state.frame_counter = 1;
+    engine_obj.unk36.timer = 0;
+    engine_obj.gameplay_locked = 0;
+    D_80173C84 = 0;
+    cur_random = 0;
+    jr.active = 0x41;
+    jr.id = 56;
+    jr.state = state;
+    jr.unk5 = unk5;
+    jr.unk6 = unk6;
+    jr.unk7 = unk7;
+    jr.x_pos.i.hi = 160;
+    jr.y_pos.i.hi = 120;
+    jr.collision_data = D_801079F8;
+    jr.animation_table = (const u8* const*)jet_stingray_animations;
+    set_animation(&jr, 0);
+}
+static void jr_step(s8 duration, s8 event, s8 relative_step)
+{
+    jr.animation_step.fields.duration = duration;
+    jr.animation_step.fields.event = event;
+    jr.animation_step.fields.relative_step = relative_step;
+}
+
+static void jr_intro_warning(void)
+{
+    jr_reset(0, 1, 0, 0);
+    jet_stingray_update(&jr);
+    assert(jr.unk6 == 1 && effect_objects[0].active == 1 && effect_objects[0].id == 0x18);
+    assert(jr.ext.main_56.object.effect == &effect_objects[0] && jr.on_screen == 0);
+    jet_stingray_update(&jr);
+    assert(jr.unk6 == 1);
+    effect_objects[0].active = 0;
+    jet_stingray_update(&jr);
+    assert(jr.unk6 == 2 && jr.unk7C == 0x3C);
+    jr.unk7C = 2;
+    jet_stingray_update(&jr);
+    assert(jr.unk7C == 1 && jr.unk5 == 1 && jr.unk6 == 2);
+    jet_stingray_update(&jr);
+    assert(jr.unk5 == 2 && jr.unk6 == 0 && jr.unk17 == 0x1D);
+}
+static void jr_intro_emerge(void)
+{
+    jr_reset(0, 2, 0, 0);
+    jr_step(5, 0, 1);
+    jet_stingray_intro(&jr);
+    assert(jr.unk5 == 2 && jr.on_screen == C_TEST_VISIBLE(jr.unk16) && visual_objects[0].active == 0);
+    jr_step(5, 0, 0);
+    jet_stingray_intro(&jr);
+    assert(jr.unk5 == 3 && jr.unk7C == 0x1E && jr.y_speed == FIXED(1) && jr.unk17 == 0x26);
+    assert(engine_obj.enable_boss == 1 && engine_obj.unk25 == 1 && engine_obj.boss_ptr == &jr && jet_stingray_bubble_index == 3);
+    assert(visual_objects[0].id == 0x17 && visual_objects[0].unk2 == 1 && visual_objects[0].y_vel.val == FIXED(0.875));
+    assert(visual_objects[0].x_pos.i.hi == 128 && visual_objects[1].x_pos.i.hi == 160 && visual_objects[2].x_pos.i.hi == 192);
+    assert(visual_objects[2].y_pos.i.hi == 144 && visual_objects[3].active == 0);
+}
+static void jr_intro_rise(void)
+{
+    jr_reset(0, 3, 0, 0);
+    jr.unk7C = 2;
+    jr.y_speed = FIXED(1);
+    jet_stingray_intro(&jr);
+    assert(jr.unk7C == 1 && jr.unk5 == 3 && jr.y_pos.i.hi == 119);
+    jet_stingray_intro(&jr);
+    assert(jr.unk5 == 4 && jr.y_speed == 0 && jr.y_pos.i.hi == 118 && jr.unk17 == 0x27);
+}
+static void jr_intro_pose(void)
+{
+    jr_reset(0, 4, 0, 0);
+    engine_obj.stage = 0;
+    engine_obj.character_state.bytes[8] = 0;
+    jr_step(5, 0, 1);
+    jet_stingray_intro(&jr);
+    assert(jr.unk6 == 0);
+    jr_step(5, 1, 1);
+    jet_stingray_intro(&jr);
+    assert(jr.unk6 == 1 && engine_obj.character_state.bytes[8] == 0);
+    jr.unk6 = 0;
+    engine_obj.stage = 5;
+    abc_object.unkC = 0x80;
+    jr_step(5, 1, 1);
+    jet_stingray_intro(&jr);
+    assert(jr.unk6 == 1 && engine_obj.character_state.bytes[8] == 1 && abc_object.unk10 == (s16)(0x8000 | 0xD));
+    abc_object.unkC = 1;
+    jet_stingray_intro(&jr);
+    assert(jr.unk5 == 4 && jr.unk6 == 1);
+    abc_object.unkC = 0;
+    jet_stingray_intro(&jr);
+    assert(jr.unk5 == 5 && jr.unk6 == 0 && jr.unk7C == 2);
+}
+static void jr_intro_fill_health(void)
+{
+    jr_reset(0, 5, 0, 0);
+    jr.unk7C = 2;
+    engine_obj.unk36.timer = 5;
+    D_80173C84 = 1;
+    jr_step(5, 0, 0);
+    jet_stingray_intro(&jr);
+    assert(jr.hp == 0 && jr.unk7C == 2);
+    engine_obj.unk36.timer = 0;
+    jr_step(5, 0, 1);
+    jet_stingray_intro(&jr);
+    assert(jr.hp == 0);
+    jr_step(5, 0, 0);
+    jet_stingray_intro(&jr);
+    assert(jr.hp == 1 && jr.unk7C == 1);
+    jr_step(5, 0, 0);
+    jet_stingray_intro(&jr);
+    assert(jr.hp == 2 && jr.unk7C == 2);
+    jr.hp = 0x30;
+    jr_step(5, 0, 0);
+    jet_stingray_intro(&jr);
+    assert(jr.hp == 0x30 && jr.unk5 == 6 && jr.unk7C == 0x3C);
+}
+static void jr_intro_finish(void)
+{
+    jr_reset(0, 6, 0, 0);
+    jr.unk7C = 2;
+    g_Player.script_state = 1;
+    jet_stingray_intro(&jr);
+    assert(jr.unk7C == 1 && jr.state == 0);
+    jr.unk6 = 3;
+    jr.unk7 = 4;
+    jet_stingray_intro(&jr);
+    assert(jr.state == 1 && jr.unk5 == 2 && jr.unk6 == 0 && jr.unk7 == 0 && g_Player.script_state == 0);
+}
+static void jr_fight(u8 character, u8 weapon, u8 kind, u8 hp, u8 flash)
+{
+    jr_reset(1, 1, 0, 0);
+    jr.hp = hp;
+    jr.ext.main_56.flash_timer = flash;
+    engine_obj.cur_character = character;
+    if (weapon != 0xFF)
+        state_hit(&jr, weapon, kind, 1);
+    jet_stingray_update(&jr);
+}
+static void jr_fight_unhit(void)
+{
+    jr_fight(CHARACTER_X, 0xFF, 0, 10, 3);
+    assert(jr.state == 1 && jr.unk5 == 2 && jr.ext.main_56.flash_timer == 2 && jr.hp == 10);
+}
+static void jr_fight_lethal(void)
+{
+    jr_fight(CHARACTER_X, 0, 0, 1, 0);
+    assert(jr.state == 2 && jr.unk5 == 0 && (jr.unk42 & 0x8000) == 0 && SPIKE_IMMUNE(g_Player) == 1 && jr.hp == 0);
+}
+static void jr_fight_x_staggers(void)
+{
+    jr_fight(CHARACTER_X, 2, 0, 10, 0);
+    assert(jr.state == 3 && jr.unk6 == 0 && jr.unk7 == 0 && jr.hp == 9);
+}
+static void jr_fight_x_hit_while_flashing(void)
+{
+    jr_fight(CHARACTER_X, 0, 0, 10, 3);
+    assert(jr.state == 1 && jr.hp == 9 && jr.ext.main_56.flash_timer == 2 && jr.collision_data == state_damage);
+}
+static void jr_fight_x_immune(void)
+{
+    jr_fight(CHARACTER_X, 0, 0xFF, 10, 0);
+    assert(jr.state == 1 && jr.hp == 10 && jr.ext.main_56.flash_timer == 0 && jr.collision_data == D_801079F8);
+}
+static void jr_fight_zero_ignored(void)
+{
+    jr_fight(CHARACTER_ZERO, 0x19, 0, 10, 0);
+    assert(jr.state == 1 && jr.hp == 9 && jr.ext.main_56.flash_timer == 0 && jr.collision_data == D_801079F8);
+}
+static void jr_swim_splash(void)
+{
+    jr_reset(1, 2, 0, 0);
+    state_terrain(0x24);
+    jr.ext.main_56.flags = 2;
+    jr.terrain_box = &jet_stingray_terrain_box;
+    jr.collision_flags = 8;
+    jet_stingray_swim(&jr);
+    assert(jr.unk6 == 1 && jr.contact_damage == 6 && jr.attack_box == &jet_stingray_swim_attack_box && jr.hurt_box == &jet_stingray_swim_hurt_box);
+    assert(jr.terrain_box == NULL && jr.air_state == 1 && jr.collision_flags == 0 && jr.unk17 == 1);
+    assert(jr.ext.main_56.flags == 2 && visual_objects[0].active == 0x41 && visual_objects[0].id == 0x17 && visual_objects[0].unk2 == 2);
+    assert(visual_objects[0].y_pos.i.hi == 112 && visual_objects[0].unk50 == PLAYER_OBJECT(&jr));
+    jr.x_pos.i.hi = 100;
+    jet_stingray_swim(&jr);
+    assert(visual_objects[1].active == 0);
+    jr.ext.main_56.flags = 0;
+    state_terrain(0);
+    jet_stingray_swim(&jr);
+    assert(visual_objects[1].active == 0 && jr.ext.main_56.flags == 0);
+}
+static void jr_swim_targets(void)
+{
+    static const s16 spots[][3] = { { 0x40, 0x98, 1 }, { 0x3F, 0x97, 1 }, { 100, 0x98, 0 }, { 0x40, 0x50, 0 }, { 0x120, 0x98, 1 } };
+    u32 i;
+    for (i = 0; i < COUNT(spots); i++) {
+        jr_reset(1, 2, 1, 0);
+        jr.x_pos.i.hi = spots[i][0];
+        jr.y_pos.i.hi = spots[i][1];
+        func_80070514(&jr);
+        assert(jr.unk15 == (i < 4 ? PLAYER_FACING_RIGHT : 0) && jr.unk6 == 1 + spots[i][2]);
+        if (spots[i][2])
+            assert(jr.x_speed == 0 && jr.y_speed == 0 && jr.unk7C == 0);
+    }
+    assert(jr.unk6 == 2);
+    jr_reset(1, 2, 1, 0);
+    jr.x_pos.i.hi = 100;
+    jr.y_pos.i.hi = 0x98;
+    func_80070514(&jr);
+    assert(jr.x_speed == -0x20000 && jr.y_speed == 0);
+}
+static void jr_swim_next(void)
+{
+    jr_reset(1, 2, 2, 3);
+    jr.hp = 0x10;
+    jr.unk7C = 1;
+    jet_stingray_swim_next(&jr);
+    assert(jr.unk7C == 0 && jr.unk5 == 2 && jr.unk6 == 2);
+    jet_stingray_swim_next(&jr);
+    assert(jr.unk5 == 9 && jr.unk6 == 0 && jr.unk7 == 0);
+    jet_stingray_swim_next(&jr);
+    assert(jr.unk5 == 7 && *jr.ext.main_56.pattern == 0xFF);
+    jet_stingray_swim_next(&jr);
+    assert(jr.unk5 == 9);
+}
+static void jr_land(void)
+{
+    jr_reset(1, 3, 0, 0);
+    state_terrain(0x24);
+    jr.ext.main_56.flags = 1;
+    jet_stingray_land(&jr);
+    assert(jr.unk6 == 0 && jr.air_state == -1 && jr.terrain_box == &jet_stingray_terrain_box && jr.y_speed == -FIXED(2));
+    assert(jr.y_pos.i.hi == 122 && jr.ext.main_56.flags == 2 && visual_objects[0].id == 0x17 && visual_objects[0].unk2 == 2);
+    jr.collision_flags = 8;
+    jet_stingray_land(&jr);
+    assert(jr.unk6 == 1 && jr.air_state == 0 && jr.y_speed == 0 && jr.unk7C == 0x28 && jr.unk17 == 0);
+    assert(jr.attack_box == &jet_stingray_land_attack_box && jr.hurt_box == &jet_stingray_land_hurt_box && visual_objects[1].active == 0);
+    jr.collision_flags = 0;
+    jet_stingray_land(&jr);
+    assert(jr.unk6 == 1);
+    jr.collision_flags = 8;
+    jet_stingray_land(&jr);
+    assert(jr.unk6 == 2 && jr.unk7C == 0x28);
+    jr.unk7C = 2;
+    state_terrain(0);
+    jet_stingray_land(&jr);
+    assert(jr.unk7C == 1 && jr.unk5 == 3);
+    jet_stingray_land(&jr);
+    assert(jr.unk5 == 4 && jr.unk6 == 0);
+}
+static void jr_vortex(void)
+{
+    jr_reset(1, 4, 0, 0);
+    jr.ext.main_56.vortex_result = 2;
+    jet_stingray_vortex(&jr);
+    assert(jr.unk7 == 1 && jr.unk6 == 0 && jr.ext.main_56.vortex_result == 0 && jr.unk17 == 2);
+    jr_step(5, 0, 0);
+    jet_stingray_vortex(&jr);
+    assert(jr.unk6 == 1 && jr.unk7 == 0 && jr.unk7C == 0x14);
+    jr.unk6 = 3;
+    effect_objects[0].active = 1;
+    jr.ext.main_56.object.effect = &effect_objects[0];
+    jet_stingray_vortex(&jr);
+    assert(jr.unk5 == 4 && jr.unk6 == 3);
+    effect_objects[0].active = 0;
+    jet_stingray_vortex(&jr);
+    assert(jr.unk5 == 6 && jr.unk6 == 0);
+}
+#ifndef VERSION_DEMO
+static void jr_vortex_pull(void)
+{
+    jr_reset(1, 4, 2, 0);
+    jr.unk7C = 3;
+    g_Player.x_pos.i.hi = 200;
+    g_Player.y_pos.i.hi = 200;
+    func_80070A38(&jr);
+    assert(g_Player.x_pos.i.hi == 197 && g_Player.y_pos.i.hi == 200 && jr.unk6 == 2 && jr.unk7C == 2);
+    g_Player.x_pos.i.hi = 200;
+    g_Player.y_pos.i.hi = 100;
+    func_80070A38(&jr);
+    assert(g_Player.x_pos.i.hi == 197 && g_Player.y_pos.i.hi == 102 && jr.unk6 == 2 && jr.unk7C == 1);
+    g_Player.x_pos.i.hi = 150;
+    g_Player.y_pos.i.hi = 100;
+    func_80070A38(&jr);
+    assert(g_Player.x_pos.i.hi == 153 && g_Player.y_pos.i.hi == 102 && jr.unk6 == 3 && jr.ext.main_56.vortex_result == 2);
+    jr.unk6 = 2;
+    g_Player.x_pos.i.hi = 300;
+    g_Player.y_pos.i.hi = 300;
+    func_80070A38(&jr);
+    assert(jr.unk6 == 3 && jr.unk7C == 0 && jr.ext.main_56.vortex_result == 1 && visual_objects[0].active == 0);
+}
+#endif
+static void jr_ambush_exit(void)
+{
+    jr_reset(1, 5, 0, 0);
+    jr.ext.main_56.flags = 0xFF;
+    jr.on_screen = 1;
+    func_800710D4(&jr);
+    assert(jr.unk7 == 1 && jr.unk6 == 0 && jr.ext.main_56.flags == 0xFC && jr.contact_damage == 9 && jr.y_speed == FIXED(9));
+    assert(jr.attack_box == &jet_stingray_ambush_attack_box && jr.hurt_box == &jet_stingray_ambush_hurt_box && jr.unk17 == 7);
+    jr.on_screen = 0;
+    func_800710D4(&jr);
+    assert(jr.unk6 == 1 && jr.unk7 == 0 && jr.unk7C == 0x3C);
+}
+static void jr_ambush_surface(void)
+{
+    jr_reset(1, 5, 3, 0);
+    jr.unk7C = 100;
+    jr.y_pos.i.hi = 0x130;
+    func_800710D4(&jr);
+    assert(jr.unk7C == 99 && jr.ext.main_56.flags == 0 && visual_objects[0].active == 0);
+    state_terrain(0x10);
+    func_800710D4(&jr);
+    assert(jr.ext.main_56.flags == 1 && visual_objects[3].active == 0x41 && visual_objects[4].active == 0);
+    assert(visual_objects[0].x_pos.i.hi == 181 && visual_objects[0].y_pos.i.hi == 0x128 && visual_objects[3].unk2 == 1);
+    state_terrain(0x38);
+    func_800710D4(&jr);
+    assert(visual_objects[4].active == 0);
+    jr.ext.main_56.flags = 0;
+    jr.y_pos.i.hi = 0x120;
+    func_800710D4(&jr);
+    assert(jr.ext.main_56.flags == 0 && visual_objects[4].active == 0);
+    state_terrain(0x24);
+    func_800710D4(&jr);
+    assert(jr.ext.main_56.flags == 2 && visual_objects[4].unk2 == 2);
+    func_800710D4(&jr);
+    assert(visual_objects[5].active == 0);
+}
+static void jr_ambush_drop_rise_return(void)
+{
+    jr_reset(1, 5, 1, 0);
+    jr.unk7C = 2;
+    jet_stingray_ambush_drop(&jr);
+    assert(jr.unk7 == 0 && jr.unk7C == 1);
+    jr.unk7 = 1;
+    jet_stingray_ambush_drop(&jr);
+    assert(jr.unk7 == 1);
+    jr.on_screen = 1;
+    jet_stingray_ambush_drop(&jr);
+    assert(jr.unk7 == 2);
+    jet_stingray_ambush_drop(&jr);
+    assert(jr.unk7 == 2);
+    jr.on_screen = 0;
+    jet_stingray_ambush_drop(&jr);
+    assert(jr.unk6 == 2 && jr.unk7 == 0 && jr.unk7C == 0x28);
+    jr.unk7C = 2;
+    jet_stingray_ambush_rise(&jr);
+    assert(jr.unk7 == 0 && jr.unk7C == 1);
+    jr.unk7 = 1;
+    jet_stingray_ambush_rise(&jr);
+    assert(jr.unk7 == 1);
+    jr.on_screen = 1;
+    jet_stingray_ambush_rise(&jr);
+    assert(jr.unk7 == 2);
+    jet_stingray_ambush_rise(&jr);
+    assert(jr.unk7 == 2);
+    jr.on_screen = 0;
+    jet_stingray_ambush_rise(&jr);
+    assert(jr.unk6 == 3 && jr.unk7 == 0 && jr.unk7C == 0x5A);
+    jr.unk7C = 2;
+    jet_stingray_ambush_return(&jr);
+    assert(jr.unk7C == 1 && jr.unk5 == 5);
+    background_objects[0].unk1E = 0x100;
+    background_objects[0].y_pos.i.hi = 0x200;
+    jet_stingray_ambush_return(&jr);
+    assert(jr.unk5 == 2 && jr.x_pos.i.hi == 0x220 && jr.y_pos.i.hi == 0x1B0);
+    jr.unk5 = 5;
+    jr.unk7C = 1;
+    jr.x_pos.i.hi = 0x19F;
+    background_objects[0].x_pos.i.hi = 0x100;
+    jet_stingray_ambush_return(&jr);
+    assert(jr.unk5 == 2 && jr.x_pos.i.hi == 0x140);
+}
+static void jr_dash(void)
+{
+    jr_reset(1, 6, 0, 0);
+    jr.x_speed = 0x10000;
+    jet_stingray_dash(&jr);
+    assert(jr.unk7 == 1 && jr.unk6 == 0 && jr.contact_damage == 9 && jr.x_speed == 0 && jr.unk17 == 5);
+    jr_step(5, 0, 0);
+    jet_stingray_dash(&jr);
+    assert(jr.unk6 == 1 && jr.unk7 == 0 && jr.unk7C == 0x14);
+    jr.unk7C = 2;
+    jet_stingray_dash(&jr);
+    assert(jr.unk7C == 1 && jr.unk7 == 0);
+    jet_stingray_dash(&jr);
+    assert(jr.unk7 == 1 && jr.x_speed == FIXED(-6) && jr.attack_box == &jet_stingray_dash_attack_box && jr.hurt_box == &jet_stingray_dash_hurt_box);
+    assert(jr.unk17 == 6 && jr.x_pos.i.hi == 154);
+    jr.unk7 = 0;
+    jr.unk7C = 1;
+    jr.unk15 = PLAYER_FACING_RIGHT;
+    jet_stingray_dash(&jr);
+    assert(jr.x_speed == FIXED(6));
+    jr.on_screen = 1;
+    jet_stingray_dash(&jr);
+    assert(jr.unk6 == 1);
+    jr.on_screen = 0;
+    background_objects[0].unk22 = 0x100;
+    jet_stingray_dash(&jr);
+    assert(jr.unk6 == 2 && jr.unk7 == 0 && jr.unk7C == 0x78 && jr.x_speed == 0 && jr.y_pos.i.hi == 0xB0);
+}
+static void jr_dash_return(void)
+{
+    jr_reset(1, 6, 2, 0);
+    jr.unk7C = 2;
+    background_objects[0].unk1E = 0x100;
+    background_objects[0].x_pos.i.hi = 161;
+    background_objects[0].y_pos.i.hi = 0x200;
+    jet_stingray_dash(&jr);
+    assert(jr.unk7C == 1 && jr.unk5 == 6);
+    jet_stingray_dash(&jr);
+    assert(jr.unk5 == 2 && jr.unk6 == 0 && jr.x_pos.i.hi == 0x140 && jr.y_pos.i.hi == 0x1B0);
+    jr.unk5 = 6;
+    jr.unk6 = 2;
+    jr.unk7C = 1;
+    jr.x_pos.i.hi = 161;
+    jet_stingray_dash(&jr);
+    assert(jr.x_pos.i.hi == 0x220);
+}
+static void jr_leap(void)
+{
+    jr_reset(1, 7, 0, 0);
+    jr.ext.main_56.flags = 3;
+    jet_stingray_leap(&jr);
+    assert(jr.unk6 == 1 && jr.contact_damage == 7 && jr.attack_box == &jet_stingray_leap_attack_box && jr.hurt_box == jet_stingray_leap_hurt_boxes);
+    assert(jr.x_accel == 0 && jr.ext.main_56.flags == 1 && jr.unk17 == 4);
+    assert(jr.x_pos.i.hi == 155 && jr.y_pos.val == FIXED(129.5) && jr.y_speed == FIXED(-9.5) + FIXED(0.2578125));
+    jr.unk6 = 0;
+    jr.unk15 = PLAYER_FACING_RIGHT;
+    state_terrain(0x24);
+    jet_stingray_leap(&jr);
+    assert(jr.x_speed == 0x50000 && jr.ext.main_56.flags == 3 && visual_objects[0].id == 0x17 && visual_objects[0].unk2 == 2);
+    jet_stingray_leap(&jr);
+    assert(jr.unk6 == 1 && visual_objects[1].active == 0);
+    jr.y_speed = 1;
+    jet_stingray_leap(&jr);
+    assert(jr.unk6 == 2 && jr.y_speed == FIXED(0.8125) && jr.gravity == -FIXED(0.8125));
+    assert(jr.ext.main_56.flags == 3 && visual_objects[1].unk2 == 2);
+    jr.on_screen = 1;
+    jet_stingray_leap(&jr);
+    assert(jr.unk6 == 2 && jr.unk5 == 7);
+    jr.on_screen = 0;
+    background_objects[0].unk1E = 0x100;
+    background_objects[0].x_pos.i.hi = 0x400;
+    background_objects[0].y_pos.i.hi = 0x200;
+    jet_stingray_leap(&jr);
+    assert(jr.unk5 == 2 && jr.unk6 == 0 && jr.x_pos.i.hi == 0x140 + 5 && jr.y_pos.i.hi < 0x1B0);
+    jr.unk5 = 7;
+    jr.unk6 = 2;
+    background_objects[0].x_pos.i.hi = 0;
+    jet_stingray_leap(&jr);
+    assert(jr.unk5 == 2 && jr.x_pos.i.hi == 0x220 + 5);
+}
+static void jr_missiles(void)
+{
+    jr_reset(1, 8, 0, 0);
+    jet_stingray_missiles(&jr);
+    assert(jr.unk7 == 1 && jr.unk7C == 0x31);
+    jr.unk7C = 1;
+    jet_stingray_missiles(&jr);
+    assert(jr.unk7 == 2 && jr.unk7E == 3 && jr.unk17 == 9);
+    jr_step(5, 0, 1);
+    jet_stingray_missiles(&jr);
+    assert(jr.unk6 == 0 && shot_objects[0].active == 0);
+    jr_step(5, 2, 1);
+    jet_stingray_missiles(&jr);
+    assert(jr.unk6 == 1 && jr.unk7C == 0x14 && jr.animation_step.fields.event == 0);
+    jr.unk5 = 9;
+    jr.unk6 = 0;
+    jr.unk7 = 1;
+    jr.unk7C = 1;
+    jet_stingray_missiles_wide(&jr);
+    assert(jr.unk7E == 4 && jr.unk7 == 2);
+}
+static void jr_missiles_repeat_finish(void)
+{
+    jr_reset(1, 8, 1, 0);
+    jr.unk7C = 1;
+    jr.unk7E = 1;
+    jet_stingray_missiles(&jr);
+    assert(jr.unk7C == 0 && jr.unk6 == 1);
+    jet_stingray_missiles(&jr);
+    assert(jr.unk6 == 0 && jr.unk7E == 0);
+    jr.unk6 = 1;
+    jr.unk7 = 3;
+    jet_stingray_missiles(&jr);
+    assert(jr.unk6 == 2 && jr.unk7 == 0 && jr.unk17 == 0xA);
+    jr.unk7C = 3;
+    jr_step(5, 0, 1);
+    jet_stingray_missiles(&jr);
+    assert(jr.unk7 == 0 && jr.unk7C == 2);
+    jr_step(5, 0, 0);
+    jet_stingray_missiles(&jr);
+    assert(jr.unk7 == 1 && jr.unk7C == 0x27 && jr.unk17 == 1 && jr.animation_cursor == (const u8*)jet_stingray_animations[1] + 8);
+    jr.unk7C = 1;
+    jet_stingray_missiles(&jr);
+    assert(jr.unk5 == 2 && jr.unk6 == 1 && jr.unk7 == 0);
+}
+static void jr_stagger(void)
+{
+    jr_reset(3, 1, 0, 0);
+    jr.unk42 = 0x8123;
+    jet_stingray_stagger(&jr);
+    assert(jr.collision_data == D_801060F0 && jr.unk42 == 0x123 && jr.unk6 == 1 && jr.unk17 == 0x16);
+    jr_step(5, 0, 1);
+    jet_stingray_stagger(&jr);
+    assert(jr.unk7 == 0);
+    jr_step(5, 0, 0);
+    jet_stingray_stagger(&jr);
+    assert(jr.unk7 == 1 && jr.unk7C == 0x78);
+    jr.unk7C = 2;
+    jet_stingray_stagger(&jr);
+    assert(jr.unk7C == 1 && jr.unk6 == 1);
+    jet_stingray_stagger(&jr);
+    assert(jr.unk6 == 2 && jr.unk7 == 0 && jr.unk7C == 0xA && jr.ext.main_56.unk89.value == 5);
+    jr.unk7C = 2;
+    jet_stingray_stagger(&jr);
+    assert(jr.unk7C == 1 && jr.x_pos.i.hi == 165 && jr.ext.main_56.unk89.signed_value == -5);
+    jet_stingray_stagger(&jr);
+    assert(jr.unk6 == 3 && jr.unk17 == 0x17 && misc_objects[5].active == 0x41 && misc_objects[5].id == 3 && misc_objects[6].active == 0);
+    jr_step(5, 0, 1);
+    jet_stingray_stagger(&jr);
+    assert(jr.unk6 == 3);
+    jr_step(5, 0, 0);
+    jr.x_speed = 0x10000;
+    jet_stingray_stagger(&jr);
+    assert(jr.unk6 == 4 && jr.y_speed == FIXED(8) && jr.x_speed == 0 && jr.unk17 == 7);
+    jr.on_screen = 1;
+    jet_stingray_stagger(&jr);
+    assert(jr.state == 3 && jr.y_pos.i.hi == 112);
+    jr.on_screen = 0;
+    jet_stingray_stagger(&jr);
+    assert(jr.state == 1 && jr.unk5 == 2 && jr.unk6 == 0 && jr.unk7 == 0 && jr.collision_data == D_801079F8);
+}
+static void jr_death_finish_stage(void)
+{
+    jr_reset(2, 2, 0, 0);
+    effect_objects[0].active = 1;
+    effect_objects[0].unk7 = 1;
+    jr.ext.main_56.object.effect = &effect_objects[0];
+    jr.on_screen = 1;
+    jet_stingray_death(&jr);
+    assert(jr.unk5 == 2 && jr.on_screen == 0 && jr.unk42 == 0);
+    effect_objects[0].unk7 = 0;
+    jet_stingray_death(&jr);
+    assert(jr.unk42 == 0x8000 && jr.unk7E == 5 && jr.on_screen == C_TEST_VISIBLE(jr.unk16));
+    jr.unk7E = 2;
+    jet_stingray_death(&jr);
+    assert(jr.unk42 == 0x8000 && jr.unk7E == 1);
+    effect_objects[0].active = 0;
+    engine_obj.stage = 5;
+    engine_obj.checkpoint = 1;
+    engine_obj.unkF = 0;
+    jet_stingray_death(&jr);
+    assert(jr.active == 0 && engine_obj.unkF == 0x10 && engine_obj.checkpoint == 1);
+}
+static void (*const jr_cases[])(void) = {
+    jr_intro_warning,
+    jr_intro_emerge,
+    jr_intro_rise,
+    jr_intro_pose,
+    jr_intro_fill_health,
+    jr_intro_finish,
+    jr_fight_unhit,
+    jr_fight_lethal,
+    jr_fight_x_staggers,
+    jr_fight_x_hit_while_flashing,
+    jr_fight_x_immune,
+    jr_fight_zero_ignored,
+    jr_swim_splash,
+    jr_swim_targets,
+    jr_swim_next,
+    jr_land,
+    jr_vortex,
+#ifndef VERSION_DEMO
+    jr_vortex_pull,
+#endif
+    jr_ambush_exit,
+    jr_ambush_surface,
+    jr_ambush_drop_rise_return,
+    jr_dash,
+    jr_dash_return,
+    jr_leap,
+    jr_missiles,
+    jr_missiles_repeat_finish,
+    jr_stagger,
+    jr_death_finish_stage,
+};
+static u32 jr_run(u32 row)
+{
+    jr_cases[row]();
+    return 1;
+}
 
 const struct CTestGroup c_test_groups[] = {
     { "jet_stingray_states", 0, 0, COUNT(jet_stingray_states_cases), test_jet_stingray_states },
@@ -682,10 +1323,15 @@ const struct CTestGroup c_test_groups[] = {
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "jet_stingray_ambush_drop_start", jet_stingray_ambush_drop_start_cases, jet_stingray_ambush_drop_start_cases_expected, COUNT(jet_stingray_ambush_drop_start_cases), 0 },
     { "jet_stingray_ambush_rise_start", jet_stingray_ambush_rise_start_cases, jet_stingray_ambush_rise_start_cases_expected, COUNT(jet_stingray_ambush_rise_start_cases), 0 },
+#ifndef VERSION_DEMO
     { "jet_stingray_intro_warning_wait", jet_stingray_intro_warning_wait_cases, jet_stingray_intro_warning_wait_cases_expected, COUNT(jet_stingray_intro_warning_wait_cases), 0 },
+#endif
     { "Jet_own_animation_event_narrow_wide_full_last_missile_slot", NULL, NULL, 24, missile },
+#ifndef VERSION_DEMO
     { "real_boss_splash_full_visual_pool_and_last_slot_all_layers", NULL, NULL, 12, splash },
     { "own_Jet_vortex_water_debris_full_visual_pool_two_draws_all_layers", NULL, NULL, 48, vortex },
+#endif
+    { "jet_stingray_state_steps", NULL, NULL, COUNT(jr_cases), jr_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(jet_stingray_states_cases) + COUNT(stingray_damage_dispatch_cases_expected) + COUNT(stingray_vortex_visual_pool_cases_expected) + 1 + 2 + 2 + COUNT(pool_full_cases) + COUNT(jet_stingray_ambush_drop_start_cases) + COUNT(jet_stingray_ambush_rise_start_cases) + COUNT(jet_stingray_intro_warning_wait_cases) + 24 + 12 + 48;
+const u32 c_test_count = COUNT(jet_stingray_states_cases) + COUNT(stingray_damage_dispatch_cases_expected) + COUNT(stingray_vortex_visual_pool_cases_expected) + 1 + 2 + 2 + COUNT(pool_full_cases) + COUNT(jet_stingray_ambush_drop_start_cases) + COUNT(jet_stingray_ambush_rise_start_cases) + WARNING_WAIT_CASES + 24 + SPLASH_VORTEX_CASES + COUNT(jr_cases);

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/misc/misc_15_vent.h"
 #include "main/misc/misc_16_vent_puff.h"
 
@@ -64,7 +65,7 @@ static u32 enter(u32 row)
         metadata[i] = (resource + i + 1) * 128 + 0x5A;
     for (i = 0; i < COUNT(archive); i++)
         archive[i] = i < 5 ? 20 + i * 4 : 0x13570000 + i;
-    D_801406A8 = metadata;
+    test_stage_graphics(metadata);
     TEST_MENU_FRAMES = (u8*)archive;
     engine_obj.unk5F = progress;
     engine_before = engine_obj;
@@ -75,12 +76,12 @@ static u32 enter(u32 row)
     obj.active = 0x41;
     obj.id = 15;
     obj.unk2 = type;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.x_pos.val = 0x1234;
     obj.y_pos.val = 0x5678;
     expected = obj;
-    expected.unk42 = 0x7881;
-    expected.unk40 = resource + 5;
+    expected.unk42 = OBJECT_CLUT(0x7881);
+    expected.unk40 = OBJECT_STAGE_TEXTURE(4);
     expected.animation_table = (u32**)vent_animations;
     expected.unk3C = (u8*)archive + 36;
     expected.x_pos.val = 124 * 65536;
@@ -92,7 +93,7 @@ static u32 enter(u32 row)
     expected.unk17 = type;
     expected.previous_animation_index = 255;
     expected.animation_cursor = (u32*)(vent_animations[type] + (type ? frame : 0));
-    expected.animation_step.packed = type ? words[frame] : 0x00010006;
+    expected.animation_step.packed = C_TEST_STEP(type ? words[frame] : 0x00010006);
     func_800CA86C(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
@@ -106,9 +107,33 @@ static u32 enter(u32 row)
     return 1;
 }
 
+
+#include "support/state_cases.h"
+#define sm state_room.misc
+#define VENT(kind, count) (state_reset(0, count, 0), sm.active = 1, sm.state = 1, sm.unk2 = kind, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x60, vent_update(&sm))
+static void vt_smoke_rest(void) { VENT(0, 0); }
+static void vt_smoke_puff(void) { VENT(0, 1); }
+static void vt_glow(void) { VENT(1, 0); }
+
+static void (*const vt_cases[])(void) = {
+    vt_smoke_rest,
+    vt_smoke_puff,
+    vt_glow,
+};
+static const u32 vt_expected[] = {
+    0x10001u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
+    0x20001u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    1u, 0x101u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+};
+static u32 test_vt(u32 row)
+{
+    return object_run(vt_cases[row], row, &vt_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "vent_steps", 0, 0, COUNT(vt_cases), test_vt },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "both_real_vent_layers_progress_four_through_seven_backed_archive", NULL, NULL, 16, enter },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(pool_full_cases) + 16;
+const u32 c_test_count = COUNT(pool_full_cases) + 16 + COUNT(vt_cases);

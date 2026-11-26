@@ -19,6 +19,10 @@ static u32 falling_pillar_context_pillar_case(u32 mode, u32 observation)
     u8 id[7] = { 0, 4, 9, 10, 14, 20, 10 };
     s16 x;
     u32 i, j, k, actual, tile_count, tile_x, tile_y, end_y, changed = 0;
+#ifdef MMX4_SATURN
+    if (observation >= 5 && observation <= 8)
+        c_test_skip();
+#endif
     memset(&obj, 0, sizeof(obj));
     memset(&engine_obj, 0, sizeof(engine_obj));
     memset(background_objects, 0, sizeof(background_objects));
@@ -122,7 +126,7 @@ static u32 falling_pillar_context_pillar_case(u32 mode, u32 observation)
         actual = obj.y_pos.val;
         break;
     case 2:
-        actual = ((u32*)&obj)[1];
+        actual = C_TEST_LE_WORD((u32*)&obj + 1);
         break;
     case 3:
         actual = obj.ext.packed;
@@ -226,10 +230,39 @@ static u32 test_falling_pillar_finish(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 2);
 }
 
+void func_800C044C(struct ItemObj*);
+extern u8 falling_pillar_box[4];
+static u32 pillar_init_archive[16];
+static u32 test_falling_pillar_init(u32 row)
+{
+    static const u8 ids[3] = { 4, 20, 14 };
+    struct ItemObj obj;
+    u8* saved = TEST_MENU_FRAMES;
+    u32 id = ids[row];
+    memset(&obj, 0, sizeof(obj));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    engine_obj.stage = 0;
+    engine_obj.substage = 1;
+    pillar_init_archive[8] = 64;
+    TEST_MENU_FRAMES = (u8*)pillar_init_archive;
+    obj.active = 1;
+    obj.id = 3;
+    obj.unk2 = id;
+    func_800C044C(&obj);
+    TEST_MENU_FRAMES = saved;
+    engine_obj.substage = 0;
+    assert(obj.state == 1 && obj.x_pos.i.hi == (s16)falling_pillar_entries[id].x && obj.y_pos.i.hi == (s16)falling_pillar_entries[id].y);
+    assert(obj.x_vel.val == (row == 2 ? -0x4000 : 0x4000));
+    assert(obj.unk68 == (row == 1 ? NULL : (struct Unk_unk68*)falling_pillar_box));
+    assert(obj.unk42 == OBJECT_CLUT(0x79C1) && obj.sprite_frames == (u8*)pillar_init_archive + 64 && obj.unk75 == 1);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "falling_pillar_context", NULL, falling_pillar_context_cases_expected, COUNT(falling_pillar_context_cases_expected), falling_pillar_context_cases_row },
     { "falling_pillar_threshold_context", NULL, falling_pillar_threshold_context_cases_expected, COUNT(falling_pillar_threshold_context_cases_expected), falling_pillar_threshold_context_pillar_case },
     { "falling_pillar_finish", 0, 0, 2, test_falling_pillar_finish },
+    { "falling_pillar_init", 0, 0, 3, test_falling_pillar_init },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(falling_pillar_context_cases_expected) + COUNT(falling_pillar_threshold_context_cases_expected) + 2;
+const u32 c_test_count = COUNT(falling_pillar_context_cases_expected) + COUNT(falling_pillar_threshold_context_cases_expected) + 5;

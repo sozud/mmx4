@@ -42,9 +42,44 @@ static u32 test_sigma_collapse_states(u32 row)
     return c_test_observe(0, row, seen, &sigma_collapse_states_expected[row * 3], 3);
 }
 
+void sigma_collapse_debris_drop(struct EffectObj*);
+static u32 debris_drop(u16 timer, u8 music)
+{
+    struct EffectObj obj;
+    u8 music_before = D_80171EA8;
+    memset(&obj, 0, sizeof(obj));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    D_8013E198[5] = -1;
+    D_80171EA8 = music;
+    obj.active = 1;
+    obj.ext.effect_9.transition_timer = timer;
+    obj.ext.effect_16.saved_background_2A = 0x77;
+    cur_random = 0x1234;
+    sigma_collapse_debris_drop(&obj);
+    D_80171EA8 = music_before;
+    return (u8)obj.active | (u32)(u16)obj.ext.effect_9.transition_timer << 8 | (u32)misc_objects[0].id << 24;
+}
+static u32 scd_waiting(void) { return debris_drop(3, 0); }
+static u32 scd_drop(void)
+{
+    u32 seen = debris_drop(1, 0);
+    assert(misc_objects[0].active == 0x41 && misc_objects[0].unk2 < 6 && misc_objects[0].unk40 == 0x77);
+    assert(background_objects[0].unk37 == 5);
+    return seen;
+}
+static u32 scd_music_started(void) { return debris_drop(3, 1); }
+static const CTestCase sigma_collapse_debris_cases[] = {
+    scd_waiting,
+    scd_drop,
+    scd_music_started,
+};
+static const u32 sigma_collapse_debris_cases_expected[] = { 0x201u, 0x39000501u, 0x300u };
+
 const struct CTestGroup c_test_groups[] = {
     { "sigma_collapse_states", 0, 0, COUNT(sigma_collapse_states_cases), test_sigma_collapse_states },
     { "sigma_collapse_init", 0, 0, 1, test_sigma_collapse_init },
+    { "sigma_collapse_debris", sigma_collapse_debris_cases, sigma_collapse_debris_cases_expected, COUNT(sigma_collapse_debris_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(sigma_collapse_states_cases) + 1;
+const u32 c_test_count = COUNT(sigma_collapse_states_cases) + 1 + COUNT(sigma_collapse_debris_cases);

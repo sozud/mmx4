@@ -11,7 +11,7 @@ void player_wall_jump_rise(struct PlayerObj*);
 static u32 gfx[16] = { 0x20, 0x24 }, sprites[16] = { 0x20, 0x24, 0x28, 0x2C, 0x30, 0x34 };
 static u8 map[3 * 256];
 static u16 pixels[2][16][16];
-static u32 attributes[] = { 0x20, 0x38 };
+static u32 attributes[] = { TEST_DISC32(0x20), TEST_DISC32(0x38) };
 static struct MiscObj misc_expected[64];
 static struct WeaponObj weapons_before[16];
 #define SAME(a, b) assert(c_test_word_difference((const u32*)&(a), (const u32*)&(b), sizeof(a) / 4) == 0)
@@ -20,7 +20,7 @@ static void animation(struct PlayerObj* p, u32 index, u32 word, u32 saber)
     p->unk17 = index;
     p->previous_animation_index = 0xFF;
     p->animation_cursor = (u32*)D_8011AFF0[index];
-    p->animation_step.packed = word;
+    p->animation_step.packed = C_TEST_STEP(word);
     p->unk38 = (u8*)gfx + (saber ? 0x24 : 0x20);
     p->unk3C = (u8*)sprites + (saber ? 0x34 : 0x20);
 }
@@ -60,7 +60,7 @@ static u32 interrupt(u32 row)
     g_Player.state = 1;
     g_Player.hp = 24;
     g_Player.bg_offset = layer;
-    g_Player.unk15 = facing ? 0x40 : 0;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     g_Player.unk5 = drop ? PLAYER_ZERO_HYOURETSUZAN : PLAYER_WALL_JUMP;
     g_Player.unk6 = 1;
     g_Player.air_state = 1;
@@ -185,7 +185,7 @@ static u32 interrupt(u32 row)
         assert(map[i] == 1);
     for (i = 0; i < 512; i++)
         assert(((u16*)pixels)[i] == (i >= 480 || (i >= 256 && (s32)(i % 16) == column)));
-    assert(attributes[0] == 0x20 && attributes[1] == 0x38);
+    assert(attributes[0] == TEST_DISC32(0x20) && attributes[1] == TEST_DISC32(0x38));
     return 1;
 }
 const struct CTestGroup c_test_groups[] = { { "wall_jump_and_ice_drop_ladder_wall_double_jump_and_pool_handoffs", NULL, NULL, 60, interrupt } };

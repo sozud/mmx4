@@ -154,8 +154,31 @@ static u32 test_sigma_laser_states(u32 row)
     return laser_run(laser_cases[row], row, &laser_expected[row * 8]);
 }
 
+static u32 laser_shrink(u8 count)
+{
+    struct QuadObj obj;
+    struct MainObj owner;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    owner.ext.main_74.pad95 = 1;
+    obj.active = 1;
+    obj.unk5C = PLAYER_OBJECT(&owner);
+    obj.ext.unk38 = count;
+    func_800D845C(&obj);
+    return obj.ext.unk38 | (u32)owner.ext.main_74.pad95 << 8 | (u32)visual_objects[0].active << 16;
+}
+static u32 sl_shrink_late(void) { return laser_shrink(3); }
+static u32 sl_shrink_early(void) { return laser_shrink(13); }
+static const CTestCase sigma_laser_shrink_cases[] = {
+    sl_shrink_late,
+    sl_shrink_early,
+};
+static const u32 sigma_laser_shrink_cases_expected[] = { 0x210002u, 0x21000Cu };
+
 const struct CTestGroup c_test_groups[] = {
+    { "sigma_laser_shrink", sigma_laser_shrink_cases, sigma_laser_shrink_cases_expected, COUNT(sigma_laser_shrink_cases), 0 },
     { "sigma_laser_states", 0, 0, COUNT(laser_cases), test_sigma_laser_states },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(laser_cases);
+const u32 c_test_count = COUNT(laser_cases) + COUNT(sigma_laser_shrink_cases);

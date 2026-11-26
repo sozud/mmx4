@@ -40,12 +40,12 @@ static u32 head_case(u32 raw, u32 observation)
     before.unk6 = 0;
     before.unk5 = raw ? 3 : 8;
     if (!raw)
-        before.unk15 = 0x40;
+        before.unk15 = PLAYER_FACING_RIGHT;
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     for (i = 0; i < sizeof(next_before); i++)
         assert(((u8*)sigma_head_formation_next)[i] == (raw && i == 15 ? 0 : ((u8*)next_before)[i]));
-    return observation == 0 ? (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u8)obj.unk15 << 16) : (u16)obj.x_pos.i.hi | ((u32)(u16)obj.y_pos.i.hi << 16);
+    return observation == 0 ? (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 16) : (u16)obj.x_pos.i.hi | ((u32)(u16)obj.y_pos.i.hi << 16);
 }
 static const u32 sigma_head_formation_context_cases_expected[] = { 0x400008u, 0x2580408u, 0x270003u, 0x2B80578u };
 static u32 sigma_head_formation_context_cases_row(u32 row)
@@ -80,7 +80,9 @@ static u32 volley_case(u32 mode)
         shot_objects[i].unk54 = (const u8*)&box;
         shot_objects[i].unk68 = &box;
         shot_objects[i].unk98 = shot_objects[i].unk61 = shot_objects[i].unk64 = shot_objects[i].unk65 = shot_objects[i].unk66 = 7;
-        shot_objects[i].unk72 = shot_objects[i].unk73 = shot_objects[i].unk74 = shot_objects[i].unk76 = shot_objects[i].unk77 = shot_objects[i].unk78 = 7;
+        shot_objects[i].unk72 = shot_objects[i].unk73 = shot_objects[i].unk76 = shot_objects[i].unk77 = 7;
+        OBJ_UNK78_SET(shot_objects[i], 7);
+        OBJ_UNK74_SET(shot_objects[i], 7);
         shot_objects[i].unk62 = shot_objects[i].unk63 = shot_objects[i].unk7A = shot_objects[i].unk75 = 7;
     }
     owner.active = 0x41;
@@ -121,7 +123,9 @@ static u32 volley_case(u32 mode)
             child->unk54 = NULL;
             child->unk68 = NULL;
             child->unk98 = child->unk61 = child->unk64 = child->unk65 = child->unk66 = 0;
-            child->unk72 = child->unk73 = child->unk74 = child->unk76 = child->unk77 = child->unk78 = 0;
+            child->unk72 = child->unk73 = child->unk76 = child->unk77 = 0;
+            OBJ_UNK78_SET(*child, 0);
+            OBJ_UNK74_SET(*child, 0);
             child->unk62 = child->unk63 = child->unk7A = child->unk75 = 0;
         }
     }
@@ -150,7 +154,7 @@ static u32 test_sigma_head_move(u32 row)
     obj.unk2 = 2;
     obj.unk8C.bytes[1] = 0;
     sigma_head_move(&obj);
-    observed_values[0] = (u32)obj.unk15;
+    observed_values[0] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[1] = (u32)obj.unk5;
     observed_values[2] = (u32)obj.unk6;
     observed_values[3] = (u32)obj.x_pos.i.hi;
@@ -451,7 +455,9 @@ static u32 lightning(u32 row)
     return 1;
 }
 
+static u32 head_paths(u32 row);
 const struct CTestGroup c_test_groups[] = {
+    { "head_paths", 0, 0, 11, head_paths },
     { "sigma_head_signals", 0, 0, COUNT(sigma_head_signals_cases), test_sigma_head_signals },
     { "sigma_head_states", 0, 0, COUNT(sigma_head_states_cases), test_sigma_head_states },
     { "sigma_head_formation_context", NULL, sigma_head_formation_context_cases_expected, COUNT(sigma_head_formation_context_cases_expected), sigma_head_formation_context_cases_row },
@@ -460,4 +466,76 @@ const struct CTestGroup c_test_groups[] = {
     { "independent_full_pools_sixth_bolt_and_waiting_tick", NULL, NULL, 16, lightning },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(sigma_head_signals_cases) + COUNT(sigma_head_states_cases) + COUNT(sigma_head_formation_context_cases_expected) + COUNT(sigma_head_wall_volley_pools_cases_expected) + 1 + 16;
+const u32 c_test_count = COUNT(sigma_head_signals_cases) + COUNT(sigma_head_states_cases) + COUNT(sigma_head_formation_context_cases_expected) + COUNT(sigma_head_wall_volley_pools_cases_expected) + 1 + 16 + 11;
+
+#include "weapon_resources.h"
+void sigma_head_move(struct ShotObj*);
+void func_800AB050(struct ShotObj*);
+void func_800AB170(struct ShotObj*);
+void sigma_head_vanish_blink(struct ShotObj*);
+static u32 head_paths(u32 row)
+{
+    struct ShotObj obj;
+    struct MainObj owner;
+    u8 heading;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    obj.active = 0x41;
+    obj.id = 53;
+    obj.state = 1;
+    obj.unk7C = (struct WeaponObj*)&owner;
+    obj.x_pos.i.hi = 100;
+    obj.y_pos.i.hi = 100;
+    obj.animation_table = (u32**)state_table;
+    obj.animation_cursor = state_step;
+    obj.animation_step.packed = state_step[0];
+    if (row <= 2) {
+        obj.unk5 = 1;
+        obj.unk6 = 1;
+        obj.unk8C.bytes[2] = row == 1 ? 3 : 0;
+        heading = angle_to_point(OBJECT_HEADER(&obj), sigma_head_formation_end[obj.unk8C.bytes[2]][0][0] << 16,
+            sigma_head_formation_end[obj.unk8C.bytes[2]][0][1] << 16);
+        obj.unk8C.bytes[1] = row == 0 ? heading : heading ^ 0x10;
+        sigma_head_move(&obj);
+        if (row == 0) {
+            assert(obj.unk6 == 1 && obj.unk5 == 1 && obj.x_pos.i.hi == 100);
+        } else {
+            assert(obj.unk6 == 0 && obj.unk5 == (row == 1 ? 9 : 3) && obj.unk15 == 0);
+            assert(obj.x_pos.i.hi == sigma_head_formation_end[obj.unk8C.bytes[2]][0][0]);
+        }
+        return 1;
+    }
+    if (row <= 4) {
+        obj.unk5 = 3;
+        obj.unk8C.bytes[0] = 1;
+        obj.unk8C.bytes[2] = 1;
+        owner.ext.main_74.unk8C = row == 3 ? 0 : 2;
+        func_800AB050(&obj);
+        assert(obj.unk5 == 3 && obj.on_screen == 1);
+        return 1;
+    }
+    if (row <= 7) {
+        obj.unk6 = 1;
+        obj.timer = row == 5 ? 1 : 5;
+        g_Player.y_pos.i.hi = row == 5 ? 110 : row == 6 ? 90 : 102;
+        func_800AB170(&obj);
+        assert(obj.y_pos.i.hi == (row == 5 ? 103 : row == 6 ? 97 : 102));
+        return 1;
+    }
+    obj.unk5 = 7;
+    obj.unk6 = 2;
+    obj.timer = row == 8 ? 1 : 5;
+    obj.unk8A = row == 9 ? 1 : 3;
+    obj.unk8C.byte = 0;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.on_screen = 0;
+    sigma_head_vanish_blink(&obj);
+    if (row == 8) {
+        assert(obj.unk5 == 3 && obj.unk6 == 0 && obj.x_pos.i.hi == 0 && obj.unk15 == 0);
+    } else {
+        assert(obj.unk8C.byte == (row == 9) && obj.unk8A == 2 && obj.on_screen == (row == 9));
+    }
+    return 1;
+}

@@ -15,7 +15,7 @@ static u32 travel_case(u32 mode, u32 observation)
     obj.unk5 = 0;
     obj.unk6 = 0x35;
     obj.unk7 = 0x27;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.unk17 = 12;
     obj.previous_animation_index = 0xA5;
     obj.timer = 0x1234;
@@ -64,7 +64,7 @@ static u32 travel_case(u32 mode, u32 observation)
         actual = obj.unk84.value;
         break;
     case 5:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     default:
         actual = cursor_index;
@@ -117,7 +117,7 @@ static u32 lifetime(u32 row)
     obj.unk6 = 7;
     obj.timer = 2;
     obj.on_screen = 7;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x1234;
     obj.unk5C = 1;
     obj.unk60 = 6;
@@ -130,7 +130,7 @@ static u32 lifetime(u32 row)
     obj.unk58.collision_bounds = D_801060F0;
     obj.animation_table = (u32**)double_animations;
     set_animation(&obj, 12);
-    assert(obj.animation_step.packed == 0x33010001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x33010001));
     if (hit) {
         weapon_objects[0].active = 0x21;
         weapon_objects[0].id = 56;
@@ -145,7 +145,7 @@ static u32 lifetime(u32 row)
     expected.unk1C = obj.y_pos;
     expected.timer = 1;
     expected.animation_cursor = (u32*)double_animations[12] + 1;
-    expected.animation_step.packed = 0x34010001;
+    expected.animation_step.packed = C_TEST_STEP(0x34010001);
     if (dead) {
         expected.state = 2;
         expected.on_screen = 0;
@@ -175,9 +175,43 @@ static u32 lifetime(u32 row)
     return 1;
 }
 
+
+#include "support/state_cases.h"
+static struct WeaponObj ball_owner;
+#define ss state_room.shot
+#define BALL(st, step, setup) (state_reset(step, 0, 0), memset(&ball_owner, 0, sizeof(ball_owner)), ball_owner.state = 1, memset(&g_Player, 0, sizeof(g_Player)), g_Player.x_pos.i.hi = 0x40, g_Player.y_pos.i.hi = 0x80, ss.active = 0x41, ss.state = st, ss.unk7C = &ball_owner, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60, ss.timer = 3, setup, double_ball_update(&ss), state_extra = ss.timer | (u32)ss.unk17 << 16 | (u32)(u16)ss.unk8A << 24)
+static void dbl_start_left(void) { BALL(0, 0, 0); }
+static void dbl_start_right(void) { BALL(0, 0, ss.unk15 = PLAYER_FACING_RIGHT); }
+static void dbl_holding(void) { BALL(1, 1, 0); }
+static void dbl_held(void) { BALL(1, 1, ss.timer = 1); }
+static void dbl_bursting(void) { BALL(1, 2, ss.animation_step.fields.relative_step = 1); }
+static void dbl_burst_done(void) { BALL(1, 2, 0); }
+
+static void (*const dbl_cases[])(void) = {
+    dbl_start_left,
+    dbl_start_right,
+    dbl_holding,
+    dbl_held,
+    dbl_bursting,
+    dbl_burst_done,
+};
+static const u32 dbl_expected[] = {
+    0x1u, 0xFF000041u, 0x690000u, 0x6D0000u, 0xFFFC4DF4u, 0xFFFE7824u, 0u, 0x50000u, 0x100C0000u, 0u,
+    0x1u, 0xFF400041u, 0x970000u, 0x6D0000u, 0xFFFC13B0u, 0xFFFF383Cu, 0u, 0x50000u, 0x1B0C0000u, 0u,
+    0x101u, 0x41u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x2u, 0u,
+    0x201u, 0xFF000041u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0xD0000u, 0u,
+    0x201u, 0x41u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x3u, 0u,
+    0x2u, 0x41u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x3u, 0u,
+};
+static u32 test_dbl(u32 row)
+{
+    return object_run(dbl_cases[row], row, &dbl_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "double_ball_steps", 0, 0, COUNT(dbl_cases), test_dbl },
     { "double_ball_positions", NULL, double_ball_positions_cases_expected, COUNT(double_ball_positions_cases_expected), double_ball_positions_cases_row },
     { "owner_death_weapon_clear_and_viewport_edges", NULL, NULL, COUNT(screen_x) * 8, lifetime },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(double_ball_positions_cases_expected) + COUNT(screen_x) * 8;
+const u32 c_test_count = COUNT(double_ball_positions_cases_expected) + COUNT(screen_x) * 8 + COUNT(dbl_cases);

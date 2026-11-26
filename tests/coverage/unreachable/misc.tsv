@@ -1,0 +1,18 @@
+file	line	function	outcome	class	evidence
+src/main/misc/misc_52_npc_cutscene.c	182	npc_cutscene_reply	taken	unreachable-logic	The switch (unk5) covers the reply phases 0-2; the reply sets unk5 only to 1 and 2 (init leaves 0), and phase 2 ends the reply.
+src/main/misc/misc_52_npc_cutscene.c	84	func_800D2190	taken	unreachable-logic	The switch (unk2) covers NPC 0, NPC 1 and the listener 2; npc_cutscene_main indexes the three-entry npc_cutscene_type_funcs with the same unk2.
+src/main/misc/misc_39_iris_intro_crystal.c	103	func_800CF950	taken	unreachable-logic	The switch (i) sits in for (i = 0; i < 5; i++) and has a case for each of 0-4.
+src/main/misc/misc_04_dragon_rubble.c	43	dragon_rubble_init	taken	unreachable-logic	func_8002938C returns an unsigned resource index, so clut_x = index * 4 + 0x18 is never negative (the compiler's signed-division rounding fix-up).
+src/main/misc/misc_04_dragon_rubble.c	48	dragon_rubble_init	taken	unreachable-logic	adjusted_y = index + 6 with an unsigned resource index is never negative (the same signed-division fix-up).
+src/main/misc/misc_31_option_toggle.c	89	func_800CDF4C	taken	unreachable-logic	A cancel press already set unk2 to -1 in the identical test just before, so the second test stops at unk2 == -1 and never reaches its cancel term true.
+src/main/misc/misc_13_stage_portrait.c	69	stage_portrait_select	taken	unreachable-logic	stage comes from mission_stage_order (0-11), so (stage - 1) * 2 + 0xB is never negative (the compiler's signed-division fix-up).
+src/main/misc/misc_13_stage_portrait.c	74	stage_portrait_select	taken	unreachable-logic	stage + 4 with stage from mission_stage_order (0-11) is never negative (the same signed-division fix-up).
+src/main/misc/misc_52_npc_cutscene.c	84	func_800D2190	taken	unreachable-logic	The implicit default of switch (unk2): the NPC kinds 0-2 are all named, and the spawners (the stage record, 102FC.c's kind 1, the talker's listener kind 2) use only those.
+src/main/misc/misc_52_npc_cutscene.c	182	npc_cutscene_reply	taken	unreachable-logic	The implicit default of switch (unk5): the reply starts at 0 and its own steps set unk5 only to 1 and 2, all named.
+src/main/misc/misc_44_stage_cutscene.c	136	func_800D0C68	taken	unreachable-logic	The implicit default of switch ((s8)timer): the cutscene object's timer field holds its kind 0-2, all named.
+src/main/misc/misc_39_iris_intro_crystal.c	103	func_800CF950	taken	unreachable-logic	The implicit default of switch (i): i is the index of the loop for (i = 0; i < 5; i++), and cases 0-4 are all named.
+src/main/misc/misc_28_select_a_character.c	432	select_char_character_exit	taken	unreachable-logic	The implicit default of switch (unk6): the exit step's own sub-steps set unk6 only to 0-3, all named.
+src/main/misc/misc_08_crumbling_tile.c	171	crumbling_tile_break_second	taken	unreachable-logic	The implicit default of switch (unk2): every crumbling tile kind the stage records use is named.
+src/main/misc/misc_32_option_sprite.c	69	func_800CE1D4	taken	unreachable-logic	A cancel press already set unk2 to -1 in the identical test just before, so the second test stops at unk2 == -1 and never reaches its cancel term true.
+src/main/misc/misc_33_cyberspace_warp.c	105	func_800CE388	taken	unreachable-logic	The implicit default of switch (unk2): only effect_38_cyberspace_trial spawns the warp (misc 0x21), with subtypes 0-1 (cyberspace_trial_spawn_warps) or 2-4 (its variant switch, whose default returns first), all named cases.
+src/main/misc/misc_03_debris.c	130	func_800C842C	not-taken	unreachable-logic	Saturn machine branch (no llvm-cov branch): the sign fix-up SH-GCC emits for a signed % 16; the dividend is a func_8002938C slot index times 4 plus a constant, never negative.

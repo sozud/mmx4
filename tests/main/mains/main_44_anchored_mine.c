@@ -32,8 +32,22 @@ static u32 test_anchored_mine_main(u32 row)
     return c_test_observe(0, row, observed_values, anchored_mine_main_expected, 4);
 }
 
+#include "support/state_cases.h"
+static void am_idle_on_screen(void) { state_reset(2, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), state_terrain(0), g_Player.unk68 = NULL, so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, anchored_mine_main(&so), state_extra = so.ext.main_44.saved_unk5; }
+static void (*const anchored_mine_states_cases[])(void) = {
+    am_idle_on_screen,
+};
+static const u32 anchored_mine_states_expected[] = {
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2u, 0x41000000u,
+};
+static u32 test_anchored_mine_states(u32 row)
+{
+    return state_run(anchored_mine_states_cases[row], row, &anchored_mine_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "anchored_mine_main", 0, 0, 1, test_anchored_mine_main },
+    { "anchored_mine_states", 0, 0, COUNT(anchored_mine_states_cases), test_anchored_mine_states },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1;
+const u32 c_test_count = 1 + COUNT(anchored_mine_states_cases);

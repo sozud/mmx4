@@ -1,6 +1,14 @@
 #include "test_runtime.h"
 #include "main/55C4.h"
 #include "main/323C.h"
+#ifdef MMX4_SATURN
+#include "saturn/platform.h"
+#define TEST_READY_TEXTURE 0xE000
+#define TEST_READY_CLEARED(i) 0
+#else
+#define TEST_READY_TEXTURE 0x1E00
+#define TEST_READY_CLEARED(i) ((i) ? 0x8000 : 0)
+#endif
 
 void ready_text_init(struct MiscObj*);
 void func_8001DE54(struct GameInfo*);
@@ -44,11 +52,11 @@ static u32 test_ready_archive(u32 row)
     obj.unk2 = part;
     expected = obj;
     expected.unk3C = (u8*)archive + (character == CHARACTER_X ? 0x80 : 0x300);
-    expected.unk40 = 0x1E00;
+    expected.unk40 = TEST_READY_TEXTURE;
     expected.animation_table = (u32**)ready_text_animations;
     expected.state = 1;
     expected.bg_offset = -1;
-    expected.unk42 = clut[part];
+    expected.unk42 = OBJECT_CLUT(clut[part]);
     expected.x_pos.i.hi = x[part];
     expected.y_pos.i.hi = y[part];
     expected.unk16 = priority[part];
@@ -67,7 +75,7 @@ static u32 test_ready_archive(u32 row)
     if (part == 1)
         for (i = 0; i < 16; i++) {
             saved[i] = palette[0x100 + i];
-            palette_expected[0x100 + i] = i ? 0x8000 : 0;
+            palette_expected[0x100 + i] = TEST_READY_CLEARED(i);
         }
     need_palette_load = 0x20;
     ready_text_init(&obj);
@@ -110,9 +118,14 @@ static u32 test_title_coordinates(u32 row)
         for (i = 0; i < 36; i++)
             scratch.sector[i] = (s32)coordinates[i] * 65536;
         scratch.title.settled = 1;
+#ifndef MMX4_SATURN
         backgrounds[0].unk3 = 1;
+#endif
         expected.mode = 5;
     }
+#ifdef MMX4_SATURN
+    saturn_display_mode = 0;
+#endif
     func_8001DE54(&info);
     c_test_same_words(&info, &expected, sizeof(expected));
     c_test_same_words(&D_80169498, &scratch, sizeof(scratch));
@@ -122,6 +135,9 @@ static u32 test_title_coordinates(u32 row)
         == 0);
     c_test_same_words(D_800F2204, coordinates, sizeof(coordinates));
     assert(D_80139690 == OBJECT_HEADER(&owner));
+#ifdef MMX4_SATURN
+    assert(saturn_display_mode == (ready ? 3 : 0));
+#endif
     return 1;
 }
 

@@ -434,7 +434,7 @@ void eregion_wing_slash_active(struct ShotObj* self)
 {
     if (0 > self->animation_step.fields.event) {
         if (func_8002D9BC(self) == 1) {
-            MAIN_OBJECT(self->unk7C)->ext.main_8.queued_sound = 0x1C;
+            MAIN_OBJECT(self->unk7C)->ext.main_8.queued_sound = SATURN_SOUND(0x1C, 0x07);
         }
     }
 

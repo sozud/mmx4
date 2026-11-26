@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/1A5BC.h"
+#include "support/test_pad.h"
 
 extern u16 D_800EE430[16];
 extern u8 D_800F4568[], D_800F457C[];
@@ -25,30 +26,30 @@ static const struct {
     s8 transition;
     u8 expected_selection, exits;
 } navigation[] = {
-    { PADstart | PADLup, 2, 0, 0, 1, 2, 0 },
-    { PADstart, 0, 0, 0, 0, 0, 1 },
-    { PAD_CONFIRM, 7, 0, 0, 0, 7, 1 },
-    { PADLup, 0, 0, 0, 0, 7, 0 },
-    { PADLup, 1, 0, 0, 0, 0, 0 },
-    { PADLup, 2, 1, 0, 0, 1, 0 },
-    { PADLup, 7, 0, 0, 0, 6, 0 },
-    { PADLup, 7, 1, 0, 0, 4, 0 },
-    { PADLup, 7, 1, 1, 0, 6, 0 },
-    { PADLdown, 7, 0, 0, 0, 0, 0 },
-    { PADLdown, 4, 0, 0, 0, 5, 0 },
-    { PADLdown, 4, 1, 0, 0, 7, 0 },
-    { PADLdown, 4, 1, 1, 0, 5, 0 },
-    { PADLdown, 1, 1, 0, 0, 2, 0 },
+    { TEST_PAD_START | TEST_PAD_UP, 2, 0, 0, 1, 2, 0 },
+    { TEST_PAD_START, 0, 0, 0, 0, 0, 1 },
+    { TEST_PAD_CONFIRM, 7, 0, 0, 0, 7, 1 },
+    { TEST_PAD_UP, 0, 0, 0, 0, 7, 0 },
+    { TEST_PAD_UP, 1, 0, 0, 0, 0, 0 },
+    { TEST_PAD_UP, 2, 1, 0, 0, 1, 0 },
+    { TEST_PAD_UP, 7, 0, 0, 0, 6, 0 },
+    { TEST_PAD_UP, 7, 1, 0, 0, 4, 0 },
+    { TEST_PAD_UP, 7, 1, 1, 0, 6, 0 },
+    { TEST_PAD_DOWN, 7, 0, 0, 0, 0, 0 },
+    { TEST_PAD_DOWN, 4, 0, 0, 0, 5, 0 },
+    { TEST_PAD_DOWN, 4, 1, 0, 0, 7, 0 },
+    { TEST_PAD_DOWN, 4, 1, 1, 0, 5, 0 },
+    { TEST_PAD_DOWN, 1, 1, 0, 0, 2, 0 },
     { 0, 0, 0, 0, 0, 0, 0 },
     { 0, 7, 0, 0, 0, 7, 0 },
-    { PADLup | PADLright, 2, 0, 0, 0, 1, 0 },
+    { TEST_PAD_UP | TEST_PAD_RIGHT, 2, 0, 0, 0, 1, 0 },
 };
 
 static u32 test_controls_navigation(u32 row)
 {
     u32 i;
     controls_reset();
-    controller_input.pressed = navigation[row].pressed;
+    TEST_PAD_PRESSED = navigation[row].pressed;
     main_bss_state.transition.selection = navigation[row].selection;
     main_bss_state.transition.active = navigation[row].transition;
     main_bss_state.character_mode = navigation[row].both_characters;
@@ -57,15 +58,17 @@ static u32 test_controls_navigation(u32 row)
     func_8002A098(&game_info);
 
     assert(main_bss_state.transition.selection == navigation[row].expected_selection);
-    assert(main_bss_state.transition.active == (navigation[row].exits ? -1 : navigation[row].transition));
+    assert(main_bss_state.transition.active == (navigation[row].exits ? TEST_FADE_OUT_ACTIVE : navigation[row].transition));
     assert(D_8013B7D0 == 3 + navigation[row].exits);
     if (navigation[row].exits)
-        assert(main_bss_state.transition.fade_amount == 8);
+        assert(main_bss_state.transition.fade_amount == TEST_FADE_OUT_AMOUNT(8, 0));
     for (i = 0; i < COUNT(default_bindings); i++)
         assert(D_800EE430[i] == default_bindings[i]);
-    assert(controller_input.pressed == navigation[row].pressed);
+    assert(TEST_PAD_PRESSED == navigation[row].pressed);
     return main_bss_state.transition.selection;
 }
+
+#ifndef MMX4_SATURN
 
 static const struct {
     u16 button;
@@ -159,11 +162,17 @@ static u32 test_controls_labels(u32 row)
     assert(D_8013B7D0 == 4);
     return created;
 }
+#define PSX_SCREEN_CASES (COUNT(rebindings) + COUNT(label_cases))
+#else
+#define PSX_SCREEN_CASES 0
+#endif
 
 const struct CTestGroup c_test_groups[] = {
     { "controls_navigation", 0, 0, COUNT(navigation), test_controls_navigation },
+#ifndef MMX4_SATURN
     { "controls_rebinding", 0, 0, COUNT(rebindings), test_controls_rebinding },
     { "controls_labels", 0, 0, COUNT(label_cases), test_controls_labels },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(navigation) + COUNT(rebindings) + COUNT(label_cases);
+const u32 c_test_count = COUNT(navigation) + PSX_SCREEN_CASES;

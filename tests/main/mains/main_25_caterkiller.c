@@ -25,7 +25,7 @@ static u32 end_case(u32 mode, u32 lunge)
     obj.state = 1;
     obj.unk5 = lunge ? 3 : 2;
     obj.unk6 = 2;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.x_speed = mode == 5 ? 0 : facing ? -65536
@@ -70,7 +70,7 @@ static u32 end_case(u32 mode, u32 lunge)
                 expected.animation_step = caterkiller_animations[1][0];
             }
         } else if (!lunge) {
-            expected.unk15 = facing ? 0 : 0x40;
+            expected.unk15 = facing ? 0 : PLAYER_FACING_RIGHT;
             expected.x_speed = facing ? -65536 : 65536;
             expected.unk6 = 1;
         } else {
@@ -92,7 +92,7 @@ static u32 end_case(u32 mode, u32 lunge)
         assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
     for (i = 0; i < sizeof(g_Player) / 4; i++)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u8)obj.unk15 << 16) | ((u32)obj.ext.main_25.unk84 << 24);
+    return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)C_TEST_PSX_FACING(obj.unk15) << 16) | ((u32)obj.ext.main_25.unk84 << 24);
 }
 static const u32 caterkiller_end_boundaries_cases_expected[] = { 0x1400102u, 0x2u, 0x102u, 0x400002u, 0x3u, 0x1000003u, 0x400003u, 0x400003u, 0x1000202u, 0x1000203u, 0x1400102u, 0x2u, 0x3u, 0x1000003u, 0x102u, 0x400002u };
 static u32 caterkiller_end_boundaries_cases_row(u32 row)
@@ -285,8 +285,8 @@ static u32 test_caterkiller_climb_cling(u32 row)
 {
     struct MainObj* obj = cat_climb(139, 244);
     u32 observed;
-    world_attrs[1] = 16;
-    world_attrs[2] = 36;
+    world_attrs[1] = C_TEST_PSX_WORD(16);
+    world_attrs[2] = C_TEST_PSX_WORD(36);
     world_pixels[389] = 2;
     world_pixels[390] = 2;
     world_pixels[391] = 2;
@@ -314,7 +314,7 @@ static u32 test_caterkiller_climb_rise(u32 row)
 {
     struct MainObj* obj = cat_climb(132, 244);
     u32 observed;
-    world_attrs[1] = 36;
+    world_attrs[1] = C_TEST_PSX_WORD(36);
     world_snapshot();
     move_with_gravity(ANIMATED_OBJECT(world_expected));
     animate_object(ANIMATED_OBJECT(world_expected));
@@ -331,7 +331,7 @@ static u32 test_caterkiller_fall_drop(u32 row)
     struct MainObj* obj = cat_spawn(1, 27);
     u32 observed, i;
     func_80057160(obj);
-    world_attrs[1] = 36;
+    world_attrs[1] = C_TEST_PSX_WORD(36);
     world_pixels[421] = 1;
     world_pixels[422] = 1;
     world_pixels[423] = 1;
@@ -434,6 +434,39 @@ static void ck_fall_curl(void)
     state_extra = so.ext.main_25.unk84;
 }
 
+void caterkiller_update(struct MainObj*);
+void func_80057308(struct MainObj*);
+void caterkiller_crawl_start(struct MainObj*);
+void func_8005754C(struct MainObj*);
+void caterkiller_lunge_start(struct MainObj*);
+void func_80057874(struct MainObj*);
+void caterkiller_fall_drop(struct MainObj*);
+void caterkiller_climb_rise(struct MainObj*);
+void caterkiller_climb_cling(struct MainObj*);
+#define CKX() (state_extra = so.ext.main_25.unk80 | (u32)so.ext.main_25.unk84 << 8 | (u32)so.ext.main_25.unk88 << 16 | (u32)so.state << 24)
+#define CKP(step, sub, px, py) (CK(step, sub), so.ext.main_25.unk80 = 5, g_Player.x_pos.i.hi = 0x80 + (px), g_Player.y_pos.i.hi = 0x60 + (py))
+#define CKT(step, sub, attr) (CK(step, sub), so.terrain_box = &state_hit_box, state_terrain(attr))
+static void ck_update_hang(void) { CK(6, 0), state_terrain(0), so.terrain_box = &state_hit_box, so.state = 1, so.ext.main_25.unk88 = 1, caterkiller_update(&so), CKX(); }
+static void ck_update_despawn(void) { CK(0, 0), state_terrain(0), so.terrain_box = &state_hit_box, so.state = 2, so.active = 1, so.ext.main_25.unk88 = 1, caterkiller_update(&so), CKX(); }
+static void ck_main_defeated(void) { CKT(3, 1, 0x38), so.state = 1, so.hp = 1, state_hit(&so, 0, 0, 1), cur_random = 1, func_80057308(&so), CKX(); }
+static void ck_crawl_start_left(void) { CKP(2, 0, -0x40, 0), caterkiller_crawl_start(&so); }
+static void ck_crawl_event2_far(void) { CKP(2, 1, 0, -0x40), so.animation_step.fields.event = 2, func_8005754C(&so), CKX(); }
+static void ck_crawl_event1_timeout(void) { CKP(2, 1, 0, -0x40), so.ext.main_25.unk80 = 1, so.animation_step.fields.event = 1, func_8005754C(&so), CKX(); }
+static void ck_crawl_wall_left(void) { CKP(2, 1, 0, -0x40), so.collision_flags = 2, func_8005754C(&so), CKX(); }
+static void ck_crawl_wall_right(void) { CKP(2, 1, 0, -0x40), so.unk15 = PLAYER_FACING_RIGHT, so.collision_flags = 1, func_8005754C(&so), CKX(); }
+static void ck_crawl_player_below(void) { CKP(2, 1, -0x10, 0x50), func_8005754C(&so), CKX(); }
+static void ck_crawl_player_below_far(void) { CKP(2, 1, 0x40, 0x50), func_8005754C(&so), CKX(); }
+static void ck_lunge_start_left(void) { CKP(3, 0, -0x40, 0), caterkiller_lunge_start(&so); }
+static void ck_lunge_event2_away(void) { CKP(3, 1, 0, 0x40), so.animation_step.fields.event = 2, func_80057874(&so), CKX(); }
+static void ck_lunge_event1_left_passed(void) { CKP(3, 1, 0x20, 0), so.animation_step.fields.event = 1, func_80057874(&so), CKX(); }
+static void ck_lunge_left_ahead(void) { CKP(3, 1, -0x20, 0), func_80057874(&so), CKX(); }
+static void ck_lunge_right_passed(void) { CKP(3, 1, -0x20, 0), so.unk15 = PLAYER_FACING_RIGHT, func_80057874(&so), CKX(); }
+static void ck_lunge_right_ahead(void) { CKP(3, 1, 0x20, 0), so.unk15 = PLAYER_FACING_RIGHT, func_80057874(&so), CKX(); }
+static void ck_lunge_player_above(void) { CKP(3, 1, 0, -0x40), func_80057874(&so), CKX(); }
+static void ck_drop_landed(void) { CKT(4, 1, 0x38), caterkiller_fall_drop(&so), CKX(); }
+static void ck_drop_air(void) { CKT(4, 1, 0), caterkiller_fall_drop(&so), CKX(); }
+static void ck_rise_air(void) { CKT(5, 1, 0), caterkiller_climb_rise(&so), CKX(); }
+static void ck_cling_lost(void) { CKT(5, 2, 0), caterkiller_climb_cling(&so), CKX(); }
 static void (*const caterkiller_states_cases[])(void) = {
     ck_init_crawl,
     ck_init_drop,
@@ -444,12 +477,105 @@ static void (*const caterkiller_states_cases[])(void) = {
     ck_fall,
     ck_fall_push,
     ck_fall_curl,
+    ck_update_hang,
+    ck_main_defeated,
+    ck_crawl_start_left,
+    ck_crawl_event2_far,
+    ck_crawl_event1_timeout,
+    ck_crawl_wall_left,
+    ck_crawl_wall_right,
+    ck_crawl_player_below,
+    ck_crawl_player_below_far,
+    ck_lunge_start_left,
+    ck_lunge_event2_away,
+    ck_lunge_event1_left_passed,
+    ck_lunge_left_ahead,
+    ck_lunge_right_passed,
+    ck_lunge_right_ahead,
+    ck_drop_landed,
+    ck_drop_air,
+    ck_rise_air,
+    ck_cling_lost,
+    ck_lunge_player_above,
+    ck_update_despawn,
 };
-static const u32 caterkiller_states_expected[] = { 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x30003u, 0x40u, 0u, 0x1000004u, 0u, 0x800000u, 0u, 0u, 0x420000u, 4u, 0x30003u, 2u, 0u, 0x1000006u, 0u, 0x800000u, 0u, 0u, 0x420000u, 4u, 0x30003u, 2u, 0u, 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x30000u, 0u, 0u, 3u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0x420000u, 0u, 0u, 0u, 0u, 0x104u, 0u, 0x800000u, 0u, 0u, 0u, 4u, 0u, 2u, 0u };
+static const u32 caterkiller_states_expected[] = { 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x30003u, 0x40u, 0u, 0x1000004u, 0u, 0x800000u, 0u, 0u, 0x420000u, 4u, 0x30003u, 2u, 0u, 0x1000006u, 0u, 0x800000u, 0u, 0u, 0x420000u, 4u, 0x30003u, 2u, 0u, 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x30000u, 0u, 0u, 3u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0x420000u, 0u, 0u, 0u, 0u, 0x104u, 0u, 0x800000u, 0u, 0u, 0u, 4u, 0u, 2u, 0u,
+    0x6u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1010000u, 0x0u,
+    0x1000004u, 0x0u, 0x7E0000u, 0x0u, 0xFFFFBE00u, 0x420000u, 0x80000003u, 0x3u, 0x2000200u, 0x2100u,
+    0x102u, 0x0u, 0x800000u, 0xFFFF0000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x104u, 0x0u,
+    0x202u, 0x0u, 0x800000u, 0x0u, 0x0u, 0xFFFFF000u, 0x0u, 0x0u, 0x80u, 0x0u,
+    0x202u, 0x0u, 0x800000u, 0x0u, 0x0u, 0xFFFFF000u, 0x0u, 0x0u, 0x80u, 0x0u,
+    0x202u, 0x0u, 0x800000u, 0x0u, 0x0u, 0xFFFFF000u, 0x4000u, 0x0u, 0x80u, 0x0u,
+    0x1000005u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x2u, 0x0u, 0x10504u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x4u, 0x0u,
+    0x103u, 0x0u, 0x800000u, 0xFFFE0000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x40u, 0x0u,
+    0x203u, 0x0u, 0x800000u, 0x0u, 0x0u, 0xFFFFF000u, 0x0u, 0x0u, 0x5u, 0x0u,
+    0x103u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x5u, 0x0u,
+    0x203u, 0x0u, 0x800000u, 0x0u, 0x0u, 0xFFFFF000u, 0x4000u, 0x0u, 0x5u, 0x0u,
+    0x103u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x5u, 0x0u,
+    0x204u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x5u, 0x0u, 0x0u, 0x0u,
+    0x104u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x105u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x104u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x40u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+};
 
 static u32 test_caterkiller_states(u32 row)
 {
     return state_run(caterkiller_states_cases[row], row, &caterkiller_states_expected[row * 10]);
+}
+
+void func_80057308(struct MainObj* self);
+static struct Unk_unk68 ck_top_box = { -2, -2, 4, 4 };
+static const struct {
+    u8 step, segment, far, hit;
+    u32 expected[4];
+} ck_main_cases[] = {
+    { 6, 0, 0, 0, { 0x10010601u, 0xFFFB0000u, 0u, 0u } },
+    { 1, 0, 1, 0, { 0x10010102u, 0u, 0x1809EBFFu, 0x1C0CE8FEu } },
+    { 1, 1, 0, 0, { 0x10010101u, 0u, 0x100EF3F4u, 0x1413F0F0u } },
+    { 1, 0, 0, 2, { 0x00010102u, 0u, 0x1809EBFFu, 0x1C0CE8FEu } },
+};
+static u32 ck_box(const struct Unk_unk68* box)
+{
+    const u8* bytes = (const u8*)box;
+    return box == NULL ? 0 : bytes[0] | (u32)bytes[1] << 8 | (u32)bytes[2] << 16 | (u32)bytes[3] << 24;
+}
+static u32 ck_main(u32 row)
+{
+    u32 observed[4];
+    state_reset(ck_main_cases[row].step, 0, 0);
+    so.active = 0x41;
+    so.id = 25;
+    so.state = 1;
+    so.hp = 0x10;
+    so.collision_flags = 8;
+    so.y_speed = ck_main_cases[row].step == 6 ? -0x60000 : 0;
+    so.ext.main_25.saved_unk5 = 1;
+    so.ext.main_25.unk84 = ck_main_cases[row].segment;
+    so.x_pos.i.hi = ck_main_cases[row].far ? 0x400 : 0xA0;
+    so.y_pos.i.hi = ck_main_cases[row].far ? 0x400 : 0x78;
+    g_Player.x_pos.i.hi = so.x_pos.i.hi;
+    if (ck_main_cases[row].hit) {
+        state_hit(&so, 0, 0, 0x20);
+        so.hp = 1;
+        so.hurt_box = NULL;
+        if (ck_main_cases[row].hit == 2) {
+            ((struct MainObj*)&weapon_objects[0])->attack_box = &ck_top_box;
+            weapon_objects[0].y_pos.i.hi -= 18;
+        }
+    }
+    func_80057308(&so);
+    observed[0] = (u8)so.state | (u32)(u8)so.unk5 << 8 | (u32)(u8)so.ext.main_25.saved_unk5 << 16 | (u32)(u8)so.hp << 24;
+    observed[1] = so.y_speed;
+    observed[2] = ck_box(so.attack_box);
+    observed[3] = ck_box(so.hurt_box);
+    if (row == 2)
+        assert(so.on_screen == C_TEST_VISIBLE(so.unk16));
+    return c_test_observe(0, row, observed, ck_main_cases[row].expected, 4);
 }
 
 const struct CTestGroup c_test_groups[] = {
@@ -461,6 +587,7 @@ const struct CTestGroup c_test_groups[] = {
     { "caterkiller_climb_rise", 0, 0, 1, test_caterkiller_climb_rise },
     { "caterkiller_fall_drop", 0, 0, 1, test_caterkiller_fall_drop },
     { "func_80057874", 0, 0, 1, test_func_80057874 },
+    { "main_step_boxes_hits_and_view", NULL, NULL, COUNT(ck_main_cases), ck_main },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(caterkiller_states_cases) + COUNT(caterkiller_end_boundaries_cases_expected) + COUNT(caterkiller_events_cases_expected) + COUNT(caterkiller_fall_animation_cases_expected) + 1 + 1 + 1 + 1;
+const u32 c_test_count = COUNT(caterkiller_states_cases) + COUNT(caterkiller_end_boundaries_cases_expected) + COUNT(caterkiller_events_cases_expected) + COUNT(caterkiller_fall_animation_cases_expected) + 1 + 1 + 1 + 1 + COUNT(ck_main_cases);

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_24_jet_drone.h"
 #include "main/55C4.h"
 #include "support/state_cases.h"
@@ -42,7 +43,7 @@ static u32 bomb_case(u32 mode)
     obj.unk40 = 0x1234;
     obj.unk42 = 0x9234;
     obj.bg_offset = 1;
-    obj.unk15 = 0x40;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.ext.main_24.unk80 = fire ? 3 : 2;
     obj.unk7E = fire ? 1 : 2;
     obj.unk7C = mode == 2 ? 1 : 2;
@@ -99,7 +100,7 @@ static u32 bomb_case(u32 mode)
         shot->bg_offset = 1;
         shot->x_pos.val = before.x_pos.val;
         shot->y_pos.val = before.y_pos.val;
-        shot->unk15 = 0x40;
+        shot->unk15 = PLAYER_FACING_RIGHT;
     }
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
@@ -137,8 +138,8 @@ static u32 test_func_800567C4_0(u32 row)
     observed_values[5] = (u32)obj.hp;
     observed_values[6] = (u32)obj.invincibility_timer;
     observed_values[7] = (u32)obj.state;
-    observed_values[8] = (u32)obj.unk15;
-    observed_values[9] = (u32)obj.unk16;
+    observed_values[8] = C_TEST_PSX_FACING(obj.unk15);
+    observed_values[9] = TEST_PSX_LAYER(obj.unk16);
     observed_values[10] = (u32)obj.unk18.val;
     observed_values[11] = (u32)obj.unk1C.val;
     observed_values[12] = (u32)obj.unk5;
@@ -208,9 +209,9 @@ static u32 test_func_800567C4_1(u32 row)
     observed_values[7] = (u32)obj.x_accel;
     observed_values[8] = (u32)obj.gravity;
     observed_values[9] = (u32)obj.unk7C;
-    observed_values[10] = (u32)obj.unk15;
+    observed_values[10] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[11] = (u32)obj.unk7A;
-    observed_values[12] = obj.animation_step.packed;
+    observed_values[12] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[13] = (u32)(u8)obj.unk17;
     return c_test_observe(0, row, observed_values, c->expected, 14);
 }
@@ -250,7 +251,7 @@ static u32 test_jet_drone_fly_dash(u32 row)
     observed_values[2] = (u32)obj.ext.main_24.unk80;
     observed_values[3] = (u32)obj.unk7C;
     observed_values[4] = (u32)obj.unk6;
-    observed_values[5] = obj.animation_step.packed;
+    observed_values[5] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[6] = (u32)misc_objects[0].active;
     return c_test_observe(0, row, observed_values, jet_drone_fly_dash_expected, 7);
 }
@@ -276,7 +277,7 @@ static u32 test_jet_drone_fly_turn(u32 row)
     observed_values[1] = (u32)misc_objects[0].bg_offset;
     observed_values[2] = (u32)misc_objects[0].id;
     observed_values[3] = (u32)misc_objects[0].state;
-    observed_values[4] = (u32)misc_objects[0].unk15;
+    observed_values[4] = C_TEST_PSX_FACING(misc_objects[0].unk15);
     observed_values[5] = (u32)misc_objects[0].unk2;
     observed_values[6] = (u32)misc_objects[0].unk40;
     observed_values[7] = (u32)misc_objects[0].unk42;
@@ -298,10 +299,48 @@ static void jd_resume(void)
     jet_drone_resume_step(&so);
 }
 
+void jet_drone_main(struct MainObj*);
+void jet_drone_fly_dash(struct MainObj*);
+void jet_drone_fly_turn(struct MainObj*);
+void jet_drone_fly_arc(struct MainObj*);
+#define JD(step, sub, setup) (state_reset(step, sub, 0), memset(misc_objects, 0, sizeof(misc_objects)), memset(weapon_objects, 0, sizeof(weapon_objects)), so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, setup)
+#define JDX() (state_extra = so.ext.main_24.unk80 | (u32)so.ext.main_24.saved_unk5 << 8 | (u32)misc_objects[0].id << 16 | (u32)misc_objects[0].unk2 << 24)
+static void jd_main_wait(void) { JD(3, 0, g_Player.x_pos.i.hi = 0x100), jet_drone_main(&so), JDX(); }
+static void jd_main_start(void) { JD(3, 0, g_Player.x_pos.i.hi = 0x180), jet_drone_main(&so), JDX(); }
+static void jd_main_away(void) { JD(2, 1, (so.x_speed = 0x10000, so.x_pos.i.hi = 0x1000)), jet_drone_main(&so), JDX(); }
+static void jd_main_defeated(void) { JD(2, 1, (so.x_speed = 0x10000, so.hp = 1, state_hit(&so, 0, 0, 1), cur_random = 1)), jet_drone_main(&so), JDX(); }
+static void jd_dash_quiet(void) { JD(2, 0, so.unk7C = 5), jet_drone_fly_dash(&so), JDX(); }
+static void jd_dash_trail_end(void) { JD(2, 0, (so.unk7C = 1, so.ext.main_24.unk80 = 3)), jet_drone_fly_dash(&so), JDX(); }
+static void jd_arc_high_stop(void) { JD(2, 1, so.unk2 = 2), jet_drone_fly_arc(&so), JDX(); }
+static void jd_arc_moving(void) { JD(2, 1, (so.x_speed = 0x10000, so.y_speed = 0x10000)), jet_drone_fly_arc(&so), JDX(); }
+static void jd_turn_quiet(void) { JD(2, 2, so.unk7C = 5), jet_drone_fly_turn(&so), JDX(); }
+static void jd_turn_trail_end_high(void) { JD(2, 2, (so.unk7C = 1, so.ext.main_24.unk80 = 3, so.unk2 = 2)), jet_drone_fly_turn(&so), JDX(); }
 static void (*const jet_drone_misc_cases[])(void) = {
     jd_resume,
+    jd_main_wait,
+    jd_main_start,
+    jd_main_away,
+    jd_main_defeated,
+    jd_dash_quiet,
+    jd_dash_trail_end,
+    jd_arc_high_stop,
+    jd_arc_moving,
+    jd_turn_quiet,
+    jd_turn_trail_end_high,
 };
-static const u32 jet_drone_misc_expected[] = { 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+static const u32 jet_drone_misc_expected[] = {
+    3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0x3u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x200u, 0x0u,
+    0x102u, 0x0u, 0x10010000u, 0x10000u, 0x0u, 0x300000u, 0x0u, 0x0u, 0x200u, 0x0u,
+    0x102u, 0x0u, 0x810000u, 0x10000u, 0x0u, 0x300000u, 0x80000000u, 0x1u, 0x30200u, 0x2100u,
+    0x2u, 0x4u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u,
+    0x102u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u, 0x70004u, 0x0u,
+    0x202u, 0xAu, 0x800000u, 0x0u, 0x0u, 0xFFD00000u, 0x2u, 0x0u, 0x0u, 0x0u,
+    0x102u, 0x0u, 0x810000u, 0x10000u, 0x10000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x202u, 0x4u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u,
+    0x302u, 0x80001u, 0x800000u, 0x0u, 0x20000u, 0x0u, 0x0u, 0x0u, 0x1070004u, 0x0u,
+};
 
 static u32 test_jet_drone_misc(u32 row)
 {

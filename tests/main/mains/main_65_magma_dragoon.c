@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
+#ifndef VERSION_DEMO
 #include "main/mains/main_65_magma_dragoon.h"
 #include "main/55C4.h"
 #include "support/state_cases.h"
@@ -39,7 +41,9 @@ static u32 breath_case(u32 mode)
         s->unk54 = (const u8*)&box;
         s->unk68 = &box;
         s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 7;
-        s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = s->unk78 = 7;
+        s->unk72 = s->unk73 = s->unk76 = s->unk77 = 7;
+        OBJ_UNK78_SET(*s, 7);
+        OBJ_UNK74_SET(*s, 7);
         s->unk62 = s->unk63 = s->unk7A = s->unk75 = 7;
     }
     if (mode == 1 || mode == 6)
@@ -92,7 +96,9 @@ static u32 breath_case(u32 mode)
                 s->unk54 = NULL;
                 s->unk68 = NULL;
                 s->unk98 = s->unk61 = s->unk64 = s->unk65 = s->unk66 = 0;
-                s->unk72 = s->unk73 = s->unk74 = s->unk76 = s->unk77 = s->unk78 = 0;
+                s->unk72 = s->unk73 = s->unk76 = s->unk77 = 0;
+                OBJ_UNK78_SET(*s, 0);
+                OBJ_UNK74_SET(*s, 0);
                 s->unk62 = s->unk63 = s->unk7A = s->unk75 = 0;
             }
         } else if (mode == 2) {
@@ -101,14 +107,10 @@ static u32 breath_case(u32 mode)
         }
     }
     magma_dragoon_breath_fire(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(linked) / 4; i++)
-        assert(((u32*)&linked)[i] == ((u32*)&linked_before)[i]);
-    for (i = 0; i < sizeof(shots) / 4; i++)
-        assert(((u32*)shot_objects)[i] == ((u32*)shots)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&linked, &linked_before, sizeof(linked));
+    c_test_same_words(shot_objects, shots, sizeof(shots));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)linked.unk6 << 16) | ((u32)(obj.ext.main_65.object != NULL) << 24);
 }
 static const u32 dragoon_breath_link_and_end_cases_expected[] = { 0x40107u, 0x1040107u, 0x1050107u, 0x104000Cu, 0x1040003u, 0x1040107u, 0x1040107u };
@@ -156,12 +158,9 @@ static u32 flame_case(u32 mode)
         child->ext.misc_7.position = ANIMATED_OBJECT(&owner);
     }
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(&owner), arg);
-    for (i = 0; i < sizeof(owner) / 4; i++)
-        assert(((u32*)&owner)[i] == ((u32*)&owner_before)[i]);
-    for (i = 0; i < sizeof(pool) / 4; i++)
-        assert(((u32*)misc_objects)[i] == ((u32*)pool)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
+    c_test_same_words(misc_objects, pool, sizeof(pool));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     return (u8)misc_objects[61].active | ((u32)(u8)misc_objects[62].active << 8) | ((u32)(u8)misc_objects[63].active << 16) | ((u32)(u8)misc_objects[63].unk2 << 24);
 }
 static const u32 dragoon_flame_allocation_steps_cases_expected[] = { 0x9010101u, 0x2410101u, 0x3414101u, 0x414141u, 0x1414141u, 0x3414101u, 0x9004141u, 0x2410101u };
@@ -187,7 +186,7 @@ static u32 leap_case(u32 right, u32 observation)
     obj.id = 65;
     obj.state = 1;
     obj.unk6 = 0x21;
-    obj.unk15 = right ? 0x40 : 0;
+    obj.unk15 = right ? PLAYER_FACING_RIGHT : 0;
     obj.air_state = 1;
     obj.collision_flags = 8;
     obj.x_pos.val = (right ? 1016 : 32) * 65536 + 0x1234;
@@ -214,14 +213,10 @@ static u32 leap_case(u32 right, u32 observation)
     before.previous_animation_index = 0xFF;
     before.animation_cursor = (const u8*)magma_dragoon_animations[6];
     before.animation_step = *(union AnimationStep*)magma_dragoon_animations[6];
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)misc_objects)[i] == ((u32*)pool_before)[i]);
-    for (i = 0; i < sizeof(bg_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)bg_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(misc_objects, pool_before, sizeof(pool_before));
+    c_test_same_words(background_objects, bg_before, sizeof(bg_before));
     assert(D_8013E198[2] == -1 && magma_dragoon_arena_left == 0
         && magma_dragoon_arena_right == 1000);
     switch (observation) {
@@ -236,7 +231,7 @@ static u32 leap_case(u32 right, u32 observation)
     case 4:
         return obj.gravity;
     case 5:
-        return obj.animation_step.packed;
+        return C_TEST_STEP(obj.animation_step.packed);
     default:
         return (u8)obj.unk6 | ((u32)(u8)obj.air_state << 8)
             | ((u32)obj.ext.main_65.leap_frames << 16) | ((u32)obj.unk17 << 24);
@@ -330,13 +325,13 @@ static u32 test_func_8007FFFC(u32 row)
     observed_values[25] = (u32)misc_objects[0].active;
     observed_values[26] = (u32)misc_objects[0].id;
     observed_values[27] = (u32)misc_objects[0].unk2;
-    observed_values[28] = (u32)obj.unk15;
+    observed_values[28] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[29] = (u32)obj.unk42;
     observed_values[30] = (u32)obj.unk5;
     observed_values[31] = (u32)obj.unk7E;
     observed_values[32] = (u32)obj.x_pos.i.hi;
     observed_values[33] = (u32)obj.y_pos.i.hi;
-    observed_values[34] = (u32)qux_object.unk15;
+    observed_values[34] = C_TEST_PSX_FACING(qux_object.unk15);
     observed_values[35] = (u32)qux_object.x_pos.i.hi;
     observed_values[36] = (u32)qux_object.y_pos.i.hi;
     return c_test_observe(0, row, observed_values, c->expected, 37);
@@ -354,7 +349,7 @@ static u32 pool_full_magma_dragoon_intro_warning(void)
     magma_dragoon_intro_warning(&pf_self);
     pf_expected.unk15 = 0;
     pf_expected.unk6++;
-    pf_script(0x14, 0x40);
+    pf_script(0x14, PLAYER_FACING_RIGHT);
     pf_backgrounds_expected[0].unk26 = pf_backgrounds_expected[0].unk24 = 0x1490;
     pf_backgrounds_expected[0].unk2A = pf_backgrounds_expected[0].unk28 = 0x1EB;
     actual = pf_finish(0);
@@ -461,14 +456,14 @@ static void md_glide_left(void)
 static void md_glide_right_past(void)
 {
     MD(0, 1);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_pos.i.hi = 0xA0;
     magma_dragoon_leap_center(&so);
 }
 static void md_glide_right(void)
 {
     MD(0, 1);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     magma_dragoon_leap_center(&so);
 }
 static void md_land_wait(void)
@@ -625,12 +620,12 @@ static u32 burst(u32 row)
     obj.state = 1;
     obj.unk5 = 5;
     obj.unk6 = 1;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.i.hi = 160;
     obj.y_pos.i.hi = 200;
     obj.animation_table = (const u8* const*)magma_dragoon_animations;
     set_animation_frame(ANIMATED_OBJECT(&obj), 11, frame);
-    assert(obj.animation_step.packed == (event ? 0x24010206 : 0x24010106));
+    assert(obj.animation_step.packed == (event ? C_TEST_STEP(0x24010206) : C_TEST_STEP(0x24010106)));
     expected = obj;
     expected.animation_step.fields.duration = 5;
     expected.animation_step.fields.event = 0;
@@ -687,8 +682,8 @@ static u32 defeat_scene(u32 row)
     obj.unk5 = 15;
     obj.unk6 = 3;
     obj.unk7 = 4;
-    obj.unk15 = 0x40;
-    obj.unk16 = 7;
+    obj.unk15 = PLAYER_FACING_RIGHT;
+    obj.unk16 = VISUAL_SATURN_LAYER(7);
     obj.on_screen = 5;
     obj.bg_offset = 0;
     obj.x_pos.val = 0x14A01234;
@@ -723,20 +718,20 @@ static u32 defeat_scene(u32 row)
     memcpy(pool_expected, misc_objects, sizeof(pool_expected));
     memcpy(backgrounds_expected, background_objects, sizeof(backgrounds_expected));
     expected.unk5 = 16;
-    expected.unk15 = side == 2 ? 0 : 0x40;
+    expected.unk15 = side == 2 ? 0 : PLAYER_FACING_RIGHT;
     expected.x_pos.i.hi = side == 2 ? 0x1560 : 0x1460;
     expected.y_pos.i.hi = 0x280;
     expected.unk17 = 20;
     expected.previous_animation_index = 0xFF;
     expected.animation_cursor = (const u8*)magma_dragoon_animations[20];
-    expected.animation_step.packed = 0x5C010032;
+    expected.animation_step.packed = C_TEST_STEP(0x5C010032);
     expected.on_screen = !outside;
     player_expected.script_state = 1;
     player_expected.script_action = 0x14;
-    player_expected.script_facing = side == 2 ? 0x40 : 0;
-    player_expected.spike_immune = 1;
+    player_expected.script_facing = side == 2 ? PLAYER_FACING_RIGHT : 0;
+    SPIKE_IMMUNE_SET(player_expected, 1);
     if (riding) {
-        ride_expected.unk15 = side == 2 ? 0x40 : 0;
+        ride_expected.unk15 = side == 2 ? PLAYER_FACING_RIGHT : 0;
         ride_expected.x_pos.i.hi = 0x14E0;
         ride_expected.y_pos.i.hi = 0x280;
     } else {
@@ -775,7 +770,11 @@ static struct MainObj dragoon;
 
 static u32 think(u32 row)
 {
+#ifdef MMX4_SATURN
+    static const u32 expected[4] = { 0xF13DF744u, 0x5655C759u, 0xB3040744u, 0x181BD759u };
+#else
     static const u32 expected[4] = { 991454243u, 2687513656u, 1110484003u, 2806543416u };
+#endif
     u32 hash = 0, seen = 0, seed;
     for (seed = 0; seed < 48; seed++) {
         c_test_zero_words((u32*)&dragoon, sizeof(dragoon) / 4);
@@ -854,6 +853,589 @@ static u32 full(u32 row)
     return 1;
 }
 
+void magma_dragoon_intro(struct MainObj*);
+void magma_dragoon_dive_kick(struct MainObj*);
+void magma_dragoon_flame_burst(struct MainObj*);
+void magma_dragoon_breath(struct MainObj*);
+void magma_dragoon_leap_wall(struct MainObj*);
+void magma_dragoon_fireball(struct MainObj*);
+void magma_dragoon_fireball_low(struct MainObj*);
+void magma_dragoon_rising_punch(struct MainObj*);
+void magma_dragoon_stagger(struct MainObj*);
+void magma_dragoon_death(struct MainObj*);
+extern struct Unk_unk68 D_80107D7C[];
+extern struct Unk_unk68 magma_dragoon_terrain_box;
+extern struct Unk_unk68 magma_dragoon_crouch_hurt_box;
+extern struct Unk_unk68 magma_dragoon_leap_attack_box;
+extern struct Unk_unk68 magma_dragoon_punch_attack_box;
+extern struct Unk_unk68 magma_dragoon_dive_kick_attack_box;
+
+static struct MainObj dg;
+static u32 dg_pages[8];
+static void dg_reset(u8 state, u8 unk5, u8 unk6, u8 unk7)
+{
+    memset(&dg, 0, sizeof(dg));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&abc_object, 0, sizeof(abc_object));
+    engine_obj.unk36.timer = 0;
+    engine_obj.stage = 4;
+    D_80173C84 = 0;
+    cur_random = 0;
+    magma_dragoon_arena_left = 0x50;
+    magma_dragoon_arena_center = 0xA0;
+    magma_dragoon_arena_right = 0xF0;
+    magma_dragoon_arena_ceiling = 0x40;
+    magma_dragoon_arena_floor = 0x100;
+    dg.active = 0x41;
+    dg.id = 65;
+    dg.state = state;
+    dg.unk5 = unk5;
+    dg.unk6 = unk6;
+    dg.unk7 = unk7;
+    dg.x_pos.i.hi = 160;
+    dg.y_pos.i.hi = 120;
+    dg.collision_data = D_80107D7C;
+    dg.animation_table = (const u8* const*)magma_dragoon_animations;
+    set_animation(&dg, 0);
+}
+static void dg_step(s8 duration, s8 event, s8 relative_step)
+{
+    dg.animation_step.fields.duration = duration;
+    dg.animation_step.fields.event = event;
+    dg.animation_step.fields.relative_step = relative_step;
+}
+
+static void dg_init(u8 stage)
+{
+    u8* frames = TEST_MENU_FRAMES;
+    u32* pages = D_801406A8;
+    dg_reset(0, 0, 0, 0);
+    engine_obj.stage = stage;
+    engine_obj.checkpoint = 1;
+    TEST_MENU_FRAMES = (u8*)dg_pages;
+    test_stage_graphics(dg_pages);
+    magma_dragoon_update(&dg);
+    TEST_MENU_FRAMES = frames;
+    test_stage_graphics(pages);
+    assert(dg.state == 1 && dg.unk5 == 2 && dg.hp == 0 && dg.contact_damage == 4 && dg.collision_data == D_80107D7C);
+    assert(dg.attack_box == &magma_dragoon_attack_box && dg.hurt_box == NULL && engine_obj.boss_ptr == &dg);
+}
+static void dg_init_stage(void)
+{
+    dg_init(4);
+    assert(dg.x_pos.i.hi == 0x15A5 && dg.y_pos.i.hi == 0x28F && engine_obj.checkpoint == 3);
+    assert(magma_dragoon_arena_left == 0x1430 && magma_dragoon_arena_center == 0x14E0 && magma_dragoon_arena_right == 0x1590);
+    assert(magma_dragoon_arena_floor == 0x280 && magma_dragoon_arena_ceiling == 0x260 && dg.unk42 == 0);
+}
+static void dg_init_rematch(void)
+{
+    dg_init(0xC);
+    assert(dg.x_pos.i.hi == 0x2CE && dg.y_pos.i.hi == 0x69F && engine_obj.checkpoint == 1);
+    assert(magma_dragoon_arena_left == 0x150 && magma_dragoon_arena_center == 0x200 && magma_dragoon_arena_right == 0x2B0);
+    assert(magma_dragoon_arena_floor == 0x690 && magma_dragoon_arena_ceiling == 0x670);
+    assert(dg.unk42 == OBJECT_CLUT(0x7888) && dg.sprite_frames == (u8*)dg_pages);
+}
+static void dg_intro_warning_rematch(void)
+{
+    dg_reset(1, 2, 0, 0);
+    engine_obj.stage = 0xC;
+    dg.unk15 = PLAYER_FACING_RIGHT;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 1 && dg.unk15 == 0 && effect_objects[0].active == 1 && effect_objects[0].id == 0x18);
+    assert(effect_objects[0].x_pos.i.hi == 160 && effect_objects[0].y_pos.i.hi == 120 && dg.ext.main_65.object == MAIN_OBJECT(&effect_objects[0]));
+    assert(g_Player.script_action == 0x14 && g_Player.script_facing == PLAYER_FACING_RIGHT);
+    assert(background_objects[0].unk24 == 0x1B0 && background_objects[0].unk26 == 0x1B0 && background_objects[0].unk28 == 0x5FB && background_objects[0].unk2A == 0x5FB);
+}
+static void dg_intro_leap_descend(void)
+{
+    dg_reset(1, 2, 1, 0);
+    effect_objects[0].active = 1;
+    dg.ext.main_65.object = MAIN_OBJECT(&effect_objects[0]);
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 1 && misc_objects[0].active == 0);
+    effect_objects[0].active = 0;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 2 && dg.y_speed == FIXED(2) && dg.x_accel == FIXED(0.0078125) && dg.air_state == 1 && dg.unk7E == 0x14 && dg.unk17 == 0xF);
+    assert(misc_objects[0].id == 0x26 && misc_objects[0].unk2 == 2 && misc_objects[1].unk2 == 3 && misc_objects[2].unk2 == 0 && misc_objects[3].active == 0);
+    dg.y_speed = 0;
+    dg.x_accel = 0;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 2 && dg.y_pos.i.hi == 120);
+    dg.y_pos.i.hi = 20;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 3 && dg.terrain_box == &magma_dragoon_terrain_box && dg.gravity == FIXED(0.1875));
+    assert(dg.x_pos.i.hi == 158 && dg.y_pos.i.hi == 22 && dg.x_speed == FIXED(-2) && dg.y_speed == FIXED(-2) - FIXED(0.1875));
+}
+static void dg_intro_land_pose(void)
+{
+    dg_reset(1, 2, 3, 0);
+    dg.air_state = 1;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 3 && misc_objects[0].active == 0);
+    dg.collision_flags = 8;
+    dg.x_speed = 0x10000;
+    dg.gravity = 0x1000;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 4 && dg.air_state == 0 && dg.x_speed == 0 && dg.y_speed == 0 && dg.gravity == 0 && dg.unk17 == 0x10);
+    assert(misc_objects[1].unk2 == 3 && misc_objects[2].active == 0);
+    dg_step(5, 0, 1);
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 4);
+    engine_obj.stage = 0;
+    dg_step(5, 0, 0);
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 5 && dg.unk17 == 0x11 && engine_obj.character_state.bytes[8] == 0);
+    dg.unk6 = 4;
+    engine_obj.stage = 4;
+    abc_object.unkC = 0x80;
+    dg_step(5, 0, 0);
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 5 && engine_obj.character_state.bytes[8] == 1 && abc_object.unk10 == (s16)(0x8000 | 0xB));
+}
+static void dg_intro_ready_fill(void)
+{
+    dg_reset(1, 2, 5, 0);
+    abc_object.unkC = 0x80;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 5);
+    abc_object.unkC = 0;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 6);
+    dg_step(5, 0, 1);
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 6);
+    engine_obj.unk36.timer = 5;
+    D_80173C84 = 1;
+    dg_step(5, 0, 0);
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 6);
+    engine_obj.unk36.timer = 0;
+    engine_obj.enable_boss = 0;
+    dg_step(5, 0, 0);
+    dg.y_speed = 0x10000;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk6 == 7 && engine_obj.enable_boss == 1 && dg.unk7E == 3 && dg.y_speed == 0 && dg.unk17 == 0x12);
+    dg.unk7E = 2;
+    magma_dragoon_intro(&dg);
+    assert(dg.hp == 1 && dg.unk7E == 1);
+    magma_dragoon_intro(&dg);
+    assert(dg.hp == 2 && dg.unk7E == 3);
+    dg.hp = 0x30;
+    g_Player.script_state = 1;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk5 == 3 && dg.unk6 == 0 && dg.hurt_box == &magma_dragoon_hurt_box && dg.unk17 == 0 && g_Player.script_state == 0);
+    assert(background_objects[0].unk26 == 0x13F0 && background_objects[0].unk24 == 0x1490 && background_objects[0].unk48 == 4);
+    dg.unk5 = 2;
+    dg.unk6 = 7;
+    engine_obj.stage = 0xC;
+    magma_dragoon_intro(&dg);
+    assert(dg.unk5 == 3 && background_objects[0].unk26 == 0x110 && background_objects[0].unk24 == 0x1B0);
+}
+static void dg_dive_kick_jump_rise(void)
+{
+    dg_reset(1, 4, 0, 0);
+    g_Player.x_pos.i.hi = 161;
+    magma_dragoon_dive_kick(&dg);
+    assert(dg.unk6 == 1 && dg.unk15 == PLAYER_FACING_RIGHT && dg.x_speed == FIXED(0.75) && dg.y_speed == FIXED(4) && dg.air_state == 1);
+    assert(dg.x_accel == FIXED(0.03125) && dg.gravity == FIXED(-0.03125) && dg.ext.main_65.jump_start_y == 120 && dg.unk17 == 3);
+    assert(misc_objects[1].active == 0x41 && misc_objects[2].active == 0);
+    dg.unk6 = 0;
+    g_Player.x_pos.i.hi = 160;
+    magma_dragoon_dive_kick(&dg);
+    assert(dg.unk15 == 0 && dg.x_speed == FIXED(-0.75));
+    dg.y_speed = 0;
+    dg.x_accel = 0;
+    dg.gravity = 0;
+    dg.y_pos.i.hi = 40;
+    magma_dragoon_dive_kick(&dg);
+    assert(dg.unk6 == 1);
+    dg.y_pos.i.hi = 39;
+    magma_dragoon_dive_kick(&dg);
+    assert(dg.unk6 == 2 && dg.contact_damage == 6 && dg.y_speed == FIXED(-6) && dg.unk17 == 4 && dg.y_pos.i.hi == 45);
+}
+static void dg_dive_kick_dive(void)
+{
+    static const s16 turns[][3] = { { 0x9F, 161, 1 }, { 0xA0, 161, 0 }, { 0x9F, 0, 1 }, { 0xA0, 0, 0 } };
+    u32 i;
+    dg_reset(1, 4, 2, 0);
+    dg.y_speed = FIXED(-6);
+    dg.attack_box = &magma_dragoon_dive_kick_attack_box;
+    dg_step(5, 0, 1);
+    magma_dragoon_dive_kick(&dg);
+    assert(dg.attack_box == &magma_dragoon_attack_box && dg.y_pos.i.hi == 120 && dg.unk6 == 2);
+    dg_step(5, 1, 1);
+    magma_dragoon_dive_kick(&dg);
+    assert(dg.attack_box == &magma_dragoon_dive_kick_attack_box && dg.y_pos.i.hi == 126);
+    for (i = 0; i < COUNT(turns); i++) {
+        dg.x_pos.i.hi = turns[i][0];
+        g_Player.x_pos.i.hi = turns[i][1];
+        dg_step(5, 2, 1);
+        magma_dragoon_dive_kick(&dg);
+        assert(dg.unk15 == (turns[i][2] ? PLAYER_FACING_RIGHT : 0) && dg.x_speed == (turns[i][2] ? 0x80000 : -0x80000));
+    }
+    dg.collision_flags = 8;
+    dg.air_state = 1;
+    dg.contact_damage = 6;
+    dg_step(5, 1, 1);
+    magma_dragoon_dive_kick(&dg);
+    assert(dg.unk6 == 3 && dg.attack_box == &magma_dragoon_attack_box && dg.contact_damage == 4 && dg.air_state == 0 && dg.unk17 == 6);
+}
+static void dg_flame_burst_breath_start(void)
+{
+    dg_reset(1, 5, 0, 0);
+    g_Player.x_pos.i.hi = 161;
+    magma_dragoon_flame_burst(&dg);
+    assert(dg.unk6 == 1 && dg.unk15 == PLAYER_FACING_RIGHT && dg.unk17 == 0xB);
+    dg.unk5 = 7;
+    dg.unk6 = 0;
+    magma_dragoon_breath(&dg);
+    assert(dg.unk6 == 1 && dg.unk15 == PLAYER_FACING_RIGHT && dg.unk17 == 0xA);
+    dg.unk6 = 0;
+    dg.x_pos.i.hi = 0xA1;
+    magma_dragoon_breath(&dg);
+    assert(dg.unk15 == 0);
+}
+static void dg_leap_center_land_recover(void)
+{
+    dg_reset(1, 8, 2, 0);
+    dg.air_state = 1;
+    dg.attack_box = &magma_dragoon_leap_attack_box;
+    magma_dragoon_leap_center(&dg);
+    assert(dg.unk6 == 2 && misc_objects[0].active == 0);
+    dg.collision_flags = 8;
+    magma_dragoon_leap_center(&dg);
+    assert(dg.unk6 == 3 && dg.air_state == 0 && dg.unk17 == 6 && misc_objects[1].unk2 == 3 && misc_objects[2].active == 0);
+    dg_step(5, 0, 1);
+    magma_dragoon_leap_center(&dg);
+    assert(dg.unk6 == 3);
+    dg_step(5, 0, 0);
+    magma_dragoon_leap_center(&dg);
+    assert(dg.unk6 == 0 && dg.unk5 == 7 && dg.attack_box == &magma_dragoon_attack_box);
+}
+static void dg_leap_wall(void)
+{
+    dg_reset(1, 9, 0, 0);
+    dg.x_pos.i.hi = 0x9F;
+    g_Player.x_pos.i.hi = 0;
+    magma_dragoon_leap_wall(&dg);
+    assert(dg.unk6 == 1 && dg.ext.main_65.leap_frames == 0x40 && dg.ext.main_65.leap_to_right == 1 && dg.unk15 == 0);
+    assert(dg.y_speed == FIXED(6) && dg.gravity == FIXED(0.1875) && dg.attack_box == &magma_dragoon_leap_attack_box && dg.air_state == 1);
+    dg.x_pos.i.hi = 160;
+    dg.y_speed = 0x10000;
+    dg.collision_flags = 8;
+    magma_dragoon_leap_wall(&dg);
+    assert(dg.unk6 == 1 && dg.x_speed == 0x8000 && dg.ext.main_65.leap_frames == 0x3F && dg.y_speed == 0x10000 - FIXED(0.1875));
+    dg.unk6 = 0;
+    dg.x_pos.i.hi = 0xA0;
+    magma_dragoon_leap_wall(&dg);
+    assert(dg.ext.main_65.leap_to_right == 0);
+    dg.x_pos.i.hi = 160;
+    dg.y_speed = 0x10000;
+    magma_dragoon_leap_wall(&dg);
+    assert(dg.unk6 == 1 && dg.x_speed == -0x8000);
+    dg.ext.main_65.leap_frames = 0;
+    dg.x_speed = 0x1234;
+    dg.collision_flags = 0;
+    magma_dragoon_leap_wall(&dg);
+    assert(dg.unk6 == 1 && dg.x_speed == 0x1234);
+    dg.unk6 = 2;
+    dg.ext.main_65.attack = 3;
+    dg_step(5, 0, 1);
+    magma_dragoon_leap_wall(&dg);
+    assert(dg.unk5 == 9 && dg.unk6 == 2);
+    dg_step(5, 0, 0);
+    magma_dragoon_leap_wall(&dg);
+    assert(dg.unk5 == 5 && dg.unk6 == 0);
+    dg.unk5 = 9;
+    dg.unk6 = 2;
+    dg.ext.main_65.attack = 0;
+    dg_step(5, 0, 0);
+    magma_dragoon_leap_wall(&dg);
+    assert(dg.unk5 == 3 && dg.unk6 == 0 && dg.unk17 == 0);
+}
+static void dg_fireball(void)
+{
+    dg_reset(1, 0xA, 0, 0);
+    g_Player.x_pos.i.hi = 0;
+    magma_dragoon_fireball(&dg);
+    assert(dg.unk6 == 1 && dg.unk15 == 0 && dg.unk17 == 8 && dg.attack_box == &magma_dragoon_leap_attack_box);
+    dg_step(5, 0, 1);
+    magma_dragoon_fireball(&dg);
+    assert(dg.unk6 == 1 && shot_objects[0].active == 0);
+    dg_step(5, 1, 0);
+    magma_dragoon_fireball(&dg);
+    assert(shot_objects[0].active == 0x41 && shot_objects[0].id == 0x29 && shot_objects[0].unk2 == 3 && shot_objects[0].unk7C == WEAPON_OBJECT(&dg));
+    assert(shot_objects[0].x_pos.i.hi == 137 && shot_objects[0].y_pos.i.hi == 120 && dg.unk5 == 0xB && dg.unk6 == 0);
+    dg.unk6 = 1;
+    dg.unk15 = PLAYER_FACING_RIGHT;
+    dg.ext.main_65.attack = 1;
+    dg_step(5, 1, 0);
+    magma_dragoon_fireball(&dg);
+    assert(shot_objects[1].x_pos.i.hi == 183 && dg.unk5 == 0xC);
+    dg.unk6 = 1;
+    dg.ext.main_65.attack = 2;
+    dg_step(5, 0, 0);
+    magma_dragoon_fireball(&dg);
+    assert(dg.unk5 == 0xB && dg.ext.main_65.attack_repeat == 1);
+    dg.unk6 = 1;
+    dg_step(5, 0, 0);
+    magma_dragoon_fireball(&dg);
+    assert(dg.unk5 == 5 && dg.ext.main_65.attack_repeat == 2);
+}
+static void dg_fireball_low(void)
+{
+    dg_reset(1, 0xB, 0, 0);
+    g_Player.x_pos.i.hi = 161;
+    magma_dragoon_fireball_low(&dg);
+    assert(dg.unk6 == 1 && dg.unk15 == PLAYER_FACING_RIGHT && dg.unk17 == 9 && dg.hurt_box == &magma_dragoon_hurt_box);
+    dg_step(5, 0, 1);
+    dg.animation_step.fields.frame_index = 0x19;
+    magma_dragoon_fireball_low(&dg);
+    assert(dg.unk6 == 1 && dg.hurt_box == &magma_dragoon_crouch_hurt_box && shot_objects[0].active == 0);
+    dg_step(5, 1, 0);
+    dg.animation_step.fields.frame_index = 0x1A;
+    dg.attack_box = NULL;
+    magma_dragoon_fireball_low(&dg);
+    assert(shot_objects[0].x_pos.i.hi == 183 && shot_objects[0].y_pos.i.hi == 160 && shot_objects[0].unk2 == 3 && dg.hurt_box == &magma_dragoon_crouch_hurt_box);
+    assert(dg.unk5 == 9 && dg.unk6 == 0 && dg.attack_box == &magma_dragoon_leap_attack_box);
+    dg.unk6 = 1;
+    dg.unk15 = 0;
+    dg.ext.main_65.attack = 4;
+    dg_step(5, 1, 0);
+    magma_dragoon_fireball_low(&dg);
+    assert(shot_objects[1].x_pos.i.hi == 137 && dg.unk5 == 4);
+    dg.unk6 = 1;
+    dg.ext.main_65.attack = 5;
+    dg_step(5, 0, 0);
+    magma_dragoon_fireball_low(&dg);
+    assert(dg.unk5 == 0xA);
+}
+static void dg_rising_punch(void)
+{
+    dg_reset(1, 0xC, 0, 0);
+    g_Player.x_pos.i.hi = 161;
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk6 == 1 && dg.contact_damage == 8 && dg.unk15 == PLAYER_FACING_RIGHT && dg.unk17 == 5 && dg.attack_box == &magma_dragoon_leap_attack_box);
+    dg.unk6 = 2;
+    dg.attack_box = NULL;
+    dg.x_speed = 0x10000;
+    dg.y_speed = 0x10000;
+    dg_step(5, 0, 1);
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk6 == 2 && dg.x_speed == 0x10000 && dg.attack_box == NULL);
+    dg_step(5, 2, 1);
+    dg.x_speed = -0x1000;
+    dg.x_accel = 0x100;
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk6 == 2 && dg.attack_box == &magma_dragoon_punch_attack_box && dg.x_speed == 0 && dg.x_accel == 0);
+    dg.unk15 = 0;
+    dg.x_accel = -0x100;
+    dg_step(5, 0, 1);
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.x_speed == 0 && dg.x_accel == 0);
+    dg.y_speed = 0;
+    dg.gravity = 1;
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk6 == 3 && dg.unk17 == 7 && dg.attack_box == &magma_dragoon_attack_box);
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk6 == 3);
+    dg.collision_flags = 8;
+    dg.contact_damage = 8;
+    dg.air_state = 1;
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk6 == 4 && dg.contact_damage == 4 && dg.air_state == 0 && dg.unk17 == 6 && misc_objects[1].unk2 == 3);
+}
+static void dg_rising_punch_recover(void)
+{
+    dg_reset(1, 0xC, 4, 0);
+    dg_step(5, 0, 1);
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk6 == 4);
+    dg_step(5, 0, 0);
+    dg.y_pos.i.hi = 0x101;
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk6 == 0 && dg.unk5 == 9);
+    dg.unk5 = 0xC;
+    dg.unk6 = 4;
+    dg.y_pos.i.hi = 0x100;
+    dg.ext.main_65.attack = 3;
+    dg_step(5, 0, 0);
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk6 == 0 && dg.unk5 == 0xC && dg.ext.main_65.attack_repeat == 1);
+    dg.unk6 = 4;
+    dg_step(5, 0, 0);
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk5 == 9 && dg.ext.main_65.attack_repeat == 2);
+    dg.unk5 = 0xC;
+    dg.unk6 = 4;
+    dg.ext.main_65.attack = 0;
+    dg_step(5, 0, 0);
+    magma_dragoon_rising_punch(&dg);
+    assert(dg.unk5 == 9);
+}
+static void dg_stagger(void)
+{
+    dg_reset(1, 0xD, 0, 0);
+    magma_dragoon_stagger(&dg);
+    assert(dg.unk6 == 1 && misc_objects[0].active == 0x41 && misc_objects[0].id == 0x26 && misc_objects[0].unk2 == 4);
+    assert(dg.ext.main_65.object == MAIN_OBJECT(&misc_objects[0]) && dg.y_speed == 0x40000 && dg.unk17 == 0xD);
+    dg.gravity = 0;
+    magma_dragoon_stagger(&dg);
+    assert(dg.unk6 == 1);
+    dg.y_speed = -1;
+    magma_dragoon_stagger(&dg);
+    assert(dg.unk6 == 2);
+    misc_objects[0].animation_step.fields.relative_step = 0;
+    magma_dragoon_stagger(&dg);
+    assert(dg.unk6 == 2 && misc_objects[0].state == 0);
+    misc_objects[0].animation_step.fields.relative_step = -1;
+    magma_dragoon_stagger(&dg);
+    assert(dg.unk6 == 3 && misc_objects[0].state == 2 && dg.y_speed == 0 && dg.gravity == FIXED(0.2578125));
+    magma_dragoon_stagger(&dg);
+    assert(dg.unk6 == 3);
+    dg.collision_flags = 8;
+    dg.ext.main_65.flash_timer = 3;
+    magma_dragoon_stagger(&dg);
+    assert(dg.unk6 == 4 && dg.ext.main_65.flash_timer == 0x3D && dg.unk7C == 1 && dg.unk17 == 0);
+    dg.unk6 = 3;
+    dg.ext.main_65.flash_timer = 2;
+    magma_dragoon_stagger(&dg);
+    assert(dg.ext.main_65.flash_timer == 0x3E);
+    dg.unk7C = 2;
+    magma_dragoon_stagger(&dg);
+    assert(dg.unk7C == 1 && dg.unk5 == 0xD);
+    magma_dragoon_stagger(&dg);
+    assert(dg.unk5 == 9 && dg.unk6 == 0);
+}
+static void dg_fight(u8 weapon, u8 kind)
+{
+    dg.unk5 = 1;
+    dg.unk6 = 0;
+    dg.ext.main_65.flash_timer = 0;
+    state_hit(&dg, weapon, kind, 1);
+    magma_dragoon_update(&dg);
+}
+static void dg_fight_hits(void)
+{
+    dg_reset(1, 1, 0, 0);
+    dg.hp = 20;
+    dg.collision_data = D_801060F0;
+    magma_dragoon_update(&dg);
+    assert(dg.state == 1 && dg.collision_data == D_801060F0 && dg.unk42 == 0);
+    dg.ext.main_65.flash_timer = 3;
+    magma_dragoon_update(&dg);
+    assert(dg.ext.main_65.flash_timer == 2 && dg.unk42 == 0x8000);
+    dg.ext.main_65.flash_timer = 1;
+    magma_dragoon_update(&dg);
+    assert(dg.ext.main_65.flash_timer == 0 && dg.unk42 == 0 && dg.collision_data == D_80107D7C);
+    dg_fight(0, 0);
+    assert(dg.hp == 19 && dg.ext.main_65.flash_timer == 0x1D && dg.unk42 == 0x8000 && dg.collision_data == D_801060F0 && dg.unk5 == 1);
+    dg_fight(0, 0xFF);
+    assert(dg.hp == 19 && dg.ext.main_65.flash_timer == 0 && dg.collision_data == state_damage);
+    dg_fight(0x18, 0);
+    assert(dg.hp == 18 && dg.ext.main_65.flash_timer == 1);
+    dg_fight(0x19, 0);
+    assert(dg.hp == 17 && dg.ext.main_65.flash_timer == 1);
+    dg_fight(0x10, 0);
+    assert(dg.hp == 16 && dg.unk5 == 0xD && dg.unk6 == 1 && dg.ext.main_65.flash_timer == 0xFE);
+    dg_fight(7, 0);
+    assert(dg.hp == 15 && dg.unk5 == 0xD && dg.unk6 == 1 && dg.ext.main_65.flash_timer == 0xFE);
+    dg.hp = 1;
+    dg_fight(0, 0);
+    assert(dg.state == 2 && dg.unk5 == 0 && dg.unk6 == 0 && dg.hp == 0 && SPIKE_IMMUNE(g_Player) == 1);
+}
+static void dg_death_start_wait(void)
+{
+    dg_reset(2, 0, 0, 0);
+    dg.unk42 = 0x8123;
+    g_Player.unk15 = PLAYER_FACING_RIGHT;
+    magma_dragoon_update(&dg);
+    assert(dg.unk5 == 1 && dg.unk42 == 0x123 && dg.unk7C == 0x7F && dg.unk7E == 0x19 && dg.invincibility_timer == 0x19 && dg.unk17 == 0xD);
+    assert(g_Player.script_action == 0x14 && g_Player.script_facing == PLAYER_FACING_RIGHT);
+    dg.unk5 = 2;
+    effect_objects[0].active = 1;
+    dg.ext.main_65.object = MAIN_OBJECT(&effect_objects[0]);
+    dg.unk7E = 0;
+    magma_dragoon_death(&dg);
+    assert(dg.unk42 == 0x8123 && dg.unk7E == 5);
+    dg.unk7E = 2;
+    magma_dragoon_death(&dg);
+    assert(dg.unk42 == 0x8123 && dg.unk7E == 1);
+    dg.unk5 = 3;
+    magma_dragoon_death(&dg);
+    assert(dg.unk5 == 3);
+    effect_objects[0].active = 0;
+    abc_object.unkC = 0x80;
+    magma_dragoon_death(&dg);
+    assert(dg.unk5 == 4 && abc_object.unk10 == (s16)(0x8000 | 0xC));
+    magma_dragoon_death(&dg);
+    assert(dg.unk5 == 4);
+    abc_object.unkC = 0;
+    magma_dragoon_death(&dg);
+    assert(dg.unk5 == 5 && dg.unk7C == 0x50 && dg.unk17 == 0x13);
+}
+static void dg_death_smoke_vanish(void)
+{
+    dg_reset(2, 5, 0, 0);
+    misc_objects[3].active = 0x41;
+    dg.ext.main_65.smoke = MAIN_OBJECT(&misc_objects[3]);
+    dg.unk7C = 9;
+    magma_dragoon_death(&dg);
+    assert(dg.unk7C == 8 && visual_objects[0].active == 0x21 && visual_objects[0].id == 4 && visual_objects[0].x_pos.i.hi == 128 && visual_objects[0].y_pos.i.hi == 120);
+    dg.unk7C = 2;
+    magma_dragoon_death(&dg);
+    assert(dg.unk7C == 1 && visual_objects[1].active == 0);
+    magma_dragoon_death(&dg);
+    assert(dg.unk5 == 6 && dg.unk7C == 0x28 && visual_objects[1].active == 0x21);
+    dg.unk7C = 9;
+    magma_dragoon_death(&dg);
+    assert(dg.unk7C == 8 && visual_objects[2].active == 0x21);
+    dg.unk7C = 4;
+    magma_dragoon_death(&dg);
+    assert(dg.unk7C == 3 && visual_objects[3].active == 0);
+    dg.unk7C = 1;
+    magma_dragoon_death(&dg);
+    assert(dg.unk5 == 7 && dg.unk7C == 0x1E && misc_objects[3].active == 0 && visual_objects[3].active == 0);
+    dg.unk7C = 2;
+    engine_obj.unkF = 0;
+    magma_dragoon_death(&dg);
+    assert(dg.unk7C == 1 && engine_obj.unkF == 0);
+    magma_dragoon_death(&dg);
+    assert(engine_obj.unkF == 1);
+}
+static void (*const dg_cases[])(void) = {
+    dg_init_stage,
+    dg_init_rematch,
+    dg_intro_warning_rematch,
+    dg_intro_leap_descend,
+    dg_intro_land_pose,
+    dg_intro_ready_fill,
+    dg_dive_kick_jump_rise,
+    dg_dive_kick_dive,
+    dg_flame_burst_breath_start,
+    dg_leap_center_land_recover,
+    dg_leap_wall,
+    dg_fireball,
+    dg_fireball_low,
+    dg_rising_punch,
+    dg_rising_punch_recover,
+    dg_stagger,
+    dg_fight_hits,
+    dg_death_start_wait,
+    dg_death_smoke_vanish,
+};
+static u32 dg_run(u32 row)
+{
+    dg_cases[row]();
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "magma_dragoon_states", 0, 0, COUNT(magma_dragoon_states_cases), test_magma_dragoon_states },
     { "dragoon_breath_link_and_end", NULL, dragoon_breath_link_and_end_cases_expected, COUNT(dragoon_breath_link_and_end_cases_expected), breath_case },
@@ -866,6 +1448,12 @@ const struct CTestGroup c_test_groups[] = {
     { "defeat_scene_ride_side_and_pool", NULL, NULL, 24, defeat_scene },
     { "attack_pick_by_health_and_roll", NULL, NULL, 4, think },
     { "actual_Magma_Dragoon_stagger_root_13_own_pose_13_full_misc_pool", NULL, NULL, 1, full },
+    { "magma_dragoon_state_steps", NULL, NULL, COUNT(dg_cases), dg_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(magma_dragoon_states_cases) + COUNT(dragoon_breath_link_and_end_cases_expected) + COUNT(dragoon_flame_allocation_steps_cases_expected) + COUNT(dragoon_leap_context_cases_expected) + 3 + COUNT(magma_dragoon_death_flash_cases) + COUNT(pool_full_cases) + 8 + 24 + 4 + 1;
+const u32 c_test_count = COUNT(magma_dragoon_states_cases) + COUNT(dragoon_breath_link_and_end_cases_expected) + COUNT(dragoon_flame_allocation_steps_cases_expected) + COUNT(dragoon_leap_context_cases_expected) + 3 + COUNT(magma_dragoon_death_flash_cases) + COUNT(pool_full_cases) + 8 + 24 + 4 + 1 + COUNT(dg_cases);
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

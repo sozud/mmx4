@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/misc/misc_23_explosion_puff.h"
+#include "weapon_resources.h"
 
 static s32 sprite_frames[8] = { 16, 20, 24, 28, 1, 2, 3, 4 };
 static u32 puff_case(u32 mode)
@@ -17,7 +18,7 @@ static u32 puff_case(u32 mode)
     obj.unk6 = 4;
     obj.unk7 = mode >> 1;
     obj.bg_offset = -1;
-    obj.unk16 = 7;
+    obj.unk16 = VISUAL_SATURN_LAYER(7);
     obj.unk17 = 5;
     obj.previous_animation_index = 6;
     obj.unk40 = 0x1234;
@@ -30,10 +31,10 @@ static u32 puff_case(u32 mode)
     expected.unk38 = NULL;
     expected.unk3C = (u8*)sprite_frames + 24;
     expected.animation_table = explosion_animations;
-    expected.unk40 = 0;
-    expected.unk42 = animation == 2 ? 0x7806 : 0x7805;
+    expected.unk40 = WEAPON_TEXTURE_BASE;
+    expected.unk42 = animation == 2 ? OBJECT_CLUT(0x7806) : OBJECT_CLUT(0x7805);
     if (obj.unk7 == 0)
-        expected.unk16 = 1;
+        expected.unk16 = VISUAL_SATURN_LAYER(1);
     expected.unk17 = animation;
     expected.previous_animation_index = 0xFF;
     expected.animation_cursor = explosion_animations[animation];
@@ -43,12 +44,9 @@ static u32 puff_case(u32 mode)
     cur_random = mode >> 1 ? 1 : 119;
     TEST_SPRITE_FRAMES = (u8*)sprite_frames;
     explosion_puff_init(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(background_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)background_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(background_objects, background_before, sizeof(background_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     for (i = 0; i < 4; i++) {
         assert(sprite_frames[i] == 16 + i * 4);
         assert(sprite_frames[i + 4] == i + 1);
@@ -56,7 +54,12 @@ static u32 puff_case(u32 mode)
     assert(SP_SPRITE_FRAMES == sprite_frames && cur_random == (mode >> 1 ? 1 : 376));
     return obj.unk42 | ((u32)(u8)obj.unk16 << 16) | ((u32)(u8)obj.unk7 << 24);
 }
-static const u32 explosion_puff_animation_start_cases_expected[] = { 0x17805u, 0x17806u, 0x1077805u, 0x1077806u };
+static const u32 explosion_puff_animation_start_cases_expected[] = {
+    OBJECT_CLUT(0x7805) | 1u << 16,
+    OBJECT_CLUT(0x7806) | 1u << 16,
+    OBJECT_CLUT(0x7805) | (u32)(u8)VISUAL_SATURN_LAYER(7) << 16 | 1u << 24,
+    OBJECT_CLUT(0x7806) | (u32)(u8)VISUAL_SATURN_LAYER(7) << 16 | 1u << 24,
+};
 
 struct explosion_puff_animate_case {
     u32 unk54;
@@ -85,9 +88,43 @@ static u32 test_explosion_puff_animate(u32 row)
 }
 #undef main_bss_state
 
+
+static u32 ep_step = C_TEST_STEP(5);
+static u32 puff(u8 state, u8 rel, u8 size, u8 parity)
+{
+    struct MiscObj obj;
+    memset(&obj, 0, sizeof(obj));
+    memset(background_objects, 0, sizeof(background_objects));
+    TEST_SPRITE_FRAMES = (u8*)sprite_frames;
+    obj.active = 0x41;
+    obj.state = state;
+    obj.unk7 = parity;
+    obj.x_pos.i.hi = 0x80;
+    obj.y_pos.i.hi = 0x60;
+    obj.x_vel.val = 0x10000;
+    obj.ext.unk.unk54 = size;
+    obj.animation_table = explosion_animations;
+    obj.animation_cursor = (const u8*)&ep_step;
+    obj.animation_step.packed = ep_step;
+    obj.animation_step.fields.relative_step = rel;
+    WEAPON_FRAME_COUNTER = 0;
+    explosion_puff_update(&obj);
+    return (u8)obj.active | (u32)obj.state << 8 | (u32)(u8)obj.on_screen << 16 | (u32)(u16)obj.x_pos.i.hi << 20;
+}
+static u32 ep_start(void) { return puff(0, 0, 0, 0); }
+static u32 ep_done(void) { return puff(1, 0, 0, 0); }
+static u32 ep_blink_hidden(void) { return puff(1, 1, 0, 1); }
+static const CTestCase explosion_puff_steps_cases[] = {
+    ep_start,
+    ep_done,
+    ep_blink_hidden,
+};
+static const u32 explosion_puff_steps_cases_expected[] = { 0x08010141u, 0x08100000u, 0x08100141u };
+
 const struct CTestGroup c_test_groups[] = {
     { "explosion_puff_animation_start", NULL, explosion_puff_animation_start_cases_expected, COUNT(explosion_puff_animation_start_cases_expected), puff_case },
     { "explosion_puff_animate", 0, 0, 2, test_explosion_puff_animate },
+    { "explosion_puff_steps", explosion_puff_steps_cases, explosion_puff_steps_cases_expected, COUNT(explosion_puff_steps_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(explosion_puff_animation_start_cases_expected) + 2;
+const u32 c_test_count = COUNT(explosion_puff_animation_start_cases_expected) + 2 + COUNT(explosion_puff_steps_cases);

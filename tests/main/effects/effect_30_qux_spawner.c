@@ -4,6 +4,9 @@ void floor_trap_wait(struct EffectObj*);
 void floor_trap_explode(struct EffectObj*);
 extern struct TileEffectRecord** tile_effect_tables[26];
 static u32 map_words[192];
+#ifdef MMX4_SATURN
+static u32 cells[1];
+#endif
 static u16 pixels[256], pixels_expected[256], cache_expected[3][32][32];
 static struct ShotObj shots_expected[32];
 static struct VisualObj visuals_before[32];
@@ -38,7 +41,11 @@ static u32 explode(u32 row)
     memcpy(cache_expected, D_801441C8, sizeof(cache_expected));
     SP_BG_TILEMAP = (u8*)map_words;
     TEST_BG_TILE_PIXELS = (u8*)pixels;
+#ifdef MMX4_SATURN
+    SP_BG_TILE_ATTRS = cells;
+#endif
     layout_width = 64;
+    layout_height = 4;
     layout_size = 256;
     c_test_zero_words((u32*)shot_objects, sizeof(shot_objects) / 4);
     for (i = 0; i < COUNT(shot_objects); i++)
@@ -72,7 +79,9 @@ static u32 explode(u32 row)
             for (x = 0; x < 4; x++) {
                 u32 tx = ox / 16 + x, ty = 6 + y;
                 pixels_expected[(ty % 16) * 16 + tx % 16] = r->tiles[x];
+#ifndef MMX4_SATURN
                 cache_expected[0][ty][tx % 32] = r->tiles[x];
+#endif
             }
         }
         memset(&expected, 0, 8);
@@ -92,6 +101,32 @@ static u32 explode(u32 row)
         assert(map_words[i] == 0);
     return 1;
 }
-const struct CTestGroup c_test_groups[] = { { "real_bike_trigger_countdown_shipped_floor_tiles_zero_one_two_shot_slots", NULL, NULL, 18, explode } };
+static u32 trap_wait(s16 dx, s16 dy)
+{
+    struct EffectObj obj;
+    struct RideArmorObj saved = qux_object;
+    memset(&obj, 0, sizeof(obj));
+    memset(&qux_object, 0, sizeof(qux_object));
+    obj.state = 1;
+    obj.x_pos.i.hi = 0x100;
+    obj.y_pos.i.hi = 0x80;
+    qux_object.x_pos.i.hi = 0x100 + dx;
+    qux_object.y_pos.i.hi = 0x80 - dy;
+    floor_trap_wait(&obj);
+    qux_object = saved;
+    return obj.state | (u32)obj.unk5 << 8;
+}
+static u32 ft_past(void) { return trap_wait(0x31, 0x1A); }
+static u32 ft_not_level(void) { return trap_wait(0x20, 0x19); }
+static const CTestCase floor_trap_wait_cases[] = {
+    ft_past,
+    ft_not_level,
+};
+static const u32 floor_trap_wait_cases_expected[] = { 1u, 1u };
+
+const struct CTestGroup c_test_groups[] = {
+    { "floor_trap_wait", floor_trap_wait_cases, floor_trap_wait_cases_expected, COUNT(floor_trap_wait_cases), 0 },
+    { "real_bike_trigger_countdown_shipped_floor_tiles_zero_one_two_shot_slots", NULL, NULL, 18, explode },
+};
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 18;
+const u32 c_test_count = 18 + COUNT(floor_trap_wait_cases);

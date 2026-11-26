@@ -1,6 +1,8 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/items/item_10_spark_machine.h"
 
+#ifndef VERSION_DEMO
 #include "support/pool_full.h"
 static u32 pool_full_spark_machine_spawn_spark_a(void)
 {
@@ -39,6 +41,10 @@ static const CTestCase pool_full_cases[] = {
 };
 
 static const u32 pool_full_cases_expected[] = { 0x50000u, 0x50000u, 0x50000u };
+#define POOL_FULL_CASES COUNT(pool_full_cases)
+#else
+#define POOL_FULL_CASES 0
+#endif
 #include "support/state_cases.h"
 
 static u32 spark_pages[0x100];
@@ -49,7 +55,7 @@ static s32 spark_frames[0x100];
 static void sp_init(void)
 {
     SPARK(0);
-    D_801406A8 = spark_pages;
+    test_stage_graphics(spark_pages);
     TEST_MENU_FRAMES = (u8*)spark_frames;
     spark_machine_update(&si);
     SPARK_SEEN();
@@ -143,7 +149,7 @@ static void (*const spark_machine_states_cases[])(void) = {
     sp_sparking_c,
     sp_broken,
 };
-static const u32 spark_machine_states_expected[] = { 1u, 0xFF000041u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x37986u, 0x1000u, 0u, 1u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 4u, 0x2100u, 1u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0x2100u, 2u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x9410078u, 0x41002100u, 3u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x100u, 0u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0xA02u, 0x41000000u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x102u, 0x41000000u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x102u, 0x41000000u, 4u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u };
+static const u32 spark_machine_states_expected[] = { 1u, 0xFF000041u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x30000u | OBJECT_CLUT(0x7986), 0x1000u, 0u, 1u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 4u, 0x2100u, 1u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0x2100u, 2u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x9410078u, 0x41002100u, 3u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x100u, 0u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0xA02u, 0x41000000u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x102u, 0x41000000u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x102u, 0x41000000u, 4u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u };
 
 static u32 test_spark_machine_states(u32 row)
 {
@@ -152,7 +158,9 @@ static u32 test_spark_machine_states(u32 row)
 
 const struct CTestGroup c_test_groups[] = {
     { "spark_machine_states", 0, 0, COUNT(spark_machine_states_cases), test_spark_machine_states },
+#ifndef VERSION_DEMO
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(spark_machine_states_cases) + COUNT(pool_full_cases);
+const u32 c_test_count = COUNT(spark_machine_states_cases) + POOL_FULL_CASES;

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_32_bomb_bat.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -43,10 +44,8 @@ static u32 drop_case(u32 wait)
         before.animation_cursor = (const u8*)bomb_bat_animations[3];
         before.animation_step = *bomb_bat_animations[3];
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u8)obj.ext.main_32.unk80 << 16) | ((u32)obj.unk17 << 24);
 }
 static const u32 bomb_bat_drop_animation_end_cases_expected[] = { 0x3000004u, 0x10203u };
@@ -123,7 +122,7 @@ static u32 test_bomb_bat_main_1(u32 row)
     D_8013E198[4] = -1;
     D_8013E198[5] = -1;
     g_Player.bg_offset = 0;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     engine_obj.stage = 0;
     engine_obj.substage = 0;
     background_objects[0].x_pos.val = 0;
@@ -184,7 +183,7 @@ static u32 test_bomb_bat_main_1(u32 row)
     background_before = background_objects[0];
     memcpy(weapons_expected, weapon_objects, sizeof(weapons_expected));
     weapons_expected[0].unk98 = 1;
-    weapons_expected[0].unk80.word = 0x00630063;
+    TEST_SET_HALVES(weapons_expected[0].unk80, 0x63, 0x63);
     memcpy(shots_before, shot_objects, sizeof(shots_before));
     memcpy(visuals_before, visual_objects, sizeof(visuals_before));
     memcpy(misc_before, misc_objects, sizeof(misc_before));
@@ -205,7 +204,7 @@ static u32 test_bomb_bat_main_1(u32 row)
     observed_values[1] = (u32)obj.hp;
     observed_values[2] = (u32)obj.unk5;
     observed_values[3] = (u32)obj.unk42;
-    observed_values[4] = (u32)weapon_objects[0].unk80.word;
+    observed_values[4] = TEST_LE_HALVES(&weapon_objects[0].unk80);
     observed_values[5] = (u32)cur_random;
     return c_test_observe(0, row, observed_values, c->expected, 6);
 }
@@ -242,7 +241,7 @@ static u32 test_func_8005C860(u32 row)
     observed_values[11] = (u32)obj.hp;
     observed_values[12] = (u32)obj.invincibility_timer;
     observed_values[13] = (u32)obj.state;
-    observed_values[14] = (u32)obj.unk16;
+    observed_values[14] = TEST_PSX_LAYER(obj.unk16);
     observed_values[15] = (u32)obj.unk18.val;
     observed_values[16] = (u32)obj.unk1C.val;
     observed_values[17] = (u32)obj.unk5;
@@ -281,7 +280,7 @@ static u32 test_func_8005CF9C(u32 row)
     g_Player.bg_offset = 0;
     obj.unk2 = c->unk2;
     func_8005C860(&obj);
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.unk5 = 6;
     obj.unk6 = 0;
     obj.unk7C = 7;
@@ -308,7 +307,7 @@ static u32 test_func_8005CF9C(u32 row)
     observed_values[2] = (u32)obj.x_accel;
     observed_values[3] = (u32)obj.unk6;
     observed_values[4] = (u32)obj.unk7C;
-    observed_values[5] = (u32)obj.animation_step.packed;
+    observed_values[5] = C_TEST_STEP(obj.animation_step.packed);
     observed_values[6] = (u32)cur_random;
     return c_test_observe(0, row, observed_values, c->expected, 7);
 }
@@ -327,7 +326,7 @@ static void bb_flee_left(void)
 static void bb_flee_right(void)
 {
     BB(3, 0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     bomb_bat_flee(&so);
 }
 static void bb_flee_move(void)
@@ -354,6 +353,24 @@ static void bb_dive_fall(void)
     bomb_bat_dive(&so);
 }
 
+void bomb_bat_main(struct MainObj*);
+void func_8005CB90(struct MainObj*);
+void bomb_bat_drop_release(struct MainObj*);
+void bomb_bat_fly_off_start(struct MainObj*);
+void bomb_bat_face_player(struct MainObj*);
+#define BBX() (state_extra = so.ext.main_32.unk80 | (u32)so.ext.main_32.unk88 << 8 | (u32)shot_objects[0].id << 16 | (u32)so.state << 24)
+#define BBM(setup) (BB(5, 1), memset(weapon_objects, 0, sizeof(weapon_objects)), so.state = 1, so.unk7C = 5, setup, bomb_bat_main(&so), BBX())
+static struct Unk_unk68 bb_point = { -2, -2, 4, 4 };
+static void bb_main_bomb_hit(void) { BBM((so.hp = 1, state_hit(&so, 0, 0, 1), weapon_objects[0].y_pos.i.hi += 25, ((struct MainObj*)&weapon_objects[0])->attack_box = &bb_point, cur_random = 1)); }
+#define BBA(px, timer) (BB(2, 1), so.unk7C = timer, g_Player.x_pos.i.hi = 0x80 + (px), g_Player.y_pos.i.hi = 0xC0, func_8005CB90(&so), BBX())
+static void bb_approach_near(void) { BBA(1, 5); }
+static void bb_approach_timeout(void) { BBA(-0x60, 1); }
+static void bb_approach_far(void) { BBA(0x60, 5); }
+static void bb_release(void) { BB(3, 1), so.ext.main_32.unk80 = 1, bomb_bat_drop_release(&so), BBX(); }
+static void bb_release_wait(void) { BB(3, 1), so.ext.main_32.unk80 = 2, bomb_bat_drop_release(&so), BBX(); }
+static void bb_fly_off_right(void) { BB(4, 0), so.unk15 = PLAYER_FACING_RIGHT, bomb_bat_fly_off_start(&so); }
+static void bb_face_left(void) { BB(1, 0), g_Player.x_pos.i.hi = 0x40, bomb_bat_face_player(&so); }
+static void bb_face_right(void) { BB(1, 0), g_Player.x_pos.i.hi = 0xC0, bomb_bat_face_player(&so); }
 static void (*const bomb_bat_states_cases[])(void) = {
     bb_fly_off,
     bb_flee_left,
@@ -362,8 +379,27 @@ static void (*const bomb_bat_states_cases[])(void) = {
     bb_dive_wait,
     bb_dive_go,
     bb_dive_fall,
+    bb_approach_near,
+    bb_approach_timeout,
+    bb_approach_far,
+    bb_release,
+    bb_release_wait,
+    bb_fly_off_right,
+    bb_face_left,
+    bb_face_right,
+    bb_main_bomb_hit,
 };
-static const u32 bomb_bat_states_expected[] = { 0x102u, 0u, 0x800000u, 0xFFFD0000u, 0x5000u, 0u, 3u, 0u, 0u, 0u, 0x103u, 0u, 0x800000u, 0xFFFD0000u, 0u, 0u, 3u, 2u, 0u, 0u, 0x103u, 0u, 0x800000u, 0x30000u, 0u, 0u, 0x4003u, 2u, 0u, 0u, 0x103u, 0u, 0x810000u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x104u, 1u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x204u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x204u, 0u, 0x800000u, 0u, 0x10100u, 0u, 0u, 0u, 0u, 0u };
+static const u32 bomb_bat_states_expected[] = { 0x102u, 0u, 0x800000u, 0xFFFD0000u, 0x5000u, 0u, 3u, 0u, 0u, 0u, 0x103u, 0u, 0x800000u, 0xFFFD0000u, 0u, 0u, 3u, 2u, 0u, 0u, 0x103u, 0u, 0x800000u, 0x30000u, 0u, 0u, 0x4003u, 2u, 0u, 0u, 0x103u, 0u, 0x810000u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x104u, 1u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x204u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x204u, 0u, 0x800000u, 0u, 0x10100u, 0u, 0u, 0u, 0u, 0u,
+    0x3u, 0x5u, 0x800000u, 0x0u, 0xFFFF0000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x3u, 0x0u, 0x800000u, 0xFFFE8762u, 0xFFFFCE0Fu, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x102u, 0x4u, 0x800000u, 0x1789Eu, 0xFFFFCE0Fu, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x203u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x7010Du, 0x410000u,
+    0x103u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u,
+    0x104u, 0x0u, 0x800000u, 0x30000u, 0x5000u, 0x0u, 0x4003u, 0x0u, 0x0u, 0x0u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x1u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x0u, 0x0u,
+    0x105u, 0x5u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x2000000u, 0x2100u,
+};
 
 static u32 test_bomb_bat_states(u32 row)
 {

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_06_bulldozer.h"
 #include "support/state_cases.h"
 #include "main/sprite_animations.h"
@@ -39,7 +40,7 @@ static u32 test_bulldozer_fall_1(u32 row)
     observed_values[6] = (u32)obj.x_accel;
     observed_values[7] = (u32)obj.gravity;
     observed_values[8] = (u32)obj.air_state;
-    observed_values[9] = (u32)obj.animation_step.packed;
+    observed_values[9] = C_TEST_STEP(obj.animation_step.packed);
     return c_test_observe(0, row, observed_values, bulldozer_fall_1_expected, 10);
 }
 
@@ -77,7 +78,7 @@ static u32 test_func_80046C8C(u32 row)
     memset(&D_8013E198, -1, sizeof(D_8013E198));
     engine_obj.stage = 1;
     cur_random = 0x1234;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.bg_offset = -1;
     g_Player.x_pos.i.hi = 1000;
     obj.active = 0x41;
@@ -89,11 +90,11 @@ static u32 test_func_80046C8C(u32 row)
     obj.unk7C = 2;
     obj.collision_flags = 8;
     obj.ext.main_6.core_health = 0;
-    assert(obj.unk15 == 0x40 && obj.ext.main_6.hitbox_toggle == 0);
+    assert(obj.unk15 == PLAYER_FACING_RIGHT && obj.ext.main_6.hitbox_toggle == 0);
     assert(obj.animation_table == (const u8* const*)D_800FA4E8);
     weapon_objects[0].active = 1;
     weapon_objects[0].id = 1;
-    weapon_objects[0].unk15 = 0x40;
+    weapon_objects[0].unk15 = PLAYER_FACING_RIGHT;
     weapon_objects[0].unk50 = (const u8*)&bulldozer_hurt_boxes[1];
     weapon_objects[0].x_pos = obj.x_pos;
     weapon_objects[0].y_pos = obj.y_pos;
@@ -112,7 +113,7 @@ static u32 test_func_80046C8C(u32 row)
     observed_values[1] = (u32)obj.unk5;
     observed_values[2] = (u32)obj.unk6;
     observed_values[3] = (u32)obj.hp;
-    observed_values[4] = (u32)obj.unk15;
+    observed_values[4] = C_TEST_PSX_FACING(obj.unk15);
     observed_values[5] = (u32)obj.unk42;
     observed_values[6] = (u32)obj.unk7C;
     observed_values[7] = (u32)obj.ext.main_6.armor_broken;
@@ -123,7 +124,7 @@ static u32 test_func_80046C8C(u32 row)
     observed_values[12] = (u32)obj.x_pos.val;
     observed_values[13] = (u32)obj.y_pos.val;
     observed_values[14] = (u32)weapon_objects[0].unk98;
-    observed_values[15] = (u32)weapon_objects[0].unk80.word;
+    observed_values[15] = TEST_LE_HALVES(&weapon_objects[0].unk80);
     observed_values[16] = (u32)cur_random;
     observed_values[17] = (u32)(obj.hurt_box == (const void*)&bulldozer_hurt_boxes[1]);
     observed_values[18] = (u32)(obj.attack_box == (const void*)&bulldozer_hurt_boxes[1]);
@@ -160,13 +161,13 @@ static void bd_charge_left_fast(void)
 static void bd_charge_right(void)
 {
     BD(3, 0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     bulldozer_charge_start(&so);
 }
 static void bd_charge_right_fast(void)
 {
     BD(3, 0);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.ext.main_6.armor_broken = 1;
     bulldozer_charge_start(&so);
 }
@@ -187,7 +188,7 @@ static void bd_move_right(void)
 {
     BD(3, 1);
     state_terrain(0x38);
-    so.unk15 = 0x40;
+    so.unk15 = PLAYER_FACING_RIGHT;
     so.x_speed = 0x10000;
     bulldozer_charge_move(&so);
 }
@@ -202,6 +203,12 @@ static void bd_hit_armor(void) { HIT(0, 1, 8, 8); }
 static void bd_hit_core(void) { HIT(0, 0, 8, 8); }
 static void bd_hit_broken(void) { HIT(1, 1, 8, 8); }
 static void bd_hit_armor_break(void) { HIT(0, 1, 1, 8); }
+void bulldozer_rev(struct MainObj*);
+void bulldozer_rev_wait(struct MainObj*);
+#define REV(broken) (BD(2, 0), so.ext.main_6.armor_broken = broken, bulldozer_rev(&so), state_extra = so.ext.main_6.ground_probe_distance | (u32)(u16)so.unk7C << 8 | (u32)so.unk17 << 24)
+static void bd_rev_begin(void) { REV(0); }
+static void bd_rev_begin_broken(void) { REV(1); }
+static void bd_rev_wait_done(void) { BD(2, 1), bulldozer_rev_wait(&so); }
 
 static void (*const bulldozer_states_cases[])(void) = {
     bd_fall,
@@ -218,8 +225,15 @@ static void (*const bulldozer_states_cases[])(void) = {
     bd_hit_core,
     bd_hit_broken,
     bd_hit_armor_break,
+    bd_rev_begin,
+    bd_rev_begin_broken,
+    bd_rev_wait_done,
 };
-static const u32 bulldozer_states_expected[] = { 4u, 0u, 0x800000u, 0u, 0xFFFFC000u, 0x400000u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x7F8000u, 0xFFFF8000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x7E0000u, 0xFFFE0000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x808000u, 0x8000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 0x103u, 0u, 0x820000u, 0x20000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 3u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x7F0000u, 0xFFFF0000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x810000u, 0x10000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 0x103u, 0u, 0x800000u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x1000001u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0x7D0003u, 0x806u, 0x2100u, 0x1000001u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0x7D0003u, 0x608u, 0x2100u, 0x1000001u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0x7D0003u, 0x608u, 0x2100u, 0x1000002u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000001u, 0x7D0003u, 0xFFFFF7FFu, 0x2100u };
+static const u32 bulldozer_states_expected[] = { 4u, 0u, 0x800000u, 0u, 0xFFFFC000u, 0x400000u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x7F8000u, 0xFFFF8000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x7E0000u, 0xFFFE0000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x808000u, 0x8000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 0x103u, 0u, 0x820000u, 0x20000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 3u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x7F0000u, 0xFFFF0000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x103u, 0u, 0x810000u, 0x10000u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 0x103u, 0u, 0x800000u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x1000001u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0x7D0003u, 0x806u, 0x2100u, 0x1000001u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0x7D0003u, 0x608u, 0x2100u, 0x1000001u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0x7D0003u, 0x608u, 0x2100u, 0x1000002u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000001u, 0x7D0003u, 0xFFFFF7FFu, 0x2100u,
+    0x102u, 0x28u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2848u, 0x0u,
+    0x102u, 0x28u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x1u, 0x0u, 0x1002808u, 0x0u,
+    0x3u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+};
 
 static u32 test_bulldozer_states(u32 row)
 {
@@ -268,7 +282,7 @@ static u32 break_effects(u32 row)
     engine_obj.stage = 1;
     engine_before = engine_obj;
     g_Player.hp = 30;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     player_before = g_Player;
     TEST_SPRITE_FRAMES = (u8*)directory;
     obj.active = 0x41;
@@ -278,7 +292,7 @@ static u32 break_effects(u32 row)
     obj.unk6 = 1;
     obj.on_screen = 7;
     obj.unk42 = 0x9234;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.collision_flags = 8;
     obj.x_pos.val = x * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
@@ -323,7 +337,7 @@ static u32 break_effects(u32 row)
             expected.unk17 = 1;
             expected.previous_animation_index = 255;
             expected.animation_cursor = (const u8*)D_800FA4E8[1];
-            expected.animation_step.packed = 0x08010002;
+            expected.animation_step.packed = C_TEST_STEP(0x08010002);
         } else {
             expected.ext.main_6.core_health = -1;
             expected.state = 2;
@@ -334,18 +348,19 @@ static u32 break_effects(u32 row)
             hit->id = 3;
             hit->unk2 = 3;
             hit->animation_table = D_8011BF40;
-            hit->unk42 = 0x7802;
+            hit->unk40 = WEAPON_TEXTURE_BASE;
+            hit->unk42 = OBJECT_CLUT(0x7802);
             hit->unk3C = (u8*)directory + 16;
             hit->x_pos.i.hi = impact_x;
             hit->y_pos.i.hi = impact_y;
-            hit->unk15 = obj.unk15 ^ 0x40;
+            hit->unk15 = obj.unk15 ^ PLAYER_FACING_RIGHT;
         }
         for (i = 0; i < explosion_count[mode] && used < capacity; i++) {
             struct VisualObj* child = &visuals_expected[used++];
             child->active = 0x21;
             child->id = 4;
             child->unk5C.value = 1;
-            child->unk16 = 1;
+            child->unk16 = VISUAL_SATURN_LAYER(1);
             child->x_pos.i.hi = x + (face ? -explosion_x[mode][i] : explosion_x[mode][i]);
             child->y_pos.i.hi = 120 + explosion_y[mode][i];
         }

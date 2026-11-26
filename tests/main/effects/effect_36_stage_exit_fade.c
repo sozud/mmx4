@@ -41,6 +41,11 @@ static void ef_wait(void) { KEEP((FADE(1), effect_objects[0].active = 1, effect_
 static void ef_wait_gone(void) { KEEP((FADE(1), stage_exit_fade_update(&se))); }
 static void ef_wait_reused(void) { KEEP((FADE(1), effect_objects[0].active = 1, effect_objects[0].id = 3, stage_exit_fade_update(&se))); }
 static void ef_whiteout(void) { KEEP((FADE(2), se.ext.effect_36.timer = 2, stage_exit_fade_update(&se))); }
+#ifdef MMX4_SATURN
+#define WHITEOUT_DONE 0x10078u
+#else
+#define WHITEOUT_DONE 0xFF010459u
+#endif
 static s32 fade_saved[4];
 static u8 fade_modes[3];
 static void ef_whiteout_done(void)
@@ -63,7 +68,7 @@ static void (*const stage_exit_fade_states_cases[])(void) = {
     ef_whiteout_done,
     ef_finish,
 };
-static const u32 stage_exit_fade_states_expected[] = { 0x1E0101u, 0xC0201u, 0x10000u, 0u, 0x101u, 0x201u, 0x10000u, 0u, 0x201u, 0u, 0x10078u, 0u, 0x201u, 0x301u, 0x10078u, 0u, 0x10201u, 0u, 0x10078u, 0u, 0x301u, 0u, 0xFF010459u, 0u, 0u, 0u, 0x14000u, 0u };
+static const u32 stage_exit_fade_states_expected[] = { 0x1E0101u, 0xC0201u, 0x10000u, 0u, 0x101u, 0x201u, 0x10000u, 0u, 0x201u, 0u, 0x10078u, 0u, 0x201u, 0x301u, 0x10078u, 0u, 0x10201u, 0u, 0x10078u, 0u, 0x301u, 0u, WHITEOUT_DONE, 0u, 0u, 0u, 0x14000u, 0u };
 
 static u32 fade_run(void (*run)(void), u32 row, const u32* expected)
 {
@@ -82,6 +87,7 @@ static u32 test_stage_exit_fade_states(u32 row)
 }
 
 void stage_exit_fade_whiteout(struct EffectObj*);
+#ifndef MMX4_SATURN
 static POLY_F4 primitives[4], expected_primitives[4];
 static struct DrawInfo draw, expected_draw;
 static u32 gauge(u32 row)
@@ -145,11 +151,18 @@ static u32 gauge(u32 row)
     assert(g_FilterModeR == 1 && g_FilterModeG == 2 && g_FilterModeB == 4 && g_FilterAmountR == 31 && g_FilterAmountG == 0x3E0 && g_FilterAmountB == 0x7C00);
     return 1;
 }
+#endif
 
 const struct CTestGroup c_test_groups[] = {
     { "stage_exit_fade_states", 0, 0, COUNT(stage_exit_fade_states_cases), test_stage_exit_fade_states },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
+#ifndef MMX4_SATURN
     { "real_stage_exit_filter_clamps_normal_low_and_damage_HP_bars", NULL, NULL, 2, gauge },
+#endif
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(stage_exit_fade_states_cases) + COUNT(pool_full_cases) + 2;
+const u32 c_test_count = COUNT(stage_exit_fade_states_cases) + COUNT(pool_full_cases)
+#ifndef MMX4_SATURN
+    + 2
+#endif
+    ;

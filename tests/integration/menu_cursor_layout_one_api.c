@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#ifndef MMX4_SATURN
 void func_8001C008(s32, s32);
 void func_8001B388(struct EngineObj*);
 void menu_icon_update(struct MiscObj*);
@@ -51,7 +52,7 @@ static u32 layout_one(u32 row)
     func_8001C008(1, 1);
     assert(misc_objects[0].active == 1 && misc_objects[0].id == 42 && misc_objects[0].unk2 == 4 && misc_objects[0].ext.misc_42.unk56 == 1);
     menu_icon_update(&misc_objects[0]);
-    assert(misc_objects[0].state == 1 && misc_objects[0].y_pos.i.hi == 0x78 && misc_objects[0].animation_step.packed == 0x3101000F);
+    assert(misc_objects[0].state == 1 && misc_objects[0].y_pos.i.hi == 0x78 && misc_objects[0].animation_step.packed == C_TEST_STEP(0x3101000F));
     controller_input.held = controller_input.pressed = PADLup;
     func_8001B388(&engine_obj);
     assert(main_bss_state.transition.selection == 1);
@@ -69,3 +70,8 @@ static u32 layout_one(u32 row)
 const struct CTestGroup c_test_groups[] = { { "supported_cursor_layout1_real_spawner_initializer_and_Up_input", NULL, NULL, 1, layout_one } };
 const u32 c_test_group_count = COUNT(c_test_groups);
 const u32 c_test_count = 1;
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

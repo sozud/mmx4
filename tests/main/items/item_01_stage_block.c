@@ -193,9 +193,174 @@ static u32 landing(u32 row)
     return 1;
 }
 
+#include "support/state_cases.h"
+#include "weapon_resources.h"
+void stage_block_main(struct ItemObj*);
+void stage_block_stop(struct ItemObj*);
+void stage_block_destroyed(struct ItemObj*);
+#define si state_room.item
+static u32 sb_archive[16];
+#define SB(kind, step) (state_reset(step, 0, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), SPIKE_IMMUNE_SET(g_Player, 1), g_Player.unk68 = &state_hit_box, si.active = 1, si.id = 1, si.unk2 = kind, si.state = 1, si.x_pos.i.hi = 0x80, si.y_pos.i.hi = 0x60, si.unk68 = (struct Unk_unk68*)&stage_block_bounds[kind])
+#define SBX() (state_extra = (u8)si.ext.timer | (u8)si.unk7C.timer << 8 | (u8)si.unk76 << 16)
+static void sb_init(u8 kind)
+{
+    SB(kind, 0);
+    si.state = 0;
+    sb_archive[8] = 64;
+    TEST_MENU_FRAMES = (u8*)sb_archive;
+    func_800BEBFC(&si);
+    SBX();
+}
+static void sb_init_ledge(void) { sb_init(8); }
+static void sb_init_rising(void) { sb_init(9); }
+static void sb_init_fire_block(void) { sb_init(13); }
+static void sb_main_fire_block_stopped(void) { SB(13, 3), stage_block_main(&si), SBX(); }
+static void sb_main(u8 hp) { SB(0, 0), ((struct MainObj*)&si)->hp = hp, state_hit((struct MainObj*)&si, 0, 0, 1), stage_block_main(&si), SBX(); }
+static void sb_main_hit(void) { sb_main(0x10); }
+static void sb_main_broken(void) { sb_main(1); }
+static void sb_main_gate_waiting(void) { SB(12, 0), si.unk42 = 0x8001, stage_block_main(&si), SBX(); }
+static void sb_main_gate_stopped(void) { SB(12, 3), si.unk42 = 0x8001, stage_block_main(&si), SBX(); }
+static void sb_trigger(u8 kind) { SB(kind, 0), g_Player.x_pos.i.hi = stage_block_entries[kind].left, stage_block_wait_trigger(&si), SBX(); }
+static void sb_trigger_rising(void) { sb_trigger(9); }
+static void sb_trigger_fire_block(void) { sb_trigger(13); }
+#define FALL(kind, y, vy, tick, landed, shaken) (SB(kind, 1), si.y_pos.i.hi = y, si.y_vel.val = vy, si.ext.timer = tick, si.tail_ext.unk1.unk84.previous_value = landed, si.tail_ext.unk1.unk88 = shaken, func_800BEFCC(&si), SBX())
+static void sb_fall_ledge_dust(void) { FALL(8, 0x1A8, 0, 1, 0, 0); }
+static void sb_fall_rising_dust(void) { FALL(9, 0x228, 0x40000, 1, 0, 0); }
+static void sb_fall_rising_top(void) { FALL(9, 0x199, 0x40000, 5, 0, 0); }
+static void sb_fall_high(void) { FALL(5, 0x1B0, 0, 5, 0, 0); }
+static void sb_fall_high_shaken(void) { FALL(5, 0x1B0, 0, 5, 0, 1); }
+static void sb_fall_high_landed(void) { FALL(5, 0x1B0, 0, 5, 1, 0); }
+static void sb_stop_fire_column(void) { SB(5, 3), stage_block_stop(&si), SBX(); }
+static void sb_destroyed(u8 tick, u8 frame) { SB(0, 0), si.state = 2, si.unk7C.timer = tick, WEAPON_FRAME_COUNTER = frame, stage_block_destroyed(&si), SBX(); }
+static void sb_destroyed_quiet(void) { sb_destroyed(2, 1); }
+static void sb_destroyed_burst(void) { sb_destroyed(2, 0x10); }
+static void sb_destroyed_done(void) { sb_destroyed(1, 1); }
+static void sb_despawn(void) { SB(0, 0), si.state = 3, stage_block_update(&si), SBX(); }
+
+static void (*const stage_block_states_cases[])(void) = {
+    sb_init_ledge,
+    sb_init_rising,
+    sb_init_fire_block,
+    sb_main_fire_block_stopped,
+    sb_main_hit,
+    sb_main_broken,
+    sb_main_gate_waiting,
+    sb_main_gate_stopped,
+    sb_trigger_rising,
+    sb_trigger_fire_block,
+    sb_fall_ledge_dust,
+    sb_fall_rising_dust,
+    sb_fall_rising_top,
+    sb_fall_high,
+    sb_fall_high_shaken,
+    sb_fall_high_landed,
+    sb_stop_fire_column,
+    sb_destroyed_quiet,
+    sb_destroyed_burst,
+    sb_destroyed_done,
+    sb_despawn,
+};
+static const u32 stage_block_states_expected[] = {
+    1u, 0x801u, 0xAE00000u, 0x1A80000u, 0u, 0u, 0x80000u, 0x50000u | OBJECT_CLUT(0x7941), 0u, 0u,
+    1u, 0x901u, 0xBE00000u, 0x2280000u, 0u, 0x40000u, 0xD0000u, 0x50000u | OBJECT_CLUT(0x7941), 0u, 0u,
+    1u, 0xD01u, 0xEA00000u, 0x1E00000u, 0u, 0u, 0x500000u, 0x50000u | OBJECT_CLUT(0x79C4), 0u, 0u,
+    0x303u, 0xD01u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
+    1u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0x2100u,
+    2u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0x3C00u, 0x41002100u,
+    1u, 0xC01u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58001u, 0u, 0u,
+    0x301u, 0xC01u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50001u, 0u, 0u,
+    0x101u, 0x901u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 1u, 0u,
+    0x101u, 0xD01u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 1u, 0x2100u,
+    0x101u, 0x801u, 0x800000u, 0x1A80000u, 0u, 0u, 0u, 0x50000u, 4u, 0x2100u,
+    0x101u, 0x901u, 0x800000u, 0x2240000u, 0u, 0x40000u, 0u, 0x50000u, 4u, 0x2100u,
+    0x201u, 0x901u, 0x800000u, 0x1980000u, 0u, 0x40000u, 0u, 0x50000u, 0u, 0u,
+    0x101u, 0x501u, 0x800000u, 0x1B00000u, 0u, 0u, 0u, 0x50000u, 4u, 0u,
+    0x101u, 0x501u, 0x800000u, 0x1B00000u, 0u, 0u, 0u, 0x50000u, 4u, 0u,
+    0x101u, 0x501u, 0x800000u, 0x1B00000u, 0u, 0u, 0u, 0x50000u, 4u, 0u,
+    0x303u, 0x501u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
+    2u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x100u, 0u,
+    2u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x100u, 0x2100u,
+    3u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
+    0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
+};
+static u32 test_stage_block_states(u32 row)
+{
+    return object_run(stage_block_states_cases[row], row, &stage_block_states_expected[row * 10]);
+}
+
+#include "support/tile_writes.h"
+void func_800BF1FC(struct ItemObj*);
+static u32 sbt_meta[64];
+#define TW_BEGIN() (memset(&engine_obj, 0, sizeof(engine_obj)), engine_obj.substage = 1, TEST_MENU_FRAMES = (u8*)sb_archive, sb_archive[8] = 64, D_801406A8 = sbt_meta, memset(main_objects, 0, sizeof(main_objects)), tile_writes_begin())
+#define TW_END() (SBX(), state_extra ^= tile_writes_end() ^ (main_objects[0].active | main_objects[2].unk2 << 8 | (u32)(u16)main_objects[0].x_pos.i.hi << 16), engine_obj.substage = 0)
+static void sbt_gate_broken(void)
+{
+    SB(12, 3), TW_BEGIN(), ((struct MainObj*)&si)->hp = 1, state_hit((struct MainObj*)&si, 0, 0, 1);
+    tile_writes_expect(stage_block_entries[12].sound_id, 0, 0, 1), stage_block_main(&si), TW_END();
+}
+static void sbt_fall_high_shake(void) { SB(5, 1), TW_BEGIN(), si.y_pos.i.hi = 0x1C0, si.ext.timer = 5, tile_writes_expect(stage_block_entries[5].sound_id, 0, 0, 1), func_800BEFCC(&si), TW_END(); }
+static void sbt_land(u8 kind, s8 dy, u8 full)
+{
+    u32 i;
+    SB(kind, 1), TW_BEGIN();
+    for (i = 0; full && i < COUNT(main_objects); i++)
+        main_objects[i].active = 1;
+    si.y_pos.i.hi = stage_block_entries[kind].trigger_x + dy;
+    if (dy == 0 && !(stage_block_entries[kind].flags & 0x40))
+        tile_writes_expect(stage_block_entries[kind].sound_id, 0, 0, 1);
+    func_800BF1FC(&si), TW_END();
+}
+static void sbt_land_2_short(void) { sbt_land(2, -1, 0); }
+static void sbt_land_4(void) { sbt_land(4, 0, 0); }
+static void sbt_land_5(void) { sbt_land(5, 0, 0); }
+static void sbt_land_6(void) { sbt_land(6, 0, 0); }
+static void sbt_land_7(void) { sbt_land(7, 0, 0); }
+static void sbt_land_8(void) { sbt_land(8, 0, 0); }
+static void sbt_land_9(void) { sbt_land(9, 0, 0); }
+static void sbt_land_10(void) { sbt_land(10, 0, 0); }
+static void sbt_land_11_full(void) { sbt_land(11, 0, 1); }
+static void sbt_land_12(void) { sbt_land(12, 0, 0); }
+static void sbt_land_13(void) { sbt_land(13, 0, 0); }
+static void (*const stage_block_tiles_cases[])(void) = {
+    sbt_gate_broken,
+    sbt_fall_high_shake,
+    sbt_land_2_short,
+    sbt_land_4,
+    sbt_land_5,
+    sbt_land_6,
+    sbt_land_7,
+    sbt_land_8,
+    sbt_land_9,
+    sbt_land_10,
+    sbt_land_11_full,
+    sbt_land_12,
+    sbt_land_13,
+};
+static const u32 stage_block_tiles_expected[] = {
+    0x302u, 0xC01u, 0x800000u, 0x600000u, 0x0u, 0x0u, 0x0u, 0x58000u, 0x3C741ACEu, 0x41002100u,
+    0x101u, 0x501u, 0x800000u, 0x1C00000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x813A4043u, 0x0u,
+    0x201u, 0x201u, 0x800000u, 0x1AF0000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x2100u,
+    0x201u, 0x401u, 0x800000u, 0x1970000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x52BB90C4u, 0x2100u,
+    0x203u, 0x501u, 0x800000u, 0x1C00000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x813A4047u, 0x2100u,
+    0x203u, 0x601u, 0x800000u, 0x1B00000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x225C0D92u, 0x2100u,
+    0x203u, 0x701u, 0x800000u, 0x1A00000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0xA22BAE2Bu, 0x2100u,
+    0x203u, 0x801u, 0x800000u, 0x2080000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x432C2B60u, 0x0u,
+    0x203u, 0x901u, 0x800000u, 0x1980000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x515065F7u, 0x0u,
+    0x203u, 0xA01u, 0x800000u, 0x1480000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x66155FC2u, 0x0u,
+    0x203u, 0xB01u, 0x800000u, 0x1700000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x9067B65Fu, 0x2100u,
+    0x201u, 0xC01u, 0x800000u, 0x1680000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x0u,
+    0x201u, 0xD01u, 0x800000u, 0x3D00000u, 0x0u, 0x0u, 0x0u, 0x50000u, 0x0u, 0x2100u,
+};
+static u32 test_stage_block_tiles(u32 row)
+{
+    return object_run(stage_block_tiles_cases[row], row, &stage_block_tiles_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "stage_block_states", 0, 0, COUNT(stage_block_states_cases), test_stage_block_states },
     { "func_800BF638", 0, 0, 2, test_func_800BF638 },
     { "actual_block_fall_capacity_and_variant3", NULL, NULL, 2, landing },
+    { "stage_block_tiles", 0, 0, COUNT(stage_block_tiles_cases), test_stage_block_tiles },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 2 + 2;
+const u32 c_test_count = COUNT(stage_block_states_cases) + 2 + 2 + COUNT(stage_block_tiles_cases);

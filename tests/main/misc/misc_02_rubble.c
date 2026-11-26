@@ -1,9 +1,12 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_30_regen_turret.h"
 #include "main/misc/misc_02_rubble.h"
 #include "main/misc/misc_03_debris.h"
+#include "weapon_resources.h"
 extern void* regen_turret_animations[11];
 
+#ifndef VERSION_DEMO
 static u32 debris_case(u32 mode)
 {
     static const u8 random_bytes[9] = { 120, 124, 137, 177, 43, 153, 228, 199, 114 };
@@ -46,7 +49,7 @@ static u32 debris_case(u32 mode)
         child->active = 0x41;
         child->id = 3;
         child->unk2 = 1;
-        child->unk15 = random_bytes[i * 3] & 0x40;
+        child->unk15 = random_bytes[i * 3] & PLAYER_FACING_RIGHT;
         child->state = 0;
         child->unk5 = 0;
         child->unk6 = 0;
@@ -60,21 +63,22 @@ static u32 debris_case(u32 mode)
         child->unk40 = owner.unk40;
     }
     spawn_owner_debris(count, regen_turret_debris, &owner, 0x18123, -5, 7);
-    for (i = 0; i < sizeof(owner) / 4; i++)
-        assert(((u32*)&owner)[i] == ((u32*)&owner_before)[i]);
-    for (i = 0; i < sizeof(expected) / 4; i++)
-        assert(((u32*)misc_objects)[i] == ((u32*)expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < 8; i++)
-        assert(regen_turret_debris[i] == (i < 5 ? i + 5 : 0));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
+    c_test_same_words(misc_objects, expected, sizeof(expected));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    for (i = 0; i < 5; i++)
+        assert(regen_turret_debris[i] == i + 5);
     for (i = 0; i < 4; i++)
         assert(frames[i] == 16);
     assert(cur_random == final_random[spawned]);
-    i = cur_random | ((u32)(u8)misc_objects[63].id << 16) | ((u32)(u8)misc_objects[63].unk15 << 24);
+    i = cur_random | ((u32)(u8)misc_objects[63].id << 16);
     return i;
 }
-static const u32 owner_debris_allocation_prefixes_cases_expected[] = { 0x270077u, 0x270077u, 0x40030D89u, 0x36E99u, 0x4003AB72u, 0x270077u };
+static const u32 owner_debris_allocation_prefixes_cases_expected[] = { 0x270077u, 0x270077u, 0x30D89u, 0x36E99u, 0x3AB72u, 0x270077u };
+#define OWNER_DEBRIS_CASES COUNT(owner_debris_allocation_prefixes_cases_expected)
+#else
+#define OWNER_DEBRIS_CASES 0
+#endif
 
 #include "support/pool_full.h"
 static u32 pool_full_spawn_debris_offset_one(void)
@@ -113,14 +117,24 @@ static u32 pool_full_rubble_spawn_none(void)
     actual = pf_finish(0);
     return actual;
 }
+static u32 pool_full_spawn_rubble_one(void)
+{
+    u32 actual;
+    pf_prepare();
+    pf_snapshot();
+    spawn_rubble(1, pf_variants, &pf_self, 0);
+    actual = pf_finish(0);
+    return actual;
+}
 static const CTestCase pool_full_cases[] = {
     pool_full_spawn_debris_offset_one,
     pool_full_spawn_debris_offset_none,
     pool_full_rubble_spawn_one,
     pool_full_rubble_spawn_none,
+    pool_full_spawn_rubble_one,
 };
 
-static const u32 pool_full_cases_expected[] = { 0x50000u, 0x50000u, 0x50000u, 0x50000u };
+static const u32 pool_full_cases_expected[] = { 0x50000u, 0x50000u, 0x50000u, 0x50000u, 0x50000u };
 
 extern u8 hatch_blast_break_debris[16];
 static struct MiscObj pool_before[64];
@@ -154,10 +168,46 @@ static u32 empty(u32 row)
     return 1;
 }
 
+
+#include "support/state_cases.h"
+#define sm state_room.misc
+static u32 rubble_frames[0x40], rubble_meta[0x40];
+#define RUBBLE(st, stg, kind, setup) (state_reset(0, 0, 0), engine_obj.stage = stg, engine_obj.substage = 0, memset(rubble_frames, 0, sizeof(rubble_frames)), TEST_MENU_FRAMES = (u8*)rubble_frames, test_stage_graphics(rubble_meta), sm.active = 0x41, sm.state = st, sm.unk2 = kind, sm.ext.unk.unk54 = 7, sm.x_pos.i.hi = 0x80, sm.y_pos.i.hi = 0x60, sm.y_vel.val = 0x10000, sm.unk2C = 0x5000, cur_random = 0x1234, setup, rubble_update(&sm), state_extra = (u16)sm.unk42 | (u32)sm.animation_step.fields.frame_index << 16 | (u32)(u8)sm.on_screen << 24)
+static void rb_start_stage_3(void) { RUBBLE(0, 3, 0, 0); }
+static void rb_start_thrown(void) { RUBBLE(0, 2, 0, 0); }
+static void rb_start_dropped(void) { RUBBLE(0, 2, 1, 0); }
+static void rb_fall_shown(void) { RUBBLE(1, 2, 0, sm.on_screen = 0); }
+static void rb_fall_hidden(void) { RUBBLE(1, 2, 0, sm.on_screen = 1); }
+static void rb_fall_gone(void) { RUBBLE(1, 2, 0, sm.x_pos.i.hi = 0x1000); }
+
+static void (*const rb_cases[])(void) = {
+    rb_start_stage_3,
+    rb_start_thrown,
+    rb_start_dropped,
+    rb_fall_shown,
+    rb_fall_hidden,
+    rb_fall_gone,
+};
+static const u32 rb_expected[] = {
+    0x1u, 0x41u, 0x800000u, 0x600000u, 0x18000u, 0x50000u, 0x500000u, 0x50000u | OBJECT_CLUT(0x7987), 0x1070000u | OBJECT_CLUT(0x7987), 0u,
+    0x1u, 0x41u, 0x800000u, 0x600000u, 0x18000u, 0x50000u, 0x500000u, 0x50000u | OBJECT_CLUT(0x7983), 0x1070000u | OBJECT_CLUT(0x7983), 0u,
+    0x1u, 0x141u, 0x800000u, 0x600000u, 0x18000u, 0x50000u, 0x500000u, 0x50000u | VISUAL_STAGE_PALETTE(8), 0x1070000u | VISUAL_STAGE_PALETTE(8), 0u,
+    0x1u, 0x41u, 0x800000u, 0x5F0000u, 0u, 0xB000u, 0x500000u, 0x50000u, 0x1000000u, 0u,
+    0x1u, 0x41u, 0x800000u, 0x5F0000u, 0u, 0xB000u, 0x500000u, 0x50000u, 0u, 0u,
+    0u, 0u, 0x10000000u, 0x600000u, 0u, 0x10000u, 0x500000u, 0x50000u, 0u, 0u,
+};
+static u32 test_rb(u32 row)
+{
+    return object_run(rb_cases[row], row, &rb_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "rubble_steps", 0, 0, COUNT(rb_cases), test_rb },
+#ifndef VERSION_DEMO
     { "owner_debris_allocation_prefixes", NULL, owner_debris_allocation_prefixes_cases_expected, COUNT(owner_debris_allocation_prefixes_cases_expected), debris_case },
+#endif
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "zero_count_debris_API_preserves_source_pools_and_random_state", NULL, NULL, 8, empty },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(owner_debris_allocation_prefixes_cases_expected) + COUNT(pool_full_cases) + 8;
+const u32 c_test_count = OWNER_DEBRIS_CASES + COUNT(pool_full_cases) + 8 + COUNT(rb_cases);

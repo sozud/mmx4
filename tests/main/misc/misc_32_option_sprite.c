@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/misc/misc_32_option_sprite.h"
 #include "main/misc/misc_31_option_toggle.h"
+#include "support/test_pad.h"
 extern union AnimationStep option_toggle_anim_0[36];
 
 static u32 option_case(u32 mode, u32 observation)
@@ -33,7 +34,7 @@ static u32 option_case(u32 mode, u32 observation)
     obj.animation_cursor = (u32*)option_toggle_anim_0;
     obj.animation_step.packed = *obj.animation_cursor;
     obj.animation_step.fields.duration = 1;
-    controller_input.pressed = PADstart;
+    TEST_PAD_PRESSED = TEST_PAD_START;
     game_info.unk0 = mode == 0 ? 10 : mode == 1 ? 8
                                                 : 9;
     main_bss_state.transition.selection = 1;
@@ -50,12 +51,10 @@ static u32 option_case(u32 mode, u32 observation)
     before.animation_step = obj.animation_step;
     for (i = 0; i < sizeof(obj) / 4; i++)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(controller_input) / 4; i++)
-        assert(((u32*)&controller_input)[i] == ((u32*)&input_before)[i]);
+    c_test_same_words(&controller_input, &input_before, sizeof(controller_input));
     for (i = 0; i < sizeof(main_bss_state) / 4; i++)
         assert(((u32*)&main_bss_state)[i] == ((u32*)&main_before)[i]);
-    for (i = 0; i < sizeof(game_info) / 4; i++)
-        assert(((u32*)&game_info)[i] == ((u32*)&game_before)[i]);
+    c_test_same_words(&game_info, &game_before, sizeof(game_info));
     assert(obj.ext.misc_32.owner == (struct MainObj*)rows && rows[2] == 40 && rows[4] == 80 && rows[6] == 120);
     assert(obj.animation_table == option_toggle_animations);
     for (i = 0; i < COUNT(option_toggle_anim_0); i++)
@@ -70,7 +69,7 @@ static u32 option_case(u32 mode, u32 observation)
         actual = obj.y_pos.val;
         break;
     case 2:
-        actual = obj.animation_step.packed;
+        actual = C_TEST_STEP(obj.animation_step.packed);
         break;
     default:
         actual = cursor;
@@ -94,12 +93,12 @@ static const struct {
 } cursor_cases[] = {
     { 0, 9, 0, 0, 0, 0, 0, 40 },
     { 0, 9, 0, 0, 1, 0, 1, 88 },
-    { PAD_SELECTION_ALT, 9, 0, 0, 1, -1, 0, 40 },
-    { PADstart, 10, 0, 1, 1, 0, 1, 88 },
-    { PAD_SELECTION_ALT, 8, 0, 1, 1, 0, 1, 88 },
+    { TEST_PAD_SELECTION_ALT, 9, 0, 0, 1, -1, 0, 40 },
+    { TEST_PAD_START, 10, 0, 1, 1, 0, 1, 88 },
+    { TEST_PAD_SELECTION_ALT, 8, 0, 1, 1, 0, 1, 88 },
     { 0, 9, -1, 0, 1, -1, 0, 40 },
     { 0, 9, -1, 1, 1, -1, 0, 40 },
-    { PADstart, 9, 0, 0, 2, 0, 2, 128 },
+    { TEST_PAD_START, 9, 0, 0, 2, 0, 2, 128 },
 };
 
 static u32 test_option_cursor(u32 row)
@@ -118,7 +117,7 @@ static u32 test_option_cursor(u32 row)
     obj.animation_table = option_toggle_animations;
     obj.animation_cursor = (u32*)option_toggle_anim_0;
     obj.animation_step.fields.duration = 1;
-    controller_input.pressed = cursor_cases[row].pressed;
+    TEST_PAD_PRESSED = cursor_cases[row].pressed;
     game_info.unk0 = cursor_cases[row].screen;
     main_bss_state.transition.selection = cursor_cases[row].selection;
 
@@ -130,7 +129,7 @@ static u32 test_option_cursor(u32 row)
     assert(obj.ext.misc_32.owner == (struct MainObj*)positions);
     assert(obj.x_pos.val == FIXED(80));
     assert(obj.y_pos.val == FIXED(cursor_cases[row].expected_y));
-    assert(controller_input.pressed == cursor_cases[row].pressed);
+    assert(TEST_PAD_PRESSED == cursor_cases[row].pressed);
     return (u8)obj.unk2;
 }
 

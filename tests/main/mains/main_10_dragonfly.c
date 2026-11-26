@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_10_dragonfly.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -17,7 +18,7 @@ static u32 carry_case(u32 mode)
     obj.state = 1;
     obj.unk5 = 4;
     obj.unk6 = 7;
-    obj.unk15 = right ? 0x40 : 0;
+    obj.unk15 = right ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.x_speed = 123;
@@ -57,10 +58,8 @@ static u32 carry_case(u32 mode)
         expected.unk6 = 0;
     }
     func_8004A178(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     actual = (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u16)obj.x_pos.i.hi << 16);
     return actual;
 }
@@ -99,7 +98,7 @@ static u32 test_dragonfly_carry_rise_0(u32 row)
     set_animation(&obj, 3);
     obj.unk5 = 4;
     obj.unk6 = 3;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.unk62 = 3;
     obj.attack_box = dragonfly_grab_box;
     obj.y_speed = 0x18000;
@@ -171,7 +170,7 @@ static u32 test_dragonfly_carry_rise_1_0(u32 row)
     set_animation(&obj, 3);
     obj.unk5 = 4;
     obj.unk6 = 3;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.attack_box = dragonfly_grab_box;
     obj.unk62 = 3;
     obj.x_speed = 0x8000;
@@ -185,7 +184,7 @@ static u32 test_dragonfly_carry_rise_1_0(u32 row)
     memset(pixels, 0, sizeof(pixels));
     pixels[356] = 1;
     attrs[0] = 0;
-    attrs[1] = 36;
+    attrs[1] = TEST_DISC32(36);
     tiles[0] = 1;
     tiles[1] = 0;
     tiles[2] = 0;
@@ -197,7 +196,7 @@ static u32 test_dragonfly_carry_rise_1_0(u32 row)
     layout_width = 1;
     expected = obj;
     expected.animation_cursor = obj.animation_cursor + 4;
-    expected.animation_step.packed = 0x2F010001;
+    expected.animation_step.packed = C_TEST_STEP(0x2F010001);
     expected.ext.main_10.timer = c->expected_main_10_timer;
     if (obj.ext.main_10.timer == 1) {
         set_animation(&expected, 4);
@@ -258,7 +257,7 @@ static u32 test_dragonfly_carry_rise_1_1(u32 row)
     set_animation(&obj, 3);
     obj.unk5 = 4;
     obj.unk6 = 3;
-    obj.unk15 = 64;
+    obj.unk15 = PLAYER_FACING_RIGHT;
     obj.attack_box = dragonfly_grab_box;
     obj.unk62 = 3;
     obj.x_speed = 0x8000;
@@ -284,7 +283,7 @@ static u32 test_dragonfly_carry_rise_1_1(u32 row)
     layout_width = 1;
     expected = obj;
     expected.animation_cursor = obj.animation_cursor + 4;
-    expected.animation_step.packed = 0x2F010001;
+    expected.animation_step.packed = C_TEST_STEP(0x2F010001);
     expected.ext.main_10.timer = 1;
     if (obj.ext.main_10.timer == 1) {
         set_animation(&expected, 4);
@@ -319,7 +318,7 @@ static u32 test_dragonfly_carry_rise_1_1(u32 row)
     observed_values[1] = (u32)obj.y_pos.val;
     observed_values[2] = (u32)obj.ext.main_10.timer;
     observed_values[3] = (u32)obj.unk6;
-    observed_values[4] = (u32)obj.animation_step.packed;
+    observed_values[4] = C_TEST_STEP(obj.animation_step.packed);
     return c_test_observe(1, row, observed_values, dragonfly_carry_rise_1_1_expected, 5);
 }
 static u32 test_dragonfly_carry_rise_1(u32 index)
@@ -364,7 +363,7 @@ static u32 test_dragonfly_carry_squeeze(u32 row)
     set_animation(&obj, 3);
     obj.unk5 = 4;
     obj.unk6 = 4;
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.unk62 = 3;
     obj.attack_box = dragonfly_grab_box;
     obj.y_speed = 0x18000;
@@ -456,7 +455,7 @@ static u32 test_dragonfly_init(u32 row)
     expected.invincibility_timer = 0;
     expected.collision_data = D_80106770;
     expected.bg_offset = 1;
-    expected.unk16 = 6;
+    expected.unk16 = VISUAL_SATURN_LAYER(6);
     expected.unk62 = 0;
     expected.unk18 = obj.x_pos;
     expected.unk1C = obj.y_pos;
@@ -469,7 +468,7 @@ static u32 test_dragonfly_init(u32 row)
         expected.unk7A = 1;
     }
     if (obj.unk2 == 1) {
-        expected.unk15 = 0x40;
+        expected.unk15 = PLAYER_FACING_RIGHT;
     }
     if (obj.unk2 == 1) {
         expected.ext.main_10.hold_state = 0;
@@ -549,7 +548,7 @@ static u32 test_func_80049E68_1(u32 row)
     obj.unk42 = 0x1234;
     obj.hp = 7;
     set_animation(&obj, 0);
-    obj.unk15 = c->unk15;
+    obj.unk15 = TEST_FACING(c->unk15);
     obj.x_speed = c->x_speed;
     obj.y_speed = -0x10000;
     obj.ext.main_10.timer = c->obj_main_10_timer;
@@ -560,7 +559,7 @@ static u32 test_func_80049E68_1(u32 row)
     expected.x_pos.val = obj.x_pos.val + obj.x_speed;
     expected.y_pos.val = obj.y_pos.val - obj.y_speed;
     expected.animation_cursor = obj.animation_cursor + 4;
-    expected.animation_step.packed = 0x01010001;
+    expected.animation_step.packed = C_TEST_STEP(0x01010001);
     expected.ext.main_10.timer = c->expected_main_10_timer;
     if (obj.ext.main_10.timer == 1) {
         expected.y_speed = 0x20000;
@@ -636,7 +635,7 @@ static void prepare(u32 subtype, u32 facing, u32 layer)
     obj.active = 0x41;
     obj.id = 10;
     obj.unk2 = subtype;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.bg_offset = 2;
     obj.x_pos.val = (cameras[layer][0] + 160) * 65536 + 0x1234;
     obj.y_pos.val = (cameras[layer][1] + 120) * 65536 + 0x5678;
@@ -699,7 +698,7 @@ static void expect_init(void)
     expected.invincibility_timer = 0;
     expected.collision_data = D_80106770;
     expected.bg_offset = g_Player.bg_offset;
-    expected.unk16 = 6;
+    expected.unk16 = VISUAL_SATURN_LAYER(6);
     expected.animation_table = dragonfly_animations;
     expected.terrain_box = &dragonfly_terrain_box;
     expected.x_speed = expected.y_speed = expected.x_accel = expected.gravity = 0;
@@ -712,11 +711,11 @@ static void expect_init(void)
     expected.ext.main_10.hold_state = subtype == 0;
     expected.ext.main_10.can_grab = subtype < 3;
     if (subtype == 0)
-        expected.unk15 = expected.x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
+        expected.unk15 = expected.x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     else {
         expected.unk7A = 1;
         if (subtype < 3)
-            expected.unk15 = subtype == 1 ? 0x40 : 0;
+            expected.unk15 = subtype == 1 ? PLAYER_FACING_RIGHT : 0;
         if (subtype == 5 || subtype == 6 || subtype == 11 || subtype == 12)
             expected.gravity = -0x600;
         if (subtype == 7 || subtype == 8 || subtype == 13 || subtype == 14)
@@ -766,7 +765,7 @@ static u32 test_wait(u32 row)
         expected.ext.main_10.hold_state = 1;
         expected.unk5 = subtype < 3 ? 3 : 6;
         if (subtype >= 3) {
-            expected.unk15 = subtype >= 9 ? 0 : 0x40;
+            expected.unk15 = subtype >= 9 ? 0 : PLAYER_FACING_RIGHT;
             expected.x_speed = (subtype >= 9 ? -1 : 1) * (subtype % 2 ? 6 : 8) * 65536;
         }
     }
@@ -777,13 +776,13 @@ static u32 test_wait(u32 row)
 
 static void expect_face(void)
 {
-    u32 face = expected.unk15;
+    u32 face = C_TEST_PSX_FACING(expected.unk15);
     if (g_Player.x_pos.val > expected.x_pos.val)
         face = 0x40;
     if (g_Player.x_pos.val < expected.x_pos.val)
         face = 0;
-    if (face != (u8)expected.unk15) {
-        expected.unk15 = face;
+    if (face != C_TEST_PSX_FACING(expected.unk15)) {
+        expected.unk15 = TEST_FACING(face);
         expected.ext.main_10.turn_delay = 16;
     }
 }
@@ -798,7 +797,7 @@ static u32 test_hover(u32 row)
     u32 facing = (x + delay + timer + y) % 2, seed = (timer + x) % 4;
     prepare(0, facing, y);
     initialize();
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk5 = 3;
     obj.unk6 = 2;
     obj.ext.main_10.turn_delay = delays[delay];
@@ -840,7 +839,7 @@ static u32 test_close(u32 row)
     u32 transition;
     prepare(0, facing, place);
     initialize();
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk5 = 3;
     obj.unk6 = 3;
     obj.ext.main_10.turn_delay = delays[delay];
@@ -869,7 +868,110 @@ static u32 test_close(u32 row)
     return 1;
 }
 
+void dragonfly_run(struct MainObj*);
+void dragonfly_finish(struct MainObj*);
+void dragonfly_despawn(struct MainObj*);
+void dragonfly_wait(struct MainObj*);
+void dragonfly_hunt_start(struct MainObj*);
+void func_80049E68(struct MainObj*);
+void dragonfly_carry_grab(struct MainObj*);
+void func_8004A178(struct MainObj*);
+void dragonfly_carry_lift(struct MainObj*);
+void dragonfly_carry_squeeze(struct MainObj*);
+static struct Unk_unk68 df2_box = { -8, -8, 16, 16 };
+#define DF2(step, sub) (state_reset(step, sub, 0), memset(weapon_objects, 0, sizeof(weapon_objects)), memset(&g_Player, 0, sizeof(g_Player)), so.active = 0x41, so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, g_Player.x_pos.i.hi = 0x200, g_Player.y_pos.i.hi = 0x60, g_Player.hp = 0x10, g_Player.unk68 = &df2_box)
+#define DF2X() (state_extra = so.state | so.ext.main_10.hold_state << 8 | (u32)so.ext.main_10.timer << 16 | (u32)g_Player.stun_timer << 24)
+#define DFRUN(setup) (DF2(2, 0), so.ext.main_10.hold_state = 1, so.unk7C = 5, setup, dragonfly_run(&so), DF2X())
+static void df2_run_idle(void) { DF2(2, 0), so.unk2 = 1, g_Player.x_pos.i.hi = 0x100, dragonfly_run(&so), DF2X(); }
+static void df2_run_buzz(void) { DFRUN(so.unk7C = 1); }
+static void df2_run_stunned(void) { DFRUN((so.ext.main_10.can_grab = 1, g_Player.stun_timer = 1)); }
+static void df2_run_miss(void) { DFRUN(so.ext.main_10.can_grab = 1); }
+static void df2_run_grab(void) { DFRUN((so.ext.main_10.can_grab = 1, so.attack_box = &df2_box, so.unk62 = 3, g_Player.x_pos.i.hi = 0x80, MAIN_OBJECT(&g_Player)->hurt_box = &df2_box)); }
+static void df2_run_bump(void) { DFRUN((so.ext.main_10.can_grab = 1, so.attack_box = &df2_box, so.contact_damage = 1, g_Player.x_pos.i.hi = 0x80, MAIN_OBJECT(&g_Player)->hurt_box = &df2_box)); }
+static void df2_run_defeat(void) { DFRUN((so.hp = 1, state_hit(&so, 0, 0, 1))); }
+static void df2_run_away(void) { DFRUN(so.x_pos.i.hi = 0x400); }
+static void df2_finish_holding(void) { DF2(0, 0), so.state = 2, so.ext.main_10.hold_state = 3, g_Player.stun_timer = 1, dragonfly_finish(&so), DF2X(); }
+static void df2_finish(void) { DF2(0, 0), so.state = 2, g_Player.stun_timer = 1, dragonfly_finish(&so), DF2X(); }
+static void df2_despawn(void) { DF2(0, 0), so.state = 3, so.unk2 = 1, dragonfly_despawn(&so), DF2X(); }
+static void df2_despawn_flyer(void) { DF2(0, 0), so.state = 3, so.unk2 = 3, dragonfly_despawn(&so), DF2X(); }
+static void df2_wait_other(void) { DF2(2, 0), so.unk2 = 15, dragonfly_wait(&so), DF2X(); }
+static void df2_hunt_left(void) { DF2(3, 0), dragonfly_hunt_start(&so), DF2X(); }
+static void df2_hunt_right(void) { DF2(3, 0), so.unk15 = PLAYER_FACING_RIGHT, dragonfly_hunt_start(&so), DF2X(); }
+static void df2_approach_left(void) { DF2(3, 1), so.ext.main_10.timer = 5, so.unk15 = PLAYER_FACING_RIGHT, g_Player.x_pos.i.hi = 0x40, func_80049E68(&so), DF2X(); }
+static void df2_grab(void) { DF2(4, 0), so.animation_step.fields.event = 1, dragonfly_carry_grab(&so), DF2X(); }
+static void df2_grab_wait(void) { DF2(4, 0), dragonfly_carry_grab(&so), DF2X(); }
+static void df2_hold_passed_right(void) { DF2(4, 1), so.unk15 = PLAYER_FACING_RIGHT, g_Player.x_pos.i.hi = 0x40, func_8004A178(&so), DF2X(); }
+static void df2_hold_carry(void) { DF2(4, 1), so.ext.main_10.timer = 5, so.ext.main_10.hold_state = 1, g_Player.x_pos.i.hi = 0x40, func_8004A178(&so), DF2X(); }
+static void df2_lift(void) { DF2(4, 2), so.animation_step.fields.event = 1, dragonfly_carry_lift(&so), DF2X(); }
+static void df2_lift_wait(void) { DF2(4, 2), dragonfly_carry_lift(&so), DF2X(); }
+#define SQUEEZE(count, ev, left) (DF2(4, 4), so.unk7E = count, so.animation_step.fields.event = ev, so.ext.main_10.timer = left, g_Player.stun_timer = 1, dragonfly_carry_squeeze(&so), DF2X(), state_extra ^= g_Player.hp << 4)
+static void df2_squeeze_sound(void) { SQUEEZE(1, 0, 5); }
+static void df2_squeeze_hurt(void) { SQUEEZE(5, 1, 10); }
+static void df2_squeeze_hurt_again(void) { SQUEEZE(5, 1, 5); }
+static void df2_squeeze_drop(void) { SQUEEZE(5, 1, 1); }
+static void (*const df2_cases[])(void) = {
+    df2_run_idle,
+    df2_run_buzz,
+    df2_run_stunned,
+    df2_run_miss,
+    df2_run_grab,
+    df2_run_bump,
+    df2_run_defeat,
+    df2_run_away,
+    df2_finish_holding,
+    df2_finish,
+    df2_despawn,
+    df2_despawn_flyer,
+    df2_wait_other,
+    df2_hunt_left,
+    df2_hunt_right,
+    df2_approach_left,
+    df2_grab,
+    df2_grab_wait,
+    df2_hold_passed_right,
+    df2_lift,
+    df2_lift_wait,
+    df2_squeeze_sound,
+    df2_squeeze_hurt,
+    df2_squeeze_hurt_again,
+    df2_squeeze_drop,
+    df2_hold_carry,
+};
+static const u32 df2_expected[] = {
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x3u, 0x3Cu, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x101u, 0x41000000u,
+    0x3u, 0x4u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1000101u, 0x41000000u,
+    0x3u, 0x4u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x101u, 0x41000000u,
+    0x3u, 0x4u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2u, 0x1000301u, 0x41000000u,
+    0x3u, 0x4u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x2u, 0x101u, 0x41000000u,
+    0x3u, 0x5u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x80000000u, 0x1u, 0x102u, 0x41002100u,
+    0x3u, 0x5u, 0x4000000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x102u, 0x41000000u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x3u, 0x41000000u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1000003u, 0x41000000u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x0u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u,
+    0x2u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x103u, 0x0u, 0x800000u, 0xFFFC0000u, 0x0u, 0x0u, 0x0u, 0x0u, 0xB40001u, 0x41000000u,
+    0x103u, 0x0u, 0x800000u, 0x40000u, 0x0u, 0x0u, 0x4000u, 0x0u, 0xB40001u, 0x41000000u,
+    0x203u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4000u, 0x0u, 0x140001u, 0x41000000u,
+    0x104u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x4002u, 0x2u, 0xB40001u, 0x41000000u,
+    0x4u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x5u, 0x0u, 0x800000u, 0x0u, 0x20000u, 0x0u, 0x4000u, 0x0u, 0x1u, 0x41000000u,
+    0x304u, 0x0u, 0x800000u, 0x0u, 0x18000u, 0x0u, 0x0u, 0x0u, 0x320001u, 0x41000000u,
+    0x204u, 0x0u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1u, 0x41000000u,
+    0x404u, 0x140000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x1050101u, 0x41000000u,
+    0x404u, 0x40000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0xF6F8E1u, 0x41000000u,
+    0x404u, 0x40000u, 0x800000u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0xFBF8E1u, 0x41000000u,
+    0x5u, 0x40000u, 0x800000u, 0x0u, 0x20000u, 0x0u, 0x5u, 0x0u, 0x101u, 0x41000000u,
+    0x104u, 0x0u, 0x7EC0B8u, 0xFFFEC0B8u, 0xD555u, 0x0u, 0x0u, 0x0u, 0x40101u, 0x41000000u,
+};
+static u32 df2_run(u32 row)
+{
+    return state_run(df2_cases[row], row, &df2_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "dragonfly_branch_steps", 0, 0, COUNT(df2_cases), df2_run },
     { "dragonfly_misc", 0, 0, COUNT(dragonfly_misc_cases), test_dragonfly_misc },
     { "dragonfly_carry_cardinal_motion", NULL, dragonfly_carry_cardinal_motion_cases_expected, COUNT(dragonfly_carry_cardinal_motion_cases_expected), carry_case },
     { "dragonfly_carry_rise_0", 0, 0, 2, test_dragonfly_carry_rise_0 },
@@ -884,4 +986,4 @@ const struct CTestGroup c_test_groups[] = {
     { "dragonfly_close_boundaries", 0, 0, 38, test_close },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(dragonfly_misc_cases) + COUNT(dragonfly_carry_cardinal_motion_cases_expected) + 2 + 3 + 2 + 3 + 1 + 4 + 45 + 90 + 30 + 38;
+const u32 c_test_count = COUNT(df2_cases) + COUNT(dragonfly_misc_cases) + COUNT(dragonfly_carry_cardinal_motion_cases_expected) + 2 + 3 + 2 + 3 + 1 + 4 + 45 + 90 + 30 + 38;

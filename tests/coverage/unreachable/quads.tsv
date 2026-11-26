@@ -1,0 +1,8 @@
+file	line	function	outcome	class	evidence
+src/main/quads/quad_07_ready_line.c	462	ready_line_streak	taken	unreachable-logic	The switch (unk5) has no default; a streak only sets unk5 to 1 (case 0) and 2 (case 1), and case 2 ends the object, so no value outside 0-2 falls through.
+src/main/quads/quad_07_ready_line.c	462	ready_line_streak	taken	unreachable-logic	The implicit default of switch (unk5): the ready line's own steps set unk5 only to 0-2, all named.
+src/main/quads/quad_00_search_light.c	181	func_800D3C58	taken	unreachable-logic	The implicit default of switch (unk5): the search light's main only ever sets unk5 to 0-3, all named cases.
+src/main/quads/quad_00_search_light.c	291	search_light_is_visible	taken	data-dependent	search_light_shapes gives every light vertex 1 right of vertex 0 (by 0x80/0x50/0x10) and vertex 3 below it (0 vs -0x100/-0x50); the sweep moves vertices 0 and 1 together, so ABS never takes its negative side.
+src/main/quads/quad_00_search_light.c	292	search_light_is_visible	taken	data-dependent	search_light_shapes gives every light vertex 1 right of vertex 0 (by 0x80/0x50/0x10) and vertex 3 below it (0 vs -0x100/-0x50); the sweep moves vertices 0 and 1 together, so ABS never takes its negative side.
+src/main/quads/quad_05_web_piece_quad.c	96	web_piece_quad_is_visible	taken	data-dependent	web_piece_quad_frames put vertex 1 at x 0x100..0x800 right of vertex 0 (x 0) in every frame and the scale is positive (0x100..0x500), so ABS(v1.x, v0.x) never takes its negative side.
+src/main/quads/quad_05_web_piece_quad.c	97	web_piece_quad_is_visible	taken	data-dependent	web_piece_quad_frames put vertex 3 at y 0 below vertex 0 (y -0x800) in every frame and the scale is positive, so ABS(v3.y, v0.y) never takes its negative side.

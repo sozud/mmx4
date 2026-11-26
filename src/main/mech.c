@@ -68,6 +68,11 @@ s32 func_8003E048(struct PlayerObj*);
 
 #define RIDE_U8(object, offset) (((u8*)&(object)->unk7C)[(offset)-0x7C])
 #define RIDE_U16(object, offset) (*(u16*)&RIDE_U8(object, offset))
+#ifdef MMX4_BIG_ENDIAN
+#define RIDE_MODE(object) ((u16)((RIDE_ARMOR_FLAGS(object) & 0xC0) << 8))
+#else
+#define RIDE_MODE(object) (RIDE_U16(object, 0x96) & 0xC000)
+#endif
 struct RideArmorTimers {
     u8 pad88[0x91 - 0x88];
     u8 unk91;
@@ -338,7 +343,7 @@ void func_8003D9E0(struct RideArmorObj* arg0)
 
     if (RIDE_ARMOR_FLAGS(arg0) & 2)
         return;
-    mode = RIDE_U16(arg0, 0x96) & 0xC000;
+    mode = RIDE_MODE(arg0);
     if (mode == 0x8000)
         return;
     switch (RIDE_U8(arg0, 0x94)) {
@@ -358,7 +363,7 @@ void func_8003D9E0(struct RideArmorObj* arg0)
         if (--RIDE_U8(arg0, 0x95) != 0)
             return;
         RIDE_U8(arg0, 0x94) = 2;
-        if (arg0->unk2 == 0 || (RIDE_U16(arg0, 0x96) & 0xC000) != 0x4000)
+        if (arg0->unk2 == 0 || RIDE_MODE(arg0) != 0x4000)
             return;
         func_8003D6EC(ANIMATED_OBJECT(arg0), 0x10);
         func_8001540C(5, SATURN_SOUND(8, 78), NULL);

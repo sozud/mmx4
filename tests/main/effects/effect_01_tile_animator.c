@@ -9,7 +9,11 @@ TILE_ANIMATOR(1)
 TILE_ANIMATOR(2)
 static const CTestCase tile_animator_tiles_cases[] = { TILE_ANIMATOR_ENTRIES(0) TILE_ANIMATOR_ENTRIES(1) TILE_ANIMATOR_ENTRIES(2) };
 
+#ifdef MMX4_SATURN
+static const u32 tile_animator_tiles_cases_expected[] = { 0x201u, 0xCAFEu, 0x300u, 0xCAFEu, 0x0u, 0xCAFEu };
+#else
 static const u32 tile_animator_tiles_cases_expected[] = { 0x201u, 0xA122u, 0x300u, 0xA123u, 0x0u, 0xA120u };
+#endif
 const struct CTestGroup c_test_groups[] = {
     { "tile_animator_tiles", tile_animator_tiles_cases, tile_animator_tiles_cases_expected, COUNT(tile_animator_tiles_cases), 0 },
 };

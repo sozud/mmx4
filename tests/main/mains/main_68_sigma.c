@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
+#ifndef VERSION_DEMO
 #include "main/mains/main_68_sigma.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -21,7 +23,7 @@ static u32 flash_case(u32 mode, u32 observation)
     memset(visual_objects, 0, sizeof(visual_objects));
     for (i = 0; i < COUNT(visual_objects); i++)
         visual_objects[i].active = 1;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     obj.active = 0x41;
     obj.id = 68;
     obj.state = 1;
@@ -62,14 +64,10 @@ static u32 flash_case(u32 mode, u32 observation)
     before.hurt_box = NULL;
     weapons_before[0].unk80 = weapon_objects[0].unk80;
     player_before.update_delay_request = 1;
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
-    for (i = 0; i < sizeof(weapons_before) / 4; i++)
-        assert(((u32*)weapon_objects)[i] == ((u32*)weapons_before)[i]);
-    for (i = 0; i < sizeof(visuals_before) / 4; i++)
-        assert(((u32*)visual_objects)[i] == ((u32*)visuals_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(weapon_objects, weapons_before, sizeof(weapons_before));
+    c_test_same_words(visual_objects, visuals_before, sizeof(visuals_before));
     assert(box.unk0 == -2 && box.unk1 == -2 && box.unk2 == 4 && box.unk3 == 4);
     assert(D_8013E198[1] == -1 && table_kind == (((u8*)D_80107F84)[70] | ((u32)((u8*)D_80107F84)[71] << 8)));
     switch (observation) {
@@ -84,7 +82,7 @@ static u32 flash_case(u32 mode, u32 observation)
     case 4:
         return (u16)obj.unk7C | ((u32)g_Player.update_delay_request << 16);
     case 5:
-        return weapon_objects[0].unk80.word;
+        return TEST_LE_HALVES(&weapon_objects[0].unk80);
     default:
         return obj.collision_data == D_801060F0 ? 1 : 0;
     }
@@ -129,7 +127,7 @@ static u32 laser_case(u32 mode)
     obj.state = 1;
     obj.unk5 = 6;
     obj.unk6 = 2;
-    obj.unk15 = right ? 0x40 : 0;
+    obj.unk15 = right ? PLAYER_FACING_RIGHT : 0;
     obj.ext.main_68.effect = (struct EffectObj*)&g_QuadObjects[0];
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
@@ -165,12 +163,9 @@ static u32 laser_case(u32 mode)
         before.animation_cursor = (const u8*)sigma_animations[29];
         before.animation_step = *(union AnimationStep*)sigma_animations[29];
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(pool_before) / 4; i++)
-        assert(((u32*)g_QuadObjects)[i] == ((u32*)pool_before)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(g_QuadObjects, pool_before, sizeof(pool_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     assert(D_8013E198[2] == -1);
     return (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)(u8)g_QuadObjects[31].unk2 << 16) | ((u32)obj.animation_step.fields.event << 24);
 }
@@ -212,11 +207,9 @@ static u32 pose_case(u32 mode, u32 observation)
         visuals_before[17].id = 0x20;
         visuals_before[17].unk2 = 5;
     }
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
-    for (i = 0; i < sizeof(visuals_before) / 4; i++)
-        assert(((u32*)visual_objects)[i] == ((u32*)visuals_before)[i]);
-    return observation == 0 ? (u8)obj.unk7 | ((u32)(u16)obj.unk7C << 16) : obj.animation_step.packed;
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(visual_objects, visuals_before, sizeof(visuals_before));
+    return observation == 0 ? (u8)obj.unk7 | ((u32)(u16)obj.unk7C << 16) : C_TEST_STEP(obj.animation_step.packed);
 }
 #define CASE(m, n)                                         \
     static u32 sigma_pose_visual_pool_pose_##m##_##n(void) \
@@ -301,7 +294,7 @@ static u32 revealed_case(u32 mode)
         obj.collision_data = D_80108104;
     obj.ext.main_68.flash_timer = mode == 16 || mode == 17 || mode == 7 || mode == 13 ? 2 : mode == 8 || mode == 14 ? 1
                                                                                                                     : 0;
-    g_Player.spike_immune = dying ? 0 : 1;
+    SPIKE_IMMUNE_SET(g_Player, dying ? 0 : 1);
     engine_obj.cur_character = character;
     if (hit) {
         weapon_objects[0].active = 1;
@@ -320,7 +313,7 @@ static u32 revealed_case(u32 mode)
     memcpy(visuals_expected, visual_objects, sizeof(visuals_expected));
     expected.unk42 &= 0x7FFF;
     if (hit) {
-        weapons_expected[0].unk80.word = 100 | (200 << 16);
+        TEST_SET_HALVES(weapons_expected[0].unk80, 100, 200);
         if (immune)
             expected.unk63 = -1;
         else {
@@ -341,13 +334,13 @@ static u32 revealed_case(u32 mode)
             visual->unk2 = weapon_id == 36 ? 7 : 3;
             visual->bg_offset = -1;
             visual->animation_table = D_8011BF40;
-            visual->unk40 = 0;
-            visual->unk42 = 0x7802;
-            visual->unk16 = 0;
+            visual->unk40 = WEAPON_TEXTURE_BASE;
+            visual->unk42 = WEAPON_PALETTE_2;
+            visual->unk16 = VISUAL_SATURN_LAYER(0);
             visual->unk3C = (u8*)sprites + 12;
             visual->x_pos.i.hi = 100;
             visual->y_pos.i.hi = 200;
-            visual->unk15 = 0x40;
+            visual->unk15 = PLAYER_FACING_RIGHT;
         }
     }
     if (expected.ext.main_68.flash_timer) {
@@ -361,7 +354,7 @@ static u32 revealed_case(u32 mode)
         expected.state = 2;
         expected.unk5 = 0;
         expected.unk42 &= 0x7FFF;
-        player_expected.spike_immune = 1;
+        SPIKE_IMMUNE_SET(player_expected, 1);
     } else {
         if (hit && !immune) {
             if (mode <= 6 && free_slots == 2) {
@@ -379,20 +372,13 @@ static u32 revealed_case(u32 mode)
         expected.unk1C = obj.y_pos;
     }
     func_8008502C(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
-    for (i = 0; i < sizeof(engine_obj) / 4; i++)
-        assert(((u32*)&engine_obj)[i] == ((u32*)&engine_expected)[i]);
-    for (i = 0; i < sizeof(weapons_expected) / 4; i++)
-        assert(((u32*)weapon_objects)[i] == ((u32*)weapons_expected)[i]);
-    for (i = 0; i < sizeof(visuals_expected) / 4; i++)
-        assert(((u32*)visual_objects)[i] == ((u32*)visuals_expected)[i]);
-    for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
-    for (i = 0; i < sizeof(quads_before) / 4; i++)
-        assert(((u32*)g_QuadObjects)[i] == ((u32*)quads_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(weapon_objects, weapons_expected, sizeof(weapons_expected));
+    c_test_same_words(visual_objects, visuals_expected, sizeof(visuals_expected));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    c_test_same_words(g_QuadObjects, quads_before, sizeof(quads_before));
     assert(box.unk0 == -2 && box.unk1 == -2 && box.unk2 == 4 && box.unk3 == 4);
     for (i = 0; i < 6; i++)
         assert(D_8013E198[i] == -1);
@@ -441,7 +427,7 @@ static u32 pool_full_sigma_intro_wait_player(void)
     pf_snapshot();
     sigma_intro_wait_player(&pf_self);
     pf_backgrounds_expected[0].unk24 -= 0x10;
-    pf_script(0x14, 0x40);
+    pf_script(0x14, PLAYER_FACING_RIGHT);
     pf_expected.unk5++;
     actual = pf_finish(0);
     return actual;
@@ -536,8 +522,8 @@ static u32 dialogue(u32 row)
         obj.animation_table = (const u8* const*)sigma_animations;
         set_animation(&obj, 15);
         obj.animation_cursor = (const u8*)sigma_animations[15] + 24;
-        obj.animation_step.packed = 0x3C000021;
-        assert(*(const u32*)obj.animation_cursor == 0x3C000021);
+        obj.animation_step.packed = C_TEST_STEP(0x3C000021);
+        assert(*(const u32*)obj.animation_cursor == C_TEST_STEP(0x3C000021));
     }
     g_Player.x_pos.val = obj.x_pos.val + ((s32)side - 1) * 65536;
     g_Player.stun_timer = 3;
@@ -556,12 +542,12 @@ static u32 dialogue(u32 row)
     if (sigma) {
         expected.animation_step.fields.duration = 32;
         expected.unk6 = 1;
-        expected.unk15 = side ? 0x40 : 0;
+        expected.unk15 = side ? PLAYER_FACING_RIGHT : 0;
         expected.on_screen = 1;
         player_expected.script_state = 1;
         player_expected.script_action = 20;
-        player_expected.script_facing = side < 2 ? 0x40 : 0;
-        player_expected.spike_immune = 1;
+        player_expected.script_facing = side < 2 ? PLAYER_FACING_RIGHT : 0;
+        SPIKE_IMMUNE_SET(player_expected, 1);
         engine_expected.gameplay_locked = 1;
         engine_expected.character_state.bytes[9] = 1;
         window_expected.unk10 = 0x8000 | (character ? 0x2C : 0x31);
@@ -600,7 +586,7 @@ static u32 reveal(u32 row)
     obj.active = 0x41;
     obj.id = 68;
     obj.state = 4;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x9234;
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
@@ -620,16 +606,16 @@ static u32 reveal(u32 row)
     expected.x_speed = 0;
     expected.unk42 = 0x1234;
     expected.unk5 = 1;
-    expected.unk15 = side ? 0x40 : 0;
+    expected.unk15 = side ? PLAYER_FACING_RIGHT : 0;
     expected.on_screen = 1;
     expected.unk17 = 8;
     expected.previous_animation_index = 255;
     expected.animation_cursor = sigma_animations[8];
-    expected.animation_step.packed = 0x00010001;
+    expected.animation_step.packed = C_TEST_STEP(0x00010001);
     scythe_expected.unk17 = 9;
     scythe_expected.previous_animation_index = 255;
     scythe_expected.animation_cursor = sigma_animations[9];
-    scythe_expected.animation_step.packed = 0x01010001;
+    scythe_expected.animation_step.packed = C_TEST_STEP(0x01010001);
     D_8013E198[2] = -1;
     sigma_reveal_start(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
@@ -680,10 +666,10 @@ static u32 attack(u32 row)
     D_8013E198[2] = -1;
     sigma_cloak_teleport_appear(&obj);
     for (i = 0; i < 6; i++)
-        sigma_cloak_teleport_fade_in(&obj);
+        test_next_frame(), sigma_cloak_teleport_fade_in(&obj);
     assert(obj.unk6 == 2 && obj.unk7C == 40);
     for (i = 0; i < 39; i++)
-        func_80083710(&obj);
+        test_next_frame(), func_80083710(&obj);
     assert(obj.unk7C == 1);
     memcpy(expected_shots, shot_objects, sizeof(expected_shots));
     memcpy(expected_visuals, visual_objects, sizeof(expected_visuals));
@@ -694,7 +680,7 @@ static u32 attack(u32 row)
     expected.unk17 = 4;
     expected.previous_animation_index = 255;
     expected.animation_cursor = sigma_animations[4];
-    expected.animation_step.packed = 0x17000021;
+    expected.animation_step.packed = C_TEST_STEP(0x17000021);
     expected.ext.main_68.count = 0;
     expected.ext.main_68.shot_type = far ? 1 : 2;
     expected_shots[0].unk17 = 7;
@@ -705,7 +691,7 @@ static u32 attack(u32 row)
         func_80083710(&obj);
         assert(obj.ext.main_68.visual == &visual_objects[31] && obj.unk6 == 3 && obj.unk7C == 10);
         for (i = 0; i < 9; i++)
-            func_800837FC(&obj);
+            test_next_frame(), func_800837FC(&obj);
         expected = obj;
         expected.unk7C = 0;
         expected.ext.main_68.count = 1;
@@ -780,8 +766,8 @@ static u32 reveal_sigma_reveal_pool_capacity(u32 row)
     expected.unk17 = 14;
     expected.previous_animation_index = 255;
     expected.animation_cursor = sigma_animations[14];
-    expected.animation_step.packed = 0x39010003;
-    expected.unk15 = face ? 0x40 : 0;
+    expected.animation_step.packed = C_TEST_STEP(0x39010003);
+    expected.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     if (first) {
         struct VisualObj* v = &visuals_expected[32 - available];
         v->active = 0x41;
@@ -860,7 +846,7 @@ static u32 full(u32 row)
     assert(obj.unk7 == 1 && obj.unk17 == 26 && obj.animation_cursor == (const u8*)sigma_animations[26] + 12 && obj.animation_step.fields.duration == 1);
     expected = obj;
     expected.animation_cursor = (const u8*)sigma_animations[26] + 16;
-    expected.animation_step.packed = 0x5301000C;
+    expected.animation_step.packed = C_TEST_STEP(0x5301000C);
     memcpy(expected_shots_sigma_spin_throw_capacity, shot_objects, sizeof(expected_shots_sigma_spin_throw_capacity));
     cur_random = 0x1234;
     sigma_scythe_spin_throw(&obj);
@@ -869,6 +855,842 @@ static u32 full(u32 row)
     c_test_same_words(&g_Player, &player, sizeof(player));
     c_test_same_words(&engine_obj, &engine, sizeof(engine));
     assert(cur_random == 0x1234);
+    return 1;
+}
+
+void sigma_intro_fill_health(struct MainObj*);
+void sigma_intro_wait(struct MainObj*);
+void sigma_intro_finish(struct MainObj*);
+void sigma_cloak_teleport_appear(struct MainObj*);
+void sigma_cloak_teleport(struct MainObj*);
+void sigma_cloak_teleport_fade_out(struct MainObj*);
+void sigma_cloak_teleport_finish(struct MainObj*);
+void sigma_cloak_dash_appear(struct MainObj*);
+void sigma_cloak_dash_fade_in(struct MainObj*);
+void sigma_cloak_dash_run(struct MainObj*);
+void sigma_cloak_dash_fade_out(struct MainObj*);
+void sigma_cloak_dash_finish(struct MainObj*);
+void sigma_scythe_spin_jump(struct MainObj*);
+void sigma_scythe_spin(struct MainObj*);
+void sigma_scythe_plant_jump(struct MainObj*);
+void sigma_scythe_plant(struct MainObj*);
+void sigma_cloak_pick_attack(struct MainObj*);
+void sigma_darts(struct MainObj*);
+void sigma_scythe_retrieve_jump(struct MainObj*);
+void sigma_scythe_retrieve(struct MainObj*);
+void sigma_land_pause(struct MainObj*);
+void sigma_eye_laser(struct MainObj*);
+void sigma_death(struct MainObj*);
+void sigma_death_finish(struct MainObj*);
+void sigma_cloak_stagger(struct MainObj*);
+void sigma_reveal(struct MainObj*);
+extern struct Unk_unk68 D_80103EEC;
+extern struct Unk_unk68 D_80103EF4;
+extern struct Unk_unk68 D_80103EF8;
+
+static struct MainObj sg;
+static struct Unk_unk68 sg_box = { -2, -2, 4, 4 };
+static u8 sg_damage[0x80];
+static u8 sg_sound_rows[0x400];
+static void sg_reset(u8 state, u8 unk5, u8 unk6, u8 unk7)
+{
+#ifndef MMX4_SATURN
+    D_80141F50[2] = sg_sound_rows;
+#endif
+    TEST_SPRITE_FRAMES = (u8*)sprites;
+    memset(&sg, 0, sizeof(sg));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    main_bss_state.frame_counter = 1;
+    engine_obj.unk36.timer = 0;
+    engine_obj.gameplay_locked = 0;
+    sg.active = 0x41;
+    sg.id = 68;
+    sg.state = state;
+    sg.unk5 = unk5;
+    sg.unk6 = unk6;
+    sg.unk7 = unk7;
+    sg.x_pos.i.hi = 160;
+    sg.y_pos.i.hi = 120;
+    sg.bg_offset = -1;
+    sg.animation_table = (const u8* const*)sigma_animations;
+    set_animation(&sg, 0);
+    shot_objects[0].active = 0x41;
+    shot_objects[0].id = 0x2E;
+    shot_objects[0].animation_table = (u32**)sigma_animations;
+    shot_objects[0].unk7C = WEAPON_OBJECT(&sg);
+    sg.ext.main_68.scythe = MAIN_OBJECT(&shot_objects[0]);
+}
+static void sg_step(s8 duration, s8 event, s8 relative_step)
+{
+    sg.animation_step.fields.duration = duration;
+    sg.animation_step.fields.event = event;
+    sg.animation_step.fields.relative_step = relative_step;
+}
+static void sg_hit(u8 weapon, u8 kind, u8 damage)
+{
+    memset(sg_damage, 0, sizeof(sg_damage));
+    sg_damage[weapon * 2] = kind;
+    sg_damage[weapon * 2 + 1] = damage;
+    sg.collision_data = sg_damage;
+    sg.hurt_box = &sg_box;
+    sg.bg_offset = -1;
+    weapon_objects[0].active = 1;
+    weapon_objects[0].id = weapon;
+    weapon_objects[0].unk50 = &sg_box;
+    weapon_objects[0].bg_offset = -1;
+    weapon_objects[0].x_pos = sg.x_pos;
+    weapon_objects[0].y_pos = sg.y_pos;
+}
+
+static void sg_intro_wait_player(void)
+{
+    sg_reset(0, 0, 0, 0);
+    g_Player.capsule_state = 1;
+    sigma_intro_wait_player(&sg);
+    assert(sg.unk5 == 0 && effect_objects[0].active == 0 && g_Player.script_state == 0);
+    g_Player.capsule_state = 0;
+    sg.on_screen = 1;
+    sigma_intro_wait_player(&sg);
+    assert(sg.unk5 == 1 && sg.on_screen == 0 && background_objects[0].unk24 == -0x10);
+    assert(effect_objects[0].active == 1 && effect_objects[0].id == 0x18 && sg.ext.main_68.effect == &effect_objects[0]);
+    assert(g_Player.script_state == 1 && g_Player.script_action == 0x14 && g_Player.script_facing == PLAYER_FACING_RIGHT);
+}
+static void sg_intro_init(void)
+{
+    sg_reset(0, 1, 0, 0);
+    effect_objects[0].active = 1;
+    sg.ext.main_68.effect = &effect_objects[0];
+    sg.on_screen = 1;
+    func_8008329C(&sg);
+    assert(sg.unk5 == 1 && sg.on_screen == 0 && sg.contact_damage == 0);
+    effect_objects[0].active = 0;
+    FILL_ACTIVE(shot_objects, 32, 1);
+    sg.ext.main_68.scythe = NULL;
+    sg.ext.main_68.next_attack = 3;
+    sg.hp = 9;
+    func_8008329C(&sg);
+    assert(sg.unk5 == 2 && sg.ext.main_68.scythe == NULL && sg.hp == 0 && sg.contact_damage == 4);
+    assert(sg.x_pos.val == 0x5200000 && sg.y_pos.val == 0x16B0000 && sg.unk7C == 1 && sg.unk7E == 0x3C);
+    assert(sg.ext.main_68.next_attack == 0 && sg.collision_data == D_80107F84 && sg.unk17 == 0);
+    assert(engine_obj.enable_boss == 1 && engine_obj.boss_ptr == &sg);
+    shot_objects[5].active = 0;
+    sg.unk5 = 1;
+    func_8008329C(&sg);
+    assert(sg.unk5 == 2 && sg.ext.main_68.scythe == MAIN_OBJECT(&shot_objects[5]));
+    assert(shot_objects[5].active == 0x41 && shot_objects[5].id == 0x2E && shot_objects[5].unk2 == 0 && shot_objects[5].unk7C == WEAPON_OBJECT(&sg));
+}
+static void sg_intro_fill_health(void)
+{
+    sg_reset(0, 2, 0, 0);
+    D_80173C84 = 0;
+    sg.unk7E = 1;
+    sg.unk7C = 2;
+    main_bss_state.frame_counter = 2;
+    sg.on_screen = 1;
+    sigma_intro_fill_health(&sg);
+    assert(sg.unk7E == 0 && sg.hp == 0 && sg.unk7C == 2 && sg.on_screen == 0);
+    sigma_intro_fill_health(&sg);
+    assert(sg.hp == 1 && sg.unk7C == 1);
+    sigma_intro_fill_health(&sg);
+    assert(sg.hp == 2 && sg.unk7C == 2);
+    engine_obj.unk36.timer = 5;
+    D_80173C84 = 1;
+    sigma_intro_fill_health(&sg);
+    assert(sg.hp == 2 && sg.unk7C == 2 && engine_obj.unk36.timer == 5);
+    engine_obj.unk36.timer = 0;
+    sg.hp = 0x30;
+    main_bss_state.frame_counter = 1;
+    sigma_intro_fill_health(&sg);
+    assert(sg.unk5 == 3 && sg.unk7C == 0x1E && sg.hp == 0x30 && sg.on_screen == C_TEST_VISIBLE(sg.unk16));
+}
+static void sg_intro_wait(void)
+{
+    sg_reset(0, 3, 0, 0);
+    sg.unk7C = 3;
+    main_bss_state.frame_counter = 2;
+    g_Player.script_state = 1;
+    engine_obj.gameplay_locked = 1;
+    sigma_intro_wait(&sg);
+    assert(sg.unk7C == 2 && sg.unk5 == 3 && sg.on_screen == 0);
+    main_bss_state.frame_counter = 1;
+    sigma_intro_wait(&sg);
+    assert(sg.unk7C == 1 && sg.on_screen == C_TEST_VISIBLE(sg.unk16));
+    sigma_intro_wait(&sg);
+    assert(sg.unk5 == 4 && sg.unk7C == 0x3C && sg.on_screen == 0);
+    assert(g_Player.script_state == 0 && engine_obj.gameplay_locked == 0);
+}
+static void sg_intro_finish(void)
+{
+    sg_reset(0, 4, 0, 0);
+    sg.unk7C = 2;
+    sigma_update(&sg);
+    assert(sg.unk7C == 1 && sg.state == 0 && sg.unk5 == 4);
+    sigma_update(&sg);
+    assert(sg.state == 1 && sg.unk5 == 2);
+}
+static void sg_teleport_appear_left(void)
+{
+    sg_reset(1, 3, 0, 0);
+    g_Player.x_pos.i.hi = 0x400;
+    sigma_cloak_teleport_appear(&sg);
+    assert(sg.x_pos.i.hi == 0x470 && sg.y_pos.val == FIXED(0x150) && sg.unk15 == PLAYER_FACING_RIGHT);
+    assert(sg.unk6 == 1 && sg.unk7C == 5 && sg.unk7E == 4 && sg.ext.main_68.bob_step == 2 && shot_objects[0].unk17 == 5);
+}
+static void sg_teleport_fire(void)
+{
+    sg_reset(1, 3, 3, 0);
+    sg.unk7C = 1;
+    sg.ext.main_68.count = 2;
+    sg.ext.main_68.shot_type = 1;
+    sg.ext.main_68.visual = &visual_objects[3];
+    func_800837FC(&sg);
+    assert(shot_objects[1].active == 0x41 && shot_objects[1].id == 0x2E && shot_objects[1].unk2 == 1);
+    assert(shot_objects[1].unk99 == 0 && shot_objects[2].unk99 == 1 && shot_objects[1].unk9A == 2 && shot_objects[2].unk9A == 2);
+    assert(shot_objects[2].unk7C == WEAPON_OBJECT(&sg) && sg.ext.main_68.active_shots == 2 && sg.ext.main_68.count == 3);
+    assert(sg.unk7 == 1 && sg.unk7C == 0x14 && sg.unk6 == 3);
+    sg.unk7C = 2;
+    func_800837FC(&sg);
+    assert(sg.unk7C == 1 && sg.unk6 == 3 && visual_objects[3].state == 0);
+    func_800837FC(&sg);
+    assert(sg.unk6 == 4 && sg.unk7 == 0 && visual_objects[3].state == 1);
+}
+static void sg_teleport_wait_shots(void)
+{
+    sg_reset(1, 3, 4, 0);
+    main_bss_state.frame_counter = 10;
+    sg.unk7E = 1;
+    sg.ext.main_68.bob_step = 2;
+    sg.ext.main_68.active_shots = 1;
+    sigma_cloak_teleport(&sg);
+    assert(sg.unk6 == 4 && sg.y_pos.i.hi == 122 && sg.unk7E == 4 && sg.ext.main_68.bob_step == -2);
+    main_bss_state.frame_counter = 11;
+    sigma_cloak_teleport(&sg);
+    assert(sg.unk6 == 4 && sg.y_pos.i.hi == 122 && sg.unk7E == 4);
+    main_bss_state.frame_counter = 10;
+    sg.ext.main_68.active_shots = 0;
+    sigma_cloak_teleport(&sg);
+    assert(sg.unk6 == 5 && sg.unk7C == 0xA && sg.y_pos.i.hi == 120 && sg.unk7E == 3 && sg.ext.main_68.bob_step == -2);
+}
+static void sg_teleport_fade_out(void)
+{
+    sg_reset(1, 3, 5, 0);
+    sg.unk7C = 2;
+    sg.hurt_box = &sg_box;
+    sg.attack_box = &sg_box;
+    sigma_cloak_teleport_fade_out(&sg);
+    assert(sg.unk7C == 1 && sg.unk6 == 5 && sg.on_screen == C_TEST_VISIBLE(sg.unk16) && sg.hurt_box != NULL);
+    sigma_cloak_teleport_fade_out(&sg);
+    assert(sg.unk6 == 6 && sg.unk7C == 0x78 && sg.on_screen == 0 && sg.hurt_box == NULL && sg.attack_box == NULL);
+}
+static void sg_teleport_finish(void)
+{
+    sg_reset(1, 3, 6, 0);
+    sg.unk7C = 2;
+    background_objects[0].x_pos.i.hi = 0x500;
+    sigma_cloak_teleport_finish(&sg);
+    assert(sg.unk7C == 1 && sg.unk5 == 3 && sg.x_pos.i.hi == 160);
+    sigma_cloak_teleport_finish(&sg);
+    assert(sg.unk5 == 2 && sg.unk6 == 0 && sg.x_pos.i.hi == 0x400);
+}
+static void sg_dash_appear(void)
+{
+    sg_reset(1, 4, 0, 0);
+    g_Player.x_pos.i.hi = 0x4D1;
+    sigma_cloak_dash_appear(&sg);
+    assert(sg.x_pos.i.hi == 0x460 && sg.unk15 == PLAYER_FACING_RIGHT && sg.y_pos.i.hi == 0x150);
+    assert(sg.unk7C == 0xA && sg.unk6 == 1 && sg.unk17 == 0 && shot_objects[0].unk17 == 5);
+    g_Player.x_pos.i.hi = 0x4D0;
+    sigma_cloak_dash_appear(&sg);
+    assert(sg.x_pos.i.hi == 0x540 && sg.unk15 == 0 && sg.unk6 == 2);
+}
+static void sg_dash_fade_in(void)
+{
+    sg_reset(1, 4, 1, 0);
+    sg.unk7C = 2;
+    sigma_cloak_dash_fade_in(&sg);
+    assert(sg.unk7C == 1 && sg.unk6 == 1 && sg.on_screen == C_TEST_VISIBLE(sg.unk16));
+    sigma_cloak_dash_fade_in(&sg);
+    assert(sg.unk6 == 2 && sg.unk7C == 0x28 && sg.on_screen == 0);
+}
+static void sg_dash_start(void)
+{
+    sg_reset(1, 4, 2, 0);
+    sg.unk7C = 2;
+    func_80083C2C(&sg);
+    assert(sg.unk7C == 1 && sg.unk7 == 0 && sg.attack_box == &D_80103EE4 && sg.hurt_box == &D_80103EE8);
+    func_80083C2C(&sg);
+    assert(sg.unk7 == 1 && sg.unk15 == PLAYER_FACING_RIGHT && sg.hurt_box == &D_80103EF8 && sg.unk17 == 1 && shot_objects[0].unk17 == 6);
+    sg_step(5, 0, 1);
+    func_80083C2C(&sg);
+    assert(sg.unk6 == 2 && sg.unk7 == 1);
+    sg_step(5, 1, 1);
+    func_80083C2C(&sg);
+    assert(sg.unk6 == 3 && sg.unk7 == 0 && sg.x_speed == -0x60000 && sg.terrain_box == &D_80103EEC && sg.unk4B == 1);
+    sg.unk6 = 2;
+    sg.unk7 = 1;
+    sg.unk15 = 0;
+    sg_step(5, 1, 1);
+    func_80083C2C(&sg);
+    assert(sg.unk6 == 3 && sg.x_speed == 0x60000);
+}
+static void sg_dash_run(void)
+{
+    sg_reset(1, 4, 3, 0);
+    sg.x_speed = 0x60000;
+    sg.ext.main_68.scythe->attack_box = &sg_box;
+    sigma_cloak_dash_run(&sg);
+    assert(sg.unk6 == 3 && sg.x_pos.i.hi == 166 && sg.unk18.i.hi == 160 && sg.ext.main_68.scythe->attack_box != NULL);
+    sg.collision_flags = 1;
+    sg.terrain_box = &D_80103EEC;
+    sigma_cloak_dash_run(&sg);
+    assert(sg.unk6 == 4 && sg.unk7C == 0xA && sg.terrain_box == NULL && sg.unk4B == -1 && sg.ext.main_68.scythe->attack_box == NULL);
+}
+static void sg_dash_fade_out(void)
+{
+    sg_reset(1, 4, 4, 0);
+    sg.unk7C = 2;
+    sg.hurt_box = &sg_box;
+    background_objects[0].x_pos.i.hi = 0x500;
+    sigma_cloak_dash_fade_out(&sg);
+    assert(sg.unk7C == 1 && sg.unk6 == 4 && sg.on_screen == C_TEST_VISIBLE(sg.unk16) && sg.x_pos.i.hi == 160);
+    sigma_cloak_dash_fade_out(&sg);
+    assert(sg.unk6 == 5 && sg.unk7C == 0x78 && sg.on_screen == 0 && sg.hurt_box == NULL && sg.x_pos.i.hi == 0x400);
+    sg.unk7C = 2;
+    sg.on_screen = 1;
+    sigma_cloak_dash_finish(&sg);
+    assert(sg.unk7C == 1 && sg.unk6 == 5 && sg.on_screen == 0);
+    sigma_cloak_dash_finish(&sg);
+    assert(sg.unk5 == 2 && sg.unk6 == 0);
+}
+static void sg_spin_jump(void)
+{
+    sg_reset(1, 2, 0, 0);
+    g_Player.x_pos.i.hi = 159;
+    sigma_scythe_spin_jump(&sg);
+    assert(sg.unk7 == 1 && sg.unk15 == 0 && sg.unk17 == 0x16);
+    sg.unk7 = 0;
+    g_Player.x_pos.i.hi = 160;
+    sigma_scythe_spin_jump(&sg);
+    assert(sg.unk7 == 1 && sg.unk15 == PLAYER_FACING_RIGHT);
+    sg_step(5, 0, 1);
+    sigma_scythe_spin_jump(&sg);
+    assert(sg.unk6 == 0 && sg.unk7 == 1);
+    sg_step(5, 0, 0);
+    sigma_scythe_spin_jump(&sg);
+    assert(sg.unk6 == 1 && sg.unk7 == 0 && sg.attack_box == &D_80103F08 && sg.hurt_box == &D_80103F0C && sg.unk17 == 0x17);
+}
+static void sg_spin_rise_far(void)
+{
+    sg_reset(1, 2, 1, 0);
+    sg.x_pos.i.hi = 1000;
+    sg.y_pos.i.hi = 336;
+    sigma_scythe_spin_rise(&sg);
+    assert(sg.unk6 == 1 && sg.x_speed == 0x40000 && sg.y_speed == 0 && sg.x_pos.i.hi == 1004 && sg.y_pos.i.hi == 336);
+}
+static void sg_spin_throw(void)
+{
+    sg_reset(1, 2, 2, 1);
+    sg_step(5, 1, 0);
+    sigma_scythe_spin_throw(&sg);
+    assert(shot_objects[1].active == 0x41 && shot_objects[1].id == 0x2E && shot_objects[1].unk2 == 7 && shot_objects[1].unk7C == WEAPON_OBJECT(&sg));
+    assert(sg.ext.main_68.scythe == MAIN_OBJECT(&shot_objects[1]) && sg.animation_step.fields.event == 0 && sg.unk6 == 3 && sg.unk7 == 0);
+}
+static void sg_spin_wait_land_recover(void)
+{
+    sg_reset(1, 2, 3, 0);
+    sg.x_speed = 0x10000;
+    sigma_scythe_spin(&sg);
+    assert(sg.unk6 == 3 && sg.x_speed == 0x10000);
+    shot_objects[0].active = 0;
+    sigma_scythe_spin(&sg);
+    assert(sg.unk6 == 4 && sg.x_speed == 0 && sg.y_speed == 0 && sg.gravity == 0x4200 && sg.unk17 == 0x18);
+    sigma_scythe_spin(&sg);
+    assert(sg.unk6 == 4 && sg.y_speed == -0x4200);
+    sg.collision_flags = 8;
+    sigma_scythe_spin(&sg);
+    assert(sg.unk6 == 5 && sg.attack_box == &D_80103F00 && sg.hurt_box == &D_80103F04 && sg.unk17 == 0x19);
+    sg_step(5, 0, 1);
+    sigma_scythe_spin(&sg);
+    assert(sg.unk5 == 2 && sg.unk6 == 5);
+    sg_step(5, 0, 0);
+    sg.unk7 = 1;
+    sigma_scythe_spin(&sg);
+    assert(sg.unk5 == 3 && sg.unk6 == 0 && sg.unk7 == 0);
+}
+static void sg_plant_jump(void)
+{
+    sg_reset(1, 3, 0, 0);
+    sg.ext.main_68.next_attack = 2;
+    g_Player.x_pos.i.hi = 160;
+    sigma_scythe_plant_jump(&sg);
+    assert(sg.unk7 == 1 && sg.unk15 == PLAYER_FACING_RIGHT && sg.ext.main_68.next_attack == 0 && sg.unk17 == 0x16);
+    sg.unk7 = 0;
+    g_Player.x_pos.i.hi = 159;
+    sigma_scythe_plant_jump(&sg);
+    assert(sg.unk7 == 1 && sg.unk15 == 0);
+    sg_step(5, 0, 1);
+    sigma_scythe_plant_jump(&sg);
+    assert(sg.unk6 == 0 && sg.unk7 == 1);
+    sg_step(5, 0, 0);
+    sg.x_speed = 0x10000;
+    sigma_scythe_plant_jump(&sg);
+    assert(sg.unk6 == 1 && sg.unk7 == 0 && sg.x_speed == 0 && sg.y_speed == FIXED(6.5) && sg.gravity == 0x4200);
+    assert(sg.attack_box == &D_80103F08 && sg.hurt_box == &D_80103F0C && sg.unk17 == 0x17);
+}
+static void sg_plant_apex_to_next(void)
+{
+    sg_reset(1, 3, 1, 0);
+    sg.y_speed = 0x10000;
+    sg.gravity = 0x4200;
+    sigma_scythe_plant(&sg);
+    assert(sg.unk6 == 1 && sg.y_speed == 0xBE00 && sg.y_pos.i.hi == 119);
+    sg.y_speed = 0x1000;
+    sigma_scythe_plant(&sg);
+    assert(sg.unk6 == 2 && sg.y_speed == 0 && sg.gravity == 0 && sg.unk17 == 0x1A);
+    sg_step(5, 0, 1);
+    sigma_scythe_plant(&sg);
+    assert(sg.unk6 == 2 && shot_objects[1].active == 0);
+    sg_step(5, 1, 0);
+    sigma_scythe_plant(&sg);
+    assert(shot_objects[1].active == 0x41 && shot_objects[1].unk2 == 3 && shot_objects[1].unk7C == WEAPON_OBJECT(&sg));
+    assert(sg.ext.main_68.scythe == MAIN_OBJECT(&shot_objects[1]) && sg.unk6 == 3 && sg.gravity == 0x4200 && sg.unk17 == 0x13);
+    sigma_scythe_plant(&sg);
+    assert(sg.unk6 == 3);
+    sg.collision_flags = 8;
+    sigma_scythe_plant(&sg);
+    assert(sg.unk6 == 4 && sg.attack_box == &D_80103F00 && sg.hurt_box == &D_80103F04 && sg.unk17 == 0x14);
+    sg_step(5, 0, 1);
+    sigma_scythe_plant(&sg);
+    assert(sg.unk7 == 0 && sg.unk17 == 0x14);
+    sg_step(5, 0, 0);
+    sigma_scythe_plant(&sg);
+    assert(sg.unk7 == 1 && sg.unk17 == 0x10);
+    sigma_scythe_plant(&sg);
+    assert(sg.unk5 == 3 && sg.unk7 == 1);
+    sg.ext.main_68.next_attack = 2;
+    sigma_scythe_plant(&sg);
+    assert(sg.unk5 == 4 && sg.unk6 == 0 && sg.unk7 == 0);
+}
+static void sg_cloak_pick_attack(void)
+{
+    sg_reset(1, 2, 5, 5);
+    sg.ext.main_68.next_attack = 2;
+    sigma_cloak_pick_attack(&sg);
+    assert(sg.unk5 == 4 && sg.unk6 == 0 && sg.unk7 == 0 && sg.hurt_box == &D_80103EF4 && sg.ext.main_68.next_attack == 0);
+    sigma_cloak_pick_attack(&sg);
+    assert(sg.unk5 == 3 && sg.ext.main_68.next_attack == 1);
+}
+static void sg_darts(void)
+{
+    sg_reset(1, 4, 0, 0);
+    sg.ext.main_68.count = 3;
+    g_Player.x_pos.i.hi = 159;
+    sigma_darts(&sg);
+    assert(sg.unk6 == 1 && sg.unk15 == 0 && sg.ext.main_68.count == 0 && sg.unk17 == 0x1B);
+    sg.unk6 = 0;
+    g_Player.x_pos.i.hi = 160;
+    sigma_darts(&sg);
+    assert(sg.unk15 == PLAYER_FACING_RIGHT && sg.unk6 == 1);
+    sg_step(5, 0, 1);
+    sigma_darts(&sg);
+    assert(sg.unk6 == 1 && shot_objects[1].active == 0);
+    sg_step(5, 1, 1);
+    sigma_darts(&sg);
+    assert(sg.unk6 == 2 && sg.animation_step.fields.event == 0 && sg.ext.main_68.count == 4 && shot_objects[5].active == 0);
+    assert(shot_objects[1].active == 0x41 && shot_objects[1].id == 0x2E && shot_objects[1].unk2 == 6 && shot_objects[1].timer == 0);
+    assert(shot_objects[4].unk2 == 6 && shot_objects[4].timer == 3 && shot_objects[4].unk7C == WEAPON_OBJECT(&sg));
+    sg_step(5, 0, 1);
+    sigma_darts(&sg);
+    assert(sg.unk6 == 2);
+    sg_step(5, 0, 0);
+    sigma_darts(&sg);
+    assert(sg.unk6 == 3 && sg.unk7C == 0x5A && sg.unk17 == 0x2B);
+    sg.unk7C = 2;
+    sigma_darts(&sg);
+    assert(sg.unk7C == 1 && sg.unk5 == 4);
+    sg.unk7 = 1;
+    sigma_darts(&sg);
+    assert(sg.unk5 == 5 && sg.unk6 == 0 && sg.unk7 == 0);
+}
+static void sg_retrieve_jump(void)
+{
+    sg_reset(1, 5, 0, 0);
+    shot_objects[0].x_pos.i.hi = 161;
+    sigma_scythe_retrieve_jump(&sg);
+    assert(sg.unk7 == 1 && sg.unk15 == PLAYER_FACING_RIGHT && sg.unk17 == 0x11);
+    sg.unk7 = 0;
+    shot_objects[0].x_pos.i.hi = 160;
+    sigma_scythe_retrieve_jump(&sg);
+    assert(sg.unk7 == 1 && sg.unk15 == 0);
+    sg_step(5, 0, 1);
+    sigma_scythe_retrieve_jump(&sg);
+    assert(sg.unk6 == 0);
+    sg_step(5, 0, 0);
+    sigma_scythe_retrieve_jump(&sg);
+    assert(sg.unk6 == 1 && sg.unk7 == 0 && sg.attack_box == &D_80103F08 && sg.hurt_box == &D_80103F0C && sg.unk17 == 0x12);
+}
+static void sg_retrieve_rise_to_recover(void)
+{
+    sg_reset(1, 5, 1, 0);
+    sg.x_pos.i.hi = 1000;
+    sg.y_pos.i.hi = 336;
+    sigma_scythe_retrieve(&sg);
+    assert(sg.unk6 == 1 && sg.x_pos.i.hi == 1004 && shot_objects[0].unk5 == 0);
+    sg.x_pos.i.hi = 1228;
+    sigma_scythe_retrieve(&sg);
+    assert(sg.unk6 == 2 && sg.x_pos.i.hi == 1232 && shot_objects[0].unk5 == 1);
+    sigma_scythe_retrieve(&sg);
+    assert(sg.unk6 == 2);
+    sg.ext.main_68.scythe = NULL;
+    sigma_scythe_retrieve(&sg);
+    assert(sg.unk6 == 3 && sg.x_speed == 0 && sg.y_speed == 0 && sg.gravity == 0x4200 && sg.unk17 == 0x18);
+    sigma_scythe_retrieve(&sg);
+    assert(sg.unk6 == 3);
+    sg.collision_flags = 8;
+    sigma_scythe_retrieve(&sg);
+    assert(sg.unk6 == 4 && sg.attack_box == &D_80103F00 && sg.hurt_box == &D_80103F04 && sg.unk17 == 0x19);
+    sg_step(5, 0, 1);
+    sigma_scythe_retrieve(&sg);
+    assert(sg.unk5 == 5);
+    sg_step(5, 0, 0);
+    sigma_scythe_retrieve(&sg);
+    assert(sg.unk5 == 6 && sg.unk6 == 0 && sg.unk7 == 0);
+}
+static void sg_land_pause(void)
+{
+    sg_reset(1, 6, 0, 0);
+    sigma_land_pause(&sg);
+    assert(sg.unk6 == 1 && sg.unk7C == 0x28 && sg.unk17 == 0x15 && sg.attack_box == &D_80103F00 && sg.hurt_box == &D_80103F04);
+    sg.unk7C = 2;
+    sigma_land_pause(&sg);
+    assert(sg.unk7C == 1 && sg.unk5 == 6);
+    sigma_land_pause(&sg);
+    assert(sg.unk5 == 2 && sg.unk6 == 0 && sg.unk7 == 0);
+}
+static void sg_laser_jump(void)
+{
+    sg_reset(1, 7, 0, 0);
+    sigma_eye_laser(&sg);
+    assert(sg.unk7 == 1 && sg.unk17 == 0x11);
+    sg_step(5, 0, 0);
+    sigma_eye_laser(&sg);
+    assert(sg.unk7 == 2 && sg.x_speed == FIXED(2.5) && sg.y_speed == 0x60000 && sg.gravity == 0x4200);
+    assert(sg.attack_box == &D_80103F08 && sg.hurt_box == &D_80103F0C && sg.unk17 == 0x12);
+    sg.unk7 = 1;
+    sg.unk15 = PLAYER_FACING_RIGHT;
+    sg_step(5, 0, 0);
+    sigma_eye_laser(&sg);
+    assert(sg.unk7 == 2 && sg.x_speed == FIXED(-2.5));
+    sg.y_speed = 0x4200;
+    sigma_eye_laser(&sg);
+    assert(sg.unk7 == 2 && sg.y_speed == 0);
+    sigma_eye_laser(&sg);
+    assert(sg.unk7 == 3 && sg.y_speed == 0 && sg.unk17 == 0x13);
+    sigma_eye_laser(&sg);
+    assert(sg.unk7 == 3);
+    sg.collision_flags = 8;
+    sigma_eye_laser(&sg);
+    assert(sg.unk7 == 4 && sg.attack_box == &D_80103F00 && sg.hurt_box == &D_80103F04 && sg.unk17 == 0x14);
+    sg_step(5, 0, 1);
+    sigma_eye_laser(&sg);
+    assert(sg.unk7 == 4 && sg.unk6 == 0);
+    sg_step(5, 0, 0);
+    sigma_eye_laser(&sg);
+    assert(sg.unk6 == 1 && sg.unk7 == 0 && sg.unk17 == 0x1C);
+}
+static void sg_laser_wait(void)
+{
+    sg_reset(1, 7, 2, 0);
+    g_QuadObjects[0].active = 1;
+    sg.ext.main_68.effect = (struct EffectObj*)&g_QuadObjects[0];
+    sigma_eye_laser(&sg);
+    assert(sg.unk5 == 7 && sg.unk6 == 2);
+    g_QuadObjects[0].active = 0;
+    sigma_eye_laser(&sg);
+    assert(sg.unk5 == 5 && sg.unk6 == 0 && sg.unk7 == 0);
+}
+static void sg_cloak_fight_unhit(void)
+{
+    sg_reset(1, 1, 0, 0);
+    sg.collision_data = D_801060F0;
+    sg.on_screen = 1;
+    sg.hurt_box = &sg_box;
+    sg.attack_box = &sg_box;
+    sigma_update(&sg);
+    assert(sg.state == 1 && sg.collision_data == D_80107F84 && sg.hurt_box == &sg_box && sg.attack_box == &sg_box);
+}
+static void sg_cloak_fight_hit(u8 weapon, u8 unk5, u8 hp)
+{
+    sg_reset(1, unk5, 0, 0);
+    sg.hp = hp;
+    sg.ext.main_68.flash_timer = 3;
+    sg_hit(weapon, 0, 2);
+    sigma_update(&sg);
+}
+static void sg_cloak_fight_stagger(void)
+{
+    sg_cloak_fight_hit(4, 3, 10);
+    assert(sg.state == 3 && sg.unk5 == 0 && sg.hp == 8 && sg.ext.main_68.flash_timer == 2);
+}
+static void sg_cloak_fight_other_weapon(void)
+{
+    sg_cloak_fight_hit(0, 1, 10);
+    assert(sg.state == 1 && sg.unk5 == 1 && sg.hp == 8 && sg.collision_data == sg_damage);
+}
+static void sg_cloak_fight_reveal(void)
+{
+    sg_cloak_fight_hit(0, 1, 2);
+    assert(sg.state == 4 && sg.unk5 == 0 && sg.unk6 == 0 && sg.hp == 0);
+}
+static void sg_death_start_blink(void)
+{
+    sg_reset(2, 0, 0, 0);
+    sigma_death(&sg);
+    assert(sg.unk5 == 1 && sg.unk7C == 0x7F && sg.unk7E == 0x19 && sg.ext.main_68.blink_delay == 0x19 && sg.unk17 == 0x29);
+    assert(g_Player.script_action == 0x15 && g_Player.script_facing == 0 && engine_obj.gameplay_locked == 1);
+    sg.unk7C = 2;
+    sg.unk7E = 1;
+    sigma_death(&sg);
+    assert(sg.unk5 == 1 && sg.unk7C == 1 && sg.unk7E == 0 && sg.unk42 == 0);
+    sigma_death(&sg);
+    assert(sg.unk5 == 2 && effect_objects[0].active == 1 && effect_objects[0].id == 0x1A && sg.ext.main_68.effect == &effect_objects[0]);
+    assert(effect_objects[0].x_pos.i.hi == 160 && effect_objects[0].y_pos.i.hi == 120);
+    assert(sg.unk42 == 0x8000 && sg.ext.main_68.blink_delay == 0x14 && sg.unk7E == 0x14);
+    sg.unk5 = 1;
+    sg.unk7C = 5;
+    sg.unk7E = 0;
+    sg.ext.main_68.blink_delay = 8;
+    sigma_death(&sg);
+    assert(sg.unk5 == 1 && sg.unk42 == 0 && sg.ext.main_68.blink_delay == 3 && sg.unk7E == 5);
+}
+static void sg_death_wait_explosion(void)
+{
+    sg_reset(2, 2, 0, 0);
+    effect_objects[0].active = 1;
+    effect_objects[0].unk7 = 1;
+    sg.ext.main_68.effect = &effect_objects[0];
+    sg.on_screen = 1;
+    sigma_death(&sg);
+    assert(sg.unk5 == 2 && sg.on_screen == 0 && sg.unk42 == 0);
+    effect_objects[0].unk7 = 0;
+    sigma_death(&sg);
+    assert(sg.unk42 == 0x8000 && sg.unk7E == 5 && sg.on_screen == C_TEST_VISIBLE(sg.unk16));
+    sg.unk7E = 2;
+    sigma_death(&sg);
+    assert(sg.unk42 == 0x8000 && sg.unk7E == 1);
+    effect_objects[0].active = 0;
+    sigma_death(&sg);
+    assert(sg.unk5 == 3 && sg.unk7C == 0x78 && background_objects[0].unk28 == 0x100);
+    assert(g_Player.script_action == 0x14 && g_Player.script_facing == PLAYER_FACING_RIGHT);
+}
+static void sg_death_explode(void)
+{
+    sg_reset(2, 3, 0, 0);
+    sg.unk7C = 2;
+    engine_obj.gameplay_locked = 1;
+    cur_random = 0;
+    sigma_death(&sg);
+    assert(sg.unk7C == 1 && engine_obj.gameplay_locked == 0 && visual_objects[0].active == 0x21 && visual_objects[0].id == 4);
+    assert(visual_objects[0].x_pos.i.hi == 0x47F && visual_objects[0].y_pos.i.hi == 0x1D2 && visual_objects[0].unk5C.value == 0);
+    cur_random = 1;
+    sigma_death(&sg);
+    assert(sg.unk7C == 0 && sg.unk5 == 3 && visual_objects[1].active == 0);
+}
+static void sg_death_finish_waits(void)
+{
+    sg_reset(2, 4, 0, 0);
+    background_objects[0].y_pos.i.hi = 1;
+    sigma_death_finish(&sg);
+    assert(sg.active == 0x41 && sg.unk5 == 4);
+}
+#include "support/tile_writes.h"
+static const u8 sg_hit_table[2] = { 0, 1 };
+static void sg_revealed_hit_flashing(void)
+{
+    sg_reset(1, 2, 0, 0);
+    sg.hp = 0x20, sg.hurt_box = &sg_box, sg.collision_data = (const u16*)sg_hit_table, sg.ext.main_68.flash_timer = 3;
+    weapon_objects[0].active = 1, weapon_objects[0].x_pos = sg.x_pos, weapon_objects[0].y_pos = sg.y_pos, ((struct MainObj*)&weapon_objects[0])->attack_box = &sg_box;
+    engine_obj.cur_character = CHARACTER_ZERO;
+    func_8008502C(&sg);
+    assert(sg.hp == 0x1F && sg.ext.main_68.flash_timer == 2 && sg.collision_data == (const u16*)sg_hit_table);
+    engine_obj.cur_character = CHARACTER_X;
+}
+static void sg_death_floor(void)
+{
+    sg_reset(2, 3, 0, 0);
+    engine_obj.stage = 12, engine_obj.substage = 1, tile_writes_begin(), tile_writes_expect(6, 0x430, 0x1C0, 1);
+    sigma_death(&sg);
+    tile_writes_end();
+    assert(sg.unk5 == 4);
+    engine_obj.stage = engine_obj.substage = 0;
+}
+static void sg_death_finish_open(void)
+{
+    sg_reset(2, 4, 0, 0);
+    background_objects[0].y_pos.i.hi = background_objects[0].unk20 = 0x100;
+    background_objects[0].unk28 = 0x40, background_objects[0].unk24 = 0x10;
+    g_Player.script_state = 1, SPIKE_IMMUNE_SET(g_Player, 1);
+    engine_obj.stage = 12, engine_obj.substage = 1, tile_writes_begin(), tile_writes_expect(7, 0, 0, 1);
+    sigma_death_finish(&sg);
+    tile_writes_end();
+    assert(sg.active == 0 && background_objects[0].unk2A == 0x40 && background_objects[0].unk24 == 0x290 && SPIKE_IMMUNE(g_Player) == 0 && g_Player.script_state == 0);
+    engine_obj.stage = engine_obj.substage = 0;
+}
+static void sg_stagger_start_trail(void)
+{
+    sg_reset(3, 0, 0, 0);
+    sg.unk42 = 0x8123;
+    sg.hurt_box = &sg_box;
+    sigma_cloak_stagger(&sg);
+    assert(sg.unk4B == -1 && sg.unk42 == 0x123 && sg.unk5 == 1 && sg.unk7C == 0x40 && sg.unk7E == 4);
+    assert(sg.hurt_box == NULL && sg.unk17 == 8 && shot_objects[0].unk17 == 9);
+    sg.unk7C = 2;
+    main_bss_state.frame_counter = 8;
+    sigma_cloak_stagger(&sg);
+    assert(sg.unk7C == 1 && sg.unk5 == 1 && visual_objects[0].active == 0x41 && visual_objects[0].id == 0x20);
+    assert(visual_objects[0].unk2 == 2 && visual_objects[0].unk50 == PLAYER_OBJECT(&sg));
+    main_bss_state.frame_counter = 10;
+    sg.unk7E = 1;
+    sg.ext.main_68.bob_step = 2;
+    sigma_cloak_stagger(&sg);
+    assert(sg.unk5 == 2 && sg.unk7C == 10 && visual_objects[1].active == 0);
+    assert(sg.y_pos.i.hi == 122 && sg.unk7E == 4 && sg.ext.main_68.bob_step == -2);
+    main_bss_state.frame_counter = 20;
+    sigma_cloak_stagger(&sg);
+    assert(sg.y_pos.i.hi == 120 && sg.unk7E == 3 && sg.ext.main_68.bob_step == -2 && sg.unk7C == 9);
+}
+static void sg_stagger_fade_finish(void)
+{
+    sg_reset(3, 2, 0, 0);
+    sg.unk7C = 2;
+    background_objects[0].x_pos.i.hi = 0x500;
+    sigma_cloak_stagger(&sg);
+    assert(sg.unk7C == 1 && sg.unk5 == 2 && sg.on_screen == C_TEST_VISIBLE(sg.unk16));
+    sigma_cloak_stagger(&sg);
+    assert(sg.unk5 == 3 && sg.unk7C == 0x78 && sg.on_screen == 0);
+    sg.unk7C = 2;
+    sg.unk6 = 4;
+    sg.unk7 = 5;
+    sigma_cloak_stagger(&sg);
+    assert(sg.unk7C == 1 && sg.state == 3);
+    sigma_cloak_stagger(&sg);
+    assert(sg.state == 1 && sg.unk5 == 2 && sg.unk6 == 0 && sg.unk7 == 0 && sg.x_pos.i.hi == 0x490);
+}
+static void sg_reveal_fall(void)
+{
+    sg_reset(4, 1, 0, 0);
+    main_bss_state.frame_counter = 5;
+    sigma_reveal(&sg);
+    assert(sg.unk5 == 1 && visual_objects[0].active == 0x41 && visual_objects[0].id == 0x20 && visual_objects[0].unk2 == 2);
+    main_bss_state.frame_counter = 1;
+    sg.collision_flags = 8;
+    sigma_reveal(&sg);
+    assert(sg.unk5 == 2 && sg.unk7C == 0x78 && visual_objects[1].active == 0);
+}
+static void sg_reveal_burn_wait(void)
+{
+    sg_reset(4, 2, 0, 0);
+    sg.unk7C = 2;
+    func_80085A44(&sg);
+    assert(sg.unk7C == 1 && sg.unk5 == 2 && sg.on_screen == C_TEST_VISIBLE(sg.unk16));
+}
+static void sg_reveal_wait_dialogue(void)
+{
+    sg_reset(4, 3, 0, 0);
+    sg.ext.main_68.count = 1;
+    sigma_reveal(&sg);
+    assert(sg.unk5 == 3);
+    sg.ext.main_68.count = 0;
+    sigma_reveal(&sg);
+    assert(sg.unk5 == 4 && sg.unk17 == 0xF);
+    sg_step(5, 0, 1);
+    sigma_reveal(&sg);
+    assert(sg.unk5 == 4 && sg.unk6 == 0);
+    sg.unk6 = 1;
+    abc_object.unkC = 1;
+    sigma_reveal(&sg);
+    assert(sg.unk5 == 4 && sg.unk6 == 1);
+    abc_object.unkC = 0;
+    sigma_reveal(&sg);
+    assert(sg.unk5 == 5 && sg.unk6 == 0 && sg.unk7C == 1);
+}
+static void sg_reveal_fill_finish(void)
+{
+    sg_reset(4, 5, 0, 0);
+    sg.hp = 0x2E;
+    sg.unk7C = 1;
+    sigma_reveal(&sg);
+    assert(sg.hp == 0x2F && sg.unk7C == 2);
+    sigma_reveal(&sg);
+    assert(sg.hp == 0x30 && sg.unk7C == 1 && sg.unk5 == 5);
+    sigma_reveal(&sg);
+    assert(sg.unk5 == 6 && sg.unk7C == 0x5A && sg.hp == 0x30);
+    sg.unk7C = 2;
+    sg.unk6 = 3;
+    sg.ext.main_68.flash_timer = 9;
+    g_Player.script_state = 1;
+    sigma_reveal(&sg);
+    assert(sg.unk7C == 1 && sg.state == 4 && shot_objects[0].state == 0);
+    sigma_reveal(&sg);
+    assert(sg.state == 1 && sg.unk2 == 1 && sg.unk5 == 2 && sg.unk6 == 0 && sg.unk7 == 0 && sg.ext.main_68.flash_timer == 0);
+    assert(sg.collision_data == D_80108004 && sg.attack_box == &D_80103F00 && sg.hurt_box == &D_80103F04);
+    assert(shot_objects[0].state == 1 && g_Player.script_state == 0);
+}
+static void (*const sg_cases[])(void) = {
+    sg_intro_wait_player,
+    sg_intro_init,
+    sg_intro_fill_health,
+    sg_intro_wait,
+    sg_intro_finish,
+    sg_teleport_appear_left,
+    sg_teleport_fire,
+    sg_teleport_wait_shots,
+    sg_teleport_fade_out,
+    sg_teleport_finish,
+    sg_dash_appear,
+    sg_dash_fade_in,
+    sg_dash_start,
+    sg_dash_run,
+    sg_dash_fade_out,
+    sg_spin_jump,
+    sg_spin_rise_far,
+    sg_spin_throw,
+    sg_spin_wait_land_recover,
+    sg_plant_jump,
+    sg_plant_apex_to_next,
+    sg_cloak_pick_attack,
+    sg_darts,
+    sg_retrieve_jump,
+    sg_retrieve_rise_to_recover,
+    sg_land_pause,
+    sg_laser_jump,
+    sg_laser_wait,
+    sg_cloak_fight_unhit,
+    sg_cloak_fight_stagger,
+    sg_cloak_fight_other_weapon,
+    sg_cloak_fight_reveal,
+    sg_death_start_blink,
+    sg_death_wait_explosion,
+    sg_death_explode,
+    sg_death_finish_waits,
+    sg_revealed_hit_flashing,
+    sg_death_floor,
+    sg_death_finish_open,
+    sg_stagger_start_trail,
+    sg_stagger_fade_finish,
+    sg_reveal_fall,
+    sg_reveal_burn_wait,
+    sg_reveal_wait_dialogue,
+    sg_reveal_fill_finish,
+};
+static u32 sg_run(u32 row)
+{
+    sg_cases[row]();
     return 1;
 }
 
@@ -884,6 +1706,12 @@ const struct CTestGroup c_test_groups[] = {
     { "cloaked_Sigma_own_appear_fade_windup_near_far_full_visual_or_shot_pool", NULL, NULL, 4, attack },
     { "own_Sigma_reveal_cloak_and_scythe_full_partial_pools_exact_RNG", NULL, NULL, 24, reveal_sigma_reveal_pool_capacity },
     { "uncloaked_Sigma_real_rise_40_wait_25_throw_animation_ticks_full_shots", NULL, NULL, 1, full },
+    { "sigma_state_steps", NULL, NULL, COUNT(sg_cases), sg_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(sigma_cloak_flash_hits_cases) + COUNT(sigma_eye_laser_quad_pool_cases_expected) + COUNT(sigma_pose_visual_pool_cases) + COUNT(sigma_revealed_hit_visual_pools_cases_expected) + 1 + COUNT(pool_full_cases) + 48 + 6 + 4 + 24 + 1;
+const u32 c_test_count = COUNT(sigma_cloak_flash_hits_cases) + COUNT(sigma_eye_laser_quad_pool_cases_expected) + COUNT(sigma_pose_visual_pool_cases) + COUNT(sigma_revealed_hit_visual_pools_cases_expected) + 1 + COUNT(pool_full_cases) + 48 + 6 + 4 + 24 + 1 + COUNT(sg_cases);
+#else
+const struct CTestGroup c_test_groups[] = {};
+const u32 c_test_group_count = 0;
+const u32 c_test_count = 0;
+#endif

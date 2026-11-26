@@ -73,7 +73,7 @@ static u32 thorn_trap_fire_run(u32 mode)
     trap.unk2 = input->variant;
     trap.state = 1;
     trap.unk5 = 2;
-    trap.unk15 = mode == AIMED_RIGHT ? 0x40 : 0;
+    trap.unk15 = mode == AIMED_RIGHT ? PLAYER_FACING_RIGHT : 0;
     trap.x_pos.val = 0x00A01111;
     trap.y_pos.val = 0x00802222;
     trap.animation_table = table;
@@ -188,7 +188,7 @@ static u32 test_func_8005C474(u32 row)
     main_bss_state.frame_counter = 1;
     g_Player.x_pos.i.hi = 360;
     g_Player.y_pos.i.hi = 100;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     cur_random = 200;
     func_8005B8D0(obj);
     assert(obj->state == 1 && obj->unk5 == 2);
@@ -214,10 +214,102 @@ static void tt_idle(void)
     thorn_trap_idle(&so);
 }
 
+void thorn_trap_windup(struct MainObj*);
+void thorn_trap_strike(struct MainObj*);
+void thorn_trap_extend(struct MainObj*);
+void thorn_trap_extend_high(struct MainObj*);
+#define TT(step, sub) (state_reset(step, sub, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, memset(weapon_objects, 0, sizeof(weapon_objects)), SPIKE_IMMUNE_SET(g_Player, 1))
+#define TT_DIST() (state_extra = (u16)so.ext.main_31.distance)
+#define TT_ANIM(flag) (state_extra = so.animation_step.fields.duration | (u32)(u8)(flag) << 8)
+static void tt_init(u8 kind) { TT(0, 0), so.unk2 = kind, func_8005B8D0(&so), state_extra = (u16)so.ext.main_31.distance | (u32)so.state << 16; }
+static void tt_init_left_long(void) { tt_init(4); }
+static void tt_init_left_short(void) { tt_init(0); }
+#define WAIT(kind, count, dist, open, face) (TT(2, 0), so.unk2 = kind, so.unk7C = count, so.ext.main_31.distance = dist, so.ext.main_31.unk82 = open, so.unk15 = face, func_8005BA2C(&so), TT_DIST())
+static void tt_wait_open_low(void) { WAIT(0, 0, -1, 0, 0); }
+static void tt_wait_open_mid_extended(void) { WAIT(6, 0, -1, 1, 0); }
+static void tt_wait_open_mid(void) { WAIT(6, 0, -1, 0, 0); }
+static void tt_wait_open_high_extended(void) { WAIT(0xC, 0, -1, 1, 0); }
+static void tt_wait_open_high(void) { WAIT(0xC, 0, -1, 0, 0); }
+static void tt_wait_slide_right(void) { WAIT(0, 0, 0x20, 0, PLAYER_FACING_RIGHT); }
+static void tt_wait_slide_left_last(void) { WAIT(0, 0, 4, 0, 0); }
+static void tt_wait_slide_right_last(void) { WAIT(0, 0, 4, 0, PLAYER_FACING_RIGHT); }
+static void tt_wait_slide_left(void) { WAIT(0, 0, 0x20, 0, 0); }
+static void tt_windup_done(void) { TT(4, 0), so.animation_step.fields.relative_step = -1, thorn_trap_windup(&so), TT_ANIM(so.contact_damage); }
+static void tt_windup(void) { TT(4, 0), thorn_trap_windup(&so), TT_ANIM(so.contact_damage); }
+static void tt_strike_hit(void) { TT(5, 0), so.contact_damage = 6, so.animation_step.fields.event = 1, thorn_trap_strike(&so), TT_ANIM(so.contact_damage); }
+static void tt_strike(void) { TT(5, 0), so.contact_damage = 6, thorn_trap_strike(&so), TT_ANIM(so.contact_damage); }
+#define EXTEND(step, ev, rel, run) (TT(step, 0), so.animation_step.fields.event = ev, so.animation_step.fields.relative_step = rel, run(&so), TT_ANIM(so.ext.main_0.flags[0]))
+static void tt_extend_open(void) { EXTEND(6, 1, -1, thorn_trap_extend); }
+static void tt_extend(void) { EXTEND(6, 0, 0, thorn_trap_extend); }
+static void tt_extended_shot_right(void) { TT(7, 0), so.unk15 = PLAYER_FACING_RIGHT, so.animation_step.fields.event = 1, cur_random = 1, func_8005BDE4(&so), TT_ANIM(0); }
+static void tt_extend_high_open(void) { EXTEND(8, 1, -1, thorn_trap_extend_high); }
+static void tt_extend_high(void) { EXTEND(8, 0, 0, thorn_trap_extend_high); }
+static void tt_main_broken(void) { TT(1, 0), so.state = 1, so.hp = 3, state_hit(&so, 0, 0, 1), func_8005C0E4(&so), state_extra = so.state; }
+static void tt_main_off_screen(void) { TT(1, 0), so.state = 1, so.active = 0x41, so.x_pos.i.hi = 0x200, func_8005C0E4(&so), state_extra = so.state; }
+static void tt_main_sunk(void) { TT(1, 0), so.state = 1, so.y_pos.i.hi = 0xB0, func_8005C0E4(&so), state_extra = so.state; }
+static void tt_break_start_left(void) { TT(0, 0), so.state = 2, func_8005C474(&so), state_extra = so.state; }
+static void tt_break_sunk_left(void) { TT(1, 0), so.state = 2, so.y_pos.i.hi = 0xB0, func_8005C474(&so), state_extra = so.state; }
+static void tt_break_sunk_right(void) { TT(1, 0), so.state = 2, so.unk15 = PLAYER_FACING_RIGHT, so.y_pos.i.hi = 0xB0, func_8005C474(&so), state_extra = so.state; }
+static void tt_despawn(void) { TT(1, 0), so.state = 3, so.active = 0x41, thorn_trap_update(&so), state_extra = so.state; }
 static void (*const thorn_trap_misc_cases[])(void) = {
     tt_idle,
+    tt_init_left_long,
+    tt_init_left_short,
+    tt_wait_open_low,
+    tt_wait_open_mid_extended,
+    tt_wait_open_mid,
+    tt_wait_open_high_extended,
+    tt_wait_open_high,
+    tt_wait_slide_right,
+    tt_wait_slide_left_last,
+    tt_wait_slide_right_last,
+    tt_wait_slide_left,
+    tt_windup_done,
+    tt_windup,
+    tt_strike_hit,
+    tt_strike,
+    tt_extend_open,
+    tt_extend,
+    tt_extended_shot_right,
+    tt_extend_high_open,
+    tt_extend_high,
+    tt_main_broken,
+    tt_main_off_screen,
+    tt_main_sunk,
+    tt_break_start_left,
+    tt_break_sunk_left,
+    tt_break_sunk_right,
+    tt_despawn,
 };
-static const u32 thorn_trap_misc_expected[] = { 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+static const u32 thorn_trap_misc_expected[] = { 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    2u, 0x96u, 0xFF940000u, 0u, 0u, 0u, 1u, 0x60002u, 0x100B0u, 0x4000000u,
+    2u, 0x96u, 0xFF940000u, 0u, 0u, 0u, 1u, 0x60002u, 0x10060u, 0x4000000u,
+    4u, 0u, 0x800000u, 0u, 0u, 0u, 2u, 0u, 0xFFFFu, 0u,
+    7u, 0u, 0x800000u, 0u, 0u, 0u, 7u, 0u, 0xFFFFu, 0u,
+    6u, 0u, 0x800000u, 0u, 0u, 0u, 3u, 0u, 0xFFFFu, 0u,
+    9u, 0u, 0x800000u, 0u, 0u, 0u, 4u, 0u, 0xFFFFu, 0u,
+    8u, 0u, 0x800000u, 0u, 0u, 0u, 3u, 0u, 0xFFFFu, 0u,
+    2u, 0u, 0x780000u, 0u, 0u, 0u, 0x4000u, 0u, 0x18u, 0u,
+    2u, 0u, 0x840000u, 0u, 0u, 0u, 0u, 0u, 0xFFFCu, 0u,
+    2u, 0u, 0x7C0000u, 0u, 0u, 0u, 0x4000u, 0u, 0xFFFCu, 0u,
+    2u, 0u, 0x880000u, 0u, 0u, 0u, 0u, 0u, 0x18u, 0u,
+    5u, 0u, 0x800000u, 0u, 0u, 0u, 9u, 0u, 5u, 0u,
+    4u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 4u, 0u,
+    5u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 2u, 0x605u, 0u,
+    5u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x604u, 0u,
+    7u, 0u, 0x800000u, 0u, 0u, 0u, 7u, 1u, 0x105u, 0u,
+    6u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 4u, 0u,
+    7u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 4u, 0x410000u,
+    9u, 0u, 0x800000u, 0u, 0u, 0u, 4u, 1u, 0x105u, 0u,
+    8u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 4u, 0u,
+    0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 1u, 2u, 0x2100u,
+    0u, 0u, 0x2000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+    0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 2u, 0x2100u,
+    1u, 0u, 0x800000u, 0u, 0u, 0u, 0xBu, 0u, 2u, 0x2100u,
+    1u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 3u, 0x2100u,
+    1u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 3u, 0x2100u,
+    0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u,
+};
 
 static u32 test_thorn_trap_misc(u32 row)
 {

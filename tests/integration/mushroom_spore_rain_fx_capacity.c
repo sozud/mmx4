@@ -53,7 +53,7 @@ static u32 rain(u32 row)
     expected.unk6 = 2;
     expected.unk17 = 4;
     expected.animation_cursor = split_mushroom_animations[4];
-    expected.animation_step.packed = 0x0F010003;
+    expected.animation_step.packed = C_TEST_STEP(0x0F010003);
     if (visual) {
         struct VisualObj* v = &visuals_expected[31];
         v->active = 0x41;
@@ -64,13 +64,13 @@ static u32 rain(u32 row)
         v->animation_table = (u32**)obj.animation_table;
         v->unk40 = 7;
         v->unk42 = 0x78C0;
-        v->unk16 = 0x13;
+        v->unk16 = VISUAL_SATURN_LAYER(0x13);
         v->unk50 = PLAYER_OBJECT(&obj);
         v->unk5C.fields.unk5E = 260;
         v->unk17 = 14;
         v->previous_animation_index = 255;
         v->animation_cursor = split_mushroom_animations[14];
-        v->animation_step.packed = 0x38010004;
+        v->animation_step.packed = C_TEST_STEP(0x38010004);
     }
     if (misc) {
         struct MiscObj* m = &misc_expected[63];
@@ -82,13 +82,13 @@ static u32 rain(u32 row)
         m->animation_table = (u32**)obj.animation_table;
         m->unk40 = 7;
         m->unk42 = 0x78C0;
-        m->unk16 = 0x13;
+        m->unk16 = VISUAL_SATURN_LAYER(0x13);
         m->ext.misc_30.owner = &obj;
         m->ext.misc_30.unk56 = 260;
         m->unk17 = 14;
         m->previous_animation_index = 255;
         m->animation_cursor = split_mushroom_animations[14];
-        m->animation_step.packed = 0x38010004;
+        m->animation_step.packed = C_TEST_STEP(0x38010004);
     }
     func_80079B50(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));

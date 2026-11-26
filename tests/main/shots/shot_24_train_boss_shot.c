@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/shots/shot_24_train_boss_shot.h"
 #include "main/collision_bounds.h"
 #include "main/mains/main_45_train_boss.h"
@@ -82,7 +83,7 @@ static u32 bullet_case(u32 mode)
     obj.unk54 = train_boss_bullet_hit_box;
     expected_animation(&obj, 4, 0);
     g_Player.hp = 30;
-    g_Player.spike_immune = 1;
+    SPIKE_IMMUNE_SET(g_Player, 1);
     g_Player.unk2 = 1;
     g_Player.boss_flags = 0x40;
     g_Player.x_pos.val = (mode == 0 ? 132 : mode == 2 ? 102
@@ -124,11 +125,11 @@ static u32 bullet_case(u32 mode)
         expected.on_screen = 0;
         expected.state = 2;
         if (dying) {
-            assert(D_80106070[28] == 0x7F00);
+            assert(D_80106070[28] == TEST_PSX_HALF(0x7F00));
             expected.unk5C = 0;
             expected.unk42 |= 0x8000;
             player_expected.update_delay_request = 1;
-            weapons_expected[0].unk80.word = 101 | (98 << 16);
+            TEST_SET_HALVES(weapons_expected[0].unk80, 101, 98);
             if (free_slots) {
                 struct VisualObj* visual = &visuals_expected[32 - free_slots];
                 visual->active = 0x21;
@@ -136,11 +137,11 @@ static u32 bullet_case(u32 mode)
                 visual->unk2 = 7;
                 visual->bg_offset = -1;
                 visual->animation_table = D_8011BF40;
-                visual->unk40 = 0;
-                visual->unk42 = 0x7802;
-                visual->unk16 = 0;
+                visual->unk40 = WEAPON_TEXTURE_BASE;
+                visual->unk42 = OBJECT_CLUT(0x7802);
+                visual->unk16 = VISUAL_SATURN_LAYER(0);
                 visual->unk3C = (u8*)sprites + 12;
-                visual->unk15 = 0x40;
+                visual->unk15 = PLAYER_FACING_RIGHT;
                 visual->x_pos.i.hi = 101;
                 visual->y_pos.i.hi = 98;
             }
@@ -155,25 +156,18 @@ static u32 bullet_case(u32 mode)
                 visual->y_pos.val = 99 * 65536;
                 visual->unk15 = 0;
                 visual->bg_offset = 0;
-                visual->unk16 = 1;
+                visual->unk16 = VISUAL_SATURN_LAYER(1);
             }
         }
     }
     func_8009E188(&obj);
-    for (i = 0; i < sizeof(obj) / 4; i++)
-        assert(((u32*)&obj)[i] == ((u32*)&expected)[i]);
-    for (i = 0; i < sizeof(owner) / 4; i++)
-        assert(((u32*)&owner)[i] == ((u32*)&owner_expected)[i]);
-    for (i = 0; i < sizeof(g_Player) / 4; i++)
-        assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
-    for (i = 0; i < sizeof(weapons_expected) / 4; i++)
-        assert(((u32*)weapon_objects)[i] == ((u32*)weapons_expected)[i]);
-    for (i = 0; i < sizeof(visuals_expected) / 4; i++)
-        assert(((u32*)visual_objects)[i] == ((u32*)visuals_expected)[i]);
-    for (i = 0; i < sizeof(backgrounds_before) / 4; i++)
-        assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
-    for (i = 0; i < sizeof(qux_object) / 4; i++)
-        assert(((u32*)&qux_object)[i] == ((u32*)&armor_before)[i]);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&owner, &owner_expected, sizeof(owner));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(weapon_objects, weapons_expected, sizeof(weapons_expected));
+    c_test_same_words(visual_objects, visuals_expected, sizeof(visuals_expected));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    c_test_same_words(&qux_object, &armor_before, sizeof(qux_object));
     for (i = 0; i < 6; i++)
         assert(D_8013E198[i] == -1);
     assert(cur_random == (dying ? 376 : 119) && SP_SPRITE_FRAMES == sprites);
@@ -250,14 +244,20 @@ static u32 test_func_8009E188(u32 row)
 static struct MainObj arm_owner;
 #define ss state_room.shot
 #define ARM(step) (state_reset(step, 0, 0), memset(&arm_owner, 0, sizeof(arm_owner)), ss.state = 4, ss.unk7C = (struct WeaponObj*)&arm_owner)
-#define OWNER() (state_extra = (u8)arm_owner.active | (u8)arm_owner.unk7 << 8 | (u8)arm_owner.x_pos.val << 16 | (u32)(u8)ss.unk84.bytes[0] << 24)
+#define SHOT24_EXTRA() ((u32)ss.unk84.shot_24.owner_state | (u32)ss.unk84.shot_24.owner_notified << 8 | (u32)(u16)ss.unk84.shot_24.timer << 16)
+#ifdef MMX4_BIG_ENDIAN
+#define TEST_ARM_OWNER_X(owner) ((owner).x_pos.i.lo)
+#else
+#define TEST_ARM_OWNER_X(owner) ((owner).x_pos.i.hi)
+#endif
+#define OWNER() (state_extra = (u8)arm_owner.active | (u8)arm_owner.unk7 << 8 | (u32)arm_owner.x_pos.bytes[0] << 16 | (u32)(u8)ss.unk84.bytes[0] << 24)
 static void tb_bullet_init(void)
 {
     ARM(0);
     ss.state = 0;
     arm_owner.unk6 = 3;
     train_boss_shot_update(&ss);
-    state_extra = ss.unk84.value;
+    state_extra = SHOT24_EXTRA();
 }
 static void tb_arm_init(void)
 {
@@ -289,7 +289,7 @@ static void tb_bullet_despawn_wait(void)
     ss.state = 2;
     ss.unk84.shot_24.timer = 2;
     train_boss_shot_update(&ss);
-    state_extra = ss.unk84.value;
+    state_extra = SHOT24_EXTRA();
 }
 static void tb_main_extended(void)
 {
@@ -324,7 +324,7 @@ static void tb_signal_own(void)
 {
     ARM(3);
     ss.unk2 = 2;
-    arm_owner.x_pos.val = 2;
+    arm_owner.x_pos.bytes[0] = 2;
     arm_owner.unk6 = 4;
     train_boss_arm_wait_signal(&ss);
     OWNER();
@@ -332,14 +332,14 @@ static void tb_signal_own(void)
 static void tb_signal_all(void)
 {
     ARM(3);
-    arm_owner.x_pos.val = 4;
+    arm_owner.x_pos.bytes[0] = 4;
     train_boss_arm_wait_signal(&ss);
     OWNER();
 }
 static void tb_signal_other(void)
 {
     ARM(3);
-    arm_owner.x_pos.val = 1;
+    arm_owner.x_pos.bytes[0] = 1;
     train_boss_arm_wait_signal(&ss);
     OWNER();
 }
@@ -347,7 +347,7 @@ static void tb_windup_fire(void)
 {
     ARM(4);
     ss.unk7 = 1;
-    arm_owner.x_pos.val = 4;
+    arm_owner.x_pos.bytes[0] = 4;
     train_boss_arm_windup(&ss);
     OWNER();
 }
@@ -435,7 +435,7 @@ static void tb_destroyed(void)
     ARM(8);
     ss.unk2 = 1;
     ss.unk42 = 0x8000;
-    arm_owner.x_pos.i.hi = 0x300;
+    TEST_ARM_OWNER_X(arm_owner) = 0x300;
     func_8009E8E0(&ss);
     OWNER();
 }
@@ -467,7 +467,7 @@ static void tb_sync_match(void)
 {
     ARM(10);
     arm_owner.active = 0x22;
-    arm_owner.x_pos.val = 4;
+    arm_owner.x_pos.bytes[0] = 4;
     train_boss_arm_wait_sync(&ss);
 }
 static void tb_sync_free(void)
@@ -480,7 +480,7 @@ static void tb_sync_wait(void)
 {
     ARM(10);
     arm_owner.active = 0x21;
-    arm_owner.x_pos.val = 4;
+    arm_owner.x_pos.bytes[0] = 4;
     train_boss_arm_wait_sync(&ss);
 }
 
@@ -640,8 +640,8 @@ static u32 interrupt(u32 row)
     weapon_objects[0].x_pos.val = x * 65536;
     weapon_objects[0].y_pos.val = y * 65536;
     c_test_copy_words((u32*)weapons_expected, (u32*)weapon_objects, sizeof(weapons_expected) / 4);
-    weapons_expected[0].unk80.word = x + 4 | ((y + 4) << 16);
-    g_Player.spike_immune = 1;
+    TEST_SET_HALVES(weapons_expected[0].unk80, x + 4, y + 4);
+    SPIKE_IMMUNE_SET(g_Player, 1);
     player_expected = g_Player;
     player_expected.update_delay_request = 1;
     expected = obj;
@@ -656,7 +656,7 @@ static u32 interrupt(u32 row)
         owner_expected.ext.main_45.unk87 &= 7 ^ (1 << type);
     } else
         expected.on_screen = 1;
-    assert(((u16*)D_80105FF0)[28] == 0x0400);
+    assert(((u16*)D_80105FF0)[28] == TEST_PSX_HALF(0x0400));
     train_boss_arm_main(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&owner, &owner_expected, sizeof(owner));
@@ -669,7 +669,23 @@ static u32 interrupt(u32 row)
     return 1;
 }
 
+void func_8009E188(struct ShotObj*);
+static u32 tb_waiting(void)
+{
+    state_reset(0, 0, 0);
+    memset(&arm_owner, 0, sizeof(arm_owner));
+    ss.active = 0x41;
+    ss.state = 1;
+    ss.unk7C = (struct WeaponObj*)&arm_owner;
+    ss.unk84.shot_24.timer = 3;
+    func_8009E188(&ss);
+    return ss.unk84.shot_24.timer | (u32)ss.unk6 << 8 | (u32)(ss.x_vel.val == 0) << 16;
+}
+static const CTestCase train_boss_bullet_wait_cases[] = { tb_waiting };
+static const u32 train_boss_bullet_wait_cases_expected[] = { 0x10002u };
+
 const struct CTestGroup c_test_groups[] = {
+    { "train_boss_bullet_wait", train_boss_bullet_wait_cases, train_boss_bullet_wait_cases_expected, COUNT(train_boss_bullet_wait_cases), 0 },
     { "train_boss_arm_states", 0, 0, COUNT(train_boss_arm_states_cases), test_train_boss_arm_states },
     { "train_boss_bullet_release_hit_pools", NULL, train_boss_bullet_release_hit_pools_cases_expected, COUNT(train_boss_bullet_release_hit_pools_cases_expected), bullet_case },
     { "func_8009E188", 0, 0, 5, test_func_8009E188 },
@@ -677,4 +693,4 @@ const struct CTestGroup c_test_groups[] = {
     { "saber_hits_and_lethal_boundary_notify_real_layer_owner_all_three_arms", NULL, NULL, 9, interrupt },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(train_boss_arm_states_cases) + COUNT(train_boss_bullet_release_hit_pools_cases_expected) + 5 + 39 + 9;
+const u32 c_test_count = COUNT(train_boss_arm_states_cases) + COUNT(train_boss_bullet_release_hit_pools_cases_expected) + 5 + 39 + 9 + COUNT(train_boss_bullet_wait_cases);

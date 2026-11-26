@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "support/platform_fixture.h"
 #include "main/mains/main_57_frost_walrus.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -14,6 +15,14 @@ extern u8* D_80141EE8[6];
 
 static u32 guarded_tiles[0x802];
 static u8 selected_tiles[0x800];
+
+#ifdef MMX4_SATURN
+#define FLOOR_TILE(before, attr) (((before) & 0xFFFFFFu) | TILE_ATTR_VALUE(attr))
+#define FLOOR_ATTR(word) ((word) >> 24)
+#else
+#define FLOOR_TILE(before, attr) (((before) & ~0xFFu) | (attr))
+#define FLOOR_ATTR(word) ((word) & 0xFF)
+#endif
 
 static u32 floor_case(s8 stage, s32 attribute, u8 empty)
 {
@@ -37,22 +46,22 @@ static u32 floor_case(s8 stage, s32 attribute, u8 empty)
     }
     assert(i < count);
 
-    frost_walrus_set_floor_tiles(attribute);
+    frost_walrus_set_floor_tiles(TILE_ATTR_VALUE(attribute));
     actual = guarded_tiles[list[0] + 1];
     if (empty)
         assert(actual == 0xA1230000u);
     else
-        assert(actual == (stage == 0xC ? 0xA1230039u : 0xA1230038u));
+        assert(actual == FLOOR_TILE(0xA1230000u | (list[0] & 0xFF), attribute));
     for (i = 0; i < COUNT(selected_tiles); i++) {
         if (selected_tiles[i])
-            assert(guarded_tiles[i + 1] == (stage == 0xC ? 0xA1230039u : 0xA1230038u));
+            assert(guarded_tiles[i + 1] == FLOOR_TILE(0xA1230000u | (i & 0xFF), attribute));
         else
             assert(guarded_tiles[i + 1] == (0xA1230000u | (i & 0xFF)));
     }
     assert(guarded_tiles[0] == 0xCAFE1234u);
     assert(guarded_tiles[0x801] == 0x5678BEEFu);
     assert(engine_obj.stage == stage);
-    return actual;
+    return FLOOR_ATTR(actual);
 }
 
 static u32 normal_floor(void) { return floor_case(7, 0x38, 0); }
@@ -64,7 +73,7 @@ static const CTestCase frost_floor_archive_cases[] = {
     boss_rush_floor,
     empty_floor,
 };
-static const u32 frost_floor_archive_cases_expected[] = { 0xA1230038u, 0xA1230039u, 0xA1230000u };
+static const u32 frost_floor_archive_cases_expected[] = { 0x38u, 0x39u, FLOOR_ATTR(0xA1230000u) };
 
 static u32 blizzard_case(u32 mode)
 {
@@ -98,7 +107,7 @@ static u32 blizzard_case(u32 mode)
     obj.state = 1;
     obj.unk5 = 8;
     obj.unk6 = 3;
-    obj.unk15 = mode & 1 ? 0x40 : 0;
+    obj.unk15 = mode & 1 ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.unk7C = mode == 4 ? 1 : mode == 5 ? 2
@@ -143,8 +152,10 @@ static u32 blizzard_case(u32 mode)
         expected_shots[29].unk98 = 0;
         expected_shots[29].unk61 = expected_shots[29].unk64 = expected_shots[29].unk65 = 0;
         expected_shots[29].unk66 = expected_shots[29].unk72 = expected_shots[29].unk73 = 0;
-        expected_shots[29].unk74 = expected_shots[29].unk76 = expected_shots[29].unk77 = 0;
-        expected_shots[29].unk78 = expected_shots[29].unk62 = expected_shots[29].unk63 = 0;
+        expected_shots[29].unk76 = expected_shots[29].unk77 = 0;
+        OBJ_UNK74_SET(expected_shots[29], 0);
+        expected_shots[29].unk62 = expected_shots[29].unk63 = 0;
+        OBJ_UNK78_SET(expected_shots[29], 0);
         expected_shots[29].unk7A = expected_shots[29].unk75 = 0;
         expected_shots[29].active = 0x41;
         expected_shots[29].id = 0x23;
@@ -168,7 +179,7 @@ static u32 blizzard_case(u32 mode)
     assert(D_80137E08 == command_before);
     for (i = 0; i < 6; i++)
         assert(D_8013E198[i] == -1);
-    assert(steps[0].packed == 0x14010002 && steps[4].packed == 0x1B010101 && steps[5].packed == 0x6B010201);
+    assert(steps[0].packed == C_TEST_STEP(0x14010002) && steps[4].packed == C_TEST_STEP(0x1B010101) && steps[5].packed == C_TEST_STEP(0x6B010201));
     actual = (u8)obj.unk6 | ((u32)(u16)obj.unk7C << 8) | ((u32)visual_objects[31].active << 24);
     return actual;
 }
@@ -190,7 +201,7 @@ static u32 charge_case(u32 mode)
     obj.state = 1;
     obj.unk5 = 3;
     obj.unk6 = 0;
-    obj.unk15 = mode & 1 ? 0x40 : 0;
+    obj.unk15 = mode & 1 ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.val = 100 * 65536 + 0x1234;
     obj.y_pos.val = 200 * 65536 + 0x5678;
     obj.x_speed = 123;
@@ -276,7 +287,7 @@ static u32 intro_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     for (i = 0; i < sizeof(engine_obj) / 4; i++)
         assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
-    assert(walk[0].packed == 0x3E010003 && roar[0].packed == 0x00010002);
+    assert(walk[0].packed == C_TEST_STEP(0x3E010003) && roar[0].packed == C_TEST_STEP(0x00010002));
     actual = (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)(u16)obj.x_pos.i.hi << 16);
     return actual;
 }
@@ -442,13 +453,13 @@ static u32 walrus_pages[8];
         walrus_engine = engine_obj;                                                                                                            \
         engine_obj.stage = stage_id;                                                                                                           \
         engine_obj.checkpoint = 1;                                                                                                             \
-        D_801406A8 = walrus_pages;                                                                                                             \
+        test_stage_graphics(walrus_pages);                                                                                                             \
         TEST_MENU_FRAMES = (u8*)walrus_pages;                                                                                                  \
         body;                                                                                                                                  \
         state_extra = engine_obj.unk25 | (engine_obj.boss_ptr == &so) << 8 | (u8)engine_obj.unkF << 16 | (u32)(u8)engine_obj.checkpoint << 24; \
         so.unk42 = 0;                                                                                                                          \
         engine_obj = walrus_engine;                                                                                                            \
-        D_801406A8 = pages;                                                                                                                    \
+        test_stage_graphics(pages);                                                                                                                    \
         TEST_MENU_FRAMES = frames;                                                                                                             \
     } while (0)
 static void fw_blizzard_start(void)
@@ -599,7 +610,7 @@ static u32 weapon_flash(u32 row)
     obj.unk6 = 9;
     obj.on_screen = 7;
     obj.bg_offset = 0;
-    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     obj.unk42 = 0x9234;
     obj.hp = hits[hit].lethal ? 1 : 48;
     obj.x_pos.val = 160 * 65536 + 0x1234;
@@ -653,7 +664,7 @@ static u32 weapon_flash(u32 row)
         expected.state = 2;
         expected.unk5 = 0;
         expected.unk42 &= 0x7FFF;
-        player_expected.spike_immune = 1;
+        SPIKE_IMMUNE_SET(player_expected, 1);
     } else if (hits[hit].weapon != 255) {
         if (!kind && weakness && !staggered) {
             expected.unk5 = 10;
@@ -693,14 +704,14 @@ static u32 recover(u32 row)
     obj.state = 1;
     obj.unk5 = 10;
     obj.unk6 = 3;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.unk7C = 1 + wait;
     obj.hp = health[hp];
     obj.ext.main_57.flashing = 1;
     obj.ext.main_57.flash_timer = 12;
     obj.animation_table = (const u8* const*)frost_walrus_animations;
     set_animation(&obj, 21);
-    assert(obj.animation_step.packed == 0x23010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x23010002));
     expected = obj;
     expected.unk7C--;
     if (wait)
@@ -743,13 +754,13 @@ static u32 land(u32 row)
     obj.state = 1;
     obj.unk5 = 10;
     obj.unk6 = 1;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.air_state = 1;
     obj.collision_flags = grounded ? 8 : 0;
     obj.ext.main_57.tusks_broken = broken;
     obj.animation_table = (const u8* const*)frost_walrus_animations;
     set_animation(&obj, 18);
-    assert(obj.animation_step.packed == 0x08000001);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x08000001));
     obj.x_pos.val = 160 * 65536 + 0x1234;
     obj.y_pos.val = 120 * 65536 + 0x5678;
     obj.x_speed = 0x18000;
@@ -768,7 +779,7 @@ static u32 land(u32 row)
         expected.unk17 = 20;
         expected.previous_animation_index = 0xFF;
         expected.animation_cursor = (const u8*)frost_walrus_animations[20];
-        expected.animation_step.packed = 0x21010002;
+        expected.animation_step.packed = C_TEST_STEP(0x21010002);
         backgrounds_expected[0].unk37 = 16;
         backgrounds_expected[0].unk46 = backgrounds_expected[0].unk3E.bytes[1] = 3;
         backgrounds_expected[0].unk3D = backgrounds_expected[0].unk3B = 1;
@@ -816,7 +827,7 @@ static u32 stagger(u32 row)
     obj.state = 1;
     obj.hp = 32;
     obj.unk5 = 10;
-    obj.unk15 = face ? 0x40 : 0;
+    obj.unk15 = face ? PLAYER_FACING_RIGHT : 0;
     obj.x_pos.i.hi = 160;
     obj.y_pos.i.hi = 120;
     obj.animation_table = (const u8* const*)frost_walrus_animations;
@@ -825,7 +836,7 @@ static u32 stagger(u32 row)
     expected.unk17 = 18;
     expected.previous_animation_index = 255;
     expected.animation_cursor = frost_walrus_animations[18];
-    expected.animation_step.packed = 0x08000001;
+    expected.animation_step.packed = C_TEST_STEP(0x08000001);
     expected.x_speed = side ? -0x20000 : 0x20000;
     expected.y_speed = 0x38000;
     expected.gravity = 0x4200;
@@ -851,6 +862,449 @@ static u32 stagger(u32 row)
     return 1;
 }
 
+void frost_walrus_start(struct MainObj*);
+void frost_walrus_intro(struct MainObj*);
+void frost_walrus_think(struct MainObj*);
+void frost_walrus_charge(struct MainObj*);
+void frost_walrus_leap(struct MainObj*);
+void frost_walrus_walk(struct MainObj*);
+void frost_walrus_shards(struct MainObj*);
+void frost_walrus_breath(struct MainObj*);
+void frost_walrus_stagger(struct MainObj*);
+void frost_walrus_regrow(struct MainObj*);
+extern u8 frost_walrus_script_2_0[4];
+extern s16 frost_walrus_burst_offsets[20][2];
+extern u8 frost_walrus_burst_subtypes[20];
+
+static struct MainObj wo;
+#define FW_TILE guarded_tiles[1 + frost_walrus_floor_tiles[0]]
+#define FW_IS(a, b) ((const void*)(a) == (const void*)(b))
+static void wo_reset(u8 unk5, u8 unk6)
+{
+    memset(&wo, 0, sizeof(wo));
+    memset(shot_objects, 0, sizeof(shot_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(effect_objects, 0, sizeof(effect_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(guarded_tiles, 0, sizeof(guarded_tiles));
+    TEST_BG_TILE_ATTRS = (u8*)&guarded_tiles[1];
+    D_80141F50[2] = state_sound_rows;
+    g_Player.hp = 0x10;
+    engine_obj.stage = 2;
+    cur_random = 0;
+    wo.active = 0x41;
+    wo.id = 57;
+    wo.state = 1;
+    wo.unk5 = unk5;
+    wo.unk6 = unk6;
+    wo.hp = 0x30;
+    wo.x_pos.i.hi = 0x200;
+    wo.y_pos.i.hi = 0x100;
+    wo.animation_table = (const u8* const*)frost_walrus_animations;
+    set_animation(&wo, 0);
+}
+static void wo_step(s8 event, s8 relative)
+{
+    wo.animation_step.fields.duration = 5;
+    wo.animation_step.fields.event = event;
+    wo.animation_step.fields.relative_step = relative;
+}
+
+static void fwx_death(void)
+{
+    struct EngineObj engine = engine_obj;
+    wo_reset(0, 0);
+    wo.state = 2;
+    wo.unk42 = 0x8123;
+    wo.ext.main_57.tusks_broken = 1;
+    g_Player.hp = 0;
+    frost_walrus_update(&wo);
+    assert(wo.unk5 == 1 && wo.unk17 == 0x1C && wo.unk7C == 0x7F && wo.unk7E == 0x19 && wo.invincibility_timer == 0x19 && wo.unk42 == 0x123);
+    assert(g_Player.script_action == 0x14 && FW_TILE == TILE_ATTR_VALUE(0x38));
+    FW_TILE = 0;
+    g_Player.hp = 0x10;
+    wo.unk7C = 2;
+    wo.unk7E = 3;
+    frost_walrus_update(&wo);
+    assert(wo.unk5 == 1 && wo.unk7C == 1 && wo.unk7E == 2 && FW_TILE == 0);
+    wo.unk7E = 0;
+    frost_walrus_update(&wo);
+    assert(wo.unk5 == 2 && effect_objects[0].active == 1 && effect_objects[0].id == 0x1A && effect_objects[0].x_pos.i.hi == 0x200 && wo.ext.main_57.effect == &effect_objects[0]);
+    assert(wo.invincibility_timer == 0x14 && wo.unk7E == 0x14 && wo.unk42 == 0x8123);
+    wo_reset(0, 0);
+    wo.state = 2;
+    frost_walrus_update(&wo);
+    assert(wo.unk5 == 1 && wo.unk17 == 0x1B);
+    engine_obj = engine;
+}
+static void fwx_start(void)
+{
+    struct EngineObj engine = engine_obj;
+    wo_reset(0, 0);
+    wo.state = 0;
+    effect_objects[0].active = 1;
+    frost_walrus_update(&wo);
+    assert(wo.unk5 == 1 && effect_objects[1].active == 1 && effect_objects[1].id == 0x18 && wo.ext.main_57.effect == &effect_objects[1]);
+    assert(g_Player.script_action == 0x14 && g_Player.script_facing == PLAYER_FACING_RIGHT);
+    engine_obj = engine;
+}
+static void fwx_intro_approach(void)
+{
+    struct EngineObj engine = engine_obj;
+    wo_reset(2, 0);
+    engine_obj.enable_boss = 0;
+    frost_walrus_intro(&wo);
+    assert(wo.unk6 == 1 && wo.x_speed == -FIXED(0.75) && engine_obj.enable_boss == 1 && wo.unk17 == 0x26);
+    wo.unk6 = 0;
+    wo.unk15 = PLAYER_FACING_RIGHT;
+    frost_walrus_intro(&wo);
+    assert(wo.x_speed == FIXED(0.75));
+    engine_obj = engine;
+    wo.unk15 = 0;
+    wo.x_speed = -0x10000;
+    g_Player.x_pos.i.hi = 0x100;
+    wo_step(1, 1);
+    frost_walrus_intro(&wo);
+    assert(wo.unk6 == 1 && wo.x_pos.i.hi == 0x1FF && background_objects[0].unk37 == 0x18);
+    wo.unk6 = 2;
+    wo_step(3, 1);
+    frost_walrus_intro(&wo);
+    assert(wo.unk6 == 2);
+    wo_step(0, 0);
+    frost_walrus_intro(&wo);
+    assert(wo.unk6 == 3 && wo.unk17 == 4 && wo.unk7C == 0x50);
+}
+static void fwx_intro_burst(void)
+{
+    struct EngineObj engine = engine_obj;
+    wo_reset(2, 3);
+    wo.unk7C = 2;
+    wo_step(0, 1);
+    frost_walrus_intro(&wo);
+    assert(wo.unk6 == 3 && wo.unk7C == 1 && visual_objects[0].active == 0);
+    engine_obj.character_state.bytes[8] = 1;
+    abc_object.unkC = 0;
+    wo_step(1, 1);
+    frost_walrus_intro(&wo);
+    assert(visual_objects[19].active == 0x41 && visual_objects[20].active == 0 && visual_objects[0].id == 0x18 && visual_objects[0].unk2 == frost_walrus_burst_subtypes[0]);
+    assert(visual_objects[19].x_pos.i.hi == 0x200 + frost_walrus_burst_offsets[19][0] && visual_objects[19].y_pos.i.hi == 0x100 + frost_walrus_burst_offsets[19][1]);
+    assert(wo.unk6 == 4 && wo.unk17 == 0x1A && abc_object.unkC == 0x80 && abc_object.unkA == 0x3C);
+    abc_object.unkC = 0;
+    engine_obj.stage = 0xC;
+    wo.unk6 = 3;
+    wo.unk7C = 1;
+    wo_step(0, 1);
+    frost_walrus_intro(&wo);
+    assert(wo.unk6 == 4 && abc_object.unkC == 0);
+    abc_object.unkC = 0x80;
+    frost_walrus_intro(&wo);
+    assert(wo.unk6 == 4);
+    abc_object.unkC = 0;
+    engine_obj.unk36.value = 0;
+    frost_walrus_intro(&wo);
+    assert(wo.unk6 == 5 && wo.unk7E == 3 && engine_obj.unk36.value == 0x3C);
+    wo.hp = 0x10;
+    D_80173C84 = 0;
+    engine_obj.unk36.timer = 2;
+    frost_walrus_intro(&wo);
+    assert(wo.hp == 0x10 && engine_obj.unk36.timer == 1);
+    engine_obj.unk36.timer = 0;
+    frost_walrus_intro(&wo);
+    assert(wo.hp == 0x11 && wo.unk7E == 2);
+    wo.unk7E = 1;
+    wo.hp = 0x2F;
+    g_Player.script_state = 1;
+    frost_walrus_intro(&wo);
+    assert(wo.hp == 0x30 && wo.unk7E == 0 && wo.unk5 == 3 && wo.unk6 == 0 && wo.ext.main_57.script == frost_walrus_script_2_0 && g_Player.script_state == 0);
+    engine_obj = engine;
+}
+static void fwx_think(void)
+{
+    static u8 used_up[1] = { 0xFF };
+    wo_reset(3, 0);
+    wo.ext.main_57.script = used_up;
+    g_Player.x_pos.i.hi = 0x300;
+    frost_walrus_think(&wo);
+    assert(wo.unk6 == 1 && wo.unk17 == 0x1A && wo.unk7C == 0x1E && wo.ext.main_57.script == &frost_walrus_script_2_0[1] && wo.unk15 == PLAYER_FACING_RIGHT);
+    frost_walrus_think(&wo);
+    assert(wo.unk6 == 1 && wo.unk7C == 0x1D);
+    wo.unk7C = 1;
+    frost_walrus_think(&wo);
+    assert(wo.unk6 == 0 && wo.unk7C == 0);
+    g_Player.x_pos.i.hi = 0x100;
+    frost_walrus_think(&wo);
+    assert(wo.unk5 == 6 && wo.unk6 == 0 && wo.ext.main_57.script == &frost_walrus_script_2_0[2] && wo.unk15 == 0);
+}
+static void fwx_charge(void)
+{
+    wo_reset(4, 1);
+    wo_step(3, 1);
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 1);
+    wo_step(2, 1);
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 2 && wo.unk17 == 2);
+    wo_step(0, 1);
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 2 && wo.x_speed == 0);
+    wo_step(1, 1);
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 3 && wo.x_speed == FIXED(-3));
+    wo.unk6 = 2;
+    wo.unk15 = PLAYER_FACING_RIGHT;
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 3 && wo.x_speed == FIXED(3) && FW_IS(wo.hurt_box, &frost_walrus_charge_hurt_box) && FW_IS(wo.attack_box, &frost_walrus_charge_attack_box));
+    wo.x_speed = 0x10000;
+    wo.collision_flags = 2;
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 3 && wo.x_pos.i.hi == 0x201);
+    wo.collision_flags = 1;
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 4 && wo.unk7C == 0x28 && FW_TILE == TILE_ATTR_VALUE(0x39) && background_objects[0].unk36 == 0x1E);
+    wo.unk6 = 3;
+    wo.unk15 = 0;
+    wo.collision_flags = 2;
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 4);
+    wo.unk7C = 2;
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 4 && wo.unk7C == 1);
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 5 && wo.unk17 == 3 && FW_TILE == TILE_ATTR_VALUE(0x38) && FW_IS(wo.hurt_box, &frost_walrus_hurt_box));
+    wo_step(0, 1);
+    frost_walrus_charge(&wo);
+    assert(wo.unk6 == 5);
+    wo.ext.main_57.tusks_broken = 1;
+    g_Player.x_pos.i.hi = 0x300;
+    wo_step(0, 0);
+    frost_walrus_charge(&wo);
+    assert(wo.unk5 == 3 && wo.unk6 == 0 && wo.unk17 == 3 && wo.unk15 == PLAYER_FACING_RIGHT);
+    wo.ext.main_57.tusks_broken = 0;
+    wo.unk5 = 4;
+    wo.unk6 = 5;
+    wo_step(0, 0);
+    frost_walrus_charge(&wo);
+    assert(wo.unk5 == 3 && wo.unk17 == 0);
+}
+static void fwx_leap(void)
+{
+    wo_reset(5, 0);
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 1 && wo.x_speed == FIXED(-3) && wo.y_speed == FIXED(6.5) && wo.gravity == FIXED(0.2578125) && wo.unk17 == 1);
+    wo.unk6 = 0;
+    wo.unk15 = PLAYER_FACING_RIGHT;
+    frost_walrus_leap(&wo);
+    assert(wo.x_speed == FIXED(3));
+    wo_step(3, 1);
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 1);
+    wo_step(0, 0);
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 2 && wo.unk17 == 2);
+    wo_step(0, 1);
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 2);
+    wo_step(2, 1);
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 3 && wo.ext.main_57.leap_grounded == 0 && wo.air_state == 0 && FW_IS(wo.hurt_box, &frost_walrus_charge_hurt_box));
+    wo.unk6 = 2;
+    wo.collision_flags = 8;
+    wo_step(2, 1);
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 3 && wo.ext.main_57.leap_grounded == 1 && wo.air_state == 1);
+    wo.y_speed = 0x10000;
+    wo.gravity = 0x4200;
+    frost_walrus_leap(&wo);
+    assert(wo.air_state == 1 && wo.y_speed == 0xBE00);
+    wo.y_speed = 0x1000;
+    wo.collision_flags = 0;
+    frost_walrus_leap(&wo);
+    assert((s8)wo.air_state == -1 && wo.unk6 == 3);
+    wo.collision_flags = 8;
+    frost_walrus_leap(&wo);
+    assert(wo.air_state == 0 && background_objects[0].unk37 == 0x18 && wo.unk6 == 3);
+    wo.collision_flags = 1;
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 4 && wo.unk7C == 0x28 && FW_TILE == TILE_ATTR_VALUE(0x39) && background_objects[0].unk36 == 0x1E);
+    wo.unk6 = 3;
+    wo.unk15 = 0;
+    wo.collision_flags = 2;
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 4);
+    wo.unk7C = 2;
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 4 && wo.unk7C == 1);
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 5 && wo.unk17 == 3 && FW_TILE == TILE_ATTR_VALUE(0x38) && FW_IS(wo.hurt_box, &frost_walrus_hurt_box));
+    wo_step(0, 1);
+    frost_walrus_leap(&wo);
+    assert(wo.unk6 == 5);
+    g_Player.x_pos.i.hi = 0x300;
+    wo_step(0, 0);
+    frost_walrus_leap(&wo);
+    assert(wo.unk5 == 3 && wo.unk6 == 0 && wo.unk17 == 0 && wo.ext.main_57.leap_grounded == 0 && wo.unk15 == PLAYER_FACING_RIGHT);
+}
+static void fwx_walk(void)
+{
+    wo_reset(6, 0);
+    frost_walrus_walk(&wo);
+    assert(wo.unk6 == 1 && wo.x_speed == -FIXED(0.75) && wo.unk17 == 6 && wo.unk7C == 0x80 && FW_IS(wo.hurt_box, &frost_walrus_hurt_box));
+    wo.unk6 = 0;
+    wo.unk15 = PLAYER_FACING_RIGHT;
+    frost_walrus_walk(&wo);
+    assert(wo.x_speed == FIXED(0.75));
+    wo.x_speed = -0x10000;
+    wo_step(1, 1);
+    frost_walrus_walk(&wo);
+    assert(wo.x_pos.i.hi == 0x1FF && wo.unk7C == 0x7F && background_objects[0].unk37 == 0x18);
+    wo_step(2, 1);
+    frost_walrus_walk(&wo);
+    assert(wo.x_pos.i.hi == 0x1FF && wo.unk7C == 0x7E);
+    wo.unk7C = 1;
+    wo_step(0, 1);
+    frost_walrus_walk(&wo);
+    assert(wo.x_pos.i.hi == 0x1FE && wo.unk5 == 3 && wo.unk6 == 0);
+}
+static void fwx_shards(void)
+{
+    wo_reset(7, 0);
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 1 && wo.unk17 == 7 && FW_IS(wo.hurt_box, &frost_walrus_hurt_box));
+    wo_step(0, 1);
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 1);
+    wo.hp = 0x17;
+    wo_step(0, 0);
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 2 && wo.ext.main_57.shard_count == 8 && wo.unk7C == 0);
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 3 && wo.unk7C == 2 && wo.unk7E == 0x20 && shot_objects[1].id == 0x23 && shot_objects[1].unk2 == 1 && shot_objects[1].unk7 == 8 && wo.ext.main_57.shot == &shot_objects[1]);
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 3 && wo.unk7E == 0x1F);
+    wo.unk7E = 0;
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 2);
+    wo.unk6 = 3;
+    wo.unk7C = 8;
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 4 && wo.unk7C == 0 && wo.unk17 == 1);
+    wo_step(3, 1);
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 4);
+    wo_step(2, 1);
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 5 && wo.unk17 == 0x1A && wo.unk7C == 0x40);
+    wo.unk7C = 2;
+    frost_walrus_shards(&wo);
+    assert(wo.unk6 == 5 && wo.unk7C == 1);
+    frost_walrus_shards(&wo);
+    assert(wo.unk5 == 3 && wo.unk6 == 0);
+}
+static void fwx_breath(void)
+{
+    wo_reset(8, 0);
+    frost_walrus_breath(&wo);
+    assert(wo.unk6 == 1 && wo.unk17 == 4 && wo.unk7C == 0x80 && wo.unk7E == 0x18);
+    wo.unk15 = PLAYER_FACING_RIGHT;
+    wo.unk7E = 1;
+    wo.unk7C = 0x41;
+    wo_step(2, 1);
+    frost_walrus_breath(&wo);
+    assert(wo.unk7E == 0x18 && wo.unk7C == 0x40 && visual_objects[0].id == 0x18 && visual_objects[0].unk2 == 0x10 && visual_objects[0].x_pos.i.hi == 0x215);
+    assert(shot_objects[0].active == 0x41 && shot_objects[0].id == 0x23 && shot_objects[0].unk2 == 0x10 && wo.ext.main_57.shot == &shot_objects[0]);
+    wo.unk7C = 0x30;
+    wo_step(0, 1);
+    frost_walrus_breath(&wo);
+    assert(wo.unk7C == 0x2F && visual_objects[1].active == 0);
+    wo.unk15 = 0;
+    wo.unk7C = 1;
+    wo_step(2, 1);
+    frost_walrus_breath(&wo);
+    assert(wo.unk6 == 2 && wo.unk7C == 0x30 && visual_objects[1].x_pos.i.hi == 0x1EB && shot_objects[1].active == 0);
+    wo.unk7C = 2;
+    frost_walrus_breath(&wo);
+    assert(wo.unk6 == 2 && wo.unk7C == 1);
+    frost_walrus_breath(&wo);
+    assert(wo.unk6 == 3 && wo.unk17 == 1);
+    wo_step(1, 1);
+    frost_walrus_breath(&wo);
+    assert(shot_objects[0].unk8C.word == 1 && wo.unk6 == 3);
+    wo_step(2, 1);
+    frost_walrus_breath(&wo);
+    assert(wo.unk6 == 4 && wo.unk17 == 0 && wo.unk7C == 0x20);
+    wo.unk7C = 2;
+    frost_walrus_breath(&wo);
+    assert(wo.unk6 == 4 && wo.unk7C == 1);
+    frost_walrus_breath(&wo);
+    assert(wo.unk5 == 3 && wo.unk6 == 0);
+}
+static void fwx_stagger_regrow(void)
+{
+    wo_reset(10, 1);
+    wo.air_state = 1;
+    wo.y_speed = 0x10000;
+    wo.gravity = 0x4200;
+    wo.collision_flags = 8;
+    frost_walrus_stagger(&wo);
+    assert(wo.unk6 == 1 && wo.air_state == 1);
+    wo.unk6 = 2;
+    wo.collision_flags = 0;
+    frost_walrus_stagger(&wo);
+    assert(wo.unk6 == 2);
+    wo.collision_flags = 2;
+    frost_walrus_stagger(&wo);
+    assert(wo.unk6 == 3 && wo.unk7C == 0x20 && background_objects[0].unk36 == 0x10);
+    wo_reset(11, 0);
+    frost_walrus_regrow(&wo);
+    assert(wo.unk6 == 1 && wo.unk17 == 0x19 && FW_IS(wo.collision_data, D_801060F0) && visual_objects[0].unk2 == 0x20 && visual_objects[0].x_pos.i.hi == 0x200);
+    wo_step(0, 1);
+    frost_walrus_regrow(&wo);
+    assert(wo.unk6 == 1);
+    wo.ext.main_57.tusks_broken = 1;
+    wo.ext.main_57.staggered = 1;
+    wo.ext.main_57.flash_timer = 5;
+    wo_step(0, 0);
+    frost_walrus_regrow(&wo);
+    assert(wo.unk5 == 3 && wo.unk6 == 0 && FW_IS(wo.collision_data, D_80107A78) && wo.ext.main_57.tusks_broken == 0 && wo.ext.main_57.staggered == 0 && wo.ext.main_57.flash_timer == 0);
+}
+static void fwx_zero_hits(void)
+{
+    struct EngineObj engine = engine_obj;
+    static const u8 weapons[] = { 0x22, 0x24 };
+    u32 i;
+    for (i = 0; i < COUNT(weapons); i++) {
+        wo_reset(1, 0);
+        engine_obj.cur_character = CHARACTER_ZERO;
+        SPIKE_IMMUNE_SET(g_Player, 1);
+        state_hit(&wo, weapons[i], 0, 1);
+        func_80072418(&wo);
+        assert(wo.hp == 0x2F && wo.ext.main_57.flash_timer == 0x40 && wo.ext.main_57.flashing == 1 && FW_IS(wo.collision_data, D_801060F0) && wo.unk5 == 3);
+    }
+    engine_obj = engine;
+}
+static void (*const fwx_cases[])(void) = {
+    fwx_death,
+    fwx_start,
+    fwx_intro_approach,
+    fwx_intro_burst,
+    fwx_think,
+    fwx_charge,
+    fwx_leap,
+    fwx_walk,
+    fwx_shards,
+    fwx_breath,
+    fwx_stagger_regrow,
+    fwx_zero_hits,
+};
+static u32 fwx_run(u32 row)
+{
+    fwx_cases[row]();
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "frost_walrus_states", 0, 0, COUNT(frost_walrus_states_cases), test_frost_walrus_states },
     { "frost_floor_archive", frost_floor_archive_cases, frost_floor_archive_cases_expected, COUNT(frost_floor_archive_cases), 0 },
@@ -866,6 +1320,7 @@ const struct CTestGroup c_test_groups[] = {
     { "health23_24_boundary_selects_actual_recovery_script", NULL, NULL, 12, recover },
     { "grounding_existing_tusks_and_exhausted_visual_pool", NULL, NULL, 16, land },
     { "Walrus_own_stagger_four_sweat_sprites_full_partial_slots", NULL, NULL, 12, stagger },
+    { "frost_walrus_state_steps", NULL, NULL, COUNT(fwx_cases), fwx_run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(frost_walrus_states_cases) + COUNT(frost_floor_archive_cases) + COUNT(walrus_blizzard_animation_pools_cases_expected) + COUNT(walrus_charge_tusk_context_cases_expected) + COUNT(walrus_intro_player_boundary_cases_expected) + COUNT(walrus_script_exhaustion_cases_expected) + 1 + 1 + 1 + COUNT(pool_full_cases) + COUNT(hits) * 16 + 12 + 16 + 12;
+const u32 c_test_count = COUNT(frost_walrus_states_cases) + COUNT(frost_floor_archive_cases) + COUNT(walrus_blizzard_animation_pools_cases_expected) + COUNT(walrus_charge_tusk_context_cases_expected) + COUNT(walrus_intro_player_boundary_cases_expected) + COUNT(walrus_script_exhaustion_cases_expected) + 1 + 1 + 1 + COUNT(pool_full_cases) + COUNT(hits) * 16 + 12 + 16 + 12 + COUNT(fwx_cases);

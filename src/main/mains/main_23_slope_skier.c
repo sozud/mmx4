@@ -277,7 +277,7 @@ void func_80056054(struct MainObj* arg0)
                     visual->id = 3;
                     visual->unk2 = 5;
                     visual->bg_offset = arg0->bg_offset;
-                    visual->unk15 = arg0->unk15 ^ 0x40;
+                    visual->unk15 = arg0->unk15 ^ PLAYER_FACING_RIGHT;
                     visual->unk40 = arg0->unk40;
                     visual->unk3C = (void*)arg0->sprite_frames;
                     visual->animation_table = (u32**)arg0->animation_table;
@@ -355,6 +355,8 @@ void func_800562AC(struct MainObj* arg0)
             visual->x_pos.i.hi = arg0->unk15 != 0 ? x - 0x28 : x + 0x28;
 #ifdef MMX4_PC
             visual->y_pos.i.hi = arg0->y_pos.i.hi + (s8)(arg0->ext.main_23.unk80 < 0x80 ? ((u8*)D_800FCE9C)[arg0->ext.main_23.unk80] : ((u8*)jet_drone_anim_3)[arg0->ext.main_23.unk80 - 0x80]);
+#elif defined(MMX4_SATURN)
+            visual->y_pos.i.hi = arg0->y_pos.i.hi + (arg0->ext.main_23.unk80 < 0x80 ? ((s8*)D_800FCE9C)[arg0->ext.main_23.unk80] : (s8)(arg0->ext.main_23.unk80 == 0x81 ? 0x0B : 0x02));
 #else
             visual->y_pos.i.hi = arg0->y_pos.i.hi + ((s8*)D_800FCE9C)[arg0->ext.main_23.unk80];
 #endif

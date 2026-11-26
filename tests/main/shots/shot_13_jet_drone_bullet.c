@@ -48,7 +48,7 @@ static u32 intro_guard(u32 row)
     g_Player.boss_flags = 0x40;
     g_Player.x_pos.val = scenes[scene].player_x * 65536 + 0x1234;
     g_Player.y_pos.val = 120 * 65536 + 0x5678;
-    g_Player.unk15 = facing ? 0x40 : 0;
+    g_Player.unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     g_Player.unk54 = (const u32*)jet_drone_bullet_hit_box;
     g_Player.stun_timer = 5;
     g_Player.hurt_type = 4;
@@ -70,7 +70,7 @@ static u32 intro_guard(u32 row)
     obj.unk60 = 3;
     obj.animation_table = (u32**)jet_drone_animations;
     set_animation(&obj, 3);
-    assert(obj.animation_step.packed == 0x11010002);
+    assert(obj.animation_step.packed == C_TEST_STEP(0x11010002));
     if (hit) {
         weapon_objects[0].active = 0x21;
         weapon_objects[0].id = 24;
@@ -109,6 +109,25 @@ static u32 intro_guard(u32 row)
     assert(cur_random == (hit ? 0x366A : 0x1234));
     return 1;
 }
-const struct CTestGroup c_test_groups[] = { { "intro_damage_guard_and_real_weapon_clear", NULL, NULL, COUNT(scenes) * 4, intro_guard } };
+static u32 bullet_gone(void)
+{
+    struct ShotObj obj;
+    memset(&obj, 0, sizeof(obj));
+    memset(background_objects, 0, sizeof(background_objects));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    obj.active = 0x41;
+    obj.state = 1;
+    obj.x_pos.i.hi = 0x1000;
+    obj.y_pos.i.hi = 0x60;
+    jet_drone_bullet_fly(&obj);
+    return obj.state | (u32)(u8)obj.on_screen << 8;
+}
+static const CTestCase jet_drone_bullet_gone_cases[] = { bullet_gone };
+static const u32 jet_drone_bullet_gone_cases_expected[] = { 2u };
+
+const struct CTestGroup c_test_groups[] = {
+    { "jet_drone_bullet_gone", jet_drone_bullet_gone_cases, jet_drone_bullet_gone_cases_expected, COUNT(jet_drone_bullet_gone_cases), 0 },
+    { "intro_damage_guard_and_real_weapon_clear", NULL, NULL, COUNT(scenes) * 4, intro_guard },
+};
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(scenes) * 4;
+const u32 c_test_count = COUNT(scenes) * 4 + COUNT(jet_drone_bullet_gone_cases);

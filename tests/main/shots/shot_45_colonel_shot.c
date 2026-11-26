@@ -3,6 +3,7 @@
 #include "main/55C4.h"
 extern void* D_80104770[25];
 extern s8 colonel_shot_box_10[4];
+extern s8 colonel_shot_box_2[4], colonel_shot_box_4[4], colonel_shot_box_6[4], colonel_shot_box_7[4], colonel_shot_box_8[4], colonel_shot_box_12[4];
 
 static u32 bolt_case(u32 observation)
 {
@@ -45,7 +46,7 @@ static u32 bolt_case(u32 observation)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     for (i = 0; i < 4; i++)
         assert(box[i] == i + 1);
-    return observation == 0 ? obj.animation_step.packed : (u8)obj.unk6 | ((u32)obj.unk5C << 8) | ((u32)obj.unk60 << 16);
+    return observation == 0 ? C_TEST_STEP(obj.animation_step.packed) : (u8)obj.unk6 | ((u32)obj.unk5C << 8) | ((u32)obj.unk60 << 16);
 }
 static const u32 colonel_bolt_animation_context_cases_expected[] = { 0x43010001u, 0x90528u };
 
@@ -109,7 +110,7 @@ static void cs_wave_left(void)
 static void cs_wave_right_port(void)
 {
     BOLT(0, 0);
-    ss.unk15 = 0x40;
+    ss.unk15 = PLAYER_FACING_RIGHT;
     engine_obj.stage = 0xA;
     colonel_shot_update(&ss);
 }
@@ -210,7 +211,7 @@ static void cs_quake_mid_right(void)
 {
     BOLT(5, 0);
     ss.unk2 = 6;
-    ss.unk15 = 0x40;
+    ss.unk15 = PLAYER_FACING_RIGHT;
     colonel_shot_update(&ss);
 }
 static void cs_quake_big_left(void)
@@ -223,7 +224,7 @@ static void cs_quake_big_right(void)
 {
     BOLT(5, 0);
     ss.unk2 = 9;
-    ss.unk15 = 0x40;
+    ss.unk15 = PLAYER_FACING_RIGHT;
     colonel_shot_update(&ss);
 }
 static void cs_quake_spread(void)
@@ -251,6 +252,88 @@ static void cs_owner_gone(void)
     colonel_shot_update(&ss);
 }
 
+static void fill_shots(void)
+{
+    u32 i;
+    for (i = 0; i < COUNT(shot_objects); i++)
+        shot_objects[i].active = 2;
+}
+static void cs_wave_left_port(void)
+{
+    BOLT(0, 0);
+    engine_obj.stage = 0xA;
+    colonel_shot_update(&ss);
+}
+static void cs_wave_right(void)
+{
+    BOLT(0, 0);
+    ss.unk15 = PLAYER_FACING_RIGHT;
+    colonel_shot_update(&ss);
+}
+static void cs_streak_spawn_full(void)
+{
+    BOLT(1, 1);
+    fill_shots();
+    ss.timer = 1;
+    ss.unk8A = 5;
+    colonel_shot_update(&ss);
+    SHOT_TIMERS();
+}
+static void cs_slash_narrow(void)
+{
+    BOLT(4, 0);
+    colonel_shot_update(&ss);
+    SHOT_TIMERS();
+    state_extra ^= (u32)(ss.unk50.data == (const u8*)colonel_shot_box_12) << 31;
+}
+static void cs_slash_hold(void)
+{
+    BOLT(4, 1);
+    ss.timer = 3;
+    colonel_shot_update(&ss);
+    SHOT_TIMERS();
+}
+static void cs_slash_end(void)
+{
+    BOLT(4, 1);
+    ss.timer = 1;
+    colonel_shot_update(&ss);
+    SHOT_TIMERS();
+}
+static void cs_quake_mid_left(void)
+{
+    BOLT(5, 0);
+    ss.unk2 = 6;
+    colonel_shot_update(&ss);
+}
+static void cs_quake_quiet(void)
+{
+    BOLT(5, 1);
+    ss.animation_step.fields.relative_step = 1;
+    ss.animation_step.fields.frame_index = 0x38;
+    ss.timer = 3;
+    colonel_shot_update(&ss);
+}
+static void cs_quake_spread_full(void)
+{
+    BOLT(5, 1);
+    fill_shots();
+    ss.animation_step.fields.event = 1;
+    ss.animation_step.fields.relative_step = 1;
+    ss.animation_step.fields.frame_index = 0x38;
+    ss.timer = 3;
+    colonel_shot_update(&ss);
+}
+#ifdef MMX4_PC
+static void cs_unlinked(void)
+{
+    BOLT(3, 1);
+    ss.active = 1;
+    ss.unk8C.object = NULL;
+    ss.y_vel.val = 0x80000;
+    colonel_shot_update(&ss);
+}
+#endif
 static void (*const colonel_shot_states_cases[])(void) = {
     cs_wave_left,
     cs_wave_right_port,
@@ -274,19 +357,56 @@ static void (*const colonel_shot_states_cases[])(void) = {
     cs_quake_spread,
     cs_quake_spread_last,
     cs_owner_gone,
+    cs_wave_left_port,
+    cs_wave_right,
+    cs_streak_spawn_full,
+    cs_slash_narrow,
+    cs_slash_hold,
+    cs_slash_end,
+    cs_quake_mid_left,
+    cs_quake_quiet,
+    cs_quake_spread_full,
+#ifdef MMX4_PC
+    cs_unlinked,
+#endif
 };
-static const u32 colonel_shot_states_expected[] = { 0x10001u, 0xFF000100u, 0x3B0000u, 0x700000u, 0xFFFB0000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10001u, 0xFF400000u, 0xC50000u, 0x4E0000u, 0x60000u, 0u, 0u, 0x50000u, 0u, 0u, 2u, 0u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10101u, 0xFF000000u, 0x800000u, 0x800000u, 0xFFFA0000u, 0u, 0u, 0x50000u, 0x320005u, 0u, 0x10101u, 0xFF400100u, 0x800000u, 0x800000u, 0x60000u, 0u, 0u, 0x50000u, 0x320005u, 0u, 0x10101u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x4000Au, 0x410000u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 2u, 0u, 0x10201u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0x410000u, 0x10201u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 0u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10301u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0x80000u, 0u, 0x50000u, 0u, 0u, 0x10301u, 0xFF000100u, 0x800000u, 0x600000u, 0u, 0x80000u, 0u, 0x50000u, 0u, 0u, 0x10301u, 0u, 0x800000u, 0x580000u, 0u, 0x80000u, 0u, 0x40000u, 0u, 0u, 2u, 0u, 0x800000u, 0x10000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10501u, 0xFF000200u, 0x700000u, 0x600000u, 0xFFFE8000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10501u, 0xFF400600u, 0x940000u, 0x600000u, 0x18000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10501u, 0xFF000900u, 0x680000u, 0x600000u, 0xFFFE8000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10501u, 0xFF400900u, 0x980000u, 0x600000u, 0x18000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10501u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0x410000u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u };
+static const u32 colonel_shot_states_expected[] = { 0x10001u, 0xFF000100u, 0x3B0000u, 0x700000u, 0xFFFB0000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10001u, 0xFF400000u, 0xC50000u, 0x4E0000u, 0x60000u, 0u, 0u, 0x50000u, 0u, 0u, 2u, 0u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10101u, 0xFF000000u, 0x800000u, 0x800000u, 0xFFFA0000u, 0u, 0u, 0x50000u, 0x320005u, 0u, 0x10101u, 0xFF400100u, 0x800000u, 0x800000u, 0x60000u, 0u, 0u, 0x50000u, 0x320005u, 0u, 0x10101u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x4000Au, 0x410000u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 2u, 0u, 0x10201u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0x410000u, 0x10201u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 2u, 0u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10301u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0x80000u, 0u, 0x50000u, 0u, 0u, 0x10301u, 0xFF000100u, 0x800000u, 0x600000u, 0u, 0x80000u, 0u, 0x50000u, 0u, 0u, 0x10301u, 0u, 0x800000u, 0x580000u, 0u, 0x80000u, 0u, 0x40000u, 0u, 0u, 2u, 0u, 0x800000u, 0x10000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10501u, 0xFF000200u, 0x700000u, 0x600000u, 0xFFFE8000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10501u, 0xFF400600u, 0x940000u, 0x600000u, 0x18000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10501u, 0xFF000900u, 0x680000u, 0x600000u, 0xFFFE8000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10501u, 0xFF400900u, 0x980000u, 0x600000u, 0x18000u, 0u, 0u, 0x50000u, 0u, 0u, 0x10501u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0x410000u, 2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x10001u, 0xFF000000u, 0x3B0000u, 0x4E0000u, 0xFFFA0000u, 0u, 0u, 0x50000u, 0u, 0u,
+    0x10001u, 0xFF400000u, 0xC50000u, 0x4E0000u, 0x50000u, 0u, 0u, 0x50000u, 0u, 0u,
+    0x10101u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x4000Au, 0x20000u,
+    0x10401u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x80000005u, 0u,
+    0x10401u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x2u, 0u,
+    0x2u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u,
+    0x10501u, 0xFF000600u, 0x6C0000u, 0x600000u, 0xFFFE8000u, 0u, 0u, 0x50000u, 0u, 0u,
+    0x10501u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u,
+    0x10501u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0x20000u,
+#ifdef MMX4_PC
+    0x10301u, 0x1u, 0x800000u, 0x580000u, 0u, 0x80000u, 0u, 0x40000u, 0u, 0u,
+#endif
+};
 
 static u32 test_colonel_shot_states(u32 row)
 {
     return object_run(colonel_shot_states_cases[row], row, &colonel_shot_states_expected[row * 10]);
 }
 
+static const u8 quake_frames[] = { 0x37, 0x39, 0x3A, 0x3B, 0x3C };
+static u32 quake_box(u32 row)
+{
+    static const s8* const boxes[] = { colonel_shot_box_2, colonel_shot_box_4, colonel_shot_box_6, colonel_shot_box_7, colonel_shot_box_8 };
+    struct ShotObj obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.animation_step.fields.frame_index = quake_frames[row];
+    func_800A858C(&obj);
+    assert(obj.unk50.data == (const u8*)boxes[row]);
+    return (u8)obj.unk50.data[1] | (u32)(u8)obj.unk50.data[3] << 8;
+}
 const struct CTestGroup c_test_groups[] = {
     { "colonel_shot_states", 0, 0, COUNT(colonel_shot_states_cases), test_colonel_shot_states },
     { "colonel_bolt_animation_context", NULL, colonel_bolt_animation_context_cases_expected, COUNT(colonel_bolt_animation_context_cases_expected), bolt_case },
     { "colonel_marker_wait", 0, 0, 1, test_colonel_marker_wait },
     { "colonel_slash_start", 0, 0, 1, test_colonel_slash_start },
+    { "colonel_quake_frame_boxes", NULL, NULL, COUNT(quake_frames), quake_box },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(colonel_shot_states_cases) + COUNT(colonel_bolt_animation_context_cases_expected) + 1 + 1;
+const u32 c_test_count = COUNT(colonel_shot_states_cases) + COUNT(colonel_bolt_animation_context_cases_expected) + 1 + 1 + COUNT(quake_frames);
